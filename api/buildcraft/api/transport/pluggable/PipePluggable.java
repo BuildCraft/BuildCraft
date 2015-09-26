@@ -8,6 +8,7 @@
  */
 package buildcraft.api.transport.pluggable;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
@@ -45,6 +46,10 @@ public abstract class PipePluggable implements INBTStoreable, ISerializable {
 
 	public void validate(IPipeTile pipe, ForgeDirection direction) {
 
+	}
+
+	public boolean onRightClick(EntityPlayer player, ForgeDirection direction) {
+		return false;
 	}
 
 	public boolean isSolidOnSide(IPipeTile pipe, ForgeDirection direction) {

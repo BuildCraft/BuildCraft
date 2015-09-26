@@ -5,6 +5,7 @@ import java.util.Set;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,7 +24,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
@@ -233,8 +234,17 @@ public class GatePluggable extends PipePluggable {
 		bounds[2][0] = min;
 		bounds[2][1] = max;
 
-		MatrixTranformations.transform(bounds, side);
+		MatrixTransformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	@Override
+	public boolean onRightClick(EntityPlayer player, ForgeDirection direction) {
+		if (realGate != null) {
+			realGate.openGui(player);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

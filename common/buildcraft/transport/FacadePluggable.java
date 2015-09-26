@@ -17,7 +17,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.transport.render.FacadeRenderHelper;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
@@ -132,7 +132,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 		bounds[2][0] = 0.0F;
 		bounds[2][1] = 1.0F;
 
-		MatrixTranformations.transform(bounds, side);
+		MatrixTransformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 

@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S0BPacketAnimation;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -187,6 +188,13 @@ public final class Utils {
 
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
+		}
+	}
+
+	public static void swingItem(EntityPlayer player) {
+		player.swingItem();
+		if (player instanceof EntityPlayerMP && ((EntityPlayerMP) player).playerNetServerHandler != null) {
+			((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S0BPacketAnimation(player, 0));
 		}
 	}
 

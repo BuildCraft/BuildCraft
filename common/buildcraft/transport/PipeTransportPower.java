@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
+import buildcraft.transport.pluggable.BreakerPluggable;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -65,6 +67,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	private final AverageInt[] powerAverage = new AverageInt[6];
 	private final TileEntity[] tiles = new TileEntity[6];
 	private final Object[] providers = new Object[6];
+	private final BreakerPluggable[] breakers = new BreakerPluggable[6];
 
 	private boolean needsInit = true;
 
@@ -174,6 +177,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			powerAverage[o].clear();
 		}
 		providers[o] = getEnergyProvider(o);
+		breakers[o] = container.hasBlockingPluggable(side) && container.getPipePluggable(side) instanceof BreakerPluggable ? (BreakerPluggable) container.getPipePluggable(side) : null;
 	}
 
 	private void init() {
@@ -196,6 +200,15 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		return CompatHooks.INSTANCE.getEnergyProvider(tiles[side]);
 	}
 
+	private boolean allowsTransfer() {
+		for (BreakerPluggable b : breakers) {
+			if (b != null && b.isSet()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public void updateEntity() {
 		if (container.getWorldObj().isRemote) {
@@ -212,58 +225,62 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		for (int i = 0; i < 6; ++i) {
-			if (internalPower[i] > 0) {
-				int totalPowerQuery = 0;
-				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0) {
-						Object ep = providers[j];
-						if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
-							totalPowerQuery += powerQuery[j];
-						}
-					}
-				}
+		boolean canTransfer = allowsTransfer();
 
-				if (totalPowerQuery > 0) {
-					int usedPowerQuery = 0;
+		if (canTransfer) {
+			for (int i = 0; i < 6; ++i) {
+				if (internalPower[i] > 0) {
+					int totalPowerQuery = 0;
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							double watts = Math.min(internalPower[i] * powerQuery[j] / (totalPowerQuery - usedPowerQuery), internalPower[i]);
-							usedPowerQuery += powerQuery[j];
+							if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
+								totalPowerQuery += powerQuery[j];
+							}
+						}
+					}
 
-							if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
-								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
-								PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
-								watts = nearbyTransport.receiveEnergy(
-										ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-										watts);
-								internalPower[i] -= watts;
-								dbgEnergyOutput[j] += watts;
+					if (totalPowerQuery > 0) {
+						int usedPowerQuery = 0;
+						for (int j = 0; j < 6; ++j) {
+							if (j != i && powerQuery[j] > 0) {
+								Object ep = providers[j];
+								double watts = Math.min(internalPower[i] * powerQuery[j] / (totalPowerQuery - usedPowerQuery), internalPower[i]);
+								usedPowerQuery += powerQuery[j];
 
-								powerAverage[j].push((int) Math.ceil(watts));
-								powerAverage[i].push((int) Math.ceil(watts));
-							} else {
-								int iWatts = (int) watts;
-								if (ep instanceof IEnergyHandler) {
-									IEnergyHandler handler = (IEnergyHandler) ep;
-									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-												iWatts - powerUsageTax, false) + powerUsageTax;
+								if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
+									Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
+									PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
+									watts = nearbyTransport.receiveEnergy(
+											ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+											watts);
+									internalPower[i] -= watts;
+									dbgEnergyOutput[j] += watts;
+
+									powerAverage[j].push((int) Math.ceil(watts));
+									powerAverage[i].push((int) Math.ceil(watts));
+								} else {
+									int iWatts = (int) watts;
+									if (ep instanceof IEnergyHandler) {
+										IEnergyHandler handler = (IEnergyHandler) ep;
+										if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+											iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+													iWatts - powerUsageTax, false) + powerUsageTax;
+										}
+									} else if (ep instanceof IEnergyReceiver) {
+										IEnergyReceiver handler = (IEnergyReceiver) ep;
+										if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+											iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+													iWatts - powerUsageTax, false) + powerUsageTax;
+										}
 									}
-								} else if (ep instanceof IEnergyReceiver) {
-									IEnergyReceiver handler = (IEnergyReceiver) ep;
-									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-												iWatts - powerUsageTax, false) + powerUsageTax;
-									}
+
+									internalPower[i] -= iWatts;
+									dbgEnergyOutput[j] += iWatts - powerUsageTax;
+
+									powerAverage[j].push(iWatts);
+									powerAverage[i].push(iWatts);
 								}
-
-								internalPower[i] -= iWatts;
-								dbgEnergyOutput[j] += iWatts - powerUsageTax;
-
-								powerAverage[j].push(iWatts);
-								powerAverage[i].push(iWatts);
 							}
 						}
 					}
@@ -280,68 +297,69 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		// Compute the tiles requesting energy that are not power pipes
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (!outputOpen(dir)) {
-				continue;
-			}
+		if (canTransfer) {
+			// Compute the tiles requesting energy that are not power pipes
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				if (!outputOpen(dir)) {
+					continue;
+				}
 
-			Object tile = providers[dir.ordinal()];
+				Object tile = providers[dir.ordinal()];
 
-			if (tile instanceof IPipeTile
-					&& ((IPipeTile) tile).getPipe() != null
-					&& ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
-				continue;
-			}
-			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler handler = (IEnergyHandler) tile;
-				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
-					if (request > 0) {
-						requestEnergy(dir, request);
+				if (tile instanceof IPipeTile
+						&& ((IPipeTile) tile).getPipe() != null
+						&& ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
+					continue;
+				}
+				if (tile instanceof IEnergyHandler) {
+					IEnergyHandler handler = (IEnergyHandler) tile;
+					if (handler.canConnectEnergy(dir.getOpposite())) {
+						int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
+						if (request > 0) {
+							requestEnergy(dir, request);
+						}
+					}
+				} else if (tile instanceof IEnergyReceiver) {
+					IEnergyReceiver handler = (IEnergyReceiver) tile;
+					if (handler.canConnectEnergy(dir.getOpposite())) {
+						int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
+						if (request > 0) {
+							requestEnergy(dir, request);
+						}
 					}
 				}
-			} else if (tile instanceof IEnergyReceiver) {
-				IEnergyReceiver handler = (IEnergyReceiver) tile;
-				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
-					if (request > 0) {
-						requestEnergy(dir, request);
+			}
+
+			// Sum the amount of energy requested on each side
+			int[] transferQuery = new int[6];
+			for (int i = 0; i < 6; ++i) {
+				transferQuery[i] = 0;
+				if (!inputOpen(ForgeDirection.getOrientation(i))) {
+					continue;
+				}
+				for (int j = 0; j < 6; ++j) {
+					if (j != i) {
+						transferQuery[i] += powerQuery[j];
+					}
+				}
+				transferQuery[i] = Math.min(transferQuery[i], maxPower); // change to maxOverloadPower for explosions
+			}
+
+			// Transfer the requested energy to nearby pipes
+			for (int i = 0; i < 6; ++i) {
+				if (transferQuery[i] != 0 && tiles[i] != null) {
+					TileEntity entity = tiles[i];
+					if (entity instanceof IPipeTile && ((IPipeTile) entity).getPipeType() == IPipeTile.PipeType.POWER) {
+						IPipeTile nearbyTile = (IPipeTile) entity;
+						if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
+							continue;
+						}
+						PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
+						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}
 			}
 		}
-
-		// Sum the amount of energy requested on each side
-		int[] transferQuery = new int[6];
-		for (int i = 0; i < 6; ++i) {
-			transferQuery[i] = 0;
-			if (!inputOpen(ForgeDirection.getOrientation(i))) {
-				continue;
-			}
-			for (int j = 0; j < 6; ++j) {
-				if (j != i) {
-					transferQuery[i] += powerQuery[j];
-				}
-			}
-			transferQuery[i] = Math.min(transferQuery[i], maxPower); // change to maxOverloadPower for explosions
-		}
-
-		// Transfer the requested energy to nearby pipes
-		for (int i = 0; i < 6; ++i) {
-			if (transferQuery[i] != 0 && tiles[i] != null) {
-				TileEntity entity = tiles[i];
-				if (entity instanceof IPipeTile && ((IPipeTile) entity).getPipeType() == IPipeTile.PipeType.POWER) {
-					IPipeTile nearbyTile = (IPipeTile) entity;
-					if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
-						continue;
-					}
-					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
-					nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
-				}
-			}
-		}
-
 
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
@@ -376,6 +394,10 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * Power Pipes or a subclass thereof.
 	 */
 	public double receiveEnergy(ForgeDirection from, double tVal) {
+		if (!allowsTransfer()) {
+			return 0;
+		}
+
 		int side = from.ordinal();
 		double val = tVal;
 

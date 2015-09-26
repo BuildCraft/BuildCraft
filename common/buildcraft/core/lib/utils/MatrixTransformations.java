@@ -10,12 +10,8 @@ package buildcraft.core.lib.utils;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public final class MatrixTranformations {
-
-	/**
-	 * Deactivate constructor
-	 */
-	private MatrixTranformations() {
+public final class MatrixTransformations {
+	private MatrixTransformations() {
 	}
 
 	/**
@@ -25,24 +21,8 @@ public final class MatrixTranformations {
 	 */
 	public static void mirrorY(float[][] targetArray) {
 		float temp = targetArray[1][0];
-		targetArray[1][0] = (targetArray[1][1] - 0.5F) * -1F + 0.5F; // 1 -> 0.5F -> -0.5F -> 0F
-		targetArray[1][1] = (temp - 0.5F) * -1F + 0.5F; // 0 -> -0.5F -> 0.5F -> 1F
-	}
-
-	/**
-	 * Shifts the coordinates around effectively rotating something. Zero state
-	 * is DOWN then -&gt; NORTH -&gt; WEST Note - To obtain Position, do a mirrorY() before
-	 * rotating
-	 *
-	 * @param targetArray the array that should be rotated
-	 */
-	public static void rotate(float[][] targetArray) {
-		for (int i = 0; i < 2; i++) {
-			float temp = targetArray[2][i];
-			targetArray[2][i] = targetArray[1][i];
-			targetArray[1][i] = targetArray[0][i];
-			targetArray[0][i] = temp;
-		}
+		targetArray[1][0] = 1.0F - targetArray[1][1];
+		targetArray[1][1] = 1.0F - temp;
 	}
 
 	/**
@@ -54,8 +34,22 @@ public final class MatrixTranformations {
 			mirrorY(targetArray);
 		}
 
-		for (int i = 0; i < (direction.ordinal() >> 1); i++) {
-			rotate(targetArray);
+		switch (direction.ordinal() >> 1) {
+			case 1:
+				for (int i = 0; i < 2; i++) {
+					float temp = targetArray[2][i];
+					targetArray[2][i] = targetArray[1][i];
+					targetArray[1][i] = temp;
+				}
+				break;
+			case 2:
+				for (int i = 0; i < 2; i++) {
+					float temp = targetArray[2][i];
+					targetArray[2][i] = targetArray[0][i];
+					targetArray[0][i] = targetArray[1][i];
+					targetArray[1][i] = temp;
+				}
+				break;
 		}
 	}
 

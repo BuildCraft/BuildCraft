@@ -22,7 +22,7 @@ import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.render.TextureStateManager;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TransportConstants;
 
@@ -143,40 +143,40 @@ public final class FacadeRenderHelper {
 				// Hollow facade
 				if (pluggable.isHollow()) {
 					renderblocks.field_152631_f = true;
-					float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
+					float[][] rotated = MatrixTransformations.deepClone(zeroStateFacade);
 					rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset * 4;
 					rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset * 4;
 					rotated[2][0] = 0.0F;
 					rotated[2][1] = CoreConstants.PIPE_MIN_POS - zFightOffset * 2;
-					MatrixTranformations.transform(rotated, direction);
+					MatrixTransformations.transform(rotated, direction);
 					setRenderBounds(renderblocks, rotated, direction);
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 
-					rotated = MatrixTranformations.deepClone(zeroStateFacade);
+					rotated = MatrixTransformations.deepClone(zeroStateFacade);
 					rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset * 4;
 					rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset * 4;
 					rotated[2][0] = CoreConstants.PIPE_MAX_POS + zFightOffset * 2;
-					MatrixTranformations.transform(rotated, direction);
+					MatrixTransformations.transform(rotated, direction);
 					setRenderBounds(renderblocks, rotated, direction);
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 
-					rotated = MatrixTranformations.deepClone(zeroStateFacade);
+					rotated = MatrixTransformations.deepClone(zeroStateFacade);
 					rotated[0][0] = 0.0F;
 					rotated[0][1] = CoreConstants.PIPE_MIN_POS - zFightOffset * 2;
-					MatrixTranformations.transform(rotated, direction);
+					MatrixTransformations.transform(rotated, direction);
 					setRenderBounds(renderblocks, rotated, direction);
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 
-					rotated = MatrixTranformations.deepClone(zeroStateFacade);
+					rotated = MatrixTransformations.deepClone(zeroStateFacade);
 					rotated[0][0] = CoreConstants.PIPE_MAX_POS + zFightOffset * 2;
 					rotated[0][1] = 1F;
-					MatrixTranformations.transform(rotated, direction);
+					MatrixTransformations.transform(rotated, direction);
 					setRenderBounds(renderblocks, rotated, direction);
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 					renderblocks.field_152631_f = false;
 				} else { // Solid facade
-					float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
-					MatrixTranformations.transform(rotated, direction);
+					float[][] rotated = MatrixTransformations.deepClone(zeroStateFacade);
+					MatrixTransformations.transform(rotated, direction);
 					setRenderBounds(renderblocks, rotated, direction);
 					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 				}
@@ -202,8 +202,8 @@ public final class FacadeRenderHelper {
 
 		// Always render connectors in pass 0
 		if (renderPass == 0 && !pluggable.isHollow() && renderBlock.getMaterial().isOpaque()) {
-			float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
-			MatrixTranformations.transform(rotated, direction);
+			float[][] rotated = MatrixTransformations.deepClone(zeroStateSupport);
+			MatrixTransformations.transform(rotated, direction);
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);

@@ -25,7 +25,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable,
@@ -69,8 +69,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			zeroState[2][0] = 0.4325F;
 			zeroState[2][1] = 0.5675F;
 
-			float[][] rotated = MatrixTranformations.deepClone(zeroState);
-			MatrixTranformations.transform(rotated, side);
+			float[][] rotated = MatrixTransformations.deepClone(zeroState);
+			MatrixTransformations.transform(rotated, side);
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
 					rotated[2][0], rotated[0][1], rotated[1][1],
@@ -87,8 +87,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			zeroState[2][0] = 0.25F;
 			zeroState[2][1] = 0.75F;
 
-			rotated = MatrixTranformations.deepClone(zeroState);
-			MatrixTranformations.transform(rotated, side);
+			rotated = MatrixTransformations.deepClone(zeroState);
+			MatrixTransformations.transform(rotated, side);
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
 					rotated[2][0], rotated[0][1], rotated[1][1],
@@ -179,7 +179,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		bounds[2][0] = 0.25F;
 		bounds[2][1] = 0.75F;
 
-		MatrixTranformations.transform(bounds, side);
+		MatrixTransformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 

@@ -61,10 +61,9 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
@@ -393,7 +392,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		bounds[2][0] = min;
 		bounds[2][1] = max;
 
-		MatrixTranformations.transform(bounds, side);
+		MatrixTransformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
@@ -670,27 +669,19 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				}
 			}
 
-			Gate clickedGate = null;
-
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
-				clickedGate = pipe.gates[rayTraceResult.sideHit.ordinal()];
-			}
+			if (rayTraceResult != null) {
+				if (rayTraceResult.hitPart == Part.Pluggable) {
+					if (pipe.container.getPipePluggable(rayTraceResult.sideHit).onRightClick(player, rayTraceResult.sideHit)) {
+						return true;
+					}
+				}
 
-			if (clickedGate != null) {
-				clickedGate.openGui(player);
-				return true;
+				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.getOrientation(side);
+				return pipe.blockActivated(player, hitSide);
 			} else {
-				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
-					return true;
-				}
-
-				if (rayTraceResult != null) {
-					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-					return pipe.blockActivated(player, hitSide);
-				}
+				return pipe.blockActivated(player, ForgeDirection.getOrientation(side));
 			}
 		}
 

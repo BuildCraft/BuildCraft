@@ -143,6 +143,8 @@ import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
+import buildcraft.transport.pluggable.BreakerPluggable;
+import buildcraft.transport.pluggable.ItemBreaker;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.ItemPowerAdapter;
@@ -207,6 +209,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeWire;
 	public static Item plugItem;
 	public static Item lensItem;
+	public static Item breakerItem;
 	public static Item powerAdapterItem;
 	public static Item pipeStructureCobblestone;
 	public static Item gateCopier;
@@ -401,6 +404,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
 			CoreProxy.proxy.registerItem(powerAdapterItem);
 
+			breakerItem = new ItemBreaker();
+			breakerItem.setUnlocalizedName("pipeBreaker");
+			CoreProxy.proxy.registerItem(breakerItem);
+
 			gateCopier = new ItemGateCopier();
 			CoreProxy.proxy.registerItem(gateCopier);
 
@@ -525,6 +532,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
 		PipeManager.registerPipePluggable(PowerAdapterPluggable.class, "powerAdapter");
+		PipeManager.registerPipePluggable(BreakerPluggable.class, "breaker");
 
 		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
 		GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);

@@ -18,7 +18,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
@@ -70,8 +70,8 @@ public class LensPluggable extends PipePluggable {
 				}
 			}
 
-			float[][] rotated = MatrixTranformations.deepClone(zeroState);
-			MatrixTranformations.transform(rotated, side);
+			float[][] rotated = MatrixTransformations.deepClone(zeroState);
+			MatrixTransformations.transform(rotated, side);
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
@@ -124,7 +124,7 @@ public class LensPluggable extends PipePluggable {
 		bounds[2][0] = 0.25F - 0.0625F;
 		bounds[2][1] = 0.75F + 0.0625F;
 
-		MatrixTranformations.transform(bounds, side);
+		MatrixTransformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 

@@ -31,7 +31,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
-import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTransformations;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeRenderState;
@@ -264,8 +264,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
 
-		float[][] rotated = MatrixTranformations.deepClone(zeroState);
-		MatrixTranformations.transform(rotated, direction);
+		float[][] rotated = MatrixTransformations.deepClone(zeroState);
+		MatrixTransformations.transform(rotated, direction);
 
 		blockStateMachine.setRenderAllSides();
 		renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
@@ -346,8 +346,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glTranslatef(xt, yt, zt);
 		}
 
-		float[][] rotated = MatrixTranformations.deepClone(zeroState);
-		MatrixTranformations.transform(rotated, direction);
+		float[][] rotated = MatrixTransformations.deepClone(zeroState);
+		MatrixTransformations.transform(rotated, direction);
 
 		switch (sideRenderingMode) {
 			case 0:

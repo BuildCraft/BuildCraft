@@ -148,6 +148,9 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerAdapterBottom("pipePowerAdapterBottom"),
 		PipePowerAdapterTop("pipePowerAdapterTop"),
 		//
+		PipeBreaker("breaker"),
+		PipeBreakerHandle("breakerHandle"),
+		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
