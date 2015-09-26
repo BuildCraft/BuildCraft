@@ -33,6 +33,11 @@ public class TileEngineCreative extends TileEngineBase {
 	}
 
 	@Override
+	public float getOutputMultiplier() {
+		return 1.0f;
+	}
+
+	@Override
 	public String getResourcePrefix() {
 		return "buildcraftenergy:textures/blocks/engineCreative";
 	}

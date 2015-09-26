@@ -48,6 +48,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 	public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
+	public static final Map<Class<? extends Pipe<?>>, Integer> powerTaxation = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
 	private static final int OVERLOAD_TICKS = 60;
 
@@ -57,6 +58,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public int overload;
 	public int maxPower = 80;
 	public float powerResistance;
+	public int powerUsageTax;
 
 	public int[] dbgEnergyInput = new int[6];
 	public int[] dbgEnergyOutput = new int[6];
@@ -88,11 +90,13 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
-		if (BuildCraftTransport.usePipeLoss) {
+		if (BuildCraftTransport.usePipeLossOverDistance) {
 			maxPower = 10240;
 			powerResistance = powerResistances.get(pipeClass);
+			powerUsageTax = 0;
 		} else {
 			maxPower = powerCapacities.get(pipeClass);
+			powerUsageTax = BuildCraftTransport.pipeKinesisPowerTax * (powerTaxation.containsKey(pipeClass) ? powerTaxation.get(pipeClass) : 1);
 		}
 	}
 
@@ -214,10 +218,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 
 				if (totalPowerQuery > 0) {
+					int usedPowerQuery = 0;
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
+							double watts = Math.min(internalPower[i] * powerQuery[j] / (totalPowerQuery - usedPowerQuery), internalPower[i]);
+							usedPowerQuery += powerQuery[j];
 
 							if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -236,19 +242,18 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 									IEnergyHandler handler = (IEnergyHandler) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
 										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-												iWatts, false);
+												iWatts - powerUsageTax, false) + powerUsageTax;
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
 										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-												iWatts, false);
+												iWatts - powerUsageTax, false) + powerUsageTax;
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								}
+
+								internalPower[i] -= iWatts;
+								dbgEnergyOutput[j] += iWatts - powerUsageTax;
 
 								powerAverage[j].push(iWatts);
 								powerAverage[i].push(iWatts);
@@ -291,7 +296,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true) + powerUsageTax;
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -299,7 +304,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			} else if (tile instanceof IEnergyReceiver) {
 				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true) + powerUsageTax;
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -393,7 +398,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			return 0;
 		}
 
-		if (BuildCraftTransport.usePipeLoss) {
+		if (BuildCraftTransport.usePipeLossOverDistance) {
 			internalNextPower[side] += val * (1.0F - powerResistance);
 		} else {
 			internalNextPower[side] += val;
@@ -492,6 +497,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		powerResistances.put(PipePowerGold.class, 0.003125F);
 		powerResistances.put(PipePowerEmerald.class, 0.0F);
 		powerResistances.put(PipePowerDiamond.class, 0.0F);
+
+		powerTaxation.put(PipePowerGold.class, 2);
+		powerTaxation.put(PipePowerDiamond.class, 4);
 	}
 
 	@Override

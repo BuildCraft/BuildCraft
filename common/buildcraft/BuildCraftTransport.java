@@ -194,6 +194,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	public static float pipeDurability;
 	public static int pipeFluidsBaseFlowRate;
+	public static int pipeKinesisPowerTax = 1;
 	public static boolean facadeTreatBlacklistAsWhitelist;
 	public static boolean additionalWaterproofingRecipe;
 	public static boolean facadeForceNonLaserRecipe;
@@ -270,7 +271,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal[] actionValve = new IActionInternal[4];
 
 	public static boolean debugPrintFacadeList = false;
-	public static boolean usePipeLoss = false;
+	public static boolean usePipeLossOverDistance = false;
 
 	public static float gateCostMultiplier = 1.0F;
 
@@ -575,7 +576,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-			usePipeLoss = BuildCraftCore.mainConfigManager.get("experimental.kinesisPowerLossOnTravel").getBoolean();
+			usePipeLossOverDistance = BuildCraftCore.mainConfigManager.get("experimental.kinesisPowerLossOnTravel").getBoolean();
 
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
