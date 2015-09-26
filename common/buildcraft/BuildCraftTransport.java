@@ -164,8 +164,6 @@ import buildcraft.transport.statements.ActionPowerLimiter;
 import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionSignalOutput;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
-import buildcraft.transport.statements.ActionValve;
-import buildcraft.transport.statements.ActionValve.ValveState;
 import buildcraft.transport.statements.TriggerClockTimer;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
 import buildcraft.transport.statements.TriggerLightSensor;
@@ -271,7 +269,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IActionInternal actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-	public static IActionInternal[] actionValve = new IActionInternal[4];
 
 	public static boolean debugPrintFacadeList = false;
 	public static boolean usePipeLossOverDistance = false;
@@ -436,10 +433,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 				actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
-			}
-
-			for (ValveState state : ValveState.VALUES) {
-				actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {

@@ -48,7 +48,6 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.statements.ActionValve;
 
 public final class Gate implements IGate, ISidedStatementContainer, IRedstoneStatementContainer {
 
@@ -110,15 +109,6 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in an API rewrite by adding
-		// ways for actions to fix their state on removal.
-		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-				pipe.transport.allowInput(side, true);
-				pipe.transport.allowOutput(side, true);
-			}
-		}
-
 		if (action != actions[position]) {
 			for (int i = 0; i < actionParameters[position].length; i++) {
 				actionParameters[position][i] = null;
