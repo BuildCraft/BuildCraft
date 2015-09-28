@@ -1,5 +1,6 @@
 package buildcraft.robotics.map;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,10 +60,11 @@ public class MapWorld {
 					f.read(data);
 					f.close();
 
-					region.readFromNBT(NBTUtils.load(data));
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+					NBTTagCompound nbt = NBTUtils.load(data);
+					if (nbt != null) {
+						region.readFromNBT(nbt);
+					}
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
