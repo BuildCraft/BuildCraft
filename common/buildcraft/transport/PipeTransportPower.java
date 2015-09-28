@@ -214,10 +214,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 
 				if (totalPowerQuery > 0) {
+					int unusedPowerQuery = totalPowerQuery;
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
+							double watts = Math.min(internalPower[i] * powerQuery[j] / unusedPowerQuery, internalPower[i]);
+							unusedPowerQuery -= powerQuery[j];
 
 							if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -238,17 +240,16 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
 										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								}
+
+								internalPower[i] -= iWatts;
+								dbgEnergyOutput[j] += iWatts;
 
 								powerAverage[j].push(iWatts);
 								powerAverage[i].push(iWatts);
@@ -258,6 +259,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 			}
 		}
+
 		short highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			powerAverage[i].tick();
