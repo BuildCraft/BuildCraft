@@ -217,10 +217,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 
 				if (totalPowerQuery > 0) {
+					int unusedPowerQuery = totalPowerQuery;
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
+							double watts = Math.min(internalPower[i] * powerQuery[j] / unusedPowerQuery, internalPower[i]);
+							unusedPowerQuery -= powerQuery[j];
 
 							if (ep instanceof IPipeTile) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -230,34 +232,37 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										watts);
 								internalPower[i] -= watts;
 								dbgEnergyOutput[j] += watts;
+
+								displayPower[j] += watts;
+								displayPower[i] += watts;
 							} else {
 								int iWatts = (int) watts;
 								if (ep instanceof IEnergyHandler) {
 									IEnergyHandler handler = (IEnergyHandler) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								}
-							}
 
-							displayPower[j] += watts;
-							displayPower[i] += watts;
+								internalPower[i] -= iWatts;
+								dbgEnergyOutput[j] += iWatts;
+
+								displayPower[j] += iWatts;
+								displayPower[i] += iWatts;
+							}
 						}
 					}
 				}
 			}
 		}
+
 		float highestPower = 0.0F;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (short) Math.floor((float) (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1) + displayPower[i]) / DISPLAY_SMOOTHING);
@@ -265,6 +270,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				highestPower = displayPower[i];
 			}
 		}
+
 		overload += highestPower > ((float) maxPower) * 0.95F ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
