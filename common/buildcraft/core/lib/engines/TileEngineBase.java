@@ -73,19 +73,17 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 	}
 
-	public abstract String getResourcePrefix();
-
 	public ResourceLocation getBaseTexture() {
-		return new ResourceLocation(getResourcePrefix() + "/base.png");
+		return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/base.png");
 	}
 
 	public ResourceLocation getChamberTexture() {
-		return new ResourceLocation(getResourcePrefix() + "/chamber.png");
+		return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/chamber.png");
 	}
 
 	public ResourceLocation getTrunkTexture(EnergyStage stage) {
-		if (ResourceUtils.resourceExists(getResourcePrefix() + "/trunk.png")) {
-			return new ResourceLocation(getResourcePrefix() + "/trunk.png");
+		if (ResourceUtils.resourceExists(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/trunk.png")) {
+			return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/trunk.png");
 		}
 
 		switch (stage) {

@@ -361,7 +361,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
+		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood", "buildcraftcore:engineWood");
 		CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
 		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);

@@ -23,11 +23,6 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	private boolean hasSent = false;
 
 	@Override
-	public String getResourcePrefix() {
-		return "buildcraftcore:textures/blocks/engineWood";
-	}
-
-	@Override
 	public ResourceLocation getTrunkTexture(EnergyStage stage) {
 		return super.getTrunkTexture(stage == EnergyStage.RED && progress < 0.5 ? EnergyStage.YELLOW : stage);
 	}

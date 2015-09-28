@@ -15,6 +15,7 @@ import buildcraft.core.lib.engines.TileEngineBase;
 public class BlockEngine extends BlockEngineBase {
 	private final ArrayList<Class<? extends TileEngineBase>> engineTiles;
 	private final ArrayList<String> names;
+	private final ArrayList<String> texturePaths;
 
 	public BlockEngine() {
 		super();
@@ -22,6 +23,20 @@ public class BlockEngine extends BlockEngineBase {
 
 		engineTiles = new ArrayList<Class<? extends TileEngineBase>>(16);
 		names = new ArrayList<String>(16);
+		texturePaths = new ArrayList<String>(16);
+	}
+
+	@Override
+	public String getTexturePrefix(int meta, boolean addPrefix) {
+		if (meta < texturePaths.size()) {
+			if (addPrefix) {
+				return texturePaths.get(meta).replaceAll(":", ":textures/blocks/");
+			} else {
+				return texturePaths.get(meta);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -29,9 +44,10 @@ public class BlockEngine extends BlockEngineBase {
 		return names.get(metadata % names.size());
 	}
 
-	public void registerTile(Class<? extends TileEngineBase> engineTile, String name) {
+	public void registerTile(Class<? extends TileEngineBase> engineTile, String name, String texturePath) {
 		engineTiles.add(engineTile);
 		names.add(name);
+		texturePaths.add(texturePath);
 	}
 
 	@Override

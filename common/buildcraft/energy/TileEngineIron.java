@@ -65,11 +65,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public String getResourcePrefix() {
-		return "buildcraftenergy:textures/blocks/engineIron";
-	}
-
-	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		if (super.onBlockActivated(player, side)) {
 			return true;

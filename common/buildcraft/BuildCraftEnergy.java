@@ -100,7 +100,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item bucketRedPlasma;
 	public static Item fuel;
 
-	public static Achievement engineAchievement1;
 	public static Achievement engineAchievement2;
 	public static Achievement engineAchievement3;
 
@@ -288,9 +287,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.packed_ice), StackKey.fluid(FluidRegistry.WATER), 2.0f);
 
-		BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "tile.engineStone");
-		BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "tile.engineIron");
-		BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "tile.engineCreative");
+		BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "tile.engineStone", "buildcraftenergy:engineStone");
+		BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "tile.engineIron", "buildcraftenergy:engineIron");
+		BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "tile.engineCreative", "buildcraftenergy:engineCreative");
 
 		InterModComms.registerHandler(new IMCHandlerEnergy());
 

@@ -13,16 +13,20 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -43,6 +47,27 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
 	public BlockEngineBase() {
 		super(Material.iron);
+	}
+
+	public abstract String getTexturePrefix(int meta, boolean addPrefix);
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public IIcon getIconAbsolute(int side, int metadata) {
+		return icons[metadata] == null ? icons[0][0] : icons[metadata][0];
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerBlockIcons(IIconRegister register) {
+		icons = new IIcon[16][];
+		for (int meta = 0; meta < 16; meta++) {
+			String prefix = getTexturePrefix(meta, false);
+			if (prefix != null) {
+				icons[meta] = new IIcon[1];
+				icons[meta][0] = register.registerIcon(prefix + "/icon");
+			}
+		}
 	}
 
 	@Override
