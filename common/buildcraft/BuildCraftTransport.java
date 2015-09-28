@@ -759,7 +759,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 				pipeRecipes.add(recipe);
 
-				if (ingredients[1] instanceof ItemPipe) {
+				if (ingredients[1] instanceof ItemPipe && clas != PipeStructureCobblestone.class) {
 					PipeRecipe uncraft = new PipeRecipe();
 					uncraft.isShapeless = true;
 					uncraft.input = new Object[]{recipe.result};
