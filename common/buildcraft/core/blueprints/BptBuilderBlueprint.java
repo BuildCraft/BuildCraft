@@ -332,20 +332,28 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
+	protected boolean readyForSlotLookup(TileAbstractBuilder builder) {
+		return builder == null || builder.energyAvailable() >= BuilderAPI.BREAK_ENERGY;
+	}
+
 	/**
 	 * Gets the next available block. If builder is not null, then building will
 	 * be verified and performed. Otherwise, the next possible building slot is
 	 * returned, possibly for reservation, with no building.
 	 */
 	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder) {
-		if (builder != null && builder.energyAvailable() < BuilderAPI.BREAK_ENERGY) {
+		if (!readyForSlotLookup(builder)) {
 			return null;
 		}
 
-		iterator = new BuildingSlotMapIterator(buildList, builder, buildStageOccurences);
-		BuildingSlotBlock slot;
+		if (iterator == null) {
+			iterator = new BuildingSlotMapIterator(buildList, builder, buildStageOccurences);
+		}
 
-		while ((slot = iterator.next()) != null) {
+		BuildingSlotBlock slot;
+		iterator.refresh(builder);
+
+		while (readyForSlotLookup(builder) && (slot = iterator.next()) != null) {
 			if (!world.blockExists(slot.x, slot.y, slot.z)) {
 				continue;
 			}
@@ -354,7 +362,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			for (int i = 0; i < slot.buildStage; i++) {
 				if (buildStageOccurences[i] > 0) {
-					iterator.skipList();
+					iterator.skipKey();
 					skipped = true;
 					break;
 				}
