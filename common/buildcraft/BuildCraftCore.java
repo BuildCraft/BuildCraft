@@ -67,6 +67,7 @@ import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockEngine;
 import buildcraft.core.BlockMarker;
@@ -283,6 +284,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 
+		BCRegistry.INSTANCE.setRegistryConfig(new File(evt.getModConfigurationDirectory(), "buildcraft/objects.cfg"));
+
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
 		mainConfigManager = new ConfigManager(mainConfiguration);
 		mainConfiguration.load();
@@ -309,66 +312,71 @@ public class BuildCraftCore extends BuildCraftMod {
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 		wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
-		CoreProxy.proxy.registerItem(wrenchItem);
+		BCRegistry.INSTANCE.registerItem(wrenchItem, false);
 
 		mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
-		CoreProxy.proxy.registerItem(mapLocationItem);
+		BCRegistry.INSTANCE.registerItem(mapLocationItem, false);
 
 		listItem = (ItemList) (new ItemList()).setUnlocalizedName("list");
-		CoreProxy.proxy.registerItem(listItem);
+		BCRegistry.INSTANCE.registerItem(listItem, false);
 
 		debuggerItem = (new ItemDebugger()).setUnlocalizedName("debugger");
-		CoreProxy.proxy.registerItem(debuggerItem);
+		BCRegistry.INSTANCE.registerItem(debuggerItem, false);
 
 		if (BuildCraftCore.modifyWorld) {
 			BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
 			springBlock = new BlockSpring().setBlockName("eternalSpring");
-			CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
+			BCRegistry.INSTANCE.registerBlock(springBlock, ItemSpring.class, false);
 		}
 
 		woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
-		CoreProxy.proxy.registerItem(woodenGearItem);
-		OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
+		if (BCRegistry.INSTANCE.registerItem(woodenGearItem, false)) {
+			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
+		}
 
 		stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
-		CoreProxy.proxy.registerItem(stoneGearItem);
-		OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
+		if (BCRegistry.INSTANCE.registerItem(stoneGearItem, false)) {
+			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
+		}
 
 		ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
-		CoreProxy.proxy.registerItem(ironGearItem);
-		OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+		if (BCRegistry.INSTANCE.registerItem(ironGearItem, false)) {
+			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+		}
 
 		goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
-		CoreProxy.proxy.registerItem(goldGearItem);
-		OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
+		if (BCRegistry.INSTANCE.registerItem(goldGearItem, false)) {
+			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
+		}
 
 		diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
-		CoreProxy.proxy.registerItem(diamondGearItem);
-		OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+		if (BCRegistry.INSTANCE.registerItem(diamondGearItem, false)) {
+			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+		}
 
 		paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
-		CoreProxy.proxy.registerItem(paintbrushItem);
+		BCRegistry.INSTANCE.registerItem(paintbrushItem, false);
 
 		if (DEVELOPER_MODE) {
 			tabletItem = new ItemTablet();
 			tabletItem.setUnlocalizedName("tablet");
-			CoreProxy.proxy.registerItem(tabletItem);
+			BCRegistry.INSTANCE.registerItem(tabletItem, false);
 		}
 
 		buildToolBlock = new BlockBuildTool();
 		buildToolBlock.setBlockName("buildToolBlock");
-		CoreProxy.proxy.registerBlock(buildToolBlock);
+		BCRegistry.INSTANCE.registerBlock(buildToolBlock, true);
 
 		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
-		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood", "buildcraftcore:engineWood");
-		CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
+		BCRegistry.INSTANCE.registerBlock(engineBlock, ItemEngine.class, true);
+		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), 0, "tile.engineWood", "buildcraftcore:engineWood");
+		BCRegistry.INSTANCE.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
 		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+		BCRegistry.INSTANCE.registerBlock(markerBlock.setBlockName("markerBlock"), false);
 
 		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+		BCRegistry.INSTANCE.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"), false);
 
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
@@ -476,6 +484,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		BCLog.logger.info("BuildCraft's fake player: UUID = " + gameProfile.getId().toString() + ", name = '" + gameProfile.getName() + "'!");
+
+		BCRegistry.INSTANCE.save();
 
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
@@ -625,35 +635,35 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone");
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S",
 				" S ", 'S',
 				"stickWood");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI",
 				" I ", 'I',
 				"cobblestone", 'G',
 				"gearWood");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI",
 				" I ", 'I',
 				"ingotIron", 'G', "gearStone");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI",
 				" I ", 'I',
 				"ingotGold", 'G', "gearIron");
-		CoreProxy.proxy.addCraftingRecipe(
+		BCRegistry.INSTANCE.addCraftingRecipe(
 				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', "gemDiamond", 'G', "gearGold");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
 				"gearWood", 'p', Blocks.piston);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
 				new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
 				"dyeGreen", 'r', Blocks.redstone_torch);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
 				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
 
 		ItemStack anyPaintbrush = new ItemStack(paintbrushItem, 1, OreDictionary.WILDCARD_VALUE);
@@ -661,16 +671,16 @@ public class BuildCraftCore extends BuildCraftMod {
 		for (int i = 0; i < 16; i++) {
 			ItemStack outputStack = new ItemStack(paintbrushItem);
 			NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
-			CoreProxy.proxy.addShapelessRecipe(outputStack, anyPaintbrush, EnumColor.fromId(i).getDye());
+			BCRegistry.INSTANCE.addShapelessRecipe(outputStack, anyPaintbrush, EnumColor.fromId(i).getDye());
 		}
 
 		// Convert old lists to new lists
-		CoreProxy.proxy.addShapelessRecipe(new ItemStack(listItem, 1, 1), new ItemStack(listItem, 1, 0));
+		BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(listItem, 1, 1), new ItemStack(listItem, 1, 0));
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			CoreSiliconRecipes.loadSiliconRecipes();
 		} else {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem, 1, 1), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(listItem, 1, 1), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
 					"dyeGreen");
 		}
 	}

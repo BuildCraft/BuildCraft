@@ -13,26 +13,26 @@ import buildcraft.core.lib.engines.BlockEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase;
 
 public class BlockEngine extends BlockEngineBase {
-	private final ArrayList<Class<? extends TileEngineBase>> engineTiles;
-	private final ArrayList<String> names;
-	private final ArrayList<String> texturePaths;
+	private final Class[] engineTiles;
+	private final String[] names;
+	private final String[] texturePaths;
 
 	public BlockEngine() {
 		super();
 		setBlockName("engineBlock");
 
-		engineTiles = new ArrayList<Class<? extends TileEngineBase>>(16);
-		names = new ArrayList<String>(16);
-		texturePaths = new ArrayList<String>(16);
+		engineTiles = new Class[16];
+		names = new String[16];
+		texturePaths = new String[16];
 	}
 
 	@Override
 	public String getTexturePrefix(int meta, boolean addPrefix) {
-		if (meta < texturePaths.size()) {
+		if (texturePaths[meta] != null) {
 			if (addPrefix) {
-				return texturePaths.get(meta).replaceAll(":", ":textures/blocks/");
+				return texturePaths[meta].replaceAll(":", ":textures/blocks/");
 			} else {
-				return texturePaths.get(meta);
+				return texturePaths[meta];
 			}
 		} else {
 			return null;
@@ -41,19 +41,21 @@ public class BlockEngine extends BlockEngineBase {
 
 	@Override
 	public String getUnlocalizedName(int metadata) {
-		return names.get(metadata % names.size());
+		return names[metadata] != null ? names[metadata] : "unknown";
 	}
 
-	public void registerTile(Class<? extends TileEngineBase> engineTile, String name, String texturePath) {
-		engineTiles.add(engineTile);
-		names.add(name);
-		texturePaths.add(texturePath);
+	public void registerTile(Class<? extends TileEngineBase> engineTile, int meta, String name, String texturePath) {
+		if (BCRegistry.INSTANCE.isEnabled("engines", name)) {
+			engineTiles[meta] = engineTile;
+			names[meta] = name;
+			texturePaths[meta] = texturePath;
+		}
 	}
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		try {
-			return engineTiles.get(metadata % engineTiles.size()).newInstance();
+			return (TileEntity) engineTiles[metadata].newInstance();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -63,12 +65,14 @@ public class BlockEngine extends BlockEngineBase {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		for (int i = 0; i < engineTiles.size(); i++) {
-			itemList.add(new ItemStack(this, 1, i));
+		for (int i = 0; i < 16; i++) {
+			if (engineTiles[i] != null) {
+				itemList.add(new ItemStack(this, 1, i));
+			}
 		}
 	}
 
-	public int getEngineCount() {
-		return engineTiles.size();
+	public boolean hasEngine(int meta) {
+		return engineTiles[meta] != null;
 	}
 }

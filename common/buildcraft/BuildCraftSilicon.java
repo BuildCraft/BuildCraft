@@ -30,6 +30,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -90,30 +91,30 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		laserBlock = (BlockLaser) CompatHooks.INSTANCE.getBlock(BlockLaser.class);
 		laserBlock.setBlockName("laserBlock");
-		CoreProxy.proxy.registerBlock(laserBlock);
+		BCRegistry.INSTANCE.registerBlock(laserBlock, false);
 
 		assemblyTableBlock = (BlockLaserTable) CompatHooks.INSTANCE.getBlock(BlockLaserTable.class);
 		assemblyTableBlock.setBlockName("laserTableBlock");
-		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
+		BCRegistry.INSTANCE.registerBlock(assemblyTableBlock, ItemLaserTable.class, false);
 
 		packagerBlock = (BlockPackager) CompatHooks.INSTANCE.getBlock(BlockPackager.class);
 		packagerBlock.setBlockName("packagerBlock");
-		CoreProxy.proxy.registerBlock(packagerBlock);
+		BCRegistry.INSTANCE.registerBlock(packagerBlock, false);
 
 		redstoneChipset = new ItemRedstoneChipset();
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
-		CoreProxy.proxy.registerItem(redstoneChipset);
+		BCRegistry.INSTANCE.registerItem(redstoneChipset, false);
 		redstoneChipset.registerItemStacks();
 
 		packageItem = new ItemPackage();
 		packageItem.setUnlocalizedName("package");
-		CoreProxy.proxy.registerItem(packageItem);
+		BCRegistry.INSTANCE.registerItem(packageItem, false);
 
 		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
-		CoreProxy.proxy.registerItem(redstoneCrystal);
-
-		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal)); // Deprecated
-		OreDictionary.registerOre("crystalRedstone", new ItemStack(redstoneCrystal));
+		if (BCRegistry.INSTANCE.registerItem(redstoneCrystal, false)) {
+			OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal)); // Deprecated
+			OreDictionary.registerOre("crystalRedstone", new ItemStack(redstoneCrystal));
+		}
 
 		EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
 	}
@@ -125,19 +126,19 @@ public class BuildCraftSilicon extends BuildCraftMod {
 						(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
-		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class,
+		BCRegistry.INSTANCE.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
+		BCRegistry.INSTANCE.registerTileEntity(TileAssemblyTable.class,
 				"net.minecraft.src.buildcraft.factory.TileAssemblyTable");
-		CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class,
+		BCRegistry.INSTANCE.registerTileEntity(TileAdvancedCraftingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
-		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
+		BCRegistry.INSTANCE.registerTileEntity(TileIntegrationTable.class,
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
-		CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
+		BCRegistry.INSTANCE.registerTileEntity(TileChargingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileChargingTable");
-		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
+		BCRegistry.INSTANCE.registerTileEntity(TileProgrammingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
-		CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
-		CoreProxy.proxy.registerTileEntity(TileStampingTable.class, "buildcraft.TileStampingTable");
+		BCRegistry.INSTANCE.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
+		BCRegistry.INSTANCE.registerTileEntity(TileStampingTable.class, "buildcraft.TileStampingTable");
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
@@ -164,7 +165,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static void loadRecipes() {
 
 		// TABLES
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(laserBlock),
 				"ORR",
 				"DDR",
 				"ORR",
@@ -172,7 +173,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'D', "gemDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(laserBlock),
 				"RRO",
 				"RDD",
 				"RRO",
@@ -180,7 +181,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'D', "gemDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(laserBlock),
 				"RRR",
 				"RDR",
 				"ODO",
@@ -188,7 +189,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'D', "gemDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(laserBlock),
 				"ODO",
 				"RDR",
 				"RRR",
@@ -196,7 +197,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'D', "gemDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0),
 				"ODO",
 				"ORO",
 				"OGO",
@@ -205,7 +206,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'D', "gemDiamond",
 				'G', "gearDiamond");
 
-		/* CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1),
+		/* BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1),
 				"OWO",
 				"OCO",
 				"ORO",
@@ -214,7 +215,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', Blocks.chest,
 				'R', new ItemStack(redstoneChipset, 1, 0)); */
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 2),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 2),
 				"OIO",
 				"OCO",
 				"OGO",
@@ -223,7 +224,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', "gearDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 3),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 3),
 				"OIO",
 				"OCO",
 				"OGO",
@@ -232,7 +233,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', "gearGold");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 4),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 4),
 				"OCO",
 				"ORO",
 				"OGO",
@@ -241,7 +242,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', "gemEmerald",
 				'G', "gearDiamond");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5),
 				"OWO",
 				"ORO",
 				"OGO",
@@ -250,7 +251,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'G', "gearGold",
 				'R', new ItemStack(redstoneChipset, 1, 0));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(packagerBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(packagerBlock, 1, 0),
 				" I ",
 				"ICI",
 				" P ",

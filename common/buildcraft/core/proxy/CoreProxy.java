@@ -80,34 +80,8 @@ public class CoreProxy implements ICoreProxy {
 	public void initializeEntityRendering() {
 	}
 
-	/* REGISTRATION */
-	public void registerBlock(Block block) {
-		registerBlock(block, ItemBlockBuildCraft.class);
-	}
-
-	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
-		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
-	}
-
-	public void registerItem(Item item) {
-		GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
-	}
-
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public void registerTileEntity(Class clas, String ident) {
-		GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
-	}
-
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
-	}
-
-	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		GameRegistry.addRecipe(new ShapedOreRecipe(result, recipe));
-	}
-
-	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		GameRegistry.addRecipe(new ShapelessOreRecipe(result, recipe));
 	}
 
 	public String playerName() {

@@ -51,6 +51,7 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -207,7 +208,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammability(0);
 			blockOil.setBlockName("blockOil").setLightOpacity(8);
-			CoreProxy.proxy.registerBlock(blockOil);
+			BCRegistry.INSTANCE.registerBlock(blockOil, true);
 			fluidOil.setBlock(blockOil);
 
 			BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?", ConfigManager.RestartRequirement.NONE);
@@ -227,7 +228,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (fluidFuel.getBlock() == null) {
 			blockFuel = new BlockBuildCraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel").setLightOpacity(3);
-			CoreProxy.proxy.registerBlock(blockFuel);
+			BCRegistry.INSTANCE.registerBlock(blockFuel, true);
 			fluidFuel.setBlock(blockFuel);
 		} else {
 			blockFuel = fluidFuel.getBlock();
@@ -237,7 +238,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			blockRedPlasma = new BlockBuildCraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
 					false).setParticleColor(0.9F, 0, 0);
 			blockRedPlasma.setBlockName("blockRedPlasma");
-			CoreProxy.proxy.registerBlock(blockRedPlasma);
+			BCRegistry.INSTANCE.registerBlock(blockRedPlasma, true);
 			fluidRedPlasma.setBlock(blockRedPlasma);
 		} else {
 			blockRedPlasma = fluidRedPlasma.getBlock();
@@ -248,14 +249,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (blockOil != null) {
 			bucketOil = new ItemBucketBuildcraft(blockOil);
 			bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
-			CoreProxy.proxy.registerItem(bucketOil);
+			BCRegistry.INSTANCE.registerItem(bucketOil, true);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketOil), new ItemStack(Items.bucket));
 		}
 
 		if (blockFuel != null) {
 			bucketFuel = new ItemBucketBuildcraft(blockFuel);
 			bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
-			CoreProxy.proxy.registerItem(bucketFuel);
+			BCRegistry.INSTANCE.registerItem(bucketFuel, true);
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
 
@@ -263,7 +264,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			if (blockRedPlasma != null) {
 				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
 				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
-				CoreProxy.proxy.registerItem(bucketRedPlasma);
+				BCRegistry.INSTANCE.registerItem(bucketRedPlasma, true);
 				FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
 			}
 		}
@@ -287,9 +288,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.packed_ice), StackKey.fluid(FluidRegistry.WATER), 2.0f);
 
-		BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "tile.engineStone", "buildcraftenergy:engineStone");
-		BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "tile.engineIron", "buildcraftenergy:engineIron");
-		BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "tile.engineCreative", "buildcraftenergy:engineCreative");
+		BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, 1, "tile.engineStone", "buildcraftenergy:engineStone");
+		BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, 2, "tile.engineIron", "buildcraftenergy:engineIron");
+		BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, 3, "tile.engineCreative", "buildcraftenergy:engineCreative");
 
 		InterModComms.registerHandler(new IMCHandlerEnergy());
 
@@ -411,10 +412,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1),
 				"www", " g ", "GpG", 'w', "cobblestone",
 				'g', "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2),
 				"www", " g ", "GpG", 'w', "ingotIron",
 				'g', "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
 	}

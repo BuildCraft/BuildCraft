@@ -59,6 +59,7 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -330,14 +331,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
+			BCRegistry.INSTANCE.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"), false);
 
 			pipeWaterproof = new ItemBuildCraft();
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			CoreProxy.proxy.registerItem(pipeWaterproof);
+			BCRegistry.INSTANCE.registerItem(pipeWaterproof, false);
 
 			genericPipeBlock = (BlockGenericPipe) CompatHooks.INSTANCE.getBlock(BlockGenericPipe.class);
-			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
+			BCRegistry.INSTANCE.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class, true);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "plankWood", "blockGlassColorless", "plankWood");
 			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "gemEmerald", "blockGlassColorless", "gemEmerald");
@@ -381,32 +382,32 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
 			pipeWire = new ItemPipeWire();
-			CoreProxy.proxy.registerItem(pipeWire);
+			BCRegistry.INSTANCE.registerItem(pipeWire, false);
 			PipeWire.item = pipeWire;
 
 			pipeGate = new ItemGate();
 			pipeGate.setUnlocalizedName("pipeGate");
-			CoreProxy.proxy.registerItem(pipeGate);
+			BCRegistry.INSTANCE.registerItem(pipeGate, false);
 
 			facadeItem = new ItemFacade();
 			facadeItem.setUnlocalizedName("pipeFacade");
-			CoreProxy.proxy.registerItem(facadeItem);
+			BCRegistry.INSTANCE.registerItem(facadeItem, false);
 			FacadeAPI.facadeItem = facadeItem;
 
 			plugItem = new ItemPlug();
 			plugItem.setUnlocalizedName("pipePlug");
-			CoreProxy.proxy.registerItem(plugItem);
+			BCRegistry.INSTANCE.registerItem(plugItem, false);
 
 			lensItem = new ItemLens();
 			lensItem.setUnlocalizedName("pipeLens");
-			CoreProxy.proxy.registerItem(lensItem);
+			BCRegistry.INSTANCE.registerItem(lensItem, false);
 
 			powerAdapterItem = new ItemPowerAdapter();
 			powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
-			CoreProxy.proxy.registerItem(powerAdapterItem);
+			BCRegistry.INSTANCE.registerItem(powerAdapterItem, false);
 
 			gateCopier = new ItemGateCopier();
-			CoreProxy.proxy.registerItem(gateCopier);
+			BCRegistry.INSTANCE.registerItem(gateCopier, false);
 
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
@@ -657,16 +658,16 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-				CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
+				BCRegistry.INSTANCE.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
-				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
+				BCRegistry.INSTANCE.addCraftingRecipe(pipe.result, pipe.input);
 			}
 		}
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
 		RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
 				BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p',
 				Blocks.piston);
@@ -722,8 +723,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	public static Item buildPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab,
 								 Object... ingredients) {
+		if (!BCRegistry.INSTANCE.isEnabled("pipes", clas.getSimpleName())) {
+			return null;
+		}
+
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
+
+		for (Object o : ingredients) {
+			if (o == null) {
+				return res;
+			}
+		}
 
 		// Add appropriate recipes to temporary list
 		if (ingredients.length == 3) {

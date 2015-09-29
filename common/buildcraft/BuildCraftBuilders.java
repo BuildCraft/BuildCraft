@@ -120,6 +120,7 @@ import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.statements.BuildersActionProvider;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -493,45 +494,43 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		templateItem = new ItemBlueprintTemplate();
 		templateItem.setUnlocalizedName("templateItem");
-		CoreProxy.proxy.registerItem(templateItem);
+		BCRegistry.INSTANCE.registerItem(templateItem, false);
 
 		blueprintItem = new ItemBlueprintStandard();
 		blueprintItem.setUnlocalizedName("blueprintItem");
-		CoreProxy.proxy.registerItem(blueprintItem);
+		BCRegistry.INSTANCE.registerItem(blueprintItem, false);
 
 		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
-		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		BCRegistry.INSTANCE.registerBlock(quarryBlock.setBlockName("machineBlock"), false);
 
 		fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
-		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+		BCRegistry.INSTANCE.registerBlock(fillerBlock.setBlockName("fillerBlock"), false);
 
 		frameBlock = new BlockFrame();
-		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		BCRegistry.INSTANCE.registerBlock(frameBlock.setBlockName("frameBlock"), true);
 
 		builderBlock = (BlockBuilder) CompatHooks.INSTANCE.getBlock(BlockBuilder.class);
-		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
+		BCRegistry.INSTANCE.registerBlock(builderBlock.setBlockName("builderBlock"), false);
 
 		architectBlock = (BlockArchitect) CompatHooks.INSTANCE.getBlock(BlockArchitect.class);
-		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
+		BCRegistry.INSTANCE.registerBlock(architectBlock.setBlockName("architectBlock"), false);
 
 		libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
-		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
+		BCRegistry.INSTANCE.registerBlock(libraryBlock.setBlockName("libraryBlock"), false);
 
-		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
-		CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
-		CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
-		CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
-		CoreProxy.proxy.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
-		CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-		CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+		BCRegistry.INSTANCE.registerTileEntity(TileQuarry.class, "Machine");
+		BCRegistry.INSTANCE.registerTileEntity(TileMarker.class, "Marker");
+		BCRegistry.INSTANCE.registerTileEntity(TileFiller.class, "Filler");
+		BCRegistry.INSTANCE.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
+		BCRegistry.INSTANCE.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
+		BCRegistry.INSTANCE.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
+		BCRegistry.INSTANCE.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
-		if (Loader.isModLoaded("BuildCraft|Robotics")) {
-			constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
-			CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
-					ItemConstructionMarker.class);
+		constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
+		BCRegistry.INSTANCE.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
+				ItemConstructionMarker.class, false);
 
-			CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
-		}
+		BCRegistry.INSTANCE.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
 
 		SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -546,7 +545,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(
+		BCRegistry.INSTANCE.addCraftingRecipe(
 				new ItemStack(quarryBlock),
 				"ipi",
 				"gig",
@@ -557,31 +556,31 @@ public class BuildCraftBuilders extends BuildCraftMod {
 				'd', "gearDiamond",
 				'D', Items.diamond_pickaxe);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
 				"dyeBlack", 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
 				"gemLapis", 'p', Items.paper);
 
 		if (constructionMarkerBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
 					"gearGold", 'r', Blocks.redstone_torch);
 		}
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
 				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 				'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
 				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 				'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
 				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 				'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
 				new ItemStack(blueprintItem, 1));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B',
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B',
 				new ItemStack(blueprintItem), 'b', Blocks.bookshelf, 'i', "ingotIron", 'g', "gearIron", 'r', Items.redstone);
 	}
 

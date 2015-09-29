@@ -34,6 +34,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -95,13 +96,13 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new FactoryGuiHandler());
 
-		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
-		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
-		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
-		CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
-		CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
-		CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
-		CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+		BCRegistry.INSTANCE.registerTileEntity(TileMiningWell.class, "MiningWell");
+		BCRegistry.INSTANCE.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
+		BCRegistry.INSTANCE.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
+		BCRegistry.INSTANCE.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
+		BCRegistry.INSTANCE.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
+		BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
+		BCRegistry.INSTANCE.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
 
 		FactoryProxy.proxy.initializeTileEntities();
 
@@ -142,28 +143,28 @@ public class BuildCraftFactory extends BuildCraftMod {
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 		miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
-		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
-
-		plainPipeBlock = new BlockPlainPipe();
-		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		if (BCRegistry.INSTANCE.registerBlock(miningWellBlock.setBlockName("miningWellBlock"), false)) {
+			plainPipeBlock = new BlockPlainPipe();
+			BCRegistry.INSTANCE.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"), true);
+		}
 
 		autoWorkbenchBlock = (BlockAutoWorkbench) CompatHooks.INSTANCE.getBlock(BlockAutoWorkbench.class);
-		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		BCRegistry.INSTANCE.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"), false);
 
 		tankBlock = (BlockTank) CompatHooks.INSTANCE.getBlock(BlockTank.class);
-		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		BCRegistry.INSTANCE.registerBlock(tankBlock.setBlockName("tankBlock"), false);
 
 		pumpBlock = (BlockPump) CompatHooks.INSTANCE.getBlock(BlockPump.class);
-		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		BCRegistry.INSTANCE.registerBlock(pumpBlock.setBlockName("pumpBlock"), false);
 
 		floodGateBlock = (BlockFloodGate) CompatHooks.INSTANCE.getBlock(BlockFloodGate.class);
-		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
+		BCRegistry.INSTANCE.registerBlock(floodGateBlock.setBlockName("floodGateBlock"), false);
 
 		refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
-		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		BCRegistry.INSTANCE.registerBlock(refineryBlock.setBlockName("refineryBlock"), false);
 
 		hopperBlock = (BlockHopper) CompatHooks.INSTANCE.getBlock(BlockHopper.class);
-		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		BCRegistry.INSTANCE.registerBlock(hopperBlock.setBlockName("blockHopper"), false);
 
 		FactoryProxy.proxy.initializeEntityRenders();
 
@@ -173,7 +174,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	public static void loadRecipes() {
 		if (miningWellBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
 					"ipi",
 					"igi",
 					"iPi",
@@ -184,7 +185,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 		if (pumpBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(
+			BCRegistry.INSTANCE.addCraftingRecipe(
 					new ItemStack(pumpBlock),
 					"ipi",
 					"igi",
@@ -197,12 +198,12 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 		if (autoWorkbenchBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
 					"gwg",
 					'w', "craftingTableWood",
 					'g', "gearStone");
 
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
 					"g",
 					"w",
 					"g",
@@ -212,7 +213,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 
 		if (tankBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(tankBlock),
 					"ggg",
 					"g g",
 					"ggg",
@@ -220,7 +221,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 		if (refineryBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(refineryBlock),
 					"RTR",
 					"TGT",
 					'T', tankBlock != null ? tankBlock : "blockGlass",
@@ -229,18 +230,18 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 		if (hopperBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(hopperBlock),
 					"ICI",
 					" G ",
 					'I', "ingotIron",
 					'C', "chestWood",
 					'G', "gearStone");
 
-			CoreProxy.proxy.addShapelessRecipe(new ItemStack(hopperBlock), Blocks.hopper, "gearStone");
+			BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(hopperBlock), Blocks.hopper, "gearStone");
 		}
 
 		if (floodGateBlock != null) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock),
+			BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(floodGateBlock),
 					"IGI",
 					"FTF",
 					"IFI",

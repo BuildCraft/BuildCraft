@@ -46,6 +46,7 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -196,22 +197,22 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 		robotItem = new ItemRobot().setUnlocalizedName("robot");
-		CoreProxy.proxy.registerItem(robotItem);
+		BCRegistry.INSTANCE.registerItem(robotItem, false);
 
 		robotStationItem = new ItemRobotStation().setUnlocalizedName("robotStation");
-		CoreProxy.proxy.registerItem(robotStationItem);
+		BCRegistry.INSTANCE.registerItem(robotStationItem, false);
 
 		redstoneBoard = new ItemRedstoneBoard();
 		redstoneBoard.setUnlocalizedName("redstone_board");
-		CoreProxy.proxy.registerItem(redstoneBoard);
+		BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
 
 		zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
 		zonePlanBlock.setBlockName("zonePlan");
-		CoreProxy.proxy.registerBlock(zonePlanBlock);
+		BCRegistry.INSTANCE.registerBlock(zonePlanBlock, false);
 
 		requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
 		requesterBlock.setBlockName("requester");
-		CoreProxy.proxy.registerBlock(requesterBlock);
+		BCRegistry.INSTANCE.registerBlock(requesterBlock, false);
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
@@ -268,8 +269,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 
-		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
-		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
+		BCRegistry.INSTANCE.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
+		BCRegistry.INSTANCE.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		RobotManager.registryProvider = new RobotRegistryProvider();
 
@@ -340,7 +341,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotItem),
 				"PPP",
 				"PRP",
 				"C C",
@@ -348,14 +349,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'R', "crystalRedstone",
 				'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(redstoneBoard),
 				"PPP",
 				"PRP",
 				"PPP",
 				'R', "dustRedstone",
 				'P', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
 				"IRI",
 				"GMG",
 				"IDI",
@@ -365,7 +366,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'D', "gearDiamond",
 				'I', "ingotIron");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
 				"IPI",
 				"GCG",
 				"IRI",
@@ -375,7 +376,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'G', "gearIron",
 				'I', "ingotIron");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
 				'I', "ingotIron",
 				'C', ItemRedstoneChipset.Chipset.GOLD.getStack());
 
