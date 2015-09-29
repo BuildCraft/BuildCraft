@@ -11,7 +11,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
-public class BCRegistry {
+public final class BCRegistry {
 	public static final BCRegistry INSTANCE = new BCRegistry();
 	private Configuration regCfg;
 

@@ -1,6 +1,5 @@
 package buildcraft.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.creativetab.CreativeTabs;

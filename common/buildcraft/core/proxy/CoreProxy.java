@@ -15,8 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -26,17 +24,12 @@ import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.core.CompatHooks;
 import buildcraft.core.LaserKind;
 import buildcraft.core.lib.EntityBlock;
-import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
 public class CoreProxy implements ICoreProxy {
 

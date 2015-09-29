@@ -17,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
 
@@ -52,7 +53,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
 		GL11.glTranslatef(0, -0.5F, 0);
 
-		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
+		int dl = (int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1));
+		GL11.glCallList(displayList[MathUtils.clamp(dl, 0, FluidRenderer.DISPLAY_STAGES - 1)]);
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();

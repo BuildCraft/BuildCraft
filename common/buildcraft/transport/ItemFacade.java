@@ -50,8 +50,6 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.proxy.CoreProxy;
 
-import scala.collection.mutable.Builder$class;
-
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
 	public static class FacadeState {
 		public final Block block;

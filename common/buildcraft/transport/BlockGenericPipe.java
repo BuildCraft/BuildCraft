@@ -912,13 +912,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			return true;
 		}
 
-		Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
-		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
-				new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
-		);
-		MinecraftForge.EVENT_BUS.post(placeEvent);
-		if (placeEvent.isCanceled()) {
-			return false;
+		if (player != null) {
+			Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
+			BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+					new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
+			);
+			MinecraftForge.EVENT_BUS.post(placeEvent);
+			if (placeEvent.isCanceled()) {
+				return false;
+			}
 		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);

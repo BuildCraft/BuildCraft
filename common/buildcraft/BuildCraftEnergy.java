@@ -63,7 +63,6 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyGuiHandler;
 import buildcraft.energy.EnergyProxy;

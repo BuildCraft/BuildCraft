@@ -44,7 +44,6 @@ import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockHopper;

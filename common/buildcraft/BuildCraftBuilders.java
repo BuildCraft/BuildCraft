@@ -35,7 +35,6 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -136,7 +135,6 @@ import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.builders.schematics.SchematicRotateMetaSupported;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.config.ConfigManager;
-import buildcraft.core.proxy.CoreProxy;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
