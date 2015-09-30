@@ -42,6 +42,11 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
+	public int getCurrentOutputLimit() {
+		return (int) Math.floor((float) getIdealOutput() * heat / IDEAL_HEAT);
+	}
+
+	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
 		if (super.onBlockActivated(player, side)) {
 			return true;

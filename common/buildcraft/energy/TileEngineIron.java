@@ -110,11 +110,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		}
 	}
 
-	@Override
-	public float getOutputMultiplier() {
-		return 4.0f;
-	}
-
 	private float getBiomeTempScalar() {
 		if (biomeCache == null) {
 			biomeCache = worldObj.getBiomeGenForCoords(xCoord, zCoord);

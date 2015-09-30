@@ -91,11 +91,6 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	}
 
 	@Override
-	public int calculateCurrentOutput() {
-		return 10;
-	}
-
-	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 		return false;
 	}
