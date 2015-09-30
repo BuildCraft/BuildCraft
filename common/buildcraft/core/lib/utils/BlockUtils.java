@@ -119,14 +119,6 @@ public final class BlockUtils {
 		world.spawnEntityInWorld(entityitem);
 	}
 
-	@Deprecated
-	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAir(world, x, y, z)) {
-			return false;
-		}
-		return true;
-	}
-
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
 		return canChangeBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
@@ -136,7 +128,7 @@ public final class BlockUtils {
 			return true;
 		}
 
-		if (block.getBlockHardness(world, x, y, z) < 0) {
+		if (isUnbreakableBlock(world, x, y, z, block)) {
 			return false;
 		}
 
@@ -152,10 +144,24 @@ public final class BlockUtils {
 		return true;
 	}
 
-	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
-		Block b = world.getBlock(x, y, z);
+	public static float getBlockHardnessMining(World world, int x, int y, int z, Block b) {
+		if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
+			return b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y, z);
+		} else {
+			return b.getBlockHardness(world, x, y, z);
+		}
+	}
 
-		return b != null && b.getBlockHardness(world, x, y, z) < 0;
+	public static boolean isUnbreakableBlock(World world, int x, int y, int z, Block b) {
+		if (b == null) {
+			return false;
+		}
+
+		return getBlockHardnessMining(world, x, y, z, b) < 0;
+	}
+
+	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
+		return isUnbreakableBlock(world, x, y, z, world.getBlock(x, y, z));
 	}
 
 	/**

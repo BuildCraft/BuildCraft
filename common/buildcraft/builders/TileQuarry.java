@@ -268,7 +268,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				CoreProxy.proxy.removeEntity(entity);
 				miner.mineStack(mineable);
 			}
+		}
 
+		if (miner.hasMined() || miner.hasFailed()) {
 			miner = null;
 
 			if (!findFrame()) {
@@ -281,7 +283,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	protected boolean findFrame() {
-		int dir = getBlockMetadata();
+		int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 		ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 		if (o == ForgeDirection.UNKNOWN) {
 			return true;
@@ -545,7 +547,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			chunkTicket.getModData().setInteger("quarryX", xCoord);
 			chunkTicket.getModData().setInteger("quarryY", yCoord);
 			chunkTicket.getModData().setInteger("quarryZ", zCoord);
-			ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 		}
 
 		IAreaProvider a = null;
@@ -588,7 +589,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			int dir = getBlockMetadata();
+			int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {

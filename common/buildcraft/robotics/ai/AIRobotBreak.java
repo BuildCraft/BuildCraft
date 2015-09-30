@@ -49,7 +49,7 @@ public class AIRobotBreak extends AIRobot {
 		robot.setItemActive(true);
 		block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
 		meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-		hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
+		hardness = BlockUtils.getBlockHardnessMining(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, block);
 		speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
 	}
 
@@ -63,11 +63,11 @@ public class AIRobotBreak extends AIRobot {
 				return;
 			}
 			meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-			hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
+			hardness = BlockUtils.getBlockHardnessMining(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, block);
 			speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
 		}
 
-		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
+		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z) || hardness < 0) {
 			setSuccess(false);
 			terminate();
 			return;

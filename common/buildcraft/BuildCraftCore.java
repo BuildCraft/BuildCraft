@@ -110,6 +110,8 @@ import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.command.SubCommandChangelog;
+import buildcraft.core.command.SubCommandDeop;
+import buildcraft.core.command.SubCommandOp;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
 import buildcraft.core.config.ConfigManager;
@@ -250,6 +252,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
+	public static boolean miningAllowPlayerProtectedBlocks = false;
 	public static float miningMultiplier;
 
 	public static AchievementManager achievementManager;
@@ -275,6 +278,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		commandBuildcraft.addAlias("bc");
 		commandBuildcraft.addChildCommand(new SubCommandVersion());
 		commandBuildcraft.addChildCommand(new SubCommandChangelog());
+		commandBuildcraft.addChildCommand(new SubCommandDeop());
+		commandBuildcraft.addChildCommand(new SubCommandOp());
 
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
@@ -292,6 +297,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		mainConfigManager.getCat("debug").setShowInGui(false);
 		mainConfigManager.getCat("vars").setShowInGui(false);
 
+		mainConfigManager.register("general.miningBreaksPlayerProtectedBlocks", false, "Should BuildCraft miners be allowed to break blocks using player-specific protection?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
@@ -615,6 +621,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			canEnginesExplode = mainConfigManager.get("general.canEnginesExplode").getBoolean();
 			consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
 			miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
+			miningAllowPlayerProtectedBlocks = mainConfigManager.get("general.miningBreaksPlayerProtectedBlocks").getBoolean();
 
 			if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
 				Version.check();
