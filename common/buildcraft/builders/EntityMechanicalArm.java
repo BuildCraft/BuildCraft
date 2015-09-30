@@ -65,9 +65,9 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void makeParts(World world) {
-		xArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 1, 0.5, 0.5);
-		yArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5);
-		zArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1);
+		xArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 1, 0.5, 0.5, true);
+		yArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5, false);
+		zArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1, true);
 
 		head = BuilderProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
 		head.shadowSize = 1.0F;

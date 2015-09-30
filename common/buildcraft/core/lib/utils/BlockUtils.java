@@ -146,7 +146,12 @@ public final class BlockUtils {
 
 	public static float getBlockHardnessMining(World world, int x, int y, int z, Block b) {
 		if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
-			return b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y, z);
+			float relativeHardness = b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y, z);
+			if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
+				return -1.0F;
+			} else {
+				return relativeHardness;
+			}
 		} else {
 			return b.getBlockHardness(world, x, y, z);
 		}

@@ -28,7 +28,7 @@ public class BuilderProxy {
 	}
 
 	public EntityBlock newDrill(World w, double i, double j, double k,
-								double l, double d, double e) {
+								double l, double d, double e, boolean xz) {
 		return new EntityBlock(w, i, j, k, l, d, e);
 	}
 

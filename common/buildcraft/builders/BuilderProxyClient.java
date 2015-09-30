@@ -28,7 +28,7 @@ import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.render.RenderLEDTile;
 
 public class BuilderProxyClient extends BuilderProxy {
-	public static IIcon drillTexture;
+	public static IIcon drillTexture, drillXzTexture;
 	public static IIcon drillHeadTexture;
 
 	@Override
@@ -66,9 +66,9 @@ public class BuilderProxyClient extends BuilderProxy {
 
 
 	@Override
-	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
-		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
-		eb.texture = drillTexture;
+	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e, boolean xz) {
+		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e, xz);
+		eb.texture = xz ? drillXzTexture : drillTexture;
 		return eb;
 	}
 

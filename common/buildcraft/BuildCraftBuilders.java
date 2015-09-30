@@ -604,6 +604,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (evt.map.getTextureType() == 0) {
 			TextureMap terrainTextures = evt.map;
 			BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
+			BuilderProxyClient.drillXzTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_xz");
 			BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
 		}
 	}
