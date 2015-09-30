@@ -25,4 +25,12 @@ public class SchematicFree extends SchematicBlock {
 	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 		// cancel requirements reading
 	}
+
+	@Override
+	public LinkedList<ItemStack> getStacksToDisplay(
+			LinkedList<ItemStack> stackConsumed) {
+		LinkedList<ItemStack> displayStacks = new LinkedList<ItemStack>();
+		displayStacks.add(new ItemStack(block, 1, meta));
+		return displayStacks;
+	}
 }
