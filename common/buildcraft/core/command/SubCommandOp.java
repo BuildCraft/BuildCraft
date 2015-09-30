@@ -11,6 +11,7 @@ import buildcraft.core.lib.commands.SubCommand;
 public class SubCommandOp extends SubCommand {
 	public SubCommandOp() {
 		super("op");
+		setPermLevel(PermLevel.SERVER_ADMIN);
 	}
 
 	@Override

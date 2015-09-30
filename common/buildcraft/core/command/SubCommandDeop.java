@@ -10,6 +10,7 @@ import buildcraft.core.lib.commands.SubCommand;
 public class SubCommandDeop extends SubCommand {
 	public SubCommandDeop() {
 		super("deop");
+		setPermLevel(PermLevel.SERVER_ADMIN);
 	}
 
 	@Override
