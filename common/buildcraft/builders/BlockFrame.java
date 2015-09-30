@@ -79,7 +79,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.legacyPipeModel;
+		return BuilderProxy.frameRenderId;
 	}
 
 	@Override

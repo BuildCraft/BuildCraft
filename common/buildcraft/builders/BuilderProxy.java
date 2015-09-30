@@ -17,6 +17,7 @@ import buildcraft.core.lib.EntityBlock;
 public class BuilderProxy {
 	@SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
 	public static BuilderProxy proxy;
+	public static int frameRenderId;
 
 	public void registerClientHook() {
 

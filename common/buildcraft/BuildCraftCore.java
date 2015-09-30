@@ -224,7 +224,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static IIconProvider iconProvider;
 	public static int blockByEntityModel;
 	public static int complexBlockModel;
-	public static int legacyPipeModel;
 	public static int markerModel;
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
 	public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);

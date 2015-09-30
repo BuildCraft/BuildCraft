@@ -243,7 +243,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (miner == null) {
-			// Hmm.
+			// Hmm. Probably shouldn't be mining if there's no miner.
 			stage = Stage.IDLE;
 			return;
 		}
@@ -252,7 +252,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		getBattery().useEnergy(rfTaken, rfTaken, false);
 
 		if (miner.hasMined()) {
-			// Collect any lost items laying around
+			// Collect any lost items laying around.
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 			List<EntityItem> result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
@@ -269,9 +269,24 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				miner.mineStack(mineable);
 			}
 
-			stage = Stage.IDLE;
 			miner = null;
+
+			if (!findFrame()) {
+				initializeBlueprintBuilder();
+				stage = Stage.BUILDING;
+			} else {
+				stage = Stage.IDLE;
+			}
 		}
+	}
+
+	protected boolean findFrame() {
+		int dir = getBlockMetadata();
+		ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
+		if (o == ForgeDirection.UNKNOWN) {
+			return true;
+		}
+		return worldObj.getBlock(xCoord + o.offsetX, yCoord + o.offsetY, zCoord + o.offsetZ) == BuildCraftBuilders.frameBlock;
 	}
 
 	protected void idling() {
@@ -573,7 +588,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			int dir = getBlockMetadata();
 			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {
@@ -613,7 +628,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		if (bpt != null) {
 			builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
+			speed = 0;
 			stage = Stage.BUILDING;
+			sendNetworkUpdate();
 		}
 	}
 

@@ -20,6 +20,7 @@ import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderFiller;
+import buildcraft.builders.render.RenderFrame;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderMultiTESR;
 import buildcraft.core.lib.render.RenderVoid;
@@ -58,6 +59,9 @@ public class BuilderProxyClient extends BuilderProxy {
 		}));
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
+
+		frameRenderId = RenderingRegistry.getNextAvailableRenderId();
+		RenderingRegistry.registerBlockHandler(frameRenderId, new RenderFrame());
 	}
 
 

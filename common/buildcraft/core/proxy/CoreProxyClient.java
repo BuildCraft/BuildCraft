@@ -87,12 +87,10 @@ public class CoreProxyClient extends CoreProxy {
 	@Override
 	public void initializeRendering() {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.complexBlockModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.complexBlockModel, new RenderBlockComplex());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
