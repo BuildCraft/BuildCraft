@@ -188,11 +188,13 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	}
 
 	private LibraryTypeHandler findHandler(int slot, LibraryTypeHandler.HandlerType type) {
-		ItemStack stack = getStackInSlot(slot);
+		if (!worldObj.isRemote) {
+			ItemStack stack = getStackInSlot(slot);
 
-		for (LibraryTypeHandler h : LibraryAPI.getHandlerSet()) {
-			if (h.isHandler(stack, type)) {
-				return h;
+			for (LibraryTypeHandler h : LibraryAPI.getHandlerSet()) {
+				if (h.isHandler(stack, type)) {
+					return h;
+				}
 			}
 		}
 

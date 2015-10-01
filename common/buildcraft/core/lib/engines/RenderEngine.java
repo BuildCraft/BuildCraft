@@ -96,12 +96,16 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		TileEngineBase engine = (TileEngineBase) tileentity;
 
 		if (engine != null) {
+			/* float progress = engine.progress + (engine.progressPart != 0 ? f * engine.getPistonSpeed() : 0);
+			if (progress > 1) {
+				progress = 0;
+			} -- uncomment out for smooth engine rendering */
+
 			render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine.getEnergyStage()), x, y, z);
 		}
 	}
 
 	private void render(float progress, ForgeDirection orientation, ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture, double x, double y, double z) {
-
 		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
 		}

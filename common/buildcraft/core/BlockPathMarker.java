@@ -21,7 +21,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.lib.utils.ResourceUtils;
 
 public class BlockPathMarker extends BlockMarker {
-
 	private IIcon activeMarker;
 
 	public BlockPathMarker() {

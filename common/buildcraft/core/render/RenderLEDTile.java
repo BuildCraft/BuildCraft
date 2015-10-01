@@ -72,19 +72,20 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 		IIcon[] icons = iconMap.get(block);
 
 		for (int i = 0; i < icons.length; i++) {
-			renderBox.texture = icons[i];
-			if (((BlockBuildCraft) block).isRotatable()) {
-				renderBox.setRenderSingleSide(((BlockBuildCraft) block).getFrontSide(tile.getBlockMetadata()));
-			} else {
-				renderBox.renderSide[0] = false;
-				renderBox.renderSide[1] = false;
-				renderBox.renderSide[2] = true;
-				renderBox.renderSide[3] = true;
-				renderBox.renderSide[4] = true;
-				renderBox.renderSide[5] = true;
-			}
 			renderBox.light = provider.getLEDLevel(i);
-			if (renderBox.light > 0) {
+			if (renderBox.light != 0) {
+				renderBox.texture = icons[i];
+
+				if (((BlockBuildCraft) block).isRotatable()) {
+					renderBox.setRenderSingleSide(((BlockBuildCraft) block).getFrontSide(tile.getBlockMetadata()));
+				} else {
+					renderBox.renderSide[0] = false;
+					renderBox.renderSide[1] = false;
+					renderBox.renderSide[2] = true;
+					renderBox.renderSide[3] = true;
+					renderBox.renderSide[4] = true;
+					renderBox.renderSide[5] = true;
+				}
 				RenderEntityBlock.INSTANCE.renderBlock(renderBox);
 			}
 		}

@@ -261,18 +261,16 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 		TileTank tile = getBottomTank();
 
-		int capacity = tank.getCapacity();
-
 		if (tile != null && tile.tank.getFluid() != null) {
 			compositeTank.setFluid(tile.tank.getFluid().copy());
 		} else {
 			return new FluidTankInfo[]{compositeTank.getInfo()};
 		}
 
+		int capacity = tile.tank.getCapacity();
 		tile = getTankAbove(tile);
 
 		while (tile != null) {
-
 			FluidStack liquid = tile.tank.getFluid();
 			if (liquid == null || liquid.amount == 0) {
 				// NOOP
