@@ -51,7 +51,10 @@ public class StackRequest {
 
 	public IRequestProvider getRequester(World world) {
 		if (requester == null) {
-			requester = getStation(world).getRequestProvider();
+			DockingStation dockingStation = getStation(world);
+			if (dockingStation != null) {
+				requester = dockingStation.getRequestProvider();
+			}
 		}
 		return requester;
 	}
@@ -85,24 +88,30 @@ public class StackRequest {
 		stack.writeToNBT(stackNBT);
 		nbt.setTag("stack", stackNBT);
 
-		NBTTagCompound stationIndexNBT = new NBTTagCompound();
-		station.index().writeTo(stationIndexNBT);
-		nbt.setTag("stationIndex", stationIndexNBT);
-		nbt.setByte("stationSide", (byte) station.side().ordinal());
+		if (station != null) {
+			NBTTagCompound stationIndexNBT = new NBTTagCompound();
+			station.index().writeTo(stationIndexNBT);
+			nbt.setTag("stationIndex", stationIndexNBT);
+			nbt.setByte("stationSide", (byte) station.side().ordinal());
+		}
 	}
 
 	public static StackRequest loadFromNBT(NBTTagCompound nbt) {
-		int slot = nbt.getInteger("slot");
+		if (nbt.hasKey("stationIndex")) {
+			int slot = nbt.getInteger("slot");
 
-		ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+			ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
 
-		BlockIndex stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
-		ForgeDirection stationSide = ForgeDirection.values()[nbt.getByte("stationSide")];
+			BlockIndex stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+			ForgeDirection stationSide = ForgeDirection.values()[nbt.getByte("stationSide")];
 
-		return new StackRequest(slot, stack, stationIndex, stationSide);
+			return new StackRequest(slot, stack, stationIndex, stationSide);
+		} else {
+			return null;
+		}
 	}
 
 	public ResourceId getResourceId(World world) {
-		return new ResourceIdRequest(getStation(world), slot);
+		return getStation(world) != null ? new ResourceIdRequest(getStation(world), slot) : null;
 	}
 }

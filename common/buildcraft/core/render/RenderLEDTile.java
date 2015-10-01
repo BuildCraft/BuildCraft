@@ -33,17 +33,19 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 	public static void registerBlockIcons(IIconRegister register) {
 		for (Block b : iconMap.keySet().toArray(new Block[iconMap.keySet().size()])) {
 			String base = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(b));
-			List<IIcon> icons = new ArrayList<IIcon>();
-			if (b instanceof ICustomLEDBlock) {
-				for (String s : ((ICustomLEDBlock) b).getLEDSuffixes()) {
-					icons.add(register.registerIcon(base + "/" + s));
+			if (base != null) {
+				List<IIcon> icons = new ArrayList<IIcon>();
+				if (b instanceof ICustomLEDBlock) {
+					for (String s : ((ICustomLEDBlock) b).getLEDSuffixes()) {
+						icons.add(register.registerIcon(base + "/" + s));
+					}
+				} else {
+					icons.add(register.registerIcon(base + "/led_red"));
+					icons.add(register.registerIcon(base + "/led_green"));
 				}
-			} else {
-				icons.add(register.registerIcon(base + "/led_red"));
-				icons.add(register.registerIcon(base + "/led_green"));
-			}
 
-			iconMap.put(b, icons.toArray(new IIcon[icons.size()]));
+				iconMap.put(b, icons.toArray(new IIcon[icons.size()]));
+			}
 		}
 	}
 

@@ -142,18 +142,22 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	private void generatePlannedOutputIcons() {
 		for (String s : plannedOutput) {
 			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(s);
-			CraftingResult<ItemStack> result = recipe.craft(this, true);
-			if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
-				plannedOutputIcons.put(s, result);
-			} else if (recipe instanceof IFlexibleRecipeViewable) {
-				// !! HACK !! TODO !! HACK !!
-				Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
-				if (out instanceof ItemStack) {
-					result = new CraftingResult<ItemStack>();
-					result.crafted = (ItemStack) out;
-					result.recipe = recipe;
+			if (recipe != null) {
+				CraftingResult<ItemStack> result = recipe.craft(this, true);
+				if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
 					plannedOutputIcons.put(s, result);
+				} else if (recipe instanceof IFlexibleRecipeViewable) {
+					// !! HACK !! TODO !! HACK !!
+					Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
+					if (out instanceof ItemStack) {
+						result = new CraftingResult<ItemStack>();
+						result.crafted = (ItemStack) out;
+						result.recipe = recipe;
+						plannedOutputIcons.put(s, result);
+					}
 				}
+			} else {
+				plannedOutput.remove(s);
 			}
 		}
 

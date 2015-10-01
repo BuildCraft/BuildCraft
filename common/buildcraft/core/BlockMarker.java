@@ -149,7 +149,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	private void dropTorchIfCantStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
+		if (!canPlaceBlockOnSide(world, x, y, z, meta) && world.getBlock(x, y, z) == this) {
 			dropBlockAsItem(world, x, y, z, 0, 0);
 			world.setBlockToAir(x, y, z);
 		}

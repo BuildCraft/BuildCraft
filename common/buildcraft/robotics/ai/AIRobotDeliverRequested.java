@@ -36,7 +36,12 @@ public class AIRobotDeliverRequested extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStation(robot, requested.getStation(robot.worldObj)));
+		if (requested != null) {
+			startDelegateAI(new AIRobotGotoStation(robot, requested.getStation(robot.worldObj)));
+		} else {
+			setSuccess(false);
+			terminate();
+		}
 	}
 
 	@Override

@@ -9,8 +9,11 @@
 package buildcraft.builders;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -27,12 +30,13 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.internal.IFramePipeConnection;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
+	private static final ThreadLocal<Boolean> isRemovingFrames = new ThreadLocal<Boolean>();
 
 	public BlockFrame() {
 		super(Material.glass);
@@ -45,16 +49,33 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 			return;
 		}
 
-		removeNeighboringFrames(world, x, y, z);
+		if (isRemovingFrames.get() == null) {
+			removeNeighboringFrames(world, x, y, z);
+		}
 	}
 
 	public void removeNeighboringFrames(World world, int x, int y, int z) {
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-			if (nBlock == this) {
-				world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+		isRemovingFrames.set(true);
+
+		Set<BlockIndex> frameCoords = new ConcurrentSkipListSet<BlockIndex>();
+		frameCoords.add(new BlockIndex(x, y, z));
+
+		while (frameCoords.size() > 0) {
+			Iterator<BlockIndex> frameCoordIterator = frameCoords.iterator();
+			while (frameCoordIterator.hasNext()) {
+				BlockIndex i = frameCoordIterator.next();
+				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+					Block nBlock = world.getBlock(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ);
+					if (nBlock == this) {
+						world.setBlockToAir(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ);
+						frameCoords.add(new BlockIndex(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ));
+					}
+				}
+				frameCoordIterator.remove();
 			}
 		}
+
+		isRemovingFrames.remove();
 	}
 
 	@Override

@@ -159,8 +159,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		BuildCraftCore.mainConfiguration.save();
 
+		BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
+
 		if (oilDesertBiomeId > 0) {
-			if (BiomeGenBase.getBiomeGenArray()[oilDesertBiomeId] != null) {
+			if (biomeGenArray.length >= oilDesertBiomeId || biomeGenArray[oilDesertBiomeId] != null) {
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
@@ -170,7 +172,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (oilOceanBiomeId > 0) {
-			if (BiomeGenBase.getBiomeGenArray()[oilOceanBiomeId] != null) {
+			if (biomeGenArray.length >= oilOceanBiomeId || biomeGenArray[oilOceanBiomeId] != null) {
 				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
@@ -433,7 +435,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			private static final long serialVersionUID = 1L;
 
 			public BiomeIdLimitException(String biome) {
-				super(String.format("You have run out of free Biome ID spaces for %s", biome));
+				super(String.format("You have run out of free Biome ID spaces for %s - free more Biome IDs or disable the biome by setting the ID to 0!", biome));
 			}
 		}
 

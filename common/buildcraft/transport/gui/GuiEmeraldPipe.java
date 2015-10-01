@@ -83,16 +83,6 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 	}
 
 	@Override
-	public void onGuiClosed() {
-		if (pipe.getWorld().isRemote) {
-			PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer());
-			pkt.sendPacket();
-		}
-
-		super.onGuiClosed();
-	}
-
-	@Override
 	public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId) {
 		switch (buttonId) {
 			case WHITE_LIST_BUTTON_ID:
@@ -116,6 +106,11 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
 				pipe.getSettings().setFilterMode(FilterMode.ROUND_ROBIN);
 				break;
+		}
+
+		if (pipe.getWorld().isRemote) {
+			PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer());
+			pkt.sendPacket();
 		}
 	}
 

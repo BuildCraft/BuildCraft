@@ -20,6 +20,7 @@ import net.minecraftforge.common.DimensionManager;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.network.PacketIds;
 
+// TODO: Rename to PacketGuiUpdate
 public class PacketGuiReturn extends Packet {
 	private EntityPlayer sender;
 	private IGuiReturnHandler obj;
