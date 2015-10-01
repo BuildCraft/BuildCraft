@@ -54,7 +54,7 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public EntityBlock newPumpTube(World w) {
 		EntityBlock eb = super.newPumpTube(w);
-		eb.texture = pumpTexture;
+		eb.setTexture(pumpTexture);
 		return eb;
 	}
 }

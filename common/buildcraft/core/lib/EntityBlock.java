@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class EntityBlock extends Entity {
 
 	@SideOnly(Side.CLIENT)
-	public IIcon texture;
+	public IIcon[] texture = new IIcon[6];
 	public float shadowSize = 0;
 	public float rotationX = 0;
 	public float rotationY = 0;
@@ -48,6 +48,12 @@ public class EntityBlock extends Entity {
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
+	}
+
+	public void setTexture(IIcon icon) {
+		for (int i = 0; i < 6; i++) {
+			this.texture[i] = icon;
+		}
 	}
 
 	@Override

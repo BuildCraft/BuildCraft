@@ -149,38 +149,53 @@ public final class RenderEntityBlock extends Render {
 
 		shadowSize = entity.shadowSize;
 		RenderInfo util = new RenderInfo();
-		util.texture = entity.texture;
+		util.textureArray = entity.texture;
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
-			for (int jBase = 0; jBase < entity.jSize; ++jBase) {
-				for (int kBase = 0; kBase < entity.kSize; ++kBase) {
+		int iMax = (int) Math.ceil(entity.iSize) - 1;
+		int jMax = (int) Math.ceil(entity.jSize) - 1;
+		int kMax = (int) Math.ceil(entity.kSize) - 1;
 
-					util.minX = 0;
-					util.minY = 0;
-					util.minZ = 0;
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-					double remainX = entity.iSize - iBase;
-					double remainY = entity.jSize - jBase;
-					double remainZ = entity.kSize - kBase;
+		for (int iBase = 0; iBase <= iMax; ++iBase) {
+			for (int jBase = 0; jBase <= jMax; ++jBase) {
+				for (int kBase = 0; kBase <= kMax; ++kBase) {
+					util.renderSide[0] = jBase == 0;
+					util.renderSide[1] = jBase == jMax;
+					util.renderSide[2] = kBase == 0;
+					util.renderSide[3] = kBase == kMax;
+					util.renderSide[4] = iBase == 0;
+					util.renderSide[5] = iBase == iMax;
 
-					util.maxX = remainX > 1.0 ? 1.0 : remainX;
-					util.maxY = remainY > 1.0 ? 1.0 : remainY;
-					util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
+					if (util.renderSide[0] || util.renderSide[1] || util.renderSide[2]
+							|| util.renderSide[3] || util.renderSide[4] || util.renderSide[5]) {
+						util.minX = 0;
+						util.minY = 0;
+						util.minZ = 0;
 
-					GL11.glPushMatrix();
-					GL11.glTranslatef((float) x, (float) y, (float) z);
-					GL11.glRotatef(entity.rotationX, 1, 0, 0);
-					GL11.glRotatef(entity.rotationY, 0, 1, 0);
-					GL11.glRotatef(entity.rotationZ, 0, 0, 1);
-					GL11.glTranslatef(iBase, jBase, kBase);
+						double remainX = entity.iSize - iBase;
+						double remainY = entity.jSize - jBase;
+						double remainZ = entity.kSize - kBase;
 
-					renderBlock(util);
-					GL11.glPopMatrix();
+						util.maxX = remainX > 1.0 ? 1.0 : remainX;
+						util.maxY = remainY > 1.0 ? 1.0 : remainY;
+						util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
 
+						GL11.glPushMatrix();
+						GL11.glRotatef(entity.rotationX, 1, 0, 0);
+						GL11.glRotatef(entity.rotationY, 0, 1, 0);
+						GL11.glRotatef(entity.rotationZ, 0, 0, 1);
+						GL11.glTranslatef(iBase, jBase, kBase);
+
+						renderBlock(util);
+						GL11.glPopMatrix();
+					}
 				}
 			}
 		}
+
+		GL11.glTranslatef((float) -x, (float) -y, (float) -z);
 	}
 
 	public void renderBlock(RenderInfo info) {
