@@ -61,6 +61,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
@@ -91,6 +92,8 @@ import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.SchematicAir;
 import buildcraft.builders.schematics.SchematicBed;
+import buildcraft.builders.schematics.SchematicBrewingStand;
+import buildcraft.builders.schematics.SchematicBuilderLike;
 import buildcraft.builders.schematics.SchematicCactus;
 import buildcraft.builders.schematics.SchematicCustomStack;
 import buildcraft.builders.schematics.SchematicDirt;
@@ -104,6 +107,7 @@ import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
+import buildcraft.builders.schematics.SchematicJukebox;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
@@ -361,6 +365,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.melon_stem, SchematicSeeds.class, Items.melon_seeds);
 		schemes.registerSchematicBlock(Blocks.nether_wart, SchematicSeeds.class, Items.nether_wart);
 
+		schemes.registerSchematicBlock(Blocks.flower_pot, SchematicTile.class);
+
 		schemes.registerSchematicBlock(Blocks.tripwire, SchematicBlockFloored.class);
 		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
 
@@ -408,6 +414,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class, Items.comparator);
 		schemes.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class, Items.comparator);
 
+		schemes.registerSchematicBlock(Blocks.daylight_detector, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.jukebox, SchematicJukebox.class);
+		schemes.registerSchematicBlock(Blocks.noteblock, SchematicTile.class);
+
 		schemes.registerSchematicBlock(Blocks.redstone_lamp, SchematicRedstoneLamp.class);
 		schemes.registerSchematicBlock(Blocks.lit_redstone_lamp, SchematicRedstoneLamp.class);
 
@@ -435,10 +445,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.detector_rail, SchematicRail.class);
 		schemes.registerSchematicBlock(Blocks.golden_rail, SchematicRail.class);
 
+		schemes.registerSchematicBlock(Blocks.beacon, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.brewing_stand, SchematicBrewingStand.class);
+		schemes.registerSchematicBlock(Blocks.enchanting_table, SchematicTile.class);
+
 		schemes.registerSchematicBlock(Blocks.fire, SchematicFire.class);
 
 		schemes.registerSchematicBlock(Blocks.bedrock, SchematicBlockCreative.class);
 
+		schemes.registerSchematicBlock(Blocks.command_block, SchematicTileCreative.class);
 		schemes.registerSchematicBlock(Blocks.mob_spawner, SchematicTileCreative.class);
 
 		// Standard entities
@@ -454,7 +469,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// BuildCraft blocks
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(builderBlock, SchematicBuilderLike.class);
+		schemes.registerSchematicBlock(fillerBlock, SchematicBuilderLike.class);
+		schemes.registerSchematicBlock(libraryBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(quarryBlock, SchematicBuilderLike.class);
 
 		if (constructionMarkerBlock != null) {
 			schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);

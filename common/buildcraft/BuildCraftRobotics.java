@@ -37,6 +37,8 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -264,6 +266,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		}
 
 		BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
+
+		BuilderAPI.schematicRegistry.registerSchematicBlock(requesterBlock, SchematicTile.class);
 
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);

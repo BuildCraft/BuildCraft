@@ -46,6 +46,7 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -469,6 +470,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		TransportProxy.proxy.registerTileEntities();
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(filteredBufferBlock, SchematicTile.class);
 
 		new BptPipeRotatable(pipeItemsWood);
 		new BptPipeRotatable(pipeFluidsWood);

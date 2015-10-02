@@ -51,6 +51,17 @@ public abstract class Schematic {
 	}
 
 	/**
+	 * This is called to verify whether the required item is equal to the
+	 * supplied item.
+	 *
+	 * Primarily rely on this for checking metadata/NBT - the item ID
+	 * itself might have been filtered out by previously running code.
+	 */
+	public boolean isItemMatchingRequirement(ItemStack suppliedStack, ItemStack requiredStack) {
+		return BuilderAPI.schematicHelper.isEqualItem(suppliedStack, requiredStack);
+	}
+
+	/**
 	 * This is called each time an item matches a requirement. By default, it
 	 * will increase damage of items that can be damaged by the amount of the
 	 * requirement, and remove the intended amount of items that can't be

@@ -92,6 +92,7 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.FillerRegistry;
@@ -286,6 +287,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
 
+		BuilderAPI.schematicHelper = SchematicHelper.INSTANCE;
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 
 		BCRegistry.INSTANCE.setRegistryConfig(new File(evt.getModConfigurationDirectory(), "buildcraft/objects.cfg"));

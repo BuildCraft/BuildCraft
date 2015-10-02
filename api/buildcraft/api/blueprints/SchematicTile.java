@@ -28,6 +28,7 @@ public class SchematicTile extends SchematicBlock {
 	 */
 	public NBTTagCompound tileNBT = new NBTTagCompound();
 
+
 	@Override
 	public void idsToBlueprint(MappingRegistry registry) {
 		registry.scanAndTranslateStacksToRegistry(tileNBT);
@@ -40,6 +41,10 @@ public class SchematicTile extends SchematicBlock {
 		} catch (MappingNotFoundException e) {
 			tileNBT = new NBTTagCompound();
 		}
+	}
+
+	public void onNBTLoaded() {
+
 	}
 
 	/**
@@ -68,7 +73,9 @@ public class SchematicTile extends SchematicBlock {
 			if (tile != null) {
 				tile.writeToNBT(tileNBT);
 			}
+
 			tileNBT = (NBTTagCompound) tileNBT.copy();
+			onNBTLoaded();
 		}
 	}
 
@@ -108,6 +115,7 @@ public class SchematicTile extends SchematicBlock {
 		super.readSchematicFromNBT(nbt, registry);
 
 		tileNBT = nbt.getCompoundTag("blockCpt");
+		onNBTLoaded();
 	}
 
 	@Override

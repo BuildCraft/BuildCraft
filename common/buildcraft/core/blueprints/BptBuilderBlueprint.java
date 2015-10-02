@@ -548,7 +548,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean compatibleContainer = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (StackHelper.isEqualItem(reqStk, invStk) || compatibleContainer) {
+				if (slot.isItemMatchingRequirement(invStk, reqStk) || compatibleContainer) {
 					try {
 						stacksUsed.add(slot.useItem(context, reqStk, slotInv));
 					} catch (Throwable t) {
@@ -631,7 +631,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean fluidFound = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (fluidFound || StackHelper.isEqualItem(reqStk, invStk)) {
+				if (fluidFound || slot.getSchematic().isItemMatchingRequirement(invStk, reqStk)) {
 					try {
 						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
 						slot.addStackConsumed(usedStack);
