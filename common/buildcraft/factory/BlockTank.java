@@ -82,7 +82,7 @@ public class BlockTank extends BlockBuildCraft {
 	@SuppressWarnings({"all"})
 	@Override
 	public IIcon getIconAbsolute(IBlockAccess iblockaccess, int i, int j, int k, int side, int metadata) {
-		if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) == this) {
+		if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) instanceof BlockTank) {
 			return textureStackedSide;
 		} else {
 			return super.getIconAbsolute(side, metadata);
@@ -197,7 +197,7 @@ public class BlockTank extends BlockBuildCraft {
 	@Override
 	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
 		if (side <= 1) {
-			return world.getBlock(x, y, z) != this;
+			return !(world.getBlock(x, y, z) instanceof BlockTank);
 		} else {
 			return super.shouldSideBeRendered(world, x, y, z, side);
 		}
