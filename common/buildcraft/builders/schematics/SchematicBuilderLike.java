@@ -1,6 +1,5 @@
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
 
 public class SchematicBuilderLike extends SchematicRotateMeta {

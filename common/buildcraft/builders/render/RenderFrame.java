@@ -1,7 +1,6 @@
 package buildcraft.builders.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
@@ -10,7 +9,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;

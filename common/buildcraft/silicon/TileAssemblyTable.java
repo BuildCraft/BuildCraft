@@ -78,9 +78,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (currentRecipe == null) {
-			/* if (getEnergy() >= 50) {
-				setEnergy(Math.max(0, getEnergy() - 50));
-			} */
 			return;
 		}
 
