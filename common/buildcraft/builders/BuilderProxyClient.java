@@ -69,6 +69,7 @@ public class BuilderProxyClient extends BuilderProxy {
 	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e, boolean xz) {
 		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e, xz);
 		if (xz) {
+			eb.texture = new IIcon[6];
 			for (int a = 0; a < 6; a++) {
 				eb.texture[a] = a >= 2 ? drillSideTexture : drillTexture;
 			}
