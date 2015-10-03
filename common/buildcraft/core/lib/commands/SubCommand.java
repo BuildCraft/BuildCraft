@@ -20,7 +20,7 @@ import net.minecraft.command.ICommandSender;
 public abstract class SubCommand implements IModCommand {
 	public enum PermLevel {
 		EVERYONE(0), ADMIN(2), SERVER_ADMIN(3);
-		int permLevel;
+		final int permLevel;
 
 		PermLevel(int permLevel) {
 			this.permLevel = permLevel;

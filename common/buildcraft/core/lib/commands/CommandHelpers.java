@@ -111,6 +111,14 @@ public final class CommandHelpers {
 	public static boolean processStandardCommands(ICommandSender sender, IModCommand command, String[] args) {
 		if (args.length >= 1) {
 			if ("help".equals(args[0])) {
+				if (args.length >= 2) {
+					for (SubCommand child : command.getChildren()) {
+						if (matches(args[1], child)) {
+							child.printHelp(sender);
+							return true;
+						}
+					}
+				}
 				command.printHelp(sender);
 				return true;
 			}
