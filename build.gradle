@@ -1,11 +1,6 @@
 // DON'T TOUCH THE BUILDSCRIPT[] BLOCK
 // its special, and it is only there to make ForgeGradle work correctly.
 
-import net.minecraftforge.gradle.user.UserConstants
-import net.minecraftforge.gradle.delayed.DelayedFile
-import net.minecraftforge.gradle.delayed.DelayedString
-import net.minecraftforge.gradle.tasks.user.reobf.ReobfTask
-
 buildscript {
     repositories {
         mavenCentral()
@@ -19,155 +14,65 @@ buildscript {
         }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
-apply plugin: "forge" // adds the forge dependency
-apply plugin: "maven" // for uploading to a maven repo
-//apply plugin: "checkstyle"
+apply plugin: 'forge' // adds the forge dependency
+apply plugin: 'maven' // for uploading to a maven repo
+apply plugin: 'checkstyle'
 
-version = "7.0.5"
+version = "7.1.8"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
+ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
+ext.priv = parseConfig(file('private.properties'))
+
+
 minecraft {
-    mappings = "stable_16"
-    version = "1.8-11.14.3.1502" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
+    version = "1.7.10-11.14.3.1518" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
     // replacing stuff in the source
-    replace "@VERSION@", project.version
-    replace "@MC_VERSION@", version
+    replace '@VERSION@', project.version
+    replace '@MC_VERSION@', version
 }
 
+// configure  the source folders
 sourceSets {
-    core {
+    main {
+        java {
+            srcDir 'common'
+            // exclude 'some exclusion'
+            // include 'some inclusion'
+        }
         resources {
-            def l10n = file("../BuildCraft-Localization")
+            srcDir 'buildcraft_resources'
+            def l10n = file('../BuildCraft-Localization')
             if(l10n.exists())
-                   srcDir l10n
+                srcDir l10n
             exclude "**/.md" // exclude readme from localization repo
+            // exclude 'some exclusion'
+            // include 'some inclusion'
         }
     }
-}
-
-// --------------------
-// extra jar section
-// --------------------
-
-// add a source jar
-task sourceJar(type: Jar) {
-    classifier = "sources"
-}
-
-// because the normal output has been made to be obfuscated
-task deobfJar(type: Jar) {
-    classifier = "developer"
-
-    // This makes the dev output work
-    doLast {
-        println "hi"
-        com.google.common.io.Files.copy(
-                new File("./build/libs/buildcraft-" + version + "-developer.jar"), 
-                new File("./build/libs/buildcraft-" + version + ".jar"))
+    api {
+		java {
+			srcDir 'api'
+		}
     }
 }
 
-// --------------------
-// module section
-// --------------------
+// Obfuscated Jar location
+ext.jarFile = zipTree(jar.archivePath)
 
-ext.modules = [ "api", "core", "builders", "energy", "factory", "transport", "silicon", "robotics" ]
-ext.moduleDependencies = [  
-                                "api":[],
-                                "core":["api"],
-                                "builders":["api", "core"],
-                                "energy": ["api", "core"],
-                                "factory": ["api", "core"],
-                                "transport": ["api", "core"],
-                                "silicon": ["api", "core"],
-                                "robotics": ["api", "core", "transport"]
-                        ]
+// Add API dir to the IDEA module
+idea.module.sourceDirs += sourceSets.api.java.srcDirs
 
-println "modules:"
-modules.each { module ->
-    println "  " + module
-    if (sourceSets.findByName(module) == null) {
-           sourceSets.create("${module}") {
-            java {
-                srcDir "src/${module}/java"
-            }
-            resources {
-                srcDir "src/${module}/resources"
-            }
-        }
-    }
-    sourceSets[module].compileClasspath += sourceSets["api"].compileClasspath
-    moduleDependencies[module].each { dependant ->
-        sourceSets[module].compileClasspath += sourceSets[dependant].output
-        println "    depends on " + dependant
-    }
-    task (module + "DeobfJar", type: Jar) {
-        from sourceSets[module].output
-        appendix = module
-        classifier = "developer"
-        doLast {
-            com.google.common.io.Files.copy(
-                    new File("./build/libs/buildcraft-" + module + "-" + version + "-developer.jar"), 
-                    new File("./build/libs/buildcraft-" + module + "-" + version + ".jar"))
-        }
-    }
-    task (module + "SourceJar", type: Jar) {
-        from sourceSets[module].allSource
-        appendix = module
-        classifier = "source"
-    }
-    task (module + "Jar", type: ReobfTask, dependsOn: module + "DeobfJar") {
-        reobf tasks[module + "DeobfJar"]
-
-        File reobfInput = new File("./build/libs/buildcraft-" + module + "-" + version + "-developer.jar")
-        deobfFile = new DelayedFile(reobfInput)
-        
-        File reobfOutput = new File("./build/libs/buildcraft-" + module + "-" + version + ".jar")
-
-        recompFile = new DelayedFile(reobfOutput)
-
-        setSrgSrg()
-        setMcVersion(new DelayedString(getProject(), minecraft.version))
-        setExceptorCfg(new DelayedFile(getProject(), UserConstants.EXC_SRG, getProject().getPlugins().getPlugin("forge")));
-        setFieldCsv(new DelayedFile(getProject(), UserConstants.FIELD_CSV, getProject().getPlugins().getPlugin("forge")));
-        setMethodCsv(new DelayedFile(getProject(), UserConstants.METHOD_CSV, getProject().getPlugins().getPlugin("forge")));
-    }
-
-    tasks.sourceJar.from sourceSets[module].allSource
-    tasks.deobfJar.from sourceSets[module].output // TODO: Find out what to use instead of "output" for the full jar
-    build.dependsOn tasks[module + "Jar"]
-    build.dependsOn tasks[module + "DeobfJar"]
-    build.dependsOn tasks[module + "SourceJar"]
-}
-
-task ("reobfJar", type: ReobfTask, dependsOn: deobfJar) {
-        reobf tasks["deobfJar"]   
-
-        File reobfInput = new File("./build/libs/buildcraft-" + version + "-developer.jar")
-        deobfFile = new DelayedFile(reobfInput)
-        
-        File reobfOutput = new File("./build/libs/buildcraft-" + version + ".jar")
-
-        recompFile = new DelayedFile(reobfOutput)
-
-        setSrgSrg()
-        setMcVersion(new DelayedString(getProject(), minecraft.version))
-        setExceptorCfg(new DelayedFile(getProject(), UserConstants.EXC_SRG, getProject().getPlugins().getPlugin("forge")));
-        setFieldCsv(new DelayedFile(getProject(), UserConstants.FIELD_CSV, getProject().getPlugins().getPlugin("forge")));
-        setMethodCsv(new DelayedFile(getProject(), UserConstants.METHOD_CSV, getProject().getPlugins().getPlugin("forge")));
-}
-
-build.dependsOn tasks["reobfJar"]
-
-processResources {
+processResources
+{
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
@@ -183,14 +88,169 @@ processResources {
     }
 }
 
-//checkstyle {
-//    configFile = file('guidelines/buildcraft.checkstyle')
-//}
+// --------------------
+// extra jar section
+// -------------------
 
-//checkstyleApi.exclude "cofh/**"
+
+
+def createMCModInfo(def id, def taskName)
+{
+    File temp = new File("build/processing/" + taskName + "/mcmod.info")
+    temp.parentFile.mkdirs()
+    if (temp.exists())
+        temp.delete()
+    temp.createNewFile()
+    temp.write(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    temp.deleteOnExit()
+    return temp
+}
+
+def parseConfig(File config) {
+    if (!config.exists())
+        return null;
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
+// add a source jar
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    from sourceSets.api.allSource
+    classifier = 'sources'
+}
+
+// add api classes to javadoc
+javadoc {
+    source += sourceSets.api.allSource
+}
+
+// add a javadoc jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+// because the normal output has been made to be obfuscated
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    from sourceSets.api.output
+    classifier = 'dev'
+}
+
+task apiJar(type: Jar) {
+    from sourceSets.api.output
+    classifier = 'api'
+}
+
+task coreJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'core'
+
+    doFirst {
+        from(createMCModInfo(0, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraft/**", "assets/buildcraftcore/**", "buildcraft/BuildCraftCore**", "buildcraft/BuildCraftMod**", "buildcraft/core/**", "buildcraft/api/**", "cofh/**", "changelog/**", "LICENSE**", "versions.txt"])
+        }
+    }
+}
+
+task buildersJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'builders'
+
+    doFirst {
+        from(createMCModInfo(1, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "buildcraft/BuildCraftBuilders**", "LICENSE"])
+        }
+    }
+}
+
+task energyJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'energy'
+
+    doFirst {
+        from(createMCModInfo(2, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "buildcraft/BuildCraftEnergy**", "LICENSE"])
+        }
+    }
+}
+
+task factoryJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'factory'
+
+    doFirst {
+        from(createMCModInfo(3, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "buildcraft/BuildCraftFactory**", "LICENSE"])
+        }
+    }
+}
+
+task siliconJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'silicon'
+
+    doFirst {
+        from(createMCModInfo(4, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "buildcraft/BuildCraftSilicon**", "LICENSE"])
+        }
+    }
+}
+
+task transportJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'transport'
+
+    doFirst {
+        from(createMCModInfo(5, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "buildcraft/BuildCraftTransport**", "LICENSE"])
+        }
+    }
+}
+
+task roboticsJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'robotics'
+
+    doFirst {
+        from(createMCModInfo(6, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "buildcraft/BuildCraftRobotics**", "LICENSE"])
+        }
+    }
+}
+
+
+// add api classes to main package
+jar {
+	from sourceSets.api.output
+}
+
+checkstyle {
+	configFile = file('guidelines/buildcraft.checkstyle')
+}
+
+checkstyleApi.exclude "cofh/**"
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, deobfJar
+build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
 
 // --------------------
 // maven section
@@ -199,21 +259,71 @@ build.dependsOn sourceJar, deobfJar
 // create the deployerJars dependency configuration
 configurations {
     deployerJars
+    sshAntTask
 }
 
 dependencies {
     // dependency in deployerJars, for maven deployment. see definition in mavenDeployer{} below
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+    sshAntTask "org.apache.ant:ant-jsch:1.9.6", "com.jcraft:jsch:0.1.53"
+}
+
+clean{
+    delete "modules"
 }
 
 // specify artifacts to be uploaded
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-    // archives javadocJar
+    archives javadocJar
     archives deobfJar
-    // archives apiJar
+    archives apiJar
+
+    // Modules
+    archives coreJar
+    archives buildersJar
+    archives energyJar
+    archives factoryJar
+    archives siliconJar
+    archives transportJar
+    archives roboticsJar
 }
+
+def sftp(String subPath, Closure antFileset = {}) {
+    ant {
+        taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+                classpath: configurations.sshAntTask.asPath)
+        Map sftpArgs = [
+                               verbose : 'yes',
+                               todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
+                               port: priv.port,
+                               password: priv.password,
+                               sftp: true,
+                               trust: 'yes'
+        ]
+        delegate.scp(sftpArgs) {
+            antFileset.delegate = delegate
+            antFileset()
+        }
+    }
+}
+
+task upload(dependsOn: build) {
+    description = 'Update files on remote server.'
+    doFirst {
+        sftp("") {
+            fileset(dir: libsDir)
+        }
+        sftp("modules") {
+            fileset(dir: 'modules')
+        }
+    }
+}
+
+
+if (ext.priv == null)
+    upload.enabled = false;
 
 uploadArchives {
     // make sure this happens after reobfuscation
@@ -297,3 +407,4 @@ uploadArchives {
         }
     }
 }
+
