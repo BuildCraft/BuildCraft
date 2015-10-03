@@ -12,13 +12,16 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+        classpath "gradle.plugin.net.minecraftforge.gradle:ForgeGradle:2.0.1"
     }
 }
 
-apply plugin: 'forge' // adds the forge dependency
+apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'checkstyle'
 
@@ -117,11 +120,11 @@ def parseConfig(File config) {
 }
 
 // add a source jar
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    from sourceSets.api.allSource
-    classifier = 'sources'
-}
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allSource
+//    from sourceSets.api.allSource
+//    classifier = 'sources'
+//}
 
 // add api classes to javadoc
 javadoc {
@@ -146,7 +149,7 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
-task coreJar(type: Jar, dependsOn: reobf) {
+task coreJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'core'
@@ -159,7 +162,7 @@ task coreJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task buildersJar(type: Jar, dependsOn: reobf) {
+task buildersJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'builders'
@@ -172,7 +175,7 @@ task buildersJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task energyJar(type: Jar, dependsOn: reobf) {
+task energyJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'energy'
@@ -185,7 +188,7 @@ task energyJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task factoryJar(type: Jar, dependsOn: reobf) {
+task factoryJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'factory'
@@ -198,7 +201,7 @@ task factoryJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task siliconJar(type: Jar, dependsOn: reobf) {
+task siliconJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'silicon'
@@ -211,7 +214,7 @@ task siliconJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task transportJar(type: Jar, dependsOn: reobf) {
+task transportJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'transport'
@@ -224,7 +227,7 @@ task transportJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task roboticsJar(type: Jar, dependsOn: reobf) {
+task roboticsJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'robotics'

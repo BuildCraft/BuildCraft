@@ -2,6 +2,7 @@
 .project
 .classpath
 .metadata
+*.launch
 org.*
 bin
 
