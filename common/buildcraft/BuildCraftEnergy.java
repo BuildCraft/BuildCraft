@@ -162,7 +162,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BiomeGenBase[] biomeGenArray = BiomeGenBase.getBiomeGenArray();
 
 		if (oilDesertBiomeId > 0) {
-			if (biomeGenArray.length >= oilDesertBiomeId || biomeGenArray[oilDesertBiomeId] != null) {
+			if (oilDesertBiomeId >= biomeGenArray.length || biomeGenArray[oilDesertBiomeId] != null) {
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
@@ -172,7 +172,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (oilOceanBiomeId > 0) {
-			if (biomeGenArray.length >= oilOceanBiomeId || biomeGenArray[oilOceanBiomeId] != null) {
+			if (oilOceanBiomeId >= biomeGenArray.length || biomeGenArray[oilOceanBiomeId] != null) {
 				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
 				// save changes to config file
 				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);

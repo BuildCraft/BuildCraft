@@ -10,6 +10,7 @@ package buildcraft.core.lib.engines;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -73,17 +74,44 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 	}
 
+	private String getTexturePrefix() {
+		if (!(blockType instanceof BlockEngineBase)) {
+			Block engineBase = worldObj.getBlock(xCoord, yCoord, zCoord);
+			if (engineBase instanceof BlockEngineBase) {
+				blockType = engineBase;
+				getBlockMetadata();
+			} else {
+				return null;
+			}
+		}
+
+		return ((BlockEngineBase) blockType).getTexturePrefix(getBlockMetadata(), true);
+	}
+
+
 	public ResourceLocation getBaseTexture() {
-		return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/base.png");
+		if (getTexturePrefix() != null) {
+			return new ResourceLocation(getTexturePrefix() + "/base.png");
+		} else {
+			return new ResourceLocation("missingno");
+		}
 	}
 
 	public ResourceLocation getChamberTexture() {
-		return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/chamber.png");
+		if (getTexturePrefix() != null) {
+			return new ResourceLocation(getTexturePrefix() + "/chamber.png");
+		} else {
+			return new ResourceLocation("missingno");
+		}
 	}
 
 	public ResourceLocation getTrunkTexture(EnergyStage stage) {
-		if (ResourceUtils.resourceExists(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/trunk.png")) {
-			return new ResourceLocation(((BlockEngineBase) getBlockType()).getTexturePrefix(getBlockMetadata(), true) + "/trunk.png");
+		if (getTexturePrefix() == null) {
+			return TRUNK_OVERHEAT_TEXTURE;
+		}
+
+		if (ResourceUtils.resourceExists(getTexturePrefix() + "/trunk.png")) {
+			return new ResourceLocation(getTexturePrefix() + "/trunk.png");
 		}
 
 		switch (stage) {

@@ -60,6 +60,7 @@ public class PipeTransportItemsRenderer extends PipeTransportRenderer<PipeTransp
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y + 0.25F, (float) z);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
 
 		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skylight << 4, Math.max(blocklight, getItemLightLevel(itemstack)) << 4);
 
