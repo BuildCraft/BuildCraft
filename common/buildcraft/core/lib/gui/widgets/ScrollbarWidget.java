@@ -2,7 +2,9 @@ package buildcraft.core.lib.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.utils.MathUtils;
 
 public class ScrollbarWidget extends Widget {
 	private static final int HEIGHT = 14;
@@ -58,7 +60,7 @@ public class ScrollbarWidget extends Widget {
 	}
 
 	public void setPosition(int pos) {
-		this.pos = pos > len ? len : pos;
+		this.pos = MathUtils.clamp(pos, 0, len);
 	}
 
 	public void setLength(int len) {

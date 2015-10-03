@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,28 +15,21 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.core.CompatHooks;
 import buildcraft.core.LaserKind;
 import buildcraft.core.lib.EntityBlock;
-import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -80,35 +73,8 @@ public class CoreProxy implements ICoreProxy {
 	public void initializeEntityRendering() {
 	}
 
-	/* REGISTRATION */
-	public void registerBlock(Block block) {
-		registerBlock(block, ItemBlockBuildCraft.class);
-	}
-
-	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
-		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
-	}
-
-	public void registerItem(Item item) {
-		GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
-	}
-
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public void registerTileEntity(Class clas, String ident) {
-		GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
-	}
-
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
 		stack.onCrafting(world, player, stack.stackSize);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
-	}
-
-	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
 	}
 
 	public String playerName() {
@@ -161,7 +127,7 @@ public class CoreProxy implements ICoreProxy {
 	 * This function returns either the player from the handler if it's on the
 	 * server, or directly from the minecraft instance if it's the client.
 	 */
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+	public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
 		if (handler instanceof NetHandlerPlayServer) {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {
@@ -171,5 +137,9 @@ public class CoreProxy implements ICoreProxy {
 
 	public TileEntity getServerTile(TileEntity source) {
 		return source;
+	}
+
+	public EntityPlayer getClientPlayer() {
+		return null;
 	}
 }

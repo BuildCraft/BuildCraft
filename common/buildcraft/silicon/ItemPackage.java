@@ -2,13 +2,18 @@ package buildcraft.silicon;
 
 import java.util.List;
 
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -17,6 +22,25 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.silicon.render.PackageFontRenderer;
 
 public class ItemPackage extends ItemBuildCraft {
+	public static final class DispenseBehaviour extends BehaviorDefaultDispenseItem {
+		@Override
+		public ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
+			if (stack != null && stack.getItem() instanceof ItemPackage) {
+				World world = source.getWorld();
+				EnumFacing enumfacing = BlockDispenser.func_149937_b(source.getBlockMetadata());
+
+				EntityPackage entityPackage = new EntityPackage(source.getWorld(),
+						source.getX() + enumfacing.getFrontOffsetX(),
+						source.getY() + enumfacing.getFrontOffsetY(),
+						source.getZ() + enumfacing.getFrontOffsetZ(), stack.copy());
+				entityPackage.setThrowableHeading(enumfacing.getFrontOffsetX(), enumfacing.getFrontOffsetY() + 0.1F, enumfacing.getFrontOffsetZ(), 1.1F, 6.0F);
+				world.spawnEntityInWorld(entityPackage);
+				stack.splitStack(1);
+			}
+			return stack;
+		}
+	}
+
 	public ItemPackage() {
 		super();
 		setMaxStackSize(1);

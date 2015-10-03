@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -32,7 +33,7 @@ public class DefaultActionProvider implements IActionProvider {
 		if (container instanceof IRedstoneStatementContainer) {
 			res.add(BuildCraftCore.actionRedstone);
 		}
-		
+
 		return res;
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +25,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -32,6 +34,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -145,8 +148,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	private static final Block NULL_BLOCK = null;
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
+	private static final Block[] PREVIEW_FACADES = new Block[]{
+			Blocks.planks, Blocks.stonebrick, Blocks.glass
+	};
+	private static int RANDOM_FACADE_ID = -1;
+
 	public ItemFacade() {
-		super(BCCreativeTab.get("facades"));
+		super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
@@ -156,7 +164,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	public String getItemStackDisplayName(ItemStack itemstack) {
 		switch (getFacadeType(itemstack)) {
 			case Basic:
-				return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
+				FacadeState[] states = getFacadeStates(itemstack);
+				String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
+				return super.getItemStackDisplayName(itemstack) + ": " + displayName;
 			case Phased:
 				return StringUtils.localize("item.FacadePhased.name");
 			default:
@@ -213,11 +223,29 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		for (ItemStack stack : allFacades) {
-			itemList.add(stack);
-		}
-		for (ItemStack stack : allHollowFacades) {
-			itemList.add(stack);
+		if (BuildCraftTransport.showAllFacadesCreative) {
+			for (ItemStack stack : allFacades) {
+				itemList.add(stack);
+			}
+			for (ItemStack stack : allHollowFacades) {
+				itemList.add(stack);
+			}
+		} else {
+			List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
+			for (Block b : PREVIEW_FACADES) {
+				if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
+					ItemStack facade = getFacadeForBlock(b, 0);
+					itemList.add(facade);
+					FacadeState state = getFacadeStates(facade)[0];
+					hollowFacades.add(getFacade(new FacadeState(state.block, state.metadata, state.wire, true)));
+				}
+			}
+			if (RANDOM_FACADE_ID < 0) {
+				RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
+			}
+			itemList.add(allFacades.get(RANDOM_FACADE_ID));
+			itemList.addAll(hollowFacades);
+			itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
 		}
 	}
 
@@ -266,16 +294,16 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 					continue;
 				}
 
-                // Check if all of these functions work correctly.
-                // If an exception is filed, or null is returned, this generally means that
-                // this block is invalid.
-                try {
-                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
-                        continue;
-                    }
-                } catch (Throwable t) {
-                    continue;
-                }
+				// Check if all of these functions work correctly.
+				// If an exception is filed, or null is returned, this generally means that
+				// this block is invalid.
+				try {
+					if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
+						continue;
+					}
+				} catch (Throwable t) {
+					continue;
+				}
 
 				addFacade(stack);
 			} catch (IndexOutOfBoundsException e) {
@@ -293,19 +321,19 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 			return true;
 		}
 
-        // Blocks blacklisted by mods should always be treated as blacklisted
+		// Blocks blacklisted by mods should always be treated as blacklisted
 		for (String blacklistedBlock : blacklistedFacades) {
 			if (blockName.equals(blacklistedBlock)) {
 				return true;
 			}
 		}
 
-        // Blocks blacklisted by config should depend on the config settings
-        for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-                return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
-            }
-        }
+		// Blocks blacklisted by config should depend on the config settings
+		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
+			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
+				return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
+			}
+		}
 
 		return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
 	}

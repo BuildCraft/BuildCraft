@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyConnection;
@@ -86,7 +87,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		return IPipeTile.PipeType.POWER;
 	}
 
-	public void initFromPipe(Class<? extends Pipe> pipeClass) {
+	public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
 		if (BuildCraftTransport.usePipeLoss) {
 			maxPower = 10240;
 			powerResistance = powerResistances.get(pipeClass);
@@ -150,26 +151,26 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		updateTile(side);
 	}
 
-    private void updateTile(ForgeDirection side) {
+	private void updateTile(ForgeDirection side) {
 		int o = side.ordinal();
-        TileEntity tile = container.getTile(side);
-        if (tile != null && container.isPipeConnected(side)) {
-            tiles[o] = tile;
-        } else {
-            tiles[o] = null;
-            internalPower[o] = 0;
-            internalNextPower[o] = 0;
+		TileEntity tile = container.getTile(side);
+		if (tile != null && container.isPipeConnected(side)) {
+			tiles[o] = tile;
+		} else {
+			tiles[o] = null;
+			internalPower[o] = 0;
+			internalNextPower[o] = 0;
 			powerAverage[o].clear();
-        }
+		}
 		providers[o] = getEnergyProvider(o);
-    }
+	}
 
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                updateTile(side);
-            }
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				updateTile(side);
+			}
 		}
 	}
 
@@ -194,11 +195,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 		init();
 
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
-                updateTile(side);
-            }
-        }
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
+				updateTile(side);
+			}
+		}
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
@@ -213,10 +214,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 
 				if (totalPowerQuery > 0) {
+					int unusedPowerQuery = totalPowerQuery;
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
+							double watts = Math.min(internalPower[i] * powerQuery[j] / unusedPowerQuery, internalPower[i]);
+							unusedPowerQuery -= powerQuery[j];
 
 							if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -226,34 +229,37 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										watts);
 								internalPower[i] -= watts;
 								dbgEnergyOutput[j] += watts;
+
+								powerAverage[j].push((int) Math.ceil(watts));
+								powerAverage[i].push((int) Math.ceil(watts));
 							} else {
 								int iWatts = (int) watts;
 								if (ep instanceof IEnergyHandler) {
 									IEnergyHandler handler = (IEnergyHandler) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
-									internalPower[i] -= iWatts;
-									dbgEnergyOutput[j] += iWatts;
 								}
-							}
 
-							powerAverage[j].push((int) Math.ceil(watts));
-							powerAverage[i].push((int) Math.ceil(watts));
+								internalPower[i] -= iWatts;
+								dbgEnergyOutput[j] += iWatts;
+
+								powerAverage[j].push(iWatts);
+								powerAverage[i].push(iWatts);
+							}
 						}
 					}
 				}
 			}
 		}
+
 		short highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			powerAverage[i].tick();
@@ -263,7 +269,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		overload += highestPower > ((float) maxPower) * 0.95F ? 1 : -1;
+		overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
 		}
@@ -279,7 +285,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 			Object tile = providers[dir.ordinal()];
 
-			if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
+			if (tile instanceof IPipeTile
+					&& ((IPipeTile) tile).getPipe() != null
+					&& ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 				continue;
 			}
 			if (tile instanceof IEnergyHandler) {
@@ -322,10 +330,10 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				TileEntity entity = tiles[i];
 				if (entity instanceof IPipeTile && ((IPipeTile) entity).getPipeType() == IPipeTile.PipeType.POWER) {
 					IPipeTile nearbyTile = (IPipeTile) entity;
-					if (nearbyTile.getPipe() == null) {
+					if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
 						continue;
 					}
-					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;
+					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
 					nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 				}
 			}
@@ -408,11 +416,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
-		
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-		    nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
+			nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
-		    nextPowerQuery[from.ordinal()] += amount;
+			nextPowerQuery[from.ordinal()] += amount;
 		}
 	}
 
@@ -470,7 +478,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		powerCapacities.put(PipePowerCobblestone.class, 80);
 		powerCapacities.put(PipePowerStone.class, 160);
 		powerCapacities.put(PipePowerWood.class, 320);
-        powerCapacities.put(PipePowerSandstone.class, 320);
+		powerCapacities.put(PipePowerSandstone.class, 320);
 		powerCapacities.put(PipePowerQuartz.class, 640);
 		powerCapacities.put(PipePowerIron.class, 1280);
 		powerCapacities.put(PipePowerGold.class, 2560);

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -89,7 +89,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
 	@Override
 	public String[] getIconNames() {
-		return new String[]{ getIconType() + "/clean", getIconType() + "/used" };
+		return new String[]{getIconType() + "/clean", getIconType() + "/used"};
 	}
 
 	@Override
@@ -103,6 +103,9 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 		return itemIcon;
 	}
 
+	public static boolean isContentReadable(ItemStack stack) {
+		return getId(stack) != null;
+	}
 
 	public static LibraryId getId(ItemStack stack) {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
@@ -110,7 +113,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 			return null;
 		}
 		LibraryId id = new LibraryId();
-		id.read (nbt);
+		id.read(nbt);
 
 		if (BuildCraftBuilders.serverDB.exists(id)) {
 			return id;

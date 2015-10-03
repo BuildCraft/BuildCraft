@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -21,11 +21,11 @@ public class PacketPipeTransportItemStackRequest extends Packet {
 
 	public int travelerID;
 	TravelingItem item;
-	
+
 	public PacketPipeTransportItemStackRequest() {
-		
+
 	}
-	
+
 	public PacketPipeTransportItemStackRequest(int travelerID) {
 		this.travelerID = travelerID;
 	}
@@ -39,10 +39,10 @@ public class PacketPipeTransportItemStackRequest extends Packet {
 	public void readData(ByteBuf data) {
 		travelerID = data.readShort();
 		TravelingItem.TravelingItemCache cache = TravelingItem.serverCache;
-		item = cache.get(travelerID);		
+		item = cache.get(travelerID);
 	}
 
-	public void sendDataToPlayer (EntityPlayer player) {
+	public void sendDataToPlayer(EntityPlayer player) {
 		if (item != null) {
 			BuildCraftTransport.instance.sendToPlayer(
 					player,
@@ -50,7 +50,7 @@ public class PacketPipeTransportItemStackRequest extends Packet {
 							.getItemStack()));
 		}
 	}
-	
+
 	@Override
 	public int getID() {
 		return PacketIds.PIPE_ITEMSTACK_REQUEST;

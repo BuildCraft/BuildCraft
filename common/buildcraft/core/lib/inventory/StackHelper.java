@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,6 +9,7 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
@@ -19,6 +20,7 @@ public class StackHelper {
 	}
 
 	/* STACK MERGING */
+
 	/**
 	 * Checks if two ItemStacks are identical enough to be merged
 	 *
@@ -88,6 +90,7 @@ public class StackHelper {
 	}
 
 	/* ITEM COMPARISONS */
+
 	/**
 	 * Determines whether the given ItemStack should be considered equivalent
 	 * for crafting purposes.
@@ -133,7 +136,7 @@ public class StackHelper {
 		return false;
 	}
 
-	public static boolean isMatchingItemOrList(ItemStack a, ItemStack b) {
+	public static boolean isMatchingItemOrList(final ItemStack a, final ItemStack b) {
 		if (a == null || b == null) {
 			return false;
 		}
@@ -157,8 +160,19 @@ public class StackHelper {
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
-	public static boolean isMatchingItem(ItemStack base, ItemStack comparison) {
+	public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison) {
 		return isMatchingItem(base, comparison, true, true);
+	}
+
+	/**
+	 * This variant also checks damage for damaged items.
+	 */
+	public static boolean isEqualItem(final ItemStack a, final ItemStack b) {
+		if (isMatchingItem(a, b, false, true)) {
+			return isWildcard(a) || isWildcard(b) || a.getItemDamage() == b.getItemDamage();
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -172,7 +186,7 @@ public class StackHelper {
 	 * @return true if matches
 	 */
 	public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage,
-			final boolean matchNBT) {
+										 final boolean matchNBT) {
 		if (a == null || b == null) {
 			return false;
 		}

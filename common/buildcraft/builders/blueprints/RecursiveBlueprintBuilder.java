@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.core.Box;
@@ -35,7 +36,7 @@ public class RecursiveBlueprintBuilder {
 	private Box box = new Box();
 
 	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ,
-			ForgeDirection iDir) {
+									 ForgeDirection iDir) {
 		blueprint = iBlueprint;
 		subBlueprints = iBlueprint.subBlueprintsNBT;
 		world = iWorld;
@@ -47,7 +48,7 @@ public class RecursiveBlueprintBuilder {
 
 	public BptBuilderBase nextBuilder() {
 		if (!returnedThis) {
-			blueprint.adjustToWorld(world, x, y, z, dir);
+			blueprint = blueprint.adjustToWorld(world, x, y, z, dir);
 
 			returnedThis = true;
 

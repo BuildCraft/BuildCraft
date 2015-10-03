@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,80 +14,107 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
 
+import buildcraft.core.lib.fluids.Tank;
+
 public class BuildingSlotMapIterator {
-	private static final int MAX_PER_ITEM = 80;
-	private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots;
+	private static final int MAX_PER_ITEM = 64;
+	private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slotMap;
 	private final Set<BuilderItemMetaPair> availablePairs = new HashSet<BuilderItemMetaPair>();
 	private final int[] buildStageOccurences;
 	private final boolean isCreative;
-	private Iterator<BuilderItemMetaPair> impIterator;
-	private BuilderItemMetaPair pair;
-	private List<BuildingSlotBlock> current;
-	private int position, returnsThisCurrent;
+	private Iterator<BuilderItemMetaPair> keyIterator;
+	private BuilderItemMetaPair currentKey;
+	private List<BuildingSlotBlock> slots;
+	private int slotPos, slotFound;
 
 	public BuildingSlotMapIterator(Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots, TileAbstractBuilder builder,
 								   int[] buildStageOccurences) {
-		this.slots = slots;
-		this.impIterator = slots.keySet().iterator();
+		this.slotMap = slots;
 		this.buildStageOccurences = buildStageOccurences;
 		this.isCreative = builder == null
 				|| builder.getWorldObj().getWorldInfo().getGameType() == WorldSettings.GameType.CREATIVE;
 
-		// Generate available pairs
-		if (builder != null) {
+		reset();
+	}
+
+	public void refresh(TileAbstractBuilder builder) {
+		if (!isCreative) {
+			availablePairs.clear();
 			availablePairs.add(new BuilderItemMetaPair(null));
-			for (int i = 0; i < builder.getSizeInventory(); i++) {
-				availablePairs.add(new BuilderItemMetaPair(builder.getStackInSlot(i)));
+
+			if (builder != null) {
+				for (int i = 0; i < builder.getSizeInventory(); i++) {
+					ItemStack stack = builder.getStackInSlot(i);
+					if (stack != null) {
+						availablePairs.add(new BuilderItemMetaPair(stack));
+					}
+				}
+				for (Tank t : builder.getFluidTanks()) {
+					if (t.getFluid() != null && t.getFluid().getFluid().getBlock() != null) {
+						availablePairs.add(new BuilderItemMetaPair(new ItemStack(t.getFluid().getFluid().getBlock())));
+					}
+				}
 			}
 		}
-
-		findNewCurrent();
 	}
 
-	public void skipList() {
-		findNewCurrent();
+	public void skipKey() {
+		findNextKey();
 	}
 
-	private void findNewCurrent() {
-		position = -1;
-		returnsThisCurrent = 0;
-		while (impIterator.hasNext()) {
-			pair = impIterator.next();
-			if (isCreative || availablePairs.contains(pair)) {
-				current = slots.get(pair);
+	private void findNextKey() {
+		slotPos = -1;
+		slotFound = 0;
+		slots = null;
+		while (keyIterator.hasNext()) {
+			currentKey = keyIterator.next();
+			if (isCreative || availablePairs.contains(currentKey)) {
+				slots = slotMap.get(currentKey);
+				slotPos = currentKey.position - 1;
 				return;
 			}
 		}
-		current = null;
+		this.currentKey = null;
+		this.keyIterator = slotMap.keySet().iterator();
 	}
 
 	public BuildingSlotBlock next() {
-		while (current != null) {
-			position++;
-			while (returnsThisCurrent < MAX_PER_ITEM && position < current.size()) {
-				BuildingSlotBlock b = current.get(position);
+		if (slots == null) {
+			findNextKey();
+		}
+		while (slots != null) {
+			slotPos++;
+			while (slotFound < MAX_PER_ITEM && slotPos < slots.size()) {
+				BuildingSlotBlock b = slots.get(slotPos);
 				if (b != null) {
-					returnsThisCurrent++;
+					slotFound++;
+					currentKey.position = slotPos + 1;
 					return b;
 				}
-				position++;
+				slotPos++;
 			}
-			findNewCurrent();
+			if (slotFound >= MAX_PER_ITEM) {
+				currentKey.position = slotPos;
+			} else if (slotPos >= slots.size()) {
+				currentKey.position = 0;
+			}
+			findNextKey();
 		}
 		return null;
 	}
 
 	public void remove() {
-		buildStageOccurences[current.get(position).buildStage]--;
-		current.set(position, null);
+		buildStageOccurences[slots.get(slotPos).buildStage]--;
+		slots.set(slotPos, null);
 	}
 
 	public void reset() {
-		this.impIterator = slots.keySet().iterator();
-		this.pair = null;
-		this.current = null;
-		findNewCurrent();
+		this.keyIterator = slotMap.keySet().iterator();
+		this.currentKey = null;
+		this.slots = null;
+		findNextKey();
 	}
 }

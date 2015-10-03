@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -39,12 +40,12 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
 	@Override
 	public void actionActivate(TileEntity target, ForgeDirection side,
-			IStatementContainer source, IStatementParameter[] parameters) {
+							   IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof IControllable) {
 			((IControllable) target).setControlMode(mode);
 		}
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister register) {

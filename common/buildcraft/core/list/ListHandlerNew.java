@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public class ListHandlerNew {
+public final class ListHandlerNew {
 	public static final int WIDTH = 9;
 	public static final int HEIGHT = 2;
 
@@ -28,7 +32,7 @@ public class ListHandlerNew {
 		}
 
 		public boolean getOption(int id) {
-			return (id == 0 ? precise : (id == 1 ? byType : byMaterial));
+			return id == 0 ? precise : (id == 1 ? byType : byMaterial);
 		}
 
 		public void toggleOption(int id) {
@@ -65,8 +69,11 @@ public class ListHandlerNew {
 				}
 			} else {
 				for (ItemStack s : stacks) {
-					if (s != null && StackHelper.isMatchingItem(s, target, precise || target.getItem().getHasSubtypes(), precise)) {
-						return true;
+					if (s != null && StackHelper.isMatchingItem(s, target, true, precise)) {
+						// If precise, re-check damage
+						if (!precise || s.getItemDamage() == target.getItemDamage()) {
+							return true;
+						}
 					}
 				}
 			}
@@ -130,17 +137,44 @@ public class ListHandlerNew {
 			List<ItemStack> stackList = new ArrayList<ItemStack>();
 			if (stacks[0] != null) {
 				List<ListMatchHandler> handlers = ListRegistry.getHandlers();
+				List<ListMatchHandler> handlersCustom = new ArrayList<ListMatchHandler>();
 				ListMatchHandler.Type type = getSortingType();
 				for (ListMatchHandler h : handlers) {
-					List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
-					if (examples != null) {
-						stackList.addAll(examples);
+					if (h.isValidSource(type, stacks[0])) {
+						List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
+						if (examples != null) {
+							stackList.addAll(examples);
+						} else {
+							handlersCustom.add(h);
+						}
 					}
 				}
+				if (handlersCustom.size() > 0) {
+					for (Object o : Item.itemRegistry) {
+						if (o != null && o instanceof Item) {
+							Item i = (Item) o;
+							List<ItemStack> examples = new ArrayList<ItemStack>();
+							i.getSubItems(i, CreativeTabs.tabMisc, examples);
+							for (ItemStack s : examples) {
+								for (ListMatchHandler mh : handlersCustom) {
+									if (mh.matches(type, stacks[0], s, false)) {
+										stackList.add(s);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+
 				Collections.shuffle(stackList);
 			}
 			return stackList;
 		}
+	}
+
+	private ListHandlerNew() {
+
 	}
 
 	public static Line[] getLines(ItemStack item) {

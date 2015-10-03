@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -38,7 +38,7 @@ public class AIRobotShutdown extends AIRobot {
 	@Override
 	public void update() {
 		if (skip == 0) {
-			List boxes = robot.worldObj.getCollidingBoundingBoxes(robot,
+			List<?> boxes = robot.worldObj.getCollidingBoundingBoxes(robot,
 					getRobotBox().addCoord(robot.motionX, -0.075f, robot.motionZ));
 			if (boxes.size() == 0) {
 				robot.motionY = -0.075f;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -31,11 +31,15 @@ public class RenderLaser extends Render {
 
 	protected static ModelBase model = new ModelBase() {
 	};
-	private static ModelRenderer [] box;
+	private static ModelRenderer[] box;
 
-	private static int [][][] scaledBoxes;
+	private static int[][][] scaledBoxes;
 
 	public RenderLaser() {
+	}
+
+	public static void onTextureReload() {
+		scaledBoxes = null;
 	}
 
 	private static ModelRenderer getBox(int index) {
@@ -51,12 +55,12 @@ public class RenderLaser extends Render {
 			}
 		}
 
-		return box [index];
+		return box[index];
 	}
 
-	private static void initScaledBoxes () {
+	private static void initScaledBoxes() {
 		if (scaledBoxes == null) {
-			scaledBoxes = new int [2][100][20];
+			scaledBoxes = new int[2][100][20];
 
 			for (int flags = 0; flags < 2; ++flags) {
 				for (int size = 0; size < 100; ++size) {
@@ -160,7 +164,6 @@ public class RenderLaser extends Render {
 
 		GL11.glPopMatrix();
 	}
-
 
 
 	public static void doRenderLaser(TextureManager textureManager, LaserData laser, ResourceLocation texture) {

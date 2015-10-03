@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -53,7 +53,7 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-		this ();
+		this();
 		initialize(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
@@ -109,7 +109,7 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public void initialize(NBTTagCompound nbttagcompound) {
-		kind = Kind.values() [nbttagcompound.getShort("kind")];
+		kind = Kind.values()[nbttagcompound.getShort("kind")];
 
 		initialize(nbttagcompound.getInteger("xMin"),
 				nbttagcompound.getInteger("yMin"),
@@ -264,7 +264,7 @@ public class Box implements IBox, ISerializable {
 		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
 	}
 
-	public Box extendToEncompass (Box toBeContained) {
+	public Box extendToEncompass(Box toBeContained) {
 		if (toBeContained == null || !toBeContained.initialized) {
 			return this;
 		}

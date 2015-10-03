@@ -46,7 +46,7 @@ public class PatternParameterXZDir implements IStatementParameter {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
+		icons = new IIcon[]{
 				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_left"),
 				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_right"),
 				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up"),

@@ -5,6 +5,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IStripesActivator;
@@ -16,7 +17,7 @@ public class StripesHandlerArrow implements IStripesHandler {
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
 	}
-	
+
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return stack.getItem() == Items.arrow;
@@ -24,8 +25,8 @@ public class StripesHandlerArrow implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesActivator activator) {
+						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
+						  IStripesActivator activator) {
 
 		EntityArrow entityArrow = new EntityArrow(world, player, 0);
 		entityArrow.setPosition(x + 0.5d, y + 0.5d, z + 0.5d);

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
@@ -102,7 +103,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	public void readData(ByteBuf stream) {
 		super.readData(stream);
 		currentRecipeId = NetworkUtils.readUTF(stream);
-		optionId = stream.readUnsignedByte();
+		optionId = stream.readByte();
 		updateRecipe();
 	}
 
@@ -158,7 +159,9 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			}
 		}
 
-		if ((oldId != null && !oldId.equals(currentRecipeId)) || (oldId == null && currentRecipeId != null)) {
+		if ((oldId != null && currentRecipeId != null && !oldId.equals(currentRecipeId))
+				|| (oldId == null && currentRecipeId != null)
+				|| (oldId != null && currentRecipeId == null)) {
 			optionId = -1;
 			updateRecipe();
 			queueNetworkUpdate();
@@ -185,9 +188,11 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && "select".equals(command)) {
-			optionId = stream.readUnsignedByte();
+			optionId = stream.readByte();
 			if (optionId >= options.size()) {
-				optionId = 0;
+				optionId = -1;
+			} else if (optionId < -1) {
+				optionId = -1;
 			}
 
 			queueNetworkUpdate();
@@ -216,7 +221,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[] {0, 1};
+		return new int[]{0, 1};
 	}
 
 	@Override

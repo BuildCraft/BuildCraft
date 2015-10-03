@@ -1,5 +1,6 @@
 package buildcraft.robotics.map;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
@@ -38,13 +39,21 @@ public class MapChunk {
 		for (int bz = 0; bz < 16; bz++) {
 			for (int bx = 0; bx < 16; bx++) {
 				int y = chunk.getHeightValue(bx, bz);
-				int color;
+				int color = MapColor.airColor.colorIndex;
 
-				while ((color = chunk.getBlock(bx, y, bz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
-					y--;
-					if (y < 0) {
+				if (y < 0) {
+					y = 255;
+				}
+
+				Block b;
+
+				while (y >= 0) {
+					b = chunk.getBlock(bx, y, bz);
+					color = b.getMapColor(0) != null ? b.getMapColor(0).colorIndex : MapColor.airColor.colorIndex;
+					if (color != MapColor.airColor.colorIndex) {
 						break;
 					}
+					y--;
 				}
 
 				data[(bz << 4) | bx] = (byte) color;

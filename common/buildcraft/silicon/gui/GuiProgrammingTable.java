@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -69,6 +69,7 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
 			return String.format("%.1f RF/t", table.getRecentEnergyAverage() / 100.0f);
 		}
 	}
+
 	private final TileProgrammingTable table;
 
 	class RecipeSlot extends AdvancedSlot {
@@ -160,15 +161,19 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
 	@Override
 	protected void slotClicked(AdvancedSlot aslot, int mouseButton) {
 		super.slotClicked(aslot, mouseButton);
-		
+
 		if (aslot instanceof RecipeSlot) {
 			RecipeSlot slot = (RecipeSlot) aslot;
-			
+
 			if (slot.slot == null) {
 				return;
 			}
 
-			table.rpcSelectOption(slot.id);
+			if (table.optionId == slot.id) {
+				table.rpcSelectOption(-1);
+			} else {
+				table.rpcSelectOption(slot.id);
+			}
 		}
 	}
 

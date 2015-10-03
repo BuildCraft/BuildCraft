@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -38,6 +39,7 @@ import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
@@ -51,11 +53,9 @@ import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryCopy;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
-
 	public ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
 
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
@@ -65,6 +65,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotMapIterator iterator;
+	private IndexRequirementMap requirementMap = new IndexRequirementMap();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -117,7 +118,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpSupported = new LinkedList<BuildingSlotBlock>();
 		LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
@@ -152,19 +152,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						switch (slot.getBuildStage()) {
-						case STANDALONE:
-							tmpStandalone.add(b);
-							b.buildStage = 1;
-							break;
-						case SUPPORTED:
-							tmpSupported.add(b);
-							b.buildStage = 2;
-							break;
-						case EXPANDING:
-							tmpExpanding.add(b);
-							b.buildStage = 3;
-							break;
-
+							case STANDALONE:
+								tmpStandalone.add(b);
+								b.buildStage = 1;
+								break;
+							case EXPANDING:
+								tmpExpanding.add(b);
+								b.buildStage = 2;
+								break;
 						}
 					} else {
 						postProcessing.add(b);
@@ -174,9 +169,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (BuildingSlotBlock b : tmpStandalone) {
-			addToBuildList(b);
-		}
-		for (BuildingSlotBlock b : tmpSupported) {
 			addToBuildList(b);
 		}
 		for (BuildingSlotBlock b : tmpExpanding) {
@@ -203,7 +195,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		recomputeNeededItems();
 	}
 
-	public void deploy () {
+	public void deploy() {
 		initialize();
 
 		for (List<BuildingSlotBlock> lb : buildList.values()) {
@@ -304,14 +296,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				buildList.put(imp, new ArrayList<BuildingSlotBlock>());
 			}
 			buildList.get(imp).add(b);
+
 			if (buildStageOccurences == null) {
-				buildStageOccurences = new int[Math.max(4, b.buildStage + 1)];
+				buildStageOccurences = new int[Math.max(3, b.buildStage + 1)];
 			} else if (buildStageOccurences.length <= b.buildStage) {
 				int[] newBSO = new int[b.buildStage + 1];
 				System.arraycopy(buildStageOccurences, 0, newBSO, 0, buildStageOccurences.length);
 				buildStageOccurences = newBSO;
 			}
 			buildStageOccurences[b.buildStage]++;
+
+			if (b.mode == Mode.Build) {
+				requirementMap.add(b, context);
+				b.internalRequirementRemovalListener = requirementMap;
+			}
 		}
 	}
 
@@ -333,20 +331,28 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
+	protected boolean readyForSlotLookup(TileAbstractBuilder builder) {
+		return builder == null || builder.energyAvailable() >= BuilderAPI.BREAK_ENERGY;
+	}
+
 	/**
 	 * Gets the next available block. If builder is not null, then building will
 	 * be verified and performed. Otherwise, the next possible building slot is
 	 * returned, possibly for reservation, with no building.
 	 */
 	private BuildingSlot internalGetNextBlock(World world, TileAbstractBuilder builder) {
-		if (builder != null && builder.energyAvailable() < BuilderAPI.BREAK_ENERGY) {
+		if (!readyForSlotLookup(builder)) {
 			return null;
 		}
 
-		iterator = new BuildingSlotMapIterator(buildList, builder, buildStageOccurences);
-		BuildingSlotBlock slot;
+		if (iterator == null) {
+			iterator = new BuildingSlotMapIterator(buildList, builder, buildStageOccurences);
+		}
 
-		while ((slot = iterator.next()) != null) {
+		BuildingSlotBlock slot;
+		iterator.refresh(builder);
+
+		while (readyForSlotLookup(builder) && (slot = iterator.next()) != null) {
 			if (!world.blockExists(slot.x, slot.y, slot.z)) {
 				continue;
 			}
@@ -355,7 +361,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			for (int i = 0; i < slot.buildStage; i++) {
 				if (buildStageOccurences[i] > 0) {
-					iterator.skipList();
+					iterator.skipKey();
 					skipped = true;
 					break;
 				}
@@ -380,6 +386,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			try {
 				if (slot.isAlreadyBuilt(context)) {
 					if (slot.mode == Mode.Build) {
+						requirementMap.remove(slot);
+
 						// Even slots that considered already built may need
 						// post processing calls. For example, flowing water
 						// may need to be adjusted, engines may need to be
@@ -388,7 +396,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					}
 
 					iterator.remove();
-
 					continue;
 				}
 
@@ -396,11 +403,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 					markLocationUsed(slot.x, slot.y, slot.z);
+					requirementMap.remove(slot);
 				} else {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
 								slot.z)
-						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
+								|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							markLocationUsed(slot.x, slot.y, slot.z);
 						} else {
@@ -421,12 +429,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							return slot;
 						} else if (checkRequirements(builder, slot.schematic)) {
 							if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-									slot.z)) {
+									slot.z) || requirementMap.contains(new BlockIndex(slot.x, slot.y, slot.z))) {
 								continue; // Can't build yet, wait (#2751)
 							} else if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
 								// Forge does not allow us to place a block in
 								// this position.
 								iterator.remove();
+								requirementMap.remove(slot);
 								markLocationUsed(slot.x, slot.y, slot.z);
 								continue;
 							}
@@ -448,6 +457,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						// Even slots that don't need to be build may need
 						// post processing, see above for the argument.
 						postProcessing.add(slot);
+						requirementMap.remove(slot);
 						iterator.remove();
 					}
 				}
@@ -456,6 +466,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing(t);
 				iterator.remove();
+				requirementMap.remove(slot);
 			}
 		}
 
@@ -536,7 +547,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean compatibleContainer = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (StackHelper.isMatchingItem(reqStk, invStk, true, true) || compatibleContainer) {
+				if (slot.isItemMatchingRequirement(invStk, reqStk) || compatibleContainer) {
 					try {
 						stacksUsed.add(slot.useItem(context, reqStk, slotInv));
 					} catch (Throwable t) {
@@ -580,7 +591,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		}
 
-		if (context.world ().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			for (ItemStack s : tmpReq) {
 				slot.addStackConsumed(s);
 			}
@@ -619,10 +630,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean fluidFound = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (fluidFound || StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
+				if (fluidFound || slot.getSchematic().isItemMatchingRequirement(invStk, reqStk)) {
 					try {
 						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
-						slot.addStackConsumed (usedStack);
+						slot.addStackConsumed(usedStack);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
@@ -760,12 +771,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.saveBuildStateToNBT(nbt, builder);
 
-		int [] entitiesBuiltArr = new int [builtEntities.size()];
+		int[] entitiesBuiltArr = new int[builtEntities.size()];
 
 		int id = 0;
 
 		for (Integer i : builtEntities) {
-			entitiesBuiltArr [id] = i;
+			entitiesBuiltArr[id] = i;
 			id++;
 		}
 
@@ -776,7 +787,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.loadBuildStateToNBT(nbt, builder);
 
-		int [] entitiesBuiltArr = nbt.getIntArray("builtEntities");
+		int[] entitiesBuiltArr = nbt.getIntArray("builtEntities");
 
 		for (int i = 0; i < entitiesBuiltArr.length; ++i) {
 			builtEntities.add(i);

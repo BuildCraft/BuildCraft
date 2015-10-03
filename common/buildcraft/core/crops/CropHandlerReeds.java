@@ -4,10 +4,14 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
@@ -21,7 +25,10 @@ public class CropHandlerReeds implements ICropHandler {
 
 	@Override
 	public boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
-		return CropManager.getDefaultHandler().canSustainPlant(world, seed, x, y, z);
+		Block block = world.getBlock(x, y, z);
+		return block.canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) Blocks.reeds)
+				&& block != Blocks.reeds
+				&& world.isAirBlock(x, y + 1, z);
 	}
 
 	@Override

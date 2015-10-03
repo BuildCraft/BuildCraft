@@ -6,6 +6,7 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+
 import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.IConfigElement;
@@ -22,7 +23,7 @@ public class ConfigManager implements IModGuiFactory {
 
 			for (String s : config.getCategoryNames()) {
 				if (!s.contains(".")) {
-					configElements.add(new BCConfigElement(config.getCategory(s)));
+					configElements.add(new BCConfigElement<Object>(config.getCategory(s)));
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,6 +9,7 @@
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,18 +36,18 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	public String getDescription() {
 		return StringUtils.localize("gate.action.redstone.signal");
 	}
-	
-    @Override
-    public IStatementParameter createParameter(int index) {
+
+	@Override
+	public IStatementParameter createParameter(int index) {
 		IStatementParameter param = null;
-	
+
 		if (index == 0) {
-		    param = new StatementParameterRedstoneGateSideOnly();
+			param = new StatementParameterRedstoneGateSideOnly();
 		}
-	
+
 		return param;
-    }
-	
+	}
+
 	@Override
 	public int maxParameters() {
 		return 1;
@@ -62,7 +63,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
 	@Override
 	public void actionActivate(IStatementContainer source,
-			IStatementParameter[] parameters) {
+							   IStatementParameter[] parameters) {
 		if (source instanceof IRedstoneStatementContainer) {
 			ForgeDirection side = ForgeDirection.UNKNOWN;
 			if (source instanceof ISidedStatementContainer && isSideOnly(parameters)) {
@@ -75,7 +76,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	protected int getSignalLevel() {
 		return 15;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister register) {

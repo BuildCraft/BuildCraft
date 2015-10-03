@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -37,7 +37,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	public List<List<ItemStack>> generateExampleExpansions() {
 		ArrayList<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
 		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
-		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+		for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
 			ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
 			nbt.createBoard(NBTUtils.getItemData(stack));
 			example.add(stack);
@@ -49,7 +49,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	@Override
 	public List<ItemStack> generateExampleOutput() {
 		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
-		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+		for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
 			example.add(ItemRobot.createRobotStack((RedstoneBoardRobotNBT) nbt, 0));
 		}
 		return example;

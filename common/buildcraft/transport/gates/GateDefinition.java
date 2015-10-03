@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -112,7 +113,7 @@ public final class GateDefinition {
 
 		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
-		
+
 		@SideOnly(Side.CLIENT)
 		private IIcon iconGate;
 
@@ -125,7 +126,7 @@ public final class GateDefinition {
 		public IIcon getIconDark() {
 			return iconDark;
 		}
-		
+
 		@SideOnly(Side.CLIENT)
 		public IIcon getGateIcon() {
 			return iconGate;
@@ -144,7 +145,7 @@ public final class GateDefinition {
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			iconLit = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_lit");
 			iconDark = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_dark");
-			
+
 			iconGate = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag());
 		}
 

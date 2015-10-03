@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -21,7 +22,7 @@ public class StripesHandlerShears implements IStripesHandler {
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
 	}
-	
+
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return stack.getItem() instanceof ItemShears;
@@ -29,8 +30,8 @@ public class StripesHandlerShears implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesActivator activator) {
+						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
+						  IStripesActivator activator) {
 		Block block = world.getBlock(x, y, z);
 
 		if (block instanceof IShearable) {
@@ -52,7 +53,7 @@ public class StripesHandlerShears implements IStripesHandler {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 

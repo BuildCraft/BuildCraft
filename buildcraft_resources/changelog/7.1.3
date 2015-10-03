@@ -1,0 +1,70 @@
+NOTE: This changelog takes off from BuildCraft 7.0.23!
+
+BREAKING CHANGES!
+
+* Cobblestone Structure Pipes have a new recipe. (asie)
+* Electronic Libraries have a new recipe matching the looks better. (asie)
+* Quartz Fluid Pipes no longer connect to Cobblestone or Stone Fluid Pipes. This might break existing builds! (asie)
+
+NON-BREAKING CHANGES BUT STILL IMPORTANT!
+
+* [#2886] Server blueprints are now saved inside [world]/buildcraft/blueprints as opposed to config/buildcraft/blueprints/server. The old directory will keep working, however.
+
+Additions:
+
+* Core:
+  * New Lists! (asie)
+    * Sort by type, material, or both! Precise sorting!
+    * See with a tooltip if an item matches the List!
+    * They can also sort armor, tools and fluids by type!
+* Transport:
+  * Power Adapters! Connect Kinesis Pipes to non-Kinesis pipes. (asie)
+
+Improvements:
+
+* Core/Any:
+  * [#2345] Finish adding command localization (asie, warlordjones)
+  * Minor optimizations (asie, gamerForEA)
+  * Use integrated server data in singleplayer for certain tiles - back to the smoothness of 1.2.5! (asie)
+* Builders:
+  * Massive improvements to Builder logic and heuristics (asie)
+  * Improved pipe rotation support (asie)
+* Factory:
+  * Chutes now support the Comparator (asie)
+  * Flood Gates now have configurable sides. No idea when I fixed that, but it works now. (asie)
+  * Less lag on Tank updating - new comparator update system (asie)
+* Robotics:
+  * Robots can now be destroyed via swords and projectiles (asie)
+  * Requesters now support the Comparator (asie)
+  * Add events for robot interaction and removal (asie)
+* Transport:
+  * Filtered Buffers now support the Comparator (asie)
+  * Glass Facades no longer render the "plug" (asie)
+  * Lenses do not require Iron Ingots anymore (asie)
+  * New power beam display algorithm (asie)
+  * Rewritten pipe wires - should now propagate more or less instantly. (asie)
+  * Fluid pipe capacity and extraction rate now scales with the base flow multiplier. (asie)
+
+Bugs fixed:
+
+* [#3017] Crash if unable to extend stripes pipe (asie)
+* [#3015] Packager pulls from input only slots from adjacent machines (asie)
+* [#3010] Pipe wire does not activate when connecting by building through striped pipe (asie)
+* [#2956] PipePluggable leaking state on the client (asie)
+* [#2951] Obsidian Pipes not working right in certain circumstances (asie)
+* [#2925] Rails on gravel not placing correctly (asie)
+* A few robot bugs (hea3ven)
+* Force/Forbid Robot statements not accepting lists (asie)
+* "Lens-Filter" diodes not working (asie)
+* Stirling engines heat up to green again (asie)
+
+API changes (I will document the API eventually):
+
+* Blueprints:
+  * Schematics can now depend on relative blocks to be built before they are placed (things like torches, ladders, redstone wire, etc.) (asie)
+* Lists:
+  * New list matching API for custom sorting support! (asie)
+* Robots:
+  * Rewritten request system! You can now check what items BC machines need with a simple interface! (hea3ven)
+* Transport (Internal):
+  * PipeTransports can now have their own renderers via PipeTransportRenderer! (asie)

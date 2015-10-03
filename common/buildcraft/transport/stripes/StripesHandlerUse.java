@@ -23,7 +23,7 @@ public class StripesHandlerUse implements IStripesHandler {
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
 	}
-	
+
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return items.contains(stack.getItem());
@@ -31,8 +31,8 @@ public class StripesHandlerUse implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesActivator activator) {
+						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
+						  IStripesActivator activator) {
 		Position target = new Position(x, y, z, direction);
 		target.moveForwards(1.0D);
 

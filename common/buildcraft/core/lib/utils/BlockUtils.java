@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -26,6 +26,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -118,14 +119,6 @@ public final class BlockUtils {
 		world.spawnEntityInWorld(entityitem);
 	}
 
-	@Deprecated
-	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
-		if (block == null || block.isAir(world, x, y, z)) {
-			return false;
-		}
-		return true;
-	}
-
 	public static boolean canChangeBlock(World world, int x, int y, int z) {
 		return canChangeBlock(world.getBlock(x, y, z), world, x, y, z);
 	}
@@ -135,7 +128,7 @@ public final class BlockUtils {
 			return true;
 		}
 
-		if (block.getBlockHardness(world, x, y, z) < 0) {
+		if (isUnbreakableBlock(world, x, y, z, block)) {
 			return false;
 		}
 
@@ -151,10 +144,29 @@ public final class BlockUtils {
 		return true;
 	}
 
-	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
-		Block b = world.getBlock(x, y, z);
+	public static float getBlockHardnessMining(World world, int x, int y, int z, Block b) {
+		if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
+			float relativeHardness = b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y, z);
+			if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
+				return -1.0F;
+			} else {
+				return relativeHardness;
+			}
+		} else {
+			return b.getBlockHardness(world, x, y, z);
+		}
+	}
 
-		return b != null && b.getBlockHardness(world, x, y, z) < 0;
+	public static boolean isUnbreakableBlock(World world, int x, int y, int z, Block b) {
+		if (b == null) {
+			return false;
+		}
+
+		return getBlockHardnessMining(world, x, y, z, b) < 0;
+	}
+
+	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {
+		return isUnbreakableBlock(world, x, y, z, world.getBlock(x, y, z));
 	}
 
 	/**
@@ -278,6 +290,7 @@ public final class BlockUtils {
 		return getBlockMetadata(world, x, y, z, false);
 
 	}
+
 	public static int getBlockMetadata(World world, int x, int y, int z, boolean force) {
 		if (!force) {
 			if (y < 0 || y > 255) {
@@ -291,7 +304,7 @@ public final class BlockUtils {
 	}
 
 	public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, int x,
-			int y, int z, ForgeDirection direction) {
+										 int y, int z, ForgeDirection direction) {
 		boolean done = stack.getItem().onItemUseFirst(stack, player, world, x, y, z,
 				direction.ordinal(), 0.5F, 0.5F, 0.5F);
 
@@ -300,6 +313,10 @@ public final class BlockUtils {
 					0.5F, 0.5F, 0.5F);
 		}
 		return done;
+	}
+
+	public static void onComparatorUpdate(World world, int x, int y, int z, Block block) {
+		world.func_147453_f(x, y, z, block);
 	}
 
 	public static TileEntityChest getOtherDoubleChest(TileEntity inv) {

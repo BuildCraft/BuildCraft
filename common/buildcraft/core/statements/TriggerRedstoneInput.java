@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,6 +9,7 @@
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.statements.IStatementContainer;
@@ -31,18 +32,18 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 	public String getDescription() {
 		return StringUtils.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
 	}
-	
-    @Override
-    public IStatementParameter createParameter(int index) {
+
+	@Override
+	public IStatementParameter createParameter(int index) {
 		IStatementParameter param = null;
-	
+
 		if (index == 0) {
-		    param = new StatementParameterRedstoneGateSideOnly();
+			param = new StatementParameterRedstoneGateSideOnly();
 		}
-	
+
 		return param;
-    }
-	
+	}
+
 	@Override
 	public int maxParameters() {
 		return 1;

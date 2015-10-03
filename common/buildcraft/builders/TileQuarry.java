@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -24,9 +24,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
@@ -50,6 +51,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -101,7 +103,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private int ledState;
 
-	public TileQuarry () {
+	public TileQuarry() {
 		box.kind = Kind.STRIPES;
 		this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000 * BuildCraftCore.miningMultiplier), 0));
 	}
@@ -162,6 +164,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				&& worldObj.blockExists(box.xMin, box.yMax, box.zMax)
 				&& worldObj.blockExists(box.xMax, box.yMax, box.zMax);
 	}
+
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -240,7 +243,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (miner == null) {
-			// Hmm.
+			// Hmm. Probably shouldn't be mining if there's no miner.
 			stage = Stage.IDLE;
 			return;
 		}
@@ -249,7 +252,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		getBattery().useEnergy(rfTaken, rfTaken, false);
 
 		if (miner.hasMined()) {
-			// Collect any lost items laying around
+			// Collect any lost items laying around.
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 			List<EntityItem> result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
@@ -265,11 +268,29 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				CoreProxy.proxy.removeEntity(entity);
 				miner.mineStack(mineable);
 			}
+		}
 
-			stage = Stage.IDLE;
+		if (miner.hasMined() || miner.hasFailed()) {
 			miner = null;
+
+			if (!findFrame()) {
+				initializeBlueprintBuilder();
+				stage = Stage.BUILDING;
+			} else {
+				stage = Stage.IDLE;
+			}
 		}
 	}
+
+	protected boolean findFrame() {
+		int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
+		if (o == ForgeDirection.UNKNOWN) {
+			return true;
+		}
+		return worldObj.getBlock(xCoord + o.offsetX, yCoord + o.offsetY, zCoord + o.offsetZ) == BuildCraftBuilders.frameBlock;
+	}
+
 	protected void idling() {
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
@@ -476,6 +497,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE + (int) Math.ceil(Math.sqrt(yCoord * yCoord + box.sizeX() * box.sizeX() + box.sizeZ() * box.sizeZ()));
+	}
+
+	@Override
 	public void invalidate() {
 		if (chunkTicket != null) {
 			ForgeChunkManager.releaseTicket(chunkTicket);
@@ -516,11 +542,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (BuildCraftBuilders.quarryLoadsChunks && chunkTicket == null) {
 			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftBuilders.instance, worldObj, Type.NORMAL);
 		}
+
 		if (chunkTicket != null) {
 			chunkTicket.getModData().setInteger("quarryX", xCoord);
 			chunkTicket.getModData().setInteger("quarryY", yCoord);
 			chunkTicket.getModData().setInteger("quarryZ", zCoord);
-			ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 		}
 
 		IAreaProvider a = null;
@@ -538,19 +564,15 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		int xSize = a.xMax() - a.xMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (chunkTicket != null) {
-			if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-				if (placedBy != null) {
-					placedBy.addChatMessage(new ChatComponentText(
-							String.format(
-									"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
-									xSize, zSize,
-									chunkTicket.getMaxChunkListDepth())));
-				}
-
-				a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
-				useDefault = true;
+		if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
+			if (placedBy != null) {
+				placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
+						xSize, zSize,
+						chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
 			}
+
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
+			useDefault = true;
 		}
 
 		xSize = a.xMax() - a.xMin() + 1;
@@ -571,23 +593,23 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {
-			case EAST:
-				xMin = xCoord + 1;
-				zMin = zCoord - 4 - 1;
-				break;
-			case WEST:
-				xMin = xCoord - 9 - 2;
-				zMin = zCoord - 4 - 1;
-				break;
-			case SOUTH:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord + 1;
-				break;
-			case NORTH:
-			default:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord - 9 - 2;
-				break;
+				case EAST:
+					xMin = xCoord + 1;
+					zMin = zCoord - 4 - 1;
+					break;
+				case WEST:
+					xMin = xCoord - 9 - 2;
+					zMin = zCoord - 4 - 1;
+					break;
+				case SOUTH:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord + 1;
+					break;
+				case NORTH:
+				default:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord - 9 - 2;
+					break;
 			}
 
 			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
@@ -607,7 +629,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		if (bpt != null) {
 			builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
+			speed = 0;
 			stage = Stage.BUILDING;
+			sendNetworkUpdate();
 		}
 	}
 
@@ -622,7 +646,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stream.writeDouble(headPosY);
 		stream.writeDouble(headPosZ);
 		stream.writeFloat((float) speed);
-		stream.writeFloat((float) headTrajectory);
+		stream.writeFloat(headTrajectory);
 		int flags = stage.ordinal();
 		flags |= movingHorizontally ? 0x10 : 0;
 		flags |= movingVertically ? 0x20 : 0;
@@ -750,7 +774,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
-	
+
 	public void moveHead(double instantSpeed) {
 		int[] target = getTarget();
 		double[] head = getHead();
@@ -842,10 +866,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-			placedBy.addChatMessage(new ChatComponentText(
-					String.format(
-							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
-							xCoord, yCoord, zCoord, chunks.size())));
+			placedBy.addChatMessage(new ChatComponentTranslation(
+					"chat.buildcraft.quarry.chunkloadInfo",
+					xCoord, yCoord, zCoord, chunks.size()));
 		}
 	}
 
@@ -856,7 +879,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override
@@ -866,7 +889,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[] {};
+		return new int[]{};
 	}
 
 	@Override
@@ -891,9 +914,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
-		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
-			return ConnectOverride.DISCONNECT;
-		}
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -25,8 +25,6 @@ public class EntityMechanicalArm extends Entity {
 	private double yRoot;
 	private double zRoot;
 
-	private boolean inProgressionXZ = false;
-	private boolean inProgressionY = false;
 	private int headX, headY, headZ;
 	private EntityBlock xArm, yArm, zArm, head;
 
@@ -67,9 +65,9 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void makeParts(World world) {
-		xArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 1, 0.5, 0.5);
-		yArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5);
-		zArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1);
+		xArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 1, 0.5, 0.5, true);
+		yArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5, false);
+		zArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1, true);
 
 		head = BuilderProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
 		head.shadowSize = 1.0F;
@@ -149,6 +147,6 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private double[] getHead() {
-		return new double[] { this.headX / 32D, this.headY / 32D, this.headZ / 32D };
+		return new double[]{this.headX / 32D, this.headY / 32D, this.headZ / 32D};
 	}
 }

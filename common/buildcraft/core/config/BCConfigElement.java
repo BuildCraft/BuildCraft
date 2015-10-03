@@ -36,8 +36,8 @@ public class BCConfigElement<T> extends ConfigElement<T> {
 				if (!child.parent.getQualifiedName().equals(cat.getQualifiedName())) {
 					continue;
 				}
-				
-				ConfigElement temp = new BCConfigElement(child);
+
+				ConfigElement<?> temp = new BCConfigElement<Object>(child);
 				if (temp.showInGui()) {
 					elements.add(temp);
 				}

@@ -99,18 +99,18 @@ public final class LaserUtils {
 		p[6] = new Position(xMin, yMax, zMax);
 		p[7] = new Position(xMax, yMax, zMax);
 
-		lasers[0] = new LaserData (p[0], p[1]);
-		lasers[1] = new LaserData (p[0], p[2]);
-		lasers[2] = new LaserData (p[2], p[3]);
-		lasers[3] = new LaserData (p[1], p[3]);
-		lasers[4] = new LaserData (p[4], p[5]);
-		lasers[5] = new LaserData (p[4], p[6]);
-		lasers[6] = new LaserData (p[5], p[7]);
-		lasers[7] = new LaserData (p[6], p[7]);
-		lasers[8] = new LaserData (p[0], p[4]);
-		lasers[9] = new LaserData (p[1], p[5]);
-		lasers[10] = new LaserData (p[2], p[6]);
-		lasers[11] = new LaserData (p[3], p[7]);
+		lasers[0] = new LaserData(p[0], p[1]);
+		lasers[1] = new LaserData(p[0], p[2]);
+		lasers[2] = new LaserData(p[2], p[3]);
+		lasers[3] = new LaserData(p[1], p[3]);
+		lasers[4] = new LaserData(p[4], p[5]);
+		lasers[5] = new LaserData(p[4], p[6]);
+		lasers[6] = new LaserData(p[5], p[7]);
+		lasers[7] = new LaserData(p[6], p[7]);
+		lasers[8] = new LaserData(p[0], p[4]);
+		lasers[9] = new LaserData(p[1], p[5]);
+		lasers[10] = new LaserData(p[2], p[6]);
+		lasers[11] = new LaserData(p[3], p[7]);
 
 		return lasers;
 	}

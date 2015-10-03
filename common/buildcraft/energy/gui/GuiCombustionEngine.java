@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -36,7 +36,7 @@ public class GuiCombustionEngine extends GuiEngine {
 		TileEngineIron engine = (TileEngineIron) tile;
 		drawFluid(engine.getFuel(), guiLeft + 104, guiTop + 19, 16, 58, TileEngineIron.MAX_LIQUID);
 		drawFluid(engine.getCoolant(), guiLeft + 122, guiTop + 19, 16, 58, TileEngineIron.MAX_LIQUID);
-        mc.renderEngine.bindTexture(TEXTURE);
+		mc.renderEngine.bindTexture(TEXTURE);
 		drawTexturedModalRect(guiLeft + 104, guiTop + 19, 176, 0, 16, 60);
 		drawTexturedModalRect(guiLeft + 122, guiTop + 19, 176, 0, 16, 60);
 	}

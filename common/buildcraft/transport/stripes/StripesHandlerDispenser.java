@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
@@ -90,7 +91,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
 			return true;
 		}
 
-		Class c = stack.getItem().getClass();
+		Class<?> c = stack.getItem().getClass();
 		while (c != Item.class) {
 			if (items.contains(c)) {
 				return true;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -137,14 +138,6 @@ public class TravelingItem {
 
 	public boolean hasExtraData() {
 		return extraData != null;
-	}
-
-	@Deprecated
-	public void setInsetionHandler(InsertionHandler handler) {
-		if (handler == null) {
-			return;
-		}
-		this.insertionHandler = handler;
 	}
 
 	public void setInsertionHandler(InsertionHandler handler) {
@@ -308,20 +301,25 @@ public class TravelingItem {
 		return true;
 	}
 
+	public void cleanup() {
+		if (hasDisplayList) {
+			TransportProxy.proxy.clearDisplayList(displayList);
+			hasDisplayList = false;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "TravelingItem: " + id;
 	}
 
 	public static class InsertionHandler {
-
 		public boolean canInsertItem(TravelingItem item, IInventory inv) {
 			return true;
 		}
 	}
 
 	public static class TravelingItemCache {
-
 		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
 
 		public void cache(TravelingItem item) {

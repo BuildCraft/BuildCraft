@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.biome.BiomeGenBase;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -61,11 +62,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		super(1);
 		tankManager.add(tankFuel);
 		tankManager.add(tankCoolant);
-	}
-
-	@Override
-	public String getResourcePrefix() {
-		return "buildcraftenergy:textures/blocks/engineIron";
 	}
 
 	@Override
@@ -300,7 +296,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			// Fluid Fuel ID
 			case 15:
 				if (FluidRegistry.getFluid(value) != null) {
-					tankFuel.setFluid(new FluidStack(value, tankFuelAmountCache));
+					tankFuel.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankFuelAmountCache));
 				} else {
 					tankFuel.setFluid(null);
 				}
@@ -308,7 +304,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			// Fluid Coolant ID
 			case 16:
 				if (FluidRegistry.getFluid(value) != null) {
-					tankCoolant.setFluid(new FluidStack(value, tankCoolantAmountCache));
+					tankCoolant.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankCoolantAmountCache));
 				} else {
 					tankCoolant.setFluid(null);
 				}
@@ -397,13 +393,13 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
 		return from != orientation &&
-                (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
-                        BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
+				(BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
+						BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-        return tankManager.getTankInfo(direction);
+		return tankManager.getTankInfo(direction);
 	}
 
 	@Override
@@ -427,22 +423,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public int maxEnergyReceived() {
-		return 20000;
-	}
-
-	@Override
-	public int maxEnergyExtracted() {
-		return 5000;
-	}
-
-	@Override
 	public int getMaxEnergy() {
 		return 100000;
 	}
 
 	@Override
-	public int calculateCurrentOutput() {
+	public int getIdealOutput() {
 		if (currentFuel == null) {
 			return 0;
 		} else {

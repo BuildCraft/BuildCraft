@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -39,7 +39,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		RedstoneBoardNBT board = getBoardNBT(stack);
+		RedstoneBoardNBT<?> board = getBoardNBT(stack);
 		board.addInformation(stack, player, list, advanced);
 	}
 
@@ -52,7 +52,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String[] getIconNames() {
-		return new String[] {"board/clean"};
+		return new String[]{"board/clean"};
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -65,14 +65,14 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		}
 	}
 
-	public static ItemStack createStack(RedstoneBoardNBT boardNBT) {
+	public static ItemStack createStack(RedstoneBoardNBT<?> boardNBT) {
 		ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
 		NBTTagCompound nbtData = NBTUtils.getItemData(stack);
 		boardNBT.createBoard(nbtData);
 		return stack;
 	}
 
-	public static RedstoneBoardNBT getBoardNBT(ItemStack stack) {
+	public static RedstoneBoardNBT<?> getBoardNBT(ItemStack stack) {
 		return getBoardNBT(getNBT(stack));
 	}
 
@@ -84,7 +84,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		return cpt;
 	}
 
-	private static RedstoneBoardNBT getBoardNBT(NBTTagCompound cpt) {
+	private static RedstoneBoardNBT<?> getBoardNBT(NBTTagCompound cpt) {
 		return RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
 	}
 }

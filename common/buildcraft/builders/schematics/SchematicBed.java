@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -36,18 +36,18 @@ public class SchematicBed extends SchematicBlock {
 		int others = meta - orientation;
 
 		switch (orientation) {
-		case 0:
-			meta = 1 + others;
-			break;
-		case 1:
-			meta = 2 + others;
-			break;
-		case 2:
-			meta = 3 + others;
-			break;
-		case 3:
-			meta = 0 + others;
-			break;
+			case 0:
+				meta = 1 + others;
+				break;
+			case 1:
+				meta = 2 + others;
+				break;
+			case 2:
+				meta = 3 + others;
+				break;
+			case 3:
+				meta = 0 + others;
+				break;
 		}
 	}
 
@@ -63,18 +63,18 @@ public class SchematicBed extends SchematicBlock {
 		int z2 = z;
 
 		switch (meta) {
-		case 0:
-			z2++;
-			break;
-		case 1:
-			x2--;
-			break;
-		case 2:
-			z2--;
-			break;
-		case 3:
-			x2++;
-			break;
+			case 0:
+				z2++;
+				break;
+			case 1:
+				x2--;
+				break;
+			case 2:
+				z2--;
+				break;
+			case 3:
+				x2++;
+				break;
 		}
 
 		context.world().setBlock(x2, y, z2, block, meta + 8, 3);

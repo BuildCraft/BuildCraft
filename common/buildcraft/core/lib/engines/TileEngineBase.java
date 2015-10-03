@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,11 +10,13 @@ package buildcraft.core.lib.engines;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyConnection;
@@ -72,19 +74,44 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 	}
 
-	public abstract String getResourcePrefix();
+	private String getTexturePrefix() {
+		if (!(blockType instanceof BlockEngineBase)) {
+			Block engineBase = worldObj.getBlock(xCoord, yCoord, zCoord);
+			if (engineBase instanceof BlockEngineBase) {
+				blockType = engineBase;
+				getBlockMetadata();
+			} else {
+				return null;
+			}
+		}
+
+		return ((BlockEngineBase) blockType).getTexturePrefix(getBlockMetadata(), true);
+	}
+
 
 	public ResourceLocation getBaseTexture() {
-		return new ResourceLocation(getResourcePrefix() + "/base.png");
+		if (getTexturePrefix() != null) {
+			return new ResourceLocation(getTexturePrefix() + "/base.png");
+		} else {
+			return new ResourceLocation("missingno");
+		}
 	}
 
 	public ResourceLocation getChamberTexture() {
-		return new ResourceLocation(getResourcePrefix() + "/chamber.png");
+		if (getTexturePrefix() != null) {
+			return new ResourceLocation(getTexturePrefix() + "/chamber.png");
+		} else {
+			return new ResourceLocation("missingno");
+		}
 	}
 
 	public ResourceLocation getTrunkTexture(EnergyStage stage) {
-		if (ResourceUtils.resourceExists(getResourcePrefix() + "/trunk.png")) {
-			return new ResourceLocation(getResourcePrefix() + "/trunk.png");
+		if (getTexturePrefix() == null) {
+			return TRUNK_OVERHEAT_TEXTURE;
+		}
+
+		if (ResourceUtils.resourceExists(getTexturePrefix() + "/trunk.png")) {
+			return new ResourceLocation(getTexturePrefix() + "/trunk.png");
 		}
 
 		switch (stage) {
@@ -261,7 +288,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 
 		burn();
-		
+
 		if (!isRedstonePowered) {
 			currentOutput = 0;
 		} else if (isRedstonePowered && isActive()) {
@@ -276,14 +303,14 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	private int getPowerToExtract() {
 		Object tile = getEnergyProvider(orientation);
 
-        if (tile instanceof IEngine) {
-            IEngine engine = (IEngine) tile;
+		if (tile instanceof IEngine) {
+			IEngine engine = (IEngine) tile;
 
-            int maxEnergy = engine.receiveEnergyFromEngine(
-                    orientation.getOpposite(),
-                    this.energy, true);
-            return extractEnergy(maxEnergy, false);
-        } else if (tile instanceof IEnergyHandler) {
+			int maxEnergy = engine.receiveEnergyFromEngine(
+					orientation.getOpposite(),
+					this.energy, true);
+			return extractEnergy(maxEnergy, false);
+		} else if (tile instanceof IEnergyHandler) {
 			IEnergyHandler handler = (IEnergyHandler) tile;
 
 			int maxEnergy = handler.receiveEnergy(
@@ -308,26 +335,26 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 			int extracted = getPowerToExtract();
 			if (extracted <= 0) {
 				setPumping(false);
-                return;
+				return;
 			}
 
-            setPumping(true);
+			setPumping(true);
 
 			if (tile instanceof IEngine) {
-                IEngine engine = (IEngine) tile;
-                int neededRF = engine.receiveEnergyFromEngine(
-                        orientation.getOpposite(),
-                        extracted, false);
+				IEngine engine = (IEngine) tile;
+				int neededRF = engine.receiveEnergyFromEngine(
+						orientation.getOpposite(),
+						extracted, false);
 
-                extractEnergy(neededRF, true);
-            } else if (tile instanceof IEnergyHandler) {
-                IEnergyHandler handler = (IEnergyHandler) tile;
-                int neededRF = handler.receiveEnergy(
-                        orientation.getOpposite(),
-                        extracted, false);
+				extractEnergy(neededRF, true);
+			} else if (tile instanceof IEnergyHandler) {
+				IEnergyHandler handler = (IEnergyHandler) tile;
+				int neededRF = handler.receiveEnergy(
+						orientation.getOpposite(),
+						extracted, false);
 
-                extractEnergy(neededRF, true);
-            } else if (tile instanceof IEnergyReceiver) {
+				extractEnergy(neededRF, true);
+			} else if (tile instanceof IEnergyReceiver) {
 				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				int neededRF = handler.receiveEnergy(
 						orientation.getOpposite(),
@@ -482,7 +509,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	}
 
 	public int extractEnergy(int energyMax, boolean doExtract) {
-		int max = Math.min(energyMax, maxEnergyExtracted());
+		int max = Math.min(energyMax, getCurrentOutputLimit());
 
 		int extracted;
 
@@ -505,31 +532,27 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 	public boolean isPoweredTile(Object tile, ForgeDirection side) {
 		if (tile == null) {
-            return false;
-        } else if (tile instanceof IEngine) {
-            return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
+			return false;
+		} else if (tile instanceof IEngine) {
+			return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
 		} else if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
-            return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
-        } else {
+			return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
+		} else {
 			return false;
 		}
 	}
 
 	public abstract int getMaxEnergy();
 
-	public int minEnergyReceived() {
-		return 20;
-	}
-
-	public abstract int maxEnergyReceived();
-
-	public abstract int maxEnergyExtracted();
-
 	public int getEnergyStored() {
 		return energy;
 	}
 
-	public abstract int calculateCurrentOutput();
+	public abstract int getIdealOutput();
+
+	public int getCurrentOutputLimit() {
+		return Integer.MAX_VALUE;
+	}
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
@@ -554,7 +577,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 
@@ -577,51 +600,51 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		return from == orientation;
 	}
 
-    // IEngine
+	// IEngine
 
-    @Override
-    public boolean canReceiveFromEngine(ForgeDirection side) {
-        return side == orientation.getOpposite();
-    }
+	@Override
+	public boolean canReceiveFromEngine(ForgeDirection side) {
+		return side == orientation.getOpposite();
+	}
 
-    @Override
-    public int receiveEnergyFromEngine(ForgeDirection side, int amount, boolean simulate) {
-        if (canReceiveFromEngine(side)) {
-            int targetEnergy = Math.min(this.getMaxEnergy() - this.energy, amount);
-            if (!simulate) {
-                energy += targetEnergy;
-            }
-            return targetEnergy;
-        } else {
-            return 0;
-        }
-    }
+	@Override
+	public int receiveEnergyFromEngine(ForgeDirection side, int amount, boolean simulate) {
+		if (canReceiveFromEngine(side)) {
+			int targetEnergy = Math.min(this.getMaxEnergy() - this.energy, amount);
+			if (!simulate) {
+				energy += targetEnergy;
+			}
+			return targetEnergy;
+		} else {
+			return 0;
+		}
+	}
 
-    // IHeatable
+	// IHeatable
 
-    @Override
-    public double getMinHeatValue() {
-        return MIN_HEAT;
-    }
+	@Override
+	public double getMinHeatValue() {
+		return MIN_HEAT;
+	}
 
-    @Override
-    public double getIdealHeatValue() {
-        return IDEAL_HEAT;
-    }
+	@Override
+	public double getIdealHeatValue() {
+		return IDEAL_HEAT;
+	}
 
-    @Override
-    public double getMaxHeatValue() {
-        return MAX_HEAT;
-    }
+	@Override
+	public double getMaxHeatValue() {
+		return MAX_HEAT;
+	}
 
-    @Override
-    public double getCurrentHeatValue() {
-        return heat;
-    }
+	@Override
+	public double getCurrentHeatValue() {
+		return heat;
+	}
 
-    @Override
-    public double setHeatValue(double value) {
-        heat = (float) MathUtils.clamp(value, MIN_HEAT, MAX_HEAT);
-        return heat;
-    }
+	@Override
+	public double setHeatValue(double value) {
+		heat = (float) MathUtils.clamp(value, MIN_HEAT, MAX_HEAT);
+		return heat;
+	}
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -157,7 +158,7 @@ public class MapManager implements Runnable {
 			MapWorld mw = getWorld(ws);
 			IChunkProvider provider = ws.getChunkProvider();
 			if (provider instanceof ChunkProviderServer) {
-				for (Object o: ((ChunkProviderServer) provider).func_152380_a()) {
+				for (Object o : ((ChunkProviderServer) provider).func_152380_a()) {
 					if (o != null && o instanceof Chunk) {
 						Chunk c = (Chunk) o;
 						if (!mw.hasChunk(c.xPosition, c.zPosition)) {

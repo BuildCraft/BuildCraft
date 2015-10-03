@@ -23,7 +23,7 @@ public class StripesHandlerPlant implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z, ForgeDirection direction,
-			ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+						  ItemStack stack, EntityPlayer player, IStripesActivator activator) {
 		if (CropManager.canSustainPlant(world, stack, x, y - 1, z)) {
 			if (CropManager.plantCrop(world, player, stack, x, y - 1, z)) {
 				if (stack.stackSize > 0) {

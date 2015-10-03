@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -24,9 +24,9 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.Gate;
 
 public class ActionParameterSignal implements IStatementParameter {
-	
+
 	private static IIcon[] icons;
-	
+
 	public PipeWire color = null;
 
 	public ActionParameterSignal() {
@@ -84,7 +84,7 @@ public class ActionParameterSignal implements IStatementParameter {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public String getDescription() {
 		if (color == null) {
@@ -100,7 +100,7 @@ public class ActionParameterSignal implements IStatementParameter {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
+		icons = new IIcon[]{
 				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
 				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
 				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),

@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport.pipes;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -20,6 +20,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -42,16 +43,11 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	private RFBattery battery = new RFBattery(2560, 640, 0);
+	private final RFBattery battery = new RFBattery(2560, 640, 0);
+	private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<Entity, Long>();
 
-	private int[] entitiesDropped;
-	private int entitiesDroppedIndex = 0;
-	
 	public PipeItemsObsidian(Item item) {
 		super(new PipeTransportItems(), item);
-
-		entitiesDropped = new int[32];
-		Arrays.fill(entitiesDropped, -1);
 	}
 
 	@Override
@@ -91,7 +87,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				p2.x += 1 + distance;
 				break;
 			case WEST:
-			p1.x -= distance - 1;
+				p1.x -= distance - 1;
 				p2.x -= distance;
 				break;
 			case UP:
@@ -107,7 +103,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				break;
 			case NORTH:
 			default:
-			p1.z -= distance - 1;
+				p1.z -= distance - 1;
 				p2.z -= distance;
 				break;
 		}
@@ -125,7 +121,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				p2.y += distance;
 				break;
 			case DOWN:
-			p1.y -= distance - 1;
+				p1.y -= distance - 1;
 				p2.y -= distance;
 				break;
 			case SOUTH:
@@ -217,7 +213,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				if (contained == null) {
 					return;
 				}
-				
+
 				TransportProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
@@ -247,7 +243,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 			if (stack == null) {
 				return;
 			}
-			
+
 			TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			item.setSpeed((float) speed);
@@ -257,12 +253,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
-		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
-			entitiesDroppedIndex = 0;
-		} else {
-			entitiesDroppedIndex++;
-		}
-		entitiesDropped[entitiesDroppedIndex] = event.entity.getEntityId();
+		entityDropTime.put(event.entity, event.entity.worldObj.getTotalWorldTime() + 200);
 	}
 
 	public boolean canSuck(Entity entity, int distance) {
@@ -276,10 +267,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				return false;
 			}
 
-			for (int element : entitiesDropped) {
-				if (item.getEntityId() == element) {
-					return false;
-				}
+			long wt = entity.worldObj.getTotalWorldTime();
+			if (entityDropTime.containsKey(entity) && entityDropTime.get(entity) >= wt) {
+				return false;
 			}
 
 			return battery.getEnergyStored() >= distance * 10;
@@ -297,13 +287,13 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 

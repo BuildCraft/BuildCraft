@@ -1,17 +1,19 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -23,6 +25,10 @@ import buildcraft.transport.render.GateItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
 import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.render.PipeTransportFluidsRenderer;
+import buildcraft.transport.render.PipeTransportItemsRenderer;
+import buildcraft.transport.render.PipeTransportPowerRenderer;
+import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.TileEntityPickupFX;
 
@@ -45,6 +51,11 @@ public class TransportProxyClient extends TransportProxy {
 	}
 
 	@Override
+	public void clearDisplayList(int displayList) {
+		GLAllocation.deleteDisplayLists(displayList);
+	}
+
+	@Override
 	public void registerRenderers() {
 		for (Item itemPipe : BlockGenericPipe.pipes.keySet()) {
 			MinecraftForgeClient.registerItemRenderer(itemPipe, pipeItemRenderer);
@@ -53,6 +64,10 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);
+
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportItems.class, new PipeTransportItemsRenderer());
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportFluids.class, new PipeTransportFluidsRenderer());
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportPower.class, new PipeTransportPowerRenderer());
 
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 

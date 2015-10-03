@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -45,18 +46,21 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -66,8 +70,6 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.list.ListMatchHandlerClass;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.FacadePluggable;
@@ -77,9 +79,11 @@ import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPipeWire;
+import buildcraft.transport.LensFilterHandler;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
+import buildcraft.transport.PipeEventBus;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
@@ -190,10 +194,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
-    public static int pipeFluidsBaseFlowRate;
-    public static boolean facadeTreatBlacklistAsWhitelist;
-    public static boolean additionalWaterproofingRecipe;
+	public static int pipeFluidsBaseFlowRate;
+	public static boolean facadeTreatBlacklistAsWhitelist;
+	public static boolean additionalWaterproofingRecipe;
 	public static boolean facadeForceNonLaserRecipe;
+	public static boolean showAllFacadesCreative;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -223,7 +228,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeItemsSandstone;
 	public static Item pipeItemsEmzuli;
 	public static Item pipeItemsStripes;
-    public static Item pipeItemsClay;
+	public static Item pipeItemsClay;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -243,7 +248,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
 	public static Item pipePowerEmerald;
-    public static Item pipePowerSandstone;
+	public static Item pipePowerSandstone;
 
 	public static String[] facadeBlacklist;
 
@@ -264,9 +269,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IActionInternal actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-    public static IActionInternal[] actionValve = new IActionInternal[4];
+	public static IActionInternal[] actionValve = new IActionInternal[4];
 
-    public static boolean debugPrintFacadeList = false;
+	public static boolean debugPrintFacadeList = false;
 	public static boolean usePipeLoss = false;
 
 	public static float gateCostMultiplier = 1.0F;
@@ -288,7 +293,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("pipes");
-		new BCCreativeTab("facades");
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			new BCCreativeTab("gates");
 		}
@@ -300,9 +304,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME)
 					.setMinValue(1).setMaxValue(40);
 			BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeShowAllInCreative", true, "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
-			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[]{
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
 					Block.blockRegistry.getNameForObject(Blocks.grass),
 					Block.blockRegistry.getNameForObject(Blocks.leaves),
@@ -321,15 +326,19 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			reloadConfig(ConfigManager.RestartRequirement.GAME);
 
+			if (showAllFacadesCreative) {
+				new BCCreativeTab("facades");
+			}
+
 			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
+			BCRegistry.INSTANCE.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"), false);
 
 			pipeWaterproof = new ItemBuildCraft();
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
-			CoreProxy.proxy.registerItem(pipeWaterproof);
+			BCRegistry.INSTANCE.registerItem(pipeWaterproof, false);
 
 			genericPipeBlock = (BlockGenericPipe) CompatHooks.INSTANCE.getBlock(BlockGenericPipe.class);
-			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
+			BCRegistry.INSTANCE.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class, true);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "plankWood", "blockGlassColorless", "plankWood");
 			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "gemEmerald", "blockGlassColorless", "gemEmerald");
@@ -346,7 +355,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
 			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
 			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
-            pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
+			pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
@@ -368,37 +377,37 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerGold = buildPipe(PipePowerGold.class, "dustRedstone", pipeItemsGold);
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "dustRedstone", pipeItemsDiamond);
 			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
-            pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
+			pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
-            pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
+			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
 			pipeWire = new ItemPipeWire();
-			CoreProxy.proxy.registerItem(pipeWire);
+			BCRegistry.INSTANCE.registerItem(pipeWire, false);
 			PipeWire.item = pipeWire;
 
 			pipeGate = new ItemGate();
 			pipeGate.setUnlocalizedName("pipeGate");
-			CoreProxy.proxy.registerItem(pipeGate);
+			BCRegistry.INSTANCE.registerItem(pipeGate, false);
 
 			facadeItem = new ItemFacade();
 			facadeItem.setUnlocalizedName("pipeFacade");
-			CoreProxy.proxy.registerItem(facadeItem);
+			BCRegistry.INSTANCE.registerItem(facadeItem, false);
 			FacadeAPI.facadeItem = facadeItem;
 
 			plugItem = new ItemPlug();
 			plugItem.setUnlocalizedName("pipePlug");
-			CoreProxy.proxy.registerItem(plugItem);
+			BCRegistry.INSTANCE.registerItem(plugItem, false);
 
 			lensItem = new ItemLens();
 			lensItem.setUnlocalizedName("pipeLens");
-			CoreProxy.proxy.registerItem(lensItem);
+			BCRegistry.INSTANCE.registerItem(lensItem, false);
 
 			powerAdapterItem = new ItemPowerAdapter();
 			powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
-			CoreProxy.proxy.registerItem(powerAdapterItem);
+			BCRegistry.INSTANCE.registerItem(powerAdapterItem, false);
 
 			gateCopier = new ItemGateCopier();
-			CoreProxy.proxy.registerItem(gateCopier);
+			BCRegistry.INSTANCE.registerItem(gateCopier, false);
 
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
@@ -428,7 +437,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			for (ValveState state : ValveState.VALUES) {
-			    actionValve[state.ordinal()] = new ActionValve(state);
+				actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {
@@ -461,6 +470,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		TransportProxy.proxy.registerTileEntities();
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(filteredBufferBlock, SchematicTile.class);
 
 		new BptPipeRotatable(pipeItemsWood);
 		new BptPipeRotatable(pipeFluidsWood);
@@ -473,15 +483,19 @@ public class BuildCraftTransport extends BuildCraftMod {
 		new BptPipeRotatable(pipeItemsEmzuli);
 
 		for (Item itemPipe : BlockGenericPipe.pipes.keySet()) {
-			Class<? extends Pipe> klazz = BlockGenericPipe.pipes.get(itemPipe);
+			Class<? extends Pipe<?>> klazz = BlockGenericPipe.pipes.get(itemPipe);
 
 			if (IDiamondPipe.class.isAssignableFrom(klazz)) {
 				new BptPipeFiltered(itemPipe);
 			}
 		}
 
+		PipeEventBus.registerGlobalHandler(new LensFilterHandler());
+
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
-		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+		if (showAllFacadesCreative) {
+			BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+		}
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
 		}
@@ -552,10 +566,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 		}
 
-		ListMatchHandlerClass.itemClasses.add(ItemPipe.class);
-		ListMatchHandlerClass.itemClasses.add(ItemGate.class);
-		ListMatchHandlerClass.itemClasses.add(ItemFacade.class);
-		ListMatchHandlerClass.itemClasses.add(ItemPipeWire.class);
+		ListRegistry.itemClassAsType.add(ItemPipe.class);
+		ListRegistry.itemClassAsType.add(ItemGate.class);
+		ListRegistry.itemClassAsType.add(ItemFacade.class);
+		ListRegistry.itemClassAsType.add(ItemPipeWire.class);
 	}
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
@@ -567,6 +581,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			debugPrintFacadeList = BuildCraftCore.mainConfigManager.get("debug.printFacadeList").getBoolean();
 			pipeFluidsBaseFlowRate = BuildCraftCore.mainConfigManager.get("general.pipes.baseFluidRate").getInt();
 			facadeForceNonLaserRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
+			showAllFacadesCreative = BuildCraftCore.mainConfigManager.get("general.pipes.facadeShowAllInCreative").getBoolean();
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
@@ -644,18 +659,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
 			if (pipe.isShapeless) {
-				CoreProxy.proxy.addShapelessRecipe(pipe.result, pipe.input);
+				BCRegistry.INSTANCE.addShapelessRecipe(pipe.result, pipe.input);
 			} else {
-				CoreProxy.proxy.addCraftingRecipe(pipe.result, pipe.input);
+				BCRegistry.INSTANCE.addCraftingRecipe(pipe.result, pipe.input);
 			}
 		}
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
 		RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
-		
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
+
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p',
 				Blocks.piston);
 
 		//Facade turning helper
@@ -682,7 +697,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i),
 						"OSO", "SGS", "OSO",
 						'O', "ingotIron", 'S', dye, 'G', "blockGlass"
-						));
+				));
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16),
 						"OSO", "SGS", "OSO",
 						'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"
@@ -696,21 +711,31 @@ public class BuildCraftTransport extends BuildCraftMod {
 		InterModComms.processIMC(event);
 	}
 
-	public static Item buildPipe(Class<? extends Pipe> clas, Object... ingredients) {
+	public static Item buildPipe(Class<? extends Pipe<?>> clas, Object... ingredients) {
 		return buildPipe(clas, BCCreativeTab.get("pipes"), ingredients);
 	}
 
 	@Deprecated
-	public static Item buildPipe(Class<? extends Pipe> clas,
+	public static Item buildPipe(Class<? extends Pipe<?>> clas,
 								 String descr, BCCreativeTab creativeTab,
 								 Object... ingredients) {
 		return buildPipe(clas, creativeTab, ingredients);
 	}
 
-	public static Item buildPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab,
-			Object... ingredients) {
+	public static Item buildPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab,
+								 Object... ingredients) {
+		if (!BCRegistry.INSTANCE.isEnabled("pipes", clas.getSimpleName())) {
+			return null;
+		}
+
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
+
+		for (Object o : ingredients) {
+			if (o == null) {
+				return res;
+			}
+		}
 
 		// Add appropriate recipes to temporary list
 		if (ingredients.length == 3) {
@@ -746,7 +771,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 				pipeRecipes.add(recipe);
 
-				if (ingredients[1] instanceof ItemPipe) {
+				if (ingredients[1] instanceof ItemPipe && clas != PipeStructureCobblestone.class) {
 					PipeRecipe uncraft = new PipeRecipe();
 					uncraft.isShapeless = true;
 					uncraft.input = new Object[]{recipe.result};

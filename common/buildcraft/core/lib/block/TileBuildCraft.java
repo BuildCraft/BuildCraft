@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
@@ -38,7 +39,7 @@ import buildcraft.core.lib.utils.Utils;
  * provides all the underlying functionality to stop code repetition.
  */
 public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable {
-    protected TileBuffer[] cache;
+	protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
 	protected IControllable.Mode mode;
 
@@ -52,7 +53,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public String getOwner() {
 		return owner;
 	}
-	
+
 	public void addGuiWatcher(EntityPlayer player) {
 		if (!guiWatchers.contains(player)) {
 			guiWatchers.add(player);
@@ -64,7 +65,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 			guiWatchers.remove(player);
 		}
 	}
-	
+
 	@Override
 	public void updateEntity() {
 		if (!init && !isInvalid()) {
@@ -82,17 +83,17 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	}
 
-    @Override
-    public void validate() {
-        super.validate();
-        cache = null;
-    }
+	@Override
+	public void validate() {
+		super.validate();
+		cache = null;
+	}
 
 	@Override
 	public void invalidate() {
 		init = false;
 		super.invalidate();
-        cache = null;
+		cache = null;
 	}
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
@@ -102,14 +103,18 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	public void destroy() {
-        cache = null;
+		cache = null;
 	}
 
 	public void sendNetworkUpdate() {
 		if (worldObj != null && !worldObj.isRemote) {
 			BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj,
-					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+					xCoord, yCoord, zCoord, getNetworkUpdateRange());
 		}
+	}
+
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE;
 	}
 
 	public void writeData(ByteBuf stream) {
@@ -179,7 +184,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			int received = battery.receiveEnergy(maxReceive - receivedTick, simulate);
 			if (!simulate) {
@@ -196,7 +201,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	 * If you want to use this, implement IEnergyProvider.
 	 */
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);
 			if (!simulate) {
@@ -234,19 +239,19 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		this.battery = battery;
 	}
 
-    public Block getBlock(ForgeDirection side) {
-        if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-        }
-        return cache[side.ordinal()].getBlock();
-    }
+	public Block getBlock(ForgeDirection side) {
+		if (cache == null) {
+			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		return cache[side.ordinal()].getBlock();
+	}
 
-    public TileEntity getTile(ForgeDirection side) {
-        if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-        }
-        return cache[side.ordinal()].getTile();
-    }
+	public TileEntity getTile(ForgeDirection side) {
+		if (cache == null) {
+			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		}
+		return cache[side.ordinal()].getTile();
+	}
 
 	public IControllable.Mode getControlMode() {
 		return mode;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
@@ -454,7 +455,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public boolean setPipeColor(int color) {
 		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
-			renderState.glassColorDirty = true;
 			glassColor = color;
 			notifyBlockChanged();
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
@@ -507,34 +507,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					break;
 
 			}
-		}
-
-		// Facades
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
-			if (!(pluggable instanceof FacadePluggable)) {
-				continue;
-			}
-
-			FacadeState[] states = ((FacadePluggable) pluggable).states;
-			// Iterate over all states and activate first proper
-			int defaultState = -1;
-			int activeState = -1;
-			for (int i = 0; i < states.length; i++) {
-				FacadeState state = states[i];
-				if (state.wire == null) {
-					defaultState = i;
-					continue;
-				}
-				if (pipe != null && pipe.isWireActive(state.wire)) {
-					activeState = i;
-					break;
-				}
-			}
-			if (activeState < 0) {
-				activeState = defaultState;
-			}
-			((FacadePluggable) pluggable).setActiveState(activeState);
 		}
 
 		/* TODO: Rewrite the requiresRenderUpdate API to run on the
@@ -1194,7 +1166,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		IEnergyHandler handler = internalGetEnergyHandler(from);
 		if (handler != null) {
 			return handler.receiveEnergy(from, maxReceive, simulate);
@@ -1205,7 +1177,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		IEnergyHandler handler = internalGetEnergyHandler(from);
 		if (handler != null) {
 			return handler.extractEnergy(from, maxExtract, simulate);

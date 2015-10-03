@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,12 +10,11 @@ package buildcraft.factory;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -39,7 +38,7 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.RefineryRecipeManager;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IHasWork, IFlexibleCrafter, ICommandReceiver {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
@@ -63,50 +62,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TileRefinery() {
 		super();
 		this.setBattery(new RFBattery(10000, 1500, 0));
-	}
-
-	@Override
-	public int getSizeInventory() {
-		return 0;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return null;
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-	}
-
-	@Override
-	public String getInventoryName() {
-		return null;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return 0;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return false;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		return null;
 	}
 
 	@Override
@@ -150,31 +105,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 			CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
 			result.fill(r.crafted.copy(), true);
 		}
-	}
-
-	private boolean containsInput(FluidStack ingredient) {
-		if (ingredient == null) {
-			return true;
-		}
-
-		return (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(ingredient))
-				|| (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(ingredient));
-	}
-
-	private boolean consumeInput(FluidStack liquid) {
-		if (liquid == null) {
-			return true;
-		}
-
-		if (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(liquid)) {
-			tanks[0].drain(liquid.amount, true);
-			return true;
-		} else if (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(liquid)) {
-			tanks[1].drain(liquid.amount, true);
-			return true;
-		}
-
-		return false;
 	}
 
 	@Override
@@ -253,14 +183,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		}
 	}
 
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
 	public void resetFilters() {
 		for (SingleUseTank tank : tankManager) {
 			tank.setAcceptedFluid(null);
@@ -303,12 +225,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		FluidStack resourceUsing = resource.copy();
 
 		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks1().contains(resource)) {
-		    used += tanks[0].fill(resourceUsing, doFill);
-		    resourceUsing.amount -= used;
+			used += tanks[0].fill(resourceUsing, doFill);
+			resourceUsing.amount -= used;
 		}
 		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks2().contains(resource)) {
-		    used += tanks[1].fill(resourceUsing, doFill);
-		    resourceUsing.amount -= used;
+			used += tanks[1].fill(resourceUsing, doFill);
+			resourceUsing.amount -= used;
 		}
 		updateRecipe();
 
@@ -328,7 +250,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		currentRecipe = null;
 		craftingResult = null;
 
-		for (IFlexibleRecipe recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
+		for (IFlexibleRecipe<FluidStack> recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
 			craftingResult = recipe.craft(this, true);
 
 			if (craftingResult != null) {
@@ -380,11 +302,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		return true;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
 	}
 
 	@Override

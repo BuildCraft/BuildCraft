@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,11 +14,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.DimensionManager;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.network.PacketIds;
 
+// TODO: Rename to PacketGuiUpdate
 public class PacketGuiReturn extends Packet {
 	private EntityPlayer sender;
 	private IGuiReturnHandler obj;
@@ -26,7 +28,7 @@ public class PacketGuiReturn extends Packet {
 
 	public PacketGuiReturn() {
 	}
-	
+
 	public PacketGuiReturn(EntityPlayer sender) {
 		this.sender = sender;
 	}
@@ -44,7 +46,7 @@ public class PacketGuiReturn extends Packet {
 	@Override
 	public void writeData(ByteBuf data) {
 		data.writeInt(obj.getWorld().provider.dimensionId);
-		
+
 		if (obj instanceof TileEntity) {
 			TileEntity tile = (TileEntity) obj;
 			data.writeBoolean(true);
@@ -58,9 +60,9 @@ public class PacketGuiReturn extends Packet {
 		} else {
 			return;
 		}
-		
+
 		obj.writeGuiData(data);
-		
+
 		if (extraData != null) {
 			data.writeBytes(extraData);
 		}
@@ -71,7 +73,7 @@ public class PacketGuiReturn extends Packet {
 		int dim = data.readInt();
 		World world = DimensionManager.getWorld(dim);
 		boolean tileReturn = data.readBoolean();
-		
+
 		if (tileReturn) {
 			int x = data.readInt();
 			int y = data.readInt();

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -33,13 +34,13 @@ import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
 	protected RFBattery battery = new RFBattery(2560, 80, 0);
-	
+
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	protected float speedMultiplier = 1.0F;
 
 	private int ticksSincePull = 0;
-	
+
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
@@ -96,7 +97,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		super.updateEntity();
 
 		if (container.getWorldObj().isRemote) {
@@ -104,7 +105,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		}
 
 		ticksSincePull++;
-		
+
 		if (shouldTick()) {
 			if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
 				extractItems();
@@ -115,7 +116,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			speedMultiplier = 1.0F;
 		}
 	}
-	
+
 	private boolean shouldTick() {
 		if (ticksSincePull < 8) {
 			return false;
@@ -244,13 +245,13 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -43,13 +43,13 @@ public final class LibraryId implements Comparable<LibraryId>, ISerializable {
 		}
 	}
 
-	public void write (NBTTagCompound nbt) {
+	public void write(NBTTagCompound nbt) {
 		nbt.setByteArray("uniqueBptId", uniqueId);
 		nbt.setString("name", name);
 		nbt.setString("extension", extension);
 	}
 
-	public void read (NBTTagCompound nbt) {
+	public void read(NBTTagCompound nbt) {
 		uniqueId = nbt.getByteArray("uniqueBptId");
 		name = nbt.getString("name");
 		if (nbt.hasKey("kind")) {
@@ -73,11 +73,11 @@ public final class LibraryId implements Comparable<LibraryId>, ISerializable {
 		return Arrays.hashCode(ArrayUtils.addAll(uniqueId, name.getBytes()));
 	}
 
-	public String getCompleteId () {
+	public String getCompleteId() {
 		if (completeId == null) {
 			if (uniqueId.length > 0) {
 				completeId = name + BPT_SEP_CHARACTER
-					+ toString(uniqueId);
+						+ toString(uniqueId);
 			} else {
 				completeId = name;
 			}
@@ -112,27 +112,27 @@ public final class LibraryId implements Comparable<LibraryId>, ISerializable {
 		return getCompleteId().compareTo(o.getCompleteId());
 	}
 
-	public static String toString (byte [] bytes) {
+	public static String toString(byte[] bytes) {
 		char[] ret = new char[bytes.length * 2];
 
 		for (int i = 0; i < bytes.length; i++) {
-			int val = bytes [i] + 128;
+			int val = bytes[i] + 128;
 
 			ret[i * 2] = toHex(val >> 4);
 			ret[i * 2 + 1] = toHex(val & 0xf);
 		}
 
-		return new String (ret);
+		return new String(ret);
 	}
 
 	public static byte[] toBytes(String suffix) {
-		byte [] result = new byte [suffix.length() / 2];
+		byte[] result = new byte[suffix.length() / 2];
 
 		for (int i = 0; i < result.length; ++i) {
-			result [i] = (byte) ((byte) (fromHex(suffix.charAt(i * 2 + 1)))
+			result[i] = (byte) ((byte) (fromHex(suffix.charAt(i * 2 + 1)))
 					+ (byte) (fromHex(suffix.charAt(i * 2)) << 4));
 
-			result [i] -= 128;
+			result[i] -= 128;
 		}
 
 		return result;

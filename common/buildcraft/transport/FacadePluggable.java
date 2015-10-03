@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -36,6 +37,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
 	public ItemFacade.FacadeState[] states;
 	private ItemFacade.FacadeState activeState;
+	private IPipeTile pipe;
 
 	// Client sync
 	private Block block;
@@ -48,6 +50,16 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	public FacadePluggable() {
+	}
+
+	@Override
+	public void invalidate() {
+		this.pipe = null;
+	}
+
+	@Override
+	public void validate(IPipeTile pipe, ForgeDirection direction) {
+		this.pipe = pipe;
 	}
 
 	@Override
@@ -73,9 +85,9 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
 		if (states != null) {
-			return new ItemStack[] { ItemFacade.getFacade(states) };
+			return new ItemStack[]{ItemFacade.getFacade(states)};
 		} else {
-			return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getCurrentBlock(), getCurrentMetadata(), null, isHollow())) };
+			return new ItemStack[]{ItemFacade.getFacade(new ItemFacade.FacadeState(getCurrentBlock(), getCurrentMetadata(), null, isHollow()))};
 		}
 	}
 
@@ -166,14 +178,31 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	private void prepareStates() {
-		if (activeState == null) {
-			activeState = states != null && states.length > 0 ? states[0] : null;
-		}
-	}
+		if (states != null && states.length > 1) {
+			if (pipe == null || pipe.getPipe() == null) {
+				activeState = states[0];
+				return;
+			}
 
-	protected void setActiveState(int id) {
-		if (id >= 0 && id < states.length) {
-			activeState = states[id];
+			IPipe p = pipe.getPipe();
+			int defaultStateId = -1;
+			int activeStateId = -1;
+
+			for (int i = 0; i < states.length; i++) {
+				ItemFacade.FacadeState state = states[i];
+				if (state.wire == null) {
+					defaultStateId = i;
+					continue;
+				}
+				if (p.isWireActive(state.wire)) {
+					activeStateId = i;
+					break;
+				}
+			}
+
+			activeState = activeStateId < 0 ? (defaultStateId < 0 ? states[0] : states[defaultStateId]) : states[activeStateId];
+		} else if (activeState == null) {
+			activeState = states != null && states.length > 0 ? states[0] : null;
 		}
 	}
 }

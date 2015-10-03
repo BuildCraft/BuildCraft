@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,13 +12,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityBlock extends Entity {
 
 	@SideOnly(Side.CLIENT)
-	public IIcon texture;
+	public IIcon[] texture;
 	public float shadowSize = 0;
 	public float rotationX = 0;
 	public float rotationY = 0;
@@ -47,6 +48,15 @@ public class EntityBlock extends Entity {
 		this.motionX = 0.0;
 		this.motionY = 0.0;
 		this.motionZ = 0.0;
+	}
+
+	public void setTexture(IIcon icon) {
+		if (this.texture == null) {
+			this.texture = new IIcon[6];
+		}
+		for (int i = 0; i < 6; i++) {
+			this.texture[i] = icon;
+		}
 	}
 
 	@Override
@@ -93,9 +103,9 @@ public class EntityBlock extends Entity {
 	public int getBrightnessForRender(float par1) {
 		return brightness > 0 ? brightness : super.getBrightnessForRender(par1);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
-    public boolean isInRangeToRenderDist(double distance) {
+	public boolean isInRangeToRenderDist(double distance) {
 		return distance < 50000;
-    }
+	}
 }

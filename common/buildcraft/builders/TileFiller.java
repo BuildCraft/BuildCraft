@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
@@ -27,9 +28,7 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.TileMarker;
 import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
@@ -48,7 +47,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	public IStatementParameter[] patternParameters;
 
 	private BptBuilderTemplate currentTemplate;
-	private BptContext context;
 
 	private final Box box = new Box();
 	private boolean done = false;
@@ -96,9 +94,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	private void initTemplate() {
-		if (currentPattern != null && box.isInitialized()) {
+		if (currentPattern != null && box.isInitialized() && box.sizeX() > 0 && box.sizeY() > 0 && box.sizeZ() > 0) {
 			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
-			context = currentTemplate.getContext();
 			currentTemplate.blueprint.excavate = excavate;
 		}
 	}
@@ -245,7 +242,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-		public int getInventoryStackLimit() {
+	public int getInventoryStackLimit() {
 		return inv.getInventoryStackLimit();
 	}
 
@@ -394,7 +391,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override
@@ -422,16 +419,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 				NetworkUtils.writeNBT(data, parameterData);
 			}
 		}));
-	}
-
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 1) { // Red LED
-			return done ? 15 : 0;
-		} else if (renderPass == 2) { // Green LED
-			return 0;
-		} else {
-			return -1;
-		}
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -30,7 +31,8 @@ public class PacketHandlerCore extends PacketHandler {
 				} else {
 					handleTabletServer(player, (PacketTabletMessage) packet);
 				}
-			} break;
+			}
+			break;
 		}
 	}
 

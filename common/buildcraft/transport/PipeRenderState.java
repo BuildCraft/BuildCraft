@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,13 +16,12 @@ import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
 public class PipeRenderState implements ISerializable {
-
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	protected boolean glassColorDirty = false;
+	private boolean glassColorDirty = false;
 	private byte glassColor = -127;
-	
+
 	private boolean dirty = true;
 
 	public void clean() {
@@ -38,7 +37,10 @@ public class PipeRenderState implements ISerializable {
 	}
 
 	public void setGlassColor(byte color) {
-		this.glassColor = color;
+		if (this.glassColor != color) {
+			this.glassColor = color;
+			this.glassColorDirty = true;
+		}
 	}
 
 	public boolean isDirty() {

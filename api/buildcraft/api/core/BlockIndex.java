@@ -56,7 +56,6 @@ public class BlockIndex implements Comparable<BlockIndex> {
 	 */
 	@Override
 	public int compareTo(BlockIndex o) {
-
 		if (o.x < x) {
 			return 1;
 		} else if (o.x > x) {

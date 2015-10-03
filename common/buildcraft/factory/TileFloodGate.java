@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -199,9 +200,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public void queueForFilling(int x, int y, int z) {
-        if (y < 0 || y > 255) {
-            return;
-        }
+		if (y < 0 || y > 255) {
+			return;
+		}
 		BlockIndex index = new BlockIndex(x, y, z);
 		if (visitedBlocks.add(index)) {
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
@@ -256,28 +257,28 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		}
 	}
 
-	// TODO: fit in single byte
 	@Override
 	public void readData(ByteBuf stream) {
+		byte flags = stream.readByte();
 		for (int i = 0; i < 6; i++) {
-			blockedSides[i] = stream.readBoolean();
-			System.out.println("Rsides=" + i + "=" + blockedSides[i]);
+			blockedSides[i] = (flags & (1 << i)) != 0;
 		}
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
+		byte flags = 0;
 		for (int i = 0; i < 6; i++) {
-			System.out.println("Wsides=" + i + "=" + blockedSides[i]);
-			stream.writeBoolean(blockedSides[i]);
+			if (blockedSides[i]) {
+				flags |= 1 << i;
+			}
 		}
+		stream.writeByte(flags);
 	}
 
 	public void switchSide(ForgeDirection side) {
-		System.out.println("Csides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
 		if (side.ordinal() != 1) {
 			blockedSides[side.ordinal()] = !blockedSides[side.ordinal()];
-			System.out.println("Ssides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
 
 			rebuildQueue();
 			sendNetworkUpdate();

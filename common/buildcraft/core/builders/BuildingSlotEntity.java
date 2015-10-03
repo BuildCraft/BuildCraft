@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -34,12 +34,13 @@ public class BuildingSlotEntity extends BuildingSlot {
 	public int sequenceNumber;
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public boolean writeToWorld(IBuilderContext context) {
 		schematic.writeToWorld(context);
+		return true;
 	}
 
 	@Override
-	public Position getDestination () {
+	public Position getDestination() {
 		NBTTagList nbttaglist = schematic.entityNBT.getTagList("Pos", 6);
 		Position pos = new Position(nbttaglist.func_150309_d(0),
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
@@ -48,7 +49,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	}
 
 	@Override
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		LinkedList<ItemStack> results = new LinkedList<ItemStack>();
 
 		Collections.addAll(results, schematic.storedRequirements);
@@ -67,7 +68,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	}
 
 	@Override
-	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		NBTTagCompound schematicNBT = new NBTTagCompound();
 		SchematicFactory.getFactory(schematic.getClass())
 				.saveSchematicToWorldNBT(schematicNBT, schematic, registry);

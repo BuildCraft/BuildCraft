@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -26,18 +26,17 @@ import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 	private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
 	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");
-	private IInventory playerInventory;
 	private TileBuilder builder;
 	private GuiButton selectedButton;
 
 	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
 		super(new ContainerBuilder(playerInventory, builder), builder, BLUEPRINT_TEXTURE);
-		this.playerInventory = playerInventory;
 		this.builder = builder;
 		xSize = 256;
 		ySize = 225;
@@ -125,6 +124,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			for (int i = 0; i < builder.fluidTanks.length; i++) {
 				Tank tank = builder.fluidTanks[i];
 				if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+					mc.renderEngine.bindTexture(FluidRenderer.getFluidSheet(tank.getFluid()));
 					drawFluid(tank.getFluid(), guiLeft + 179 + 18 * i, guiTop + 145, 16, 47, tank.getCapacity());
 					drawTexturedModalRect(guiLeft + 179 + 18 * i, guiTop + 145, 0, 54, 16, 47);
 				}

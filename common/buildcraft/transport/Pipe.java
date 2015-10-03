@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -62,8 +63,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		this.item = item;
 
 		eventBus.registerHandler(this);
-		// TODO: Move to globalHandlers once a priority system is in place
-		eventBus.registerHandler(new LensFilterHandler());
 	}
 
 	public void setTile(TileEntity tile) {
@@ -80,11 +79,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean blockActivated(EntityPlayer player, ForgeDirection side) {
-		return false;
-	}
-
-	@Deprecated
-	public boolean blockActivated(EntityPlayer entityplayer) {
 		return false;
 	}
 
@@ -168,7 +162,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void writeToNBT(NBTTagCompound data) {
 		transport.writeToNBT(data);
-		
+
 		// Save gate if any
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			final String key = "Gate[" + i + "]";
@@ -189,7 +183,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void readFromNBT(NBTTagCompound data) {
 		transport.readFromNBT(data);
-		
+
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			final String key = "Gate[" + i + "]";
 			gates[i] = data.hasKey(key) ? GateFactory.makeGate(this, data.getCompoundTag(key)) : null;
@@ -198,7 +192,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		// Legacy support
 		if (data.hasKey("Gate")) {
 			transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), 0);
-			
+
 			data.removeTag("Gate");
 		}
 
@@ -219,11 +213,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void updateSignalState() {
 		for (PipeWire c : PipeWire.values()) {
-			if (!wireSet[c.ordinal()]) {
-				return;
+			if (wireSet[c.ordinal()]) {
+				updateSignalState(c);
 			}
-
-			updateSignalState(c);
 		}
 	}
 
@@ -326,17 +318,17 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 		return false;
 	}
-	
+
 	public int getMaxRedstoneOutput(ForgeDirection dir) {
 		int output = 0;
-		
+
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			output = Math.max(output, getRedstoneOutput(side));
 			if (side == dir) {
 				output = Math.max(output, getRedstoneOutputSide(side));
 			}
 		}
-		
+
 		return output;
 	}
 
@@ -434,7 +426,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 
 		for (ValveState state : ValveState.VALUES) {
-		    result.add(BuildCraftTransport.actionValve[state.ordinal()]);
+			result.add(BuildCraftTransport.actionValve[state.ordinal()]);
 		}
 
 		return result;
@@ -483,7 +475,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure
 				|| Utils.checkPipesConnections(
-						container, tile);
+				container, tile);
 	}
 
 	public void dropContents() {
@@ -551,13 +543,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public IPipeTile getTile() {
 		return container;
 	}
-	
+
 	@Override
 	public IGate getGate(ForgeDirection side) {
 		if (side == ForgeDirection.UNKNOWN) {
 			return null;
 		}
-		
+
 		return gates[side.ordinal()];
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,6 +9,7 @@
 package buildcraft.core.builders;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,41 +28,41 @@ public abstract class BuildingSlot {
 
 	public boolean built = false;
 
-	public void writeToWorld(IBuilderContext context) {
+	public boolean writeToWorld(IBuilderContext context) {
+		return false;
+	}
+
+	public void writeCompleted(IBuilderContext context, double complete) {
 
 	}
 
-	public void writeCompleted (IBuilderContext context, double complete) {
+	public void postProcessing(IBuilderContext context) {
 
 	}
 
-	public void postProcessing (IBuilderContext context) {
-
-	}
-
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		return new LinkedList<ItemStack>();
 	}
 
-	public abstract Position getDestination ();
+	public abstract Position getDestination();
 
-	public void addStackConsumed (ItemStack stack) {
+	public void addStackConsumed(ItemStack stack) {
 		if (stackConsumed == null) {
 			stackConsumed = new LinkedList<ItemStack>();
 		}
 
-		stackConsumed.add (stack);
+		stackConsumed.add(stack);
 	}
 
-	public LinkedList<ItemStack> getStacksToDisplay() {
-		return getSchematic ().getStacksToDisplay (stackConsumed);
+	public List<ItemStack> getStacksToDisplay() {
+		return getSchematic().getStacksToDisplay(stackConsumed);
 	}
 
-	public abstract boolean isAlreadyBuilt (IBuilderContext context);
+	public abstract boolean isAlreadyBuilt(IBuilderContext context);
 
-	public abstract Schematic getSchematic ();
+	public abstract Schematic getSchematic();
 
-	public abstract void writeToNBT (NBTTagCompound nbt, MappingRegistry registry);
+	public abstract void writeToNBT(NBTTagCompound nbt, MappingRegistry registry);
 
 	public abstract void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException;
 

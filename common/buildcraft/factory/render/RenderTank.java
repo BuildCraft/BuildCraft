@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,10 +12,12 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
 
@@ -51,7 +53,8 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glScalef(0.75F, 0.999F, 0.75F);
 		GL11.glTranslatef(0, -0.5F, 0);
 
-		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
+		int dl = (int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1));
+		GL11.glCallList(displayList[MathUtils.clamp(dl, 0, FluidRenderer.DISPLAY_STAGES - 1)]);
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();

@@ -7,6 +7,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -32,7 +33,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
 	}
-	
+
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return stack.getItem() instanceof ItemBucket;
@@ -40,8 +41,8 @@ public class StripesHandlerBucket implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesActivator activator) {
+						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
+						  IStripesActivator activator) {
 		if (world.isAirBlock(x, y, z)) {
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, direction.ordinal() < 2 ? y : (y - 1), z)) {
 				activator.sendItem(emptyBucket, direction.getOpposite());

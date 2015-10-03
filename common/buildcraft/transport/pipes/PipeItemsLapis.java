@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -54,7 +55,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer player) {
+	public boolean blockActivated(EntityPlayer player, ForgeDirection direction) {
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
 			if (player.isSneaking()) {
@@ -65,7 +66,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;
-		}  else {
+		} else {
 			int color = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
 			if (color >= 0 && color < 16) {
 				setColor(EnumColor.fromId(15 - color));

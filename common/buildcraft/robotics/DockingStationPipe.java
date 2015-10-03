@@ -3,6 +3,7 @@ package buildcraft.robotics;
 import java.util.List;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -21,6 +22,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
@@ -47,7 +49,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 					return 0;
 				}
 
-				((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport)
+				((PipeTransportItems) ((Pipe<?>) getPipe().getPipe()).transport)
 						.injectItem(item, from);
 			}
 			return stack.stackSize;
@@ -98,7 +100,12 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 	}
 
 	@Override
-	public IInventory getItemInput() {
+	public ForgeDirection getItemOutputSide() {
+		return side().getOpposite();
+	}
+
+	@Override
+	public ISidedInventory getItemInput() {
 		if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
 			return null;
 		}
@@ -113,10 +120,24 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
 				y() + dir.offsetY, z() + dir.offsetZ);
 		if (connectedTile instanceof IInventory) {
-			return (IInventory) connectedTile;
+			return InventoryWrapper.getWrappedInventory(connectedTile);
 		}
 
 		return null;
+	}
+
+	@Override
+	public ForgeDirection getItemInputSide() {
+		if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
+			return ForgeDirection.UNKNOWN;
+		}
+
+		if (!(getPipe().getPipe() instanceof PipeItemsWood)) {
+			return ForgeDirection.UNKNOWN;
+		}
+
+		int meta = ((TileEntity) getPipe()).getBlockMetadata();
+		return ForgeDirection.getOrientation(meta).getOpposite();
 	}
 
 	@Override
@@ -142,12 +163,31 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 	}
 
 	@Override
+	public ForgeDirection getFluidInputSide() {
+		if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
+			return ForgeDirection.UNKNOWN;
+		}
+
+		if (!(getPipe().getPipe() instanceof PipeFluidsWood)) {
+			return ForgeDirection.UNKNOWN;
+		}
+
+		int meta = ((TileEntity) getPipe()).getBlockMetadata();
+		return ForgeDirection.getOrientation(meta).getOpposite();
+	}
+
+	@Override
 	public IFluidHandler getFluidOutput() {
 		if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
 			return null;
 		}
 
-		return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
+		return (IFluidHandler) ((Pipe<?>) getPipe().getPipe()).transport;
+	}
+
+	@Override
+	public ForgeDirection getFluidOutputSide() {
+		return ForgeDirection.UNKNOWN;
 	}
 
 	@Override
@@ -172,7 +212,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 		if (getPipe() == null || getPipe().getPipe() == null) {
 			return false;
 		}
-		return ((Pipe) getPipe().getPipe()).isInitialized();
+		return ((Pipe<?>) getPipe().getPipe()).isInitialized();
 	}
 
 	@Override
@@ -196,7 +236,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 	@Override
 	public void unsafeRelease(EntityRobotBase robot) {
 		super.unsafeRelease(robot);
-		if (robotTaking() == null) {
+		if (robotTaking() == null && getPipe() != null) {
 			getPipe().scheduleRenderUpdate();
 		}
 	}

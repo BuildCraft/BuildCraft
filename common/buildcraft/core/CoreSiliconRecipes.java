@@ -2,6 +2,7 @@ package buildcraft.core;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
 import cpw.mods.fml.common.Optional;
 
 import buildcraft.BuildCraftCore;

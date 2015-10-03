@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -22,6 +22,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -259,7 +260,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		if (gate == null) {
 			return ActionActiveState.Deactivated;
 		} else {
-			return gate.actionsState [i];
+			return gate.actionsState[i];
 		}
 	}
 
@@ -310,7 +311,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	}
 
 	public Packet getStatementParameterPacket(final String name, final int slot,
-			final int paramSlot, final IStatementParameter parameter) {
+											  final int paramSlot, final IStatementParameter parameter) {
 		final String parameterName = parameter != null ? parameter.getUniqueTag() : null;
 		final NBTTagCompound parameterNBT = new NBTTagCompound();
 		if (parameter != null) {
@@ -467,7 +468,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setTriggerParameter", trigger, param, parameter));
 		}
 	}
-	
+
 	/**
 	 * GATE INFORMATION *
 	 */

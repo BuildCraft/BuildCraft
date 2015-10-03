@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -11,6 +11,7 @@ package buildcraft.energy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.network.IGuiHandler;
 
 import buildcraft.core.GuiIds;
@@ -37,14 +38,14 @@ public class EnergyGuiHandler implements IGuiHandler {
 
 		switch (id) {
 
-		case GuiIds.ENGINE_IRON:
-			return new GuiCombustionEngine(player.inventory, (TileEngineIron) engine);
+			case GuiIds.ENGINE_IRON:
+				return new GuiCombustionEngine(player.inventory, (TileEngineIron) engine);
 
-		case GuiIds.ENGINE_STONE:
-			return new GuiStoneEngine(player.inventory, (TileEngineStone) engine);
+			case GuiIds.ENGINE_STONE:
+				return new GuiStoneEngine(player.inventory, (TileEngineStone) engine);
 
-		default:
-			return null;
+			default:
+				return null;
 		}
 	}
 
@@ -64,14 +65,14 @@ public class EnergyGuiHandler implements IGuiHandler {
 
 		switch (id) {
 
-		case GuiIds.ENGINE_IRON:
-			return new ContainerEngine(player.inventory, engine);
+			case GuiIds.ENGINE_IRON:
+				return new ContainerEngine(player.inventory, engine);
 
-		case GuiIds.ENGINE_STONE:
-			return new ContainerEngine(player.inventory, engine);
+			case GuiIds.ENGINE_STONE:
+				return new ContainerEngine(player.inventory, engine);
 
-		default:
-			return null;
+			default:
+				return null;
 		}
 	}
 

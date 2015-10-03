@@ -10,7 +10,6 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -40,22 +39,26 @@ public abstract class Schematic {
 	 */
 	public enum BuildingStage {
 		/**
-		 * Standalone blocks can be placed in the air, and they don't change
-		 * once placed.
+		 * Standalone blocks do not change once placed.
 		 */
 		STANDALONE,
 
 		/**
-		 * Supported blocks may require to be placed on a standalone block,
-		 * e.g. a torch.
-		 */
-		SUPPORTED,
-
-		/**
 		 * Expanding blocks will grow and may disturb other block locations,
-		 * like e.g. water
+		 * like liquids.
 		 */
 		EXPANDING
+	}
+
+	/**
+	 * This is called to verify whether the required item is equal to the
+	 * supplied item.
+	 *
+	 * Primarily rely on this for checking metadata/NBT - the item ID
+	 * itself might have been filtered out by previously running code.
+	 */
+	public boolean isItemMatchingRequirement(ItemStack suppliedStack, ItemStack requiredStack) {
+		return BuilderAPI.schematicHelper.isEqualItem(suppliedStack, requiredStack);
 	}
 
 	/**
@@ -98,12 +101,14 @@ public abstract class Schematic {
 			}
 		}
 
-		if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
-			Item container = stack.getItem().getContainerItem();
-			ItemStack newStack = new ItemStack(container);
-			slot.setStackInSlot(newStack);
-		} else if (stack.stackSize == 0) {
-			slot.setStackInSlot(null);
+		if (stack.stackSize == 0) {
+			stack.stackSize = 1;
+			if (stack.getItem().hasContainerItem(stack)) {
+				ItemStack newStack = stack.getItem().getContainerItem(stack);
+				slot.setStackInSlot(newStack);
+			} else {
+				slot.setStackInSlot(null);
+			}
 		}
 
 		return result;
@@ -248,7 +253,7 @@ public abstract class Schematic {
 	 * Return the maximium building permission for blueprint containing this
 	 * schematic.
 	 */
-	public BuildingPermission getBuildingPermission () {
+	public BuildingPermission getBuildingPermission() {
 		return BuildingPermission.ALL;
 	}
 

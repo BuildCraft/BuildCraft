@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,13 +20,11 @@ import buildcraft.transport.Pipe;
 public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	private final IDiamondPipe pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerDiamondPipe(IInventory playerInventory, IDiamondPipe pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		for (int y = 0; y < 6; y++) {
@@ -48,6 +46,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return ((Pipe) pipe).container.isUseableByPlayer(entityplayer);
+		return ((Pipe<?>) pipe).container.isUseableByPlayer(entityplayer);
 	}
 }

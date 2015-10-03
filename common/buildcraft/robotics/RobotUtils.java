@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -43,7 +44,6 @@ public final class RobotUtils {
 	}
 
 
-
 	public static RedstoneBoardRobotNBT getNextBoard(ItemStack stack, boolean reverse) {
 		Collection<RedstoneBoardNBT<?>> boards = RedstoneBoardRegistry.instance.getAllBoardNBTs();
 		if (stack == null || !(stack.getItem() instanceof ItemRobot)) {
@@ -57,7 +57,7 @@ public final class RobotUtils {
 				boards = Lists.reverse((List<RedstoneBoardNBT<?>>) boards);
 			}
 			boolean found = false;
-			for (RedstoneBoardNBT boardNBT : boards) {
+			for (RedstoneBoardNBT<?> boardNBT : boards) {
 				if (found) {
 					return (RedstoneBoardRobotNBT) boardNBT;
 				} else if (ItemRobot.getRobotNBT(stack) == boardNBT) {

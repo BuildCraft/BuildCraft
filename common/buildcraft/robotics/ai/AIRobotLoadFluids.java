@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -56,7 +56,7 @@ public class AIRobotLoadFluids extends AIRobot {
 	}
 
 	public static int load(EntityRobotBase robot, DockingStation station, IFluidFilter filter,
-			boolean doLoad) {
+						   boolean doLoad) {
 		if (station == null) {
 			return 0;
 		}
@@ -71,7 +71,9 @@ public class AIRobotLoadFluids extends AIRobot {
 			return 0;
 		}
 
-		FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME,
+		ForgeDirection side = station.getFluidInputSide();
+
+		FluidStack drainable = handler.drain(side, FluidContainerRegistry.BUCKET_VOLUME,
 				false);
 		if (drainable == null || !filter.matches(drainable.getFluid())) {
 			return 0;
@@ -82,7 +84,7 @@ public class AIRobotLoadFluids extends AIRobot {
 
 		if (filled > 0 && doLoad) {
 			drainable.amount = filled;
-			handler.drain(station.side, drainable, true);
+			handler.drain(side, drainable, true);
 		}
 		return filled;
 	}

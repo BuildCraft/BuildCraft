@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -31,7 +31,7 @@ import buildcraft.transport.pipes.PipePowerWood;
  */
 public final class PipeConnectionBans {
 
-	private static final SetMultimap<Class<? extends Pipe>, Class<? extends Pipe>> connectionBans = HashMultimap.create();
+	private static final SetMultimap<Class<? extends Pipe<?>>, Class<? extends Pipe<?>>> connectionBans = HashMultimap.create();
 
 	static {
 		// Fluid pipes
@@ -47,7 +47,7 @@ public final class PipeConnectionBans {
 		banConnection(PipeItemsEmzuli.class);
 		banConnection(PipeItemsWood.class, PipeItemsEmerald.class, PipeItemsEmzuli.class);
 		banConnection(PipeItemsObsidian.class);
-		
+
 		// Power Pipes
 		banConnection(PipePowerWood.class);
 		banConnection(PipePowerEmerald.class);
@@ -65,7 +65,7 @@ public final class PipeConnectionBans {
 	 *
 	 * @param types
 	 */
-	public static void banConnection(Class<? extends Pipe>... types) {
+	public static void banConnection(Class<? extends Pipe<?>>... types) {
 		if (types.length == 0) {
 			return;
 		}

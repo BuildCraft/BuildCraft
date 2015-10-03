@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,41 +13,40 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicRail extends SchematicBlock {
-
+public class SchematicRail extends SchematicBlockFloored {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		switch (meta) {
-		case 0:
-			meta = 1;
-			break;
-		case 1:
-			meta = 0;
-			break;
+			case 0:
+				meta = 1;
+				break;
+			case 1:
+				meta = 0;
+				break;
 
-		case 2:
-			meta = 5;
-			break;
-		case 3:
-			meta = 4;
-			break;
-		case 4:
-			meta = 2;
-			break;
-		case 5:
-			meta = 3;
-			break;
+			case 2:
+				meta = 5;
+				break;
+			case 3:
+				meta = 4;
+				break;
+			case 4:
+				meta = 2;
+				break;
+			case 5:
+				meta = 3;
+				break;
 
-		case 6:
-		case 7:
-		case 8:
-			meta++;
-			break;
-		case 9:
-			meta = 6;
-			break;
+			case 6:
+			case 7:
+			case 8:
+				meta++;
+				break;
+			case 9:
+				meta = 6;
+				break;
 		}
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -65,10 +65,14 @@ public class AIRobotGotoStation extends AIRobot {
 		if (station == null) {
 			terminate();
 		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
-					stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
-					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+			if (ai.success()) {
+				startDelegateAI(new AIRobotStraightMoveTo(robot,
+						stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
+						stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
+						stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+			} else {
+				terminate();
+			}
 		} else {
 			setSuccess(true);
 			if (stationSide.offsetY == 0) {

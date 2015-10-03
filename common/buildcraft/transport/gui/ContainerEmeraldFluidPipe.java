@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,13 +19,11 @@ import buildcraft.transport.pipes.PipeFluidsEmerald;
 public class ContainerEmeraldFluidPipe extends BuildCraftContainer {
 
 	private final PipeFluidsEmerald pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerEmeraldFluidPipe(IInventory playerInventory, PipeFluidsEmerald pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		addSlotToContainer(new SlotPhantom(filterInv, 0, 80, 18));

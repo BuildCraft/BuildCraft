@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
@@ -71,7 +72,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	public byte broadcastSignal, prevBroadcastSignal;
 	public int redstoneOutput = 0;
 	public int redstoneOutputSide = 0;
-	
+
 	/**
 	 * this is the internal pulsing state of the gate. Intended to be managed
 	 * by the server side only, the client is supposed to be referring to the
@@ -81,7 +82,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	private ForgeDirection direction;
 
 	private HashMultiset<IStatement> statementCounts = HashMultiset.create();
-	private int[] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
+	private int[] actionGroups = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
 
 	// / CONSTRUCTOR
 	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
@@ -164,7 +165,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			expansions.put(expansion, expansion.makeController(pipe != null ? pipe.container : null));
 		}
 	}
-	
+
 	public void writeStatementsToNBT(NBTTagCompound data) {
 		for (int i = 0; i < material.numSlots; ++i) {
 			if (triggers[i] != null) {
@@ -266,12 +267,12 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 		recalculateActionGroups();
 	}
-	
+
 	public boolean verifyGateStatements() {
 		List<IStatement> triggerList = getAllValidTriggers();
 		List<IStatement> actionList = getAllValidActions();
 		boolean warning = false;
-		
+
 		for (int i = 0; i < MAX_STATEMENTS; ++i) {
 			if ((triggers[i] != null || actions[i] != null) && i >= material.numSlots) {
 				triggers[i] = null;
@@ -279,7 +280,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				warning = true;
 				continue;
 			}
-			
+
 			if (triggers[i] != null) {
 				if (!triggerList.contains(triggers[i]) ||
 						triggers[i].minParameters() > material.numTriggerParameters) {
@@ -287,7 +288,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 					warning = true;
 				}
 			}
-			
+
 			if (actions[i] != null) {
 				if (!actionList.contains(actions[i]) ||
 						actions[i].minParameters() > material.numActionParameters) {
@@ -303,7 +304,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 		return !warning;
 	}
-	
+
 	public void readFromNBT(NBTTagCompound data) {
 		readStatementsFromNBT(data);
 
@@ -389,7 +390,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	public void resolveActions() {
 		int oldRedstoneOutput = redstoneOutput;
 		redstoneOutput = 0;
-		
+
 		int oldRedstoneOutputSide = redstoneOutputSide;
 		redstoneOutputSide = 0;
 
@@ -469,7 +470,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			if (action instanceof IActionInternal) {
 				((IActionInternal) action).actionActivate(this, slot.parameters);
 			} else if (action instanceof IActionExternal) {
-				for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 					TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 					if (tile != null) {
 						((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
@@ -529,7 +530,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				return true;
 			}
 		} else if (trigger instanceof ITriggerExternal) {
-			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 				if (tile != null) {
 					if (tile instanceof ITriggerExternalOverride) {
@@ -571,16 +572,16 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			expansion.addTriggers(list);
 		}
 	}
-	
+
 	public List<IStatement> getAllValidTriggers() {
 		ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
 		allTriggers.addAll(StatementManager.getInternalTriggers(this));
-		
+
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
-		
+
 		return allTriggers;
 	}
 
@@ -596,19 +597,19 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			expansion.addActions(list);
 		}
 	}
-	
+
 	public List<IStatement> getAllValidActions() {
 		ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
 		allActions.addAll(StatementManager.getInternalActions(this));
-		
+
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
-		
+
 		return allActions;
 	}
-	
+
 	//@Override TODO
 	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {

@@ -2,6 +2,7 @@ package buildcraft.transport.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -13,9 +14,6 @@ import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 
-/**
- * Created by asie on 3/14/15.
- */
 public class TriggerLightSensor extends BCStatement implements ITriggerInternal {
 	private final boolean bright;
 

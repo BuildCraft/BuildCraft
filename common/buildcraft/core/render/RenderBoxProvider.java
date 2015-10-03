@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -45,8 +45,8 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 			for (Box b : ((IBoxesProvider) tileentity).getBoxes()) {
 				if (b.isVisible) {
 					RenderBox.doRender(
-						TileEntityRendererDispatcher.instance.field_147553_e,
-						getTexture(b.kind), b);
+							TileEntityRendererDispatcher.instance.field_147553_e,
+							getTexture(b.kind), b);
 				}
 			}
 		} else if (tileentity instanceof IBoxProvider) {
@@ -54,8 +54,8 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 
 			if (b.isVisible) {
 				RenderBox.doRender(
-					TileEntityRendererDispatcher.instance.field_147553_e,
-					getTexture(b.kind), b);
+						TileEntityRendererDispatcher.instance.field_147553_e,
+						getTexture(b.kind), b);
 			}
 		}
 
@@ -65,18 +65,18 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 
 	private ResourceLocation getTexture(Box.Kind kind) {
 		switch (kind) {
-		case LASER_RED:
-			return LASER_RED;
-		case LASER_YELLOW:
-			return LASER_YELLOW;
-		case LASER_GREEN:
-			return LASER_GREEN;
-		case LASER_BLUE:
-			return LASER_BLUE;
-		case STRIPES:
-			return STRIPES;
-		case BLUE_STRIPES:
-			return BLUE_STRIPES;
+			case LASER_RED:
+				return LASER_RED;
+			case LASER_YELLOW:
+				return LASER_YELLOW;
+			case LASER_GREEN:
+				return LASER_GREEN;
+			case LASER_BLUE:
+				return LASER_BLUE;
+			case STRIPES:
+				return STRIPES;
+			case BLUE_STRIPES:
+				return BLUE_STRIPES;
 		}
 
 		return null;

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,11 +14,11 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.robotics.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -27,6 +27,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.ZonePlan;
 import buildcraft.robotics.map.MapWorld;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
@@ -116,26 +117,26 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 			} else if ("computeMap".equals(command)) {
 				computeMap(stream.readInt(), stream.readInt(),
 						stream.readUnsignedShort(), stream.readUnsignedShort(),
-						stream.readUnsignedByte(), (EntityPlayer) sender);
+						stream.readFloat(), (EntityPlayer) sender);
 			} else if ("setName".equals(command)) {
 				map.mapName = NetworkUtils.readUTF(stream);
 			}
 		}
 	}
 
-	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
+	private void computeMap(int cx, int cz, int width, int height, float blocksPerPixel, EntityPlayer player) {
 		final byte[] textureData = new byte[width * height];
 
 		MapWorld w = BuildCraftRobotics.manager.getWorld(map.getWorldObj());
-		int startX = cx - width * blocksPerPixel / 2;
-		int startZ = cz - height * blocksPerPixel / 2;
-		int mapStartX = (map.chunkStartX << 4);
-		int mapStartZ = (map.chunkStartZ << 4);
+		int startX = Math.round(cx - width * blocksPerPixel / 2);
+		int startZ = Math.round(cz - height * blocksPerPixel / 2);
+		int mapStartX = map.chunkStartX << 4;
+		int mapStartZ = map.chunkStartZ << 4;
 
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				int x = startX + i * blocksPerPixel;
-				int z = startZ + j * blocksPerPixel;
+				int x = Math.round(startX + i * blocksPerPixel);
+				int z = Math.round(startZ + j * blocksPerPixel);
 				int ix = x - mapStartX;
 				int iz = z - mapStartZ;
 

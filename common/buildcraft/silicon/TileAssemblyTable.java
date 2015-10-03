@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
@@ -47,7 +48,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
 		List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
 
-		for (IFlexibleRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (IFlexibleRecipe<ItemStack> recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 			CraftingResult<ItemStack> r = recipe.craft(this, true);
 
 			if (r != null) {
@@ -89,10 +90,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (getEnergy() >= currentRecipe.craft(this, true).energyCost) {
-			setEnergy(0);
-
 			if (currentRecipe.canBeCrafted(this)) {
-				outputStack(currentRecipe.craft(this, false).crafted.copy(), true);
+				CraftingResult<ItemStack> result = currentRecipe.craft(this, false);
+				setEnergy(Math.max(0, getEnergy() - result.energyCost));
+				outputStack(result.crafted.copy(), true);
 
 				setNextCurrentRecipe();
 			}
@@ -138,18 +139,22 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	private void generatePlannedOutputIcons() {
 		for (String s : plannedOutput) {
 			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(s);
-			CraftingResult<ItemStack> result = recipe.craft(this, true);
-			if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
-				plannedOutputIcons.put(s, result);
-			} else if (recipe instanceof IFlexibleRecipeViewable) {
-				// !! HACK !! TODO !! HACK !!
-				Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
-				if (out instanceof ItemStack) {
-					result = new CraftingResult<ItemStack>();
-					result.crafted = (ItemStack) out;
-					result.recipe = recipe;
+			if (recipe != null) {
+				CraftingResult<ItemStack> result = recipe.craft(this, true);
+				if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
 					plannedOutputIcons.put(s, result);
+				} else if (recipe instanceof IFlexibleRecipeViewable) {
+					// !! HACK !! TODO !! HACK !!
+					Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
+					if (out instanceof ItemStack) {
+						result = new CraftingResult<ItemStack>();
+						result.crafted = (ItemStack) out;
+						result.recipe = recipe;
+						plannedOutputIcons.put(s, result);
+					}
 				}
+			} else {
+				plannedOutput.remove(s);
 			}
 		}
 
@@ -165,10 +170,11 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		super.writeData(stream);
 		NetworkUtils.writeUTF(stream, currentRecipeId);
 		stream.writeByte(plannedOutput.size());
-		for (String s: plannedOutput) {
+		for (String s : plannedOutput) {
 			NetworkUtils.writeUTF(stream, s);
 		}
 	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
@@ -209,7 +215,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 	}
 
-	public boolean isPlanned(IFlexibleRecipe recipe) {
+	public boolean isPlanned(IFlexibleRecipe<ItemStack> recipe) {
 		if (recipe == null) {
 			return false;
 		}
@@ -217,7 +223,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return plannedOutput.contains(recipe.getId());
 	}
 
-	public boolean isAssembling(IFlexibleRecipe recipe) {
+	public boolean isAssembling(IFlexibleRecipe<ItemStack> recipe) {
 		return recipe != null && recipe == currentRecipe;
 	}
 

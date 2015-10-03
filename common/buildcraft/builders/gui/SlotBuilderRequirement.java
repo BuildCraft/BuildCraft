@@ -1,7 +1,9 @@
 package buildcraft.builders.gui;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.item.ItemStack;
+
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

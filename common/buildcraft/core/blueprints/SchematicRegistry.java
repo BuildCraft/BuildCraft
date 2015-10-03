@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -98,13 +99,13 @@ public final class SchematicRegistry implements ISchematicRegistry {
 			throw new IllegalArgumentException("Builder: Could not find matching constructor for class " + clazz);
 		}
 	}
-	
+
 	public void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
 		for (int i = 0; i < 16; i++) {
 			registerSchematicBlock(block, i, clazz, params);
 		}
 	}
-	
+
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
 		if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
 			BCLog.logger.warn("Builder: Mod tried to register block '" + (block != null ? block.getClass().getName() : "null") + "' schematic with a null name! Ignoring.");
@@ -136,7 +137,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 		if (c == null) {
 			return null;
 		}
-		
+
 		try {
 			SchematicBlock s = (SchematicBlock) c.newInstance();
 			s.block = block;
@@ -208,7 +209,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 			}
 		}
 	}
-	
+
 	private String toStringKey(Block block, int meta) {
 		return Block.blockRegistry.getNameForObject(block) + ":" + meta;
 	}

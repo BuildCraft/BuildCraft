@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -18,6 +18,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -58,6 +59,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 			}
 		}
 	}
+
 	private SimpleFilterInventory filters = new SimpleFilterInventory(54, "Filters", 1);
 	private long usedFilters;
 
@@ -104,7 +106,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection direction) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;

@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent;
@@ -73,6 +74,11 @@ public class BlockMiner {
 	}
 
 	public int acceptEnergy(int offeredAmount) {
+		if (BlockUtils.isUnbreakableBlock(world, x, y, z)) {
+			hasFailed = true;
+			return 0;
+		}
+
 		energyRequired = BlockUtils.computeBlockBreakEnergy(world, x, y, z);
 
 		int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
@@ -108,7 +114,6 @@ public class BlockMiner {
 						Block.getIdFromBlock(block)
 								+ (meta << 12));
 
-				Utils.preDestroyBlock(world, x, y, z);
 				world.setBlockToAir(x, y, z);
 			} else {
 				hasFailed = true;

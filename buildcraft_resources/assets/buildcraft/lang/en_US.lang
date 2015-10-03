@@ -18,6 +18,7 @@ buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 buildcraft.boardRobotStripes=Stripes
+buildcraft.boardRobotBreaker=Breaker
 
 buildcraft.boardRobotPicker.desc=Picks up items
 buildcraft.boardRobotLumberjack.desc=Breaks logs
@@ -37,6 +38,7 @@ buildcraft.boardRobotCrafter.desc=Crafts items
 buildcraft.boardRobotDelivery.desc=Delivers items upon request
 buildcraft.boardRobotPump.desc=Pumps out liquids
 buildcraft.boardRobotStripes.desc=Uhh... Stripes!
+buildcraft.boardRobotStripes.desc=Mines stone
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
@@ -352,6 +354,7 @@ item.PipeFluidsQuartz.name=Quartz Fluid Pipe
 item.PipeFluidsGold.name=Golden Fluid Pipe
 item.PipeFluidsEmerald.name=Emerald Fluid Pipe
 item.PipeFluidsDiamond.name=Diamond Fluid Pipe
+item.PipeFluidsClay.name=Clay Fluid Pipe
 item.PipePowerWood.name=Wooden Kinesis Pipe
 item.PipePowerCobblestone.name=Cobblestone Kinesis Pipe
 item.PipePowerStone.name=Stone Kinesis Pipe
@@ -543,6 +546,10 @@ bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
+bc_update.changelog=Type '/buildcraft changelog' to see the changelog
+
+chat.buildcraft.quarry.tooSmall=[BuildCraft] Quarry size is outside of chunkloading bounds or too small %d %d (%d)
+chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will keep %d chunks loaded
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:
@@ -563,3 +570,11 @@ command.buildcraft.buildcraft.version.format=Format: /%s
 command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
 command.buildcraft.buildcraft.changelog.help=Displays the latest BC changelog.
 command.buildcraft.buildcraft.changelog.format=Format: /%s
+
+command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
+command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
+command.buildcraft.buildcraft.op.format=Format: /%s
+
+command.buildcraft.buildcraft.deop.desc=- %s : Deop FakePlayer
+command.buildcraft.buildcraft.deop.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
+command.buildcraft.buildcraft.deop.format=Format: /%s

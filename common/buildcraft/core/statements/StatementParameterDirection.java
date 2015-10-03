@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.statements.IStatement;
@@ -23,12 +24,12 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {
 
-    private static IIcon[] icons;
-    
+	private static IIcon[] icons;
+
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
-    
+
 	public StatementParameterDirection() {
-		
+
 	}
 
 	@Override
@@ -38,11 +39,11 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public IIcon getIcon() {
-	    if (direction == ForgeDirection.UNKNOWN) {
-	    	return null;
-	    } else {
-	    	return icons[direction.ordinal()];
-	    }
+		if (direction == ForgeDirection.UNKNOWN) {
+			return null;
+		} else {
+			return icons[direction.ordinal()];
+		}
 	}
 
 	@Override
@@ -60,25 +61,25 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-	    nbt.setByte("direction", (byte) direction.ordinal());
+		nbt.setByte("direction", (byte) direction.ordinal());
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-	    if (nbt.hasKey("direction")) {
-	    	direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
-	    } else {
-	    	direction = ForgeDirection.UNKNOWN;
-	    }
+		if (nbt.hasKey("direction")) {
+			direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
+		} else {
+			direction = ForgeDirection.UNKNOWN;
+		}
 	}
 
 	@Override
 	public boolean equals(Object object) {
-	    if (object instanceof StatementParameterDirection) {
-	    	StatementParameterDirection param = (StatementParameterDirection) object;
-	    	return param.direction == this.direction;
-	    }
-	    return false;
+		if (object instanceof StatementParameterDirection) {
+			StatementParameterDirection param = (StatementParameterDirection) object;
+			return param.direction == this.direction;
+		}
+		return false;
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
+		icons = new IIcon[]{
 				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_down"),
 				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_up"),
 				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_north"),

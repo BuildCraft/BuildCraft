@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -38,6 +38,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -62,12 +63,13 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
-	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
+	public static Map<Item, Class<? extends Pipe<?>>> pipes = new HashMap<Item, Class<? extends Pipe<?>>>();
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
@@ -288,9 +290,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (!isValid(pipe)) {
 			return null;
 		}
-		
+
 		TileGenericPipe tileG = pipe.container;
-		
+
 		if (tileG == null) {
 			return null;
 		}
@@ -445,7 +447,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (pipe == null) {
 			pipe = pipeRemoved.get(new BlockIndex(x, y, z));
 		}
-		
+
 		if (pipe != null) {
 			if (pipe.item != null) {
 				list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
@@ -477,7 +479,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 			if (k1 != null) {
 				pipe.dropContents();
-				for (ItemStack is: pipe.computeItemDrop()) {
+				for (ItemStack is : pipe.computeItemDrop()) {
 					dropBlockAsItem(world, i, j, k, is);
 				}
 				dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
@@ -489,6 +491,17 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	public Item getItemDropped(int meta, Random rand, int dmg) {
 		// Returns null to be safe - the id does not depend on the meta
 		return null;
+	}
+
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		// HACK: WAILA compatibility
+		EntityPlayer clientPlayer = CoreProxy.proxy.getClientPlayer();
+		if (clientPlayer != null) {
+			return getPickBlock(target, world, x, y, z, clientPlayer);
+		} else {
+			return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
+		}
 	}
 
 	@Override
@@ -522,7 +535,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
 			pipe.container.redstoneInput = 0;
-			
+
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				ForgeDirection d = ForgeDirection.getOrientation(i);
 				pipe.container.redstoneInputSide[i] = getRedstoneInputToPipe(world, x, y, z, d);
@@ -550,9 +563,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			}
 		}
 	}
-	
+
 	private int getRedstoneInputToPipe(World world, int x, int y, int z,
-			ForgeDirection d) {
+									   ForgeDirection d) {
 		int i = d.ordinal();
 		int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
 		if (input == 0) {
@@ -620,16 +633,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				if (pipe.blockActivated(player)) {
-					return true;
-				}
-
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 				if (rayTraceResult != null) {
 					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
 					return pipe.blockActivated(player, hitSide);
 				} else {
-					return false;
+					return pipe.blockActivated(player, ForgeDirection.UNKNOWN);
 				}
 			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations
@@ -674,7 +683,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				clickedGate.openGui(player);
 				return true;
 			} else {
-				if (pipe.blockActivated(player)) {
+				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 
@@ -864,7 +873,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	/* Registration ******************************************************** */
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab) {
+	public static ItemPipe registerPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
@@ -903,13 +912,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			return true;
 		}
 
-		Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
-		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
-				new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
-		);
-		MinecraftForge.EVENT_BUS.post(placeEvent);
-		if (placeEvent.isCanceled()) {
-			return false;
+		if (player != null) {
+			Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
+			BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+					new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
+			);
+			MinecraftForge.EVENT_BUS.post(placeEvent);
+			if (placeEvent.isCanceled()) {
+				return false;
+			}
 		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
@@ -1080,7 +1091,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+			Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
 			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 		}
 

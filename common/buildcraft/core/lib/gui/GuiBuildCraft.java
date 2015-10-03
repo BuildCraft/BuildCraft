@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -26,6 +26,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
@@ -445,7 +446,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		public int currentShiftX = 0;
 		public int currentShiftY = 0;
 		protected int overlayColor = 0xffffff;
-		protected int limitWidth = 128;
 		protected int maxWidth = 124;
 		protected int minWidth = 24;
 		protected int currentWidth = minWidth;

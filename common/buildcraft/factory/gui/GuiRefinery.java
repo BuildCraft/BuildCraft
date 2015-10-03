@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,7 +29,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	private final ContainerRefinery container;
 
 	public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(new ContainerRefinery(inventory, refinery), refinery, TEXTURE);
+		super(new ContainerRefinery(inventory, refinery), null, TEXTURE);
 
 		xSize = 175;
 		ySize = 207;
@@ -83,12 +84,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 					container.refinery.tankManager.get(position).colorRenderCache = 0xFFFFFF;
 				}
 			} else {
-				TileRefinery ref = (TileRefinery) this.tile;
-
 				if (position == 0) {
-					container.setFilter(position, ref.tanks[0].getFluidType());
+					container.setFilter(position, container.refinery.tanks[0].getFluidType());
 				} else if (position == 1) {
-					container.setFilter(position, ref.tanks[1].getFluidType());
+					container.setFilter(position, container.refinery.tanks[1].getFluidType());
 				}
 			}
 		}

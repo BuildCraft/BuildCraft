@@ -3,14 +3,15 @@ package buildcraft.core.lib.gui;
 import java.util.ArrayList;
 
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 
 /**
-* Created by asie on 1/24/15.
-*/
+ * Created by asie on 1/24/15.
+ */
 public abstract class StatementSlot extends AdvancedSlot {
 	public int slot;
 	public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();

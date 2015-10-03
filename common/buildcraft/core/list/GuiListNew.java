@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,12 +13,15 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.BuildCraftCore;
+import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
@@ -79,6 +82,15 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		}
 	}
 
+	public GuiListNew(EntityPlayer iPlayer) {
+		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
+
+		xSize = 176;
+		ySize = 191;
+
+		player = iPlayer;
+	}
+
 	private void clearExamplesCache(int lineId) {
 		Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
 		if (exampleList != null) {
@@ -112,15 +124,6 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		return exampleList.get(type);
 	}
 
-	public GuiListNew(EntityPlayer iPlayer) {
-		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
-
-		xSize = 176;
-		ySize = 192;
-
-		player = iPlayer;
-	}
-
 	@Override
 	public void initGui() {
 		super.initGui();
@@ -143,7 +146,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		}
 
 		for (Object o : buttonList) {
-			GuiImageButton b = ((GuiImageButton) o);
+			GuiImageButton b = (GuiImageButton) o;
 			int lineId = b.id / BUTTON_COUNT;
 			int buttonId = b.id % BUTTON_COUNT;
 			if (((ContainerListNew) getContainer()).lines[lineId].getOption(buttonId)) {
@@ -163,7 +166,13 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		ContainerListNew container = (ContainerListNew) getContainer();
+		ContainerListNew containerL = (ContainerListNew) getContainer();
+		for (int i = 0; i < 2; i++) {
+			if (containerL.lines[i].isOneStackMode()) {
+				drawTexturedModalRect(guiLeft + 6, guiTop + 30 + i * 33, 0, ySize, 20, 20);
+			}
+		}
+
 		drawBackgroundSlots(x, y);
 	}
 
@@ -175,9 +184,9 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		drawTooltipForSlotAt(par1, par2);
 	}
 
-	private boolean isCarryingList() {
+	private boolean isCarryingNonEmptyList() {
 		ItemStack stack = mc.thePlayer.inventory.getItemStack();
-		return stack != null && stack.getItem() instanceof ItemList;
+		return stack != null && stack.getItem() instanceof ItemList && stack.getTagCompound() != null;
 	}
 
 	private boolean hasListEquipped() {
@@ -188,7 +197,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 	protected void mouseClicked(int x, int y, int b) {
 		super.mouseClicked(x, y, b);
 
-		if (isCarryingList() || !hasListEquipped()) {
+		if (isCarryingNonEmptyList() || !hasListEquipped()) {
 			return;
 		}
 

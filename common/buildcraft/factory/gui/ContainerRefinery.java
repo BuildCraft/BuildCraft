@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+
 import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.BuildCraftFactory;
@@ -26,7 +27,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 	public TileRefinery refinery;
 
 	public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(refinery.getSizeInventory());
+		super(0);
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
@@ -43,7 +44,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return refinery.isUseableByPlayer(entityplayer);
+		return entityplayer.worldObj.getTileEntity(refinery.xCoord, refinery.yCoord, refinery.zCoord) == refinery;
 	}
 
 	/* SETTING AND GETTING FILTERS */

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,7 +16,6 @@ import java.util.List;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
@@ -34,12 +33,14 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
@@ -47,14 +48,13 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
-import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.network.EntityIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.BlockRequester;
 import buildcraft.robotics.BlockZonePlan;
 import buildcraft.robotics.BoardProgrammingRecipe;
@@ -151,7 +151,6 @@ import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
 import buildcraft.silicon.ItemRedstoneChipset;
-import buildcraft.transport.ItemPipe;
 
 @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
@@ -199,22 +198,22 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 		robotItem = new ItemRobot().setUnlocalizedName("robot");
-		CoreProxy.proxy.registerItem(robotItem);
+		BCRegistry.INSTANCE.registerItem(robotItem, false);
 
 		robotStationItem = new ItemRobotStation().setUnlocalizedName("robotStation");
-		CoreProxy.proxy.registerItem(robotStationItem);
+		BCRegistry.INSTANCE.registerItem(robotStationItem, false);
 
 		redstoneBoard = new ItemRedstoneBoard();
 		redstoneBoard.setUnlocalizedName("redstone_board");
-		CoreProxy.proxy.registerItem(redstoneBoard);
+		BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
 
 		zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
 		zonePlanBlock.setBlockName("zonePlan");
-		CoreProxy.proxy.registerBlock(zonePlanBlock);
+		BCRegistry.INSTANCE.registerBlock(zonePlanBlock, false);
 
 		requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
 		requesterBlock.setBlockName("requester");
-		CoreProxy.proxy.registerBlock(requesterBlock);
+		BCRegistry.INSTANCE.registerBlock(requesterBlock, false);
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
@@ -268,11 +267,13 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
 
+		BuilderAPI.schematicRegistry.registerSchematicBlock(requesterBlock, SchematicTile.class);
+
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 
-		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
-		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
+		BCRegistry.INSTANCE.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
+		BCRegistry.INSTANCE.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		RobotManager.registryProvider = new RobotRegistryProvider();
 
@@ -339,11 +340,11 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		RoboticsProxy.proxy.registerRenderers();
 
-		ListMatchHandlerClass.itemClasses.add(ItemRobot.class);
+		ListRegistry.itemClassAsType.add(ItemRobot.class);
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotItem),
 				"PPP",
 				"PRP",
 				"C C",
@@ -351,14 +352,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'R', "crystalRedstone",
 				'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(redstoneBoard),
 				"PPP",
 				"PRP",
 				"PPP",
 				'R', "dustRedstone",
 				'P', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
 				"IRI",
 				"GMG",
 				"IDI",
@@ -368,17 +369,17 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'D', "gearDiamond",
 				'I', "ingotIron");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
 				"IPI",
 				"GCG",
 				"IRI",
-				'C', Blocks.chest,
+				'C', "chestWood",
 				'R', "dustRedstone",
 				'P', Blocks.piston,
 				'G', "gearIron",
 				'I', "ingotIron");
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
+		BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
 				'I', "ingotIron",
 				'C', ItemRedstoneChipset.Chipset.GOLD.getStack());
 
@@ -429,6 +430,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		manager = new MapManager(f);
 		managerThread = new Thread(manager);
 		managerThread.start();
+
+		BoardRobotPicker.onServerStart();
 
 		MinecraftForge.EVENT_BUS.register(manager);
 		FMLCommonHandler.instance().bus().register(manager);

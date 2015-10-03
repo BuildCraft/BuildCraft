@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -97,6 +97,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		if (slot != null) {
 			slot.drawTooltip(this, mouseX, mouseY);
+			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 
@@ -109,22 +110,22 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 	}
 
-	public static RenderItem getItemRenderer () {
+	public static RenderItem getItemRenderer() {
 		return itemRender;
 	}
 
-    public int getXSize () {
-    	return xSize;
-    }
+	public int getXSize() {
+		return xSize;
+	}
 
-    public int getYSize () {
-    	return ySize;
-    }
+	public int getYSize() {
+		return ySize;
+	}
 
-    @Override
+	@Override
 	public void renderToolTip(ItemStack stack, int x, int y) {
-    	super.renderToolTip(stack, x, y);
-    }
+		super.renderToolTip(stack, x, y);
+	}
 
 	public void drawStack(ItemStack item, int x, int y) {
 		Minecraft mc = Minecraft.getMinecraft();

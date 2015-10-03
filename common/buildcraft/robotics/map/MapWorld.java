@@ -2,7 +2,6 @@ package buildcraft.robotics.map;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -21,7 +20,6 @@ import net.minecraft.world.chunk.Chunk;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class MapWorld {
-	private final World world;
 	private final LongHashMap regionMap;
 	private final HashMap<Chunk, Integer> timeToUpdate = new HashMap<Chunk, Integer>();
 	private final TLongLongHashMap regionUpdateTime;
@@ -29,7 +27,6 @@ public class MapWorld {
 	private final File location;
 
 	public MapWorld(World world, File location) {
-		this.world = world;
 		regionMap = new LongHashMap();
 		regionUpdateTime = new TLongLongHashMap();
 		updatedChunks = new TLongHashSet();
@@ -57,14 +54,15 @@ public class MapWorld {
 			if (target.exists()) {
 				try {
 					FileInputStream f = new FileInputStream(target);
-					byte [] data = new byte [(int) target.length()];
+					byte[] data = new byte[(int) target.length()];
 					f.read(data);
 					f.close();
 
-					region.readFromNBT(NBTUtils.load(data));
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+					NBTTagCompound nbt = NBTUtils.load(data);
+					if (nbt != null) {
+						region.readFromNBT(nbt);
+					}
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -127,8 +125,11 @@ public class MapWorld {
 					if (v > 1) {
 						timeToUpdate.put(c, v - 1);
 					} else {
-						timeToUpdate.remove(c);
-						updateChunk(c);
+						try {
+							updateChunk(c);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

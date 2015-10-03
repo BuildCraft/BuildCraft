@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,8 +14,8 @@ import cpw.mods.fml.common.Loader;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftRobotics;
-import buildcraft.robotics.render.RenderZonePlan;
 import buildcraft.robotics.render.RenderRobot;
+import buildcraft.robotics.render.RenderZonePlan;
 import buildcraft.robotics.render.RobotStationItemRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {

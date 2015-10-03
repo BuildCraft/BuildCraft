@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -115,7 +115,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		int position = 0;
 
 		slots.clear();
-		
+
 		if (gate.material == GateMaterial.REDSTONE) {
 			slots.add(new TriggerSlot(62, 26, pipe, 0));
 			slots.add(new ActionSlot(98, 26, pipe, 0));

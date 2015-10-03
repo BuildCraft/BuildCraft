@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -47,7 +48,7 @@ public class SchematicPipe extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		SideProperties props = new SideProperties ();
+		SideProperties props = new SideProperties();
 
 		props.readFromNBT(tileNBT);
 		props.rotateLeft();
@@ -102,26 +103,26 @@ public class SchematicPipe extends SchematicTile {
 				a = a.rotateLeft();
 				gateNBT.setString("action[" + i + "]", a.getUniqueTag());
 			}
-			
+
 			for (int j = 0; j < Gate.MAX_PARAMETERS; ++j) {
 				if (gateNBT.hasKey("triggerParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = gateNBT.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
 					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
 					parameter.readFromNBT(cpt);
-					
+
 					parameter = parameter.rotateLeft();
-					
+
 					parameter.writeToNBT(cpt);
 					gateNBT.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
 				}
-				
+
 				if (gateNBT.hasKey("actionParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = gateNBT.getCompoundTag("actionParameters[" + i + "][" + j + "]");
 					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
 					parameter.readFromNBT(cpt);
-					
+
 					parameter = parameter.rotateLeft();
-					
+
 					parameter.writeToNBT(cpt);
 					gateNBT.setTag("actionParameters[" + i + "][" + j + "]", cpt);
 				}

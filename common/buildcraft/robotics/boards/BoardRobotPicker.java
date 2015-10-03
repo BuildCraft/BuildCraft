@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -21,11 +21,14 @@ import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
-	// TODO: Clean this when world unloaded
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	public BoardRobotPicker(EntityRobotBase iRobot) {
 		super(iRobot);
+	}
+
+	public static void onServerStart() {
+		targettedItems.clear();
 	}
 
 	@Override

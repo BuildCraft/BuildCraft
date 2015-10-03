@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
@@ -18,7 +19,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public class ListHandlerOld {
+public final class ListHandlerOld {
 	private static final WeakHashMap<ItemStack, StackLine[]> LINE_CACHE = new WeakHashMap<ItemStack, StackLine[]>();
 
 	public static class StackLine {
@@ -137,7 +138,7 @@ public class ListHandlerOld {
 		}
 
 		private void setClientPreviewLists() {
-			Item baseItem = stacks [0].getItem();
+			Item baseItem = stacks[0].getItem();
 
 			int[] oreIds = OreDictionary.getOreIDs(stacks[0]);
 
@@ -193,6 +194,10 @@ public class ListHandlerOld {
 				return false;
 			}
 		}
+	}
+
+	private ListHandlerOld() {
+
 	}
 
 	public static void saveLine(ItemStack stack, StackLine line, int index) {

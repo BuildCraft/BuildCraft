@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
@@ -92,7 +93,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		tessellator.setNormal(0, 0, 1);
 		render.renderFaceZPos(block, 0, 0, 0, icon3);
 		render.field_152631_f = false;
-		
+
 		render.setRenderBounds(cavity, 0, width, innerWidth, cavity, 1);
 		tessellator.setNormal(0, 0, -1);
 		render.renderFaceZNeg(block, 0, 0, 0, icon2);
@@ -169,7 +170,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		RenderUtils.setGLColorFromInt(0xFFFFFF);
 
 		// Render StructurePipe
-		if (!hollow) {
+		if (!hollow && block != null && (block.getMaterial() == null || block.getMaterial().isOpaque())) {
 			block = BuildCraftTransport.genericPipeBlock;
 			IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 

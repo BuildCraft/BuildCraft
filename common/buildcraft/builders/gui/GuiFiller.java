@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -45,7 +45,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 
 		@Override
 		public IStatementParameter getParameter() {
-			if (slot >= instance.filler.patternParameters.length) {
+			if (instance.filler.patternParameters == null || slot >= instance.filler.patternParameters.length) {
 				return null;
 			} else {
 				return instance.filler.patternParameters[slot];
@@ -61,14 +61,12 @@ public class GuiFiller extends GuiAdvancedInterface {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
 	private static final IButtonTextureSet EXCAVATE_OFF = new ButtonTextureSet(240, -16, 16, 16, TEXTURE);
 	private static final IButtonTextureSet EXCAVATE_ON = new ButtonTextureSet(224, -16, 16, 16, TEXTURE);
-	private final IInventory playerInventory;
 	private final TileFiller filler;
 	private final GuiFiller instance;
 	private final StatementSlot fakeStatementSlot;
 
 	public GuiFiller(IInventory playerInventory, TileFiller filler) {
 		super(new ContainerFiller(playerInventory, filler), filler, TEXTURE);
-		this.playerInventory = playerInventory;
 		this.filler = filler;
 		this.instance = this;
 		this.fakeStatementSlot = new StatementSlot(instance, -1, -1, 0) {
@@ -139,7 +137,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 		AdvancedSlot slot = getSlotAtLocation(x, y);
 
 		if (slot != null) {
-			int i  = ((FillerParameterSlot) slot).slot;
+			int i = ((FillerParameterSlot) slot).slot;
 			if (i < filler.patternParameters.length) {
 				if (filler.patternParameters[i] != null) {
 					filler.patternParameters[i].onClick(filler, filler.currentPattern, mc.thePlayer.inventory.getItemStack(),
