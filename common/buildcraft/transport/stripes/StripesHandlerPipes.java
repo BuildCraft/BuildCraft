@@ -50,12 +50,12 @@ public class StripesHandlerPipes implements IStripesHandler {
 		p.moveBackwards(1.0D);
 
 		Pipe<?> pipe = BlockGenericPipe.createPipe(stack.getItem());
+
 		if (pipe.transport instanceof PipeTransportItems) {
-			// Checks done, request extension
+			// Item pipe: request extending on end of tick
 			BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, (int) p.x, (int) p.y, (int) p.z, direction, activator);
 		} else {
-			// Fluid/power pipe, place in front instead
-
+			// Non-item pipe: place in front of stripes (item) pipe
 			stack.getItem().onItemUse(stack,
 					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, (int) p.x, (int) p.y, (int) p.z).get(),
 					world, x, y, z, 1, 0, 0, 0);

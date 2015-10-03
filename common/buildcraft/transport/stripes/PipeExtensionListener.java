@@ -26,9 +26,6 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.utils.TransportUtils;
 
-/**
- * Created by asie on 3/20/15.
- */
 public class PipeExtensionListener {
 	private class PipeExtensionRequest {
 		public ItemStack stack;

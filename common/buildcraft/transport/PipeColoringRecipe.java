@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import buildcraft.core.lib.utils.ColorUtils;
 
 public class PipeColoringRecipe implements IRecipe {
-
 	private ItemStack getResult(InventoryCrafting crafting) {
 		ItemStack oneColorPipeStack = null;
 		ItemStack pipeStack = null;
