@@ -1,0 +1,190 @@
+[
+  {
+    "names": ["double_plant", "piston_head", "snow", "tallgrass"],
+    "ignore": true
+  },
+  {
+    "names": ["farmland"],
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:farmland@0",
+    "requirements": ["minecraft:dirt@0"]
+  },
+  {
+    "names": ["glass", "stained_glass", "glass_pane", "stained_glass_pane"],
+    "ignoreDrops": true
+  },
+  {
+    "names": ["stone", "coal_ore", "lapis_ore", "diamond_ore", "redstone_ore", "lit_redstone_ore", "emerald_ore"],
+    "placedBlock": "minecraft:stone@0"
+  },
+  {
+    "names": ["gravel"],
+    "ignoreDrops": true
+  },
+  {
+    "name": "cake",
+    "requirements": ["minecraft:cake"]
+  },
+  {
+    "name": "pumpkin",
+    "requirements": ["minecraft:pumpkin@0"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    }
+  },
+  {
+    "name": "lit_pumpkin",
+    "requirements": ["minecraft:lit_pumpkin@0"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    }
+  },
+  {
+    "name": "flower_pot"
+  },
+  {
+    "names": ["beacon", "daylight_detector", "enchanting_table", "noteblock"]
+  },
+  {
+    "names": ["bedrock", "command_block", "mob_spawner"],
+    "buildingPermission": "CREATIVE_ONLY"
+  },
+  {
+    "name": "cactus",
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:cactus@0",
+    "prerequisites": [[0, -1, 0]],
+    "requirements": ["minecraft:cactus@0"]
+  },
+  {
+    "name": "melon_stem",
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:melon_stem@0",
+    "requirements": ["minecraft:melon_seeds@0"]
+  },
+  {
+    "name": "nether_wart",
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:nether_wart@0",
+    "requirements": ["minecraft:nether_wart@0"]
+  },
+  {
+    "name": "pumpkin_stem",
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:pumpkin_stem@0",
+    "requirements": ["minecraft:pumpkin_seeds@0"]
+  },
+  {
+    "name": "wheat",
+    "metadataComparisonMask": 0,
+    "placedBlock": "minecraft:wheat@0",
+    "requirements": ["minecraft:wheat_seeds@0"]
+  },
+  {
+    "name": "brewing_stand",
+    "nbt": {
+      "blacklist": ["brewTime"]
+    }
+  },
+  {
+    "name": "anvil",
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    }
+  },
+  {
+    "names": ["hopper", "furnace", "lit_furnace", "chest", "trapped_chest", "dispenser", "dropper"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [2, 5, 3, 4]
+    }
+  },
+  {
+    "name": "fence_gate",
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    },
+    "metadataEqualityMask": 3
+  },
+  {
+    "name": "ladder",
+    "rotation": {
+      "type": "metadata",
+      "mask": 7,
+      "matrix": [2, 5, 3, 4],
+      "sticksToWall": true
+    }
+  },
+  {
+    "names": ["hay_block", "log", "log2"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 12,
+      "matrix": [8, 4]
+    }
+  },
+  {
+    "names": ["quartz_block"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 7,
+      "matrix": [4, 3]
+    }
+  },
+  {
+    "name": "redstone_wire",
+    "metadataEqualityMask": 0,
+    "placedBlock": "minecraft:redstone_wire@0",
+    "prerequisites": [[0, -1, 0]],
+    "requirements": ["minecraft:redstone"]
+  },
+  {
+    "name": "tripwire",
+    "prerequisites": [[0, -1, 0]]
+  },
+  {
+    "names": ["powered_repeater", "unpowered_repeater"],
+    "requirements": ["minecraft:repeater"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    }
+  },
+  {
+    "names": ["powered_comparator", "unpowered_comparator"],
+    "requirements": ["minecraft:comparator"],
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3]
+    }
+  },
+  {
+    "name": "skull",
+    "rotation": {
+      "type": "metadata",
+      "mask": 12,
+      "matrix": [0, 4, 8, 12]
+    }
+  },
+  {
+    "name": "tripwire_hook",
+    "rotation": {
+      "type": "metadata",
+      "mask": 3,
+      "matrix": [0, 1, 2, 3],
+      "sticksToWall": true
+    },
+    "metadataEqualityMask": 3
+  }
+]

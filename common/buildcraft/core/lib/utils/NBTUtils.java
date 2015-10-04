@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -25,6 +26,35 @@ public final class NBTUtils {
 
 	}
 
+	public static NBTBase getTag(NBTTagCompound cptBase, String nameBase) {
+		NBTTagCompound cpt = cptBase;
+		String name = nameBase;
+
+		while (name.contains(".")) {
+			String cptName = name.substring(0, name.indexOf("."));
+			if (cpt.hasKey(cptName, 10)) {
+				cpt = cpt.getCompoundTag(cptName);
+				name = name.substring(name.indexOf(".") + 1);
+			}
+		}
+
+		return cpt.getTag(name);
+	}
+
+	public static void setTag(NBTTagCompound cptBase, String nameBase, NBTBase tag) {
+		NBTTagCompound cpt = cptBase;
+		String name = nameBase;
+
+		while (name.contains(".")) {
+			String cptName = name.substring(0, name.indexOf("."));
+			if (cpt.hasKey(cptName, 10)) {
+				cpt = cpt.getCompoundTag(cptName);
+				name = name.substring(name.indexOf(".") + 1);
+			}
+		}
+
+		cpt.setTag(name, tag);
+	}
 
 	public static NBTTagCompound load(byte[] data) {
 		try {
