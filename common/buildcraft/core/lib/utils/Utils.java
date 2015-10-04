@@ -321,21 +321,6 @@ public final class Utils {
         return slots;
     }
 
-    /** This subprogram transforms a packet into a FML packet to be send in the minecraft default packet mechanism. This
-     * always use BC-CORE as a channel, and as a result, should use discriminators declared there.
-     *
-     * WARNING! The implementation of this subprogram relies on the internal behavior of
-     * #FMLIndexedMessageToMessageCodec (in particular the encode member). It is probably opening a maintenance issue
-     * and should be replaced eventually by some more solid mechanism. */
-    public static FMLProxyPacket toPacket(Packet packet, int discriminator) {
-        ByteBuf buf = Unpooled.buffer();
-
-        buf.writeByte((byte) discriminator);
-        packet.writeData(buf);
-
-        return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
-    }
-
 	public static String getNameForItem(Item item) {
 		Object obj = Item.itemRegistry.getNameForObject(item);
 		if (obj == null) {

@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -22,6 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -32,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -63,9 +66,9 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.ConfigAccessor;
 import buildcraft.api.core.ConfigAccessor.EMod;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
@@ -78,27 +81,9 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.AchievementManager;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BlockBuildTool;
-import buildcraft.core.BlockEngine;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.CoreGuiHandler;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.ItemDebugger;
-import buildcraft.core.ItemList;
-import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemPaintbrush;
-import buildcraft.core.ItemSpring;
-import buildcraft.core.ItemWrench;
-import buildcraft.core.SchematicEngine;
-import buildcraft.core.SpringPopulate;
-import buildcraft.core.TickHandlerCore;
-import buildcraft.core.TileEngineWood;
-import buildcraft.core.Version;
+import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
@@ -355,7 +340,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public void init(FMLInitializationEvent evt) {
         BuildCraftAPI.proxy = CoreProxy.proxy;
 
-        ChannelHandler coreChannelHandler = new ChannelHandler();
+        ChannelHandler coreChannelHandler = ChannelHandler.createChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandlerCore());
@@ -414,8 +399,10 @@ public class BuildCraftCore extends BuildCraftMod {
 
         FMLCommonHandler.instance().bus().register(TabletManagerClient.INSTANCE);
         FMLCommonHandler.instance().bus().register(TabletManagerServer.INSTANCE);
+        FMLCommonHandler.instance().bus().register(new TickHandlerCore());
         MinecraftForge.EVENT_BUS.register(TabletManagerClient.INSTANCE);
         MinecraftForge.EVENT_BUS.register(TabletManagerServer.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(new TickHandlerCore());
 
         TabletAPI.registerProgram(new TabletProgramMenuFactory());
     }
@@ -436,8 +423,6 @@ public class BuildCraftCore extends BuildCraftMod {
         BuildCraftAPI.softBlocks.add(Blocks.vine);
         BuildCraftAPI.softBlocks.add(Blocks.fire);
         BuildCraftAPI.softBlocks.add(Blocks.air);
-
-        FMLCommonHandler.instance().bus().register(new TickHandlerCore());
 
         CropManager.setDefaultHandler(new CropHandlerPlantable());
         CropManager.registerHandler(new CropHandlerReeds());
@@ -675,6 +660,13 @@ public class BuildCraftCore extends BuildCraftMod {
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Post evt) {
         FluidRenderer.initFluidTextures(evt.map);
+        TextureAtlasSprite[] array = new TextureAtlasSprite[16];
+        for (EnumColor color : EnumColor.values()) {
+            String location = "buildcraftcore:textures/items/paintbrush/" + color.getName().toLowerCase(Locale.ENGLISH);
+            array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
+        }
+        EnumColor.registerSprites(array);
+        CoreIconProvider.registerIcons(evt.map);
     }
 
     @SubscribeEvent

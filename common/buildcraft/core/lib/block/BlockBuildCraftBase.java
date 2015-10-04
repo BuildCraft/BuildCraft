@@ -27,11 +27,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftExtendedProperty;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -49,6 +50,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperties.ENERGY_STAGE;
     public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
     public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
+    public static final BuildCraftProperty<EnumLaserTableType> LASER_TABLE_TYPE = BuildCraftProperties.LASER_TABLE_TYPE;
 
     public static final BuildCraftProperty<Integer> GENERIC_PIPE_DATA = BuildCraftProperties.GENERIC_PIPE_DATA;
 

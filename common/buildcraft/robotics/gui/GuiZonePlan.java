@@ -11,7 +11,6 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -19,8 +18,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.EnumColor;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
@@ -35,6 +34,8 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
+
+import io.netty.buffer.ByteBuf;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -68,8 +69,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
     private GuiBetterButton tool, fsButton;
 
-    private List inventorySlots;
-    private List savedButtonList;
+    private List<?> inventorySlots;
+    private List<GuiBetterButton> savedButtonList;
 
     private GuiTextField textField;
 
@@ -281,7 +282,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         }
     }
 
-	// TODO: Test, see if Released is MovedOrUp
+    // TODO: Test, see if Released is MovedOrUp
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int eventType) {
         super.mouseReleased(mouseX, mouseY, eventType);

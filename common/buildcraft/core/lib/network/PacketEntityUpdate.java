@@ -47,4 +47,20 @@ public class PacketEntityUpdate extends PacketUpdate {
     public Entity getTarget(World world) {
         return world.getEntityByID(entityId);
     }
+
+    @Override
+    public void applyData(World world) {
+        if (!targetExists(world)) {
+            return;
+        }
+
+        Entity entity = getTarget(world);
+
+        if (!(entity instanceof ISerializable)) {
+            return;
+        }
+
+        ISerializable payload = (ISerializable) entity;
+        payload.readData(payloadData);
+    }
 }

@@ -5,7 +5,7 @@
 package buildcraft.core.lib.network;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
@@ -28,18 +28,18 @@ public class PacketGuiWidget extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data) {
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         data.writeByte(windowId);
         data.writeByte(widgetId);
         data.writeBytes(payload);
     }
 
     @Override
-    public void readData(ByteBuf data) {
+    public void readData(ByteBuf data, World world, EntityPlayer player) {
+        super.readData(data, world, player);
         windowId = data.readByte();
         widgetId = data.readByte();
-
-        EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 
         if (player.openContainer instanceof BuildCraftContainer && player.openContainer.windowId == windowId) {
             ((BuildCraftContainer) player.openContainer).handleWidgetClientData(widgetId, data);
@@ -49,6 +49,12 @@ public class PacketGuiWidget extends Packet {
     @Override
     public int getID() {
         return PacketIds.GUI_WIDGET;
+    }
+
+    @Override
+    public void applyData(World world) {
+        // TODO Auto-generated method stub
+
     }
 
 }

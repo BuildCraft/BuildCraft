@@ -164,7 +164,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
     }
 
     public WeakReference<EntityPlayer> getInternalPlayer() {
-        return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, getPos().add(0, 1, 0));
+        return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, getPos().up());
     }
 
     @Override
@@ -340,7 +340,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
             }
 
             if (output.stackSize > 0) {
-                InvUtils.dropItems(worldObj, output, getPos().add(0, 1, 0));
+                InvUtils.dropItems(worldObj, output, getPos().up());
             }
         }
     }
@@ -377,7 +377,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         updateRecipe();
 
         if (worldObj.isRemote) {
-            PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, getPos(), slot, stack);
+            PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, worldObj.provider.getDimensionId(), getPos(), slot,
+                    stack);
             BuildCraftSilicon.instance.sendToServer(packet);
         }
     }
@@ -441,20 +442,20 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         return requiresLaserEnergy();
     }
 
-	@Override
-	public int[] getSlotsForFace(EnumFacing side) {
-		return SLOTS;
-	}
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        return SLOTS;
+    }
 
-	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
-		return isItemValidForSlot(slot, stack);
-	}
+    @Override
+    public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
+        return isItemValidForSlot(slot, stack);
+    }
 
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
-		return slot >= 15;
-	}
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
+        return slot >= 15;
+    }
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {

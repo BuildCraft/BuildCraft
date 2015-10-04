@@ -31,21 +31,6 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
         recentEnergyAverageUtil.tick();
     }
 
-	@Override
-	public double getXCoord() {
-		return getPos().getX();
-	}
-
-	@Override
-	public double getYCoord() {
-		return getPos().getY();
-	}
-
-	@Override
-	public double getZCoord() {
-		return getPos().getZ();
-	}
-
     public int getEnergy() {
         return energy;
     }

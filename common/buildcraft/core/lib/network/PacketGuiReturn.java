@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.core.BuildCraftCore;
 import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
@@ -38,9 +38,8 @@ public class PacketGuiReturn extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data) {
-        data.writeInt(obj.getWorld().provider.getDimensionId());
-
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         if (obj instanceof TileEntity) {
             TileEntity tile = (TileEntity) obj;
             data.writeBoolean(true);
@@ -63,9 +62,8 @@ public class PacketGuiReturn extends Packet {
     }
 
     @Override
-    public void readData(ByteBuf data) {
-        int dim = data.readInt();
-        World world = DimensionManager.getWorld(dim);
+    public void readData(ByteBuf data, World world, EntityPlayer player) {
+        super.readData(data, world, player);
         boolean tileReturn = data.readBoolean();
 
         if (tileReturn) {
@@ -91,5 +89,11 @@ public class PacketGuiReturn extends Packet {
     @Override
     public int getID() {
         return PacketIds.GUI_RETURN;
+    }
+
+    @Override
+    public void applyData(World world) {
+        // TODO Auto-generated method stub
+
     }
 }
