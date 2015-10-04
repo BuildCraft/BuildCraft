@@ -1,9 +1,21 @@
 {
-    "variants": {
-        "facing=up": { "model": "buildcraftfactory:miningWell" },
-        "facing=east": { "model": "buildcraftfactory:miningWell" },
-        "facing=south": { "model": "buildcraftfactory:miningWell", "y": 90 },
-        "facing=west": { "model": "buildcraftfactory:miningWell", "y": 180 },
-        "facing=north": { "model": "buildcraftfactory:miningWell", "y": 270 }
-    }
+	"forge_marker": 1,
+	"defaults": {
+		"model": "buildcraftfactory:mining_well/main",
+		"textures": {
+			"particle":"buildcraftfactory:blocks/mining_well/top"
+		}
+	},
+	"variants": {
+        "led_done": {
+        	"true":  { "submodel":"buildcraftfactory:mining_well/led_active_on" },
+        	"false": { "submodel":"buildcraftfactory:mining_well/led_active_off" }
+        },
+        "led_power": {
+        	"0": { "submodel":"buildcraftfactory:mining_well/led_power_0" },
+        	"1": { "submodel":"buildcraftfactory:mining_well/led_power_1" },
+        	"2": { "submodel":"buildcraftfactory:mining_well/led_power_2" },
+        	"3": { "submodel":"buildcraftfactory:mining_well/led_power_3" }
+        }
+	}
 }

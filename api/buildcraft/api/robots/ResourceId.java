@@ -47,7 +47,7 @@ public abstract class ResourceId {
             int x = indexNBT.getInteger("i");
             int y = indexNBT.getInteger("j");
             int z = indexNBT.getInteger("k");
-            pos = new BlockPos(pos);
+            pos = new BlockPos(x, y, z);
         } else {
             int[] array = nbt.getIntArray("pos");
             if (array.length == 3) {

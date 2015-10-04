@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"decorated_type=destroy": { "model":"buildcraftcore:buildToolBlock" },
+		"decorated_type=blueprint": { "model":"buildcraftcore:blueprintBlock" },
+		"decorated_type=template": { "model":"buildcraftcore:templateBlock" }
+	}
+}

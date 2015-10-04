@@ -1,0 +1,25 @@
+{
+	"cameraPos": {
+		"xCoord": 0,
+		"yCoord": 0,
+		"zCoord": 0
+	},
+	"cameraFacing": {
+		"xCoord": 5.5,
+		"yCoord": 6,
+		"zCoord": 5.5
+	},
+	"schematic": "",
+	"labels": [
+		{
+			"label": "Pointing at the furnace",
+			"size": 0.25,
+			"offset": 1,
+			"position": {
+				"xCoord": 5.5,
+				"yCoord": 0.2,
+				"zCoord": 5.5
+			}
+		}
+	]
+}

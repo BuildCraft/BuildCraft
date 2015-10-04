@@ -1,12 +1,25 @@
 {
+	"forge_marker": 1,
     "variants": {
-        "normal": { "model": "buildcraftbuilders:marker_path" },
-        "inventory": { "model": "buildcraftbuilders:marker_path" },
-        "facing=up":  { "model": "buildcraftbuilders:marker_path" },
-        "facing=down":  { "model": "buildcraftbuilders:marker_path", "x": 180 },
-        "facing=east":  { "model": "buildcraftbuilders:marker_path", "y": 90, "x": 90 },
-        "facing=south":  { "model": "buildcraftbuilders:marker_path", "y": 180, "x": 90 },
-        "facing=west":  { "model": "buildcraftbuilders:marker_path", "y": 270, "x": 90 },
-        "facing=north":  { "model": "buildcraftbuilders:marker_path", "x": 90 }
+    	"facing": {
+        	"up":    { "model": "buildcraftbuilders:marker_path" },
+        	"down":  { "model": "buildcraftbuilders:marker_path", "x": 180 },
+        	"east":  { "model": "buildcraftbuilders:marker_path", "x": 90, "y": 90 },
+        	"south": { "model": "buildcraftbuilders:marker_path", "x": 90, "y": 180 },
+        	"west":  { "model": "buildcraftbuilders:marker_path", "x": 90, "y": 270 },
+        	"north": { "model": "buildcraftbuilders:marker_path", "x": 90 }
+        },
+        "led_done": {
+        	"false": {
+        		"textures": {
+        			"torch": "buildcraftbuilders:blocks/marker/path"
+        		}
+        	},
+        	"true": {
+        		"textures": {
+        			"torch": "buildcraftbuilders:blocks/marker/path_searching"
+        		}
+        	}
+        }
     }
 }

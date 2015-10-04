@@ -1,7 +1,21 @@
 {
-    "variants": {
-        "state=off": { "model": "buildcraftfactory:pump_off" },
-        "state=on": { "model": "buildcraftfactory:pump_on" },
-        "state=done": { "model": "buildcraftfactory:pump_done" }
-    }
+	"forge_marker": 1,
+	"defaults": {
+		"model": "buildcraftfactory:pump/main",
+		"textures": {
+			"particle":"buildcraftfactory:blocks/pump/top"
+		}
+	},
+	"variants": {
+        "led_done": {
+        	"true":  { "submodel":"buildcraftfactory:pump/led_active_on" },
+        	"false": { "submodel":"buildcraftfactory:pump/led_active_off" }
+        },
+        "led_power": {
+        	"0": { "submodel":"buildcraftfactory:pump/led_power_0" },
+        	"1": { "submodel":"buildcraftfactory:pump/led_power_1" },
+        	"2": { "submodel":"buildcraftfactory:pump/led_power_2" },
+        	"3": { "submodel":"buildcraftfactory:pump/led_power_3" }
+        }
+	}
 }
