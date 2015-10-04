@@ -18,7 +18,7 @@ import buildcraft.transport.ItemPipe;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {
-        super(quads, particle, DefaultVertexFormats.BLOCK, getTransforms());
+        super(quads, particle, DefaultVertexFormats.BLOCK, getItemTransforms());
     }
 
     public static PipeItemModel create(ItemPipe item) {

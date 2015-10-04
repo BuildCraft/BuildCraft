@@ -23,15 +23,14 @@ import net.minecraft.world.World;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileUpdate;
-import buildcraft.core.lib.utils.Utils;
 
 import io.netty.buffer.ByteBuf;
 
@@ -42,6 +41,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
+    private boolean sendNetworkUpdate = false;
 
     private int init = 0;
     private String owner = "[BuildCraft]";
@@ -97,6 +97,13 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
                 }
             }
         }
+
+        if (sendNetworkUpdate) {
+            sendNetworkUpdate = false;
+            if (worldObj != null && !worldObj.isRemote) {
+                BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj, pos, DefaultProps.NETWORK_UPDATE_RANGE);
+            }
+        }
     }
 
     public void initialize() {
@@ -128,9 +135,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public void sendNetworkUpdate() {
-        if (worldObj != null && !worldObj.isRemote) {
-            BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj, pos, DefaultProps.NETWORK_UPDATE_RANGE);
-        }
+        sendNetworkUpdate = true;
     }
 
     public void writeData(ByteBuf stream) {
@@ -147,7 +152,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public net.minecraft.network.Packet getDescriptionPacket() {
-        return Utils.toPacket(getPacketUpdate(), 0);
+        sendNetworkUpdate();
+        return null;
     }
 
     @Override

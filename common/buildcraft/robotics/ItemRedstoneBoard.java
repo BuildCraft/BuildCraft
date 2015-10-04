@@ -6,6 +6,8 @@ package buildcraft.robotics;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -17,12 +19,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.BuildCraftRobotics;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
     public ItemRedstoneBoard() {
@@ -84,7 +86,9 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
     @Override
     public void registerModels() {
-        for (RedstoneBoardNBT<?> boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+        List<RedstoneBoardNBT<?>> boardNBTs = Lists.newArrayList(RedstoneBoardRegistry.instance.getAllBoardNBTs());
+        boardNBTs.add(RedstoneBoardRegistry.instance.getEmptyRobotBoard());
+        for (RedstoneBoardNBT<?> boardNBT : boardNBTs) {
             String type = boardNBT.getItemModelLocation();
             /* Neat little trick: we have to register the models, but NEVER for meta 0 (because of the way minecraft
              * gets its item models). So, provided this number is never 0 it will work */
