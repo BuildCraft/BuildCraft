@@ -10,15 +10,16 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
+// TODO: MAKE POWER FLOW WORK!
 public class PipeRendererPower {
     public static final float DISPLAY_MULTIPLIER = 0.1f;
     public static final int POWER_STAGES = 100;

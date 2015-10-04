@@ -17,13 +17,13 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -38,6 +38,7 @@ import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
+// TODO: MAKE POWER FLOW WORK!
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
     public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
@@ -46,6 +47,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     private static final int OVERLOAD_TICKS = 60;
 
     public short[] displayPower = new short[6];
+    public byte[] displayFlow = new byte[6];
     public int[] nextPowerQuery = new int[6];
     public double[] internalNextPower = new double[6];
     public int overload;
@@ -324,7 +326,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         }
 
         if (tracker.markTimeIfDelay(container.getWorld())) {
-            PacketPowerUpdate packet = new PacketPowerUpdate(container.getPos());
+            PacketPowerUpdate packet = new PacketPowerUpdate(container);
 
             packet.displayPower = displayPower;
             packet.overload = isOverloaded();
@@ -440,6 +442,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
      * @param packetPower */
     public void handlePowerPacket(PacketPowerUpdate packetPower) {
         displayPower = packetPower.displayPower;
+        displayFlow = packetPower.displayFlow;
         overload = packetPower.overload ? OVERLOAD_TICKS : 0;
     }
 

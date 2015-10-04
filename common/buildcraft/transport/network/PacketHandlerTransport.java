@@ -30,6 +30,7 @@ public class PacketHandlerTransport extends PacketHandler {
     /** TODO: A lot of this is based on the player to retrieve the world. Passing a dimension id would be more
      * appropriate. More generally, it seems like a lot of these packets could be replaced with tile-based RPCs. */
     @Override
+    @Deprecated
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
         super.channelRead0(ctx, packet);
         try {
@@ -40,7 +41,8 @@ public class PacketHandlerTransport extends PacketHandler {
 
             switch (packetID) {
                 case PacketIds.PIPE_POWER:
-                    onPacketPower(player, (PacketPowerUpdate) packet);
+                    // MOVED!
+//                    onPacketPower(player, (PacketPowerUpdate) packet);
                     break;
                 case PacketIds.PIPE_LIQUID:
                     // action will have happened already at read time
