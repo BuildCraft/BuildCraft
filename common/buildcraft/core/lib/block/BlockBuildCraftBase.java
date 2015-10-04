@@ -28,7 +28,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumBlueprintType;
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;

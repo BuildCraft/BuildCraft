@@ -19,7 +19,7 @@ import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.robotics.BuildCraftRobotics;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.transport.TileGenericPipe;
 

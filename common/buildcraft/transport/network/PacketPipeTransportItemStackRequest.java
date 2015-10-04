@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.TravelingItem;
 
 import io.netty.buffer.ByteBuf;

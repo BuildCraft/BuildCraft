@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.vecmath.Vector3f;
+import com.google.common.collect.Lists;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -21,16 +23,22 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.power.IEngine;
@@ -49,10 +57,17 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.network.Packet;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import javax.vecmath.Vector3f;
 
 public final class Utils {
+	// Commonly used vectors
+	public static final BlockPos POS_ZERO = BlockPos.ORIGIN;
+	public static final BlockPos POS_ONE = vec3i(1);
+
+	public static final Vec3 VEC_ZERO = vec3(0);
+	public static final Vec3 VEC_HALF = vec3(0.5);
+	public static final Vec3 VEC_ONE = vec3(1);
+
     public static final boolean CAULDRON_DETECTED;
     public static final XorShift128Random RANDOM = new XorShift128Random();
     private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALUES));
@@ -321,153 +336,290 @@ public final class Utils {
         return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
     }
 
-    public static String getNameForItem(Item item) {
-        Object obj = Item.itemRegistry.getNameForObject(item);
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString();
-    }
+	public static String getNameForItem(Item item) {
+		Object obj = Item.itemRegistry.getNameForObject(item);
+		if (obj == null) {
+			return null;
+		}
+		return obj.toString();
+	}
 
-    public static String getNameForBlock(Block block) {
-        Object obj = Block.blockRegistry.getNameForObject(block);
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString();
-    }
+	public static String getNameForBlock(Block block) {
+		Object obj = Block.blockRegistry.getNameForObject(block);
+		if (obj == null) {
+			return null;
+		}
+		return obj.toString();
+	}
 
-    /** Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY,
-     * maxZ */
-    public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        if (maxY >= 0 && minY < 256) {
-            minX >>= 4;
-            minZ >>= 4;
-            maxX >>= 4;
-            maxZ >>= 4;
+	public static String getModSpecificNameForBlock(Block block) {
+		Object obj = Block.blockRegistry.getNameForObject(block);
+		if (obj == null) {
+			return null;
+		}
+		return ((ResourceLocation) obj).getResourcePath();
+	}
 
-            for (int var7 = minX; var7 <= maxX; ++var7) {
-                for (int var8 = minZ; var8 <= maxZ; ++var8) {
-                    if (!world.getChunkProvider().chunkExists(var7, var8)) {
-                        return false;
-                    }
-                }
-            }
+	public static String getModSpecificNameForItem(Item item) {
+		Object obj = Item.itemRegistry.getNameForObject(item);
+		if (obj == null) {
+			return null;
+		}
+		return ((ResourceLocation) obj).getResourcePath();
+	}
 
-            return true;
-        } else {
-            return false;
-        }
-    }
+	/** Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY,
+	 * maxZ */
+	public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+		if (maxY >= 0 && minY < 256) {
+			minX >>= 4;
+			minZ >>= 4;
+			maxX >>= 4;
+			maxZ >>= 4;
 
-    public static Vec3 convert(Vec3i vec3i) {
-        return new Vec3(vec3i.getX(), vec3i.getY(), vec3i.getZ());
-    }
+			for (int var7 = minX; var7 <= maxX; ++var7) {
+				for (int var8 = minZ; var8 <= maxZ; ++var8) {
+					if (!world.getChunkProvider().chunkExists(var7, var8)) {
+						return false;
+					}
+				}
+			}
 
-    /** Convert an integer vector to an equal floating point vector, 0.5 added to all coordinates (so the middle of a
-     * block if this vector represents a block) */
-    public static Vec3 convertMiddle(Vec3i vec3i) {
-        return convert(vec3i).add(new Vec3(0.5, 0.5, 0.5));
-    }
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-    public static Vec3 convert(EnumFacing face) {
-        if (face == null) {
-            return new Vec3(0, 0, 0);
-        }
-        return new Vec3(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+	// Vector utils
 
-    }
+	/** Factory that returns a new Vec3 with the same argument for x, y and z. */
+	public static Vec3 vec3(double value) {
+		return new Vec3(value, value, value);
+	}
 
-    public static Vec3 convert(EnumFacing face, double size) {
-        return multiply(convert(face), size);
-    }
+	/** Factory that returns a new BlockPos with the same argument for x, y and z. */
+	public static BlockPos vec3i(int value) {
+		return new BlockPos(value, value, value);
+	}
 
-    public static EnumFacing convertPositive(EnumFacing face) {
-        if (face == null) {
-            return null;
-        }
-        if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
-            return face.getOpposite();
-        }
-        return face;
-    }
+	/** Factory that returns a new Vector3f with the same argument for x, y and z. */
+	public static Vector3f vec3f(float value) {
+		return new Vector3f(value, value, value);
+	}
 
-    // We always return BlockPos instead of Vec3i as it will be usable in all situations that Vec3i is, and all the ones
-    // that require BlockPos
-    public static BlockPos convertFloor(Vec3 vec) {
-        return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
-    }
+	/** Factory that converts an integer vector to a double vector. */
+	public static Vec3 convert(Vec3i vec3i) {
+		return new Vec3(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+	}
 
-    public static BlockPos convertFloor(EnumFacing face) {
-        return convertFloor(convert(face));
-    }
+	/** Convert an integer vector to an equal floating point vector, 0.5 added to all coordinates (so the middle of a
+	 * block if this vector represents a block) */
+	public static Vec3 convertMiddle(Vec3i vec3i) {
+		return convert(vec3i).add(Utils.VEC_HALF);
+	}
 
-    public static BlockPos convertFloor(EnumFacing face, int multiple) {
-        return convertFloor(convert(face, multiple));
-    }
+	public static Vec3 convert(EnumFacing face) {
+		if (face == null) {
+			return Utils.VEC_ZERO;
+		}
+		return new Vec3(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
 
-    public static Vec3 convert(Vector3f vec) {
-        return new Vec3(vec.x, vec.y, vec.z);
-    }
+	}
 
-    public static Vector3f convertFloat(Vec3 vec) {
-        return new Vector3f((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
-    }
+	public static Vec3 convert(EnumFacing face, double size) {
+		return multiply(convert(face), size);
+	}
 
-    public static Vec3 multiply(Vec3 vec, double multiple) {
-        return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
-    }
+	public static EnumFacing convertPositive(EnumFacing face) {
+		if (face == null) {
+			return null;
+		}
+		if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+			return face.getOpposite();
+		}
+		return face;
+	}
 
-    public static Vec3 clamp(Vec3 in, Vec3 lower, Vec3 upper) {
-        double x = MathUtils.clamp(in.xCoord, lower.xCoord, upper.xCoord);
-        double y = MathUtils.clamp(in.yCoord, lower.yCoord, upper.yCoord);
-        double z = MathUtils.clamp(in.zCoord, lower.zCoord, upper.zCoord);
-        return new Vec3(x, y, z);
-    }
+	// We always return BlockPos instead of Vec3i as it will be usable in all situations that Vec3i is, and all the ones
+	// that require BlockPos
+	public static BlockPos convertFloor(Vec3 vec) {
+		return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
+	}
 
-    public static Vec3 min(Vec3 one, Vec3 two) {
-        double x = Math.min(one.xCoord, two.xCoord);
-        double y = Math.min(one.yCoord, two.yCoord);
-        double z = Math.min(one.zCoord, two.zCoord);
-        return new Vec3(x, y, z);
-    }
+	public static BlockPos convertFloor(EnumFacing face) {
+		return convertFloor(convert(face));
+	}
 
-    public static Vec3 max(Vec3 one, Vec3 two) {
-        double x = Math.max(one.xCoord, two.xCoord);
-        double y = Math.max(one.yCoord, two.yCoord);
-        double z = Math.max(one.zCoord, two.zCoord);
-        return new Vec3(x, y, z);
-    }
+	public static BlockPos convertFloor(EnumFacing face, int multiple) {
+		return convertFloor(convert(face, multiple));
+	}
 
-    public static Vec3 withValue(Vec3 vector, Axis axis, double value) {
-        if (axis == Axis.X) {
-            return new Vec3(value, vector.yCoord, vector.zCoord);
-        } else if (axis == Axis.Y) {
-            return new Vec3(vector.xCoord, value, vector.zCoord);
-        } else if (axis == Axis.Z) {
-            return new Vec3(vector.xCoord, vector.yCoord, value);
-        } else {
-            return vector;
-        }
-    }
+	public static BlockPos min(BlockPos one, BlockPos two) {
+		int x = Math.min(one.getX(), two.getX());
+		int y = Math.min(one.getY(), two.getY());
+		int z = Math.min(one.getZ(), two.getZ());
+		return new BlockPos(x, y, z);
+	}
 
-    public static double getValue(Vec3 vector, Axis axis) {
-        if (axis == Axis.X) {
-            return vector.xCoord;
-        } else if (axis == Axis.Y) {
-            return vector.yCoord;
-        } else if (axis == Axis.Z) {
-            return vector.zCoord;
-        } else {
-            throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-        }
-    }
+	public static BlockPos max(BlockPos one, BlockPos two) {
+		int x = Math.max(one.getX(), two.getX());
+		int y = Math.max(one.getY(), two.getY());
+		int z = Math.max(one.getZ(), two.getZ());
+		return new BlockPos(x, y, z);
+	}
 
-    public static Vec3 getVec(Entity entity) {
-        return new Vec3(entity.posX, entity.posY, entity.posZ);
-    }
+	public static Vec3 convert(Vector3f vec) {
+		return new Vec3(vec.x, vec.y, vec.z);
+	}
 
-    public static BlockPos getPos(Entity entity) {
-        return convertFloor(getVec(entity));
-    }
+	public static Vector3f convertFloat(Vec3 vec) {
+		return new Vector3f((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+	}
+
+	public static Vec3 multiply(Vec3 vec, double multiple) {
+		return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
+	}
+
+	public static Vec3 clamp(Vec3 in, Vec3 lower, Vec3 upper) {
+		double x = MathUtils.clamp(in.xCoord, lower.xCoord, upper.xCoord);
+		double y = MathUtils.clamp(in.yCoord, lower.yCoord, upper.yCoord);
+		double z = MathUtils.clamp(in.zCoord, lower.zCoord, upper.zCoord);
+		return new Vec3(x, y, z);
+	}
+
+	public static Vec3 min(Vec3 one, Vec3 two) {
+		double x = Math.min(one.xCoord, two.xCoord);
+		double y = Math.min(one.yCoord, two.yCoord);
+		double z = Math.min(one.zCoord, two.zCoord);
+		return new Vec3(x, y, z);
+	}
+
+	public static Vec3 max(Vec3 one, Vec3 two) {
+		double x = Math.max(one.xCoord, two.xCoord);
+		double y = Math.max(one.yCoord, two.yCoord);
+		double z = Math.max(one.zCoord, two.zCoord);
+		return new Vec3(x, y, z);
+	}
+
+	public static Vec3 withValue(Vec3 vector, Axis axis, double value) {
+		if (axis == Axis.X) {
+			return new Vec3(value, vector.yCoord, vector.zCoord);
+		} else if (axis == Axis.Y) {
+			return new Vec3(vector.xCoord, value, vector.zCoord);
+		} else if (axis == Axis.Z) {
+			return new Vec3(vector.xCoord, vector.yCoord, value);
+		} else {
+			return vector;
+		}
+	}
+
+	public static double getValue(Vec3 vector, Axis axis) {
+		if (axis == Axis.X) {
+			return vector.xCoord;
+		} else if (axis == Axis.Y) {
+			return vector.yCoord;
+		} else if (axis == Axis.Z) {
+			return vector.zCoord;
+		} else {
+			throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
+		}
+	}
+
+	public static Vec3 getVec(Entity entity) {
+		return new Vec3(entity.posX, entity.posY, entity.posZ);
+	}
+
+	public static BlockPos getPos(Entity entity) {
+		return convertFloor(getVec(entity));
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static Vec3 getInterpolatedVec(Entity entity, float partialTicks) {
+		return entity.getPositionEyes(partialTicks).addVector(0, -entity.getEyeHeight(), 0);
+	}
+
+	/** Returns all of the chunks that all the block positions returned by
+	 * {@link #allInBoxIncludingCorners(BlockPos, BlockPos)} occupy */
+	public static Iterable<ChunkCoordIntPair> allChunksFor(BlockPos pos1, BlockPos pos2) {
+		BlockPos min = min(pos1, pos2);
+		BlockPos max = max(pos1, pos2);
+		int minX = min.getX() >> 4;
+		int maxX = max.getX() >> 4;
+		int minZ = min.getZ() >> 4;
+		int maxZ = max.getZ() >> 4;
+		List<ChunkCoordIntPair> list = Lists.newArrayList();
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
+				list.add(new ChunkCoordIntPair(x, z));
+			}
+		}
+		return list;
+	}
+
+	public static Iterable<BlockPos> allInChunk(ChunkCoordIntPair ccip) {
+		return allInBoxIncludingCorners(ccip.getBlock(0, 0, 0), ccip.getBlock(15, 255, 15));
+	}
+
+	/** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but doesn't require unsafe casting. */
+	@SuppressWarnings("unchecked")
+	public static Iterable<BlockPos> allInBoxIncludingCorners(BlockPos pos1, BlockPos pos2) {
+		BlockPos min = min(pos1, pos2);
+		BlockPos max = max(pos1, pos2);
+		Iterable<?> iterator = BlockPos.getAllInBox(min, max);
+		return (Iterable<BlockPos>) iterator;
+	}
+
+	public static Vec3 getMinForFace(EnumFacing face, Vec3 min, Vec3 max) {
+		if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+			return min;
+		}
+		if (face == EnumFacing.EAST) {
+			return new Vec3(max.xCoord, min.yCoord, min.zCoord);
+		} else if (face == EnumFacing.UP) {
+			return new Vec3(min.xCoord, max.yCoord, min.zCoord);
+		} else {// MUST be SOUTH
+			return new Vec3(min.xCoord, min.yCoord, max.zCoord);
+		}
+	}
+
+	public static Vec3 getMaxForFace(EnumFacing face, Vec3 min, Vec3 max) {
+		if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+			return max;
+		}
+		if (face == EnumFacing.WEST) {
+			return new Vec3(min.xCoord, max.yCoord, max.zCoord);
+		} else if (face == EnumFacing.DOWN) {
+			return new Vec3(max.xCoord, min.yCoord, max.zCoord);
+		} else {// MUST be NORTH
+			return new Vec3(max.xCoord, max.yCoord, min.zCoord);
+		}
+	}
+
+	public static BlockPos getMinForFace(EnumFacing face, BlockPos min, BlockPos max) {
+		return convertFloor(getMinForFace(face, convert(min), convert(max)));
+	}
+
+	public static BlockPos getMaxForFace(EnumFacing face, BlockPos min, BlockPos max) {
+		return convertFloor(getMaxForFace(face, convert(min), convert(max)));
+	}
+
+	public static boolean isInside(BlockPos toTest, BlockPos min, BlockPos max) {
+		if (toTest.getX() < min.getX() || toTest.getY() < min.getY() || toTest.getZ() < min.getZ()) {
+			return false;
+		}
+		return toTest.getX() <= max.getX() && toTest.getY() <= max.getY() && toTest.getZ() <= max.getZ();
+	}
+
+	public static BlockPos getClosestInside(BlockPos from, BlockPos min, BlockPos max) {
+		BlockPos maxMin = max(from, min);
+		BlockPos minMax = min(maxMin, max);
+		return minMax;
+	}
+
+	public static AxisAlignedBB boundingBox(Vec3 pointA, Vec3 pointB) {
+		Vec3 min = min(pointA, pointB);
+		Vec3 max = max(pointA, pointB);
+		return new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
+	}
 }

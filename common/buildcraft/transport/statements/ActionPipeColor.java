@@ -8,7 +8,7 @@ import java.util.Locale;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;

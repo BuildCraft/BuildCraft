@@ -14,7 +14,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.statements.TriggerClockTimer;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
 

@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.tablet.TabletBitmap;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 
 public class TabletServer extends TabletBase {
     protected final EntityPlayer player;

@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.robotics.tile.TileRequester;
+import buildcraft.robotics.TileRequester;
 
 public class GuiRequester extends GuiAdvancedInterface {
 

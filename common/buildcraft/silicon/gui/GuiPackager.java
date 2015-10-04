@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.silicon.tile.TilePackager;
+import buildcraft.silicon.TilePackager;
 
 public class GuiPackager extends GuiBuildCraft {
 

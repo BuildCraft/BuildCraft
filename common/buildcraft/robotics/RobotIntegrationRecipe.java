@@ -9,14 +9,13 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.recipes.IntegrationRecipeBC;
-import buildcraft.robotics.item.ItemRedstoneBoard;
-import buildcraft.robotics.item.ItemRobot;
 
 public class RobotIntegrationRecipe extends IntegrationRecipeBC {
     public RobotIntegrationRecipe() {

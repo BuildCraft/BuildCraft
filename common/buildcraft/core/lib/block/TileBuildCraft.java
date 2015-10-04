@@ -25,7 +25,7 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;

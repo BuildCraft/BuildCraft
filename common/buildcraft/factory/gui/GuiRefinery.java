@@ -18,7 +18,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.lib.gui.FluidSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.factory.tile.TileRefinery;
+import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {
 

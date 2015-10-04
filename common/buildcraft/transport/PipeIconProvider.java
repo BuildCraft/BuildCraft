@@ -6,8 +6,6 @@ package buildcraft.transport;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -18,8 +16,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.enums.EnumColor;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
+import buildcraft.BuildCraftCore;
 
 public class PipeIconProvider implements IIconProvider {
 

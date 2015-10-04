@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import buildcraft.transport.item.ItemPipe;
 import buildcraft.transport.render.TileEntityPickupFX;
 import buildcraft.transport.render.tile.PipeRendererTESR;
 

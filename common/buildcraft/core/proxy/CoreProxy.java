@@ -30,7 +30,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;

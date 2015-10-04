@@ -18,7 +18,7 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
     @Override

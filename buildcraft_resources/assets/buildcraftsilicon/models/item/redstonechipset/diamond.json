@@ -1,0 +1,6 @@
+{
+	"parent":"buildcraftcore:item/buildcraft_base",
+	"textures": {
+		"layer0":"buildcraftsilicon:items/chipset/redstone_diamond_chipset"
+	}
+}

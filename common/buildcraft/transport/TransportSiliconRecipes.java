@@ -8,11 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateExpansionPulsar;

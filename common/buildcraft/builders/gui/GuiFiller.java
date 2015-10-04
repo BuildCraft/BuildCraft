@@ -14,7 +14,7 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

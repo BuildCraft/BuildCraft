@@ -6,14 +6,13 @@ package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.silicon.tile.TilePackager;
+import buildcraft.silicon.TilePackager;
 
 public class ContainerPackager extends BuildCraftContainer {
     private final TilePackager tile;
@@ -53,21 +52,6 @@ public class ContainerPackager extends BuildCraftContainer {
         }
 
         onCraftMatrixChanged(tile);
-    }
-
-    @Override
-    public void addCraftingToCrafters(ICrafting icrafting) {
-        super.addCraftingToCrafters(icrafting);
-        // icrafting.sendProgressBarUpdate(this, 0, tile.progress);
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        /* for (int i = 0; i < crafters.size(); i++) { ICrafting icrafting = (ICrafting) crafters.get(i); if
-         * (lastProgress != tile.progress) { icrafting.sendProgressBarUpdate(this, 0, tile.progress); } } ItemStack
-         * output = craftResult.getStackInSlot(0); if (output != prevOutput) { prevOutput = output;
-         * onCraftMatrixChanged(tile.craftMatrix); } lastProgress = tile.progress; */
     }
 
     @Override

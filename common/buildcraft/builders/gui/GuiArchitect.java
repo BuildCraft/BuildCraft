@@ -14,8 +14,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.tile.TileArchitect;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.builders.TileArchitect;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.lib.gui.GuiBuildCraft;

@@ -12,7 +12,7 @@ import net.minecraft.inventory.Slot;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.silicon.tile.TileStampingTable;
+import buildcraft.silicon.TileStampingTable;
 
 public class ContainerStampingTable extends BuildCraftContainer {
 

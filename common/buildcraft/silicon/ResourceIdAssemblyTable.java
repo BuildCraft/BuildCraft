@@ -7,7 +7,6 @@ package buildcraft.silicon;
 import net.minecraft.util.BlockPos;
 
 import buildcraft.api.robots.ResourceId;
-import buildcraft.silicon.tile.TileAssemblyTable;
 
 public class ResourceIdAssemblyTable extends ResourceId {
 
@@ -16,7 +15,7 @@ public class ResourceIdAssemblyTable extends ResourceId {
     }
 
     public ResourceIdAssemblyTable(TileAssemblyTable tile) {
-        pos = new BlockPos(tile);
+        pos = new BlockPos(tile.getXCoord(), tile.getYCoord(), tile.getZCoord());
     }
 
 }

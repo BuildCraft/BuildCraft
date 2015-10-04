@@ -16,11 +16,11 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.block.BlockGenericPipe;
-import buildcraft.transport.item.ItemPipe;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.ItemPipe;
 
 public class StripesHandlerPipes implements IStripesHandler {
 

@@ -17,7 +17,7 @@ import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 
 public class DefaultActionProvider implements IActionProvider {
 

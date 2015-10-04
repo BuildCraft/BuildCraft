@@ -10,7 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.TileAssemblyTable;
 
 public class ContainerAssemblyTable extends BuildCraftContainer {
     IInventory playerIInventory;

@@ -17,7 +17,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
@@ -27,7 +27,7 @@ import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
 import buildcraft.core.lib.utils.RevolvingList;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {

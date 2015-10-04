@@ -10,13 +10,12 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
-import buildcraft.factory.tile.TileRefinery;
-import buildcraft.factory.tile.TileTank;
 
 public class FactoryProxyClient extends FactoryProxy {
     public static TextureAtlasSprite pumpTexture;

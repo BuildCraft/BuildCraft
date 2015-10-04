@@ -13,7 +13,7 @@ import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 
 public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
 

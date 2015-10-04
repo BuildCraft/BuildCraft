@@ -10,7 +10,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.lib.EntityResizableCuboid;
 
 public class EntityMechanicalArm extends Entity {

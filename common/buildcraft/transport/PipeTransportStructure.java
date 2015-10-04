@@ -8,7 +8,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.transport.block.BlockGenericPipe;
 
 public class PipeTransportStructure extends PipeTransport {
 

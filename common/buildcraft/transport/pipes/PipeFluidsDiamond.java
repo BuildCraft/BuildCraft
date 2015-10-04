@@ -23,12 +23,12 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.FluidUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.block.BlockGenericPipe;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 
 import io.netty.buffer.ByteBuf;

@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
 import buildcraft.robotics.render.RenderRobot;
 

@@ -8,7 +8,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.network.PacketIds;

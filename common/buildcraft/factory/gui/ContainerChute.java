@@ -10,7 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.TileChute;
 
 public class ContainerChute extends BuildCraftContainer {
 

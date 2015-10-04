@@ -9,7 +9,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 
 public class ContainerBuilder extends BuildCraftContainer {

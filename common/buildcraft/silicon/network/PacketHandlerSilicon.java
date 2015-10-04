@@ -4,11 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.network;
 
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.lib.network.Packet;
@@ -16,10 +20,7 @@ import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
+import buildcraft.silicon.TileAdvancedCraftingTable;
 
 @Sharable
 public class PacketHandlerSilicon extends PacketHandler {
@@ -43,7 +44,7 @@ public class PacketHandlerSilicon extends PacketHandler {
     }
 
     private TileAdvancedCraftingTable getAdvancedWorkbench(World world, BlockPos pos) {
-        if (!world.blockExists(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 
@@ -56,7 +57,7 @@ public class PacketHandlerSilicon extends PacketHandler {
     }
 
     private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
-        TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
+        TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.pos);
         if (tile == null) {
             return;
         }

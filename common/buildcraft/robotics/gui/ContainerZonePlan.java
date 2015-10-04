@@ -10,7 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
@@ -19,8 +19,8 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.robotics.BuildCraftRobotics;
-import buildcraft.robotics.tile.TileZonePlan;
+import buildcraft.BuildCraftRobotics;
+import buildcraft.robotics.TileZonePlan;
 
 import io.netty.buffer.ByteBuf;
 

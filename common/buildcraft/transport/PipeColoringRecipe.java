@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.transport.item.ItemPipe;
 
 public class PipeColoringRecipe implements IRecipe {
 

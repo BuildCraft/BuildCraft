@@ -15,8 +15,6 @@ import buildcraft.robotics.gui.ContainerRequester;
 import buildcraft.robotics.gui.ContainerZonePlan;
 import buildcraft.robotics.gui.GuiRequester;
 import buildcraft.robotics.gui.GuiZonePlan;
-import buildcraft.robotics.tile.TileRequester;
-import buildcraft.robotics.tile.TileZonePlan;
 
 public class RoboticsGuiHandler implements IGuiHandler {
     @Override

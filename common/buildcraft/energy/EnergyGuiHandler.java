@@ -15,8 +15,6 @@ import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.energy.gui.ContainerEngine;
 import buildcraft.energy.gui.GuiCombustionEngine;
 import buildcraft.energy.gui.GuiStoneEngine;
-import buildcraft.energy.tile.TileEngineIron;
-import buildcraft.energy.tile.TileEngineStone;
 
 public class EnergyGuiHandler implements IGuiHandler {
 

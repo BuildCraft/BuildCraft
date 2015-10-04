@@ -11,21 +11,21 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.core.render.RenderLaser;
-import buildcraft.silicon.tile.TileLaser;
+import buildcraft.silicon.TileLaser;
 
 public class RenderLaserTile extends TileEntitySpecialRenderer {
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
         TileLaser laser = (TileLaser) tileentity;
 
         if (laser != null) {
             GL11.glPushMatrix();
-            GL11.glTranslated(pos);
-            GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+            GL11.glTranslated(x, y, z);
+            GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 
             GL11.glPushMatrix();
-            RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.field_147553_e, laser.laser, laser.getTexture());
+            RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, TileEntityRendererDispatcher.instance.renderEngine, laser.laser, laser.getTexture());
             GL11.glPopMatrix();
 
             GL11.glPopMatrix();

@@ -11,19 +11,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.silicon.gui.*;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
-import buildcraft.silicon.tile.TileAssemblyTable;
-import buildcraft.silicon.tile.TileChargingTable;
-import buildcraft.silicon.tile.TileIntegrationTable;
-import buildcraft.silicon.tile.TilePackager;
-import buildcraft.silicon.tile.TileProgrammingTable;
-import buildcraft.silicon.tile.TileStampingTable;
 
 public class SiliconGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
-        if (!world.blockExists(pos)) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+		BlockPos pos = new BlockPos(x, y, z);
+
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 
@@ -86,8 +81,10 @@ public class SiliconGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
-        if (!world.blockExists(pos)) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+		BlockPos pos = new BlockPos(x, y, z);
+
+		if (!world.isBlockLoaded(pos)) {
             return null;
         }
 

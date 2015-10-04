@@ -14,9 +14,9 @@ import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.recipes.IntegrationRecipeBC;
-import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.item.ItemFacade;
-import buildcraft.transport.item.ItemPipeWire;
+import buildcraft.BuildCraftTransport;
+import buildcraft.transport.ItemFacade;
+import buildcraft.transport.ItemPipeWire;
 
 public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
     public AdvancedFacadeRecipe() {

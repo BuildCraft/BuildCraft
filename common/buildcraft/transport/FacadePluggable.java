@@ -28,7 +28,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.item.ItemFacade;
 
 import io.netty.buffer.ByteBuf;
 

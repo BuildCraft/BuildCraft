@@ -2,9 +2,9 @@ package buildcraft.builders.schematics;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.builders.BuildCraftBuilders;
-import buildcraft.builders.block.BlockFrame;
-import buildcraft.builders.block.BlockFrame.EFrameConnection;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.BlockFrame;
+import buildcraft.builders.BlockFrame.EFrameConnection;
 
 public class SchematicFrame extends SchematicBlock {
     public SchematicFrame(EFrameConnection connection) {

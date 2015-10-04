@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.factory.BuildCraftFactory;
+import buildcraft.BuildCraftFactory;
 
 public class SchematicPump extends SchematicTile {
 

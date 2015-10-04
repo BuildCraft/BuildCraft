@@ -3,10 +3,8 @@ package buildcraft.builders;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.library.ILibraryTypeHandler;
-import buildcraft.builders.item.ItemBlueprint;
-import buildcraft.builders.item.ItemBlueprintStandard;
-import buildcraft.builders.item.ItemBlueprintTemplate;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.LibraryId;
 

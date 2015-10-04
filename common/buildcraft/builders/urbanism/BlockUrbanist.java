@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.builders.BuildCraftBuilders;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 

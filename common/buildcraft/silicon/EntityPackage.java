@@ -10,7 +10,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-import buildcraft.silicon.item.ItemPackage;
+import buildcraft.BuildCraftSilicon;
 
 public class EntityPackage extends EntityThrowable {
     private ItemStack pkg;
@@ -43,15 +43,15 @@ public class EntityPackage extends EntityThrowable {
 
     @Override
     protected void onImpact(MovingObjectPosition target) {
-        double pos;
+        double x, y, z;
         if (target.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
             x = target.entityHit.posX;
             y = target.entityHit.posY;
             z = target.entityHit.posZ;
         } else {
-            x = target.blockX;
-            y = target.blockY;
-            z = target.blockZ;
+            x = target.getBlockPos().getX();
+            y = target.getBlockPos().getY();
+            z = target.getBlockPos().getZ();
         }
 
         float hitPoints = 0.0F;
@@ -69,7 +69,7 @@ public class EntityPackage extends EntityThrowable {
                 double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
                 double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
                 EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, stack);
-                entityitem.delayBeforeCanPickup = 10;
+                entityitem.setDefaultPickupDelay();
 
                 world.spawnEntityInWorld(entityitem);
             }
