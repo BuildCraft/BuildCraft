@@ -7,6 +7,7 @@ package buildcraft;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -14,7 +15,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -50,6 +53,8 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BCCreativeTab;
@@ -65,25 +70,7 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.BlockFilteredBuffer;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.FacadePluggable;
-import buildcraft.transport.IMCHandlerTransport;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.ItemGateCopier;
-import buildcraft.transport.ItemPipe;
-import buildcraft.transport.ItemPipeWire;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeActionProvider;
-import buildcraft.transport.PipeColoringRecipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTriggerProvider;
-import buildcraft.transport.TileFilteredBuffer;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TransportGuiHandler;
-import buildcraft.transport.TransportProxy;
-import buildcraft.transport.TransportSiliconRecipes;
-import buildcraft.transport.WireIconProvider;
+import buildcraft.transport.*;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -457,6 +444,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         TransportProxy.proxy.registerRenderers();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TransportGuiHandler());
+
+        // Make pipes extend to connect to blocks like chests
+        ICustomPipeConnection smallerBlockConnection = new ICustomPipeConnection() {
+            @Override
+            public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+                return face == EnumFacing.UP ? 0 : 2 / 16f;
+            }
+        };
+
+        PipeConnectionAPI.registerConnection(Blocks.chest, smallerBlockConnection);
+        PipeConnectionAPI.registerConnection(Blocks.trapped_chest, smallerBlockConnection);
+        PipeConnectionAPI.registerConnection(Blocks.hopper, smallerBlockConnection);
     }
 
     @Mod.EventHandler

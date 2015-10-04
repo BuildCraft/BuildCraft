@@ -42,9 +42,11 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
@@ -471,6 +473,13 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         // Pipe connections;
         for (EnumFacing o : EnumFacing.VALUES) {
             renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
+            if (pipeConnectionsBuffer[o.ordinal()]) {
+                BlockPos connected = getPos().offset(o);
+                IBlockState state = worldObj.getBlockState(connected);
+                Block block = state.getBlock();
+                ICustomPipeConnection connection = PipeConnectionAPI.getCustomConnection(block);
+                renderState.setExtension(o, connection.getExtension(worldObj, connected, o, state));
+            }
         }
 
         // Pipe Textures

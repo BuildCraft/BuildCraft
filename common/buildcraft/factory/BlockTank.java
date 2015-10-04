@@ -14,6 +14,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,12 +24,13 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.BCCreativeTab;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.inventory.InvUtils;
 
-public class BlockTank extends BlockBuildCraft {
+public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection {
     private static final boolean DEBUG_MODE = false;
 
     public BlockTank() {
@@ -242,5 +244,10 @@ public class BlockTank extends BlockBuildCraft {
     @Override
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         return new AxisAlignedBB(0.1, 0, 0.1, 0.9, 1, 0.9);
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        return face.getAxis() == Axis.Y ? 0 : 2 / 16f;
     }
 }

@@ -22,18 +22,18 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
-    // private static final Map<Integer, Pipe<?>> pipes = Maps.newHashMap();
-
     public PipeBlockModel() {
         super(ImmutableList.<BakedQuad> of(), null, null);
     }
@@ -44,7 +44,12 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
     @Override
     public ISmartBlockModel handleBlockState(IBlockState state) {
-        return handle((IExtendedBlockState) state);
+        try {
+            return handle((IExtendedBlockState) state);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return defaultModel();
+        }
     }
 
     private static ISmartBlockModel defaultModel() {
@@ -58,7 +63,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         Pipe<?> pipe = BlockGenericPipe.PIPE_PIPE.getUnlistedValue(state);
 
         if (core == null || render == null || pluggable == null || pipe == null) {
-            return defaultModel();// Thats not good. Just return a cobblestone structure pipe center model
+            return defaultModel();// Thats not good. Just return a cobblestone structure pipe centre model
         }
 
         List<BakedQuad> quads = Lists.newArrayList();
@@ -71,7 +76,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
         // Center bit
         {
-            TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(pipe.getIconIndex(null));
+            TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null));
 
             float[] uvs = new float[4];
             uvs[U_MIN] = sprite.getInterpolatedU(minUV);
@@ -80,7 +85,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             uvs[V_MAX] = sprite.getInterpolatedV(maxUV);
 
             for (EnumFacing face : EnumFacing.VALUES) {
-                if (!render.pipeConnectionMatrix.isConnected(face)) {
+                if (!render.pipeConnectionMatrix.isConnected(face) || !render.pipeConnectionBanned.isConnected(face)) {
                     bakeDoubleFace(quads, face, new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(0.25f, 0.25f, 0.25f), uvs);
                 }
             }
@@ -88,89 +93,45 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
         // All the connected bits
         for (EnumFacing connect : EnumFacing.VALUES) {
-            if (render.pipeConnectionMatrix.isConnected(connect)) {
-                TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(pipe.getIconIndex(connect));
-                Vec3 actualCenter = Utils.convert(connect, 0.375f).addVector(0.5, 0.5, 0.5);
-                Vector3f center = Utils.convertFloat(actualCenter);
+            if (render.pipeConnectionMatrix.isConnected(connect) && render.pipeConnectionBanned.isConnected(connect)) {
+                float extension = render.customConnections[connect.ordinal()];
+                TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(connect));
 
-                for (EnumFacing face : EnumFacing.VALUES) {
-                    if (face.getAxis() == connect.getAxis()) {
-                        continue;
-                    }
+                Vec3 actualCenter = Utils.convert(connect, 0.375f + extension / 2).addVector(0.5, 0.5, 0.5);
 
-                    Vec3 smallerFace = null;
-                    if (connect.getAxisDirection() == AxisDirection.POSITIVE) {
-                        smallerFace = Utils.convert(connect, 2 / 16d);
-                    } else {
-                        smallerFace = Utils.convert(connect.getOpposite(), 2 / 16d);
-                    }
-                    Vec3 actualRadius = new Vec3(0.25, 0.25, 0.25).subtract(smallerFace);
-                    Vector3f radius = Utils.convertFloat(actualRadius);
-
-                    // Essentially a lot of special casing direction-wise to make pipes all work properly
-                    double umin = 0, umax = 0, vmin = 0, vmax = 0;
-
-                    if (connect == EnumFacing.UP) {
-                        umin = 4;
-                        umax = 12;
-                        vmin = 0;
-                        vmax = 4;
-                    } else if (connect == EnumFacing.DOWN) {
-                        umin = 4;
-                        umax = 12;
-                        vmin = 12;
-                        vmax = 16;
-                    } else {
-                        boolean vertical = false;
-                        boolean positive = false;
-
-                        if (connect == EnumFacing.NORTH) {
-                            vertical = face.getAxis() == Axis.Y;
-                            positive = face.getAxis() == Axis.X;
-                        } else if (connect == EnumFacing.SOUTH) {
-                            vertical = face.getAxis() == Axis.Y;
-                            positive = face.getAxis() != Axis.X;
-                        } else if (connect == EnumFacing.EAST) {
-                            positive = false;
-                        } else if (connect == EnumFacing.WEST) {
-                            positive = true;
-                        }
-
-                        if (vertical) {
-                            if (positive) {
-                                umin = 4;
-                                umax = 12;
-                                vmin = 0;
-                                vmax = 4;
-                            } else {
-                                umin = 4;
-                                umax = 12;
-                                vmin = 12;
-                                vmax = 16;
-                            }
-                        } else {
-                            if (positive) {
-                                umin = 0;
-                                umax = 4;
-                                vmin = 4;
-                                vmax = 12;
-                            } else {
-                                umin = 12;
-                                umax = 16;
-                                vmin = 4;
-                                vmax = 12;
-                            }
-                        }
-                    }
-
-                    float[] uvs = new float[4];
-                    uvs[U_MIN] = sprite.getInterpolatedU(umin);
-                    uvs[U_MAX] = sprite.getInterpolatedU(umax);
-                    uvs[V_MIN] = sprite.getInterpolatedV(vmin);
-                    uvs[V_MAX] = sprite.getInterpolatedV(vmax);
-
-                    bakeDoubleFace(quads, face, center, radius, uvs);
+                Vec3 smallerFace = null;
+                if (connect.getAxisDirection() == AxisDirection.POSITIVE) {
+                    smallerFace = Utils.convert(connect, 4 / 16d - extension);
+                } else {
+                    smallerFace = Utils.convert(connect.getOpposite(), 4 / 16d - extension);
                 }
+                Vec3 actualSize = Utils.VEC_HALF.subtract(smallerFace);
+
+                Vec3 pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
+
+                EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
+                cuboid.texture = sprite;
+                cuboid.makeClient();
+
+                // The extra 0.001 is to stop a bug where the next texture along is used for a pixel of the cuboid
+
+                double start = connect.getAxisDirection() == AxisDirection.POSITIVE ? 12.001 : 0.001;
+
+                cuboid.textureStartX = connect.getAxis() == Axis.X ? start : 4.001;
+                cuboid.textureStartY = connect.getAxis() == Axis.Y ? start : 4.001;
+                cuboid.textureStartZ = connect.getAxis() == Axis.Z ? start : 4.001;
+
+                cuboid.textureSizeX = connect.getAxis() == Axis.X ? 3.998 : 7.998;
+                cuboid.textureSizeY = connect.getAxis() == Axis.Y ? 3.998 : 7.998;
+                cuboid.textureSizeZ = connect.getAxis() == Axis.Z ? 3.998 : 7.998;
+
+                cuboid.textures[connect.ordinal()] = null;
+                cuboid.textures[connect.getOpposite().ordinal()] = null;
+
+                cuboid.setSize(actualSize);
+                cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
+
+                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
             }
         }
 
