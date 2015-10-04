@@ -33,7 +33,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class BlockUtils {

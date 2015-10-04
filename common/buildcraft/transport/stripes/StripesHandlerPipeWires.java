@@ -12,7 +12,7 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.item.ItemPipeWire;
+import buildcraft.transport.ItemPipeWire;
 
 public class StripesHandlerPipeWires implements IStripesHandler {
     @Override

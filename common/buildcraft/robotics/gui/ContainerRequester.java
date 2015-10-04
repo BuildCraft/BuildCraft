@@ -10,13 +10,13 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.robotics.tile.TileRequester;
+import buildcraft.robotics.TileRequester;
 
 import io.netty.buffer.ByteBuf;
 

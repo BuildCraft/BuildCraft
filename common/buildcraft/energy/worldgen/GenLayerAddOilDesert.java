@@ -7,7 +7,7 @@ package buildcraft.energy.worldgen;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 
-import buildcraft.energy.BuildCraftEnergy;
+import buildcraft.BuildCraftEnergy;
 
 public class GenLayerAddOilDesert extends GenLayerBiomeReplacer {
 

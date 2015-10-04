@@ -28,12 +28,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.client.BuildCraftStateMapper;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -97,7 +97,6 @@ public class CoreProxyClient extends CoreProxy {
     public void initializeEntityRendering() {
         RenderingRegistry.registerEntityRenderingHandler(EntityResizableCuboid.class, RenderResizableCuboid.INSTANCE);
         RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
-        EnumColor.registerIcons();
 
         for (Block block : blocksToRegisterRenderersFor) {
             if (block instanceof IModelRegister) {

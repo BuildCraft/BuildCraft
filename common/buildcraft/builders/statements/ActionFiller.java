@@ -11,7 +11,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.statements.BCStatement;
 

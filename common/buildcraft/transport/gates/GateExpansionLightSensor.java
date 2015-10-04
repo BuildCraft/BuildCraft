@@ -11,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 
 public final class GateExpansionLightSensor extends GateExpansionBuildcraft implements IGateExpansion {
 

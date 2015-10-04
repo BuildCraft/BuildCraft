@@ -11,7 +11,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.silicon.tile.TileChargingTable;
+import buildcraft.silicon.TileChargingTable;
 
 public class ContainerChargingTable extends BuildCraftContainer {
 

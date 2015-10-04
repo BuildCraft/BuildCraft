@@ -18,7 +18,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeRenderState;
 
 public class PipeRendererWires {

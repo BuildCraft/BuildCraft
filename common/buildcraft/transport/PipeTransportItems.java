@@ -24,6 +24,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
@@ -31,7 +32,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;

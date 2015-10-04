@@ -13,7 +13,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.utils.StringUtils;
 
 @SideOnly(Side.CLIENT)

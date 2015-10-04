@@ -13,7 +13,7 @@ import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-import buildcraft.core.BuildCraftMod;
+import buildcraft.BuildCraftMod;
 
 public class ConfigManager implements IModGuiFactory {
     public static Configuration config;

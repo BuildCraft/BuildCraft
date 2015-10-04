@@ -13,8 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.library.LibraryAPI;
-import buildcraft.builders.BuildCraftBuilders;
-import buildcraft.builders.tile.TileBlueprintLibrary;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.gui.GuiBuildCraft;

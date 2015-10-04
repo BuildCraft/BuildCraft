@@ -4,17 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.silicon.tile.TileLaserTableBase;
+import buildcraft.silicon.TileLaserTableBase;
 
 public abstract class GuiLaserTable extends GuiBuildCraft {
 
@@ -36,8 +34,11 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
             drawBackground(x, y);
 
             // Draw icon
+			// TODO
+			/*
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
             drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+			*/
 
             if (!isFullyOpened()) {
                 return;

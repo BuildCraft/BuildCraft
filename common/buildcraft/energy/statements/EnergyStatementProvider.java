@@ -15,7 +15,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.energy.BuildCraftEnergy;
+import buildcraft.BuildCraftEnergy;
 
 public class EnergyStatementProvider implements ITriggerProvider {
 

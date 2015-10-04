@@ -19,6 +19,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.proxy.CoreProxy;
 

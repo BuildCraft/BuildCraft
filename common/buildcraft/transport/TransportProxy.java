@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.CompatHooks;
-import buildcraft.transport.item.ItemPipe;
 
 public class TransportProxy {
     @SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")

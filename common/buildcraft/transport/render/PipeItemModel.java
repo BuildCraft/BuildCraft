@@ -14,7 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.core.lib.render.BuildCraftBakedModel;
-import buildcraft.transport.item.ItemPipe;
+import buildcraft.transport.ItemPipe;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {

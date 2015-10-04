@@ -28,7 +28,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
-import buildcraft.transport.block.BlockGenericPipe;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {

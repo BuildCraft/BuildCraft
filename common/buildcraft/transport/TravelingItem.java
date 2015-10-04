@@ -19,8 +19,8 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.enums.EnumColor;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.Utils;
 

@@ -34,7 +34,7 @@ import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;

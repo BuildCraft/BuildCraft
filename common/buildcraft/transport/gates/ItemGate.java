@@ -31,7 +31,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;

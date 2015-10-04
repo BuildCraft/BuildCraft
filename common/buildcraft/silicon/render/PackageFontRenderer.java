@@ -12,14 +12,14 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class PackageFontRenderer extends FontRenderer {
-    private static final RenderItem itemRender = new RenderItem();
+    private static final RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
     private static final Minecraft mc = Minecraft.getMinecraft();
-    private static final FontRenderer realRenderer = mc.fontRenderer;
+    private static final FontRenderer realRenderer = mc.fontRendererObj;
     private final ItemStack packageStack;
     private final NBTTagCompound pkgTag;
 
     public PackageFontRenderer(ItemStack packageStack) {
-        super(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.getTextureManager(), mc.fontRenderer.getUnicodeFlag());
+        super(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.getTextureManager(), mc.fontRendererObj.getUnicodeFlag());
         this.packageStack = packageStack;
         this.pkgTag = NBTUtils.getItemData(packageStack);
     }
@@ -33,14 +33,15 @@ public class PackageFontRenderer extends FontRenderer {
         return 21;
     }
 
+	// TODO: Bug-test!
     @Override
-    public int drawString(String s, int x, int y, int color, boolean shadow) {
+    public int drawString(String s, float x, float y, int color, boolean shadow) {
         if (s.indexOf("SPECIAL:") < 0) {
             return realRenderer.drawString(s, x, y, color, shadow);
         }
 
         int begin = Integer.parseInt(s.substring(s.length() - 1)) * 3;
-        int rx = x;
+        int rx = (int) x;
 
         for (int slotPos = begin; slotPos < begin + 3; slotPos++) {
             GL11.glPushMatrix();
@@ -53,11 +54,11 @@ public class PackageFontRenderer extends FontRenderer {
                 itemRender.zLevel = 200.0F;
 
                 if (font == null || font instanceof PackageFontRenderer) {
-                    font = Minecraft.getMinecraft().fontRenderer;
+                    font = Minecraft.getMinecraft().fontRendererObj;
                 }
 
-                itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-                itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
+                itemRender.renderItemAndEffectIntoGUI(slotStack, rx * 2, (int) (y * 2));
+                itemRender.renderItemOverlayIntoGUI(font, slotStack, rx * 2, (int) (y * 2), "");
                 itemRender.zLevel = 0.0F;
             }
 

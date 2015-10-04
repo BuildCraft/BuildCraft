@@ -9,20 +9,12 @@ import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.silicon.render.RenderLaserBlock;
-import buildcraft.silicon.render.RenderLaserTable;
+import buildcraft.BuildCraftSilicon;
 import buildcraft.silicon.render.RenderLaserTile;
-import buildcraft.silicon.tile.TileLaser;
 
 public class SiliconProxyClient extends SiliconProxy {
     @Override
     public void registerRenderers() {
-        SiliconProxy.laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new RenderLaserBlock());
-
-        SiliconProxy.laserTableModel = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new RenderLaserTable());
-
         ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserTile());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPackage.class, new RenderSnowball(Minecraft.getMinecraft().getRenderManager(),

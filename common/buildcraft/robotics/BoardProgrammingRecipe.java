@@ -7,12 +7,11 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.robotics.BuildCraftRobotics;
-import buildcraft.robotics.item.ItemRedstoneBoard;
 
 public class BoardProgrammingRecipe implements IProgrammingRecipe {
     private class BoardSorter implements Comparator<ItemStack> {

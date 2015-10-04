@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
@@ -35,7 +36,6 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.statements.ActionValve.ValveState;
 

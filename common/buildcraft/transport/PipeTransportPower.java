@@ -17,16 +17,16 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;

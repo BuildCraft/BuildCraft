@@ -14,7 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
-import buildcraft.factory.tile.TileTank;
+import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
     private static final Vec3 TANK_SIZE = new Vec3(0.75, 1, 0.75);

@@ -29,7 +29,7 @@ import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.StackFilter;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

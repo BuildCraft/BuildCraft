@@ -22,7 +22,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
-import buildcraft.factory.tile.TileRefinery;
+import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer {
 

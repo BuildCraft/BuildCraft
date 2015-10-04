@@ -10,7 +10,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.energy.tile.TileEngineStone;
+import buildcraft.energy.TileEngineStone;
 
 public class GuiStoneEngine extends GuiEngine {
 

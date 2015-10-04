@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
@@ -16,7 +16,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 

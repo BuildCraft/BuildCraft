@@ -12,18 +12,16 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.TileAssemblyTable;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
@@ -47,8 +45,11 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
             drawBackground(x, y);
 
             // Draw icon
+			// TODO
+			/*
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
             drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+            */
 
             if (!isFullyOpened()) {
                 return;

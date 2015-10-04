@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotUntouchable;
-import buildcraft.factory.tile.TileAutoWorkbench;
+import buildcraft.factory.TileAutoWorkbench;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 

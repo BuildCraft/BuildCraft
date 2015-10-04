@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.robots.RobotManager;

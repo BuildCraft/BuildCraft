@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;

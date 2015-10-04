@@ -17,9 +17,6 @@ import buildcraft.factory.gui.ContainerRefinery;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.gui.GuiChute;
 import buildcraft.factory.gui.GuiRefinery;
-import buildcraft.factory.tile.TileAutoWorkbench;
-import buildcraft.factory.tile.TileChute;
-import buildcraft.factory.tile.TileRefinery;
 
 public class FactoryGuiHandler implements IGuiHandler {
 

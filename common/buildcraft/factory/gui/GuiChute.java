@@ -10,7 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.TileChute;
 
 public class GuiChute extends GuiContainer {
 

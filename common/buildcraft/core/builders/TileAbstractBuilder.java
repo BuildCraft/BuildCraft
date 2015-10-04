@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserData;
 import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.lib.RFBattery;

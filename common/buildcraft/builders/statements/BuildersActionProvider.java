@@ -17,7 +17,7 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
-import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
 
 public class BuildersActionProvider implements IActionProvider {

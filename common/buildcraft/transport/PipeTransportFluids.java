@@ -19,13 +19,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.events.PipeEventFluid;

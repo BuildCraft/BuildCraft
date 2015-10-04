@@ -16,7 +16,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
-import buildcraft.robotics.BuildCraftRobotics;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.RobotUtils;
 
 public class RobotsTriggerProvider implements ITriggerProvider {

@@ -17,8 +17,8 @@ import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.JavaTools;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.factory.BuildCraftFactory;
-import buildcraft.factory.tile.TileAutoWorkbench;
+import buildcraft.BuildCraftFactory;
+import buildcraft.factory.TileAutoWorkbench;
 
 public class SchematicAutoWorkbench extends SchematicTile {
 

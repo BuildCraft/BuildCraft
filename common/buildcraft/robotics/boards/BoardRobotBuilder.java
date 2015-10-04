@@ -14,7 +14,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.builders.tile.TileConstructionMarker;
+import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;

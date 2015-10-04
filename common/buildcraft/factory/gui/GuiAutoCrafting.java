@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.factory.tile.TileAutoWorkbench;
+import buildcraft.factory.TileAutoWorkbench;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 

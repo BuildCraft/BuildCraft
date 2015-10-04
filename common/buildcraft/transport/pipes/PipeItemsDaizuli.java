@@ -19,13 +19,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

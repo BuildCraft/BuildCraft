@@ -9,8 +9,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.core.BuildCraftCore;
-import buildcraft.core.item.ItemList;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;

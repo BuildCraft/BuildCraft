@@ -13,7 +13,7 @@ import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotUntouchable;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.silicon.tile.TileIntegrationTable;
+import buildcraft.silicon.TileIntegrationTable;
 
 public class ContainerIntegrationTable extends BuildCraftContainer {
     public static final int[] SLOT_X = { 44, 44, 69, 69, 69, 44, 19, 19, 19 };

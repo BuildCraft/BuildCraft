@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.builders.tile.TilePathMarker;
+import buildcraft.builders.TilePathMarker;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.render.RenderLaser;

@@ -13,7 +13,7 @@ import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.core.lib.gui.slots.SlotUntouchable;
-import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import buildcraft.silicon.TileAdvancedCraftingTable;
 
 public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 

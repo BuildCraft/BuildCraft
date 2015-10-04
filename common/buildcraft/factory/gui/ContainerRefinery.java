@@ -13,8 +13,8 @@ import net.minecraftforge.fluids.Fluid;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.factory.BuildCraftFactory;
-import buildcraft.factory.tile.TileRefinery;
+import buildcraft.BuildCraftFactory;
+import buildcraft.factory.TileRefinery;
 
 import io.netty.buffer.ByteBuf;
 

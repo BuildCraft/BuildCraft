@@ -15,7 +15,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.robotics.item.ItemRobot;
+import buildcraft.robotics.ItemRobot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
     private final boolean invert;

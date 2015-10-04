@@ -31,8 +31,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.core.BuildCraftCore;
-import buildcraft.energy.BuildCraftEnergy;
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 
 public final class OilPopulate {
 

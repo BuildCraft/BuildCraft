@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
-import buildcraft.api.enums.EnumColor;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.GuiIds;
@@ -25,10 +25,10 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.block.BlockGenericPipe;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.statements.ActionExtractionPreset;
 
 import io.netty.buffer.ByteBuf;

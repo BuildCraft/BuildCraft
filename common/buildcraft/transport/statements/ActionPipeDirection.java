@@ -15,7 +15,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 
 public class ActionPipeDirection extends BCStatement implements IActionInternal {
 

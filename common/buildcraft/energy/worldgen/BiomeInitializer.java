@@ -7,7 +7,7 @@ package buildcraft.energy.worldgen;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.energy.BuildCraftEnergy;
+import buildcraft.BuildCraftEnergy;
 
 public class BiomeInitializer {
 

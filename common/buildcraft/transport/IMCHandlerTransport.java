@@ -11,12 +11,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.IMCHandler;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.item.ItemFacade;
 
 public class IMCHandlerTransport extends IMCHandler {
     @Override

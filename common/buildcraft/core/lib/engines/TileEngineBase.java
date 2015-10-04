@@ -22,7 +22,7 @@ import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;

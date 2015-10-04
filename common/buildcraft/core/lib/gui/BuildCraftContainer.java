@@ -17,7 +17,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;

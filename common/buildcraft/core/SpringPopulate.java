@@ -16,6 +16,8 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.BuildCraftCore;
+
 public class SpringPopulate {
 
     @SubscribeEvent

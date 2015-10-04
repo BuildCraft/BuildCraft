@@ -16,7 +16,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
-import buildcraft.transport.BuildCraftTransport;
+import buildcraft.BuildCraftTransport;
 import buildcraft.transport.statements.ActionEnergyPulsar;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 

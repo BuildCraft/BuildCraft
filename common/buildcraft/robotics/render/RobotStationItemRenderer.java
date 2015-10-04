@@ -4,17 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.render;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.IItemRenderer;
-
-import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.PipeIconProvider;
-
 public class RobotStationItemRenderer {/*implements IItemRenderer {
     private void renderPlugItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
         // Render StructurePipe

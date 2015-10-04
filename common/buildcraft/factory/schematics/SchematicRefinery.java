@@ -13,7 +13,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.factory.BuildCraftFactory;
+import buildcraft.BuildCraftFactory;
 
 public class SchematicRefinery extends SchematicTile {
 

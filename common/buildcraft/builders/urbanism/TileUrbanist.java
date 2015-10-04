@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.internal.IBoxesProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.network.Packet;

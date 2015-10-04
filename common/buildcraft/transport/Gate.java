@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;

@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -18,8 +19,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.enums.EnumColor;
-import buildcraft.core.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
@@ -33,9 +34,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.robotics.tile.TileZonePlan;
-
-import io.netty.buffer.ByteBuf;
+import buildcraft.robotics.TileZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -86,7 +85,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         @Override
         public TextureAtlasSprite getIcon() {
-            return color.getIcon();
+            return color.getSprite();
         }
 
         @Override
@@ -282,9 +281,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         }
     }
 
+	// TODO: Test, see if Released is MovedOrUp
     @Override
-    protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-        super.mouseMovedOrUp(mouseX, mouseY, eventType);
+    protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+        super.mouseReleased(mouseX, mouseY, eventType);
 
         if (eventType != -1 && inSelection) {
             boolean val = tool.displayString.equals("+");
