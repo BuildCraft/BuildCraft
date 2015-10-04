@@ -101,7 +101,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY,
             float hitZ) {
         if (world.isRemote) {
-            // return true;
+             return true;
         }
         int dye = getColor(stack);
         Block block = world.getBlockState(pos).getBlock();

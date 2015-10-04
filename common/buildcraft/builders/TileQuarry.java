@@ -30,6 +30,7 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
@@ -41,7 +42,6 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.blueprints.Blueprint;
@@ -213,6 +213,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 }
 
                 moveHead(speed);
+            } else {
+                speed = 0;
             }
         }
 

@@ -61,13 +61,11 @@ public class ItemGateCopier extends ItemBuildCraft {
         if (isCopying) {
             if (gate == null) {
                 stack.setTagCompound(new NBTTagCompound());
-                stack.setItemDamage(META_EMPTY);
                 player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
             } else {
                 gate.writeStatementsToNBT(data);
                 data.setByte("material", (byte) gate.material.ordinal());
                 data.setByte("logic", (byte) gate.logic.ordinal());
-                stack.setItemDamage(META_FULL);
                 player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gateCopied"));
             }
 

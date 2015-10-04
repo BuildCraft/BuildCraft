@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -46,10 +47,9 @@ import buildcraft.api.robots.IRobotOverlayItem;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.BuildCraftCore;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
-import buildcraft.core.ItemWrench;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
@@ -1011,11 +1011,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             return super.interact(player);
         }
 
-        if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+        if (player.isSneaking() && stack.getItem() instanceof IToolWrench) {
             if (!worldObj.isRemote) {
                 convertToItems();
             } else {
-                ((ItemWrench) stack.getItem()).wrenchUsed(player, new BlockPos(0, 0, 0));
+                ((IToolWrench) stack.getItem()).wrenchUsed(player, this);
             }
             return true;
         } else if (wearables.size() < 8 && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == 0) {

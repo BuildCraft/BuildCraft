@@ -14,11 +14,11 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
@@ -38,6 +38,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     @Override
     public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int argumentthatisalwaysminusone) {
         if (BuildCraftCore.render == RenderMode.NoDynamic) {
+            return;
+        }
+
+        if (!(tileentity instanceof TileGenericPipe)) {
             return;
         }
 
