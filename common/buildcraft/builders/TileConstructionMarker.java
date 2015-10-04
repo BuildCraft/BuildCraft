@@ -37,7 +37,6 @@ import buildcraft.core.lib.utils.Utils;
 
 import io.netty.buffer.ByteBuf;
 
-// TODO: Create and implement "IBlueprintProvider" for robots to get Blueprints from
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
     public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
