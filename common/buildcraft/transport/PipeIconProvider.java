@@ -15,9 +15,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.EnumColor;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
+import buildcraft.api.core.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
 
@@ -25,7 +25,7 @@ public class PipeIconProvider implements IIconProvider {
 
         PipeStructureCobblestone("pipeStructureCobblestone"),
         //
-        PipeItemsCobbleStone("pipeItemsCobblestone"),
+        PipeItemsCobbleStone("cobblestone_item"),
         //
         PipeItemsDiamond_Item("pipeItemsDiamond_item"),
         PipeItemsDiamond_Center("pipeItemsDiamond_center"),
@@ -188,7 +188,7 @@ public class PipeIconProvider implements IIconProvider {
         }
         diamondPipeItems.put(null, TYPE.PipeItemsDiamond_Center);
         diamondPipeFluids.put(null, TYPE.PipeFluidsDiamond_Center);
-        
+
         lapisPipe = Maps.newHashMap();
         dazuliPipe = Maps.newHashMap();
 

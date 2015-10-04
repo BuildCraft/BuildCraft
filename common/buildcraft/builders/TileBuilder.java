@@ -29,6 +29,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -42,7 +43,6 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -351,7 +351,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                     BlockPos start = it.next();
 
                     EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
-                    currentPathIterator = new PathIterator(start, it, face.getOpposite());
+                    currentPathIterator = new PathIterator(start, it, face);
                 }
 
                 if (currentBuilder != null && currentBuilder.isDone(this)) {
@@ -388,7 +388,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
                     if (bpt != null) {
                         EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
-                        recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, face.getOpposite());
+                        recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, face);
 
                         currentBuilder = recursiveBuilder.nextBuilder();
 

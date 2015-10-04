@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -422,17 +420,9 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         if (sendClientUpdate) {
             sendClientUpdate = false;
 
-            if (worldObj instanceof WorldServer) {
-                WorldServer world = (WorldServer) worldObj;
+            if (!worldObj.isRemote) {
                 Packet updatePacket = getBCDescriptionPacket();
-
-                for (Object o : world.playerEntities) {
-                    EntityPlayerMP player = (EntityPlayerMP) o;
-
-                    if (world.getPlayerManager().isPlayerWatchingChunk(player, getPos().getX() >> 4, getPos().getX() >> 4)) {
-                        BuildCraftCore.instance.sendToPlayer(player, updatePacket);
-                    }
-                }
+                BuildCraftCore.instance.sendToPlayersNear(updatePacket, this);
             }
         }
     }
@@ -483,8 +473,8 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         }
 
         // Pipe Textures
-        for (int i = 0; i < 7; i++) {
-            EnumFacing o = EnumFacing.getFront(i);
+        renderState.textureMatrix.setIconIndex(null, pipe.getIconIndex(null));
+        for (EnumFacing o : EnumFacing.values()) {
             renderState.textureMatrix.setIconIndex(o, pipe.getIconIndex(o));
         }
 
