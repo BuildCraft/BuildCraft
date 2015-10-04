@@ -5,6 +5,7 @@
 package buildcraft.transport;
 
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -14,10 +15,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemPipeWire extends ItemBuildCraft {
-
-    // private TextureAtlasSprite[] icons;
 
     public ItemPipeWire() {
         super();
@@ -26,11 +26,6 @@ public class ItemPipeWire extends ItemBuildCraft {
         setPassSneakClick(true);
         setUnlocalizedName("pipeWire");
     }
-
-    // @Override
-    // public TextureAtlasSprite getIconFromDamage(int damage) {
-    // return icons[damage];
-    // }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
@@ -46,20 +41,11 @@ public class ItemPipeWire extends ItemBuildCraft {
         }
     }
 
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-    // icons = new TextureAtlasSprite[PipeWire.VALUES.length];
-    // for (PipeWire pipeWire : PipeWire.VALUES) {
-    // icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" +
-    // pipeWire.getColor().toLowerCase());
-    // }
-    // }
-
-    public void registerItemStacks() {
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
         for (PipeWire pipeWire : PipeWire.VALUES) {
-            // TODO: Find out whether custom item stacks are needed, and if they even exist anymore
-            // GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
+            ModelHelper.registerItemModel(this, pipeWire.ordinal(), "/" + pipeWire.name().toLowerCase(Locale.ROOT));
         }
     }
 }

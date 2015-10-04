@@ -4,6 +4,7 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.tools;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
@@ -25,4 +26,8 @@ public interface IToolWrench {
      * @param player - The player doing the wrenching
      * @param pos - The position of the block being wrenched */
     void wrenchUsed(EntityPlayer player, BlockPos pos);
+
+    boolean canWrench(EntityPlayer player, Entity entity);
+
+    void wrenchUsed(EntityPlayer player, Entity entity);
 }

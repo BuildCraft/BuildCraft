@@ -11,6 +11,7 @@ import buildcraft.api.enums.EnumBlueprintType;
 public class ItemBlueprintStandard extends ItemBlueprint {
     public ItemBlueprintStandard() {
         super();
+        setTextureLocation("buildcraftbuilders:blueprint/");
     }
 
     @Override

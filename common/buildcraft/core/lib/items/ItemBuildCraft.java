@@ -18,6 +18,7 @@ import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemBuildCraft extends Item implements IModelRegister {
     private boolean passSneakClick = false;
+    protected String textureName = null;
 
     public ItemBuildCraft() {
         this(BCCreativeTab.get("main"));
@@ -27,6 +28,12 @@ public class ItemBuildCraft extends Item implements IModelRegister {
         super();
 
         setCreativeTab(creativeTab);
+    }
+
+    /** Sets the custom name (can use slashes for folders) for the model location. */
+    public ItemBuildCraft setTextureLocation(String name) {
+        textureName = name;
+        return this;
     }
 
     public Item setPassSneakClick(boolean passClick) {
@@ -41,6 +48,10 @@ public class ItemBuildCraft extends Item implements IModelRegister {
 
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "");
+        if (textureName == null) {
+            ModelHelper.registerItemModel(this, 0, "");
+        } else {
+            ModelHelper.registerItemModel(this, 0, textureName, "");
+        }
     }
 }

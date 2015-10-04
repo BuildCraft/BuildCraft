@@ -1,5 +1,7 @@
 package buildcraft.core.lib.utils;
 
+import java.util.Locale;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -12,7 +14,14 @@ public final class ModelHelper {
     }
 
     public static void registerItemModel(Item item, int metadata, String suffix) {
-        String type = Utils.getNameForItem(item).replace("|", "") + suffix;
+        String type = Utils.getNameForItem(item).replace("|", "");
+        type = type.toLowerCase(Locale.ROOT);
+        registerItemModel(item, metadata, type, suffix);
+    }
+
+    public static void registerItemModel(Item item, int metadata, String name, String suffix) {
+        String type = name + suffix;
+        type = type.toLowerCase(Locale.ROOT);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata, new ModelResourceLocation(type, "inventory"));
         ModelBakery.addVariantName(item, type);
     }

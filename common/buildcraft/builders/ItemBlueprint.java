@@ -10,10 +10,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.items.IBlueprintItem;
-import buildcraft.BuildCraftBuilders;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -119,7 +119,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
     @Override
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "");
-        ModelHelper.registerItemModel(this, 1, "Used");
+        ModelHelper.registerItemModel(this, 0, "clean");
+        ModelHelper.registerItemModel(this, 1, "used");
     }
 }

@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockLever;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -77,5 +78,15 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
     @Override
     public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         return true;
+    }
+
+    @Override
+    public boolean canWrench(EntityPlayer player, Entity entity) {
+        return true;
+    }
+
+    @Override
+    public void wrenchUsed(EntityPlayer player, Entity entity) {
+        player.swingItem();
     }
 }

@@ -269,7 +269,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-            wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
+            wrenchItem = (new ItemWrench()).setTextureLocation("buildcraftcore:wrench").setUnlocalizedName("wrenchItem");
             CoreProxy.proxy.registerItem(wrenchItem);
 
             mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
@@ -288,23 +288,23 @@ public class BuildCraftCore extends BuildCraftMod {
                 CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
             }
 
-            woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
+            woodenGearItem = (new ItemBuildCraft()).setTextureLocation("buildcraftcore:gear/wood").setUnlocalizedName("woodenGearItem");
             CoreProxy.proxy.registerItem(woodenGearItem);
             OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-            stoneGearItem = (new ItemBuildCraft()).setUnlocalizedName("stoneGearItem");
+            stoneGearItem = (new ItemBuildCraft()).setTextureLocation("buildcraftcore:gear/stone").setUnlocalizedName("stoneGearItem");
             CoreProxy.proxy.registerItem(stoneGearItem);
             OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-            ironGearItem = (new ItemBuildCraft()).setUnlocalizedName("ironGearItem");
+            ironGearItem = (new ItemBuildCraft()).setTextureLocation("buildcraftcore:gear/iron").setUnlocalizedName("ironGearItem");
             CoreProxy.proxy.registerItem(ironGearItem);
             OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-            goldGearItem = (new ItemBuildCraft()).setUnlocalizedName("goldGearItem");
+            goldGearItem = (new ItemBuildCraft()).setTextureLocation("buildcraftcore:gear/gold").setUnlocalizedName("goldGearItem");
             CoreProxy.proxy.registerItem(goldGearItem);
             OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-            diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
+            diamondGearItem = (new ItemBuildCraft()).setTextureLocation("buildcraftcore:gear/diamond").setUnlocalizedName("diamondGearItem");
             CoreProxy.proxy.registerItem(diamondGearItem);
             OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 

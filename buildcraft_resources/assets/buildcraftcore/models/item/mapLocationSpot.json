@@ -1,6 +1,0 @@
-{
-    "parent": "buildcraftcore:item/mapLocation",
-    "textures": {
-        "layer0": "buildcraftcore:items/map/spot"
-    }
-}
