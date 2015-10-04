@@ -22,20 +22,19 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {
+    public static final RealBlueprintDeployer realInstance = new RealBlueprintDeployer();
 
     @Override
     public void deployBlueprint(World world, BlockPos pos, EnumFacing dir, File file) {
-
         deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
     }
 
     @Override
     public void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data) {
-
         deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
     }
 
-    private void deployBlueprint(World world, BlockPos pos, EnumFacing dir, Blueprint bpt) {
+    public void deployBlueprint(World world, BlockPos pos, EnumFacing dir, Blueprint bpt) {
         bpt.id = new LibraryId();
         bpt.id.extension = "bpt";
 

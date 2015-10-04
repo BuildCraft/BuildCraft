@@ -6,7 +6,6 @@ package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -24,11 +23,6 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
 
 public class BlockBuilder extends BlockBuildCraft {
-
-    TextureAtlasSprite blockTextureTop;
-    TextureAtlasSprite blockTextureSide;
-    TextureAtlasSprite blockTextureFront;
-
     public BlockBuilder() {
         super(Material.iron, FACING_PROP, LED_DONE, LED_POWER, BLUEPRINT_TYPE);
         setHardness(5F);

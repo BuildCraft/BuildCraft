@@ -70,7 +70,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
         int left = this.guiLeft;
         int top = this.guiTop;
 
-        GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glTranslatef(left, top, 0.0F);
@@ -86,7 +85,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
 
         GL11.glPopMatrix();
-        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 

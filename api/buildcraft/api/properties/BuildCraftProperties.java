@@ -6,8 +6,9 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
@@ -26,6 +27,8 @@ public final class BuildCraftProperties {
     public static final BuildCraftProperty<EnumMachineState> MACHINE_STATE = BuildCraftProperty.create("state", EnumMachineState.class);
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperty.create("stage", EnumEnergyStage.class);
     public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperty.create("blueprint_type", EnumBlueprintType.class);
+    public static final BuildCraftProperty<EnumDecoratedBlock> DECORATED_BLOCK = BuildCraftProperty.create("Decoration_type",
+            EnumDecoratedBlock.class);
 
     public static final BuildCraftProperty<Integer> GENERIC_PIPE_DATA = BuildCraftProperty.create("pipe_data", 0, 15);
     public static final BuildCraftProperty<Integer> LED_POWER = BuildCraftProperty.create("led_power", 0, 3);

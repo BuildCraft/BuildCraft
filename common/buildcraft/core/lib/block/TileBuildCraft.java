@@ -50,8 +50,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     private int receivedTick, extractedTick;
     private long worldTimeEnergyReceive;
     /** Used at the client for the power LED brightness */
-    public int ledPower = 0;
-    public boolean ledActive = false;
+    public int ledPower = 0, lastLedPower = 0;
+    public boolean ledDone = false, lastLedDone = false;
 
     public String getOwner() {
         return owner;
@@ -96,6 +96,26 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
                     sendNetworkUpdate();
                 }
             }
+        }
+
+        if (!worldObj.isRemote) {
+            if (battery != null) {
+                if (battery.getMaxEnergyStored() > 0) {
+                    ledPower = (int) (3 * battery.getEnergyStored() / battery.getMaxEnergyStored());
+                } else {
+                    ledPower = 0;
+                }
+            }
+        }
+
+        if (lastLedPower != ledPower || lastLedDone != ledDone) {
+            if (worldObj.isRemote) {
+                worldObj.markBlockForUpdate(getPos());
+            } else {
+                sendNetworkUpdate();
+            }
+            lastLedPower = ledPower;
+            lastLedDone = ledDone;
         }
 
         if (sendNetworkUpdate) {

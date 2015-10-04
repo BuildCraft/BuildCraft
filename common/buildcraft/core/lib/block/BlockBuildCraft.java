@@ -29,7 +29,7 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     protected static boolean keepInventory = false;
 
     protected final XorShift128Random rand = new XorShift128Random();
-    private final boolean hasPowerLed;
+    private final boolean hasPowerLed, hasDoneLed;
 
     protected BlockBuildCraft(Material material) {
         this(material, BCCreativeTab.get("main"), new BuildCraftProperty<?>[0]);
@@ -42,7 +42,7 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     protected BlockBuildCraft(Material material, BuildCraftProperty<?>... properties) {
         this(material, BCCreativeTab.get("main"), properties);
     }
-    
+
     protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
         this(material, bcCreativeTab, false, properties);
     }
@@ -50,19 +50,27 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, boolean hasExtended, BuildCraftProperty<?>... properties) {
         super(material, bcCreativeTab, hasExtended, properties);
         hasPowerLed = propertyList.contains(LED_POWER);
+        hasDoneLed = propertyList.contains(LED_DONE);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
-        if (!hasPowerLed) {
+        if (!hasPowerLed || !hasDoneLed) {
             return state;
         }
-        TileBuildCraft tile = (TileBuildCraft) access.getTileEntity(pos);
-        if (tile == null) {
+        TileEntity tile = access.getTileEntity(pos);
+        if (!(tile instanceof TileBuildCraft)) {
             return state;
-        } else {
-            return state.withProperty(LED_POWER, tile.ledPower);
         }
+        TileBuildCraft tileBC = (TileBuildCraft) tile;
+        if (hasPowerLed) {
+            state = state.withProperty(LED_POWER, tileBC.ledPower);
+        }
+        if (hasDoneLed) {
+            state = state.withProperty(LED_DONE, tileBC.ledDone);
+        }
+
+        return state;
     }
 
     @Override

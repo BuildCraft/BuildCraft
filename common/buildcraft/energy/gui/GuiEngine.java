@@ -10,6 +10,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -41,7 +42,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
             // Draw icon
             Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES);
             // TODO (PASS 1): Fix GUI icons using random textures
-            // drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+            drawIcon(CoreIconProvider.ENERGY.getSprite(), x + 3, y + 4);
 
             if (!isFullyOpened()) {
                 return;

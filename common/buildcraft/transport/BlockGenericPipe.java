@@ -54,6 +54,7 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.properties.BuildCraftExtendedProperty;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -71,7 +72,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.gates.GatePluggable;
 
-public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight, ICustomStateMapper {
+public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight, ICustomStateMapper, ICustomPipeConnection {
     public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended(
             "core_state", TileGenericPipe.CoreState.class);
 
@@ -1099,5 +1100,20 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                 return loc;
             }
         });
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos.offset(face.getOpposite()));
+        if (tile == null) {
+            return 0;
+        }
+        if (tile instanceof TileGenericPipe) {
+            TileGenericPipe genericPipe = (TileGenericPipe) tile;
+            if (genericPipe.pipe instanceof ICustomPipeConnection) {
+                return ((ICustomPipeConnection) genericPipe.pipe).getExtension(world, pos, face, state);
+            }
+        }
+        return 0;
     }
 }

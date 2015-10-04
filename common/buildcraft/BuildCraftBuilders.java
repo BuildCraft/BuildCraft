@@ -65,35 +65,7 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.builders.BlockArchitect;
-import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuilder;
-import buildcraft.builders.BlockConstructionMarker;
-import buildcraft.builders.BlockFiller;
-import buildcraft.builders.BlockFrame;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
-import buildcraft.builders.BlockQuarry;
-import buildcraft.builders.BlueprintServerDatabase;
-import buildcraft.builders.BuilderProxy;
-import buildcraft.builders.BuilderProxyClient;
-import buildcraft.builders.BuildersGuiHandler;
-import buildcraft.builders.EventHandlerBuilders;
-import buildcraft.builders.HeuristicBlockDetection;
-import buildcraft.builders.ItemBlueprintStandard;
-import buildcraft.builders.ItemBlueprintTemplate;
-import buildcraft.builders.ItemConstructionMarker;
-import buildcraft.builders.LibraryBlueprintTypeHandler;
-import buildcraft.builders.LibraryBookTypeHandler;
-import buildcraft.builders.LibraryDatabase;
-import buildcraft.builders.TileArchitect;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.TileBuilder;
-import buildcraft.builders.TileConstructionMarker;
-import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
-import buildcraft.builders.TileQuarry;
+import buildcraft.builders.*;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.*;
 import buildcraft.builders.statements.BuildersActionProvider;
@@ -686,9 +658,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
             if (mapping.name.equals("BuildCraftBuilders:buildToolBlock") || mapping.name.equals("BuildCraftBuilders:null")) {
                 if (mapping.type == GameRegistry.Type.ITEM) {
-                    mapping.remap(Item.getItemFromBlock(BuildCraftCore.buildToolBlock));
+                    mapping.remap(Item.getItemFromBlock(BuildCraftCore.decoratedBlock));
                 } else {
-                    mapping.remap(BuildCraftCore.buildToolBlock);
+                    mapping.remap(BuildCraftCore.decoratedBlock);
                 }
             }
         }

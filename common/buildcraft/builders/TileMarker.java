@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -162,7 +161,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             int rangePlus = DefaultProps.MARKER_RANGE + 1;
             int rangeMinus = DefaultProps.MARKER_RANGE - 1;
             if (!origin.isSet() || !origin.vect[0].isSet()) {
-                signals[0] = Utils.createLaser(worldObj, cPos, cPos.addVector(0, rangeMinus, 0), LaserKind.Blue);
+                signals[0] = Utils.createLaser(worldObj, cPos, cPos.addVector(rangeMinus, 0, 0), LaserKind.Blue);
                 signals[1] = Utils.createLaser(worldObj, cPos.addVector(-rangePlus, 0, 0), cPos, LaserKind.Blue);
             }
 
@@ -230,10 +229,10 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
                 coords[n] += j;
                 coord = new BlockPos(coords[0], coords[1], coords[2]);
 
-                Block block = worldObj.getBlockState(pos).getBlock();
+                TileEntity tile = worldObj.getTileEntity(coord);
 
-                if (block == BuildCraftBuilders.markerBlock) {
-                    TileMarker marker = (TileMarker) worldObj.getTileEntity(coord);
+                if (tile instanceof TileMarker) {
+                    TileMarker marker = (TileMarker) tile;
 
                     if (linkTo(marker, n)) {
                         break;
@@ -244,10 +243,10 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
                 coords[n] -= j;
                 coord = new BlockPos(coords[0], coords[1], coords[2]);
 
-                block = worldObj.getBlockState(coord).getBlock();
+                tile = worldObj.getTileEntity(coord);
 
-                if (block == BuildCraftBuilders.markerBlock) {
-                    TileMarker marker = (TileMarker) worldObj.getTileEntity(coord);
+                if (tile instanceof TileMarker) {
+                    TileMarker marker = (TileMarker) tile;
 
                     if (linkTo(marker, n)) {
                         break;

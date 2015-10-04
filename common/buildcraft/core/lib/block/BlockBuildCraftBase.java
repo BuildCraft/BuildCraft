@@ -25,10 +25,12 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
@@ -51,6 +53,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
     public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
     public static final BuildCraftProperty<EnumLaserTableType> LASER_TABLE_TYPE = BuildCraftProperties.LASER_TABLE_TYPE;
+    public static final BuildCraftProperty<EnumDecoratedBlock> DECORATED_TYPE = BuildCraftProperties.DECORATED_BLOCK;
 
     public static final BuildCraftProperty<Integer> GENERIC_PIPE_DATA = BuildCraftProperties.GENERIC_PIPE_DATA;
 
@@ -67,6 +70,8 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
 
     public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
+    @SuppressWarnings("unchecked")
+    public static final BuildCraftProperty<Boolean>[] CONNECTED_ARRAY = CONNECTED_MAP.values().toArray(new BuildCraftProperty[6]);
 
     protected final BuildCraftProperty<?>[] properties;
     protected final BuildCraftProperty<?>[] nonMetaProperties;
@@ -110,6 +115,11 @@ public abstract class BlockBuildCraftBase extends Block {
 
         int total = 1;
         for (BuildCraftProperty<?> prop : properties) {
+            if (prop == null) {
+                /* Used by some blocks (e.g. the filler) if they do or do not want to have a specific property at
+                 * runtime (per block). Is used in the format "wantProperty ? someProp : null" */
+                continue;
+            }
             if (prop instanceof BuildCraftExtendedProperty<?>) {
                 infinites.add((BuildCraftExtendedProperty<?>) prop);
                 hasExtendedProps = true;
@@ -126,9 +136,6 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         this.hasExtendedProperties = hasExtendedProps;
-        if (this.hasExtendedProperties) {
-            BCLog.logger.info("This block has extended properties!");
-        }
 
         this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
         this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
@@ -144,6 +151,10 @@ public abstract class BlockBuildCraftBase extends Block {
         boolean canSixRotate = false;
 
         for (BuildCraftProperty<?> prop : properties) {
+            if (prop == null) {
+                continue;
+            }
+
             if (prop instanceof BuildCraftExtendedProperty<?>) {
                 continue;
             }
@@ -185,38 +196,7 @@ public abstract class BlockBuildCraftBase extends Block {
                 intToState.put(i, entry.getKey());
             }
         }
-
-        // Temporary. Used for debugging early on.
-        BCLog.logger.info("Created the block " + getUnlocalizedName() + " as " + getClass().getSimpleName());
-
-        BCLog.logger.info("Int -> State: ");
-        for (Entry<Integer, IBlockState> entry : intToState.entrySet()) {
-            BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
-        }
-
-        BCLog.logger.info("State -> Int: ");
-        int num = stateToInt.size();
-        int cap = num - 17;
-        for (Entry<IBlockState, Integer> entry : stateToInt.entrySet()) {
-            if (num == cap) {
-                BCLog.logger.info("");
-                BCLog.logger.info("  (" + num + " more)");
-                BCLog.logger.info("");
-            } else if (num > cap) {
-                BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
-            }
-            num--;
-        }
-
         setDefaultState(defaultState);
-
-        for (BuildCraftProperty<?> prop : properties) {
-            if (metas.contains(prop)) {
-                BCLog.logger.info("  The value of " + prop.getName() + " is saved to disk");
-            } else {
-                BCLog.logger.info("  The value of " + prop.getName() + " is implied by surroundings and is temparary");
-            }
-        }
 
         List<BuildCraftProperty<?>> allProperties = Lists.newArrayList();
         allProperties.addAll(metas);
@@ -244,7 +224,6 @@ public abstract class BlockBuildCraftBase extends Block {
             props[properties.length + i] = nonMetaProperties[i];
         }
         if (hasExtendedProperties) {
-            BCLog.logger.info("Creating extended block state!");
             return new ExtendedBlockState(this, props, extendedProperties);
         }
         return new BlockState(this, props);
@@ -286,6 +265,10 @@ public abstract class BlockBuildCraftBase extends Block {
 
     public AxisAlignedBB[] getBoxes(IBlockAccess world, BlockPos pos, IBlockState state) {
         return new AxisAlignedBB[] { getBox(world, pos, state) };
+    }
+
+    public MovingObjectPosition collisionRayTrace_super(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+        return super.collisionRayTrace(world, pos, origin, direction);
     }
 
     @Override
@@ -341,24 +324,13 @@ public abstract class BlockBuildCraftBase extends Block {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
         return getBox(world, pos, world.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-        AxisAlignedBB[] bbs = getBoxes(world, pos, world.getBlockState(pos));
-        AxisAlignedBB bb = bbs[0];
-        for (int i = 1; i < bbs.length; i++) {
-            bb = bb.union(bbs[i]);
-        }
-
-        minX = bb.minX;
-        minY = bb.minY;
-        minZ = bb.minZ;
-
-        maxX = bb.maxX;
-        maxY = bb.maxY;
-        maxZ = bb.maxZ;
-    }
+    /* @Override public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) { AxisAlignedBB[] bbs =
+     * getBoxes(world, pos, world.getBlockState(pos)); AxisAlignedBB bb = bbs[0]; for (int i = 1; i < bbs.length; i++) {
+     * bb = bb.union(bbs[i]); } minX = bb.minX; minY = bb.minY; minZ = bb.minZ; maxX = bb.maxX; maxY = bb.maxY; maxZ =
+     * bb.maxZ; } */
 }

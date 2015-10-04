@@ -9,6 +9,9 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
@@ -39,6 +42,20 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
         NBTUtils.getItemData(stack).setString("name", name);
         return true;
     }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (world.isRemote) {
+            BlueprintBase bpt = loadBlueprint(stack);
+            if (bpt != null) {
+                openGui(bpt);
+            }
+        }
+        return stack;
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected abstract void openGui(BlueprintBase bpt);
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {

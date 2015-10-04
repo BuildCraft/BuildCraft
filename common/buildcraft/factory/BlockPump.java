@@ -21,7 +21,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 public class BlockPump extends BlockBuildCraft {
 
     public BlockPump() {
-        super(Material.iron);
+        super(Material.iron, LED_POWER, LED_DONE);
     }
 
     @Override

@@ -4,9 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.builders.gui.GuiTemplate;
+import buildcraft.core.blueprints.BlueprintBase;
 
 public class ItemBlueprintTemplate extends ItemBlueprint {
     public ItemBlueprintTemplate() {
@@ -17,5 +20,10 @@ public class ItemBlueprintTemplate extends ItemBlueprint {
     @Override
     public EnumBlueprintType getType(ItemStack stack) {
         return EnumBlueprintType.TEMPLATE;
+    }
+
+    @Override
+    protected void openGui(BlueprintBase bpt) {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiTemplate(bpt));
     }
 }

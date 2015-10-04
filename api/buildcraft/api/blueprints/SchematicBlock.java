@@ -13,7 +13,6 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockTorch;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -24,8 +23,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
-
-import buildcraft.api.properties.BuildCraftProperties;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -196,18 +193,13 @@ public class SchematicBlock extends SchematicBlockBase {
         @SuppressWarnings("unchecked")
         Collection<IProperty> props = state.getPropertyNames();
         for (IProperty prop : props) {
-            if (BuildCraftProperties.BLOCK_FACING.getName().equals(prop.getName())) {
-                boolean six = prop.getAllowedValues().contains(EnumFacing.UP) || prop.getAllowedValues().contains(EnumFacing.DOWN);
-                IProperty property = six ? BuildCraftProperties.BLOCK_FACING_6 : BuildCraftProperties.BLOCK_FACING;
-                if (state.getBlock() instanceof BlockTorch) {
-                    property = BlockTorch.FACING;
-                }
-                EnumFacing face = getFace(property);
+            if ("facing".equals(prop.getName())) {
+                EnumFacing face = getFace(prop);
                 if (face.getAxis() == Axis.Y) {
                     // Don't attempt to rotate if its facing up or down
                     break;
                 }
-                state = state.withProperty(property, face.rotateY());
+                state = state.withProperty(prop, face.rotateY());
                 break;
             }
         }

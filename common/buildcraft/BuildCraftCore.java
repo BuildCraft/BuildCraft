@@ -154,7 +154,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
     public static BlockEngine engineBlock;
     public static BlockSpring springBlock;
-    public static BlockBuildTool buildToolBlock;
+    public static BlockDecoration decoratedBlock;
     public static Item woodenGearItem;
     public static Item stoneGearItem;
     public static Item ironGearItem;
@@ -318,9 +318,9 @@ public class BuildCraftCore extends BuildCraftMod {
                 CoreProxy.proxy.registerItem(tabletItem);
             }
 
-            buildToolBlock = new BlockBuildTool();
-            buildToolBlock.setUnlocalizedName("buildToolBlock");
-            CoreProxy.proxy.registerBlock(buildToolBlock);
+            decoratedBlock = new BlockDecoration();
+            decoratedBlock.setUnlocalizedName("decoratedBlock");
+            CoreProxy.proxy.registerBlock(decoratedBlock);
 
             engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
             CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);

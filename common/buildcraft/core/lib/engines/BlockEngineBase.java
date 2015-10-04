@@ -4,7 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
 
+import java.util.Map;
 import java.util.Random;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -16,7 +19,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -26,16 +31,28 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
-    private static final AxisAlignedBB[][] boxes = { { new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.5,
-            0.75) },   // -Y
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AxisAlignedBB(0.25, 0.5, 0.25, 0.75, 1.0, 0.75) },   // +Y
-        { new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5) },   // -Z
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), new AxisAlignedBB(0.25, 0.25, 0.5, 0.75, 0.75, 1.0) },   // +Z
-        { new AxisAlignedBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.0, 0.25, 0.25, 0.5, 0.75, 0.75) },   // -X
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), new AxisAlignedBB(0.5, 0.25, 0.25, 1.0, 0.75, 0.75) } // +X
-    };
+    private static final Map<EnumFacing, AxisAlignedBB[]> boxMap;
+
+    static {
+        Map<EnumFacing, AxisAlignedBB[]> map = Maps.newEnumMap(EnumFacing.class);
+        for (EnumFacing face : EnumFacing.values()) {
+            AxisAlignedBB[] array = new AxisAlignedBB[2];
+            boolean pos = face.getAxisDirection() == AxisDirection.POSITIVE;
+
+            Vec3 pointA = Utils.withValue(Utils.VEC_ZERO, face.getAxis(), pos ? 0 : 0.5);
+            Vec3 pointB = Utils.withValue(Utils.VEC_ONE, face.getAxis(), pos ? 0.5 : 1);
+            array[0] = Utils.boundingBox(pointA, pointB);
+
+            pointA = Utils.vec3(0.25).add(Utils.convert(face, 0.25));
+            pointB = pointA.add(Utils.VEC_HALF);
+            array[1] = Utils.boundingBox(pointA, pointB);
+            map.put(face, array);
+        }
+        boxMap = Maps.immutableEnumMap(map);
+    }
 
     public BlockEngineBase() {
         super(Material.iron, ENGINE_TYPE);
@@ -91,7 +108,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     public AxisAlignedBB[] getBoxes(IBlockAccess world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase) {
-            return boxes[((TileEngineBase) tile).orientation.ordinal()];
+            return boxMap.get(((TileEngineBase) tile).orientation);
         } else {
             return super.getBoxes(world, pos, state);
         }

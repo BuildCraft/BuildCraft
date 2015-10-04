@@ -16,7 +16,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockMiningWell extends BlockBuildCraft {
     public BlockMiningWell() {
-        super(Material.ground);
+        super(Material.ground, LED_POWER, LED_DONE);
 
         setHardness(5F);
         setResistance(10F);
