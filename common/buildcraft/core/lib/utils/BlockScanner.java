@@ -44,7 +44,7 @@ public class BlockScanner implements Iterable<BlockPos> {
                 if (pos.getY() < box.yMax) {
                     pos = pos.up();
                 } else {
-                    pos = new BlockPos(pos.getX(), box.yMax, pos.getZ() + 1);
+                    pos = new BlockPos(pos.getX(), box.yMin, pos.getZ() + 1);
                 }
             }
 

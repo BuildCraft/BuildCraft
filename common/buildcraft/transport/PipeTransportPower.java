@@ -329,6 +329,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             PacketPowerUpdate packet = new PacketPowerUpdate(container);
 
             packet.displayPower = displayPower;
+            packet.displayFlow = displayFlow;
             packet.overload = isOverloaded();
             BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
         }
