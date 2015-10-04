@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - openjdk7
+  - openjdk6
 
 before_install: git clone https://github.com/BuildCraft/BuildCraft-Localization.git ../BuildCraft-Localization
 install: ./gradlew setupDecompWorkspace -S
