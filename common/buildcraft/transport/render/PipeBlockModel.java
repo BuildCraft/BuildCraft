@@ -15,7 +15,9 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
@@ -68,6 +70,20 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
         List<BakedQuad> quads = Lists.newArrayList();
 
+        EnumWorldBlockLayer layer = MinecraftForgeClient.getRenderLayer();
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            renderCutoutPass(render, pluggable, pipe, quads);
+        } else if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
+            renderTranslucentPass(render, pluggable, pipe, quads);
+        }
+
+        TextureAtlasSprite particle = pipe.getIconProvider().getIcon(pipe.getIconIndex(null));
+
+        return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
+    }
+
+    // The main block model
+    private static void renderCutoutPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
 
@@ -151,9 +167,10 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 }
             }
         }
+    }
 
-        TextureAtlasSprite particle = pipe.getIconProvider().getIcon(pipe.getIconIndex(null));
+    // Used basically for pipe colour
+    private static void renderTranslucentPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
 
-        return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
     }
 }

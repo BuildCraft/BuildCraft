@@ -7,6 +7,7 @@ import javax.vecmath.Vector3f;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -18,12 +19,16 @@ import buildcraft.transport.ItemPipe;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {
-        super(quads, particle, DefaultVertexFormats.BLOCK, getItemTransforms());
+        super(quads, particle, DefaultVertexFormats.ITEM, getBlockTransforms());
     }
 
     public static PipeItemModel create(ItemPipe item) {
         List<BakedQuad> quads = Lists.newArrayList();
+
         TextureAtlasSprite sprite = item.getSprite();
+        if (sprite == null) {
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        }
 
         Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
         Vector3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
@@ -35,7 +40,7 @@ public class PipeItemModel extends BuildCraftBakedModel {
             uvs[U_MAX] = sprite.getInterpolatedU(12);
             uvs[V_MIN] = vertical ? sprite.getInterpolatedV(4) : sprite.getMinV();
             uvs[V_MAX] = vertical ? sprite.getInterpolatedV(12) : sprite.getMaxV();
-            bakeFace(quads, face, center, radius, uvs);
+            bakeDoubleFace(quads, face, center, radius, uvs);
         }
 
         return new PipeItemModel(ImmutableList.copyOf(quads), sprite);

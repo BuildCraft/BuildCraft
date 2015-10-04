@@ -20,9 +20,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
-
     public enum TYPE {
-
         PipeStructureCobblestone("pipeStructureCobblestone"),
         //
         PipeItemsCobbleStone("cobblestone_item"),

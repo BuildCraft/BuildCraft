@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IItemPipe;
@@ -28,7 +29,6 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.BuildCraftTransport;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -119,9 +119,9 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         list.addAll(toolTip);
     }
 
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void registerModels() {
-//        ModelHelper.registerItemModel(this, 0, "");
-//    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerModels() {
+    // ModelHelper.registerItemModel(this, 0, "");
+    // }
 }

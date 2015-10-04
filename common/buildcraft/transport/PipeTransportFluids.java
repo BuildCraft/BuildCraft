@@ -19,11 +19,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
@@ -211,6 +211,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     @Override
     public void updateEntity() {
+        container.deletePipe = true;
+        if (true) {
+            return;
+        }
         if (container.getWorld().isRemote) {
             return;
         }

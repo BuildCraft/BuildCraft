@@ -687,6 +687,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         for (ItemPipe itemPipe : BlockGenericPipe.pipes.keySet()) {
             mrl = ModelHelper.getItemResourceLocation(itemPipe, "");
             event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe));
+            BCLog.logger.info("Registering " + itemPipe + " as " + mrl);
         }
     }
 }

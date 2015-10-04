@@ -107,4 +107,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public int getID() {
         return PacketIds.PIPE_LIQUID;
     }
+
+    @Override
+    public void applyData(World world) {
+        // TODO Auto-generated method stub
+        
+    }
 }

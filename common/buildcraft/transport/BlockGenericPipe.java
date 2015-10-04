@@ -147,6 +147,11 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
+    public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
+        return layer == EnumWorldBlockLayer.CUTOUT || layer == EnumWorldBlockLayer.TRANSLUCENT;
+    }
+
+    @Override
     public double getExpansion() {
         return 0;
     }

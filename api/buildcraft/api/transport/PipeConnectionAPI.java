@@ -30,11 +30,11 @@ public final class PipeConnectionAPI {
             }
             // Invert the face (If it was up, we want to get the bottom of the block)
             if (face.getAxisDirection() == AxisDirection.POSITIVE) {
-                Vec3 min = Utils.min(bb);
+                Vec3 min = Utils.min(bb).subtract(Utils.convert(pos));
                 return (float) Utils.getValue(min, face.getAxis());
             } else {
-                Vec3 max = Utils.max(bb);
-                return (float) Utils.getValue(max, face.getAxis());
+                Vec3 max = Utils.max(bb).subtract(Utils.convert(pos));
+                return 1 - (float) Utils.getValue(max, face.getAxis());
             }
         }
     };

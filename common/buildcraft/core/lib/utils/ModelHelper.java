@@ -27,7 +27,9 @@ public final class ModelHelper {
     }
 
     public static ModelResourceLocation getItemResourceLocation(Item item, String suffix) {
-        return new ModelResourceLocation(Utils.getNameForItem(item).replace("|", "") + suffix, "inventory");
+        String type = Utils.getNameForItem(item).replace("|", "") + suffix;
+        type = type.toLowerCase(Locale.ROOT);
+        return new ModelResourceLocation(type, "inventory");
     }
 
     public static Object getBlockResourceLocation(Block block) {
