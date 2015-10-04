@@ -30,11 +30,11 @@ public final class NBTUtils {
 		NBTTagCompound cpt = cptBase;
 		String name = nameBase;
 
-		while (name.contains(".")) {
-			String cptName = name.substring(0, name.indexOf("."));
+		while (name.contains("/")) {
+			String cptName = name.substring(0, name.indexOf("/"));
 			if (cpt.hasKey(cptName, 10)) {
 				cpt = cpt.getCompoundTag(cptName);
-				name = name.substring(name.indexOf(".") + 1);
+				name = name.substring(name.indexOf("/") + 1);
 			}
 		}
 
@@ -45,11 +45,11 @@ public final class NBTUtils {
 		NBTTagCompound cpt = cptBase;
 		String name = nameBase;
 
-		while (name.contains(".")) {
-			String cptName = name.substring(0, name.indexOf("."));
+		while (name.contains("/")) {
+			String cptName = name.substring(0, name.indexOf("/"));
 			if (cpt.hasKey(cptName, 10)) {
 				cpt = cpt.getCompoundTag(cptName);
-				name = name.substring(name.indexOf(".") + 1);
+				name = name.substring(name.indexOf("/") + 1);
 			}
 		}
 

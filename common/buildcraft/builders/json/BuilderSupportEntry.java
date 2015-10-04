@@ -26,7 +26,8 @@ public class BuilderSupportEntry {
 	public List<Integer> metadata;
 	public List<String> tileId;
 
-	public int metadataEqualityMask = 15;
+	public int metadataMask = 15;
+	public int metadataEqualityMask = 0;
 	public NBTEntry nbt;
 
 	public String placedBlock;
@@ -95,6 +96,15 @@ public class BuilderSupportEntry {
 		} else if (rotationList != null) {
 			for (BuilderRotation r : rotationList) {
 				r.validate(e);
+			}
+		}
+
+		if (metadataEqualityMask == 0) {
+			// Try to heurestically deduce a good metadata equality mask.
+			for (BuilderRotation r : getAllRotations()) {
+				if (r.type == BuilderRotation.Type.METADATA) {
+					metadataEqualityMask |= r.mask;
+				}
 			}
 		}
 

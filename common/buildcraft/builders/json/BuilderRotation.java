@@ -35,22 +35,33 @@ public class BuilderRotation {
 	};
 
 	public Type type;
-	public String tag;
-	public int mask;
-	public int[] matrix;
+	public int mask, shift;
 	public boolean sticksToWall;
+	private String tag;
+	private int[] matrix, transformation;
+
+	private transient boolean maskShifted;
 
 	private int rotateLeft(int v) {
 		int rot = mask != 0 ? v & mask : v;
 		int out = v & ~mask;
 
-		for (int i = 0; i < matrix.length; i++) {
-			if (matrix[i] == rot) {
-				rot = matrix[(i + 1) % matrix.length];
-				if (mask != 0) {
-					rot &= mask;
+		if (transformation != null) {
+			for (int i = 0; i < transformation.length; i++) {
+				if (rot == (i << shift)) {
+					rot = transformation[i] << shift;
+					break;
 				}
-				break;
+			}
+		} else {
+			for (int i = 0; i < matrix.length; i++) {
+				if (matrix[i] == rot) {
+					rot = matrix[(i + 1) % matrix.length];
+					if (mask != 0) {
+						rot &= mask;
+					}
+					break;
+				}
 			}
 		}
 
@@ -97,10 +108,10 @@ public class BuilderRotation {
 				byte[] rotated = ((NBTTagByteArray) sidedArray).func_150292_c();
 				byte[] rotatedNew = new byte[rotated.length];
 				for (int i = 0; i < rotated.length; i++) {
-					if (i >= matrix.length || matrix[i] >= rotated.length) {
+					if (i >= transformation.length || transformation[i] >= rotated.length) {
 						rotatedNew[i] = rotated[i];
 					} else {
-						rotatedNew[matrix[i]] = rotated[i];
+						rotatedNew[transformation[i]] = rotated[i];
 					}
 				}
 				NBTUtils.setTag(s.tileNBT, tag, new NBTTagByteArray(rotatedNew));
@@ -108,10 +119,10 @@ public class BuilderRotation {
 				int[] rotated = ((NBTTagIntArray) sidedArray).func_150302_c();
 				int[] rotatedNew = new int[rotated.length];
 				for (int i = 0; i < rotated.length; i++) {
-					if (i >= matrix.length || matrix[i] >= rotated.length) {
+					if (i >= transformation.length || transformation[i] >= rotated.length) {
 						rotatedNew[i] = rotated[i];
 					} else {
-						rotatedNew[matrix[i]] = rotated[i];
+						rotatedNew[transformation[i]] = rotated[i];
 					}
 				}
 				NBTUtils.setTag(s.tileNBT, tag, new NBTTagIntArray(rotatedNew));
@@ -137,6 +148,19 @@ public class BuilderRotation {
 			throw new JSONValidationException(e, "Invalid rotation type!");
 		}
 
+		if (matrix == null && sticksToWall) {
+			throw new JSONValidationException(e, "Must set rotation matrix (N->E->S->W) if block sticks to wall!");
+		}
+
+		if (shift < 0 || shift > 32) {
+			throw new JSONValidationException(e, "Invalid shift value specified: " + shift + "!");
+		}
+
+		if (!maskShifted) {
+			mask <<= shift;
+			maskShifted = true;
+		}
+
 		if (type == Type.METADATA) {
 			if (tag != null) {
 				throw new JSONValidationException(e, "Must not specify tag when using s.metadata type!");
@@ -147,6 +171,11 @@ public class BuilderRotation {
 		} else if (type == Type.NBT_FIELD || type == Type.NBT_ROTATE_ARRAY) {
 			if (tag == null) {
 				throw new JSONValidationException(e, "Must specify tag when using NBT type!");
+			}
+			if (type == Type.NBT_ROTATE_ARRAY) {
+				if (transformation == null) {
+					throw new JSONValidationException(e, "Must specify transformation when using NBT array rotation!");
+				}
 			}
 		}
 

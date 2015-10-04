@@ -116,6 +116,8 @@ public class SchematicJSON extends SchematicTile {
 				Block rblock = bip.block;
 				int rmeta = entry.placedBlock.contains("@") ? bip.meta : meta;
 
+				rmeta &= entry.metadataMask;
+
 				context.world().setBlock(x, y, z, rblock, rmeta, 3);
 				if (entry.notifyBlockTwice) {
 					context.world().setBlockMetadataWithNotify(x, y, z, rmeta, 3);
@@ -124,9 +126,9 @@ public class SchematicJSON extends SchematicTile {
 			return;
 		}
 
-		context.world().setBlock(x, y, z, block, meta, 3);
+		context.world().setBlock(x, y, z, block, meta & entry.metadataMask, 3);
 		if (entry.notifyBlockTwice) {
-			context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+			context.world().setBlockMetadataWithNotify(x, y, z, meta & entry.metadataMask, 3);
 		}
 	}
 

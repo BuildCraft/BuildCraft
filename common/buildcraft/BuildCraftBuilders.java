@@ -61,7 +61,6 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
@@ -100,11 +99,9 @@ import buildcraft.builders.schematics.SchematicEnderChest;
 import buildcraft.builders.schematics.SchematicFactoryBlock;
 import buildcraft.builders.schematics.SchematicFactoryEntity;
 import buildcraft.builders.schematics.SchematicFactoryMask;
-import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicJukebox;
 import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
 import buildcraft.builders.schematics.SchematicRail;
 import buildcraft.builders.schematics.SchematicRedstoneLamp;
@@ -337,8 +334,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
+		/*
 		schemes.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
+		*/
 
 		schemes.registerSchematicBlock(Blocks.monster_egg, SchematicSilverfish.class);
 
@@ -346,10 +345,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.redstone_lamp, SchematicRedstoneLamp.class);
 		schemes.registerSchematicBlock(Blocks.lit_redstone_lamp, SchematicRedstoneLamp.class);
-
-		schemes.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
-		schemes.registerSchematicBlock(Blocks.piston_extension, SchematicPiston.class);
-		schemes.registerSchematicBlock(Blocks.sticky_piston, SchematicPiston.class);
 
 		schemes.registerSchematicBlock(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
 		schemes.registerSchematicBlock(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
@@ -366,13 +361,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.detector_rail, SchematicRail.class);
 		schemes.registerSchematicBlock(Blocks.golden_rail, SchematicRail.class);
 
-		schemes.registerSchematicBlock(Blocks.beacon, SchematicTile.class);
-		schemes.registerSchematicBlock(Blocks.enchanting_table, SchematicTile.class);
-
-		schemes.registerSchematicBlock(Blocks.fire, SchematicFire.class);
-
 		// Standard entities
-
 		schemes.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class, Items.minecart);
 		schemes.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class, Items.furnace_minecart);
 		schemes.registerSchematicEntity(EntityMinecartTNT.class, SchematicMinecart.class, Items.tnt_minecart);
