@@ -1,5 +1,5 @@
 {
-  "parent": "block/cube",
+  "parent":"block/cube",
   "display": {
     "thirdperson": {
       "rotation": [ 10, -45, 170 ],
@@ -7,4 +7,4 @@
       "scale": [ 0.375, 0.375, 0.375 ]
     }
   }
-} 
+}

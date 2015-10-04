@@ -1,6 +1,0 @@
-{
-    "parent":"buildcraftcore:block/default_cube_all",
-    "textures": {
-    	"all":"buildcraftcore:blocks/blueprint/blue"
-    }
-}

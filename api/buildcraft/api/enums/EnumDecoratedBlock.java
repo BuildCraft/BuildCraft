@@ -1,6 +1,10 @@
 package buildcraft.api.enums;
 
-public enum EnumDecoratedBlock {
+import java.util.Locale;
+
+import net.minecraft.util.IStringSerializable;
+
+public enum EnumDecoratedBlock implements IStringSerializable {
     DESTROY(0),
     BLUEPRINT(10),
     TEMPLATE(10),
@@ -11,5 +15,10 @@ public enum EnumDecoratedBlock {
 
     private EnumDecoratedBlock(int lightValue) {
         this.lightValue = lightValue;
+    }
+
+    @Override
+    public String getName() {
+        return name().toLowerCase(Locale.ROOT);
     }
 }

@@ -27,7 +27,7 @@ public final class BuildCraftProperties {
     public static final BuildCraftProperty<EnumMachineState> MACHINE_STATE = BuildCraftProperty.create("state", EnumMachineState.class);
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperty.create("stage", EnumEnergyStage.class);
     public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperty.create("blueprint_type", EnumBlueprintType.class);
-    public static final BuildCraftProperty<EnumDecoratedBlock> DECORATED_BLOCK = BuildCraftProperty.create("Decoration_type",
+    public static final BuildCraftProperty<EnumDecoratedBlock> DECORATED_BLOCK = BuildCraftProperty.create("decoration_type",
             EnumDecoratedBlock.class);
 
     public static final BuildCraftProperty<Integer> GENERIC_PIPE_DATA = BuildCraftProperty.create("pipe_data", 0, 15);

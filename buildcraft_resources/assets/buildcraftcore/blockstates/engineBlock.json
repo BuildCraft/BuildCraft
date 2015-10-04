@@ -1,8 +1,12 @@
 {
+	"forge_marker": 1,
+	
 	"variants": {
-		"type=wood": { "model":"buildcraftcore:engineBlockWood" },
-		"type=iron": { "model":"buildcraftcore:engineBlockIron" },
-		"type=stone": { "model":"buildcraftcore:engineBlockStone" },
-		"type=creative": { "model":"buildcraftcore:engineBlockCreative" }
+		"type": {
+			"wood": { "model":"buildcraftcore:engineBlockWood" },
+			"iron": { "model":"buildcraftcore:engineBlockIron" },
+			"stone": { "model":"buildcraftcore:engineBlockStone" },
+			"creative": { "model":"buildcraftcore:engineBlockCreative" }
+		}
 	}
 }
