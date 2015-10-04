@@ -32,7 +32,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
     public final boolean[] powerSources = new boolean[6];
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
-    protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+    protected int solidIconIndex = PipeIconProvider.TYPE.PipePowerWood_Solid.ordinal();
     protected RFBattery battery;
 
     private boolean full;

@@ -70,7 +70,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
         super(item);
 
         standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
-        solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
+        solidIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Solid.ordinal();
     }
 
     @Override

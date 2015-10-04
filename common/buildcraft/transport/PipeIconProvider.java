@@ -71,11 +71,11 @@ public class PipeIconProvider implements IIconProvider {
         PipeItemsDaizuli_White("pipeItemsDaizuli_white"),
         PipeAllDaizuli_Solid("pipeAllDaizuli_solid"),
         //
-        PipeItemsWood_Standard("pipeItemsWood_standard"),
-        PipeAllWood_Solid("pipeAllWood_solid"),
+        PipeItemsWood_Standard("wood_item_clear"),
+        PipeItemsWood_Solid("wood_item_filled"),
         //
         PipeItemsEmerald_Standard("pipeItemsEmerald_standard"),
-        PipeAllEmerald_Solid("pipeAllEmerald_solid"),
+        PipeItemsEmerald_Solid("pipeAllEmerald_solid"),
         //
         PipeItemsEmzuli_Standard("pipeItemsEmzuli_standard"),
         PipeAllEmzuli_Solid("pipeAllEmzuli_solid"),
@@ -87,19 +87,22 @@ public class PipeIconProvider implements IIconProvider {
         //
         PipeItemsObsidian("pipeItemsObsidian"),
         PipeItemsSandstone("pipeItemsSandstone"),
-        PipeItemsStone("pipeItemsStone"),
+        PipeItemsStone("stone_items"),
         PipeItemsQuartz("pipeItemsQuartz"),
         PipeItemsClay("pipeItemsClay"),
         PipeItemsVoid("pipeItemsVoid"),
         //
-        PipeFluidsCobblestone("pipeFluidsCobblestone"),
-        PipeFluidsWood_Standard("pipeFluidsWood_standard"),
+        PipeFluidsCobblestone("cobblestone_fluid"),
+        //
+        PipeFluidsWood_Standard("wood_fluid_clear"),
+        PipeFluidsWood_Solid("wood_fluid_filled"),
+        //
         PipeFluidsEmerald_Standard("pipeFluidsEmerald_standard"),
         PipeFluidsQuartz("pipeFluidsQuartz"),
         PipeFluidsGold("pipeFluidsGold"),
         PipeFluidsIron_Standard("pipeFluidsIron_standard"),
         PipeFluidsSandstone("pipeFluidsSandstone"),
-        PipeFluidsStone("pipeFluidsStone"),
+        PipeFluidsStone("stone_fluid"),
         PipeFluidsVoid("pipeFluidsVoid"),
         //
         PipeFluidsDiamond_Item("pipeFluidsDiamond_item"),
@@ -117,7 +120,10 @@ public class PipeIconProvider implements IIconProvider {
         PipePowerStone("pipePowerStone"),
         PipePowerSandstone("pipePowerSandstone"),
         PipePowerCobblestone("pipePowerCobblestone"),
-        PipePowerWood_Standard("pipePowerWood_standard"),
+        //
+        PipePowerWood_Standard("wood_power_clear"),
+        PipePowerWood_Solid("wood_power_filled"),
+        //
         PipePowerEmerald_Standard("pipePowerEmerald_standard"),
         //
         PipePowerIronM2("pipePowerIronM2"),

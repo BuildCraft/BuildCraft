@@ -13,7 +13,7 @@ import buildcraft.transport.PipeIconProvider;
 public class PipePowerEmerald extends PipePowerWood {
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Standard.ordinal();
-    protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
+    protected int solidIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Solid.ordinal();
 
     public PipePowerEmerald(Item item) {
         super(item);

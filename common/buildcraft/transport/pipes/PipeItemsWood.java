@@ -33,7 +33,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHan
     protected RFBattery battery = new RFBattery(2560, 80, 0);
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
-    protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+    protected int solidIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Solid.ordinal();
     protected float speedMultiplier = 1.0F;
 
     private int ticksSincePull = 0;

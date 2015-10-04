@@ -31,7 +31,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
         super(item);
 
         standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
-        solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
+        solidIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Solid.ordinal();
 
         transport.initFromPipe(getClass());
     }
