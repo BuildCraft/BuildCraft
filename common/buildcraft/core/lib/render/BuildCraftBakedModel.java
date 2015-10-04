@@ -10,15 +10,10 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
@@ -49,21 +44,40 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     }
 
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
-        super(quads, particle, format);
+        this(quads, particle, format, getBlockTransforms());
     }
 
     @SuppressWarnings("deprecation")
     /** Get the default transformations for inside inventories and third person */
-    protected static ImmutableMap<TransformType, TRSRTransformation> getTransforms() {
+    protected static ImmutableMap<TransformType, TRSRTransformation> getBlockTransforms() {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
-        // builder.put(TransformType.GUI, TRSRTransformation.identity());
-//        builder.put(TransformType.GUI, new TRSRTransformation(ict.gui));
-
-        float scale = 0.0375f;
+        float scale = 0.375f;
         Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
         TRSRTransformation trsr = new TRSRTransformation(translation, new Quat4f(10, -45, 170, 1), new Vector3f(0.375F, 0.375F, 0.375F), null);
         builder.put(TransformType.THIRD_PERSON, trsr);
+
+        // translation = new Vector3f(1, 1, 0);
+        // trsr = new TRSRTransformation(translation, new Quat4f(0, 0, 0, 1), new Vector3f(1, 1, 1), new Quat4f(0, -90,
+        // 90, 1));
+        // builder.put(TransformType.GUI, trsr);
+
+        return builder.build();
+    }
+
+    @SuppressWarnings("deprecation")
+    /** Get the default transformations for inside inventories and third person */
+    protected static ImmutableMap<TransformType, TRSRTransformation> getItemTransforms() {
+        ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+
+        float scale = 0.375f;
+        Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
+        TRSRTransformation trsr = new TRSRTransformation(translation, new Quat4f(10, -45, 170, 1), new Vector3f(0.375F, 0.375F, 0.375F), null);
+        builder.put(TransformType.THIRD_PERSON, trsr);
+
+        translation = new Vector3f(1, 1, 0);
+        trsr = new TRSRTransformation(translation, new Quat4f(0, 0, 0, 1), new Vector3f(1, 1, 1), new Quat4f(0, -90, 90, 1));
+        builder.put(TransformType.GUI, trsr);
 
         return builder.build();
     }
@@ -97,15 +111,24 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         return concat(i1, i2, i3, i4);
     }
 
+    public static float[] getUVArray(TextureAtlasSprite sprite) {
+        float[] uvs = new float[4];
+        uvs[U_MIN] = sprite.getMinU();
+        uvs[U_MAX] = sprite.getMaxU();
+        uvs[V_MIN] = sprite.getMinV();
+        uvs[V_MAX] = sprite.getMaxV();
+        return uvs;
+    }
+
     public static int[] getFrom(Vector3f[] array, float[] uvs) {
         return getFrom(array[0], array[1], array[2], array[3], uvs);
     }
 
-    private static int asInt(float f) {
+    public static int asInt(float f) {
         return Float.floatToRawIntBits(f);
     }
 
-    private static int[] concat(int[]... ints) {
+    public static int[] concat(int[]... ints) {
         int[] holder = ints[0];
         for (int i = 1; i < ints.length; i++) {
             holder = ArrayUtils.addAll(holder, ints[i]);
@@ -145,21 +168,18 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     }
 
     public static void bakeFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
-        Vector3f centerOfFace = new Vector3f(center);
-        Vector3f faceAdd = new Vector3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
-        centerOfFace.add(faceAdd);
-        Vector3f faceRadius = new Vector3f(radius);
-        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
-            faceRadius.sub(faceAdd);
-        } else {
-            faceRadius.add(faceAdd);
-        }
-        Vector3f[] points = getPoints(centerOfFace, faceRadius);
+        Vector3f[] points = getPointsForFace(face, center, radius);
         int[] quadData = getFrom(points, uvs);
         bakeQuad(quads, quadData, face);
     }
 
     public static void bakeDoubleFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
+        Vector3f[] points = getPointsForFace(face, center, radius);
+        int[][] quadData = getDoubleFrom(points, uvs);
+        bakeQuads(quads, quadData, face.getOpposite(), face);
+    }
+
+    public static Vector3f[] getPointsForFace(EnumFacing face, Vector3f center, Vector3f radius) {
         Vector3f centerOfFace = new Vector3f(center);
         Vector3f faceAdd = new Vector3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
         centerOfFace.add(faceAdd);
@@ -169,8 +189,6 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         } else {
             faceRadius.add(faceAdd);
         }
-        Vector3f[] points = getPoints(centerOfFace, faceRadius);
-        int[][] quadData = getDoubleFrom(points, uvs);
-        bakeQuads(quads, quadData, face.getOpposite(), face);
+        return getPoints(centerOfFace, faceRadius);
     }
 }
