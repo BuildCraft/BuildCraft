@@ -22,9 +22,12 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockMarker extends BlockBuildCraft {
-
     public BlockMarker() {
-        super(Material.circuits, FACING_6_PROP);
+        this(false);
+    }
+
+    protected BlockMarker(boolean on) {
+        super(Material.circuits, FACING_6_PROP, on ? LED_DONE : null);
         setDefaultState(getDefaultState().withProperty(FACING_6_PROP, EnumFacing.UP));
         setLightLevel(0.5F);
         setHardness(0.0F);

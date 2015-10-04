@@ -15,7 +15,7 @@ import buildcraft.core.lib.block.BlockBuildCraftBase;
 
 public class BlockDecoration extends BlockBuildCraftBase {
     public BlockDecoration() {
-        super(Material.iron, DECORATED_BLOCK);
+        super(Material.iron, DECORATED_TYPE);
         setCreativeTab(null);
     }
 
@@ -29,14 +29,14 @@ public class BlockDecoration extends BlockBuildCraftBase {
 
     @Override
     public int damageDropped(IBlockState state) {
-        return DECORATED_BLOCK.getValue(state).ordinal();
+        return DECORATED_TYPE.getValue(state).ordinal();
     }
 
     @Override
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == this) {
-            EnumDecoratedBlock type = DECORATED_BLOCK.getValue(state);
+            EnumDecoratedBlock type = DECORATED_TYPE.getValue(state);
             return type.lightValue;
         }
         return super.getLightValue(world, pos);

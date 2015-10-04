@@ -25,7 +25,8 @@ import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TickHandlerCore {
+public enum TickHandlerCore {
+    INSTANCE;
     private static final List<PacketHandler> packetHandlers = Lists.newCopyOnWriteArrayList();
 
     private boolean nagged;

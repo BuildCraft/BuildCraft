@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.DefaultProps;
@@ -72,7 +73,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     @Override
     public void update() {
         if (init != 2 && !isInvalid()) {
-            if (init < 2) {
+            if (init < 1) {
                 init++;
                 return;
             }
@@ -119,9 +120,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         }
 
         if (sendNetworkUpdate) {
-            sendNetworkUpdate = false;
             if (worldObj != null && !worldObj.isRemote) {
-                BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj, pos, DefaultProps.NETWORK_UPDATE_RANGE);
+                BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj, getPos(), DefaultProps.NETWORK_UPDATE_RANGE);
+                sendNetworkUpdate = false;
             }
         }
     }

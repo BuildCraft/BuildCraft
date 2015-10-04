@@ -25,6 +25,7 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
@@ -34,8 +35,8 @@ import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
-// @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
-// dependencies = DefaultProps.DEPENDENCY_CORE)
+ @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
+ dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")
     public static BuildCraftSilicon instance;

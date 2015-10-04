@@ -7,6 +7,7 @@ package buildcraft.core.lib.network.command;
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.core.lib.network.Packet;
@@ -22,6 +23,8 @@ public class PacketCommand extends Packet {
     public Object target;
     public CommandTarget handler;
     private CommandWriter writer;
+    /** Only used for reading */
+    private EntityPlayer player;
 
     static {
         targets = new ArrayList<CommandTarget>();
@@ -50,17 +53,9 @@ public class PacketCommand extends Packet {
         }
     }
 
-    public void handle(EntityPlayer player) {
-        if (handler != null) {
-            ICommandReceiver receiver = handler.handle(player, stream, player.worldObj);
-            if (receiver != null) {
-                receiver.receiveCommand(command, FMLCommonHandler.instance().getEffectiveSide(), player, stream);
-            }
-        }
-    }
-
     @Override
-    public void writeData(ByteBuf data) {
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         NetworkUtils.writeUTF(data, command);
         data.writeByte(targets.indexOf(handler));
         handler.write(data, target);
@@ -70,14 +65,26 @@ public class PacketCommand extends Packet {
     }
 
     @Override
-    public void readData(ByteBuf data) {
+    public void readData(ByteBuf data, World world, EntityPlayer player) {
+        super.readData(data, world, player);
         command = NetworkUtils.readUTF(data);
         handler = targets.get(data.readUnsignedByte());
         stream = data; // for further reading
+        this.player = player;
     }
 
     @Override
     public int getID() {
         return PacketIds.COMMAND;
+    }
+
+    @Override
+    public void applyData(World world) {
+        if (handler != null) {
+            ICommandReceiver receiver = handler.handle(player, stream, world);
+            if (receiver != null) {
+                receiver.receiveCommand(command, FMLCommonHandler.instance().getEffectiveSide(), player, stream);
+            }
+        }
     }
 }

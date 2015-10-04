@@ -107,7 +107,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
             if (stacksToDisplay.size() == 0) {
                 StackAtPosition sPos = new StackAtPosition();
-                sPos.stack = new ItemStack(BuildCraftCore.buildToolBlock);
+                sPos.stack = new ItemStack(BuildCraftCore.decoratedBlock);
                 stacksToDisplay.add(sPos);
             }
 
