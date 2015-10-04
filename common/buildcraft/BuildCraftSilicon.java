@@ -30,25 +30,8 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockLaser;
-import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.BlockPackager;
-import buildcraft.silicon.EntityPackage;
-import buildcraft.silicon.ItemLaserTable;
-import buildcraft.silicon.ItemPackage;
-import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import buildcraft.silicon.ResourceIdAssemblyTable;
-import buildcraft.silicon.SiliconGuiHandler;
-import buildcraft.silicon.SiliconProxy;
-import buildcraft.silicon.TileAdvancedCraftingTable;
-import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileChargingTable;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.TileLaser;
-import buildcraft.silicon.TilePackager;
-import buildcraft.silicon.TileProgrammingTable;
-import buildcraft.silicon.TileStampingTable;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
 // @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
@@ -72,7 +55,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         BuildCraftCore.mainConfigManager.register("power.chipsetCostMultiplier", 1.0D, "The cost multiplier for Chipsets",
-				ConfigManager.RestartRequirement.GAME);
+                ConfigManager.RestartRequirement.GAME);
         BuildCraftCore.mainConfiguration.save();
         chipsetCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.chipsetCostMultiplier").getDouble();
 
@@ -108,7 +91,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", ChannelHandler.createChannelHandler(),
+                new PacketHandlerSilicon());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
         CoreProxy.proxy.registerTileEntity(TileLaser.class, "buildcraft.silicon.TileLaser", "net.minecraft.src.buildcraft.factory.TileLaser");

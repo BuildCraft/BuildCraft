@@ -33,11 +33,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
@@ -48,7 +49,6 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
@@ -59,9 +59,9 @@ import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;
@@ -643,7 +643,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         bindPipe();
         updateCoreState();
 
-        PacketTileState packet = new PacketTileState(getPos());
+        PacketTileState packet = new PacketTileState(this);
 
         if (pipe != null && pipe.transport != null) {
             pipe.transport.sendDescriptionPacket();
@@ -662,7 +662,8 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
 
     @Override
     public net.minecraft.network.Packet getDescriptionPacket() {
-        return Utils.toPacket(getBCDescriptionPacket(), 1);
+        sendNetworkUpdate();
+        return null;
     }
 
     @Override

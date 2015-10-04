@@ -13,6 +13,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.INBTStoreable;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.utils.IdentifiableAABB;
+import buildcraft.transport.BlockGenericPipe.Part;
 
 /** An IPipePluggable MUST have an empty constructor for client-side rendering! */
 public abstract class PipePluggable implements INBTStoreable, ISerializable {

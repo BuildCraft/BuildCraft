@@ -378,7 +378,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(), new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", ChannelHandler.createChannelHandler(),
+                new PacketHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new EnergyGuiHandler());
 

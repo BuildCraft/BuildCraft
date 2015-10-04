@@ -42,25 +42,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.factory.BlockAutoWorkbench;
-import buildcraft.factory.BlockChute;
-import buildcraft.factory.BlockFloodGate;
-import buildcraft.factory.BlockMiningWell;
-import buildcraft.factory.BlockPlainPipe;
-import buildcraft.factory.BlockPump;
-import buildcraft.factory.BlockRefinery;
-import buildcraft.factory.BlockTank;
-import buildcraft.factory.FactoryGuiHandler;
-import buildcraft.factory.FactoryProxy;
-import buildcraft.factory.FactoryProxyClient;
-import buildcraft.factory.PumpDimensionList;
-import buildcraft.factory.TileAutoWorkbench;
-import buildcraft.factory.TileChute;
-import buildcraft.factory.TileFloodGate;
-import buildcraft.factory.TileMiningWell;
-import buildcraft.factory.TilePump;
-import buildcraft.factory.TileRefinery;
-import buildcraft.factory.TileTank;
+import buildcraft.factory.*;
 import buildcraft.factory.render.ChuteRenderModel;
 import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
@@ -130,7 +112,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.EventHandler
     public void initialize(FMLPreInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", ChannelHandler.createChannelHandler(),
+                new PacketHandler());
 
         String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
             + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"

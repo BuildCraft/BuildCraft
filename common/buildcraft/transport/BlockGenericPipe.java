@@ -65,6 +65,7 @@ import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
 import buildcraft.core.lib.utils.ICustomStateMapper;
+import buildcraft.core.lib.utils.IdentifiableAABB;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
@@ -91,17 +92,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     public static enum Part {
         Pipe,
-        Pluggable
+        Pluggable,
+        Wire
     }
 
     public static class RaytraceResult {
         public final Part hitPart;
         public final MovingObjectPosition movingObjectPosition;
-        public final AxisAlignedBB boundingBox;
+        public final IdentifiableAABB<Part> boundingBox;
         public final EnumFacing sideHit;
 
-        RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition, AxisAlignedBB boundingBox, EnumFacing side) {
-            this.hitPart = hitPart;
+        RaytraceResult(MovingObjectPosition movingObjectPosition, IdentifiableAABB<Part> boundingBox, EnumFacing side) {
+            this.hitPart = boundingBox.identifier;
             this.movingObjectPosition = movingObjectPosition;
             this.boundingBox = boundingBox;
             this.sideHit = side;
@@ -213,10 +215,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     @Override
     public AxisAlignedBB[] getBoxes(IBlockAccess access, BlockPos pos, IBlockState state) {
-        List<AxisAlignedBB> bbs = Lists.newArrayList();
+        List<IdentifiableAABB<Part>> bbs = Lists.newArrayList();
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
-        AxisAlignedBB base = new AxisAlignedBB(min, min, min, max, max, max);
+        IdentifiableAABB<Part> base = new IdentifiableAABB<Part>(getPipeBoundingBox(null), Part.Pipe);
         bbs.add(base);
 
         TileEntity tile = access.getTileEntity(pos);
@@ -225,164 +227,51 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
             // Pipe Connections
 
-            if (pipe.isPipeConnected(EnumFacing.WEST)) {
-                bbs.add(new AxisAlignedBB(0, min, min, min, max, max));
-            }
-
-            if (pipe.isPipeConnected(EnumFacing.EAST)) {
-                bbs.add(new AxisAlignedBB(max, min, min, 1, max, max));
-            }
-
-            if (pipe.isPipeConnected(EnumFacing.NORTH)) {
-                bbs.add(new AxisAlignedBB(min, min, 0, max, max, min));
-            }
-
-            if (pipe.isPipeConnected(EnumFacing.SOUTH)) {
-                bbs.add(new AxisAlignedBB(min, min, max, max, max, 1));
-            }
-
-            if (pipe.isPipeConnected(EnumFacing.DOWN)) {
-                bbs.add(new AxisAlignedBB(min, 0, min, max, min, max));
-            }
-
-            if (pipe.isPipeConnected(EnumFacing.UP)) {
-                bbs.add(new AxisAlignedBB(min, max, min, max, 1, max));
+            for (EnumFacing face : EnumFacing.values()) {
+                if (pipe.isPipeConnected(face)) {
+                    bbs.add(new IdentifiableAABB<Part>(getPipeBoundingBox(face), Part.Pipe));
+                }
             }
 
             // Facades
 
-            float facadeThickness = TransportConstants.FACADE_THICKNESS;
-
-            if (pipe.hasEnabledFacade(EnumFacing.WEST)) {
-                bbs.add(new AxisAlignedBB(0, 0, 0, facadeThickness, 1, 1));
-            }
-
-            if (pipe.hasEnabledFacade(EnumFacing.EAST)) {
-                bbs.add(new AxisAlignedBB(1 - facadeThickness, 0, 0, 1, 1, 1));
-            }
-
-            if (pipe.hasEnabledFacade(EnumFacing.NORTH)) {
-                bbs.add(new AxisAlignedBB(0, 0, 0, 1, 1, facadeThickness));
-            }
-
-            if (pipe.hasEnabledFacade(EnumFacing.SOUTH)) {
-                bbs.add(new AxisAlignedBB(0, 0, 1 - facadeThickness, 1, 1, 1));
-            }
-
-            if (pipe.hasEnabledFacade(EnumFacing.DOWN)) {
-                bbs.add(new AxisAlignedBB(0, 0, 0, 1, facadeThickness, 1));
-            }
-
-            if (pipe.hasEnabledFacade(EnumFacing.UP)) {
-                bbs.add(new AxisAlignedBB(0, 1 - facadeThickness, 0, 1, 1, 1));
-            }
+            // float facadeThickness = TransportConstants.FACADE_THICKNESS;
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.WEST)) {
+            // bbs.add(new AxisAlignedBB(0, 0, 0, facadeThickness, 1, 1));
+            // }
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.EAST)) {
+            // bbs.add(new AxisAlignedBB(1 - facadeThickness, 0, 0, 1, 1, 1));
+            // }
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.NORTH)) {
+            // bbs.add(new AxisAlignedBB(0, 0, 0, 1, 1, facadeThickness));
+            // }
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.SOUTH)) {
+            // bbs.add(new AxisAlignedBB(0, 0, 1 - facadeThickness, 1, 1, 1));
+            // }
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.DOWN)) {
+            // bbs.add(new AxisAlignedBB(0, 0, 0, 1, facadeThickness, 1));
+            // }
+            //
+            // if (pipe.hasEnabledFacade(EnumFacing.UP)) {
+            // bbs.add(new AxisAlignedBB(0, 1 - facadeThickness, 0, 1, 1, 1));
+            // }
 
             // Pluggables
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (pipe.hasPipePluggable(face)) {
-                    bbs.add(pipe.getPipePluggable(face).getBoundingBox(face));
+                    bbs.add(new IdentifiableAABB<Part>(pipe.getPipePluggable(face).getBoundingBox(face), Part.Pluggable));
                 }
             }
         }
 
-        return bbs.toArray(new AxisAlignedBB[bbs.size()]);
+        return bbs.toArray(new IdentifiableAABB[bbs.size()]);
     }
-
-    //// @SuppressWarnings("rawtypes")
-    // @Override
-    // public void addCollisionBoxesToList(World world, BlockPos pos, AxisAlignedBB axisalignedbb, List arraylist,
-    //// Entity par7Entity) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    //
-    // TileEntity tile1 = world.getTileEntity(pos);
-    // if (tile1 instanceof TileGenericPipe) {
-    // TileGenericPipe tileG = (TileGenericPipe) tile1;
-    //
-    // if (tileG.isPipeConnected(EnumFacing.WEST)) {
-    // setBlockBounds(
-    // 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-    //// CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.isPipeConnected(EnumFacing.EAST)) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F,
-    //// CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.isPipeConnected(EnumFacing.DOWN)) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-    //// CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.isPipeConnected(EnumFacing.UP)) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-    //// 1.0F,
-    // CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.isPipeConnected(EnumFacing.NORTH)) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS,
-    //// CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.isPipeConnected(EnumFacing.SOUTH)) {
-    // setBlockBounds(
-    // CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-    // CoreConstants.PIPE_MAX_POS, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // float facadeThickness = TransportConstants.FACADE_THICKNESS;
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.EAST)) {
-    // setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.WEST)) {
-    // setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.UP)) {
-    // setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.DOWN)) {
-    // setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.SOUTH)) {
-    // setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    //
-    // if (tileG.hasEnabledFacade(EnumFacing.NORTH)) {
-    // setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
-    // super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
-    // }
-    // }
-    // setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-    // }
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -400,6 +289,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                 case Pipe: {
                     float scale = 0.08F;
                     box = box.expand(scale, scale, scale);
+                    break;
+                }
+                case Wire: {
+                    break;
+                }
+                default: {
                     break;
                 }
             }
@@ -449,13 +344,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         /** pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades] */
         MovingObjectPosition[] hits = new MovingObjectPosition[31];
-        AxisAlignedBB[] boxes = new AxisAlignedBB[31];
+        IdentifiableAABB<Part>[] boxes = new IdentifiableAABB[31];
         EnumFacing[] sideHit = new EnumFacing[31];
         Arrays.fill(sideHit, null);
 
         // Center bit of pipe
         {
-            AxisAlignedBB bb = getPipeBoundingBox(null);
+            IdentifiableAABB<Part> bb = getPipeBoundingBox(null);
             setBlockBounds(bb);
             boxes[6] = bb;
             hits[6] = super.collisionRayTrace(world, pos, origin, direction);
@@ -465,7 +360,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         // Connections
         for (EnumFacing side : DIR_VALUES) {
             if (tileG.isPipeConnected(side)) {
-                AxisAlignedBB bb = getPipeBoundingBox(side);
+                IdentifiableAABB<Part> bb = getPipeBoundingBox(side);
                 setBlockBounds(bb);
                 boxes[side.ordinal()] = bb;
                 hits[side.ordinal()] = super.collisionRayTrace(world, pos, origin, direction);
@@ -477,7 +372,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         for (EnumFacing side : EnumFacing.VALUES) {
             if (tileG.getPipePluggable(side) != null) {
-                AxisAlignedBB bb = tileG.getPipePluggable(side).getBoundingBox(side);
+                IdentifiableAABB<Part> bb = new IdentifiableAABB<Part>(tileG.getPipePluggable(side).getBoundingBox(side), Part.Pluggable);
                 setBlockBounds(bb);
                 boxes[7 + side.ordinal()] = bb;
                 hits[7 + side.ordinal()] = super.collisionRayTrace(world, pos, origin, direction);
@@ -513,15 +408,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         if (minIndex == -1) {
             return null;
         } else {
-            Part hitPart;
-
-            if (minIndex < 7) {
-                hitPart = Part.Pipe;
-            } else {
-                hitPart = Part.Pluggable;
-            }
-
-            return new RaytraceResult(hitPart, hits[minIndex], boxes[minIndex], sideHit[minIndex]);
+            return new RaytraceResult(hits[minIndex], boxes[minIndex], sideHit[minIndex]);
         }
     }
 
@@ -529,12 +416,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
     }
 
-    private AxisAlignedBB getPipeBoundingBox(EnumFacing side) {
+    private IdentifiableAABB<Part> getPipeBoundingBox(EnumFacing side) {
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
 
         if (side == null) {
-            return new AxisAlignedBB(min, min, min, max, max, max);
+            return new IdentifiableAABB<Part>(min, min, min, max, max, max, Part.Pipe);
         }
 
         float[][] bounds = new float[3][2];
@@ -549,7 +436,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         bounds[2][1] = max;
 
         MatrixTranformations.transform(bounds, side);
-        return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+        return new IdentifiableAABB<Part>(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1], Part.Pipe);
     }
 
     public static void removePipe(Pipe<?> pipe) {
