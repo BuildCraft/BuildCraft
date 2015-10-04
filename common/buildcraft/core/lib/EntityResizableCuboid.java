@@ -66,6 +66,7 @@ public class EntityResizableCuboid extends Entity {
 
     public EntityResizableCuboid(World world) {
         super(world);
+        ignoreFrustumCheck = true;
         preventEntitySpawning = false;
         noClip = true;
         isImmuneToFire = true;
