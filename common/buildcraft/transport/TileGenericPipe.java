@@ -468,6 +468,9 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
                 IBlockState state = worldObj.getBlockState(connected);
                 Block block = state.getBlock();
                 ICustomPipeConnection connection = PipeConnectionAPI.getCustomConnection(block);
+                if (connection == null) {
+                    connection = DefaultPipeConnection.INSTANCE;
+                }
                 renderState.setExtension(o, connection.getExtension(worldObj, connected, o, state));
             }
         }

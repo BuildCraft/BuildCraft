@@ -535,10 +535,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return null;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos) {
-        RaytraceResult rayTraceResult = doRayTrace(world, pos, Minecraft.getMinecraft().thePlayer);
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
+        RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
 
         if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
             switch (rayTraceResult.hitPart) {
@@ -550,8 +549,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                         return drops[0];
                     }
                 }
-                case Pipe:
+                case Pipe: {
                     return new ItemStack(getPipe(world, pos).item, 1, getPipe(world, pos).container.getItemMetadata());
+                }
+                case Wire: {
+                    break;
+                }
             }
         }
         return null;
