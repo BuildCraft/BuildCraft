@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
-@Deprecated
 public class PipeEventBus {
     private class EventHandler {
         public Method method;

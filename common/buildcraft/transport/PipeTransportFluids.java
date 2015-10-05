@@ -211,10 +211,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     @Override
     public void updateEntity() {
-        container.deletePipe = true;
-        if (true) {
-            return;
-        }
         if (container.getWorld().isRemote) {
             return;
         }
@@ -445,7 +441,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         }
 
         if (changed || initPacket) {
-            PacketFluidUpdate packet = new PacketFluidUpdate(container.getPos(), initPacket);
+            PacketFluidUpdate packet = new PacketFluidUpdate(container, initPacket);
             packet.renderCache = renderCacheCopy;
             packet.delta = delta;
             return packet;

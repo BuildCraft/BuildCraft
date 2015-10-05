@@ -6,15 +6,13 @@ package buildcraft.transport.network;
 
 import java.util.BitSet;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
@@ -25,22 +23,21 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public FluidRenderData renderCache = new FluidRenderData();
     public BitSet delta;
 
-    public PacketFluidUpdate(BlockPos pos) {
-        super(PacketIds.PIPE_LIQUID, pos);
+    public PacketFluidUpdate(TileGenericPipe tileG) {
+        super(PacketIds.PIPE_LIQUID, tileG.getWorld().provider.getDimensionId(), tileG.getPos());
     }
 
-    public PacketFluidUpdate(BlockPos pos, boolean chunkPacket) {
-        super(PacketIds.PIPE_LIQUID, pos);
+    public PacketFluidUpdate(TileGenericPipe tileG, boolean chunkPacket) {
+        this(tileG);
         this.isChunkDataPacket = chunkPacket;
     }
 
     public PacketFluidUpdate() {}
 
     @Override
-    public void readData(ByteBuf data) {
-        super.readData(data);
+    public void readData(ByteBuf data, World world, EntityPlayer player) {
+        super.readData(data, world, player);
 
-        World world = CoreProxy.proxy.getClientWorld();
         if (world.isAirBlock(pos)) {
             return;
         }
@@ -82,8 +79,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
     }
 
     @Override
-    public void writeData(ByteBuf data) {
-        super.writeData(data);
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
 
         byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
         // System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
@@ -111,6 +108,6 @@ public class PacketFluidUpdate extends PacketCoordinates {
     @Override
     public void applyData(World world) {
         // TODO Auto-generated method stub
-        
+
     }
 }
