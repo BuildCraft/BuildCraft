@@ -21,13 +21,22 @@ public class BuilderSupportEntry {
 		}
 	}
 
+	@IncludeIgnore
+	public List<String> includes;
+
+	@IncludeIgnore
 	public String name;
+
+	@IncludeIgnore
 	public List<String> names;
+
 	public List<Integer> metadata;
 	public List<String> tileId;
 
 	public int metadataMask = 15;
 	public int metadataEqualityMask = 0;
+
+	@IncludeRecurse
 	public NBTEntry nbt;
 
 	public String placedBlock;
@@ -41,6 +50,7 @@ public class BuilderSupportEntry {
 
 	public boolean notifyBlockTwice = false;
 
+	@IncludeRecurse
 	public BuilderRotation rotation = null;
 	public List<BuilderRotation> rotationList = null;
 

@@ -96,8 +96,7 @@
     "names": ["hopper", "furnace", "lit_furnace", "chest", "trapped_chest", "dispenser", "dropper"],
     "rotation": {
       "type": "metadata",
-      "mask": 3,
-      "matrix": [2, 5, 3, 4]
+      "format": "ForgeDirection"
     }
   },
   {
@@ -192,8 +191,7 @@
     "metadataMask": 7,
     "rotation": {
       "type": "metadata",
-      "mask": 7,
-      "matrix": [2, 5, 3, 4]
+      "format": "ForgeDirection"
     }
   },
   {

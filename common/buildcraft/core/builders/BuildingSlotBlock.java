@@ -22,6 +22,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;

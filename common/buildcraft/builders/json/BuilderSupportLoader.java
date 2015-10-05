@@ -1,5 +1,6 @@
 package buildcraft.builders.json;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,27 +32,27 @@ public final class BuilderSupportLoader {
 	}
 
 	private void processJSONFile(String filename, ClassLoader classLoader, String modId, String blockName) {
-		InputStream is = classLoader.getResourceAsStream(filename);
+		try {
+			BuilderSupportFile supportFile = new BuilderSupportFile(filename, classLoader, blockName);
+			Set<Block> loadedBlocks = new HashSet<Block>();
 
-		if (is != null) {
-			try {
-				BuilderSupportFile supportFile = new BuilderSupportFile(is, blockName);
-				Set<Block> loadedBlocks = new HashSet<Block>();
-
-				for (BuilderSupportEntry e : supportFile.entries) {
-					if (e.names == null) {
-						register(supportFile, e, modId, e.name, loadedBlocks);
-					} else {
-						for (String name : e.names) {
-							register(supportFile, e, modId, name, loadedBlocks);
-						}
+			for (BuilderSupportEntry e : supportFile.entries) {
+				if (e.names == null) {
+					register(supportFile, e, modId, e.name, loadedBlocks);
+				} else {
+					for (String name : e.names) {
+						register(supportFile, e, modId, name, loadedBlocks);
 					}
 				}
+			}
 
-				if (loadedBlocks.size() > 0) {
-					BCLog.logger.info("Loaded " + loadedBlocks.size() + " block" + (loadedBlocks.size() == 1 ? "" : "s") +  " from Builder support definition " + filename);
-				}
-			} catch (JSONValidationException e) {
+			if (loadedBlocks.size() > 0) {
+				BCLog.logger.info("Loaded " + loadedBlocks.size() + " block" + (loadedBlocks.size() == 1 ? "" : "s") +  " from Builder support definition " + filename);
+			}
+		} catch (JSONValidationException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			if (!e.getMessage().equals(filename)) {
 				e.printStackTrace();
 			}
 		}

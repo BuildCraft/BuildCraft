@@ -15,7 +15,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagShort;
 
 public final class NBTUtils {
 
@@ -39,6 +42,17 @@ public final class NBTUtils {
 		}
 
 		return cpt != null ? cpt.getTag(name) : null;
+	}
+
+	public static void setInteger(NBTTagCompound cptBase, String nameBase, int i) {
+		NBTBase field = getTag(cptBase, nameBase);
+		if (field instanceof NBTTagByte) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagByte((byte) i));
+		} else if (field instanceof NBTTagShort) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagShort((short) i));
+		} else if (field instanceof NBTTagInt) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagInt(i));
+		}
 	}
 
 	public static void setTag(NBTTagCompound cptBase, String nameBase, NBTBase tag) {

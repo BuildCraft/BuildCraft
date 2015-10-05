@@ -1,26 +1,25 @@
 package buildcraft.builders.json;
 
-import java.util.Set;
-
 import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagShort;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class BuilderRotation {
+	enum Axis {
+		Y,
+		Z,
+		X
+	}
+
 	enum Type {
 		@SerializedName("metadata")
 		METADATA,
@@ -29,7 +28,10 @@ public class BuilderRotation {
 		NBT_FIELD,
 
 		@SerializedName("nbtRotateArray")
-		NBT_ROTATE_ARRAY
+		NBT_ROTATE_ARRAY,
+
+		@SerializedName("nbtBitShift")
+		NBT_BITWISE_SHIFT
 	}
 
 	private static final ForgeDirection[] MATRIX_ORDER = {
@@ -39,10 +41,41 @@ public class BuilderRotation {
 	public Type type;
 	public int mask, shift;
 	public boolean sticksToWall;
+
+	private String format;
 	private String tag;
 	private int[] matrix, transformation;
 
-	private transient boolean maskShifted;
+	private transient boolean initialized;
+
+	// TODO (7.2.x): Make use of me!
+	private int flip(int v, Axis axis) {
+		int rot = mask != 0 ? v & mask : v;
+		int out = v & ~mask;
+
+		if (format.equals("forgedirection")) {
+			if (rot == (axis.ordinal() << (1 + shift)) || rot == (((axis.ordinal() << 1) + 1) << shift)) {
+				rot ^= (1 << shift);
+			}
+		} else if (matrix.length == 4) {
+			switch (axis) {
+				case X:
+					if (rot == (matrix[1] << shift)) {
+						rot = matrix[3] << shift;
+					} else if (rot == (matrix[3] << shift)) {
+						rot = matrix[1] << shift;
+					}
+				case Z:
+					if (rot == (matrix[0] << shift)) {
+						rot = matrix[2] << shift;
+					} else if (rot == (matrix[2] << shift)) {
+						rot = matrix[0] << shift;
+					}
+			}
+		}
+
+		return out | rot;
+	}
 
 	private int rotateLeft(int v) {
 		int rot = mask != 0 ? v & mask : v;
@@ -57,8 +90,8 @@ public class BuilderRotation {
 			}
 		} else {
 			for (int i = 0; i < matrix.length; i++) {
-				if (matrix[i] == rot) {
-					rot = matrix[(i + 1) % matrix.length];
+				if ((matrix[i] << shift) == rot) {
+					rot = matrix[(i + 1) % matrix.length] << shift;
 					if (mask != 0) {
 						rot &= mask;
 					}
@@ -154,17 +187,41 @@ public class BuilderRotation {
 				return;
 			}
 			int i = rotateLeft(((NBTBase.NBTPrimitive) field).func_150287_d());
-			if (field instanceof NBTTagByte) {
-				NBTUtils.setTag(s.tileNBT, tag, new NBTTagByte((byte) i));
-			} else if (field instanceof NBTTagShort) {
-				NBTUtils.setTag(s.tileNBT, tag, new NBTTagShort((short) i));
-			} else if (field instanceof NBTTagInt) {
-				NBTUtils.setTag(s.tileNBT, tag, new NBTTagInt(i));
+			NBTUtils.setInteger(s.tileNBT, tag, i);
+		} else if (type == Type.NBT_BITWISE_SHIFT) {
+			NBTBase field = NBTUtils.getTag(s.tileNBT, tag);
+			if (field == null) {
+				BCLog.logger.warn("Could not find field " + tag + " in tile " + s.tileNBT.getString("id") + "!");
+				return;
 			}
+			int v = ((NBTBase.NBTPrimitive) field).func_150287_d();
+			int bits = (v & mask) >> shift;
+			int bitsNew = 0;
+			for (int i = 0; i < transformation.length; i++) {
+				bitsNew |= ((bits >> i) & 1) << transformation[i];
+			}
+			v = v & mask | (bitsNew << shift);
+			NBTUtils.setInteger(s.tileNBT, tag, v);
 		}
 	}
 
 	public void validate(BuilderSupportEntry e) throws JSONValidationException {
+		if (!initialized && format != null) {
+			if (format.equalsIgnoreCase("ForgeDirection") || format.equalsIgnoreCase("EnumFacing")) {
+				format = "forgedirection";
+
+				if (type == Type.NBT_ROTATE_ARRAY || type == Type.NBT_BITWISE_SHIFT) {
+					transformation = new int[]{0, 1, 5, 4, 2, 3};
+				} else {
+					matrix = new int[]{2, 5, 3, 4};
+				}
+
+				if (mask == 0 && shift == 0) {
+					mask = 7;
+				}
+			}
+		}
+
 		if (type == null || matrix == null) {
 			throw new JSONValidationException(e, "Invalid rotation type!");
 		}
@@ -177,9 +234,8 @@ public class BuilderRotation {
 			throw new JSONValidationException(e, "Invalid shift value specified: " + shift + "!");
 		}
 
-		if (!maskShifted) {
+		if (!initialized) {
 			mask <<= shift;
-			maskShifted = true;
 		}
 
 		if (type == Type.METADATA) {
@@ -189,11 +245,11 @@ public class BuilderRotation {
 			if ((mask & ~15) != 0) {
 				throw new JSONValidationException(e, "Mask out of bounds!");
 			}
-		} else if (type == Type.NBT_FIELD || type == Type.NBT_ROTATE_ARRAY) {
+		} else if (type == Type.NBT_FIELD || type == Type.NBT_ROTATE_ARRAY || type == Type.NBT_BITWISE_SHIFT) {
 			if (tag == null) {
 				throw new JSONValidationException(e, "Must specify tag when using NBT type!");
 			}
-			if (type == Type.NBT_ROTATE_ARRAY) {
+			if (type == Type.NBT_ROTATE_ARRAY || type == Type.NBT_BITWISE_SHIFT) {
 				if (transformation == null) {
 					throw new JSONValidationException(e, "Must specify transformation when using NBT array rotation!");
 				}
@@ -203,9 +259,11 @@ public class BuilderRotation {
 		if (sticksToWall) {
 			if (matrix.length != 4) {
 				throw new JSONValidationException(e, "SticksToWall only works for matrices of length 4 (N->E->S->W)!");
-			} else if (type == Type.NBT_ROTATE_ARRAY) {
-				throw new JSONValidationException(e, "SticksToWall does not work for NBTRotateArray!");
+			} else if (type == Type.NBT_ROTATE_ARRAY || type == Type.NBT_BITWISE_SHIFT) {
+				throw new JSONValidationException(e, "SticksToWall does not work for type " + type.name() + "!");
 			}
 		}
+
+		initialized = true;
 	}
 }
