@@ -9,16 +9,11 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -146,16 +141,23 @@ public class SchematicJSON extends SchematicTile {
 					}
 				}
 			} else if (block != null) {
+				World reqWorld = context.world();
+				if (tileNBT != null) {
+					tileNBT.setInteger("x", x);
+					tileNBT.setInteger("y", y);
+					tileNBT.setInteger("z", z);
+					reqWorld = new WorldWrapped(context.world(), x, y, z, TileEntity.createAndLoadEntity(tileNBT));
+				}
+
 				if (entry.ignoreDrops) {
 					req = new ArrayList<ItemStack>();
 					req.add(new ItemStack(block, 1, meta));
 				} else {
-					req = block.getDrops(context.world(), x,
-							y, z, context.world().getBlockMetadata(x, y, z), 0);
+					req = block.getDrops(reqWorld, x, y, z, meta, 0);
 				}
 
 				if (!entry.ignoreInventoryContents && block.hasTileEntity(meta)) {
-					TileEntity tile = context.world().getTileEntity(x, y, z);
+					TileEntity tile = reqWorld.getTileEntity(x, y, z);
 
 					if (tile instanceof IInventory) {
 						IInventory inv = (IInventory) tile;
