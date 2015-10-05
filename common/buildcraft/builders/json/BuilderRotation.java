@@ -9,12 +9,14 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.core.lib.utils.NBTUtils;
 
@@ -27,7 +29,7 @@ public class BuilderRotation {
 		NBT_FIELD,
 
 		@SerializedName("nbtRotateArray")
-		NBT_ROTATE_ARRAY;
+		NBT_ROTATE_ARRAY
 	}
 
 	private static final ForgeDirection[] MATRIX_ORDER = {
@@ -104,7 +106,10 @@ public class BuilderRotation {
 			s.meta = rotateLeft(s.meta);
 		} else if (type == BuilderRotation.Type.NBT_ROTATE_ARRAY) {
 			NBTBase sidedArray = NBTUtils.getTag(s.tileNBT, tag);
-			if (sidedArray instanceof NBTTagByteArray) {
+			if (sidedArray == null) {
+				BCLog.logger.warn("Could not find field " + tag + " in tile " + s.tileNBT.getString("id") + "!");
+				return;
+			} else if (sidedArray instanceof NBTTagByteArray) {
 				byte[] rotated = ((NBTTagByteArray) sidedArray).func_150292_c();
 				byte[] rotatedNew = new byte[rotated.length];
 				for (int i = 0; i < rotated.length; i++) {
@@ -126,10 +131,26 @@ public class BuilderRotation {
 					}
 				}
 				NBTUtils.setTag(s.tileNBT, tag, new NBTTagIntArray(rotatedNew));
+			} else if (sidedArray instanceof NBTTagList) {
+				NBTTagList list = (NBTTagList) sidedArray;
+				NBTBase[] tags = new NBTBase[list.tagCount()];
+				for (int i = 0; i < tags.length; i++) {
+					if (i >= transformation.length || transformation[i] >= tags.length) {
+						tags[i] = list.getCompoundTagAt(i);
+					} else {
+						tags[transformation[i]] = list.getCompoundTagAt(i);
+					}
+				}
+				NBTTagList listNew = new NBTTagList();
+				for (int i = 0; i < tags.length; i++) {
+					listNew.appendTag(tags[i]);
+				}
+				NBTUtils.setTag(s.tileNBT, tag, listNew);
 			}
 		} else if (type == BuilderRotation.Type.NBT_FIELD) {
 			NBTBase field = NBTUtils.getTag(s.tileNBT, tag);
 			if (field == null) {
+				BCLog.logger.warn("Could not find field " + tag + " in tile " + s.tileNBT.getString("id") + "!");
 				return;
 			}
 			int i = rotateLeft(((NBTBase.NBTPrimitive) field).func_150287_d());

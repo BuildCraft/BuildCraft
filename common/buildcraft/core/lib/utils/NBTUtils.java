@@ -30,7 +30,7 @@ public final class NBTUtils {
 		NBTTagCompound cpt = cptBase;
 		String name = nameBase;
 
-		while (name.contains("/")) {
+		while (cpt != null && name.contains("/")) {
 			String cptName = name.substring(0, name.indexOf("/"));
 			if (cpt.hasKey(cptName, 10)) {
 				cpt = cpt.getCompoundTag(cptName);
@@ -38,14 +38,14 @@ public final class NBTUtils {
 			}
 		}
 
-		return cpt.getTag(name);
+		return cpt != null ? cpt.getTag(name) : null;
 	}
 
 	public static void setTag(NBTTagCompound cptBase, String nameBase, NBTBase tag) {
 		NBTTagCompound cpt = cptBase;
 		String name = nameBase;
 
-		while (name.contains("/")) {
+		while (cpt != null && name.contains("/")) {
 			String cptName = name.substring(0, name.indexOf("/"));
 			if (cpt.hasKey(cptName, 10)) {
 				cpt = cpt.getCompoundTag(cptName);
@@ -53,7 +53,9 @@ public final class NBTUtils {
 			}
 		}
 
-		cpt.setTag(name, tag);
+		if (cpt != null) {
+			cpt.setTag(name, tag);
+		}
 	}
 
 	public static NBTTagCompound load(byte[] data) {
