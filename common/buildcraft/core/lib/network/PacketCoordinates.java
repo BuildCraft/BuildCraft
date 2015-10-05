@@ -5,6 +5,7 @@
 package buildcraft.core.lib.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -17,10 +18,11 @@ public abstract class PacketCoordinates extends Packet {
 
     public PacketCoordinates() {}
 
-    public PacketCoordinates(int id, int dimId, BlockPos pos) {
+    public PacketCoordinates(int id, TileEntity tile) {
         this.id = id;
-        this.dimensionId = id;
-        this.pos = pos;
+        this.tempWorld = tile.getWorld();
+        this.dimensionId = tempWorld.provider.getDimensionId();
+        this.pos = tile.getPos();
     }
 
     @Override

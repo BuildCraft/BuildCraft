@@ -40,7 +40,7 @@ import io.netty.buffer.ByteBuf;
 public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerializable {
 
     private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
-    private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
+    private int solidIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Solid.ordinal();
     private int color = EnumColor.BLACK.ordinal();
     private PipeLogicIron logic = new PipeLogicIron(this) {
         @Override
@@ -113,7 +113,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
 
     @Override
     public int getIconIndexForItem() {
-        return PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
+        return PipeIconProvider.TYPE.PipeItemsDaizuli_Solid.ordinal();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
         if (container != null && container.getBlockMetadata() == direction.ordinal()) {
             return PipeIconProvider.dazuliPipe.get(getColor()).ordinal();
         }
-        return PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
+        return PipeIconProvider.TYPE.PipeItemsDaizuli_Solid.ordinal();
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -1242,7 +1243,14 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        int glassColor = getPipeColor();
+        if (glassColor >= 0 && glassColor < 16) {
+            left.add("");
+            left.add("Colour = " + EnumDyeColor.values()[glassColor]);
+        }
+
         if (pipe instanceof IDebuggable) {
             ((IDebuggable) pipe).getDebugInfo(left, right, side);
         }

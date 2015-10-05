@@ -137,7 +137,7 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     }
 
     public static void bakeQuad(List<BakedQuad> quads, int[] list, EnumFacing side) {
-        quads.add(new BakedQuad(list, 0, side));
+        quads.add(new BakedQuad(list, -1, side));
     }
 
     public static void bakeQuads(List<BakedQuad> quads, int[][] lists, EnumFacing... sides) {

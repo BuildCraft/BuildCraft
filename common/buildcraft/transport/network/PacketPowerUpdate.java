@@ -25,7 +25,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
     public PacketPowerUpdate() {}
 
     public PacketPowerUpdate(TileEntity tile) {
-        super(PacketIds.PIPE_POWER, tile.getWorld().provider.getDimensionId(), tile.getPos());
+        super(PacketIds.PIPE_POWER, tile);
     }
 
     @Override

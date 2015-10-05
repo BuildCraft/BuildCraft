@@ -28,7 +28,7 @@ import buildcraft.transport.statements.ActionPipeDirection;
 public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Standard.ordinal();
-    protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllIron_Solid.ordinal();
+    protected int solidIconIndex = PipeIconProvider.TYPE.PipeFluidsIron_Solid.ordinal();
     private PipeLogicIron logic = new PipeLogicIron(this) {
         @Override
         protected boolean isValidConnectingTile(TileEntity tile) {

@@ -57,9 +57,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
         Side side = ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
         World world = packet.tempWorld;
 
-        if (player != null) {
-            world = player.worldObj;
-        } else {
+        if (player == null) {
             switch (side) {
                 case CLIENT: {
                     // ok, WTF?
@@ -68,7 +66,9 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
                     if (player == null) {
                         BCLog.logger.warn("... BUT THE PLAYER WAS STILL NULL? MAJOR BUG HERE!");
                     } else {
-                        world = player.worldObj;
+                        if (world == null) {
+                            world = player.worldObj;
+                        }
                     }
                     break;
                 }
@@ -88,17 +88,20 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
                 }
             }
         }
-        if (player == null) {
-            BCLog.logger.warn("The player was null when writing a packet! THIS SHOULD NEVER HAPPPEN!");
-            if (world == null) {
-                BCLog.logger.warn("The world  was null as well! Dropping packet " + packet.unique_packet_id);
-                return;
-            }
-        } else if (world == null) {
-            world = player.worldObj;
+        boolean noPlayer = player == null;
+        boolean noWorld = world == null;
+        if (noWorld) {
+            BCLog.logger.warn("The world  was null as well! Very bad! :(");
         }
-
-        packet.writeData(data, world, player);
+        try {
+            packet.writeData(data, world, player);
+        } catch (Throwable t) {
+            if (noPlayer) {
+                BCLog.logger.error("A packet failed to write its data! This could be casued by there not being a player?", t);
+            } else {
+                BCLog.logger.error("A packet failed to write its data! THIS IS VERY BAD!", t);
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)

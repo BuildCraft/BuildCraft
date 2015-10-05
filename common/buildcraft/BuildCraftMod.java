@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IBuildCraftMod;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.Packet;
@@ -42,6 +43,11 @@ public class BuildCraftMod implements IBuildCraftMod {
         SendRequest(Packet packet) {
             this.packet = packet;
             this.source = BuildCraftMod.this;
+            if (packet.tempWorld == null) {
+                NullPointerException npe = new NullPointerException("The packet's world was null! Cannot send this!");
+                BCLog.logger.fatal("// Blame AlexIIL", npe);
+                throw npe;
+            }
         }
 
         @Override

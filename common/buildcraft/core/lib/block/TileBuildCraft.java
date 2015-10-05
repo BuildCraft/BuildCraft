@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.DefaultProps;
@@ -168,7 +167,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     public Packet getPacketUpdate() {
-        return new PacketTileUpdate(this);
+        return new PacketTileUpdate(this, this);
     }
 
     @Override

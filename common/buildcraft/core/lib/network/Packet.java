@@ -14,17 +14,17 @@ public abstract class Packet {
     protected boolean isChunkDataPacket = false;
     public int dimensionId;
     public World tempWorld;
-    public int unique_packet_id = -1;
 
-    public abstract int getID();
+    @Deprecated
+    public int getID() {
+        return 0;
+    }
 
     public void readData(ByteBuf data, World world, EntityPlayer player) {
-        unique_packet_id = data.readInt();
         dimensionId = data.readInt();
     }
 
     public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        data.writeInt(unique_packet_id);
         data.writeInt(world.provider.getDimensionId());
     }
 

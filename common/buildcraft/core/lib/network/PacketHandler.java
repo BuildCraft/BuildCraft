@@ -63,7 +63,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         if (side != null) {
             getQueue(side, packet.dimensionId).add(packet);
         } else {
-            BCLog.logger.error("Found a message without a side! THIS IS VERY BAD, MAJOR ERRORS COULD OCCOUR! (" + packet.unique_packet_id + ")");
+            BCLog.logger.error("Found a message without a side! THIS IS VERY BAD, MAJOR ERRORS COULD OCCOUR!");
         }
     }
 

@@ -366,7 +366,7 @@ public class RenderResizableCuboid extends Render {
                 list[i * arr.length + j] = used;
             }
         }
-        return new BakedQuad(list, 0, face);
+        return new BakedQuad(list, -1, face);
     }
 
     /** Returns an array containing [uMin, uMax, vMin, vMax]. start* and end* must be doubles between 0 and 1 */

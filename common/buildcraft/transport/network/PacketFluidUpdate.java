@@ -24,7 +24,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public BitSet delta;
 
     public PacketFluidUpdate(TileGenericPipe tileG) {
-        super(PacketIds.PIPE_LIQUID, tileG.getWorld().provider.getDimensionId(), tileG.getPos());
+        super(PacketIds.PIPE_LIQUID, tileG);
     }
 
     public PacketFluidUpdate(TileGenericPipe tileG, boolean chunkPacket) {

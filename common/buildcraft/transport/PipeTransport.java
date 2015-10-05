@@ -18,8 +18,8 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BitSetUtils;
 
 public abstract class PipeTransport {
-
     public TileGenericPipe container;
+    protected boolean shouldSendPacket = false;
 
     protected boolean[] inputsOpen = new boolean[EnumFacing.VALUES.length];
     protected boolean[] outputsOpen = new boolean[EnumFacing.VALUES.length];

@@ -152,6 +152,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int tintIndex) {
+        // Just return the tinitIndex (It IS the colour needed- PipeBlockModel sorts that all out)
+        return tintIndex;
+    }
+
+    @Override
     public double getExpansion() {
         return 0;
     }
@@ -1051,7 +1058,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public boolean recolorBlock(World world, BlockPos pos, EnumFacing side, EnumDyeColor colour) {
         TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(pos);
         if (!pipeTile.hasBlockingPluggable(side)) {
-            return pipeTile.setPipeColor(colour.getDyeDamage());
+            return pipeTile.setPipeColor(colour.getMetadata());
         }
 
         return false;

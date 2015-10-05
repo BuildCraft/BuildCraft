@@ -12,7 +12,7 @@ import buildcraft.transport.pipes.*;
 /** Controls whether one type of pipe can connect to another. */
 public final class PipeConnectionBans {
 
-    private static final SetMultimap<Class<? extends Pipe>, Class<? extends Pipe>> connectionBans = HashMultimap.create();
+    private static final SetMultimap<Class<? extends Pipe<?>>, Class<? extends Pipe<?>>> connectionBans = HashMultimap.create();
 
     static {
         // Fluid pipes
@@ -33,6 +33,7 @@ public final class PipeConnectionBans {
         // Power Pipes
         banConnection(PipePowerWood.class);
         banConnection(PipePowerEmerald.class);
+        banConnection(PipePowerWood.class, PipePowerEmerald.class);
     }
 
     private PipeConnectionBans() {}
@@ -42,7 +43,7 @@ public final class PipeConnectionBans {
      * If only one parameter is passed in, it will ban connection to pipes of the same type.
      *
      * @param types */
-    public static void banConnection(Class<? extends Pipe>... types) {
+    public static void banConnection(Class<? extends Pipe<?>>... types) {
         if (types.length == 0) {
             return;
         }

@@ -20,15 +20,14 @@ public class PacketTileUpdate extends PacketUpdate {
         super(PacketIds.TILE_UPDATE);
     }
 
-    public PacketTileUpdate(ISerializable tile) {
-        this(PacketIds.TILE_UPDATE, tile);
+    public PacketTileUpdate(TileEntity tile, ISerializable ser) {
+        this(PacketIds.TILE_UPDATE, tile, ser);
     }
 
-    public PacketTileUpdate(int packetId, ISerializable tile) {
-        super(packetId, tile);
-
-        TileEntity entity = (TileEntity) tile;
-        pos = entity.getPos();
+    public PacketTileUpdate(int packetId, TileEntity tile, ISerializable ser) {
+        super(packetId, ser);
+        tempWorld = tile.getWorld();
+        pos = tile.getPos();
     }
 
     @Override

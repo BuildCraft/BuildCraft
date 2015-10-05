@@ -52,7 +52,8 @@ public class PacketTileState extends PacketCoordinates {
      *
      * @param pos - the coordinates the tile to sync */
     public PacketTileState(TileEntity tile) {
-        super(PacketIds.STATE_UPDATE, tile.getWorld().provider.getDimensionId(), tile.getPos());
+        super(PacketIds.STATE_UPDATE, tile);
+        tempWorld = tile.getWorld();
         isChunkDataPacket = true;
     }
 
@@ -103,7 +104,7 @@ public class PacketTileState extends PacketCoordinates {
                 tile1.afterStateUpdated(stateId);
             }
         } else {
-            BCLog.logger.info("ignored the packet @ " + pos + " as (" + tile + " instanceof ISyncedTile) was false!");
+            BCLog.logger.debug("Ignored the packet (" + getClass() + ") @ " + pos + " as (" + tile + " instanceof ISyncedTile) was false!");
         }
     }
 

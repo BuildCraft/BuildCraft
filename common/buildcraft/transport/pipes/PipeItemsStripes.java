@@ -157,7 +157,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems>implements IEnergy
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        return PipeIconProvider.TYPE.Stripes.ordinal();
+        return PipeIconProvider.TYPE.PipeItemsStripes.ordinal();
     }
 
     @Override

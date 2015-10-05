@@ -1,11 +1,11 @@
 package buildcraft.transport.render;
 
 import java.util.List;
-
-import javax.vecmath.Vector3f;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -27,9 +27,11 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.render.RenderResizableCuboid;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
@@ -82,8 +84,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
     }
 
-    // The main block model
-    private static void renderCutoutPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
+    private static void renderPipe(PipeRenderState render, List<BakedQuad> quads, Map<EnumFacing, TextureAtlasSprite> spriteMap, boolean smaller) {
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
 
@@ -92,7 +93,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
         // Center bit
         {
-            TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null));
+            TextureAtlasSprite sprite = spriteMap.get(null);
 
             float[] uvs = new float[4];
             uvs[U_MIN] = sprite.getInterpolatedU(minUV);
@@ -102,7 +103,12 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (!render.pipeConnectionMatrix.isConnected(face) || !render.pipeConnectionBanned.isConnected(face)) {
-                    bakeDoubleFace(quads, face, new Vector3f(0.5f, 0.5f, 0.5f), new Vector3f(0.25f, 0.25f, 0.25f), uvs);
+                    Vec3 radius = Utils.vec3(0.25);
+                    if (smaller) {
+                        double smallerValue = Utils.getValue(radius, face.getAxis()) - 0.01f;
+                        radius = Utils.withValue(radius, face.getAxis(), smallerValue);
+                    }
+                    bakeDoubleFace(quads, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
                 }
             }
         }
@@ -111,9 +117,9 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         for (EnumFacing connect : EnumFacing.VALUES) {
             if (render.pipeConnectionMatrix.isConnected(connect) && render.pipeConnectionBanned.isConnected(connect)) {
                 float extension = render.customConnections[connect.ordinal()];
-                TextureAtlasSprite sprite = pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(connect));
+                TextureAtlasSprite sprite = spriteMap.get(connect);
 
-                Vec3 actualCenter = Utils.convert(connect, 0.375f + extension / 2).addVector(0.5, 0.5, 0.5);
+                Vec3 actualCenter = Utils.convert(connect, 0.375f + extension / 2).add(Utils.VEC_HALF);
 
                 Vec3 smallerFace = null;
                 if (connect.getAxisDirection() == AxisDirection.POSITIVE) {
@@ -123,23 +129,28 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 }
                 Vec3 actualSize = Utils.VEC_HALF.subtract(smallerFace);
 
+                if (smaller) {
+                    // Decrease the entire size
+                    Vec3 allSmaller = actualSize.subtract(Utils.vec3(0.02));
+                    // Increase the size of axis the connection is in.
+                    actualSize = allSmaller.add(Utils.convert(Utils.convertPositive(connect), 0.02));
+                }
+
                 Vec3 pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
 
                 EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
                 cuboid.texture = sprite;
                 cuboid.makeClient();
 
-                // The extra 0.001 is to stop a bug where the next texture along is used for a pixel of the cuboid
+                double start = connect.getAxisDirection() == AxisDirection.POSITIVE ? 12 : 0;
 
-                double start = connect.getAxisDirection() == AxisDirection.POSITIVE ? 12.001 : 0.001;
+                cuboid.textureStartX = connect.getAxis() == Axis.X ? start : 4;
+                cuboid.textureStartY = connect.getAxis() == Axis.Y ? start : 4;
+                cuboid.textureStartZ = connect.getAxis() == Axis.Z ? start : 4;
 
-                cuboid.textureStartX = connect.getAxis() == Axis.X ? start : 4.001;
-                cuboid.textureStartY = connect.getAxis() == Axis.Y ? start : 4.001;
-                cuboid.textureStartZ = connect.getAxis() == Axis.Z ? start : 4.001;
-
-                cuboid.textureSizeX = connect.getAxis() == Axis.X ? 3.998 : 7.998;
-                cuboid.textureSizeY = connect.getAxis() == Axis.Y ? 3.998 : 7.998;
-                cuboid.textureSizeZ = connect.getAxis() == Axis.Z ? 3.998 : 7.998;
+                cuboid.textureSizeX = connect.getAxis() == Axis.X ? 4 : 8;
+                cuboid.textureSizeY = connect.getAxis() == Axis.Y ? 4 : 8;
+                cuboid.textureSizeZ = connect.getAxis() == Axis.Z ? 4 : 8;
 
                 cuboid.textures[connect.ordinal()] = null;
                 cuboid.textures[connect.getOpposite().ordinal()] = null;
@@ -150,6 +161,16 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
             }
         }
+    }
+
+    // The main block model
+    private static void renderCutoutPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
+        Map<EnumFacing, TextureAtlasSprite> spriteMap = Maps.newHashMap();
+        for (EnumFacing face : EnumFacing.values()) {
+            spriteMap.put(face, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(face)));
+        }
+        spriteMap.put(null, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null)));
+        renderPipe(render, quads, spriteMap, false);
 
         // Wires
         PipeRendererWires.renderPipeWires(quads, render);
@@ -171,6 +192,26 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
     // Used basically for pipe colour
     private static void renderTranslucentPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
+        if (render.getGlassColor() >= 0 && render.getGlassColor() < 16) {
+            Map<EnumFacing, TextureAtlasSprite> spriteMap = Maps.newHashMap();
+            TextureAtlasSprite sprite = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
+            for (EnumFacing face : EnumFacing.values()) {
+                spriteMap.put(face, sprite);
+            }
+            spriteMap.put(null, sprite);
 
+            // Grab the first index to apply shading to
+            int startIndex = quads.size();
+
+            renderPipe(render, quads, spriteMap, true);
+
+            int colour = ColorUtils.getRGBColor(render.getGlassColor());
+            for (int i = startIndex; i < quads.size(); i++) {
+                quads.get(i).getTintIndex();
+                BakedQuad shapeQuad = quads.get(i);
+                BakedQuad colouredQuad = new BakedQuad(shapeQuad.getVertexData(), colour, shapeQuad.getFace());
+                quads.set(i, colouredQuad);
+            }
+        }
     }
 }
