@@ -23,6 +23,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -151,12 +152,15 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public TileEntity getServerTile(TileEntity source) {
-		if (source.getWorldObj().isRemote) {
+		if (Minecraft.getMinecraft().isSingleplayer() && source.getWorldObj().isRemote) {
 			WorldServer w = DimensionManager.getWorld(source.getWorldObj().provider.dimensionId);
 			if (w != null) {
-				TileEntity t = w.getTileEntity(source.xCoord, source.yCoord, source.zCoord);
-				if (t != null && t.getClass().equals(source.getClass())) {
-					return t;
+				Chunk c = w.getChunkFromBlockCoords(source.xCoord, source.zCoord);
+				if (c != null) {
+					TileEntity t = c.getTileEntityUnsafe(source.xCoord & 15, source.yCoord, source.zCoord & 15);
+					if (t != null && t.getClass().equals(source.getClass())) {
+						return t;
+					}
 				}
 			}
 		}
