@@ -75,6 +75,7 @@ import buildcraft.builders.BlockQuarry;
 import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.BuilderProxyClient;
+import buildcraft.builders.BuilderTooltipHandler;
 import buildcraft.builders.BuildersGuiHandler;
 import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
@@ -343,6 +344,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
+
+		MinecraftForge.EVENT_BUS.register(new BuilderTooltipHandler());
 
 		// Standard blocks
 		ISchematicRegistry schemes = BuilderAPI.schematicRegistry;

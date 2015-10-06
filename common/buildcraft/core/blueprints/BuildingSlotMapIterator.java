@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.builders;
+package buildcraft.core.blueprints;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,10 +17,14 @@ import java.util.Set;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
 
+import buildcraft.core.builders.BuilderItemMetaPair;
+import buildcraft.core.builders.BuildingSlotBlock;
+import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.fluids.Tank;
 
 public class BuildingSlotMapIterator {
-	private static final int MAX_PER_ITEM = 64;
+	public static int MAX_PER_ITEM = 512;
+	private final BptBuilderBlueprint builderBlueprint;
 	private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slotMap;
 	private final Set<BuilderItemMetaPair> availablePairs = new HashSet<BuilderItemMetaPair>();
 	private final int[] buildStageOccurences;
@@ -30,10 +34,10 @@ public class BuildingSlotMapIterator {
 	private List<BuildingSlotBlock> slots;
 	private int slotPos, slotFound;
 
-	public BuildingSlotMapIterator(Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots, TileAbstractBuilder builder,
-								   int[] buildStageOccurences) {
-		this.slotMap = slots;
-		this.buildStageOccurences = buildStageOccurences;
+	public BuildingSlotMapIterator(BptBuilderBlueprint builderBlueprint, TileAbstractBuilder builder) {
+		this.builderBlueprint = builderBlueprint;
+		this.slotMap = builderBlueprint.buildList;
+		this.buildStageOccurences = builderBlueprint.buildStageOccurences;
 		this.isCreative = builder == null
 				|| builder.getWorldObj().getWorldInfo().getGameType() == WorldSettings.GameType.CREATIVE;
 
@@ -107,7 +111,7 @@ public class BuildingSlotMapIterator {
 	}
 
 	public void remove() {
-		buildStageOccurences[slots.get(slotPos).buildStage]--;
+		builderBlueprint.onRemoveBuildingSlotBlock(slots.get(slotPos));
 		slots.set(slotPos, null);
 	}
 
