@@ -102,7 +102,9 @@ public final class BuilderSupportLoader {
 				if (modId.equals("minecraft")) {
 					processJSONFile("assets/" + pathDir + "/bcbuilder/vanillaBlocks.json", classLoader, modId, null);
 				} else {
+					processJSONFile("assets/buildcraftcompat/bcbuilder/" + pathDir + "/blocks.json", classLoader, modId, null);
 					processJSONFile("assets/" + pathDir + "/bcbuilder/blocks.json", classLoader, modId, null);
+					processJSONFile("bcbuilder/" + pathDir + "/blocks/blocks.json", classLoader, modId, blockName);
 				}
 			}
 

@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 
@@ -132,6 +133,24 @@ public class BuilderRotation {
 		} else {
 			return ForgeDirection.UNKNOWN;
 		}
+	}
+
+	public boolean isEqual(SchematicJSON s, int targetMeta, NBTTagCompound targetNBT) {
+		if (type == BuilderRotation.Type.METADATA) {
+			return (targetMeta & mask) == (s.meta & mask);
+		} else if (type == BuilderRotation.Type.NBT_ROTATE_ARRAY) {
+			// TODO
+		} else if (type == BuilderRotation.Type.NBT_FIELD || type == Type.NBT_BITWISE_SHIFT) {
+			NBTBase field1 = NBTUtils.getTag(s.tileNBT, tag);
+			NBTBase field2 = NBTUtils.getTag(targetNBT, tag);
+			if (field1 == null || field2 == null) {
+				return false;
+			} else {
+				return (((NBTBase.NBTPrimitive) field1).func_150287_d() & mask) == (((NBTBase.NBTPrimitive) field1).func_150287_d() & mask);
+			}
+		}
+
+		return true;
 	}
 
 	public void rotateLeft(SchematicJSON s, IBuilderContext context) {

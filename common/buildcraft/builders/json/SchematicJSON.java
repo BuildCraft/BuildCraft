@@ -210,8 +210,9 @@ public class SchematicJSON extends SchematicTile {
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (getPlacedBlock() == context.world().getBlock(x, y, z)) {
+			int targetMeta = context.world().getBlockMetadata(x, y, z);
 			if (entry.metadataEqualityMask != 0) {
-				if ((getPlacedMeta() & entry.metadataEqualityMask) != (context.world().getBlockMetadata(x, y, z) & entry.metadataEqualityMask)) {
+				if ((getPlacedMeta() & entry.metadataEqualityMask) != (targetMeta & entry.metadataEqualityMask)) {
 					return false;
 				}
 			}
@@ -221,6 +222,12 @@ public class SchematicJSON extends SchematicTile {
 				if (tileEntity != null && tileNBT != null) {
 					NBTTagCompound targetNBT = new NBTTagCompound();
 					tileEntity.writeToNBT(targetNBT);
+
+					for (BuilderRotation rotation : entry.getAllRotations()) {
+						if (rotation.type != BuilderRotation.Type.METADATA && !rotation.isEqual(this, targetMeta, targetNBT)) {
+							return false;
+						}
+					}
 
 					for (String s : entry.nbt.equality) {
 						NBTBase srcTag = NBTUtils.getTag(tileNBT, s);
