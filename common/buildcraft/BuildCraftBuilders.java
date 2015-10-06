@@ -109,7 +109,7 @@ import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicJukebox;
-import buildcraft.builders.schematics.SchematicLeaves;
+import buildcraft.builders.schematics.SchematicMetadataMask;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
@@ -405,8 +405,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.lit_redstone_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.emerald_ore, SchematicStone.class);
 
-		schemes.registerSchematicBlock(Blocks.leaves, SchematicLeaves.class);
-		schemes.registerSchematicBlock(Blocks.leaves2, SchematicLeaves.class);
+		schemes.registerSchematicBlock(Blocks.leaves, SchematicMetadataMask.class, 3);
+		schemes.registerSchematicBlock(Blocks.leaves2, SchematicMetadataMask.class, 3);
+		schemes.registerSchematicBlock(Blocks.sapling, SchematicMetadataMask.class, 7);
 
 		schemes.registerSchematicBlock(Blocks.monster_egg, SchematicSilverfish.class);
 

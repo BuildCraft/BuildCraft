@@ -664,8 +664,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	private Packet getItemRequirementsPacket(final List<RequirementItemStack> items) {
-		if (items != null) {
+	private Packet getItemRequirementsPacket(List<RequirementItemStack> itemsIn) {
+		if (itemsIn != null) {
+			final List<RequirementItemStack> items = new ArrayList<RequirementItemStack>();
+			items.addAll(itemsIn);
+
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeMedium(items.size());

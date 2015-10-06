@@ -12,14 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.energy.TileEngineIron;
 

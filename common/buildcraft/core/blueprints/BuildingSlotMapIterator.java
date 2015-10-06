@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
 
 import buildcraft.core.builders.BuilderItemMetaPair;
-import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.fluids.Tank;

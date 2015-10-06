@@ -22,7 +22,7 @@ apply plugin: 'forge' // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'checkstyle'
 
-version = "7.1.8"
+version = "7.1.9"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
