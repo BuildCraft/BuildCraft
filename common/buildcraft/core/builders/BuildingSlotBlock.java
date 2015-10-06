@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -25,6 +26,7 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
@@ -80,7 +82,18 @@ public class BuildingSlotBlock extends BuildingSlot {
 				// This is also slightly hackish, but that's what you get when
 				// you're unable to break an API too much.
 				if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
-					return false;
+					if (context.world().isAirBlock(x, y, z)) {
+						return false;
+					} else if (!(getSchematic() instanceof SchematicBlock)
+						|| context.world().getBlock(x, y, z).isAssociatedBlock(((SchematicBlock) getSchematic()).block)) {
+						BCLog.logger.warn("Placed block does not match expectations! Most likely a bug in BuildCraft or a supported mod. Removed mismatched block.");
+						BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - Block: " + Block.blockRegistry.getNameForObject(context.world().getBlock(x, y, z)) + "@" + context.world().getBlockMetadata(x, y, z));
+						context.world().removeTileEntity(x, y, z);
+						context.world().setBlockToAir(x, y, z);
+						return true;
+					} else {
+						return false;
+					}
 				}
 
 				// This is slightly hackish, but it's a very important way to verify
@@ -107,7 +120,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 							BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - ItemStack: " + s.toString());
 							context.world().removeTileEntity(x, y, z);
 							context.world().setBlockToAir(x, y, z);
-							return false;
+							return true;
 						}
 					}
 					// Restore the stored requirements.
