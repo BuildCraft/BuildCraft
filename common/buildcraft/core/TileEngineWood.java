@@ -41,6 +41,7 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 		}
 	}
 
+	@Override
 	public int getCurrentOutputLimit() {
 		return 10;
 	}
