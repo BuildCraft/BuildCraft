@@ -15,4 +15,6 @@ public abstract class CommandTarget {
     public abstract ICommandReceiver handle(EntityPlayer player, ByteBuf data, World world);
 
     public abstract void write(ByteBuf data, Object target);
+
+    public abstract World getWorld(Object target);
 }

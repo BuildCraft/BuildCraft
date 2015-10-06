@@ -35,8 +35,8 @@ public class PacketSlotChange extends PacketCoordinates {
     }
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
 
         this.slot = data.readUnsignedShort();
         stack = NetworkUtils.readStack(data);

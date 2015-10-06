@@ -76,7 +76,9 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
                     MinecraftServer server = MinecraftServer.getServer();
                     for (WorldServer serverWorld : server.worldServers) {
                         if (serverWorld.provider.getDimensionId() == packet.dimensionId) {
-                            world = serverWorld;
+                            if (world == null) {
+                                world = serverWorld;
+                            }
                             for (EntityPlayer p2 : (List<EntityPlayer>) serverWorld.playerEntities) {
                                 player = p2;
                                 BCLog.logger.warn("Had to manually search the server for the first available player! THIS IS BAD!!!");
@@ -91,7 +93,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
         boolean noPlayer = player == null;
         boolean noWorld = world == null;
         if (noWorld) {
-            BCLog.logger.warn("The world  was null as well! Very bad! :(");
+            BCLog.logger.warn("The world  was null when trying to write a packet! Very bad!");
         }
         try {
             packet.writeData(data, world, player);
@@ -111,16 +113,6 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, Packet packet) {
-        INetHandler handler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-        EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(handler);
-        if (player != null) {
-            if (data.readableBytes() > 0) {
-                packet.readData(data, player.worldObj, player);
-            } else {
-                BCLog.logger.warn("Recieved a packet with no message!");
-            }
-        } else {
-            BCLog.logger.warn("The player was null! (Decode)");
-        }
+        packet.readData(data);
     }
 }

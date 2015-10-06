@@ -35,8 +35,8 @@ public abstract class PacketCoordinates extends Packet {
     }
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         id = data.readByte();
         pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
     }

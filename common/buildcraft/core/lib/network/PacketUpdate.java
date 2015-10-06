@@ -49,8 +49,8 @@ public abstract class PacketUpdate extends Packet {
     public abstract void writeIdentificationData(ByteBuf data);
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         packetId = data.readByte();
         readIdentificationData(data);
         int length = data.readInt();

@@ -31,4 +31,9 @@ public class CommandTargetEntity extends CommandTarget {
         }
         return null;
     }
+
+    @Override
+    public World getWorld(Object target) {
+        return ((Entity) target).worldObj;
+    }
 }

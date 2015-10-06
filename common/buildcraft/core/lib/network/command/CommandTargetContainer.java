@@ -8,12 +8,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
+import buildcraft.core.lib.gui.BuildCraftContainer;
+
 import io.netty.buffer.ByteBuf;
 
 public class CommandTargetContainer extends CommandTarget {
     @Override
     public Class getHandledClass() {
-        return Container.class;
+        return BuildCraftContainer.class;
     }
 
     @Override
@@ -27,4 +29,9 @@ public class CommandTargetContainer extends CommandTarget {
 
     @Override
     public void write(ByteBuf data, Object target) {}
+
+    @Override
+    public World getWorld(Object target) {
+        return ((BuildCraftContainer) target).getPlayer().worldObj;
+    }
 }

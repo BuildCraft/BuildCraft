@@ -35,8 +35,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public PacketFluidUpdate() {}
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
 
         if (world.isAirBlock(pos)) {
             return;

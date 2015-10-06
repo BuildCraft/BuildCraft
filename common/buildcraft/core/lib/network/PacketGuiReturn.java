@@ -61,8 +61,8 @@ public class PacketGuiReturn extends Packet {
     }
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         boolean tileReturn = data.readBoolean();
 
         if (tileReturn) {

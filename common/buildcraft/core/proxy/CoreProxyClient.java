@@ -28,7 +28,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -149,7 +148,7 @@ public class CoreProxyClient extends CoreProxy {
     @Override
     public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
         if (handler instanceof NetHandlerPlayServer) {
-            return ((NetHandlerPlayServer) handler).playerEntity;
+            return super.getPlayerFromNetHandler(handler);
         } else {
             return Minecraft.getMinecraft().thePlayer;
         }

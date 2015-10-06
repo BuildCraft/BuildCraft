@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import io.netty.buffer.ByteBuf;
 
 public abstract class Packet {
-
     protected boolean isChunkDataPacket = false;
     public int dimensionId;
     public World tempWorld;
@@ -20,7 +19,7 @@ public abstract class Packet {
         return 0;
     }
 
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
+    public void readData(ByteBuf data) {
         dimensionId = data.readInt();
     }
 

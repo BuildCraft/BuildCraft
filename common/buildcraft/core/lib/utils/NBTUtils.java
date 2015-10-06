@@ -12,10 +12,12 @@ import java.util.UUID;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -141,5 +143,42 @@ public final class NBTUtils {
 
     public static Vec3 readVec3(NBTTagList list) {
         return new Vec3(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
+    }
+
+    private static final String NULL_ENUM_STRING = "_NULL";
+
+    public static <E extends Enum<E>> NBTBase writeEnum(E value) {
+        if (value == null) {
+            return new NBTTagString(NULL_ENUM_STRING);
+        }
+        return new NBTTagString(value.name());
+    }
+
+    public static <E extends Enum<E>> E readEnum(NBTBase nbt, Class<E> clazz) {
+        if (nbt instanceof NBTTagString) {
+            String value = ((NBTTagString) nbt).getString();
+            if (NULL_ENUM_STRING.equals(value)) {
+                return null;
+            }
+            try {
+                return Enum.valueOf(clazz, value);
+            } catch (Throwable t) {
+                // In case we didn't find the constant
+                BCLog.logger.warn("Tried and failed to read the value(" + value + ") from " + clazz.getSimpleName(), t);
+                return null;
+            }
+        } else if (nbt instanceof NBTTagByte) {
+            byte value = ((NBTTagByte) nbt).getByte();
+            if (value < 0 || value >= clazz.getEnumConstants().length) {
+                return null;
+            } else {
+                return clazz.getEnumConstants()[value];
+            }
+        } else if (nbt == null) {
+            return null;
+        } else {
+            BCLog.logger.warn(new IllegalArgumentException("Tried to read an enum value when it was not a string! This is probably not good!"));
+            return null;
+        }
     }
 }

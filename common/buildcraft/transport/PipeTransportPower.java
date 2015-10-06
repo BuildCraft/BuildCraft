@@ -12,6 +12,7 @@ import java.util.Map;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
@@ -25,8 +26,8 @@ import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -45,9 +46,10 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
     private static final int DISPLAY_SMOOTHING = 10;
     private static final int OVERLOAD_TICKS = 60;
+    public static final short POWER_STAGES = 1 << 6;
 
     public short[] displayPower = new short[6];
-    public byte[] displayFlow = new byte[6];
+    public short[] displayFlow = new short[6];
     public int[] nextPowerQuery = new int[6];
     public double[] internalNextPower = new double[6];
     public int overload;
@@ -71,6 +73,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     private double[] internalPower = new double[6];
 
     private SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
+
+    /** Used at the client to show flow properly */
+    public double[] clientDisplayFlow = new double[6];
+    public Vec3 clientDisplayFlowCentre = Utils.VEC_ZERO;
+    public long clientLastDisplayTime = 0;
 
     public PipeTransportPower() {
         for (int i = 0; i < 6; ++i) {
@@ -156,6 +163,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             internalPower[o] = 0;
             internalNextPower[o] = 0;
             displayPower[o] = 0;
+            displayFlow[o] = 0;
         }
         providers[o] = getEnergyProvider(o);
     }
@@ -196,10 +204,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-        // Send the power to nearby pipes who requested it
         System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
         Arrays.fill(displayPower, (short) 0);
+        Arrays.fill(displayFlow, (short) 0);
 
+        // Send the power to nearby pipes who requested it
         for (int i = 0; i < 6; ++i) {
             if (internalPower[i] > 0) {
                 int totalPowerQuery = 0;
@@ -213,6 +222,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                 }
 
                 if (totalPowerQuery > 0) {
+                    double[] internalPowerHold = new double[6];
+                    System.arraycopy(internalPower, 0, internalPowerHold, 0, 6);
+
                     for (int j = 0; j < 6; ++j) {
                         if (j != i && powerQuery[j] > 0) {
                             Object ep = providers[j];
@@ -245,6 +257,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
                             displayPower[j] += watts;
                             displayPower[i] += watts;
+                            displayFlow[i] = 1;
+                            displayFlow[j] = -1;
                         }
                     }
                 }
@@ -327,11 +341,17 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
         if (tracker.markTimeIfDelay(container.getWorld())) {
             PacketPowerUpdate packet = new PacketPowerUpdate(container);
-
-            packet.displayPower = displayPower;
+            packet.displayPower = new short[6];
+            for (int i = 0; i < 6; i++) {
+                double val = displayPower[i];
+                val /= maxPower;
+                val = Math.sqrt(val);
+                val *= POWER_STAGES;
+                packet.displayPower[i] = (short) val;
+            }
             packet.displayFlow = displayFlow;
             packet.overload = isOverloaded();
-            BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+            BuildCraftTransport.instance.sendToPlayersNear(packet, container);
         }
     }
 

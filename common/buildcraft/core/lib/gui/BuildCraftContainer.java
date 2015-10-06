@@ -29,11 +29,17 @@ import io.netty.buffer.ByteBufInputStream;
 
 public abstract class BuildCraftContainer extends Container {
 
+    private final EntityPlayer player;
     private List<Widget> widgets = new ArrayList<Widget>();
     private int inventorySize;
 
-    public BuildCraftContainer(int inventorySize) {
+    public BuildCraftContainer(EntityPlayer player, int inventorySize) {
         this.inventorySize = inventorySize;
+        this.player = player;
+    }
+
+    public EntityPlayer getPlayer() {
+        return player;
     }
 
     public List<Widget> getWidgets() {

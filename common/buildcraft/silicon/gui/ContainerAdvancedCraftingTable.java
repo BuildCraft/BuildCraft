@@ -19,9 +19,10 @@ public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 
     private TileAdvancedCraftingTable workbench;
 
-    public ContainerAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable table) {
-        super(table.getSizeInventory());
+    public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable table) {
+        super(player, table.getSizeInventory());
         this.workbench = table;
+        InventoryPlayer playerInventory = player.inventory;
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {

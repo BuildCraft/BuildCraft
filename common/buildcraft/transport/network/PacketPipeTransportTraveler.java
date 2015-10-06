@@ -4,14 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.network.PacketIds;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
 import io.netty.buffer.ByteBuf;
@@ -31,13 +36,15 @@ public class PacketPipeTransportTraveler extends Packet {
 
     public PacketPipeTransportTraveler() {}
 
-    public PacketPipeTransportTraveler(TravelingItem item, boolean forceStackRefresh) {
+    public PacketPipeTransportTraveler(TileEntity tile, TravelingItem item, boolean forceStackRefresh) {
+        this.tempWorld = tile.getWorld();
         this.item = item;
         this.forceStackRefresh = forceStackRefresh;
     }
 
     @Override
-    public void writeData(ByteBuf data) {
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         data.writeFloat((float) item.pos.xCoord);
         data.writeFloat((float) item.pos.yCoord);
         data.writeFloat((float) item.pos.zCoord);
@@ -57,6 +64,7 @@ public class PacketPipeTransportTraveler extends Packet {
 
     @Override
     public void readData(ByteBuf data) {
+        super.readData(data);
         itemPos = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
 
         pos = Utils.convertFloor(itemPos);
@@ -120,5 +128,28 @@ public class PacketPipeTransportTraveler extends Packet {
     @Override
     public int getID() {
         return PacketIds.PIPE_TRAVELER;
+    }
+
+    @Override
+    public void applyData(World world) {
+        if (world.isAirBlock(pos)) {
+            return;
+        }
+
+        TileEntity entity = world.getTileEntity(pos);
+        if (!(entity instanceof TileGenericPipe)) {
+            return;
+        }
+
+        TileGenericPipe pipe = (TileGenericPipe) entity;
+        if (pipe.pipe == null) {
+            return;
+        }
+
+        if (!(pipe.pipe.transport instanceof PipeTransportItems)) {
+            return;
+        }
+
+        ((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(this);
     }
 }

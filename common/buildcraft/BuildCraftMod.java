@@ -177,6 +177,11 @@ public class BuildCraftMod implements IBuildCraftMod {
     }
 
     public void sendToServer(Packet packet) {
+        if (packet.tempWorld == null) {
+            NullPointerException npe = new NullPointerException("The packet's world was null! Cannot send this! (Client)");
+            BCLog.logger.fatal("// Blame AlexIIL", npe);
+            throw npe;
+        }
         try {
             channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
             channels.get(Side.CLIENT).writeOutbound(packet);

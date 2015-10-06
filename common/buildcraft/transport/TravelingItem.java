@@ -19,9 +19,10 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.EnumColor;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class TravelingItem {
@@ -158,8 +159,8 @@ public class TravelingItem {
         setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
         toCenter = data.getBoolean("toCenter");
-        input = EnumFacing.getFront(data.getByte("input"));
-        output = EnumFacing.getFront(data.getByte("output"));
+        input = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
+        output = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
 
         byte c = data.getByte("color");
         if (c != -1) {
@@ -181,8 +182,8 @@ public class TravelingItem {
         data.setTag("Item", itemStackTag);
 
         data.setBoolean("toCenter", toCenter);
-        data.setByte("input", (byte) input.ordinal());
-        data.setByte("output", (byte) output.ordinal());
+        data.setTag("input", NBTUtils.writeEnum(input));
+        data.setTag("output", NBTUtils.writeEnum(output));
 
         data.setByte("color", color != null ? (byte) color.ordinal() : -1);
 

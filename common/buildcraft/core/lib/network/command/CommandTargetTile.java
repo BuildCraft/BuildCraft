@@ -39,4 +39,9 @@ public class CommandTargetTile extends CommandTarget {
         }
         return null;
     }
+
+    @Override
+    public World getWorld(Object target) {
+        return ((TileEntity) target).getWorld();
+    }
 }

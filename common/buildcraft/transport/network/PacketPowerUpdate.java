@@ -12,7 +12,6 @@ import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.render.tile.PipeRendererPower;
 
 import io.netty.buffer.ByteBuf;
 
@@ -20,7 +19,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
 
     public boolean overload;
     public short[] displayPower;
-    public byte[] displayFlow;
+    public short[] displayFlow;
 
     public PacketPowerUpdate() {}
 
@@ -29,10 +28,10 @@ public class PacketPowerUpdate extends PacketCoordinates {
     }
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         displayPower = new short[6];
-        displayFlow = new byte[6];
+        displayFlow = new short[6];
         overload = data.readBoolean();
         for (int i = 0; i < displayPower.length; i++) {
             displayPower[i] = data.readUnsignedByte();
@@ -45,7 +44,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
         super.writeData(data, world, player);
         data.writeBoolean(overload);
         for (int i = 0; i < displayPower.length; i++) {
-            data.writeByte(Math.min(PipeRendererPower.POWER_STAGES, (int) Math.ceil(displayPower[i] * PipeRendererPower.DISPLAY_MULTIPLIER)));
+            data.writeByte(displayPower[i]);
             data.writeByte(displayFlow[i]);
         }
     }

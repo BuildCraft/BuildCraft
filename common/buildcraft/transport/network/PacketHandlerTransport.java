@@ -16,7 +16,6 @@ import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeItemsDiamond;
@@ -26,6 +25,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 
 @Sharable
+@Deprecated
 public class PacketHandlerTransport extends PacketHandler {
     /** TODO: A lot of this is based on the player to retrieve the world. Passing a dimension id would be more
      * appropriate. More generally, it seems like a lot of these packets could be replaced with tile-based RPCs. */
@@ -42,13 +42,14 @@ public class PacketHandlerTransport extends PacketHandler {
             switch (packetID) {
                 case PacketIds.PIPE_POWER:
                     // MOVED!
-//                    onPacketPower(player, (PacketPowerUpdate) packet);
+                    // onPacketPower(player, (PacketPowerUpdate) packet);
                     break;
                 case PacketIds.PIPE_LIQUID:
                     // action will have happened already at read time
                     break;
                 case PacketIds.PIPE_TRAVELER: {
-                    onPipeTravelerUpdate(player, (PacketPipeTransportTraveler) packet);
+                    // MOVED!
+                    // onPipeTravelerUpdate(player, (PacketPipeTransportTraveler) packet);
                     break;
                 }
                 case PacketIds.PIPE_ITEMSTACK: {
@@ -76,33 +77,6 @@ public class PacketHandlerTransport extends PacketHandler {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    /** Updates items in a pipe.
-     *
-     * @param packet */
-    private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
-        World world = player.worldObj;
-
-        if (world.isAirBlock(packet.pos)) {
-            return;
-        }
-
-        TileEntity entity = world.getTileEntity(packet.pos);
-        if (!(entity instanceof TileGenericPipe)) {
-            return;
-        }
-
-        TileGenericPipe pipe = (TileGenericPipe) entity;
-        if (pipe.pipe == null) {
-            return;
-        }
-
-        if (!(pipe.pipe.transport instanceof PipeTransportItems)) {
-            return;
-        }
-
-        ((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(packet);
     }
 
     /** Updates the display power on a power pipe

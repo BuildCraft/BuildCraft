@@ -5,10 +5,12 @@
 package buildcraft.transport.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
-import buildcraft.BuildCraftTransport;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
 import io.netty.buffer.ByteBuf;
@@ -22,17 +24,20 @@ public class PacketPipeTransportItemStackRequest extends Packet {
 
     }
 
-    public PacketPipeTransportItemStackRequest(int travelerID) {
-        this.travelerID = travelerID;
+    public PacketPipeTransportItemStackRequest(TileGenericPipe tile, PacketPipeTransportTraveler packet) {
+        this.tempWorld = tile.getWorld();
+        this.travelerID = packet.getTravelingEntityId();
     }
 
     @Override
-    public void writeData(ByteBuf data) {
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         data.writeShort(travelerID);
     }
 
     @Override
     public void readData(ByteBuf data) {
+        super.readData(data);
         travelerID = data.readShort();
         TravelingItem.TravelingItemCache cache = TravelingItem.serverCache;
         item = cache.get(travelerID);
@@ -47,5 +52,10 @@ public class PacketPipeTransportItemStackRequest extends Packet {
     @Override
     public int getID() {
         return PacketIds.PIPE_ITEMSTACK_REQUEST;
+    }
+
+    @Override
+    public void applyData(World world) {
+
     }
 }

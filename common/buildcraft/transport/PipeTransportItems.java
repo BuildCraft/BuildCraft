@@ -437,7 +437,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         if (packet.forceStackRefresh() || item.getItemStack() == null) {
-            BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()));
+            BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(container, packet));
         }
 
         item.pos = packet.getItemPos();
@@ -451,7 +451,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
-        PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
+        PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(container, data, forceStackRefresh);
         BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
     }
 

@@ -8,7 +8,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,8 +28,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import buildcraft.api.core.ICoreProxy;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;
@@ -164,10 +163,6 @@ public class CoreProxy implements ICoreProxy {
     /** This function returns either the player from the handler if it's on the server, or directly from the minecraft
      * instance if it's the client. */
     public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
-        if (handler instanceof NetHandlerPlayServer) {
-            return ((NetHandlerPlayServer) handler).playerEntity;
-        } else {
-            return Minecraft.getMinecraft().thePlayer;
-        }
+        return ((NetHandlerPlayServer) handler).playerEntity;
     }
 }

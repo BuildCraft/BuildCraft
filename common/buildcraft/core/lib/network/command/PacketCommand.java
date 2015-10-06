@@ -51,6 +51,8 @@ public class PacketCommand extends Packet {
                 break;
             }
         }
+
+        tempWorld = handler.getWorld(target);
     }
 
     @Override
@@ -65,8 +67,8 @@ public class PacketCommand extends Packet {
     }
 
     @Override
-    public void readData(ByteBuf data, World world, EntityPlayer player) {
-        super.readData(data, world, player);
+    public void readData(ByteBuf data) {
+        super.readData(data);
         command = NetworkUtils.readUTF(data);
         handler = targets.get(data.readUnsignedByte());
         stream = data; // for further reading

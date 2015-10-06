@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.render.tile;
 
+import com.google.common.base.Throwables;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -16,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -55,13 +58,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
-        if (pipeType == IPipeTile.PipeType.ITEM) {
-            PipeRendererItems.renderItemPipe((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
-        } else if (pipeType == IPipeTile.PipeType.FLUID) {
-            PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
-        } else if (pipeType == IPipeTile.PipeType.POWER) {
-            PipeRendererPower.renderPowerPipe((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
-        } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
+        try {
+            if (pipeType == IPipeTile.PipeType.ITEM) {
+                PipeRendererItems.renderItemPipe((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
+            } else if (pipeType == IPipeTile.PipeType.FLUID) {
+                PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
+            } else if (pipeType == IPipeTile.PipeType.POWER) {
+                PipeRendererPower.renderPowerPipe((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
+            } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
+        } catch (Throwable t) {
+            BCLog.logger.warn("A crash! Oh no!");
+            throw Throwables.propagate(t);
+        }
     }
 
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
