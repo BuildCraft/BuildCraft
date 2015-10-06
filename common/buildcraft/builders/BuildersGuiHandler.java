@@ -52,19 +52,19 @@ public class BuildersGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileBuilder)) {
                     return null;
                 }
-                return new GuiBuilder(player.inventory, (TileBuilder) tile);
+                return new GuiBuilder(player, (TileBuilder) tile);
 
             case GuiIds.FILLER:
                 if (!(tile instanceof TileFiller)) {
                     return null;
                 }
-                return new GuiFiller(player.inventory, (TileFiller) tile);
+                return new GuiFiller(player, (TileFiller) tile);
 
             case GuiIds.URBANIST:
                 if (!(tile instanceof TileUrbanist)) {
                     return null;
                 }
-                return new GuiUrbanist(player.inventory, (TileUrbanist) tile);
+                return new GuiUrbanist(player, (TileUrbanist) tile);
 
             default:
                 return null;
@@ -98,19 +98,19 @@ public class BuildersGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileBuilder)) {
                     return null;
                 }
-                return new ContainerBuilder(player.inventory, (TileBuilder) tile);
+                return new ContainerBuilder(player, (TileBuilder) tile);
 
             case GuiIds.FILLER:
                 if (!(tile instanceof TileFiller)) {
                     return null;
                 }
-                return new ContainerFiller(player.inventory, (TileFiller) tile);
+                return new ContainerFiller(player, (TileFiller) tile);
 
             case GuiIds.URBANIST:
                 if (!(tile instanceof TileUrbanist)) {
                     return null;
                 } else {
-                    return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
+                    return new ContainerUrbanist(player, (TileUrbanist) tile);
                 }
 
             default:

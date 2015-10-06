@@ -23,6 +23,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public FluidRenderData renderCache = new FluidRenderData();
     public BitSet delta;
 
+    private short fluidID = 0;
+    private int color = 0;
+    private int[] amount = new int[7];
+
     public PacketFluidUpdate(TileGenericPipe tileG) {
         super(PacketIds.PIPE_LIQUID, tileG);
     }
@@ -38,42 +42,20 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public void readData(ByteBuf data) {
         super.readData(data);
 
-        if (world.isAirBlock(pos)) {
-            return;
-        }
-
-        TileEntity entity = world.getTileEntity(pos);
-        if (!(entity instanceof TileGenericPipe)) {
-            return;
-        }
-
-        TileGenericPipe pipe = (TileGenericPipe) entity;
-        if (pipe.pipe == null) {
-            return;
-        }
-
-        if (!(pipe.pipe.transport instanceof PipeTransportFluids)) {
-            return;
-        }
-
-        PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
-
-        renderCache = transLiq.renderCache;
-
         byte[] dBytes = new byte[1];
         data.readBytes(dBytes);
         delta = BitSetUtils.fromByteArray(dBytes);
 
-        // System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
-
         if (delta.get(0)) {
-            renderCache.fluidID = data.readShort();
-            renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
+            fluidID = data.readShort();
+            if (fluidID != 0) {
+                color = data.readInt();
+            }
         }
 
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
-                renderCache.amount[dir] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
+                amount[dir] = data.readByte();
             }
         }
     }
@@ -107,7 +89,39 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
     @Override
     public void applyData(World world) {
-        // TODO Auto-generated method stub
+        if (world.isAirBlock(pos)) {
+            return;
+        }
 
+        TileEntity entity = world.getTileEntity(pos);
+        if (!(entity instanceof TileGenericPipe)) {
+            return;
+        }
+
+        TileGenericPipe pipe = (TileGenericPipe) entity;
+        if (pipe.pipe == null) {
+            return;
+        }
+
+        if (!(pipe.pipe.transport instanceof PipeTransportFluids)) {
+            return;
+        }
+
+        PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
+
+        renderCache = transLiq.renderCache;
+
+        // System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
+
+        if (delta.get(0)) {
+            renderCache.fluidID = fluidID;
+            renderCache.color = color;
+        }
+
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                renderCache.amount[dir] = amount[dir];
+            }
+        }
     }
 }

@@ -45,7 +45,8 @@ public class PacketPipeTransportItemStackRequest extends Packet {
 
     public void sendDataToPlayer(EntityPlayer player) {
         if (item != null) {
-            BuildCraftTransport.instance.sendToPlayer(player, new PacketPipeTransportItemStack(travelerID, item.getItemStack()));
+            Packet packet = new PacketPipeTransportItemStack(player.worldObj, travelerID, item.getItemStack());
+            BuildCraftTransport.instance.sendToPlayer(player, packet);
         }
     }
 

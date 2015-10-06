@@ -11,12 +11,12 @@ import buildcraft.core.lib.gui.BuildCraftContainer;
 
 public class ContainerUrbanist extends BuildCraftContainer {
 
-    IInventory playerIInventory;
+    IInventory playerInventory;
     TileUrbanist urbanist;
 
-    public ContainerUrbanist(IInventory playerInventory, TileUrbanist urbanist) {
-        super(urbanist.getSizeInventory());
-        this.playerIInventory = playerInventory;
+    public ContainerUrbanist(EntityPlayer player, TileUrbanist urbanist) {
+        super(player, urbanist.getSizeInventory());
+        this.playerInventory = player.inventory;
         this.urbanist = urbanist;
 
         /* addSlotToContainer(new Slot(builder, 0, 80, 27)); for (int k = 0; k < 3; k++) { for (int j1 = 0; j1 < 9;

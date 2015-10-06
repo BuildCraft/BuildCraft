@@ -4,7 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
@@ -20,25 +22,24 @@ public class PacketPipeTransportItemStack extends Packet {
 
     public PacketPipeTransportItemStack() {}
 
-    public PacketPipeTransportItemStack(int entityId, ItemStack stack) {
+    public PacketPipeTransportItemStack(World world, int entityId, ItemStack stack) {
+        this.tempWorld = world;
         this.entityId = entityId;
         this.stack = stack;
     }
 
     @Override
-    public void writeData(ByteBuf data) {
+    public void writeData(ByteBuf data, World world, EntityPlayer player) {
+        super.writeData(data, world, player);
         data.writeInt(entityId);
         NetworkUtils.writeStack(data, stack);
     }
 
     @Override
     public void readData(ByteBuf data) {
+        super.readData(data);
         this.entityId = data.readInt();
         stack = NetworkUtils.readStack(data);
-        TravelingItem item = TravelingItem.clientCache.get(entityId);
-        if (item != null) {
-            item.setItemStack(stack);
-        }
     }
 
     public int getEntityId() {
@@ -52,5 +53,13 @@ public class PacketPipeTransportItemStack extends Packet {
     @Override
     public int getID() {
         return PacketIds.PIPE_ITEMSTACK;
+    }
+
+    @Override
+    public void applyData(World world) {
+        TravelingItem item = TravelingItem.clientCache.get(entityId);
+        if (item != null) {
+            item.setItemStack(stack);
+        }
     }
 }

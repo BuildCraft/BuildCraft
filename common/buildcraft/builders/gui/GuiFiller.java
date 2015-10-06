@@ -7,6 +7,7 @@ package buildcraft.builders.gui;
 import java.io.IOException;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -52,9 +53,9 @@ public class GuiFiller extends GuiAdvancedInterface {
     private final GuiFiller instance;
     private final StatementSlot fakeStatementSlot;
 
-    public GuiFiller(IInventory playerInventory, TileFiller filler) {
-        super(new ContainerFiller(playerInventory, filler), filler, TEXTURE);
-        this.playerInventory = playerInventory;
+    public GuiFiller(EntityPlayer player, TileFiller filler) {
+        super(new ContainerFiller(player, filler), filler, TEXTURE);
+        this.playerInventory = player.inventory;
         this.filler = filler;
         this.instance = this;
         this.fakeStatementSlot = new StatementSlot(instance, -1, -1, 0) {

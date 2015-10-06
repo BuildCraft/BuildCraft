@@ -18,7 +18,7 @@ import buildcraft.core.lib.gui.widgets.Widget;
 
 public class ContainerFiller extends BuildCraftContainer {
 
-    IInventory playerIInventory;
+    IInventory playerInventory;
     TileFiller tile;
 
     private class PatternWidget extends Widget {
@@ -35,9 +35,9 @@ public class ContainerFiller extends BuildCraftContainer {
         }
     }
 
-    public ContainerFiller(IInventory playerInventory, TileFiller tile) {
-        super(tile.getSizeInventory());
-        this.playerIInventory = playerInventory;
+    public ContainerFiller(EntityPlayer player, TileFiller tile) {
+        super(player, tile.getSizeInventory());
+        this.playerInventory = player.inventory;
         this.tile = tile;
 
         addWidget(new PatternWidget());

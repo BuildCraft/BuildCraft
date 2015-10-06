@@ -11,12 +11,13 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.TileBuilder;
 import buildcraft.BuildCraftCore;
+import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.ItemSlot;
@@ -35,9 +36,9 @@ public class GuiBuilder extends GuiAdvancedInterface {
     private int sbPosition, sbLength;
     private boolean sbInside;
 
-    public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
-        super(new ContainerBuilder(playerInventory, builder), builder, BLUEPRINT_TEXTURE);
-        this.playerInventory = playerInventory;
+    public GuiBuilder(EntityPlayer player, TileBuilder builder) {
+        super(new ContainerBuilder(player, builder), builder, BLUEPRINT_TEXTURE);
+        this.playerInventory = player.inventory;
         this.builder = builder;
         xSize = 256;
         ySize = 225;

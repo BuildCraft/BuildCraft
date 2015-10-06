@@ -20,7 +20,7 @@ public class ContainerArchitect extends BuildCraftContainer {
     protected int computingTime = 0;
 
     public ContainerArchitect(EntityPlayer player, TileArchitect template) {
-        super(template.getSizeInventory());
+        super(player, template.getSizeInventory());
         this.playerIInventory = player.inventory;
         this.architect = template;
 

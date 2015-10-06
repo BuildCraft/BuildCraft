@@ -10,6 +10,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,13 +53,13 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 
     }
 
-    public GuiUrbanist(IInventory playerInventory, TileUrbanist urbanist) {
-        super(new ContainerUrbanist(playerInventory, urbanist), urbanist, TOOLBAR_TEXTURE);
+    public GuiUrbanist(EntityPlayer player, TileUrbanist urbanist) {
+        super(new ContainerUrbanist(player, urbanist), urbanist, TOOLBAR_TEXTURE);
 
         xSize = width;
         ySize = height;
 
-        this.playerInventory = playerInventory;
+        this.playerInventory = player.inventory;
         this.urbanist = urbanist;
 
         urbanist.createUrbanistEntity();

@@ -14,12 +14,12 @@ import buildcraft.core.lib.gui.BuildCraftContainer;
 
 public class ContainerBuilder extends BuildCraftContainer {
 
-    IInventory playerIInventory;
+    IInventory playerInventory;
     TileBuilder builder;
 
-    public ContainerBuilder(IInventory playerInventory, TileBuilder builder) {
-        super(builder.getSizeInventory());
-        this.playerIInventory = playerInventory;
+    public ContainerBuilder(EntityPlayer player, TileBuilder builder) {
+        super(player, builder.getSizeInventory());
+        this.playerInventory = player.inventory;
         this.builder = builder;
 
         addSlotToContainer(new Slot(builder, 0, 80, 27));
