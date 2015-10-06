@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
 
 import buildcraft.core.builders.BuilderItemMetaPair;
+import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.fluids.Tank;
@@ -111,8 +112,10 @@ public class BuildingSlotMapIterator {
 	}
 
 	public void remove() {
-		builderBlueprint.onRemoveBuildingSlotBlock(slots.get(slotPos));
+		BuildingSlotBlock slot = slots.get(slotPos);
 		slots.set(slotPos, null);
+
+		builderBlueprint.onRemoveBuildingSlotBlock(slot);
 	}
 
 	public void reset() {

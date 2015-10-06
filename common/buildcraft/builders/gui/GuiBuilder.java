@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -15,8 +16,11 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
@@ -64,6 +68,29 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 			fontRendererObj.drawString(StringUtils.localize("gui.needed"), 178, 7, 0x404040);
 			fontRendererObj.drawString(StringUtils.localize("gui.building.fluids"), 178, 133, 0x404040);
+		}
+
+		drawTooltips(par1, par2);
+	}
+
+	private void drawTooltips(int par1, int par2) {
+		int top = guiTop + 145;
+		for (int i = 0; i < builder.fluidTanks.length; i++) {
+			int left = guiLeft + 179 + 18 * i;
+			if (par1 >= left && par2 >= top && par1 < (left + 16) && par2 < (left + 47)) {
+				List<String> fluidTip = new ArrayList<String>();
+				Tank tank = builder.fluidTanks[i];
+				if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+					fluidTip.add(tank.getFluid().getLocalizedName());
+					if (!BuildCraftCore.hideFluidNumbers) {
+						fluidTip.add(EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + tank.getFluid().amount + " mB");
+					}
+				} else {
+					fluidTip.add(StatCollector.translateToLocal("gui.fluidtank.empty"));
+				}
+				drawHoveringText(fluidTip, par1 - guiLeft, par2 - guiTop, fontRendererObj);
+				return;
+			}
 		}
 
 		drawTooltipForSlotAt(par1, par2);
@@ -120,12 +147,21 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		if (isBlueprint) {
 			drawBackgroundSlots(x, y);
+		}
+
+		if (isBlueprint) {
+			for (int i = 0; i < builder.fluidTanks.length; i++) {
+				Tank tank = builder.fluidTanks[i];
+				if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+					drawFluid(tank.getFluid(), guiLeft + 179 + 18 * i, guiTop + 145, 16, 47, tank.getCapacity());
+				}
+			}
+
+			mc.renderEngine.bindTexture(BLUEPRINT_TEXTURE);
 
 			for (int i = 0; i < builder.fluidTanks.length; i++) {
 				Tank tank = builder.fluidTanks[i];
 				if (tank.getFluid() != null && tank.getFluid().amount > 0) {
-					mc.renderEngine.bindTexture(FluidRenderer.getFluidSheet(tank.getFluid()));
-					drawFluid(tank.getFluid(), guiLeft + 179 + 18 * i, guiTop + 145, 16, 47, tank.getCapacity());
 					drawTexturedModalRect(guiLeft + 179 + 18 * i, guiTop + 145, 0, 54, 16, 47);
 				}
 			}
