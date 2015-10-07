@@ -21,7 +21,6 @@ public class BuilderSupportEntry {
 		}
 	}
 
-	@IncludeIgnore
 	public List<String> includes;
 
 	@IncludeIgnore

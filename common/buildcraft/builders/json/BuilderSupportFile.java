@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -91,24 +92,29 @@ public class BuilderSupportFile {
 		while (entryIterator.hasNext()) {
 			BuilderSupportEntry e = entryIterator.next();
 
-			if (e.includes != null && e.includes.size() > 0) {
-				// Load includes
-				for (String includeName : e.includes) {
-					System.out.println("TEST: " + getRelativePath(filename, includeName));
-					InputStream includeStream = classLoader.getResourceAsStream(getRelativePath(filename, includeName));
-					if (includeStream == null) {
-						throw new FileNotFoundException(getRelativePath(filename, includeName));
-					}
+			if (e.includes != null) {
+				while (e.includes.size() > 0) {
+					List<String> includesCopy = new ArrayList<String>();
+					includesCopy.addAll(e.includes);
+					e.includes.clear();
 
-					List<BuilderSupportEntry> includedEntryList = gson.fromJson(new InputStreamReader(includeStream), entryType);
-					if (includedEntryList == null) {
-						throw new JSONValidationException(e, "Invalid include file!");
-					} else if (includedEntryList.size() != 1) {
-						throw new JSONValidationException(e, "Include file must only have one entry!");
-					}
+					for (String includeName : includesCopy) {
+						System.out.println("TEST: " + getRelativePath(filename, includeName));
+						InputStream includeStream = classLoader.getResourceAsStream(getRelativePath(filename, includeName));
+						if (includeStream == null) {
+							throw new FileNotFoundException(getRelativePath(filename, includeName));
+						}
 
-					BuilderSupportEntry include = includedEntryList.get(0);
-					doInclude(e, include);
+						List<BuilderSupportEntry> includedEntryList = gson.fromJson(new InputStreamReader(includeStream), entryType);
+						if (includedEntryList == null) {
+							throw new JSONValidationException(e, "Invalid include file!");
+						} else if (includedEntryList.size() != 1) {
+							throw new JSONValidationException(e, "Include file must only have one entry!");
+						}
+
+						BuilderSupportEntry include = includedEntryList.get(0);
+						doInclude(e, include);
+					}
 				}
 			}
 
