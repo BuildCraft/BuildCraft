@@ -75,7 +75,7 @@ public final class FluidRenderer {
 
     public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
         if (fluid == null) {
-            return null;
+            return missingIcon;
         }
 
         Map<Fluid, TextureAtlasSprite> map = flowing ? flowingTextureMap : stillTextureMap;

@@ -26,6 +26,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
     private short fluidID = 0;
     private int color = 0;
     private int[] amount = new int[7];
+    public byte[] flow = new byte[6];
 
     public PacketFluidUpdate(TileGenericPipe tileG) {
         super(PacketIds.PIPE_LIQUID, tileG);
@@ -55,7 +56,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
-                amount[dir] = data.readByte();
+                amount[dir] = data.readShort();
+            }
+            if (dir < 6) {
+                flow[dir] = data.readByte();
             }
         }
     }
@@ -77,7 +81,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
-                data.writeByte(renderCache.amount[dir]);
+                data.writeShort(renderCache.amount[dir]);
+            }
+            if (dir < 6) {
+                data.writeByte(flow[dir]);
             }
         }
     }
@@ -111,6 +118,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         renderCache = transLiq.renderCache;
 
+        renderCache.flow = flow;
+
         // System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 
         if (delta.get(0)) {
@@ -121,6 +130,9 @@ public class PacketFluidUpdate extends PacketCoordinates {
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
                 renderCache.amount[dir] = amount[dir];
+            }
+            if (dir < 6) {
+                transLiq.clientDisplayFlowConnection[dir] = flow[dir];
             }
         }
     }

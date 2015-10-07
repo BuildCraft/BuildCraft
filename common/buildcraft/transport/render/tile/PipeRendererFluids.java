@@ -31,11 +31,15 @@ import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererFluids {
     public static final int DISPLAY_STAGES = 100;
+    /** The number of pixels the fluid moves by per millisecond */
+    public static final double FLOW_MULTIPLIER = 0.016;
 
     /** Map of FluidID -> Fluid Render Call Lists */
+    @Deprecated
     private static Map<Integer, DisplayFluidList> fluidLists = Maps.newHashMap();
 
     /** While this class isn't actually completely Immutable, you shouldn't modify any instances after creation */
+    @Deprecated
     static class DisplayFluidList {
         /** A list of the OpenGL call lists for all of the centre faces. Array positions are accessed like this:
          * <p>
@@ -101,6 +105,15 @@ public class PipeRendererFluids {
 
         DisplayFluidList dfl = getDisplayFluidList(renderData.fluidID);
         if (dfl != null) {
+            long ms = System.currentTimeMillis();
+            long diff = ms - trans.clientLastDisplayTime;
+            if (trans.clientLastDisplayTime == 0 || diff <= 0) {
+                diff = 1;
+            }
+            trans.clientLastDisplayTime = ms;
+
+            TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID), false);
+
             RenderUtils.setGLColorFromInt(renderData.color);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
@@ -113,28 +126,42 @@ public class PipeRendererFluids {
                     sides = true;
                 }
                 if (connected) {// Render the outer connection
-                    float amount = renderData.amount[connection.ordinal()] / (float) trans.getCapacity();
-                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                    GL11.glPushMatrix();
-                    GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
-                    GL11.glPopMatrix();
+                    int ordinal = connection.ordinal();
+                    float amount = renderData.amount[ordinal] / (float) trans.getCapacity();
+                    double fluDiff = renderData.flow[ordinal] * diff * FLOW_MULTIPLIER;
+
+                    trans.clientDisplayFlowConnection[ordinal] += fluDiff;
+                    while (trans.clientDisplayFlowConnection[ordinal] < 0) {
+                        trans.clientDisplayFlowConnection[ordinal] += 16;
+                    }
+                    while (trans.clientDisplayFlowConnection[ordinal] >= 16) {
+                        trans.clientDisplayFlowConnection[ordinal] -= 16;
+                    }
+
+                    renderConnection(sprite, amount, trans.clientDisplayFlowConnection[ordinal], connection);
                 }
             }
-            if (above) {
-                float amount = renderData.amount[6] / (float) trans.getCapacity();
-                int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                GL11.glPushMatrix();
-                GL11.glCallList(dfl.centerFacesVertical[stage]);
-                GL11.glPopMatrix();
-            }
-
-            if (!above || sides) {
-                float amount = renderData.amount[6] / (float) trans.getCapacity();
-                int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                GL11.glPushMatrix();
-                GL11.glCallList(dfl.centerFaces[stage]);
-                GL11.glPopMatrix();
-            }
+            // if (above) {
+            // float amount = renderData.amount[6] / (float) trans.getCapacity();
+            // int stage = (int) (amount * (DISPLAY_STAGES - 1));
+            // if (stage >= DISPLAY_STAGES) {
+            // stage = DISPLAY_STAGES - 1;
+            // }
+            // GL11.glPushMatrix();
+            // GL11.glCallList(dfl.centerFacesVertical[stage]);
+            // GL11.glPopMatrix();
+            // }
+            //
+            // if (!above || sides) {
+            // float amount = renderData.amount[6] / (float) trans.getCapacity();
+            // int stage = (int) (amount * (DISPLAY_STAGES - 1));
+            // if (stage >= DISPLAY_STAGES) {
+            // stage = DISPLAY_STAGES - 1;
+            // }
+            // GL11.glPushMatrix();
+            // GL11.glCallList(dfl.centerFaces[stage]);
+            // GL11.glPopMatrix();
+            // }
         }
 
         GlStateManager.color(1, 1, 1, 1);
@@ -146,9 +173,50 @@ public class PipeRendererFluids {
 
         GL11.glPopAttrib();
         GL11.glPopMatrix();
-
     }
 
+    private static void renderConnection(TextureAtlasSprite sprite, float amount, double sideFlow, EnumFacing connect) {
+        boolean vert = connect.getAxis() == Axis.Y;
+
+        double diff = amount * 0.5;
+        double width = vert ? diff : 0.5;
+        double height = vert ? 0.5 : diff;
+
+        EnumFacing positive = Utils.convertPositive(connect);
+
+        Vec3 size = new Vec3(width, 0.5, width).subtract(Utils.convert(positive, 0.25));
+        Vec3 position = new Vec3(0.5, 0.5, 0.5).add(Utils.convert(connect, 0.375));
+        position = position.subtract(Utils.multiply(size, 0.5));
+
+        // The position is not correct!
+
+        GL11.glPushMatrix();
+
+        GL11.glTranslated(position.xCoord, position.yCoord, position.zCoord);
+        GL11.glTranslated(size.xCoord / 2d, size.yCoord / 2d, size.zCoord / 2d);
+
+        GL11.glScalef(0.99f, 0.99f, 0.99f);
+
+        GL11.glTranslated(-size.xCoord / 2d, -size.yCoord / 2d, -size.zCoord / 2d);
+
+        EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
+        cuboid.xSize = size.xCoord;
+        cuboid.ySize = height;
+        cuboid.zSize = size.zCoord;
+        cuboid.texture = sprite;
+
+        double flow = sideFlow;
+
+        cuboid.textureOffsetX = connect.getAxis() == Axis.X ? flow : 0;
+        cuboid.textureOffsetY = connect.getAxis() == Axis.Y ? flow : 0;
+        cuboid.textureOffsetZ = connect.getAxis() == Axis.Z ? flow : 0;
+
+        RenderResizableCuboid.INSTANCE.renderCube(cuboid);
+
+        GL11.glPopMatrix();
+    }
+
+    @Deprecated
     private static DisplayFluidList getDisplayFluidList(int fluidID) {
         if (fluidLists.containsKey(fluidID)) {
             return fluidLists.get(fluidID);

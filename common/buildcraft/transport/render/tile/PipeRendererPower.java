@@ -46,43 +46,44 @@ public class PipeRendererPower {
             }
         }
 
-        long ms = System.currentTimeMillis();
-        long diff = ms - pow.clientLastDisplayTime;
-        if (pow.clientLastDisplayTime == 0 || diff <= 0) {
-            diff = 1;
+        if (centerPower > 0) {
+            long ms = System.currentTimeMillis();
+            long diff = ms - pow.clientLastDisplayTime;
+            if (pow.clientLastDisplayTime == 0 || diff <= 0) {
+                diff = 1;
+            }
+            pow.clientLastDisplayTime = ms;
+
+            for (int i = 0; i < 6; i++) {
+                EnumFacing face = EnumFacing.values()[i];
+                if (!pipe.getTile().isPipeConnected(face)) {
+                    continue;
+                }
+                double actualDiff = flow[i] * diff * FLOW_MULTIPLIER;
+                double connectionDiff = face.getAxisDirection() == AxisDirection.POSITIVE ? actualDiff : -actualDiff;
+                pow.clientDisplayFlow[i] += connectionDiff;
+                while (pow.clientDisplayFlow[i] < 0) {
+                    pow.clientDisplayFlow[i] += 16;
+                }
+                while (pow.clientDisplayFlow[i] > 16) {
+                    pow.clientDisplayFlow[i] -= 16;
+                }
+
+                pow.clientDisplayFlowCentre = pow.clientDisplayFlowCentre.add(Utils.convert(face, actualDiff / 2));
+                renderSidePower(face, power[i], pow.clientDisplayFlow[i], centerPower);
+            }
+
+            for (Axis axis : Axis.values()) {
+                double value = Utils.getValue(pow.clientDisplayFlowCentre, axis);
+                while (value < 0) {
+                    value += 16;
+                }
+                while (value > 16) {
+                    value -= 16;
+                }
+                pow.clientDisplayFlowCentre = Utils.withValue(pow.clientDisplayFlowCentre, axis, value);
+            }
         }
-        pow.clientLastDisplayTime = ms;
-
-        for (int i = 0; i < 6; i++) {
-            EnumFacing face = EnumFacing.values()[i];
-            if (!pipe.getTile().isPipeConnected(face)) {
-                continue;
-            }
-            double actualDiff = flow[i] * diff * FLOW_MULTIPLIER;
-            double connectionDiff = face.getAxisDirection() == AxisDirection.POSITIVE ? actualDiff : -actualDiff;
-            pow.clientDisplayFlow[i] += connectionDiff;
-            while (pow.clientDisplayFlow[i] < 0) {
-                pow.clientDisplayFlow[i] += 16;
-            }
-            while (pow.clientDisplayFlow[i] > 16) {
-                pow.clientDisplayFlow[i] -= 16;
-            }
-
-            pow.clientDisplayFlowCentre = pow.clientDisplayFlowCentre.add(Utils.convert(face, actualDiff / 2));
-            renderSidePower(face, power[i], pow.clientDisplayFlow[i], centerPower);
-        }
-
-        for (Axis axis : Axis.values()) {
-            double value = Utils.getValue(pow.clientDisplayFlowCentre, axis);
-            while (value < 0) {
-                value += 16;
-            }
-            while (value > 16) {
-                value -= 16;
-            }
-            pow.clientDisplayFlowCentre = Utils.withValue(pow.clientDisplayFlowCentre, axis, value);
-        }
-
         GL11.glPushMatrix();
         renderCenterPower(centerPower, pow.clientDisplayFlowCentre);
         GL11.glPopMatrix();

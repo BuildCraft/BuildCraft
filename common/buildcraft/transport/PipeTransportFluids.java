@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -26,6 +27,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.events.PipeEventFluid;
@@ -145,6 +147,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     private int capacity, flowRate;
     private int travelDelay = MAX_TRAVEL_DELAY;
 
+    public byte[] flow = new byte[6];
+
+    public double[] clientDisplayFlowConnection = new double[6];
+    public Vec3 clientDisplayFlowCenter = Utils.VEC_ZERO;
+    public long clientLastDisplayTime = 0;
+
     public enum TransferState {
         None,
         Input,
@@ -213,6 +221,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     public void updateEntity() {
         if (container.getWorld().isRemote) {
             return;
+        }
+
+        for (int i = 0; i < 6; i++) {
+            flow[i] = 0;
         }
 
         if (fluidType != null) {
@@ -315,6 +327,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
                 if (amountToPush > 0) {
                     int filled = sections[direction.ordinal()].fill(amountToPush, true);
                     sections[6].drain(filled, true);
+                    flow[direction.ordinal()] = 1;
                 }
             }
         }
@@ -346,6 +359,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
                 if (amountToPush > 0) {
                     int filled = sections[6].fill(amountToPush, true);
                     sections[dir.ordinal()].drain(filled, true);
+                    flow[dir.ordinal()] = -1;
                 }
             }
         }
@@ -389,6 +403,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
                 transferState[ordinal] = TransferState.Output;
                 outputCount++;
             }
+
         }
         return outputCount;
     }
@@ -436,6 +451,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             }
         }
 
+        renderCacheCopy.flow = flow;
+        for (int i = 0; i < 6; i++) {
+            if (renderCache.flow[i] != renderCacheCopy.flow[i]) {
+                changed = true;
+            }
+        }
+
         if (persistChange) {
             this.renderCache = renderCacheCopy;
         }
@@ -444,6 +466,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             PacketFluidUpdate packet = new PacketFluidUpdate(container, initPacket);
             packet.renderCache = renderCacheCopy;
             packet.delta = delta;
+            packet.flow = renderCacheCopy.flow;
             return packet;
         }
 

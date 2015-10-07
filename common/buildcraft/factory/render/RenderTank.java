@@ -49,7 +49,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
         GL11.glScalef(0.999F, 0.999F, 0.999F);
         GL11.glTranslatef(-0.375F, -0.5F, -0.375F);
 
-        GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
+        int listIndex = (int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1));
+
+        GL11.glCallList(displayList[listIndex]);
 
         GL11.glPopAttrib();
         GL11.glPopMatrix();

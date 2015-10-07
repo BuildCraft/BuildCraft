@@ -67,7 +67,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 PipeRendererPower.renderPowerPipe((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
             } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
         } catch (Throwable t) {
-            BCLog.logger.warn("A crash! Oh no!");
+            BCLog.logger.warn("A crash! Oh no!", t);
             throw Throwables.propagate(t);
         }
     }
