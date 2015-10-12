@@ -368,6 +368,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 				NBTTagCompound patternData = NetworkUtils.readNBT(stream);
 				readParametersFromNBT(patternData);
 
+				currentTemplate = null;
 				done = false;
 			} else if ("setFlags".equals(command)) {
 				excavate = stream.readBoolean();

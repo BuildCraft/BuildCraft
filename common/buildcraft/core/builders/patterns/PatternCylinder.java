@@ -61,6 +61,7 @@ public class PatternCylinder extends FillerPattern {
 
 		if (xRadius == 0 || zRadius == 0) {
 			fill(xMin, yMin, zMin, xMax, yMax, zMax, result);
+			return result;
 		}
 
 		int dx = xRadius, dz = 0;
@@ -105,8 +106,13 @@ public class PatternCylinder extends FillerPattern {
 
 		if (twoBSquare > 0) {
 			while (stoppingX <= stoppingZ) {
-				fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
-						yMax, result);
+				if (filled) {
+					fillSquare(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+							yMax, result);
+				} else {
+					fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin,
+							yMax, result);
+				}
 
 				++dx;
 				stoppingX += twoBSquare;

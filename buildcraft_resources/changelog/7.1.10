@@ -1,5 +1,7 @@
 Bugs fixed:
 
 * [#3072] PipeTransportFluids crash (proper fix) (asie)
+* [#3071] Filled cylinder pattern incorrect (asie)
 * [#3069, #2865] Fluid pipe extraction speed ~25% lower than intended (asie, mconwa01)
+* Filler not changing pattern on parameter change (asie)
 * Rotated quarry not detecting its own frame (asie)
