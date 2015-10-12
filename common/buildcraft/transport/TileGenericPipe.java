@@ -816,8 +816,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public boolean isPipeConnected(ForgeDirection with) {
 		if (worldObj.isRemote) {
 			return renderState.pipeConnectionMatrix.isConnected(with);
+		} else {
+			return pipeConnectionsBuffer[with.ordinal()];
 		}
-		return pipeConnectionsBuffer[with.ordinal()];
 	}
 
 	@Override

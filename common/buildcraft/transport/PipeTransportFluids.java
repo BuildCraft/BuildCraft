@@ -335,15 +335,17 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 			inputPerTick[dir.ordinal()] = 0;
 			if (transferState[dir.ordinal()] != TransferState.Output) {
 				inputPerTick[dir.ordinal()] = sections[dir.ordinal()].drain(flowRate, false);
-				transferInCount++;
+				if (inputPerTick[dir.ordinal()] > 0) {
+					transferInCount++;
+				}
 			}
 		}
 
 		float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
+
 		for (ForgeDirection dir : directions) {
 			// Move liquid from input sides to the center
-			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
-
+			if (inputPerTick[dir.ordinal()] > 0) {
 				int amountToDrain = (int) (inputPerTick[dir.ordinal()] * min);
 				if (amountToDrain < 1) {
 					amountToDrain++;
