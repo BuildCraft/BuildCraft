@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* [#3072] PipeTransportFluids crash (proper fix) (asie)
+* Rotated quarry not detecting its own frame (asie)

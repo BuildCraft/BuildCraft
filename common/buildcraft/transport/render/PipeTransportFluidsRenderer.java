@@ -48,8 +48,9 @@ public class PipeTransportFluidsRenderer extends PipeTransportRenderer<PipeTrans
 		displayFluidLists.clearMap();
 	}
 
+	@Override
 	public boolean useServerTileIfPresent() {
-		return true;
+		return false;
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, int skylight, int blocklight, int flags, World world) {
@@ -170,12 +171,7 @@ public class PipeTransportFluidsRenderer extends PipeTransportRenderer<PipeTrans
 		PipeTransportFluids trans = pipe.transport;
 
 		boolean needsRender = false;
-		FluidRenderData renderData;
-		if (!pipe.container.getWorldObj().isRemote) {
-			renderData = trans.createServerFluidRenderData();
-		} else {
-			renderData = trans.renderCache;
-		}
+		FluidRenderData renderData = trans.renderCache;
 
 		for (int i = 0; i < 7; ++i) {
 			if (renderData.amount[i] > 0) {

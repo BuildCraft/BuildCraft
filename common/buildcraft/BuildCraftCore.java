@@ -194,6 +194,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean hidePowerNumbers = false;
 	public static boolean hideFluidNumbers = false;
 	public static boolean canEnginesExplode = false;
+	public static boolean useServerDataOnClient = true;
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static int builderMaxPerItemFactor = 1024;
@@ -301,6 +302,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		mainConfigManager.getCat("debug").setShowInGui(false);
 		mainConfigManager.getCat("vars").setShowInGui(false);
 
+		mainConfigManager.register("general.useServerDataOnClient", BuildCraftCore.useServerDataOnClient, "Allows BuildCraft to use the integrated server's data on the client on singleplayer worlds. Disable if you're getting the odd crash caused by it.", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("general.builderMaxIterationsPerItemFactor", BuildCraftCore.builderMaxPerItemFactor, "Lower this number if BuildCraft builders/fillers are causing TPS lag. Raise it if you think they are being too slow.", ConfigManager.RestartRequirement.NONE);
 
 		mainConfigManager.register("general.miningBreaksPlayerProtectedBlocks", false, "Should BuildCraft miners be allowed to break blocks using player-specific protection?", ConfigManager.RestartRequirement.NONE);
@@ -632,6 +634,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
+			useServerDataOnClient = mainConfigManager.get("general.useServerDataOnClient").getBoolean(true);
 			builderMaxPerItemFactor = mainConfigManager.get("general.builderMaxIterationsPerItemFactor").getInt();
 			hideFluidNumbers = mainConfigManager.get("display.hideFluidValues").getBoolean();
 			hidePowerNumbers = mainConfigManager.get("display.hidePowerValues").getBoolean();

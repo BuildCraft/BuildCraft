@@ -152,7 +152,7 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public TileEntity getServerTile(TileEntity source) {
-		if (Minecraft.getMinecraft().isSingleplayer() && source.getWorldObj().isRemote) {
+		if (BuildCraftCore.useServerDataOnClient && Minecraft.getMinecraft().isSingleplayer() && source.getWorldObj().isRemote) {
 			WorldServer w = DimensionManager.getWorld(source.getWorldObj().provider.dimensionId);
 			if (w != null) {
 				Chunk c = w.getChunkFromBlockCoords(source.xCoord, source.zCoord);
