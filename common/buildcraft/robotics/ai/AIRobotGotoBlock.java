@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.PathFinding;
@@ -115,9 +116,14 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	private void setNextInPath() {
 		if (path.size() > 0) {
 			BlockIndex next = path.getFirst();
-			setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
-			prevDistance = Double.MAX_VALUE;
-			robot.aimItemAt(next.x, next.y, next.z);
+			if (BuildCraftAPI.isSoftBlock(robot.worldObj, next.x, next.y, next.z)) {
+				setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
+				prevDistance = Double.MAX_VALUE;
+				robot.aimItemAt(next.x, next.y, next.z);
+			} else {
+				setSuccess(false);
+				terminate();
+			}
 		}
 	}
 

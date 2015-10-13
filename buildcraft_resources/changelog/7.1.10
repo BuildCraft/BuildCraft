@@ -4,4 +4,5 @@ Bugs fixed:
 * [#3071] Filled cylinder pattern incorrect (asie)
 * [#3069, #2865] Fluid pipe extraction speed ~25% lower than intended (asie, mconwa01)
 * Filler not changing pattern on parameter change (asie)
+* Improvements to robot pathfinding logic (asie, hea3ven)
 * Rotated quarry not detecting its own frame (asie)
