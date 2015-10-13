@@ -10,8 +10,6 @@ package buildcraft.robotics.ai;
 
 import java.util.List;
 
-import net.minecraft.util.AxisAlignedBB;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 

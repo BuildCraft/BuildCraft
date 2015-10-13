@@ -68,7 +68,6 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.events.RobotEvent;
@@ -121,7 +120,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public float itemActiveStage = 0;
 	public long lastUpdateTime = 0;
 
-	private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(10);
+	private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(20);
 	private boolean isMovingOutOfStuck;
 
 	private DockingStation currentDockingStation;
