@@ -9,6 +9,9 @@ import java.util.BitSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
@@ -114,9 +117,12 @@ public class PacketFluidUpdate extends PacketCoordinates {
             return;
         }
 
-        PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
+        PipeTransportFluids trans = (PipeTransportFluids) pipe.pipe.transport;
 
-        renderCache = transLiq.renderCache;
+        boolean fluidBefore = false;
+        boolean fluidAfter = false;
+
+        renderCache = trans.renderCache;
 
         renderCache.flow = flow;
 
@@ -124,16 +130,34 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         if (delta.get(0)) {
             renderCache.fluidID = fluidID;
+            Fluid fluid = FluidRegistry.getFluid(fluidID);
+            if (fluid == null) {
+                trans.fluidType = null;
+            } else {
+                trans.fluidType = new FluidStack(fluid, 1);
+            }
             renderCache.color = color;
         }
 
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
+                boolean before = renderCache.amount[dir] > 0;
                 renderCache.amount[dir] = amount[dir];
+                boolean after = renderCache.amount[dir] > 0;
+                fluidBefore |= before;
+                fluidAfter |= after;
             }
             if (dir < 6) {
-                transLiq.clientDisplayFlowConnection[dir] = flow[dir];
+                trans.clientDisplayFlowConnection[dir] = flow[dir];
             }
         }
+
+        // TODO Fluid shader rendering (unused for now)
+        // if (fluidBefore && !fluidAfter) {
+        // FluidShaderManager.INSTANCE.getRenderer(Minecraft.getMinecraft().theWorld).removeFluidTransport(trans);
+        // }
+        // if (!fluidBefore && fluidAfter) {
+        // FluidShaderManager.INSTANCE.getRenderer(Minecraft.getMinecraft().theWorld).addFluidTransport(trans);
+        // }
     }
 }

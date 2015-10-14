@@ -36,10 +36,10 @@ public class EnergyGuiHandler implements IGuiHandler {
         switch (id) {
 
             case GuiIds.ENGINE_IRON:
-                return new GuiCombustionEngine(player.inventory, (TileEngineIron) engine);
+                return new GuiCombustionEngine(player, (TileEngineIron) engine);
 
             case GuiIds.ENGINE_STONE:
-                return new GuiStoneEngine(player.inventory, (TileEngineStone) engine);
+                return new GuiStoneEngine(player, (TileEngineStone) engine);
 
             default:
                 return null;
@@ -64,10 +64,10 @@ public class EnergyGuiHandler implements IGuiHandler {
         switch (id) {
 
             case GuiIds.ENGINE_IRON:
-                return new ContainerEngine(player.inventory, engine);
+                return new ContainerEngine(player, engine);
 
             case GuiIds.ENGINE_STONE:
-                return new ContainerEngine(player.inventory, engine);
+                return new ContainerEngine(player, engine);
 
             default:
                 return null;

@@ -205,6 +205,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
+        // TODO Fluid shader rendering
+        // FluidShaderManager.INSTANCE.getRenderer(null);
         new BCCreativeTab("pipes");
         new BCCreativeTab("facades");
         if (Loader.isModLoaded("BuildCraft|Silicon")) {

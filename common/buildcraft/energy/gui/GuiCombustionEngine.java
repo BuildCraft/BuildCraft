@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.gui;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.utils.StringUtils;
@@ -14,8 +14,8 @@ public class GuiCombustionEngine extends GuiEngine {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
 
-    public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngineIron tileEngine) {
-        super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);
+    public GuiCombustionEngine(EntityPlayer player, TileEngineIron tileEngine) {
+        super(new ContainerEngine(player, tileEngine), tileEngine, TEXTURE);
     }
 
     @Override

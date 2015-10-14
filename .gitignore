@@ -22,3 +22,7 @@ run
 
 #mac
 .DS_Store
+
+#Custom code to inject te the dev environment
+custom
+

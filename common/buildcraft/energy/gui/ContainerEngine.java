@@ -5,7 +5,6 @@
 package buildcraft.energy.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 
@@ -17,8 +16,8 @@ public class ContainerEngine extends BuildCraftContainer {
 
     protected TileEngineWithInventory engine;
 
-    public ContainerEngine(InventoryPlayer inventoryplayer, TileEngineWithInventory tileEngine) {
-        super(tileEngine.getSizeInventory());
+    public ContainerEngine(EntityPlayer player, TileEngineWithInventory tileEngine) {
+        super(player, tileEngine.getSizeInventory());
 
         engine = tileEngine;
 
@@ -30,13 +29,13 @@ public class ContainerEngine extends BuildCraftContainer {
 
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 9; k++) {
-                addSlotToContainer(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
+                addSlotToContainer(new Slot(player.inventory, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
             }
 
         }
 
         for (int j = 0; j < 9; j++) {
-            addSlotToContainer(new Slot(inventoryplayer, j, 8 + j * 18, 142));
+            addSlotToContainer(new Slot(player.inventory, j, 8 + j * 18, 142));
         }
     }
 

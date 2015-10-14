@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
@@ -17,6 +18,11 @@ import buildcraft.core.lib.engines.TileEngineBase;
 public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 
     private boolean hasSent = false;
+
+    @Override
+    public EnumEngineType getEngineType() {
+        return EnumEngineType.WOOD;
+    }
 
     @Override
     public String getResourcePrefix() {

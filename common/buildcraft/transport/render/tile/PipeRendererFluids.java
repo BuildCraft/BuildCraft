@@ -22,6 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.FluidRenderer;
+import buildcraft.core.lib.render.FluidRenderer.FluidType;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -35,11 +36,9 @@ public class PipeRendererFluids {
     public static final double FLOW_MULTIPLIER = 0.016;
 
     /** Map of FluidID -> Fluid Render Call Lists */
-    @Deprecated
     private static Map<Integer, DisplayFluidList> fluidLists = Maps.newHashMap();
 
     /** While this class isn't actually completely Immutable, you shouldn't modify any instances after creation */
-    @Deprecated
     static class DisplayFluidList {
         /** A list of the OpenGL call lists for all of the centre faces. Array positions are accessed like this:
          * <p>
@@ -112,7 +111,7 @@ public class PipeRendererFluids {
             }
             trans.clientLastDisplayTime = ms;
 
-            TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID), false);
+            TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID), FluidType.STILL);
 
             RenderUtils.setGLColorFromInt(renderData.color);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -141,27 +140,27 @@ public class PipeRendererFluids {
                     renderConnection(sprite, amount, trans.clientDisplayFlowConnection[ordinal], connection);
                 }
             }
-            // if (above) {
-            // float amount = renderData.amount[6] / (float) trans.getCapacity();
-            // int stage = (int) (amount * (DISPLAY_STAGES - 1));
-            // if (stage >= DISPLAY_STAGES) {
-            // stage = DISPLAY_STAGES - 1;
-            // }
-            // GL11.glPushMatrix();
-            // GL11.glCallList(dfl.centerFacesVertical[stage]);
-            // GL11.glPopMatrix();
-            // }
-            //
-            // if (!above || sides) {
-            // float amount = renderData.amount[6] / (float) trans.getCapacity();
-            // int stage = (int) (amount * (DISPLAY_STAGES - 1));
-            // if (stage >= DISPLAY_STAGES) {
-            // stage = DISPLAY_STAGES - 1;
-            // }
-            // GL11.glPushMatrix();
-            // GL11.glCallList(dfl.centerFaces[stage]);
-            // GL11.glPopMatrix();
-            // }
+            if (above) {
+                float amount = renderData.amount[6] / (float) trans.getCapacity();
+                int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                if (stage >= DISPLAY_STAGES) {
+                    stage = DISPLAY_STAGES - 1;
+                }
+                GL11.glPushMatrix();
+                GL11.glCallList(dfl.centerFacesVertical[stage]);
+                GL11.glPopMatrix();
+            }
+
+            if (!above || sides) {
+                float amount = renderData.amount[6] / (float) trans.getCapacity();
+                int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                if (stage >= DISPLAY_STAGES) {
+                    stage = DISPLAY_STAGES - 1;
+                }
+                GL11.glPushMatrix();
+                GL11.glCallList(dfl.centerFaces[stage]);
+                GL11.glPopMatrix();
+            }
         }
 
         GlStateManager.color(1, 1, 1, 1);
@@ -216,7 +215,6 @@ public class PipeRendererFluids {
         GL11.glPopMatrix();
     }
 
-    @Deprecated
     private static DisplayFluidList getDisplayFluidList(int fluidID) {
         if (fluidLists.containsKey(fluidID)) {
             return fluidLists.get(fluidID);
@@ -231,7 +229,7 @@ public class PipeRendererFluids {
             return null;
         }
 
-        TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(fluid, false);
+        TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(fluid, FluidType.STILL);
 
         int[] center = new int[DISPLAY_STAGES];
 

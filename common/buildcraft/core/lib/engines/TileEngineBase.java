@@ -16,13 +16,14 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
@@ -48,6 +49,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public int energy;
     public float heat = MIN_HEAT;
     public EnumEnergyStage energyStage = EnumEnergyStage.BLUE;
+    public final EnumEngineType type = getEngineType();
     public EnumFacing orientation = EnumFacing.UP;
 
     protected int progressPart = 0;
@@ -56,6 +58,8 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     private boolean checkRedstonePower = true;
 
     private boolean isPumping = false; // Used for SMP synch
+    // How many ticks ago it gave out power, capped to 4.
+    private int lastTick = 0;
 
     public TileEngineBase() {}
 
@@ -64,36 +68,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         checkRedstonePower = true;
     }
 
-    public abstract String getResourcePrefix();
-
-    public ResourceLocation getBaseTexture() {
-        return new ResourceLocation(getResourcePrefix() + "/base.png");
-    }
-
-    public ResourceLocation getChamberTexture() {
-        return new ResourceLocation(getResourcePrefix() + "/chamber.png");
-    }
-
-    public ResourceLocation getTrunkTexture(EnumEnergyStage stage) {
-        if (ResourceUtils.resourceExists(getResourcePrefix() + "/trunk.png")) {
-            return new ResourceLocation(getResourcePrefix() + "/trunk.png");
-        }
-
-        switch (stage) {
-            case BLUE:
-                return TRUNK_BLUE_TEXTURE;
-            case GREEN:
-                return TRUNK_GREEN_TEXTURE;
-            case YELLOW:
-                return TRUNK_YELLOW_TEXTURE;
-            case RED:
-                return TRUNK_RED_TEXTURE;
-            case OVERHEAT:
-                return TRUNK_OVERHEAT_TEXTURE;
-            default:
-                return TRUNK_RED_TEXTURE;
-        }
-    }
+    public abstract EnumEngineType getEngineType();
 
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
@@ -190,6 +165,10 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     @Override
     public void update() {
         super.update();
+
+        if (lastTick < 4) {
+            lastTick++;
+        }
 
         if (checkRedstonePower) {
             checkRedstonePower();
@@ -344,7 +323,12 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         }
 
         this.isPumping = isActive;
+        lastTick = 0;
         sendNetworkUpdate();
+    }
+
+    public boolean isPumping() {
+        return isPumping || lastTick == 0;
     }
 
     public boolean isOrientationValid() {
@@ -417,11 +401,12 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         energyStage = EnumEnergyStage.values()[flags & 0x07];
         isPumping = (flags & 0x08) != 0;
         orientation = EnumFacing.values()[stream.readByte()];
+        worldObj.markBlockForUpdate(getPos());
     }
 
     @Override
     public void writeData(ByteBuf stream) {
-        stream.writeByte(energyStage.ordinal() | (isPumping ? 8 : 0));
+        stream.writeByte(energyStage.ordinal() | (isPumping() ? 8 : 0));
         stream.writeByte(orientation.ordinal());
     }
 

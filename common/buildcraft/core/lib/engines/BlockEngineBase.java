@@ -55,7 +55,19 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     }
 
     public BlockEngineBase() {
-        super(Material.iron, ENGINE_TYPE);
+        super(Material.iron, ENGINE_TYPE, FACING_6_PROP, MOVING, ENERGY_STAGE);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        TileEntity tile = access.getTileEntity(pos);
+        if (tile instanceof TileEngineBase) {
+            TileEngineBase engine = (TileEngineBase) tile;
+            state = state.withProperty(FACING_6_PROP, engine.orientation);
+            state = state.withProperty(MOVING, engine.isPumping());
+            state = state.withProperty(ENERGY_STAGE, engine.energyStage);
+        }
+        return state;
     }
 
     @Override

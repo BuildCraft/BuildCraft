@@ -11,9 +11,10 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.FakePlayer;
 
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.tools.IToolWrench;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.StringUtils;
@@ -25,7 +26,12 @@ public class TileEngineCreative extends TileEngineBase {
 
     @Override
     protected EnumEnergyStage computeEnergyStage() {
-        return EnumEnergyStage.BLUE;
+        return EnumEnergyStage.BLACK;
+    }
+
+    @Override
+    public EnumEngineType getEngineType() {
+        return EnumEngineType.CREATIVE;
     }
 
     @Override

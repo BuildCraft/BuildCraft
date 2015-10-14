@@ -53,7 +53,7 @@ public class EntityResizableCuboid extends Entity {
      * <p>
      * 0123
      * <p>
-     * With textureOffsetX set to 2 (and a textureXSize of 4) would repeat like this:
+     * With textureOffsetX set to 2 (and a textureSizeX of 4) would repeat like this:
      * <p>
      * 230123 */
     @SideOnly(Side.CLIENT)
@@ -116,6 +116,27 @@ public class EntityResizableCuboid extends Entity {
         xSize = size.xCoord;
         ySize = size.yCoord;
         zSize = size.zCoord;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setTextureOffset(Vec3 offset) {
+        textureOffsetX = offset.xCoord;
+        textureOffsetY = offset.yCoord;
+        textureOffsetZ = offset.zCoord;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setTextureStart(Vec3 start) {
+        textureStartX = start.xCoord;
+        textureStartY = start.yCoord;
+        textureStartZ = start.zCoord;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setTextureSize(Vec3 size) {
+        textureSizeX = size.xCoord;
+        textureSizeY = size.yCoord;
+        textureSizeZ = size.zCoord;
     }
 
     public void setBrightness(int brightness) {

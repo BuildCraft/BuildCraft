@@ -5,6 +5,7 @@
 package buildcraft.core.lib.render;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -25,14 +26,20 @@ import buildcraft.core.lib.EntityResizableCuboid;
 
 public final class FluidRenderer {
 
+    public enum FluidType {
+        FLOWING,
+        STILL,
+        FROZEN
+    }
+
     public static final int DISPLAY_STAGES = 100;
     public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
 
     private static Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
     private static Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
 
-    private static Map<Fluid, TextureAtlasSprite> stillTextureMap = Maps.newHashMap();
-    private static Map<Fluid, TextureAtlasSprite> flowingTextureMap = Maps.newHashMap();
+    private static Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
+
     private static TextureAtlasSprite missingIcon = null;
 
     /** Deactivate default constructor */
@@ -43,29 +50,60 @@ public final class FluidRenderer {
     public static void initFluidTextures(TextureMap map) {
         missingIcon = map.getMissingSprite();
 
-        stillTextureMap.clear();
-        flowingTextureMap.clear();
+        textureMap.clear();
+
+        for (FluidType type : FluidType.values()) {
+            textureMap.put(type, new HashMap<Fluid, TextureAtlasSprite>());
+        }
 
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            if (fluid.getStill() != null) {
-                String still = fluid.getStill().toString();
-                if (map.getTextureExtry(still) != null) {
-                    stillTextureMap.put(fluid, map.getTextureExtry(still));
-                } else {
-                    stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
-                }
-            }
+            TextureAtlasSprite toUse = null;
+
             if (fluid.getFlowing() != null) {
                 String flow = fluid.getFlowing().toString();
+                TextureAtlasSprite sprite;
                 if (map.getTextureExtry(flow) != null) {
-                    flowingTextureMap.put(fluid, map.getTextureExtry(flow));
+                    sprite = map.getTextureExtry(flow);
                 } else {
-                    flowingTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+                    sprite = map.registerSprite(fluid.getStill());
                 }
+                toUse = sprite;
+                textureMap.get(FluidType.FLOWING).put(fluid, sprite);
             }
+
+            if (fluid.getStill() != null) {
+                String still = fluid.getStill().toString();
+                TextureAtlasSprite sprite;
+                if (map.getTextureExtry(still) != null) {
+                    sprite = map.getTextureExtry(still);
+                } else {
+                    sprite = map.registerSprite(fluid.getStill());
+                }
+                toUse = sprite;
+                textureMap.get(FluidType.STILL).put(fluid, sprite);
+            }
+            // if (toUse != null) {
+            // textureMap.get(FluidType.FROZEN).put(fluid, toUse);
+            // }
         }
     }
 
+    public static TextureAtlasSprite getFluidTexture(FluidStack stack, FluidType type) {
+        if (stack == null) {
+            return missingIcon;
+        }
+        return getFluidTexture(stack.getFluid(), type);
+    }
+
+    public static TextureAtlasSprite getFluidTexture(Fluid fluid, FluidType type) {
+        if (fluid == null || type == null) {
+            return missingIcon;
+        }
+        Map<Fluid, TextureAtlasSprite> map = textureMap.get(type);
+        return map.containsKey(fluid) ? map.get(fluid) : missingIcon;
+    }
+
+    @Deprecated
     public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
         if (fluidStack == null) {
             return null;
@@ -73,23 +111,9 @@ public final class FluidRenderer {
         return getFluidTexture(fluidStack.getFluid(), flowing);
     }
 
+    @Deprecated
     public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
-        if (fluid == null) {
-            return missingIcon;
-        }
-
-        Map<Fluid, TextureAtlasSprite> map = flowing ? flowingTextureMap : stillTextureMap;
-
-        if (!map.containsKey(fluid)) {
-            return missingIcon;
-        }
-
-        TextureAtlasSprite icon = map.get(fluid);
-
-        if (icon == null) {
-            icon = missingIcon;
-        }
-        return icon;
+        return getFluidTexture(fluid, flowing ? FluidType.FLOWING : FluidType.STILL);
     }
 
     public static void setColorForFluidStack(FluidStack fluidstack) {

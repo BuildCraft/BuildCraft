@@ -7,11 +7,15 @@ package buildcraft.core.lib.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
+import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -63,7 +67,9 @@ public final class Utils {
 
     public static final boolean CAULDRON_DETECTED;
     public static final XorShift128Random RANDOM = new XorShift128Random();
+
     private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALUES));
+    private static final Map<Axis, Map<Axis, Axis>> axisOtherMap;
 
     static {
         boolean cauldron = false;
@@ -73,6 +79,17 @@ public final class Utils {
 
         }
         CAULDRON_DETECTED = cauldron;
+
+        axisOtherMap = Maps.newEnumMap(Axis.class);
+        for (Axis a : Axis.values()) {
+            Map<Axis, Axis> tempMap = Maps.newEnumMap(Axis.class);
+            axisOtherMap.put(a, tempMap);
+            for (Axis b : Axis.values()) {
+                EnumSet<Axis> axisSet = EnumSet.<Axis> of(a, b);
+                axisSet = EnumSet.complementOf(axisSet);
+                tempMap.put(b, axisSet.iterator().next());
+            }
+        }
     }
 
     /** Deactivate constructor */
@@ -409,6 +426,11 @@ public final class Utils {
         return multiply(convert(face), size);
     }
 
+    public static Vec3 convertExcept(EnumFacing face, double size) {
+        int direction = face.getAxisDirection().getOffset();
+        return vec3(direction * size).subtract(convert(face, size));
+    }
+
     public static EnumFacing convertPositive(EnumFacing face) {
         if (face == null) {
             return null;
@@ -417,6 +439,10 @@ public final class Utils {
             return face.getOpposite();
         }
         return face;
+    }
+
+    public static Axis other(Axis a, Axis b) {
+        return axisOtherMap.get(a).get(b);
     }
 
     // We always return BlockPos instead of Vec3i as it will be usable in all situations that Vec3i is, and all the ones
@@ -459,6 +485,10 @@ public final class Utils {
         return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
     }
 
+    public static Vec3 divide(Vec3 vec, double divisor) {
+        return multiply(vec, 1 / divisor);
+    }
+
     public static Vec3 clamp(Vec3 in, Vec3 lower, Vec3 upper) {
         double x = MathUtils.clamp(in.xCoord, lower.xCoord, upper.xCoord);
         double y = MathUtils.clamp(in.yCoord, lower.yCoord, upper.yCoord);
@@ -478,6 +508,14 @@ public final class Utils {
         double y = Math.max(one.yCoord, two.yCoord);
         double z = Math.max(one.zCoord, two.zCoord);
         return new Vec3(x, y, z);
+    }
+
+    public static Matrix3d toMatrix(Vec3 vec) {
+        Matrix3d matrix = new Matrix3d();
+        matrix.m00 = vec.xCoord;
+        matrix.m11 = vec.yCoord;
+        matrix.m22 = vec.zCoord;
+        return matrix;
     }
 
     public static Vec3 withValue(Vec3 vector, Axis axis, double value) {
@@ -607,5 +645,27 @@ public final class Utils {
         Vec3 min = min(pointA, pointB);
         Vec3 max = max(pointA, pointB);
         return new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
+    }
+
+    public static BlockPos[] getNeighboursIncludingSelf(BlockPos pos, EnumFacing face) {
+        BlockPos[] positions = new BlockPos[5];
+        positions[0] = pos;
+        int ordinal = 0;
+        for (EnumFacing f : getNeighbours(face)) {
+            positions[++ordinal] = pos.offset(f);
+        }
+        return positions;
+    }
+
+    public static EnumFacing[] getNeighbours(EnumFacing face) {
+        EnumFacing[] faces = new EnumFacing[4];
+        int ordinal = 0;
+        for (EnumFacing next : EnumFacing.values()) {
+            if (next.getAxis() != face.getAxis()) {
+                faces[ordinal] = next;
+                ordinal++;
+            }
+        }
+        return faces;
     }
 }

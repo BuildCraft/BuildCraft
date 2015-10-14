@@ -13,11 +13,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.BuildCraftEnergy;
 
 public class TileEngineStone extends TileEngineWithInventory {
 
@@ -34,6 +35,11 @@ public class TileEngineStone extends TileEngineWithInventory {
 
     public TileEngineStone() {
         super(1);
+    }
+
+    @Override
+    public EnumEngineType getEngineType() {
+        return EnumEngineType.STONE;
     }
 
     @Override

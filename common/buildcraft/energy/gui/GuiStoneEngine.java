@@ -6,7 +6,7 @@ package buildcraft.energy.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.utils.StringUtils;
@@ -16,8 +16,8 @@ public class GuiStoneEngine extends GuiEngine {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/steam_engine_gui.png");
 
-    public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineStone tileEngine) {
-        super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);
+    public GuiStoneEngine(EntityPlayer player, TileEngineStone tileEngine) {
+        super(new ContainerEngine(player, tileEngine), tileEngine, TEXTURE);
     }
 
     @Override

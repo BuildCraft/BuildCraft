@@ -18,8 +18,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
@@ -31,7 +33,6 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.BuildCraftEnergy;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
 
@@ -58,6 +59,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         super(1);
         tankManager.add(tankFuel);
         tankManager.add(tankCoolant);
+    }
+
+    @Override
+    public EnumEngineType getEngineType() {
+        return EnumEngineType.IRON;
     }
 
     @Override

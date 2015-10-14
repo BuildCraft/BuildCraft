@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -83,10 +84,8 @@ public class PipeRendererPower {
                 }
                 pow.clientDisplayFlowCentre = Utils.withValue(pow.clientDisplayFlowCentre, axis, value);
             }
+            renderCenterPower(centerPower, pow.clientDisplayFlowCentre);
         }
-        GL11.glPushMatrix();
-        renderCenterPower(centerPower, pow.clientDisplayFlowCentre);
-        GL11.glPopMatrix();
 
         GlStateManager.enableLighting();
 
@@ -127,6 +126,8 @@ public class PipeRendererPower {
 
         GL11.glPushMatrix();
         RenderUtils.translate(center);
+        // Tessellator.getInstance().getWorldRenderer().setBrightness(0xFFFFFFFF);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0xF0, 0xF0);
         RenderResizableCuboid.INSTANCE.renderCubeFromCentre(cuboid);
         GL11.glPopMatrix();
     }
@@ -150,6 +151,8 @@ public class PipeRendererPower {
 
         GL11.glPushMatrix();
         RenderUtils.translate(pos);
+        // Tessellator.getInstance().getWorldRenderer().setBrightness(0xFFFFFFFF);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0xF0, 0xF0);
         RenderResizableCuboid.INSTANCE.renderCubeFromCentre(erc);
         GL11.glPopMatrix();
     }
