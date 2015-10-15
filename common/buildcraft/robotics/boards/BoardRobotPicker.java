@@ -31,10 +31,14 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 		targettedItems.clear();
 	}
 
-	@Override
-	public void update() {
+	private void fetchNewItem() {
 		startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
 				.getLinkedStation()), robot.getZoneToWork()));
+	}
+
+	@Override
+	public void update() {
+		fetchNewItem();
 	}
 
 	@Override
@@ -43,8 +47,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 			if (ai.success()) {
 				// if we find an item - that may have been cancelled.
 				// let's try to get another one
-				startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
-						.getLinkedStation()), robot.getZoneToWork()));
+				fetchNewItem();
 			} else if (robot.containsItems()) {
 				startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 			} else {

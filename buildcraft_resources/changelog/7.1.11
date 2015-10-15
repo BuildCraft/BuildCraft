@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* [#3075] Rare crash in AIRobotGoAndLinkToDock (asie)
+* Robot unstucking issues (asie)

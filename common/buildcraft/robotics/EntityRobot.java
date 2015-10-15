@@ -68,6 +68,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.events.RobotEvent;
@@ -120,7 +121,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public float itemActiveStage = 0;
 	public long lastUpdateTime = 0;
 
-	private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(20);
+	private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(10);
 	private boolean isMovingOutOfStuck;
 
 	private DockingStation currentDockingStation;
@@ -354,7 +355,18 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 
 			if (expensiveVerificationsTracker.markTimeIfDelay(worldObj)) {
-				int collisions = worldObj.getCollidingBoundingBoxes(this, getBoundingBox()).size();
+				int collisions = 0;
+
+				int bx = (int) Math.floor(posX);
+				int by = (int) Math.floor(posY);
+				int bz = (int) Math.floor(posZ);
+
+				if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+					List clist = new ArrayList();
+
+					worldObj.getBlock(bx, by, bz).addCollisionBoxesToList(worldObj, bx, by, bz, getBoundingBox(), clist, this);
+					collisions = clist.size();
+				}
 
 				if (collisions > 0) {
 					isMovingOutOfStuck = true;

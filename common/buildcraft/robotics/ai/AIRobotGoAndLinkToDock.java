@@ -76,10 +76,12 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		super.writeSelfToNBT(nbt);
 
-		NBTTagCompound indexNBT = new NBTTagCompound();
-		station.index().writeTo(indexNBT);
-		nbt.setTag("stationIndex", indexNBT);
-		nbt.setByte("stationSide", (byte) station.side().ordinal());
+		if (station != null && station.index() != null) {
+			NBTTagCompound indexNBT = new NBTTagCompound();
+			station.index().writeTo(indexNBT);
+			nbt.setTag("stationIndex", indexNBT);
+			nbt.setByte("stationSide", (byte) station.side().ordinal());
+		}
 	}
 
 	@Override
