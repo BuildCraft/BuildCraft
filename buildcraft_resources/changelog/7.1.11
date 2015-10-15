@@ -1,4 +1,5 @@
 Bugs fixed:
 
+* [#3079] Emzuli pipe's round-robin extraction behaving incorrectly (asie)
 * [#3075] Rare crash in AIRobotGoAndLinkToDock (asie)
 * Robot unstucking issues (asie)
