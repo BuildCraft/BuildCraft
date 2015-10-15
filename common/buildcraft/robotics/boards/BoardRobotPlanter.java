@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -58,7 +59,8 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 			IBlockFilter blockFilter = new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					return isPlantable(itemStack, world, x, y, z)
+					return !BuildCraftAPI.getWorldProperty("replaceable").get(world, x, y, z)
+							&& isPlantable(itemStack, world, x, y, z)
 							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
 				}
 			};
