@@ -255,15 +255,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 
 		craftMatrix.rebuildCache();
-
-		// Legacy Code
-		if (data.hasKey("stackList")) {
-			ItemStack[] stacks = new ItemStack[9];
-			InvUtils.readStacksFromNBT(data, "stackList", stacks);
-			for (int i = 0; i < 9; i++) {
-				craftMatrix.setInventorySlotContents(i, stacks[i]);
-			}
-		}
 	}
 
 	@Override
