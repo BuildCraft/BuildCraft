@@ -746,7 +746,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				if (i == 0) {
 					glass = ingredients[1];
 				} else {
-					glass = new ItemStack(Blocks.stained_glass, 1, i - 1);
+					glass = "blockGlass" + EnumColor.fromId(15 - (i - 1)).getName();
 				}
 
 				recipe.result = new ItemStack(res, 8, i);
