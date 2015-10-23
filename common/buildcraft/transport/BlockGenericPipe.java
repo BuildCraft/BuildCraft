@@ -691,23 +691,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         RaytraceResult rayTrace = doRayTrace(world, pos, player);
 
-        BCLog.logger.info("Activated (side = " + side + ", new side = " + (rayTrace == null ? side : rayTrace.sideHit) + ", trace = " + rayTrace
-            + ")");
-
         if (rayTrace != null) {
             side = rayTrace.sideHit;
-            // switch (rayTrace.hitPart) {
-            // case Pipe: {
-            // break;
-            // }
-            // case Pluggable: {
-            // break;
-            // }
-            // case Wire: {
-            // // TODO: Implement Wire selection!
-            // break;
-            // }
-            // }
         }
 
         if (isValid(pipe)) {
@@ -764,11 +749,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
             Gate clickedGate = null;
 
-            RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
-
-            if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable && pipe.container.getPipePluggable(
-                    rayTraceResult.sideHit) instanceof GatePluggable) {
-                clickedGate = pipe.gates[rayTraceResult.sideHit.ordinal()];
+            if (rayTrace != null && rayTrace.hitPart == Part.Pluggable && pipe.container.getPipePluggable(
+                    rayTrace.sideHit) instanceof GatePluggable) {
+                clickedGate = pipe.gates[rayTrace.sideHit.ordinal()];
             }
 
             if (clickedGate != null) {
