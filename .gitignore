@@ -16,6 +16,7 @@ out
 #gradle
 build
 .gradle
+modules
 
 #runtime
 run
@@ -23,6 +24,6 @@ run
 #mac
 .DS_Store
 
-#Custom code to inject te the dev environment
+#Custom code to inject the the dev environment
 custom
 

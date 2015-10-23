@@ -12,7 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.lib.network.Packet;
-import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
@@ -25,18 +24,18 @@ import io.netty.channel.ChannelHandlerContext;
 
 @Sharable
 @Deprecated
-public class PacketHandlerTransport extends PacketHandler {
+public class PacketHandlerTransport {// extends PacketHandler {
     /** TODO: A lot of this is based on the player to retrieve the world. Passing a dimension id would be more
      * appropriate. More generally, it seems like a lot of these packets could be replaced with tile-based RPCs. */
-    @Override
+    // @Override
     @Deprecated
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-        super.channelRead0(ctx, packet);
+        // super.channelRead0(ctx, packet);
         try {
             INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
             EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
-            int packetID = packet.getID();
+            int packetID = 0;// packet.getID();
 
             switch (packetID) {
                 case PacketIds.PIPE_POWER:
@@ -77,6 +76,8 @@ public class PacketHandlerTransport extends PacketHandler {
             ex.printStackTrace();
         }
     }
+
+    // These methods are left here until I am certain pipes work without this
 
     /** Retrieves pipe at specified coordinates if any.
      *

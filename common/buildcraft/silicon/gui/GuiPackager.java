@@ -6,7 +6,7 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -18,8 +18,8 @@ public class GuiPackager extends GuiBuildCraft {
     public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/packager.png");
     private TilePackager bench;
 
-    public GuiPackager(InventoryPlayer inventoryplayer, TilePackager tile) {
-        super(new ContainerPackager(inventoryplayer, tile), tile, TEXTURE);
+    public GuiPackager(EntityPlayer player, TilePackager tile) {
+        super(new ContainerPackager(player, tile), tile, TEXTURE);
         this.bench = tile;
         xSize = 176;
         ySize = 197;

@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -83,8 +84,8 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
         }
     }
 
-    public GuiProgrammingTable(IInventory playerInventory, TileProgrammingTable programmingTable) {
-        super(new ContainerProgrammingTable(playerInventory, programmingTable), programmingTable, TEXTURE);
+    public GuiProgrammingTable(EntityPlayer player, TileProgrammingTable programmingTable) {
+        super(new ContainerProgrammingTable(player, programmingTable), programmingTable, TEXTURE);
 
         this.table = programmingTable;
         xSize = 176;

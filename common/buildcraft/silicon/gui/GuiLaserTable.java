@@ -6,7 +6,7 @@ package buildcraft.silicon.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -62,7 +62,7 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
 
     protected final TileLaserTableBase table;
 
-    public GuiLaserTable(InventoryPlayer playerInventory, BuildCraftContainer container, TileLaserTableBase table, ResourceLocation texture) {
+    public GuiLaserTable(EntityPlayer player, BuildCraftContainer container, TileLaserTableBase table, ResourceLocation texture) {
         super(container, table, texture);
         this.table = table;
     }

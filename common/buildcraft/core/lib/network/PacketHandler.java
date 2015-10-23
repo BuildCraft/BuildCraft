@@ -27,7 +27,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * However its fine provided that you only pass a single instance of this to forge, as this handles the double sides by
  * itself. */
 @Sharable
-public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     private final Map<Side, Map<Integer, Queue<Packet>>> packetMap;
 
     public PacketHandler() {

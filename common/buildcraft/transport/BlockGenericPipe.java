@@ -5,7 +5,6 @@
 package buildcraft.transport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,19 +100,20 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         public final Part hitPart;
         public final MovingObjectPosition movingObjectPosition;
         public final IdentifiableAABB<Part> boundingBox;
-        public final EnumFacing sideHit;
+        public final EnumFacing sideHit, partSide;
 
-        RaytraceResult(MovingObjectPosition movingObjectPosition, IdentifiableAABB<Part> boundingBox, EnumFacing side) {
+        RaytraceResult(MovingObjectPosition movingObjectPosition, IdentifiableAABB<Part> boundingBox, EnumFacing side, EnumFacing partSide) {
             this.hitPart = boundingBox.identifier;
             this.movingObjectPosition = movingObjectPosition;
             this.boundingBox = boundingBox;
             this.sideHit = side;
+            this.partSide = partSide;
         }
 
         @Override
         public String toString() {
-            return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox
-                    .toString());
+            return "RaytraceResult [hitPart=" + hitPart + ", boundingBox=" + boundingBox + ", sideHit=" + sideHit + ", partSide=" + partSide
+                + ",\n movingObjectPosition=" + movingObjectPosition + "]";
         }
     }
 
@@ -334,7 +334,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             reachDistance = ((EntityPlayerMP) player).theItemInWorldManager.getBlockReachDistance();
         }
 
-        double eyeHeight = world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight();
+        double eyeHeight = player.getEyeHeight();
         Vec3 lookVec = player.getLookVec();
         Vec3 origin = new Vec3(player.posX, player.posY + eyeHeight, player.posZ);
         Vec3 direction = origin.addVector(lookVec.xCoord * reachDistance, lookVec.yCoord * reachDistance, lookVec.zCoord * reachDistance);
@@ -342,7 +342,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return doRayTrace(world, pos, origin, direction);
     }
 
-    public RaytraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+    public RaytraceResult doRayTrace(final World world, final BlockPos pos, final Vec3 origin, final Vec3 direction) {
         Pipe<?> pipe = getPipe(world, pos);
 
         if (!isValid(pipe)) {
@@ -356,61 +356,45 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
 
         /** pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades] */
-        MovingObjectPosition[] hits = new MovingObjectPosition[31];
-        IdentifiableAABB<Part>[] boxes = new IdentifiableAABB[31];
-        EnumFacing[] sideHit = new EnumFacing[31];
-        Arrays.fill(sideHit, null);
+        final MovingObjectPosition[] closestHit = new MovingObjectPosition[1];
+        final IdentifiableAABB<Part>[] closestBox = new IdentifiableAABB[1];
+        final EnumFacing[] closestSide = new EnumFacing[1];
+        final EnumFacing[] closestSideHit = new EnumFacing[1];
+        final double[] distance = new double[] { Double.POSITIVE_INFINITY };
 
-        // Center bit of pipe
-        {
-            IdentifiableAABB<Part> bb = getPipeBoundingBox(null);
-            setBlockBounds(bb);
-            boxes[6] = bb;
-            hits[6] = super.collisionRayTrace(world, pos, origin, direction);
-            sideHit[6] = null;
-        }
+        class Tester {
+            void test(IdentifiableAABB<Part> bb, EnumFacing side) {
+                BlockGenericPipe.this.setBlockBounds(bb);
+                MovingObjectPosition mop = BlockGenericPipe.this.collisionRayTrace_super(world, pos, origin, direction);
+                if (mop != null) {
+                    double lengthSquared = mop.hitVec.squareDistanceTo(origin);
 
-        // Connections
-        for (EnumFacing side : DIR_VALUES) {
-            if (tileG.isPipeConnected(side)) {
-                IdentifiableAABB<Part> bb = getPipeBoundingBox(side);
-                setBlockBounds(bb);
-                boxes[side.ordinal()] = bb;
-                hits[side.ordinal()] = super.collisionRayTrace(world, pos, origin, direction);
-                sideHit[side.ordinal()] = side;
+                    if (lengthSquared < distance[0]) {
+                        distance[0] = lengthSquared;
+                        closestHit[0] = mop;
+                        closestBox[0] = bb;
+                        closestSide[0] = side == null ? mop.sideHit : side;
+                        closestSideHit[0] = mop.sideHit;
+                    }
+                }
             }
         }
 
-        // pluggables
+        Tester tester = new Tester();
 
-        for (EnumFacing side : EnumFacing.VALUES) {
-            if (tileG.getPipePluggable(side) != null) {
-                IdentifiableAABB<Part> bb = new IdentifiableAABB<Part>(tileG.getPipePluggable(side).getBoundingBox(side), Part.Pluggable);
-                setBlockBounds(bb);
-                boxes[7 + side.ordinal()] = bb;
-                hits[7 + side.ordinal()] = super.collisionRayTrace(world, pos, origin, direction);
-                sideHit[7 + side.ordinal()] = side;
+        tester.test(getPipeBoundingBox(null), null);
+
+        for (EnumFacing face : EnumFacing.values()) {
+            if (tileG.isPipeConnected(face)) {
+                tester.test(getPipeBoundingBox(face), face);
             }
         }
 
-        // TODO: check wires
-
-        // get closest hit
-
-        double minLengthSquared = Double.POSITIVE_INFINITY;
-        int minIndex = -1;
-
-        for (int i = 0; i < hits.length; i++) {
-            MovingObjectPosition hit = hits[i];
-            if (hit == null) {
-                continue;
-            }
-
-            double lengthSquared = hit.hitVec.squareDistanceTo(origin);
-
-            if (lengthSquared < minLengthSquared) {
-                minLengthSquared = lengthSquared;
-                minIndex = i;
+        for (EnumFacing face : EnumFacing.values()) {
+            if (tileG.getPipePluggable(face) != null) {
+                AxisAlignedBB aabb = tileG.getPipePluggable(face).getBoundingBox(face);
+                IdentifiableAABB<Part> iaabb = new IdentifiableAABB<Part>(aabb, Part.Pluggable);
+                tester.test(iaabb, face);
             }
         }
 
@@ -418,11 +402,77 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         setBlockBounds(0, 0, 0, 1, 1, 1);
 
-        if (minIndex == -1) {
-            return null;
+        if (closestHit[0] != null) {
+            return new RaytraceResult(closestHit[0], closestBox[0], closestSide[0], closestSideHit[0]);
         } else {
-            return new RaytraceResult(hits[minIndex], boxes[minIndex], sideHit[minIndex]);
+            return null;
         }
+        // MovingObjectPosition[] hits = new MovingObjectPosition[31];
+        // IdentifiableAABB<Part>[] boxes = new IdentifiableAABB[31];
+        // EnumFacing[] sideHit = new EnumFacing[31];
+
+        //
+        // // Center bit of pipe
+        // {
+        // IdentifiableAABB<Part> bb = getPipeBoundingBox(null);
+        // setBlockBounds(bb);
+        // boxes[6] = bb;
+        // hits[6] = super.collisionRayTrace(world, pos, origin, direction);
+        // sideHit[6] = null;
+        // }
+        //
+        // // Connections
+        // for (EnumFacing side : DIR_VALUES) {
+        // if (tileG.isPipeConnected(side)) {
+        // IdentifiableAABB<Part> bb = getPipeBoundingBox(side);
+        // setBlockBounds(bb);
+        // boxes[side.ordinal()] = bb;
+        // MovingObjectPosition mop = super.collisionRayTrace(world, pos, origin, direction);
+        // hits[side.ordinal()] = mop;
+        // sideHit[side.ordinal()] = mop == null ? null : mop.sideHit;
+        // }
+        // }
+        //
+        // // pluggables
+        //
+        // for (EnumFacing side : EnumFacing.VALUES) {
+        // if (tileG.getPipePluggable(side) != null) {
+        // IdentifiableAABB<Part> bb = new IdentifiableAABB<Part>(tileG.getPipePluggable(side).getBoundingBox(side),
+        // Part.Pluggable);
+        // setBlockBounds(bb);
+        // boxes[7 + side.ordinal()] = bb;
+        // MovingObjectPosition mop = super.collisionRayTrace(world, pos, origin, direction);
+        // hits[7 + side.ordinal()] = mop;
+        // sideHit[7 + side.ordinal()] = mop == null ? null : mop.sideHit;
+        // }
+        // }
+        //
+        // // TODO: check wires
+        //
+        // // get closest hit
+        //
+        // double minLengthSquared = Double.POSITIVE_INFINITY;
+        // int minIndex = -1;
+        //
+        // for (int i = 0; i < hits.length; i++) {
+        // MovingObjectPosition hit = hits[i];
+        // if (hit == null) {
+        // continue;
+        // }
+        //
+        // double lengthSquared = hit.hitVec.squareDistanceTo(origin);
+        //
+        // if (lengthSquared < minLengthSquared) {
+        // minLengthSquared = lengthSquared;
+        // minIndex = i;
+        // }
+        // }
+
+        // if (minIndex == -1) {
+        // return null;
+        // } else {
+        // return new RaytraceResult(hits[minIndex], boxes[minIndex], sideHit[minIndex]);
+        // }
     }
 
     private void setBlockBounds(AxisAlignedBB bb) {
@@ -545,6 +595,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
         RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
+        BCLog.logger.info("Picked " + rayTraceResult);
 
         if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
             switch (rayTraceResult.hitPart) {
@@ -637,6 +688,27 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         world.notifyBlockOfStateChange(pos, BuildCraftTransport.genericPipeBlock);
 
         Pipe<?> pipe = getPipe(world, pos);
+
+        RaytraceResult rayTrace = doRayTrace(world, pos, player);
+
+        BCLog.logger.info("Activated (side = " + side + ", new side = " + (rayTrace == null ? side : rayTrace.sideHit) + ", trace = " + rayTrace
+            + ")");
+
+        if (rayTrace != null) {
+            side = rayTrace.sideHit;
+            // switch (rayTrace.hitPart) {
+            // case Pipe: {
+            // break;
+            // }
+            // case Pluggable: {
+            // break;
+            // }
+            // case Wire: {
+            // // TODO: Implement Wire selection!
+            // break;
+            // }
+            // }
+        }
 
         if (isValid(pipe)) {
             ItemStack currentItem = player.getCurrentEquippedItem();

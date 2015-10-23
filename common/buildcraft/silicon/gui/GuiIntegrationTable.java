@@ -6,7 +6,7 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.silicon.TileIntegrationTable;
@@ -19,8 +19,8 @@ public class GuiIntegrationTable extends GuiLaserTable {
     private boolean flash;
     private int flashDelay;
 
-    public GuiIntegrationTable(InventoryPlayer playerInventory, TileIntegrationTable table) {
-        super(playerInventory, new ContainerIntegrationTable(playerInventory, table), table, TEXTURE);
+    public GuiIntegrationTable(EntityPlayer player, TileIntegrationTable table) {
+        super(player, new ContainerIntegrationTable(player, table), table, TEXTURE);
         this.integrationTable = table;
         xSize = 176;
         ySize = 186;

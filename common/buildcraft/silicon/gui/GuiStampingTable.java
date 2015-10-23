@@ -6,7 +6,7 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.silicon.TileStampingTable;
@@ -19,8 +19,8 @@ public class GuiStampingTable extends GuiLaserTable {
     private boolean flash;
     private int flashDelay;
 
-    public GuiStampingTable(InventoryPlayer playerInventory, TileStampingTable table) {
-        super(playerInventory, new ContainerStampingTable(playerInventory, table), table, TEXTURE);
+    public GuiStampingTable(EntityPlayer player, TileStampingTable table) {
+        super(player, new ContainerStampingTable(player, table), table, TEXTURE);
         this.integrationTable = table;
         xSize = 176;
         ySize = 151;

@@ -6,7 +6,7 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.silicon.TileAdvancedCraftingTable;
@@ -16,8 +16,8 @@ public class GuiAdvancedCraftingTable extends GuiLaserTable {
     public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_advancedworkbench.png");
     private final TileAdvancedCraftingTable workbench;
 
-    public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {
-        super(playerInventory, new ContainerAdvancedCraftingTable(playerInventory, advancedWorkbench), advancedWorkbench, TEXTURE);
+    public GuiAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable advancedWorkbench) {
+        super(player, new ContainerAdvancedCraftingTable(player, advancedWorkbench), advancedWorkbench, TEXTURE);
         this.workbench = advancedWorkbench;
         xSize = 176;
         ySize = 240;

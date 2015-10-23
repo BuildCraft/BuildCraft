@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -91,8 +92,8 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
         }
     }
 
-    public GuiAssemblyTable(IInventory playerInventory, TileAssemblyTable assemblyTable) {
-        super(new ContainerAssemblyTable(playerInventory, assemblyTable), assemblyTable, TEXTURE);
+    public GuiAssemblyTable(EntityPlayer player, TileAssemblyTable assemblyTable) {
+        super(new ContainerAssemblyTable(player, assemblyTable), assemblyTable, TEXTURE);
 
         this.table = assemblyTable;
         xSize = 176;
