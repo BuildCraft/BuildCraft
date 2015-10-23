@@ -283,7 +283,7 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-    archives javadocJar
+//    archives javadocJar
     archives deobfJar
     archives apiJar
 

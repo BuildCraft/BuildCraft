@@ -39,7 +39,7 @@ public class GatePluggable extends PipePluggable {
 
         @Override
         public void renderDynamicPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
-            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+//            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
         }
 
         @Override
