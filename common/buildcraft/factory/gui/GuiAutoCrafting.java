@@ -6,7 +6,7 @@ package buildcraft.factory.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -19,8 +19,8 @@ public class GuiAutoCrafting extends GuiBuildCraft {
     public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/autobench.png");
     private TileAutoWorkbench bench;
 
-    public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
-        super(new ContainerAutoWorkbench(inventoryplayer, tile), tile, TEXTURE);
+    public GuiAutoCrafting(EntityPlayer player, World world, TileAutoWorkbench tile) {
+        super(new ContainerAutoWorkbench(player, tile), tile, TEXTURE);
         this.bench = tile;
         xSize = 176;
         ySize = 197;

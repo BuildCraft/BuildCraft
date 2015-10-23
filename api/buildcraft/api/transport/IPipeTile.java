@@ -25,10 +25,13 @@ public interface IPipeTile extends IInjectable {
 
     World getWorld();
 
+    @Deprecated
     int x();
 
+    @Deprecated
     int y();
 
+    @Deprecated
     int z();
 
     /** True if the pipe is connected to the block/pipe in the specific direction

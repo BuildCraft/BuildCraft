@@ -57,7 +57,7 @@ public final class FluidRenderer {
         }
 
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            TextureAtlasSprite toUse = null;
+            // TextureAtlasSprite toUse = null;
 
             if (fluid.getFlowing() != null) {
                 String flow = fluid.getFlowing().toString();
@@ -67,7 +67,7 @@ public final class FluidRenderer {
                 } else {
                     sprite = map.registerSprite(fluid.getStill());
                 }
-                toUse = sprite;
+                // toUse = sprite;
                 textureMap.get(FluidType.FLOWING).put(fluid, sprite);
             }
 
@@ -79,7 +79,7 @@ public final class FluidRenderer {
                 } else {
                     sprite = map.registerSprite(fluid.getStill());
                 }
-                toUse = sprite;
+                // toUse = sprite;
                 textureMap.get(FluidType.STILL).put(fluid, sprite);
             }
             // if (toUse != null) {
@@ -95,6 +95,8 @@ public final class FluidRenderer {
         return getFluidTexture(stack.getFluid(), type);
     }
 
+    /** This will always return a texture object, but it will be the missing icon texture if the fluid is null or a
+     * texture does not exist. */
     public static TextureAtlasSprite getFluidTexture(Fluid fluid, FluidType type) {
         if (fluid == null || type == null) {
             return missingIcon;

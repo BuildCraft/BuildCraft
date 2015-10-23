@@ -6,7 +6,7 @@ package buildcraft.core.lib.network;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.utils.NetworkUtils;
@@ -14,14 +14,17 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import io.netty.buffer.ByteBuf;
 
 public class PacketSlotChange extends PacketCoordinates {
+    public interface ITile {
+        void updateCraftingMatrix(int slot, ItemStack stack);
+    }
 
     public int slot;
     public ItemStack stack;
 
     public PacketSlotChange() {}
 
-    public PacketSlotChange(int id, int dimId, BlockPos pos, int slot, ItemStack stack) {
-        super(id, dimId, pos);
+    public PacketSlotChange(TileEntity tile, int slot, ItemStack stack) {
+        super(tile);
         this.slot = slot;
         this.stack = stack;
     }
@@ -43,8 +46,13 @@ public class PacketSlotChange extends PacketCoordinates {
     }
 
     @Override
-    public void applyData(World world) {
-        // TODO Auto-generated method stub
-
+    public void applyData(World world, EntityPlayer player) {
+        if (!world.isBlockLoaded(pos)) {
+            return;
+        }
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof ITile) {
+            ((ITile) tile).updateCraftingMatrix(slot, stack);
+        }
     }
 }

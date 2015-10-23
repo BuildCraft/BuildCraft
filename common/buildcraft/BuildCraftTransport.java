@@ -66,6 +66,7 @@ import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.Utils;
@@ -81,7 +82,6 @@ import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.network.PacketFluidUpdate;
-import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.network.PacketPipeTransportItemStack;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
@@ -378,8 +378,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class);
         transportChannelHandler.registerPacketType(PacketPowerUpdate.class);
 
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler,
-                new PacketHandlerTransport());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler, new PacketHandler());
 
         TransportProxy.proxy.registerTileEntities();
 

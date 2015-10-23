@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,8 +18,8 @@ public class GuiEmzuliPipe extends GuiBuildCraft {
     IInventory filterInventory;
     PipeItemsEmzuli pipe;
 
-    public GuiEmzuliPipe(IInventory playerInventory, PipeItemsEmzuli pipe) {
-        super(new ContainerEmzuliPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
+    public GuiEmzuliPipe(EntityPlayer player, PipeItemsEmzuli pipe) {
+        super(new ContainerEmzuliPipe(player, pipe), pipe.getFilters(), TEXTURE);
 
         this.pipe = pipe;
         filterInventory = pipe.getFilters();

@@ -5,8 +5,6 @@
 package buildcraft;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -98,11 +96,11 @@ import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
-import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
 import buildcraft.core.properties.WorldPropertyIsFluidSource;
@@ -345,7 +343,7 @@ public class BuildCraftCore extends BuildCraftMod {
         ChannelHandler coreChannelHandler = ChannelHandler.createChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandlerCore());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandler());
 
         achievementManager = new AchievementManager("BuildCraft");
         FMLCommonHandler.instance().bus().register(achievementManager);

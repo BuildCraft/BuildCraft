@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
+// TODO: Convert to an enum!
 public final class GuiIds {
 
     public static final int ARCHITECT_TABLE = 10;

@@ -31,13 +31,13 @@ public class RoboticsGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileZonePlan)) {
                     return null;
                 }
-                return new GuiZonePlan(player.inventory, (TileZonePlan) tile);
+                return new GuiZonePlan(player, (TileZonePlan) tile);
 
             case GuiIds.REQUESTER:
                 if (!(tile instanceof TileRequester)) {
                     return null;
                 }
-                return new GuiRequester(player.inventory, (TileRequester) tile);
+                return new GuiRequester(player, (TileRequester) tile);
 
             default:
                 return null;
@@ -59,14 +59,14 @@ public class RoboticsGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileZonePlan)) {
                     return null;
                 } else {
-                    return new ContainerZonePlan(player.inventory, (TileZonePlan) tile);
+                    return new ContainerZonePlan(player, (TileZonePlan) tile);
                 }
 
             case GuiIds.REQUESTER:
                 if (!(tile instanceof TileRequester)) {
                     return null;
                 } else {
-                    return new ContainerRequester(player.inventory, (TileRequester) tile);
+                    return new ContainerRequester(player, (TileRequester) tile);
                 }
 
             default:

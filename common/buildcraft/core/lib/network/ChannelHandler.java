@@ -113,6 +113,8 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, Packet packet) {
+        INetHandler handler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
         packet.readData(data);
+        packet.player = CoreProxy.proxy.getPlayerFromNetHandler(handler);
     }
 }

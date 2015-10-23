@@ -43,11 +43,6 @@ public class TileEngineStone extends TileEngineWithInventory {
     }
 
     @Override
-    public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engine/stone";
-    }
-
-    @Override
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (super.onBlockActivated(player, side)) {
             return true;

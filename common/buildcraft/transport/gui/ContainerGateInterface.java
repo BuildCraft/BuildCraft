@@ -18,10 +18,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -61,15 +61,15 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
     private boolean isNetInitialized = false;
     private int lastTriggerState = 0;
 
-    public ContainerGateInterface(IInventory playerInventory, Pipe<?> pipe) {
-        super(0);
+    public ContainerGateInterface(EntityPlayer player, Pipe<?> pipe) {
+        super(player, 0);
 
         for (int i = 0; i < actionsState.length; ++i) {
             actionsState[i] = ActionActiveState.Deactivated;
         }
 
         this.pipe = pipe;
-        this.playerIInventory = playerInventory;
+        this.playerIInventory = player.inventory;
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {

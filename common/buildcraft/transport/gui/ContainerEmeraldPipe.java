@@ -15,13 +15,11 @@ import buildcraft.transport.pipes.PipeItemsEmerald;
 public class ContainerEmeraldPipe extends BuildCraftContainer {
 
     private final PipeItemsEmerald pipe;
-    private final IInventory playerInv;
     private final IInventory filterInv;
 
-    public ContainerEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
-        super(pipe.getFilters().getSizeInventory());
+    public ContainerEmeraldPipe(EntityPlayer player, PipeItemsEmerald pipe) {
+        super(player, pipe.getFilters().getSizeInventory());
         this.pipe = pipe;
-        this.playerInv = playerInventory;
         this.filterInv = pipe.getFilters();
 
         for (int i = 0; i < 9; i++) {
@@ -30,12 +28,12 @@ public class ContainerEmeraldPipe extends BuildCraftContainer {
 
         for (int l = 0; l < 3; l++) {
             for (int k1 = 0; k1 < 9; k1++) {
-                addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 79 + l * 18));
+                addSlotToContainer(new Slot(player.inventory, k1 + l * 9 + 9, 8 + k1 * 18, 79 + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; i1++) {
-            addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 137));
+            addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 137));
         }
     }
 

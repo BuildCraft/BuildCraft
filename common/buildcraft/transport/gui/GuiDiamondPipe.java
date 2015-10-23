@@ -6,6 +6,7 @@ package buildcraft.transport.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -28,9 +29,9 @@ public class GuiDiamondPipe extends GuiBuildCraft {
         }
     }
 
-    public GuiDiamondPipe(IInventory playerInventory, IDiamondPipe pipe) {
-        super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
-        this.playerInventory = playerInventory;
+    public GuiDiamondPipe(EntityPlayer player, IDiamondPipe pipe) {
+        super(new ContainerDiamondPipe(player, pipe), pipe.getFilters(), TEXTURE);
+        this.playerInventory = player.inventory;
         this.filterInventory = pipe.getFilters();
         xSize = 175;
         ySize = 225;

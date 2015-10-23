@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.network.Packet;
-import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 
@@ -51,12 +50,7 @@ public class PacketPipeTransportItemStackRequest extends Packet {
     }
 
     @Override
-    public int getID() {
-        return PacketIds.PIPE_ITEMSTACK_REQUEST;
-    }
-
-    @Override
-    public void applyData(World world) {
-
+    public void applyData(World world, EntityPlayer player) {
+        sendDataToPlayer(player);
     }
 }

@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
@@ -95,8 +95,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         }
     }
 
-    public GuiZonePlan(IInventory inventory, TileZonePlan iZonePlan) {
-        super(new ContainerZonePlan(inventory, iZonePlan), inventory, TMP_TEXTURE);
+    public GuiZonePlan(EntityPlayer player, TileZonePlan iZonePlan) {
+        super(new ContainerZonePlan(player, iZonePlan), player.inventory, TMP_TEXTURE);
 
         getContainer().gui = this;
 

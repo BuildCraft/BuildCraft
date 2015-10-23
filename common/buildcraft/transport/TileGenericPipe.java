@@ -633,16 +633,19 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
     }
 
     @Override
+    @Deprecated
     public int x() {
         return getPos().getX();
     }
 
     @Override
+    @Deprecated
     public int y() {
         return getPos().getY();
     }
 
     @Override
+    @Deprecated
     public int z() {
         return getPos().getZ();
     }

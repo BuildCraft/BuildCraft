@@ -17,6 +17,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -27,7 +28,6 @@ import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
 import buildcraft.core.lib.utils.RevolvingList;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {
@@ -37,8 +37,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
     private final byte[] prevSlotColors = new byte[4];
     private final PaintWidget[] paintWidgets = new PaintWidget[4];
 
-    public ContainerEmzuliPipe(IInventory playerInventory, PipeItemsEmzuli pipe) {
-        super(pipe.getFilters().getSizeInventory());
+    public ContainerEmzuliPipe(EntityPlayer player, PipeItemsEmzuli pipe) {
+        super(player, pipe.getFilters().getSizeInventory());
 
         this.pipe = pipe;
         filterInv = pipe.getFilters();
@@ -55,12 +55,12 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 
         for (int l = 0; l < 3; l++) {
             for (int k1 = 0; k1 < 9; k1++) {
-                addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 84 + l * 18));
+                addSlotToContainer(new Slot(player.inventory, k1 + l * 9 + 9, 8 + k1 * 18, 84 + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; i1++) {
-            addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
+            addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 142));
         }
     }
 

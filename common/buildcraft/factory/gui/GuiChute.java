@@ -7,7 +7,7 @@ package buildcraft.factory.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.factory.TileChute;
@@ -16,8 +16,8 @@ public class GuiChute extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/hopper_gui.png");
 
-    public GuiChute(InventoryPlayer inventory, TileChute tile) {
-        super(new ContainerChute(inventory, tile));
+    public GuiChute(EntityPlayer player, TileChute tile) {
+        super(new ContainerChute(player, tile));
     }
 
     @Override

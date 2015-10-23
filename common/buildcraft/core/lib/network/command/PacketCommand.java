@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
 
@@ -23,8 +22,6 @@ public class PacketCommand extends Packet {
     public Object target;
     public CommandTarget handler;
     private CommandWriter writer;
-    /** Only used for reading */
-    private EntityPlayer player;
 
     static {
         targets = new ArrayList<CommandTarget>();
@@ -72,16 +69,10 @@ public class PacketCommand extends Packet {
         command = NetworkUtils.readUTF(data);
         handler = targets.get(data.readUnsignedByte());
         stream = data; // for further reading
-        this.player = player;
     }
 
     @Override
-    public int getID() {
-        return PacketIds.COMMAND;
-    }
-
-    @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (handler != null) {
             ICommandReceiver receiver = handler.handle(player, stream, world);
             if (receiver != null) {

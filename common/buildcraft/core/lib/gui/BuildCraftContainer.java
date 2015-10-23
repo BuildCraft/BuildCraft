@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,9 +24,6 @@ import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.PacketGuiWidget;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
 
 public abstract class BuildCraftContainer extends Container {
 
@@ -60,8 +58,8 @@ public abstract class BuildCraftContainer extends Container {
         BuildCraftCore.instance.sendToPlayer((EntityPlayer) player, pkt);
     }
 
-    public void handleWidgetClientData(int widgetId, ByteBuf data) {
-        InputStream input = new ByteBufInputStream(data);
+    public void handleWidgetClientData(int widgetId, byte[] data) {
+        InputStream input = new ByteArrayInputStream(data);
         DataInputStream stream = new DataInputStream(input);
 
         try {

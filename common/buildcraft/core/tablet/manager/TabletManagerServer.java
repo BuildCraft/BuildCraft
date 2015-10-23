@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import buildcraft.core.tablet.TabletServer;
 
-public class TabletManagerServer {
-    public static final TabletManagerServer INSTANCE = new TabletManagerServer();
+public enum TabletManagerServer {
+    INSTANCE;
 
     private HashMap<EntityPlayer, TabletThread> threads = new HashMap<EntityPlayer, TabletThread>();
 

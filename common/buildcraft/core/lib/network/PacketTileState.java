@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -52,14 +51,9 @@ public class PacketTileState extends PacketCoordinates {
      *
      * @param pos - the coordinates the tile to sync */
     public PacketTileState(TileEntity tile) {
-        super(PacketIds.STATE_UPDATE, tile);
+        super(tile);
         tempWorld = tile.getWorld();
         isChunkDataPacket = true;
-    }
-
-    @Override
-    public int getID() {
-        return PacketIds.STATE_UPDATE;
     }
 
     public void addStateForSerialization(byte stateId, ISerializable state) {
@@ -92,7 +86,7 @@ public class PacketTileState extends PacketCoordinates {
     }
 
     @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof ISyncedTile) {

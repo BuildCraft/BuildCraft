@@ -14,12 +14,10 @@ import io.netty.buffer.ByteBuf;
 public abstract class PacketCoordinates extends Packet {
 
     public BlockPos pos;
-    private int id;
 
     public PacketCoordinates() {}
 
-    public PacketCoordinates(int id, TileEntity tile) {
-        this.id = id;
+    public PacketCoordinates(TileEntity tile) {
         this.tempWorld = tile.getWorld();
         this.dimensionId = tempWorld.provider.getDimensionId();
         this.pos = tile.getPos();
@@ -28,7 +26,6 @@ public abstract class PacketCoordinates extends Packet {
     @Override
     public void writeData(ByteBuf data, World world, EntityPlayer player) {
         super.writeData(data, world, player);
-        data.writeByte(id);
         data.writeInt(pos.getX());
         data.writeInt(pos.getY());
         data.writeInt(pos.getZ());
@@ -37,13 +34,7 @@ public abstract class PacketCoordinates extends Packet {
     @Override
     public void readData(ByteBuf data) {
         super.readData(data);
-        id = data.readByte();
         pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
-    }
-
-    @Override
-    public int getID() {
-        return id;
     }
 
     @Override
@@ -51,12 +42,9 @@ public abstract class PacketCoordinates extends Packet {
         StringBuilder builder = new StringBuilder();
         builder.append("PacketCoordinates [pos=");
         builder.append(pos);
-        builder.append(", id=");
-        builder.append(id);
         builder.append(", super=");
         builder.append(super.toString());
         builder.append("]");
         return builder.toString();
     }
-
 }

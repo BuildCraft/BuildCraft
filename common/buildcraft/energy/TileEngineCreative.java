@@ -35,11 +35,6 @@ public class TileEngineCreative extends TileEngineBase {
     }
 
     @Override
-    public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engine/creative";
-    }
-
-    @Override
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (!getWorld().isRemote) {
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;

@@ -37,21 +37,21 @@ public class FactoryGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileAutoWorkbench)) {
                     return null;
                 } else {
-                    return new GuiAutoCrafting(player.inventory, world, (TileAutoWorkbench) tile);
+                    return new GuiAutoCrafting(player, world, (TileAutoWorkbench) tile);
                 }
 
             case GuiIds.REFINERY:
                 if (!(tile instanceof TileRefinery)) {
                     return null;
                 } else {
-                    return new GuiRefinery(player.inventory, (TileRefinery) tile);
+                    return new GuiRefinery(player, (TileRefinery) tile);
                 }
 
             case GuiIds.HOPPER:
                 if (!(tile instanceof TileChute)) {
                     return null;
                 } else {
-                    return new GuiChute(player.inventory, (TileChute) tile);
+                    return new GuiChute(player, (TileChute) tile);
                 }
 
             default:
@@ -76,21 +76,21 @@ public class FactoryGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileAutoWorkbench)) {
                     return null;
                 } else {
-                    return new ContainerAutoWorkbench(player.inventory, (TileAutoWorkbench) tile);
+                    return new ContainerAutoWorkbench(player, (TileAutoWorkbench) tile);
                 }
 
             case GuiIds.REFINERY:
                 if (!(tile instanceof TileRefinery)) {
                     return null;
                 } else {
-                    return new ContainerRefinery(player.inventory, (TileRefinery) tile);
+                    return new ContainerRefinery(player, (TileRefinery) tile);
                 }
 
             case GuiIds.HOPPER:
                 if (!(tile instanceof TileChute)) {
                     return null;
                 } else {
-                    return new ContainerChute(player.inventory, (TileChute) tile);
+                    return new ContainerChute(player, (TileChute) tile);
                 }
 
             default:

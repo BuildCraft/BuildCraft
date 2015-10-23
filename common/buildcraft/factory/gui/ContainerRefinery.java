@@ -5,15 +5,14 @@
 package buildcraft.factory.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fluids.Fluid;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.BuildCraftFactory;
 import buildcraft.factory.TileRefinery;
 
 import io.netty.buffer.ByteBuf;
@@ -21,17 +20,17 @@ import io.netty.buffer.ByteBuf;
 public class ContainerRefinery extends BuildCraftContainer {
     public TileRefinery refinery;
 
-    public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-        super(refinery.getSizeInventory());
+    public ContainerRefinery(EntityPlayer player, TileRefinery refinery) {
+        super(player, 0);
 
         for (int l = 0; l < 3; l++) {
             for (int k1 = 0; k1 < 9; k1++) {
-                addSlotToContainer(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+                addSlotToContainer(new Slot(player.inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; i1++) {
-            addSlotToContainer(new Slot(inventory, i1, 8 + i1 * 18, 181));
+            addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 181));
         }
 
         this.refinery = refinery;

@@ -5,8 +5,8 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import buildcraft.core.tablet.TabletClient;
 
-public class TabletManagerClient {
-    public static final TabletManagerClient INSTANCE = new TabletManagerClient();
+public enum TabletManagerClient {
+    INSTANCE;
 
     private static TabletClient currentTablet;
     private static TabletThread currentTabletThread;

@@ -16,23 +16,23 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.BuildCraftTransport;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeItemsDiamond extends Pipe<PipeTransportItems>implements IDiamondPipe {
+public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamondPipe {
     private class SimpleFilterInventory extends SimpleInventory {
         protected int[] filterCounts = new int[6];
 

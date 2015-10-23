@@ -16,7 +16,6 @@ import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
@@ -77,33 +76,6 @@ public class PacketHandlerTransport extends PacketHandler {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    /** Updates the display power on a power pipe
-     *
-     * @param packetPower */
-    private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
-        World world = player.worldObj;
-        if (world.isAirBlock(packetPower.pos)) {
-            return;
-        }
-
-        TileEntity entity = world.getTileEntity(packetPower.pos);
-        if (!(entity instanceof TileGenericPipe)) {
-            return;
-        }
-
-        TileGenericPipe pipe = (TileGenericPipe) entity;
-        if (pipe.pipe == null) {
-            return;
-        }
-
-        if (!(pipe.pipe.transport instanceof PipeTransportPower)) {
-            return;
-        }
-
-        ((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
-
     }
 
     /** Retrieves pipe at specified coordinates if any.

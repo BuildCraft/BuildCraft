@@ -15,7 +15,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.network.PacketIds;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
@@ -32,7 +31,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public byte[] flow = new byte[6];
 
     public PacketFluidUpdate(TileGenericPipe tileG) {
-        super(PacketIds.PIPE_LIQUID, tileG);
+        super(tileG);
     }
 
     public PacketFluidUpdate(TileGenericPipe tileG, boolean chunkPacket) {
@@ -93,12 +92,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
     }
 
     @Override
-    public int getID() {
-        return PacketIds.PIPE_LIQUID;
-    }
-
-    @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (world.isAirBlock(pos)) {
             return;
         }
@@ -119,8 +113,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         PipeTransportFluids trans = (PipeTransportFluids) pipe.pipe.transport;
 
-        boolean fluidBefore = false;
-        boolean fluidAfter = false;
+        // boolean fluidBefore = false;
+        // boolean fluidAfter = false;
 
         renderCache = trans.renderCache;
 
@@ -141,11 +135,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         for (int dir = 0; dir < 7; dir++) {
             if (delta.get(dir + 1)) {
-                boolean before = renderCache.amount[dir] > 0;
+                // boolean before = renderCache.amount[dir] > 0;
                 renderCache.amount[dir] = amount[dir];
-                boolean after = renderCache.amount[dir] > 0;
-                fluidBefore |= before;
-                fluidAfter |= after;
+                // boolean after = renderCache.amount[dir] > 0;
+                // fluidBefore |= before;
+                // fluidAfter |= after;
             }
             if (dir < 6) {
                 trans.clientDisplayFlowConnection[dir] = flow[dir];

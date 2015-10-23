@@ -9,7 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 
@@ -24,7 +23,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
     public PacketPowerUpdate() {}
 
     public PacketPowerUpdate(TileEntity tile) {
-        super(PacketIds.PIPE_POWER, tile);
+        super(tile);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
     }
 
     @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (world.isAirBlock(pos)) {
             return;
         }

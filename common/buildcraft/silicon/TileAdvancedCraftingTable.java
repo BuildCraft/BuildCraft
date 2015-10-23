@@ -42,10 +42,9 @@ import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory {
+public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory, PacketSlotChange.ITile {
 
     private static final int[] SLOTS = Utils.createSlotArray(0, 24);
     private static final EnumSet<EnumFacing> SEARCH_SIDES = EnumSet.of(EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST,
@@ -372,13 +371,13 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         }
     }
 
+    @Override
     public void updateCraftingMatrix(int slot, ItemStack stack) {
         craftingSlots.setInventorySlotContents(slot, stack);
         updateRecipe();
 
         if (worldObj.isRemote) {
-            PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, worldObj.provider.getDimensionId(), getPos(), slot,
-                    stack);
+            PacketSlotChange packet = new PacketSlotChange(this, slot, stack);
             BuildCraftSilicon.instance.sendToServer(packet);
         }
     }

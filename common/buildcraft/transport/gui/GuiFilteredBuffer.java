@@ -7,7 +7,7 @@ package buildcraft.transport.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -20,10 +20,10 @@ public class GuiFilteredBuffer extends GuiContainer {
     IInventory playerInventory;
     TileFilteredBuffer filteredBuffer;
 
-    public GuiFilteredBuffer(InventoryPlayer playerInventory, TileFilteredBuffer filteredBuffer) {
-        super(new ContainerFilteredBuffer(playerInventory, filteredBuffer));
+    public GuiFilteredBuffer(EntityPlayer player, TileFilteredBuffer filteredBuffer) {
+        super(new ContainerFilteredBuffer(player, filteredBuffer));
 
-        this.playerInventory = playerInventory;
+        this.playerInventory = player.inventory;
         this.filteredBuffer = filteredBuffer;
         xSize = 175;
         ySize = 169;

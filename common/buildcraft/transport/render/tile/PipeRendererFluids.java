@@ -120,25 +120,33 @@ public class PipeRendererFluids {
             boolean sides = false;
 
             for (EnumFacing connection : EnumFacing.VALUES) {
-                boolean connected = renderData.amount[connection.ordinal()] > 0;
-                if (connection.getAxis() != Axis.Y && connected) {
-                    sides = true;
+                float amount = renderData.amount[connection.ordinal()] / (float) trans.getCapacity();
+                if (amount > 0) {
+                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                    GL11.glPushMatrix();
+                    GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
+                    GL11.glPopMatrix();
                 }
-                if (connected) {// Render the outer connection
-                    int ordinal = connection.ordinal();
-                    float amount = renderData.amount[ordinal] / (float) trans.getCapacity();
-                    double fluDiff = renderData.flow[ordinal] * diff * FLOW_MULTIPLIER;
-
-                    trans.clientDisplayFlowConnection[ordinal] += fluDiff;
-                    while (trans.clientDisplayFlowConnection[ordinal] < 0) {
-                        trans.clientDisplayFlowConnection[ordinal] += 16;
-                    }
-                    while (trans.clientDisplayFlowConnection[ordinal] >= 16) {
-                        trans.clientDisplayFlowConnection[ordinal] -= 16;
-                    }
-
-                    renderConnection(sprite, amount, trans.clientDisplayFlowConnection[ordinal], connection);
-                }
+                //
+                // boolean connected = renderData.amount[connection.ordinal()] > 0;
+                // if (connection.getAxis() != Axis.Y && connected) {
+                // sides = true;
+                // }
+                // if (connected) {// Render the outer connection
+                // int ordinal = connection.ordinal();
+                // float amount = renderData.amount[ordinal] / (float) trans.getCapacity();
+                // double fluDiff = renderData.flow[ordinal] * diff * FLOW_MULTIPLIER;
+                //
+                // trans.clientDisplayFlowConnection[ordinal] += fluDiff;
+                // while (trans.clientDisplayFlowConnection[ordinal] < 0) {
+                // trans.clientDisplayFlowConnection[ordinal] += 16;
+                // }
+                // while (trans.clientDisplayFlowConnection[ordinal] >= 16) {
+                // trans.clientDisplayFlowConnection[ordinal] -= 16;
+                // }
+                //
+                // renderConnection(sprite, amount, trans.clientDisplayFlowConnection[ordinal], connection);
+                // }
             }
             if (above) {
                 float amount = renderData.amount[6] / (float) trans.getCapacity();
@@ -151,7 +159,7 @@ public class PipeRendererFluids {
                 GL11.glPopMatrix();
             }
 
-            if (!above || sides) {
+            if (sides) {
                 float amount = renderData.amount[6] / (float) trans.getCapacity();
                 int stage = (int) (amount * (DISPLAY_STAGES - 1));
                 if (stage >= DISPLAY_STAGES) {

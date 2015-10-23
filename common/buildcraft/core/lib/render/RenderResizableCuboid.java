@@ -103,6 +103,8 @@ public class RenderResizableCuboid extends Render {
     private static final int V_MAX = 3;
 
     static {
+        // Static constants taken directly from minecraft's block renderer
+        // ( net.minecraft.client.renderer.BlockModelRenderer.EnumNeighborInfo )
         aoMap.put(EnumFacing.UP, Utils.vec3(1));
         aoMap.put(EnumFacing.DOWN, Utils.vec3(0.5));
         aoMap.put(EnumFacing.NORTH, Utils.vec3(0.8));

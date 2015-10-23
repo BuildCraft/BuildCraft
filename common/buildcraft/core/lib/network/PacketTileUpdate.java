@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -51,7 +52,7 @@ public class PacketTileUpdate extends PacketUpdate {
     }
 
     @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (!targetExists(world)) {
             return;
         }

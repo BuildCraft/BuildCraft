@@ -46,7 +46,8 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         int dimId = world.provider.getDimensionId();
         Queue<Packet> queue = getQueue(side, dimId);
         while ((packet = queue.poll()) != null) {
-            packet.applyData(world);
+            // Pass the packets player back to it (It was not accessible to subtypes)
+            packet.applyData(world, packet.player);
         }
     }
 

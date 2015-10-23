@@ -8,12 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
 
+/** WARNING: Only sent to the client! */
 public class PacketGuiWidget extends Packet {
-
     private byte windowId, widgetId;
     private byte[] payload;
 
@@ -32,6 +31,7 @@ public class PacketGuiWidget extends Packet {
         super.writeData(data, world, player);
         data.writeByte(windowId);
         data.writeByte(widgetId);
+        data.writeShort(payload.length);
         data.writeBytes(payload);
     }
 
@@ -40,21 +40,17 @@ public class PacketGuiWidget extends Packet {
         super.readData(data);
         windowId = data.readByte();
         widgetId = data.readByte();
+        int length = data.readShort();
+        payload = new byte[length];
+        data.readBytes(payload);
+    }
 
-        if (player.openContainer instanceof BuildCraftContainer && player.openContainer.windowId == windowId) {
-            ((BuildCraftContainer) player.openContainer).handleWidgetClientData(widgetId, data);
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (player != null) {
+            if (player.openContainer instanceof BuildCraftContainer && player.openContainer.windowId == windowId) {
+                ((BuildCraftContainer) player.openContainer).handleWidgetClientData(widgetId, payload);
+            }
         }
     }
-
-    @Override
-    public int getID() {
-        return PacketIds.GUI_WIDGET;
-    }
-
-    @Override
-    public void applyData(World world) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

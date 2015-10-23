@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -52,8 +53,8 @@ public class GuiRequester extends GuiAdvancedInterface {
         }
     }
 
-    public GuiRequester(IInventory iPlayerInventory, TileRequester iRequester) {
-        super(new ContainerRequester(iPlayerInventory, iRequester), iPlayerInventory, TEXTURE);
+    public GuiRequester(EntityPlayer player, TileRequester iRequester) {
+        super(new ContainerRequester(player, iRequester), player.inventory, TEXTURE);
 
         getContainer().gui = this;
         getContainer().getRequestList();
@@ -62,7 +63,7 @@ public class GuiRequester extends GuiAdvancedInterface {
         ySize = 181;
 
         requester = iRequester;
-        playerInventory = iPlayerInventory;
+        playerInventory = player.inventory;
 
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 5; ++y) {

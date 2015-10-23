@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.network.PacketIds;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
@@ -126,12 +125,7 @@ public class PacketPipeTransportTraveler extends Packet {
     }
 
     @Override
-    public int getID() {
-        return PacketIds.PIPE_TRAVELER;
-    }
-
-    @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (world.isAirBlock(pos)) {
             return;
         }

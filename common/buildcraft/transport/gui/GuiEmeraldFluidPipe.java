@@ -6,6 +6,7 @@ package buildcraft.transport.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,9 +20,9 @@ public class GuiEmeraldFluidPipe extends GuiBuildCraft {
     IInventory playerInventory;
     IInventory filterInventory;
 
-    public GuiEmeraldFluidPipe(IInventory playerInventory, PipeFluidsEmerald pipe) {
-        super(new ContainerEmeraldFluidPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
-        this.playerInventory = playerInventory;
+    public GuiEmeraldFluidPipe(EntityPlayer player, PipeFluidsEmerald pipe) {
+        super(new ContainerEmeraldFluidPipe(player, pipe), pipe.getFilters(), TEXTURE);
+        this.playerInventory = player.inventory;
         this.filterInventory = pipe.getFilters();
         xSize = 176;
         ySize = 132;

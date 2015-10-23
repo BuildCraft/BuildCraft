@@ -14,10 +14,9 @@ public abstract class Packet {
     public int dimensionId;
     public World tempWorld;
 
-    @Deprecated
-    public int getID() {
-        return 0;
-    }
+    /** Set by the channel handler AFTER read time. Package-private to hint that this should NOT be used at read time,
+     * but at apply time. */
+    EntityPlayer player = null;
 
     public void readData(ByteBuf data) {
         dimensionId = data.readInt();
@@ -27,8 +26,9 @@ public abstract class Packet {
         data.writeInt(world.provider.getDimensionId());
     }
 
-    /** Called in the main world tick to apply any data that cannot be applied in a different thread. So, everything. */
-    public abstract void applyData(World world);
+    /** Called in the main world tick to apply any data that cannot be applied in a different thread. So, everything. 
+     * @param player TODO*/
+    public abstract void applyData(World world, EntityPlayer player);
 
     @Override
     public String toString() {

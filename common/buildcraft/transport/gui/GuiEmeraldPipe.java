@@ -6,7 +6,7 @@ package buildcraft.transport.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -30,17 +30,14 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
     private GuiImageButton blackListButton;
     private GuiImageButton roundRobinButton;
 
-    private IInventory playerInventory;
-    private IInventory filterInventory;
     private PipeItemsEmerald pipe;
 
-    public GuiEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
-        super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
+    public GuiEmeraldPipe(EntityPlayer player, PipeItemsEmerald pipe) {
+        super(new ContainerEmeraldPipe(player, pipe), pipe.getFilters(), TEXTURE);
 
         this.pipe = pipe;
 
-        this.playerInventory = playerInventory;
-        this.filterInventory = pipe.getFilters();
+        pipe.getFilters();
 
         xSize = 175;
         ySize = 161;

@@ -25,7 +25,7 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
     private EntityPlayer player;
 
     public ContainerList(EntityPlayer iPlayer) {
-        super(iPlayer.inventory.getSizeInventory());
+        super(iPlayer, iPlayer.inventory.getSizeInventory());
 
         player = iPlayer;
 

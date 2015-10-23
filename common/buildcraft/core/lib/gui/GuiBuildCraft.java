@@ -31,6 +31,8 @@ import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
+import buildcraft.core.lib.render.FluidRenderer;
+import buildcraft.core.lib.render.FluidRenderer.FluidType;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.SessionVars;
 
@@ -114,12 +116,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
         if (fluid == null || fluid.getFluid() == null) {
             return;
         }
-        TextureAtlasSprite icon = fluid.getFluid().getIcon(fluid);
 
-        if (icon == null) {
-            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite(
-                    "missingno");
-        }
+        TextureAtlasSprite icon = FluidRenderer.getFluidTexture(fluid.getFluid(), FluidType.STILL);
 
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));

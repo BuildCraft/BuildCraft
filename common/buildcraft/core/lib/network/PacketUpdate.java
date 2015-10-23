@@ -58,9 +58,4 @@ public abstract class PacketUpdate extends Packet {
     }
 
     public abstract void readIdentificationData(ByteBuf data);
-
-    @Override
-    public int getID() {
-        return packetId;
-    }
 }

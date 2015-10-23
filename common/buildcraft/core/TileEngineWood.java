@@ -6,7 +6,6 @@ package buildcraft.core;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
@@ -22,16 +21,6 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
     @Override
     public EnumEngineType getEngineType() {
         return EnumEngineType.WOOD;
-    }
-
-    @Override
-    public String getResourcePrefix() {
-        return "buildcraftcore:textures/blocks/engine/wood";
-    }
-
-    @Override
-    public ResourceLocation getTrunkTexture(EnumEnergyStage stage) {
-        return super.getTrunkTexture(stage == EnumEnergyStage.RED && progress < 0.5 ? EnumEnergyStage.YELLOW : stage);
     }
 
     @Override

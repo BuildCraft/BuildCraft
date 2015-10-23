@@ -67,11 +67,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-    public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engine/iron";
-    }
-
-    @Override
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (super.onBlockActivated(player, side)) {
             return true;
@@ -302,16 +297,18 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         switch (id) {
             // Fluid Fuel ID
             case 15:
-                if (FluidRegistry.getFluid(value) != null) {
-                    tankFuel.setFluid(new FluidStack(value, tankFuelAmountCache));
+                Fluid fluid = FluidRegistry.getFluid(value);
+                if (fluid != null) {
+                    tankFuel.setFluid(new FluidStack(fluid, tankFuelAmountCache));
                 } else {
                     tankFuel.setFluid(null);
                 }
                 break;
             // Fluid Coolant ID
             case 16:
-                if (FluidRegistry.getFluid(value) != null) {
-                    tankCoolant.setFluid(new FluidStack(value, tankCoolantAmountCache));
+                fluid = FluidRegistry.getFluid(value);
+                if (fluid != null) {
+                    tankCoolant.setFluid(new FluidStack(fluid, tankCoolantAmountCache));
                 } else {
                     tankCoolant.setFluid(null);
                 }

@@ -33,7 +33,7 @@ public class TransportGuiHandler implements IGuiHandler {
 
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-                return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
+                return new ContainerFilteredBuffer(player, filteredBuffer);
             }
 
             if (!(tile instanceof TileGenericPipe)) {
@@ -48,19 +48,19 @@ public class TransportGuiHandler implements IGuiHandler {
 
             switch (id) {
                 case GuiIds.PIPE_DIAMOND:
-                    return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
+                    return new ContainerDiamondPipe(player, (IDiamondPipe) pipe.pipe);
 
                 case GuiIds.PIPE_EMERALD_ITEM:
-                    return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
+                    return new ContainerEmeraldPipe(player, (PipeItemsEmerald) pipe.pipe);
 
                 case GuiIds.PIPE_LOGEMERALD_ITEM:
-                    return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+                    return new ContainerEmzuliPipe(player, (PipeItemsEmzuli) pipe.pipe);
 
                 case GuiIds.PIPE_EMERALD_FLUID:
-                    return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
+                    return new ContainerEmeraldFluidPipe(player, (PipeFluidsEmerald) pipe.pipe);
 
                 case GuiIds.GATES:
-                    return new ContainerGateInterface(player.inventory, pipe.pipe);
+                    return new ContainerGateInterface(player, pipe.pipe);
 
                 default:
                     return null;
@@ -83,7 +83,7 @@ public class TransportGuiHandler implements IGuiHandler {
 
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-                return new GuiFilteredBuffer(player.inventory, filteredBuffer);
+                return new GuiFilteredBuffer(player, filteredBuffer);
             }
 
             if (!(tile instanceof TileGenericPipe)) {
@@ -98,19 +98,19 @@ public class TransportGuiHandler implements IGuiHandler {
 
             switch (id) {
                 case GuiIds.PIPE_DIAMOND:
-                    return new GuiDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
+                    return new GuiDiamondPipe(player, (IDiamondPipe) pipe.pipe);
 
                 case GuiIds.PIPE_EMERALD_ITEM:
-                    return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
+                    return new GuiEmeraldPipe(player, (PipeItemsEmerald) pipe.pipe);
 
                 case GuiIds.PIPE_LOGEMERALD_ITEM:
-                    return new GuiEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+                    return new GuiEmzuliPipe(player, (PipeItemsEmzuli) pipe.pipe);
 
                 case GuiIds.PIPE_EMERALD_FLUID:
-                    return new GuiEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
+                    return new GuiEmeraldFluidPipe(player, (PipeFluidsEmerald) pipe.pipe);
 
                 case GuiIds.GATES:
-                    return new GuiGateInterface(player.inventory, pipe.pipe);
+                    return new GuiGateInterface(player, pipe.pipe);
 
                 default:
                     return null;

@@ -5,6 +5,7 @@
 package buildcraft.core.lib.network;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
@@ -49,7 +50,7 @@ public class PacketEntityUpdate extends PacketUpdate {
     }
 
     @Override
-    public void applyData(World world) {
+    public void applyData(World world, EntityPlayer player) {
         if (!targetExists(world)) {
             return;
         }

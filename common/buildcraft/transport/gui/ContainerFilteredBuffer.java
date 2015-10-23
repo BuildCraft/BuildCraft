@@ -5,7 +5,6 @@
 package buildcraft.transport.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
@@ -34,10 +33,10 @@ public class ContainerFilteredBuffer extends BuildCraftContainer {
     IInventory playerInventory;
     TileFilteredBuffer filteredBuffer;
 
-    public ContainerFilteredBuffer(InventoryPlayer playerInventory, TileFilteredBuffer tile) {
-        super(tile.getSizeInventory());
+    public ContainerFilteredBuffer(EntityPlayer player, TileFilteredBuffer tile) {
+        super(player, tile.getSizeInventory());
 
-        this.playerInventory = playerInventory;
+        this.playerInventory = player.inventory;
         this.filteredBuffer = tile;
 
         IInventory filters = tile.getFilters();

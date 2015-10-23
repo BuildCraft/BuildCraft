@@ -11,20 +11,20 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class PacketGuiReturn extends Packet {
-    private EntityPlayer sender;
     private IGuiReturnHandler obj;
     private byte[] extraData;
 
-    public PacketGuiReturn() {}
+    private boolean tileReturn;
+    private BlockPos pos;
+    private int entityId;
+    private ByteBuf heldData;
 
-    public PacketGuiReturn(EntityPlayer sender) {
-        this.sender = sender;
-    }
+    public PacketGuiReturn() {}
 
     public PacketGuiReturn(IGuiReturnHandler obj) {
         this.obj = obj;
@@ -53,31 +53,33 @@ public class PacketGuiReturn extends Packet {
             return;
         }
 
-        obj.writeGuiData(data);
+        ByteBuf guiData = Unpooled.buffer();
+
+        obj.writeGuiData(guiData);
 
         if (extraData != null) {
-            data.writeBytes(extraData);
+            guiData.writeBytes(extraData);
         }
+
+        int length = guiData.readableBytes();
+        data.writeInt(length);
+        data.writeBytes(guiData);
     }
 
     @Override
     public void readData(ByteBuf data) {
         super.readData(data);
-        boolean tileReturn = data.readBoolean();
+        tileReturn = data.readBoolean();
 
         if (tileReturn) {
-            TileEntity t = world.getTileEntity(new BlockPos(data.readInt(), data.readInt(), data.readInt()));
+            pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
 
-            if (t instanceof IGuiReturnHandler) {
-                ((IGuiReturnHandler) t).readGuiData(data, sender);
-            }
+            int length = data.readInt();
+            heldData = data.readBytes(length);
         } else {
-            int entityId = data.readInt();
-            Entity entity = world.getEntityByID(entityId);
-
-            if (entity instanceof IGuiReturnHandler) {
-                ((IGuiReturnHandler) entity).readGuiData(data, sender);
-            }
+            entityId = data.readInt();
+            int length = data.readInt();
+            heldData = data.readBytes(length);
         }
     }
 
@@ -86,13 +88,19 @@ public class PacketGuiReturn extends Packet {
     }
 
     @Override
-    public int getID() {
-        return PacketIds.GUI_RETURN;
-    }
-
-    @Override
-    public void applyData(World world) {
-        // TODO Auto-generated method stub
-
+    public void applyData(World world, EntityPlayer player) {
+        if (tileReturn) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof IGuiReturnHandler) {
+                IGuiReturnHandler handler = (IGuiReturnHandler) tile;
+                handler.readGuiData(heldData, null);
+            }
+        } else {
+            Entity ent = world.getEntityByID(entityId);
+            if (ent instanceof IGuiReturnHandler) {
+                IGuiReturnHandler handler = (IGuiReturnHandler) ent;
+                handler.readGuiData(heldData, null);
+            }
+        }
     }
 }

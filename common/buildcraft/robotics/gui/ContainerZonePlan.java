@@ -6,11 +6,11 @@ package buildcraft.robotics.gui;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
@@ -19,7 +19,6 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.TileZonePlan;
 
 import io.netty.buffer.ByteBuf;
@@ -32,8 +31,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
     private TileZonePlan map;
 
-    public ContainerZonePlan(IInventory playerInventory, TileZonePlan iZonePlan) {
-        super(0);
+    public ContainerZonePlan(EntityPlayer player, TileZonePlan iZonePlan) {
+        super(player, 0);
 
         map = iZonePlan;
 
@@ -44,12 +43,12 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
         // Player inventory
         for (int l = 0; l < 3; l++) {
             for (int k1 = 0; k1 < 9; k1++) {
-                addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 88 + k1 * 18, 146 + l * 18));
+                addSlotToContainer(new Slot(player.inventory, k1 + l * 9 + 9, 88 + k1 * 18, 146 + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; i1++) {
-            addSlotToContainer(new Slot(playerInventory, i1, 88 + i1 * 18, 204));
+            addSlotToContainer(new Slot(player.inventory, i1, 88 + i1 * 18, 204));
         }
     }
 

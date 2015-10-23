@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -25,8 +25,8 @@ public class GuiRefinery extends GuiAdvancedInterface {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/refinery_filter.png");
     private final ContainerRefinery container;
 
-    public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-        super(new ContainerRefinery(inventory, refinery), refinery, TEXTURE);
+    public GuiRefinery(EntityPlayer player, TileRefinery refinery) {
+        super(new ContainerRefinery(player, refinery), refinery, TEXTURE);
 
         xSize = 175;
         ySize = 207;

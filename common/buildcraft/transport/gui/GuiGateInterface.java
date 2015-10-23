@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -87,13 +88,13 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         }
     }
 
-    public GuiGateInterface(IInventory playerInventory, Pipe<?> pipe) {
-        super(new ContainerGateInterface(playerInventory, pipe), null, null);
+    public GuiGateInterface(EntityPlayer player, Pipe<?> pipe) {
+        super(new ContainerGateInterface(player, pipe), null, null);
 
         container = (ContainerGateInterface) this.inventorySlots;
         container.gateCallback = this;
         this.pipe = pipe;
-        this.playerInventory = playerInventory;
+        this.playerInventory = player.inventory;
         this.instance = this;
     }
 
