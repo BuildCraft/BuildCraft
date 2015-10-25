@@ -105,7 +105,7 @@ public class AIRobotBreak extends AIRobot {
 							.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
 									blockToBreak.y, blockToBreak.z, robot);
 
-					if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+					if (robot.getHeldItem().stackSize == 0) {
 						robot.setItemInUse(null);
 					}
 				}
