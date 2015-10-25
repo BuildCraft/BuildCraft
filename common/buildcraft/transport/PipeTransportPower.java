@@ -475,15 +475,15 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	static {
-		powerCapacities.put(PipePowerCobblestone.class, 80);
-		powerCapacities.put(PipePowerStone.class, 160);
-		powerCapacities.put(PipePowerWood.class, 320);
-		powerCapacities.put(PipePowerSandstone.class, 320);
-		powerCapacities.put(PipePowerQuartz.class, 640);
-		powerCapacities.put(PipePowerIron.class, 1280);
-		powerCapacities.put(PipePowerGold.class, 2560);
-		powerCapacities.put(PipePowerEmerald.class, 2560);
-		powerCapacities.put(PipePowerDiamond.class, 10240);
+		powerCapacities.put(PipePowerCobblestone.class, TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerStone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerWood.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerSandstone.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerQuartz.class, 8 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+		powerCapacities.put(PipePowerDiamond.class, 128 * TransportConstants.PIPE_POWER_BASE_CAP);
 
 		powerResistances.put(PipePowerCobblestone.class, 0.05F);
 		powerResistances.put(PipePowerStone.class, 0.025F);

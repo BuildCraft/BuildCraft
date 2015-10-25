@@ -13,17 +13,22 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 	public static final int SLOT_OUTPUT = 9;
+	public final IInventory clientOutputInv = new SimpleInventory(1, "Preview", 64);
+
 	private static final int CYCLE_LENGTH = 16;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
 	private int tick = 0;
@@ -58,7 +63,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 		updateRecipeOutput();
 
-		ItemStack output = getStackInSlot(10);
+		ItemStack output = clientOutputInv.getStackInSlot(0);
 		if (!isRoomForOutput(output)) {
 			setEnergy(0);
 			return;
@@ -100,22 +105,24 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	}
 
 	private void updateRecipeOutput() {
-		if (activeRecipe == null) {
-			inv.setInventorySlotContents(10, null);
-			return;
+		ItemStack oldClientOutput = clientOutputInv.getStackInSlot(0);
+
+		activeRecipeValid = false;
+		clientOutputInv.setInventorySlotContents(0, null);
+
+		if (activeRecipe != null) {
+			List<ItemStack> expansions = getExpansions();
+
+			if (expansions.size() > 0) {
+				clientOutputInv.setInventorySlotContents(0, activeRecipe.craft(getStackInSlot(0), expansions, true));
+			}
 		}
 
-		List<ItemStack> expansions = getExpansions();
+		activeRecipeValid = clientOutputInv.getStackInSlot(0) != null;
 
-		if (expansions.size() == 0) {
-			activeRecipeValid = false;
-			inv.setInventorySlotContents(10, null);
-			return;
+		if (!StackHelper.isEqualItem(clientOutputInv.getStackInSlot(0), oldClientOutput)) {
+			sendNetworkUpdate();
 		}
-
-		ItemStack output = activeRecipe.craft(getStackInSlot(0), expansions, true);
-		activeRecipeValid = output != null;
-		inv.setInventorySlotContents(10, output);
 	}
 
 	private void setNewActiveRecipe() {
@@ -153,11 +160,13 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 	@Override
 	public void writeData(ByteBuf buf) {
 		buf.writeByte((byte) getMaxExpansionCount());
+		NetworkUtils.writeStack(buf, clientOutputInv.getStackInSlot(0));
 	}
 
 	@Override
 	public void readData(ByteBuf buf) {
 		maxExpCountClient = buf.readByte();
+		clientOutputInv.setInventorySlotContents(0, NetworkUtils.readStack(buf));
 	}
 
 	public int getMaxExpansionCount() {
@@ -193,7 +202,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
 	@Override
 	public int getSizeInventory() {
-		return 11;
+		return 10;
 	}
 
 	@Override

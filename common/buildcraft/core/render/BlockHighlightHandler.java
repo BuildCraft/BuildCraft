@@ -25,7 +25,6 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import buildcraft.core.lib.render.ICustomHighlight;
 
 public class BlockHighlightHandler {
-
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void handleBlockHighlight(DrawBlockHighlightEvent e) {
@@ -37,18 +36,21 @@ public class BlockHighlightHandler {
 			if (block instanceof ICustomHighlight) {
 				AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, x, y, z, e.player);
 				Vec3 pos = e.player.getPosition(e.partialTicks);
+
 				GL11.glEnable(GL11.GL_BLEND);
 				OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 				GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.4F);
 				GL11.glLineWidth(2.0F);
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				GL11.glDepthMask(false);
+
 				double exp = ((ICustomHighlight) block).getExpansion();
 				for (AxisAlignedBB aabb : aabbs) {
 					RenderGlobal.drawOutlinedBoundingBox(aabb.copy().expand(exp, exp, exp)
 							.offset(x, y, z)
 							.offset(-pos.xCoord, -pos.yCoord, -pos.zCoord), -1);
 				}
+
 				GL11.glDepthMask(true);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 				GL11.glDisable(GL11.GL_BLEND);

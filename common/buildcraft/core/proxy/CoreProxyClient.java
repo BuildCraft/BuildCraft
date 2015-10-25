@@ -66,16 +66,6 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-		if (block == null) {
-			return;
-		}
-
-		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
-	}
-
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
 		if (stack.getItem() == null) {
@@ -154,7 +144,7 @@ public class CoreProxyClient extends CoreProxy {
 	public TileEntity getServerTile(TileEntity source) {
 		if (BuildCraftCore.useServerDataOnClient && Minecraft.getMinecraft().isSingleplayer() && source.getWorldObj().isRemote) {
 			WorldServer w = DimensionManager.getWorld(source.getWorldObj().provider.dimensionId);
-			if (w != null) {
+			if (w != null && w.getChunkProvider() != null) {
 				Chunk c = w.getChunkFromBlockCoords(source.xCoord, source.zCoord);
 				if (c != null) {
 					TileEntity t = c.getTileEntityUnsafe(source.xCoord & 15, source.yCoord, source.zCoord & 15);

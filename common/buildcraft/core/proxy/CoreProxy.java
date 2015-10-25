@@ -57,11 +57,6 @@ public class CoreProxy implements ICoreProxy {
 		entity.worldObj.removeEntity(entity);
 	}
 
-	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-	}
-
 	public String getItemDisplayName(ItemStack newStack) {
 		return "";
 	}

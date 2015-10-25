@@ -38,7 +38,7 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 		}
 
 		addSlot(new SlotOutput(table, 9, 138, 49));
-		addSlot(new SlotUntouchable(table, 10, 101, 36));
+		addSlot(new SlotUntouchable(table.clientOutputInv, 0, 101, 36));
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
