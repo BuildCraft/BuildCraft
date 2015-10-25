@@ -30,6 +30,7 @@ import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
@@ -114,13 +115,19 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			battery.setEnergy(0);
 			ticksSincePull = 0;
 			speedMultiplier = 1.0F;
+
+			onPostTick();
 		}
+	}
+
+	public void onPostTick() {
+
 	}
 
 	private boolean shouldTick() {
 		if (ticksSincePull < 8) {
 			return false;
-		} else {
+		} else if (ticksSincePull < 16) {
 			// Check if we have just enough energy for the next stack.
 			int meta = container.getBlockMetadata();
 
@@ -181,7 +188,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 				entityPos.moveForwards(0.6);
 
 				TravelingItem entity = makeItem(entityPos.x, entityPos.y, entityPos.z, stack);
-				entity.setSpeed(entity.getSpeed() * speedMultiplier);
+				entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
 				transport.injectItem(entity, entityPos.orientation);
 			}
 		}
