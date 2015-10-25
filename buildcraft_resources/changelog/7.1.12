@@ -16,4 +16,4 @@ Bugs fixed:
 * [#3089] Integration Table dupe (asie)
 * [#3082] Void not killing robots (asie)
 * [#3081] Emzuli Pipe behaviour bug (asie)
-
+* Robot crash with TConstruct pickaxe on world reload (asie)

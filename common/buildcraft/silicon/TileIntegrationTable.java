@@ -27,10 +27,12 @@ import buildcraft.core.lib.utils.Utils;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 	public static final int SLOT_OUTPUT = 9;
-	public final IInventory clientOutputInv = new SimpleInventory(1, "Preview", 64);
 
 	private static final int CYCLE_LENGTH = 16;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
+
+	public final IInventory clientOutputInv = new SimpleInventory(1, "Preview", 64);
+
 	private int tick = 0;
 	private IIntegrationRecipe activeRecipe;
 	private boolean activeRecipeValid = false;

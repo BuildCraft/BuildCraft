@@ -97,6 +97,9 @@ public final class BlockUtils {
 			return false;
 		}
 
+		Block block = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+
 		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, x, y, z).get();
 		int i = 0;
 		while (player.getHeldItem() != tool && i < 9) {
@@ -107,7 +110,13 @@ public final class BlockUtils {
 			player.inventory.setInventorySlotContents(i, tool);
 			i++;
 		}
-		world.getBlock(x, y, z).harvestBlock(world, player, x, y, z, world.getBlockMetadata(x, y, z));
+
+		if (!block.canHarvestBlock(player, meta)) {
+			return false;
+		}
+
+		block.onBlockHarvested(world, x, y, z, meta, player);
+		block.harvestBlock(world, player, x, y, z, meta);
 		world.setBlockToAir(x, y, z);
 
 		return true;
