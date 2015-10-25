@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.transport.Pipe;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {
@@ -74,6 +75,7 @@ public abstract class PipeEventItem extends PipeEvent {
 
 	public static class AdjustSpeed extends PipeEventItem {
 		public boolean handled = false;
+		public float slowdownAmount = TransportConstants.PIPE_SLOWDOWN_SPEED;
 
 		public AdjustSpeed(Pipe<?> pipe, TravelingItem item) {
 			super(pipe, item);

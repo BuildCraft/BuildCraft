@@ -106,7 +106,8 @@ public class GatePluggable extends PipePluggable {
 		buf.writeBoolean(realGate != null ? realGate.isGatePulsing() : false);
 
 		final int expansionsSize = expansions.length;
-		buf.writeInt(expansionsSize);
+		buf.writeShort(expansionsSize);
+
 		for (IGateExpansion expansion : expansions) {
 			buf.writeShort(GateExpansions.getExpansionID(expansion));
 		}
@@ -119,8 +120,9 @@ public class GatePluggable extends PipePluggable {
 		isLit = buf.readBoolean();
 		isPulsing = buf.readBoolean();
 
-		final int expansionsSize = buf.readInt();
+		final int expansionsSize = buf.readUnsignedShort();
 		expansions = new IGateExpansion[expansionsSize];
+
 		for (int i = 0; i < expansionsSize; i++) {
 			expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
 		}

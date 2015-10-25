@@ -54,6 +54,15 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
+	public void onPostTick() {
+		// TODO: This has a side-effect of skipping an extract every now and
+		// then if an item cannot be found, but at least it's 100% reliable.
+
+		super.onPostTick();
+		incrementFilter();
+	}
+
+	@Override
 	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
@@ -131,9 +140,6 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 					int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
 					int energyUsed = (int) (stackSize * 10 * speedMultiplier);
 					battery.useEnergy(energyUsed, energyUsed, false);
-
-					// Only increment the filter position after a successful extraction
-					incrementFilter();
 
 					return inventory.decrStackSize(k, stackSize);
 				} else {

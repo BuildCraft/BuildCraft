@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Optional;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.core.lib.utils.Utils;
 
 public final class CoreSiliconRecipes {
 	private CoreSiliconRecipes() {
@@ -16,8 +17,10 @@ public final class CoreSiliconRecipes {
 	@Optional.Method(modid = "BuildCraft|Silicon")
 	public static void loadSiliconRecipes() {
 		// Lists
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:list", 20000, new ItemStack(BuildCraftCore.listItem, 1, 1),
-				"dyeGreen", "dustRedstone", new ItemStack(Items.paper, 8));
+		if (Utils.isRegistered(BuildCraftCore.listItem)) {
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:list", 20000, new ItemStack(BuildCraftCore.listItem, 1, 1),
+					"dyeGreen", "dustRedstone", new ItemStack(Items.paper, 8));
+		}
 	}
 }
 

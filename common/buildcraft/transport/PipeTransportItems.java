@@ -58,19 +58,23 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.AdjustSpeed.class, event);
 		if (!event.handled) {
-			defaultReajustSpeed(item);
+			defaultReadjustSpeed(item, event.slowdownAmount);
 		}
 	}
 
-	public void defaultReajustSpeed(TravelingItem item) {
+	protected void defaultReadjustSpeed(TravelingItem item, float slowdownAmount) {
 		float speed = item.getSpeed();
 
-		if (speed > TransportConstants.PIPE_NORMAL_SPEED) {
-			speed -= TransportConstants.PIPE_NORMAL_SPEED;
+		if (speed > TransportConstants.PIPE_MAX_SPEED) {
+			speed = TransportConstants.PIPE_MAX_SPEED;
 		}
 
-		if (speed < TransportConstants.PIPE_NORMAL_SPEED) {
-			speed = TransportConstants.PIPE_NORMAL_SPEED;
+		if (speed > TransportConstants.PIPE_MIN_SPEED) {
+			speed -= slowdownAmount;
+		}
+
+		if (speed < TransportConstants.PIPE_MIN_SPEED) {
+			speed = TransportConstants.PIPE_MIN_SPEED;
 		}
 
 		item.setSpeed(speed);

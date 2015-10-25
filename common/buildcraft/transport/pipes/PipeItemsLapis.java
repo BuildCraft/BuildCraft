@@ -29,8 +29,6 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TransportConstants;
-import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 
@@ -92,16 +90,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	}
 
 	public void eventHandler(PipeEventItem.AdjustSpeed event) {
-		event.handled = true;
-		TravelingItem item = event.item;
-
-		if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
-			item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
-		}
-
-		if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
-			item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
-		}
+		event.slowdownAmount /= 4;
 	}
 
 	@Override

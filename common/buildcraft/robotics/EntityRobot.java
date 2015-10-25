@@ -18,6 +18,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -354,6 +355,19 @@ public class EntityRobot extends EntityRobotBase implements
 						currentDockingStationSide);
 			}
 
+			if (posY < -128) {
+				isDead = true;
+
+				BCLog.logger.info("Destroying robot " + this.toString() + " - Fallen into Void");
+				getRegistry().killRobot(this);
+			}
+
+			// The commented out part is the part which unstucks robots.
+			// It has been known to cause a lot of issues in 7.1.11.
+			// If you want to try and fix it, go ahead.
+			// Right now it will simply stop them from moving.
+
+			/*
 			if (expensiveVerificationsTracker.markTimeIfDelay(worldObj)) {
 				int collisions = 0;
 
@@ -361,16 +375,16 @@ public class EntityRobot extends EntityRobotBase implements
 				int by = (int) Math.floor(posY);
 				int bz = (int) Math.floor(posZ);
 
-				if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+				if (by >= 0 && by < worldObj.getActualHeight() && !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
 					List clist = new ArrayList();
 
-					worldObj.getBlock(bx, by, bz).addCollisionBoxesToList(worldObj, bx, by, bz, getBoundingBox(), clist, this);
+					Block block = worldObj.getBlock(bx, by, bz);
+					block.addCollisionBoxesToList(worldObj, bx, by, bz, getBoundingBox(), clist, this);
 					collisions = clist.size();
 				}
 
 				if (collisions > 0) {
 					isMovingOutOfStuck = true;
-
 					motionX = 0.0F;
 					motionY = 0.05F;
 					motionZ = 0.0F;
@@ -380,19 +394,20 @@ public class EntityRobot extends EntityRobotBase implements
 					board.abortDelegateAI();
 
 					motionY = 0.0F;
+
 				}
 			}
 
 			if (!isMovingOutOfStuck) {
-				if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
-					this.worldObj.theProfiler.startSection("bcRobotAI");
-					mainAI.cycle();
-					this.worldObj.theProfiler.endSection();
+			*/
+			if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
+				this.worldObj.theProfiler.startSection("bcRobotAI");
+				mainAI.cycle();
+				this.worldObj.theProfiler.endSection();
 
-					if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
-						energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
-						dataWatcher.updateObject(19, energySpendPerCycle);
-					}
+				if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
+					energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
+					dataWatcher.updateObject(19, energySpendPerCycle);
 				}
 			}
 		}

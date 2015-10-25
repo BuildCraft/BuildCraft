@@ -85,13 +85,17 @@ public class AIRobotBreak extends AIRobot {
 					blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
 
+			boolean continueBreaking = true;
+
 			if (robot.getHeldItem() != null) {
-				robot.getHeldItem().getItem()
+				if (robot.getHeldItem().getItem()
 						.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
-								CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
+								CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get())) {
+					continueBreaking = false;
+				}
 			}
 
-			if (BlockUtils.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000)) {
+			if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, robot.getHeldItem())) {
 				robot.worldObj.playAuxSFXAtEntity(null, 2001,
 						blockToBreak.x, blockToBreak.y, blockToBreak.z,
 						Block.getIdFromBlock(block) + (meta << 12));
