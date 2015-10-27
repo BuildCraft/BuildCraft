@@ -74,7 +74,9 @@ import buildcraft.energy.TileEngineStone;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 import buildcraft.energy.statements.EnergyStatementProvider;
+import buildcraft.energy.statements.TriggerCoolantBelowThreshold;
 import buildcraft.energy.statements.TriggerEngineHeat;
+import buildcraft.energy.statements.TriggerFuelBelowThreshold;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
@@ -106,11 +108,18 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static boolean canOilBurn;
 	public static boolean isOilDense;
 	public static double oilWellScalar = 1.0;
+
 	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static ITriggerExternal triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
 	public static ITriggerExternal triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
 	public static ITriggerExternal triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
 	public static ITriggerExternal triggerEngineOverheat = new TriggerEngineHeat(EnergyStage.OVERHEAT);
+
+	public static ITriggerExternal triggerFuelBelow25 = new TriggerFuelBelowThreshold(0.25F);
+	public static ITriggerExternal triggerFuelBelow50 = new TriggerFuelBelowThreshold(0.50F);
+
+	public static ITriggerExternal triggerCoolantBelow25 = new TriggerCoolantBelowThreshold(0.25F);
+	public static ITriggerExternal triggerCoolantBelow50 = new TriggerCoolantBelowThreshold(0.50F);
 
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;

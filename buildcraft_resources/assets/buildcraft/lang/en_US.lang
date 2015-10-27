@@ -269,6 +269,8 @@ gate.trigger.time.0=Night
 gate.trigger.time.6=Morning
 gate.trigger.time.12=Afternoon
 gate.trigger.time.18=Evening
+gate.trigger.fuelLevelBelow=Fuel level below %d%%
+gate.trigger.coolantLevelBelow=Coolant level below %d%%
 
 gui.fluidtank.empty=Empty
 
