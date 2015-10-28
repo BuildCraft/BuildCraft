@@ -35,8 +35,8 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
