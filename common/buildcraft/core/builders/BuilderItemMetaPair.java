@@ -13,7 +13,7 @@ public class BuilderItemMetaPair {
     public int meta;
 
     public BuilderItemMetaPair(ItemStack stack) {
-        if (stack != null) {
+        if (stack != null && stack.getItem() != null) {
             this.item = stack.getItem();
             this.meta = stack.getItemDamage();
         } else {
