@@ -482,6 +482,10 @@ tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
 tip.deprecated=Deprecated
 
+tip.gate.charged=Charged
+tip.gate.fullcharge=Full Charge
+tip.gate.nocharge=No Charge
+
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate
 
