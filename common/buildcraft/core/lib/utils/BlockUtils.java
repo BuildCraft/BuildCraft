@@ -88,6 +88,40 @@ public final class BlockUtils {
 		return false;
 	}
 
+	public static boolean harvestBlock(WorldServer world, int x, int y, int z, ItemStack tool) {
+		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z),
+				world.getBlockMetadata(x, y, z), CoreProxy.proxy.getBuildCraftPlayer(world).get());
+		MinecraftForge.EVENT_BUS.post(breakEvent);
+
+		if (breakEvent.isCanceled()) {
+			return false;
+		}
+
+		Block block = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+
+		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, x, y, z).get();
+		int i = 0;
+		while (player.getHeldItem() != tool && i < 9) {
+			if (i > 0) {
+				player.inventory.setInventorySlotContents(i - 1, null);
+			}
+
+			player.inventory.setInventorySlotContents(i, tool);
+			i++;
+		}
+
+		if (!block.canHarvestBlock(player, meta)) {
+			return false;
+		}
+
+		block.onBlockHarvested(world, x, y, z, meta, player);
+		block.harvestBlock(world, player, x, y, z, meta);
+		world.setBlockToAir(x, y, z);
+
+		return true;
+	}
+
 	public static boolean breakBlock(WorldServer world, int x, int y, int z, List<ItemStack> drops) {
 		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z),
 				world.getBlockMetadata(x, y, z), CoreProxy.proxy.getBuildCraftPlayer(world).get());

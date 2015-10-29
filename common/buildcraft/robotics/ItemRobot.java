@@ -36,6 +36,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
@@ -98,11 +99,11 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 			int energy = getEnergy(cpt);
 			int pct = energy * 100 / EntityRobotBase.MAX_ENERGY;
-			String enInfo = pct + "% Charged";
+			String enInfo = pct + "% " + StringUtils.localize("tip.gate.charged");
 			if (energy == EntityRobotBase.MAX_ENERGY) {
-				enInfo = "Full Charge";
+				enInfo = StringUtils.localize("tip.gate.fullcharge");
 			} else if (energy == 0) {
-				enInfo = "No Charge";
+				enInfo = StringUtils.localize("tip.gate.nocharge");
 			}
 			enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
 			list.add(enInfo);

@@ -39,6 +39,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
@@ -79,6 +80,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this)
 	};
 	public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
+
+	private SafeTimeTracker networkUpdateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor / 2);
+	private boolean shouldUpdateRequirements;
 
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase currentBuilder;
@@ -216,7 +220,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return;
 		}
 
-
 		if (initNBT != null) {
 			iterateBpt(true);
 
@@ -262,7 +265,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (path != null && pathLasers.size() == 0) {
 			createLasersForPath();
-
 			sendNetworkUpdate();
 		}
 
@@ -333,7 +335,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					currentPathIterator = null;
 				}
 
-				updateRequirements();
+				scheduleRequirementUpdate();
 
 				sendNetworkUpdate();
 
@@ -373,13 +375,13 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					done = false;
 				}
 
-				updateRequirements();
+				scheduleRequirementUpdate();
 			} else {
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
 					currentBuilder.postProcessing(worldObj);
 					currentBuilder = recursiveBuilder.nextBuilder();
 
-					updateRequirements();
+					scheduleRequirementUpdate();
 				} else {
 					BlueprintBase bpt = instanciateBlueprint();
 
@@ -389,7 +391,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 						currentBuilder = recursiveBuilder.nextBuilder();
 
-						updateRequirements();
+						scheduleRequirementUpdate();
 					}
 				}
 
@@ -572,6 +574,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return;
 		}
 
+		if (shouldUpdateRequirements && networkUpdateTracker.markTimeIfDelay(worldObj)) {
+			updateRequirements();
+			shouldUpdateRequirements = false;
+		}
+
 		if ((currentBuilder == null || currentBuilder.isDone(this))
 				&& box.isInitialized()) {
 			box.reset();
@@ -591,7 +598,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		if (!isBuilding && this.isBuildingBlueprint()) {
-			updateRequirements();
+			scheduleRequirementUpdate();
 		}
 		isBuilding = this.isBuildingBlueprint();
 
@@ -612,7 +619,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	public List<RequirementItemStack> getNeededItems() {
-		return requiredToBuild;
+		return worldObj.isRemote ? requiredToBuild : (currentBuilder instanceof BptBuilderBlueprint ? ((BptBuilderBlueprint) currentBuilder).getNeededItems() : null);
 	}
 
 	@Override
@@ -657,8 +664,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	private Packet getItemRequirementsPacket(final List<RequirementItemStack> items) {
-		if (items != null) {
+	private Packet getItemRequirementsPacket(List<RequirementItemStack> itemsIn) {
+		if (itemsIn != null) {
+			final List<RequirementItemStack> items = new ArrayList<RequirementItemStack>();
+			items.addAll(itemsIn);
+
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeMedium(items.size());
@@ -716,16 +726,16 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	public void build() {
 		if (currentBuilder != null) {
 			if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
-				updateRequirements();
+				scheduleRequirementUpdate();
 			}
 		}
 	}
 
-	public void updateRequirements() {
+	private void updateRequirements() {
 		List<RequirementItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
 			currentBuilder.initialize();
-			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).getNeededItems();
 		}
 
 		for (EntityPlayer p : guiWatchers) {
@@ -733,11 +743,15 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	public void updateRequirements(EntityPlayer caller) {
+	public void scheduleRequirementUpdate() {
+		shouldUpdateRequirements = true;
+	}
+
+	public void updateRequirementsOnGuiOpen(EntityPlayer caller) {
 		List<RequirementItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
 			currentBuilder.initialize();
-			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).getNeededItems();
 		}
 
 		BuildCraftCore.instance.sendToPlayer(caller, getItemRequirementsPacket(reqCopy));
@@ -830,7 +844,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		} else {
 			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
-			return bpt.neededItems.size();
+			return bpt.getNeededItems().size();
 		}
 	}
 
@@ -842,12 +856,13 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return null;
 		} else {
 			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
+			List<RequirementItemStack> neededItems = bpt.getNeededItems();
 
-			if (bpt.neededItems.size() <= slot) {
+			if (neededItems.size() <= slot) {
 				return null;
 			}
 
-			RequirementItemStack requirement = bpt.neededItems.get(slot);
+			RequirementItemStack requirement = neededItems.get(slot);
 
 			int qty = quantityMissing(requirement.stack, requirement.size);
 
@@ -868,12 +883,13 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return stack;
 		} else {
 			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
+			List<RequirementItemStack> neededItems = bpt.getNeededItems();
 
-			if (bpt.neededItems.size() <= slot) {
+			if (neededItems.size() <= slot) {
 				return stack;
 			}
 
-			RequirementItemStack requirement = bpt.neededItems.get(slot);
+			RequirementItemStack requirement = neededItems.get(slot);
 
 			int qty = quantityMissing(requirement.stack, requirement.size);
 

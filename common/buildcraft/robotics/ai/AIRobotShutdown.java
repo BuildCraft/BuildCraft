@@ -10,8 +10,6 @@ package buildcraft.robotics.ai;
 
 import java.util.List;
 
-import net.minecraft.util.AxisAlignedBB;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
@@ -39,7 +37,7 @@ public class AIRobotShutdown extends AIRobot {
 	public void update() {
 		if (skip == 0) {
 			List<?> boxes = robot.worldObj.getCollidingBoundingBoxes(robot,
-					getRobotBox().addCoord(robot.motionX, -0.075f, robot.motionZ));
+					robot.getBoundingBox().addCoord(robot.motionX, -0.075f, robot.motionZ));
 			if (boxes.size() == 0) {
 				robot.motionY = -0.075f;
 			} else {
@@ -55,12 +53,6 @@ public class AIRobotShutdown extends AIRobot {
 		} else {
 			skip--;
 		}
-
-	}
-
-	private AxisAlignedBB getRobotBox() {
-		return AxisAlignedBB.getBoundingBox(robot.posX - 0.25d, robot.posY - 0.25d,
-				robot.posZ - 0.25d, robot.posX + 0.25d, robot.posY + 0.25d, robot.posZ + 0.25d);
 	}
 
 	@Override

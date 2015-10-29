@@ -69,6 +69,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
@@ -114,11 +115,13 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public ItemStack itemInUse;
 	public float itemAngle1 = 0;
-	public float renderItemAngle1 = 0;
 	public float itemAngle2 = 0;
 	public boolean itemActive = false;
 	public float itemActiveStage = 0;
 	public long lastUpdateTime = 0;
+
+	private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(10);
+	private boolean isMovingOutOfStuck;
 
 	private DockingStation currentDockingStation;
 	private List<ItemStack> wearables = new ArrayList<ItemStack>();
@@ -129,7 +132,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	private ResourceLocation texture;
 
-	private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
+	private WeakHashMap<Entity, Long> unreachableEntities = new WeakHashMap<Entity, Long>();
 
 	private NBTTagList stackRequestNBT;
 
@@ -350,8 +353,53 @@ public class EntityRobot extends EntityRobotBase implements
 						currentDockingStationSide);
 			}
 
+			if (posY < -128) {
+				isDead = true;
+
+				BCLog.logger.info("Destroying robot " + this.toString() + " - Fallen into Void");
+				getRegistry().killRobot(this);
+			}
+
+			// The commented out part is the part which unstucks robots.
+			// It has been known to cause a lot of issues in 7.1.11.
+			// If you want to try and fix it, go ahead.
+			// Right now it will simply stop them from moving.
+
+			/*
+			if (expensiveVerificationsTracker.markTimeIfDelay(worldObj)) {
+				int collisions = 0;
+
+				int bx = (int) Math.floor(posX);
+				int by = (int) Math.floor(posY);
+				int bz = (int) Math.floor(posZ);
+
+				if (by >= 0 && by < worldObj.getActualHeight() && !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+					List clist = new ArrayList();
+
+					Block block = worldObj.getBlock(bx, by, bz);
+					block.addCollisionBoxesToList(worldObj, bx, by, bz, getBoundingBox(), clist, this);
+					collisions = clist.size();
+				}
+
+				if (collisions > 0) {
+					isMovingOutOfStuck = true;
+					motionX = 0.0F;
+					motionY = 0.05F;
+					motionZ = 0.0F;
+				} else if (isMovingOutOfStuck) {
+					isMovingOutOfStuck = false;
+
+					board.abortDelegateAI();
+
+					motionY = 0.0F;
+
+				}
+			}
+
+			if (!isMovingOutOfStuck) {
+			*/
 			if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
-				this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
+				this.worldObj.theProfiler.startSection("bcRobotAI");
 				mainAI.cycle();
 				this.worldObj.theProfiler.endSection();
 
@@ -1124,12 +1172,21 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void unreachableEntityDetected(Entity entity) {
-		unreachableEntities.put(entity, true);
+		unreachableEntities.put(entity, worldObj.getTotalWorldTime() + 1200);
 	}
 
 	@Override
 	public boolean isKnownUnreachable(Entity entity) {
-		return unreachableEntities.containsKey(entity);
+		if (unreachableEntities.containsKey(entity)) {
+			if (unreachableEntities.get(entity) >= worldObj.getTotalWorldTime()) {
+				return true;
+			} else {
+				unreachableEntities.remove(entity);
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	protected void onRobotHit(boolean attacked) {

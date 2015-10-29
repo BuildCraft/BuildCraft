@@ -67,7 +67,7 @@ public class AIRobotUnload extends AIRobot {
 			if (!ActionRobotFilter
 					.canInteractWithItem(station, new ArrayStackOrListFilter(robotSlot.getStackInSlot()),
 							ActionStationAcceptItems.class)) {
-				return false;
+				continue;
 			}
 
 			ItemStack stack = robotSlot.getStackInSlot();
@@ -76,6 +76,28 @@ public class AIRobotUnload extends AIRobot {
 			if (used > 0) {
 				if (doUnload) {
 					robotSlot.decreaseStackInSlot(used);
+				}
+				return true;
+			}
+		}
+
+		if (robot.getHeldItem() != null) {
+			if (!ActionRobotFilter
+					.canInteractWithItem(station, new ArrayStackOrListFilter(robot.getHeldItem()),
+							ActionStationAcceptItems.class)) {
+				return false;
+			}
+
+			ItemStack stack = robot.getHeldItem();
+			int used = output.injectItem(stack, doUnload, injectSide, null);
+
+			if (used > 0) {
+				if (doUnload) {
+					if (stack.stackSize <= used) {
+						robot.setItemInUse(null);
+					} else {
+						stack.stackSize -= used;
+					}
 				}
 				return true;
 			}

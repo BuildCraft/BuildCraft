@@ -11,6 +11,7 @@ package buildcraft.core.lib.gui;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -73,8 +74,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 	protected void drawBackgroundSlots(int mouseX, int mouseY) {
 		RenderHelper.enableGUIStandardItemLighting();
 		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_TRANSFORM_BIT);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		int i1 = 240;
 		int k1 = 240;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
@@ -89,6 +91,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			}
 		}
 
+		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 

@@ -17,6 +17,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -50,6 +51,15 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
 		standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmzuli_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmzuli_Solid.ordinal();
+	}
+
+	@Override
+	public void onPostTick() {
+		// TODO: This has a side-effect of skipping an extract every now and
+		// then if an item cannot be found, but at least it's 100% reliable.
+
+		super.onPostTick();
+		incrementFilter();
 	}
 
 	@Override
@@ -88,12 +98,9 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	 */
 	@Override
 	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
-
 		if (activeFlags.isEmpty()) {
 			return null;
 		}
-
-		incrementFilter();
 
 		if (filters.getStackInSlot(currentFilter % filterCount) == null || !activeFlags.get(currentFilter % filterCount)) {
 			return null;
@@ -110,26 +117,33 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
-		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack != null && stack.stackSize > 0) {
-				ItemStack filter = getCurrentFilter();
-				if (filter == null) {
-					return null;
-				}
-				if (!StackHelper.isMatchingItemOrList(stack, filter)) {
-					continue;
-				}
-				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
-					continue;
-				}
-				if (doRemove) {
-					int stackSize = (int) Math.floor(battery.useEnergy(10, stack.stackSize * 10, false) / 10);
+	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+		if (inventory == null) {
+			return null;
+		}
 
-					return inventory.decrStackSize(i, stackSize);
+		ItemStack filter = getCurrentFilter();
+		if (filter == null) {
+			return null;
+		}
+
+		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+			ItemStack slot = inventory.getStackInSlot(k);
+
+			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
+				if (!StackHelper.isMatchingItemOrList(slot, filter)) {
+					continue;
+				}
+
+				if (doRemove) {
+					int maxStackSize = slot.stackSize;
+					int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+					int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+					battery.useEnergy(energyUsed, energyUsed, false);
+
+					return inventory.decrStackSize(k, stackSize);
 				} else {
-					return stack;
+					return slot;
 				}
 			}
 		}
@@ -226,6 +240,6 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	private ItemStack getCurrentFilter() {
-		return filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+		return filters.getStackInSlot(currentFilter % filterCount);
 	}
 }

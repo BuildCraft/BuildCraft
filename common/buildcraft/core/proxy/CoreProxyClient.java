@@ -8,21 +8,17 @@
  */
 package buildcraft.core.proxy;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -65,16 +61,6 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-		if (block == null) {
-			return;
-		}
-
-		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
-	}
-
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
 		if (stack.getItem() == null) {
@@ -151,12 +137,15 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public TileEntity getServerTile(TileEntity source) {
-		if (source.getWorldObj().isRemote) {
+		if (BuildCraftCore.useServerDataOnClient && Minecraft.getMinecraft().isSingleplayer() && source.getWorldObj().isRemote) {
 			WorldServer w = DimensionManager.getWorld(source.getWorldObj().provider.dimensionId);
-			if (w != null) {
-				TileEntity t = w.getTileEntity(source.xCoord, source.yCoord, source.zCoord);
-				if (t != null && t.getClass().equals(source.getClass())) {
-					return t;
+			if (w != null && w.getChunkProvider() != null) {
+				Chunk c = w.getChunkFromBlockCoords(source.xCoord, source.zCoord);
+				if (c != null) {
+					TileEntity t = c.getTileEntityUnsafe(source.xCoord & 15, source.yCoord, source.zCoord & 15);
+					if (t != null && t.getClass().equals(source.getClass())) {
+						return t;
+					}
 				}
 			}
 		}

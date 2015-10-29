@@ -42,8 +42,8 @@ public class IterableAlgorithmRunner extends Thread {
 				pathFinding.iterate();
 
 				long elapsedTime = new Date().getTime() - startTime;
-				double timeToWait = elapsedTime * 1.5;
-				sleep((long) timeToWait);
+				int timeToWait = (int) MathUtils.clamp((int) Math.ceil(elapsedTime * 1.5), 1, 500);
+				sleep(timeToWait);
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

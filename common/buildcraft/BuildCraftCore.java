@@ -92,6 +92,7 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.BuildingSlotMapIterator;
 import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.FillerPattern;
@@ -193,8 +194,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean hidePowerNumbers = false;
 	public static boolean hideFluidNumbers = false;
 	public static boolean canEnginesExplode = false;
+	public static boolean useServerDataOnClient = true;
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
+	public static int builderMaxPerItemFactor = 1024;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
 	public static ConfigManager mainConfigManager;
@@ -298,6 +301,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		mainConfigManager.getCat("debug").setShowInGui(false);
 		mainConfigManager.getCat("vars").setShowInGui(false);
+
+		mainConfigManager.register("general.useServerDataOnClient", BuildCraftCore.useServerDataOnClient, "Allows BuildCraft to use the integrated server's data on the client on singleplayer worlds. Disable if you're getting the odd crash caused by it.", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("general.builderMaxIterationsPerItemFactor", BuildCraftCore.builderMaxPerItemFactor, "Lower this number if BuildCraft builders/fillers are causing TPS lag. Raise it if you think they are being too slow.", ConfigManager.RestartRequirement.NONE);
 
 		mainConfigManager.register("general.miningBreaksPlayerProtectedBlocks", false, "Should BuildCraft miners be allowed to break blocks using player-specific protection?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
@@ -549,19 +555,30 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(commandBuildcraft);
 
+		/* Increase the builder speed in singleplayer mode.
+		   Singleplayer users generally run far fewer of them. */
+
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor * 4;
+		} else {
+			BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor;
+		}
+
 		if (Utils.CAULDRON_DETECTED) {
 			BCLog.logger.warn("############################################");
 			BCLog.logger.warn("#                                          #");
 			BCLog.logger.warn("#  Cauldron has been detected! Please keep #");
-			BCLog.logger.warn("# in mind that BuildCraft does NOT support #");
-			BCLog.logger.warn("#   Cauldron and we do not promise to fix  #");
-			BCLog.logger.warn("#  bugs caused by its modifications to the #");
-			BCLog.logger.warn("#   Minecraft engine. Please reconsider.   #");
+			BCLog.logger.warn("#  in mind that BuildCraft may NOT provide #");
+			BCLog.logger.warn("# support to Cauldron users, as the mod is #");
+			BCLog.logger.warn("# primarily tested without Bukkit/Spigot's #");
+			BCLog.logger.warn("#    changes to the Minecraft internals.   #");
 			BCLog.logger.warn("#                                          #");
 			BCLog.logger.warn("#  Any lag caused by BuildCraft on top of  #");
-			BCLog.logger.warn("# Cauldron likely arises from our fixes to #");
-			BCLog.logger.warn("#  their bugs, so please don't report that #");
-			BCLog.logger.warn("#  either. Thanks for your attention! ~BC  #");
+			BCLog.logger.warn("#  Cauldron likely arises from workarounds #");
+			BCLog.logger.warn("#  which we apply to make sure BuildCraft  #");
+			BCLog.logger.warn("#  works properly with Cauldron installed. #");
+			BCLog.logger.warn("#                                          #");
+			BCLog.logger.warn("#     Thanks for your attention! ~ BC devs #");
 			BCLog.logger.warn("#                                          #");
 			BCLog.logger.warn("############################################");
 
@@ -617,6 +634,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
+			useServerDataOnClient = mainConfigManager.get("general.useServerDataOnClient").getBoolean(true);
+			builderMaxPerItemFactor = mainConfigManager.get("general.builderMaxIterationsPerItemFactor").getInt();
 			hideFluidNumbers = mainConfigManager.get("display.hideFluidValues").getBoolean();
 			hidePowerNumbers = mainConfigManager.get("display.hidePowerValues").getBoolean();
 			itemLifespan = mainConfigManager.get("general.itemLifespan").getInt();
@@ -624,6 +643,8 @@ public class BuildCraftCore extends BuildCraftMod {
 			consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
 			miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
 			miningAllowPlayerProtectedBlocks = mainConfigManager.get("general.miningBreaksPlayerProtectedBlocks").getBoolean();
+
+			BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor;
 
 			if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
 				Version.check();

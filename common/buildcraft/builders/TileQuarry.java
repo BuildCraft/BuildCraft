@@ -100,7 +100,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private NBTTagCompound initNBT = null;
 
 	private BlockMiner miner;
-
 	private int ledState;
 
 	public TileQuarry() {
@@ -283,12 +282,16 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	protected boolean findFrame() {
-		int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
-		if (o == ForgeDirection.UNKNOWN) {
-			return true;
+		for (int i = 2; i < 6; i++) {
+			ForgeDirection o = ForgeDirection.getOrientation(i);
+			if (box.contains(xCoord + o.offsetX, yCoord + o.offsetY, zCoord + o.offsetZ)) {
+				return worldObj.getBlock(xCoord + o.offsetX, yCoord + o.offsetY, zCoord + o.offsetZ) == BuildCraftBuilders.frameBlock;
+			}
 		}
-		return worldObj.getBlock(xCoord + o.offsetX, yCoord + o.offsetY, zCoord + o.offsetZ) == BuildCraftBuilders.frameBlock;
+
+		// Could not find any location in box - this is strange, so obviously
+		// we're going to ignore it!
+		return true;
 	}
 
 	protected void idling() {

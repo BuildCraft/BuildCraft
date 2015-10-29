@@ -52,9 +52,13 @@ public class ContainerBuilder extends BuildCraftContainer {
 		if (!builder.getWorldObj().isRemote && playerInventory instanceof InventoryPlayer) {
 			// Refresh the requirements list for the player opening the GUI,
 			// in case he does not have it.
-			builder.updateRequirements(((InventoryPlayer) playerInventory).player);
+			builder.updateRequirementsOnGuiOpen(((InventoryPlayer) playerInventory).player);
 			builder.addGuiWatcher(((InventoryPlayer) playerInventory).player);
 		}
+	}
+
+	public TileBuilder getBuilder() {
+		return builder;
 	}
 
 	@Override

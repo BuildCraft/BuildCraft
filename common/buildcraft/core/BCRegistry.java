@@ -10,6 +10,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 
 public final class BCRegistry {
 	public static final BCRegistry INSTANCE = new BCRegistry();
@@ -56,13 +57,16 @@ public final class BCRegistry {
 
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
 		for (Object o : recipe) {
-			if (o instanceof Block && Block.getIdFromBlock((Block) o) < 0) {
+			if (o == null) {
 				return;
 			}
-			if (o instanceof Item && Item.getIdFromItem((Item) o) < 0) {
+			if (o instanceof Block && !Utils.isRegistered((Block) o)) {
 				return;
 			}
-			if (o instanceof ItemStack && ((ItemStack) o).getItem() == null) {
+			if (o instanceof Item && !Utils.isRegistered((Item) o)) {
+				return;
+			}
+			if (o instanceof ItemStack && !Utils.isRegistered((ItemStack) o)) {
 				return;
 			}
 		}

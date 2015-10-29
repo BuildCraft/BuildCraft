@@ -15,6 +15,7 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateExpansionPulsar;
@@ -33,44 +34,50 @@ public final class TransportSiliconRecipes {
 	public static void loadSiliconRecipes() {
 		GameRegistry.addShapelessRecipe(new ItemStack(BuildCraftTransport.gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), ItemRedstoneChipset.Chipset.RED.getStack(1));
 
-		// PIPE WIRE
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
-				"dyeRed", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
-				"dyeBlue", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
-				"dyeGreen", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-				"dyeYellow", "dustRedstone", "ingotIron");
-
-		// Lenses, Filters
-		for (int i = 0; i < 16; i++) {
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i),
-					ColorUtils.getOreDictionaryName(15 - i), "blockGlass");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i + 16),
-					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
+		if (Utils.isRegistered(BuildCraftTransport.lensItem)) {
+			// Lenses, Filters
+			for (int i = 0; i < 16; i++) {
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i),
+						ColorUtils.getOreDictionaryName(15 - i), "blockGlass");
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i + 16),
+						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
+			}
 		}
 
-		// GATES
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", Math.round(100000 * BuildCraftTransport.gateCostMultiplier),
-				ItemGate.makeGateItem(GateDefinition.GateMaterial.REDSTONE, GateDefinition.GateLogic.AND), ItemRedstoneChipset.Chipset.RED.getStack(),
-				PipeWire.RED.getStack());
+		// PIPE WIRE
+		if (Utils.isRegistered(PipeWire.item)) {
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
+					"dyeRed", "dustRedstone", "ingotIron");
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
+					"dyeBlue", "dustRedstone", "ingotIron");
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
+					"dyeGreen", "dustRedstone", "ingotIron");
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
+					"dyeYellow", "dustRedstone", "ingotIron");
 
-		addGateRecipe("Iron", Math.round(200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.IRON, ItemRedstoneChipset.Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe("Gold", Math.round(400000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.GOLD, ItemRedstoneChipset.Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Quartz", Math.round(600000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.QUARTZ, ItemRedstoneChipset.Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Diamond", Math.round(800000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.DIAMOND, ItemRedstoneChipset.Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
-		addGateRecipe("Emerald", Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD, ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
+			if (Utils.isRegistered(ItemRedstoneChipset.Chipset.RED.getStack()) && Utils.isRegistered(BuildCraftTransport.pipeGate)) {
+				// GATES
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", Math.round(100000 * BuildCraftTransport.gateCostMultiplier),
+						ItemGate.makeGateItem(GateDefinition.GateMaterial.REDSTONE, GateDefinition.GateLogic.AND), ItemRedstoneChipset.Chipset.RED.getStack(),
+						PipeWire.RED.getStack());
 
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe());
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe());
+				addGateRecipe("Iron", Math.round(200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.IRON, ItemRedstoneChipset.Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+				addGateRecipe("Gold", Math.round(400000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.GOLD, ItemRedstoneChipset.Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+				addGateRecipe("Quartz", Math.round(600000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.QUARTZ, ItemRedstoneChipset.Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+				addGateRecipe("Diamond", Math.round(800000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.DIAMOND, ItemRedstoneChipset.Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+						PipeWire.GREEN, PipeWire.YELLOW);
+				addGateRecipe("Emerald", Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD, ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
+						PipeWire.GREEN, PipeWire.YELLOW);
 
-		// This will only add recipes to the gate expansions.
-		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, ItemRedstoneChipset.Chipset.PULSATING.getStack());
-		GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, ItemRedstoneChipset.Chipset.QUARTZ.getStack());
-		GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, ItemRedstoneChipset.Chipset.COMP.getStack());
+				BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe());
+				BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe());
+
+				// This will only add recipes to the gate expansions.
+				GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, ItemRedstoneChipset.Chipset.PULSATING.getStack());
+				GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, ItemRedstoneChipset.Chipset.QUARTZ.getStack());
+				GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, ItemRedstoneChipset.Chipset.COMP.getStack());
+			}
+		}
 	}
 
 	@Optional.Method(modid = "BuildCraft|Silicon")

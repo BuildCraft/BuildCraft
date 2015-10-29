@@ -10,6 +10,7 @@ package buildcraft.factory.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -46,7 +47,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		bindTexture(FluidRenderer.getFluidSheet(liquid));
+		bindTexture(TextureMap.locationBlocksTexture);
 		RenderUtils.setGLColorFromInt(color);
 
 		GL11.glTranslatef((float) x + 0.125F, (float) y + 0.5F, (float) z + 0.125F);

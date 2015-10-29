@@ -9,10 +9,7 @@
 package buildcraft.core.proxy;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -55,11 +52,6 @@ public class CoreProxy implements ICoreProxy {
 	/* ENTITY HANDLING */
 	public void removeEntity(Entity entity) {
 		entity.worldObj.removeEntity(entity);
-	}
-
-	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
 	}
 
 	public String getItemDisplayName(ItemStack newStack) {

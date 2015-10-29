@@ -75,6 +75,7 @@ import buildcraft.builders.BlockQuarry;
 import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.BuilderProxyClient;
+import buildcraft.builders.BuilderTooltipHandler;
 import buildcraft.builders.BuildersGuiHandler;
 import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
@@ -108,6 +109,7 @@ import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
 import buildcraft.builders.schematics.SchematicJukebox;
+import buildcraft.builders.schematics.SchematicMetadataMask;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
@@ -344,6 +346,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
 
+		MinecraftForge.EVENT_BUS.register(new BuilderTooltipHandler());
+
 		// Standard blocks
 		ISchematicRegistry schemes = BuilderAPI.schematicRegistry;
 		schemes.registerSchematicBlock(Blocks.air, SchematicAir.class);
@@ -400,6 +404,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.redstone_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.lit_redstone_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.emerald_ore, SchematicStone.class);
+
+		schemes.registerSchematicBlock(Blocks.leaves, SchematicMetadataMask.class, 3);
+		schemes.registerSchematicBlock(Blocks.leaves2, SchematicMetadataMask.class, 3);
+		schemes.registerSchematicBlock(Blocks.sapling, SchematicMetadataMask.class, 7);
 
 		schemes.registerSchematicBlock(Blocks.monster_egg, SchematicSilverfish.class);
 

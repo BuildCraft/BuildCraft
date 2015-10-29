@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.Fluid;
@@ -29,7 +28,6 @@ import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 public final class FluidRenderer {
 
 	public static final int DISPLAY_STAGES = 100;
-	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
 	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	private static final RenderInfo liquidBlock = new RenderInfo();
@@ -73,17 +71,6 @@ public final class FluidRenderer {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
 		return icon;
-	}
-
-	public static ResourceLocation getFluidSheet(FluidStack liquid) {
-		if (liquid == null) {
-			return BLOCK_TEXTURE;
-		}
-		return getFluidSheet(liquid.getFluid());
-	}
-
-	public static ResourceLocation getFluidSheet(Fluid liquid) {
-		return BLOCK_TEXTURE;
 	}
 
 	public static void setColorForFluidStack(FluidStack fluidstack) {

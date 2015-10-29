@@ -335,15 +335,17 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 			inputPerTick[dir.ordinal()] = 0;
 			if (transferState[dir.ordinal()] != TransferState.Output) {
 				inputPerTick[dir.ordinal()] = sections[dir.ordinal()].drain(flowRate, false);
-				transferInCount++;
+				if (inputPerTick[dir.ordinal()] > 0) {
+					transferInCount++;
+				}
 			}
 		}
 
 		float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
+
 		for (ForgeDirection dir : directions) {
 			// Move liquid from input sides to the center
-			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
-
+			if (inputPerTick[dir.ordinal()] > 0) {
 				int amountToDrain = (int) (inputPerTick[dir.ordinal()] * min);
 				if (amountToDrain < 1) {
 					amountToDrain++;
@@ -423,18 +425,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 		}
 
 		return outputCount;
-	}
-
-	public FluidRenderData createServerFluidRenderData() {
-		FluidRenderData rCache = new FluidRenderData();
-		rCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
-		rCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
-		if (fluidType != null) {
-			for (int i = 0; i < 7; i++) {
-				rCache.amount[i] = sections[i].amount;
-			}
-		}
-		return rCache;
 	}
 
 	/**
@@ -678,16 +668,20 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 	}
 
 	static {
-		fluidCapacities.put(PipeFluidsClay.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+		fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+		fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 		fluidCapacities.put(PipeFluidsCobblestone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsIron.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsQuartz.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
 		fluidCapacities.put(PipeFluidsSandstone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 		fluidCapacities.put(PipeFluidsStone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-		fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+		fluidCapacities.put(PipeFluidsClay.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+		fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+		fluidCapacities.put(PipeFluidsIron.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+		fluidCapacities.put(PipeFluidsQuartz.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+		fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+		fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 	}
 }

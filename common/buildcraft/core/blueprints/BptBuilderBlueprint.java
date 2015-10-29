@@ -48,7 +48,6 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.builders.BuildingSlotEntity;
-import buildcraft.core.builders.BuildingSlotMapIterator;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryCopy;
@@ -56,12 +55,12 @@ import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
-	public ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
-
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
+	protected HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>> buildList = new HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>>();
+	protected int[] buildStageOccurences;
 
-	private HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>> buildList = new HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>>();
-	private int[] buildStageOccurences;
+	private ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
+
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotMapIterator iterator;
@@ -254,8 +253,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	private void checkDone() {
-		recomputeNeededItems();
-
 		if (getBuildListCount() == 0 && entityList.size() == 0) {
 			done = true;
 		} else {
@@ -346,7 +343,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		if (iterator == null) {
-			iterator = new BuildingSlotMapIterator(buildList, builder, buildStageOccurences);
+			iterator = new BuildingSlotMapIterator(this, builder);
 		}
 
 		BuildingSlotBlock slot;
@@ -473,6 +470,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		return null;
 	}
 
+	// TODO: Remove recomputeNeededItems() and replace with something more efficient
 	private BuildingSlot internalGetNextEntity(World world, TileAbstractBuilder builder) {
 		Iterator<BuildingSlotEntity> it = entityList.iterator();
 
@@ -481,12 +479,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (slot.isAlreadyBuilt(context)) {
 				it.remove();
+				recomputeNeededItems();
 			} else {
 				if (checkRequirements(builder, slot.schematic)) {
 					builder.consumeEnergy(slot.getEnergyRequirement());
 					useRequirements(builder, slot);
 
 					it.remove();
+					recomputeNeededItems();
 					postProcessing.add(slot);
 					builtEntities.add(slot.sequenceNumber);
 					return slot;
@@ -656,7 +656,82 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 	}
 
-	public void recomputeNeededItems() {
+	public List<RequirementItemStack> getNeededItems() {
+		return neededItems;
+	}
+
+	protected void onRemoveBuildingSlotBlock(BuildingSlotBlock slot) {
+		buildStageOccurences[slot.buildStage]--;
+		LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+
+		try {
+			stacks = slot.getRequirements(context);
+		} catch (Throwable t) {
+			// Defensive code against errors in implementers
+			t.printStackTrace();
+			BCLog.logger.throwing(t);
+		}
+
+		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
+
+		for (ItemStack stack : stacks) {
+			if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
+				continue;
+			}
+
+			StackKey key = new StackKey(stack);
+
+			if (!computeStacks.containsKey(key)) {
+				computeStacks.put(key, stack.stackSize);
+			} else {
+				Integer num = computeStacks.get(key);
+				num += stack.stackSize;
+				computeStacks.put(key, num);
+			}
+		}
+
+		for (RequirementItemStack ris : neededItems) {
+			StackKey stackKey = new StackKey(ris.stack);
+			if (computeStacks.containsKey(stackKey)) {
+				Integer num = computeStacks.get(stackKey);
+				if (ris.size <= num) {
+					recomputeNeededItems();
+					return;
+				} else {
+					neededItems.set(neededItems.indexOf(ris), new RequirementItemStack(ris.stack, ris.size - num));
+				}
+			}
+		}
+
+		sortNeededItems();
+	}
+
+	private void sortNeededItems() {
+		Collections.sort(neededItems, new Comparator<RequirementItemStack>() {
+			@Override
+			public int compare(RequirementItemStack o1, RequirementItemStack o2) {
+				if (o1.size != o2.size) {
+					return o1.size < o2.size ? 1 : -1;
+				} else {
+					ItemStack os1 = o1.stack;
+					ItemStack os2 = o2.stack;
+					if (Item.getIdFromItem(os1.getItem()) > Item.getIdFromItem(os2.getItem())) {
+						return -1;
+					} else if (Item.getIdFromItem(os1.getItem()) < Item.getIdFromItem(os2.getItem())) {
+						return 1;
+					} else if (os1.getItemDamage() > os2.getItemDamage()) {
+						return -1;
+					} else if (os1.getItemDamage() < os2.getItemDamage()) {
+						return 1;
+					} else {
+						return 0;
+					}
+				}
+			}
+		});
+	}
+
+	private void recomputeNeededItems() {
 		neededItems.clear();
 
 		HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
@@ -730,28 +805,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			neededItems.add(new RequirementItemStack(e.getKey().stack.copy(), e.getValue()));
 		}
 
-		Collections.sort(neededItems, new Comparator<RequirementItemStack>() {
-			@Override
-			public int compare(RequirementItemStack o1, RequirementItemStack o2) {
-				if (o1.size != o2.size) {
-					return o1.size < o2.size ? 1 : -1;
-				} else {
-					ItemStack os1 = o1.stack;
-					ItemStack os2 = o2.stack;
-					if (Item.getIdFromItem(os1.getItem()) > Item.getIdFromItem(os2.getItem())) {
-						return -1;
-					} else if (Item.getIdFromItem(os1.getItem()) < Item.getIdFromItem(os2.getItem())) {
-						return 1;
-					} else if (os1.getItemDamage() > os2.getItemDamage()) {
-						return -1;
-					} else if (os1.getItemDamage() < os2.getItemDamage()) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			}
-		});
+		sortNeededItems();
 	}
 
 	@Override
@@ -793,5 +847,4 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			builtEntities.add(i);
 		}
 	}
-
 }

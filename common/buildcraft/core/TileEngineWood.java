@@ -42,6 +42,11 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	}
 
 	@Override
+	public int getCurrentOutputLimit() {
+		return 10;
+	}
+
+	@Override
 	public float getPistonSpeed() {
 		if (!worldObj.isRemote) {
 			return Math.max(0.08f * getHeatLevel(), 0.01f);

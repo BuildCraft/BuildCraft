@@ -269,6 +269,10 @@ gate.trigger.time.0=Night
 gate.trigger.time.6=Morning
 gate.trigger.time.12=Afternoon
 gate.trigger.time.18=Evening
+gate.trigger.fuelLevelBelow=Fuel level below %d%%
+gate.trigger.coolantLevelBelow=Coolant level below %d%%
+
+gui.fluidtank.empty=Empty
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks
@@ -446,6 +450,7 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
+tip.PipeFluidsClay=Insertion pipe
 tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe
@@ -476,6 +481,10 @@ tip.PipePowerSandstone=Only connects to other pipes
 tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
 tip.deprecated=Deprecated
+
+tip.gate.charged=Charged
+tip.gate.fullcharge=Full Charge
+tip.gate.nocharge=No Charge
 
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate

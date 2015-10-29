@@ -21,6 +21,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
@@ -68,6 +69,18 @@ public final class Utils {
 	 * Deactivate constructor
 	 */
 	private Utils() {
+	}
+
+	public static boolean isRegistered(Block block) {
+		return block != null && Block.getIdFromBlock(block) >= 0;
+	}
+
+	public static boolean isRegistered(Item item) {
+		return item != null && Item.getIdFromItem(item) >= 0;
+	}
+
+	public static boolean isRegistered(ItemStack stack) {
+		return stack != null && isRegistered(stack.getItem());
 	}
 
 	/**
