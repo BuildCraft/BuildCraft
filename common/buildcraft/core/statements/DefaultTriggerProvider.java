@@ -11,6 +11,7 @@ package buildcraft.core.statements;
 import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -30,14 +31,24 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
 
-		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
-			res.add(BuildCraftCore.triggerEmptyInventory);
-			res.add(BuildCraftCore.triggerContainsInventory);
-			res.add(BuildCraftCore.triggerSpaceInventory);
-			res.add(BuildCraftCore.triggerFullInventory);
-			res.add(BuildCraftCore.triggerInventoryBelow25);
-			res.add(BuildCraftCore.triggerInventoryBelow50);
-			res.add(BuildCraftCore.triggerInventoryBelow75);
+		if (tile instanceof IInventory) {
+			boolean isSided = tile instanceof ISidedInventory;
+			boolean addTriggers = false;
+
+			if (isSided) {
+				int[] accessibleSlots = ((ISidedInventory) tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal());
+				addTriggers = accessibleSlots != null && accessibleSlots.length > 0;
+			}
+
+			if (addTriggers || (!isSided && ((IInventory) tile).getSizeInventory() > 0)) {
+				res.add(BuildCraftCore.triggerEmptyInventory);
+				res.add(BuildCraftCore.triggerContainsInventory);
+				res.add(BuildCraftCore.triggerSpaceInventory);
+				res.add(BuildCraftCore.triggerFullInventory);
+				res.add(BuildCraftCore.triggerInventoryBelow25);
+				res.add(BuildCraftCore.triggerInventoryBelow50);
+				res.add(BuildCraftCore.triggerInventoryBelow75);
+			}
 		}
 
 		if (tile instanceof IFluidHandler) {
