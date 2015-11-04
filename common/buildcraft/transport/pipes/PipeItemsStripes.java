@@ -85,6 +85,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 					EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
 							(int) p.x, (int) p.y, (int) p.z).get();
 
+					if (battery.useEnergy(10, 10, false) != 10) {
+						return;
+					}
+
 					for (IStripesHandler handler : PipeManager.stripesHandlers) {
 						if (handler.getType() == StripesHandlerType.BLOCK_BREAK
 								&& handler.shouldHandle(stack)) {

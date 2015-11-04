@@ -764,10 +764,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			pipe.wireSignalStrength[color.ordinal()] = 0;
 			pipe.wireSet[color.ordinal()] = false;
 
-			pipe.propagateSignalState(color, 0);
+			if (!pipe.container.getWorldObj().isRemote) {
+				pipe.propagateSignalState(color, 0);
 
-			if (isFullyDefined(pipe)) {
-				pipe.resolveActions();
+				if (isFullyDefined(pipe)) {
+					pipe.resolveActions();
+				}
 			}
 
 			pipe.container.scheduleRenderUpdate();
