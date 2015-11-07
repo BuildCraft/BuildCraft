@@ -14,19 +14,20 @@ public class BitSetCodec {
 	public byte encode(BitSet set) {
 		byte result = 0;
 		for (byte i = 0; i < 8; i++) {
-			result <<= 1;
-			result |= set.get(i) ? 1 : 0;
+			result |= set.get(i) ? (1 << i) : 0;
 		}
 		return result;
 	}
 
 	public void decode(byte data, BitSet target) {
 		byte localData = data;
+		int t = 1;
 
 		target.clear();
+
 		for (byte i = 0; i < 8; i++) {
-			target.set(7 - i, (localData & 1) != 0);
-			localData >>= 1;
+			target.set(i, (localData & t) != 0);
+			t <<= 1;
 		}
 	}
 }

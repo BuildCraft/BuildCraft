@@ -169,7 +169,7 @@ public class LensPluggable extends PipePluggable {
 	@Override
 	public void readData(ByteBuf data) {
 		int flags = data.readUnsignedByte();
-		color = (flags & 31) - 1;
+		color = (flags & 0x1F) - 1;
 		isFilter = (flags & 0x20) > 0;
 	}
 
