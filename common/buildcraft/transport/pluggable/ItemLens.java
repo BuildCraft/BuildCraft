@@ -38,7 +38,16 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamageForRenderPass(int meta, int pass) {
+		if (meta == 32) {
+			return icons[2];
+		}
 		return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getRenderPasses(int metadata) {
+		return metadata == 32 ? 1 : 2;
 	}
 
 	@Override
@@ -54,12 +63,19 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getColorFromItemStack(ItemStack stack, int pass) {
+		if (stack.getItemDamage() == 32) {
+			return 16777215;
+		}
 		return pass == 0 ? ColorUtils.getRGBColor(getDye(stack)) : 16777215;
 	}
 
 	@Override
 	public String getItemStackDisplayName(ItemStack itemstack) {
-		return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize("color." + ColorUtils.getName(getDye(itemstack))) + ")";
+		if (itemstack.getItemDamage() == 32) {
+			return StringUtils.localize("item.Filter.name") + " (" + StringUtils.localize("color.clear") + ")";
+		} else {
+			return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize("color." + ColorUtils.getName(getDye(itemstack))) + ")";
+		}
 	}
 
 	@Override
@@ -77,7 +93,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i <= 32; i++) {
 			itemList.add(new ItemStack(item, 1, i));
 		}
 	}

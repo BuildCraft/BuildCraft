@@ -52,6 +52,11 @@ public class LensPluggable extends PipePluggable {
 			zeroState[2][1] = 0.8125F;
 
 			if (renderPass == 1) {
+				int color = ((LensPluggable) pipePluggable).color;
+				if (color < 0) {
+					return;
+				}
+
 				blockStateMachine.setRenderMask(1 << side.ordinal() | (1 << (side.ordinal() ^ 1)));
 
 				for (int i = 0; i < 3; i++) {
@@ -59,7 +64,7 @@ public class LensPluggable extends PipePluggable {
 					zeroState[i][1] -= zFightOffset;
 				}
 				blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
-				((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - ((LensPluggable) pipePluggable).color));
+				((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - color));
 
 				blockStateMachine.setRenderAllSides();
 			} else {
@@ -87,6 +92,9 @@ public class LensPluggable extends PipePluggable {
 	public LensPluggable(ItemStack stack) {
 		color = stack.getItemDamage() & 15;
 		isFilter = stack.getItemDamage() >= 16;
+		if (isFilter && stack.getItemDamage() == 32) {
+			color = -1;
+		}
 	}
 
 	@Override
@@ -103,7 +111,12 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
-		return new ItemStack[]{new ItemStack(BuildCraftTransport.lensItem, 1, color | (isFilter ? 16 : 0))};
+		int meta = color | (isFilter ? 16 : 0);
+		if (isFilter && color == -1) {
+			meta = 32;
+		}
+
+		return new ItemStack[]{new ItemStack(BuildCraftTransport.lensItem, 1, meta)};
 	}
 
 	@Override
@@ -147,13 +160,13 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public void writeData(ByteBuf data) {
-		data.writeByte(color | (isFilter ? 0x20 : 0));
+		data.writeByte(((color + 1) & 0x1F) | (isFilter ? 0x20 : 0));
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		int flags = data.readUnsignedByte();
-		color = flags & 15;
+		color = (flags & 31) - 1;
 		isFilter = (flags & 0x20) > 0;
 	}
 

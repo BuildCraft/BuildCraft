@@ -44,6 +44,9 @@ public final class TransportSiliconRecipes {
 			}
 		}
 
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:16", 10000, new ItemStack(BuildCraftTransport.lensItem, 2, 32),
+				"blockGlass", Blocks.iron_bars);
+
 		// PIPE WIRE
 		if (Utils.isRegistered(PipeWire.item)) {
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
