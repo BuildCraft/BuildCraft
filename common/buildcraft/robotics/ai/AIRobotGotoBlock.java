@@ -30,6 +30,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	private float finalX, finalY, finalZ;
 	private double maxDistance = 0;
 	private BlockIndex lastBlockInPath;
+	private boolean loadedFromNBT;
 
 	public AIRobotGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -64,6 +65,13 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	@Override
 	public void update() {
+		if (loadedFromNBT) {
+			// Prevent a race condition with terminate() being called in
+			// setNextInPath.
+			setNextInPath();
+			loadedFromNBT = false;
+		}
+
 		if (path == null && pathSearch == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
@@ -181,8 +189,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			for (int i = 0; i < pathList.tagCount(); ++i) {
 				path.add(new BlockIndex(pathList.getCompoundTagAt(i)));
 			}
-
-			setNextInPath();
 		}
+
+		loadedFromNBT = true;
 	}
 }
