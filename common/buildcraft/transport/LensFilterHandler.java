@@ -22,6 +22,7 @@ public class LensFilterHandler {
 
 		for (ForgeDirection dir : event.destinations) {
 			boolean hasFilter = false;
+			boolean hasLens = false;
 			int sideColor = -1;
 			int sideLensColor = -1;
 
@@ -33,6 +34,7 @@ public class LensFilterHandler {
 					hasFilter = true;
 					sideColor = ((LensPluggable) pluggable).color;
 				} else {
+					hasLens = true;
 					sideLensColor = ((LensPluggable) pluggable).color;
 				}
 			}
@@ -47,7 +49,7 @@ public class LensFilterHandler {
 					if (hasFilter && otherColor != sideColor) {
 						// Filter colors conflict - the side is unpassable
 						continue;
-					} else if (sideLensColor >= 0) {
+					} else if (hasLens) {
 						// The closer lens color differs from the further away filter color - the side is unpassable OR treated as colorless
 						if (sideLensColor == otherColor) {
 							hasFilter = false;

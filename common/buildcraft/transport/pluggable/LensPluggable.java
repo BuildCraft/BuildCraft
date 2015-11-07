@@ -53,9 +53,6 @@ public class LensPluggable extends PipePluggable {
 
 			if (renderPass == 1) {
 				int color = ((LensPluggable) pipePluggable).color;
-				if (color < 0) {
-					return;
-				}
 
 				blockStateMachine.setRenderMask(1 << side.ordinal() | (1 << (side.ordinal() ^ 1)));
 
@@ -63,8 +60,13 @@ public class LensPluggable extends PipePluggable {
 					zeroState[i][0] += zFightOffset;
 					zeroState[i][1] -= zFightOffset;
 				}
-				blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
-				((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - color));
+
+				if (color == -1) {
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensClearOverlay.ordinal()));
+				} else {
+					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
+					((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - color));
+				}
 
 				blockStateMachine.setRenderAllSides();
 			} else {
@@ -92,7 +94,8 @@ public class LensPluggable extends PipePluggable {
 	public LensPluggable(ItemStack stack) {
 		color = stack.getItemDamage() & 15;
 		isFilter = stack.getItemDamage() >= 16;
-		if (isFilter && stack.getItemDamage() == 32) {
+		if (stack.getItemDamage() >= 32) {
+			isFilter = stack.getItemDamage() == 33;
 			color = -1;
 		}
 	}
@@ -112,8 +115,8 @@ public class LensPluggable extends PipePluggable {
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
 		int meta = color | (isFilter ? 16 : 0);
-		if (isFilter && color == -1) {
-			meta = 32;
+		if (color == -1) {
+			meta = isFilter ? 33 : 32;
 		}
 
 		return new ItemStack[]{new ItemStack(BuildCraftTransport.lensItem, 1, meta)};
@@ -179,7 +182,11 @@ public class LensPluggable extends PipePluggable {
 	private void color(TravelingItem item) {
 		if ((item.toCenter && item.input.getOpposite() == side)
 				|| (!item.toCenter && item.output == side)) {
-			item.color = EnumColor.fromId(color);
+			if (color == -1) {
+				item.color = null;
+			} else {
+				item.color = EnumColor.fromId(color);
+			}
 		}
 	}
 

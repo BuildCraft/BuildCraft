@@ -60,6 +60,8 @@ chat.pipe.power.iron.level.320=High
 chat.pipe.power.iron.level.640=Very High
 chat.pipe.power.iron.level.1280=Full Capacity
 
+color.clear=Clear
+
 color.black=Black
 color.blue=Blue
 color.brown=Brown
