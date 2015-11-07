@@ -22,7 +22,7 @@ public interface IModCommand extends ICommand {
 	@Override
 	List<String> getCommandAliases();
 
-	int getRequiredPermissionLevel();
+	int getMinimumPermissionLevel();
 
 	SortedSet<SubCommand> getChildren();
 

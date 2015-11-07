@@ -78,7 +78,7 @@ public final class CommandHelpers {
 	}
 
 	public static void processChildCommand(ICommandSender sender, SubCommand child, String[] args) {
-		if (!sender.canCommandSenderUseCommand(child.getRequiredPermissionLevel(), child.getFullCommandString())) {
+		if (!sender.canCommandSenderUseCommand(child.getMinimumPermissionLevel(), child.getFullCommandString())) {
 			throw new WrongUsageException(StatCollector.translateToLocal("command.buildcraft.noperms"));
 		}
 		String[] newargs = new String[args.length - 1];
@@ -96,8 +96,8 @@ public final class CommandHelpers {
 		if (command.getCommandAliases().size() > 0) {
 			sendLocalizedChatMessage(sender, body, "command.buildcraft.aliases", command.getCommandAliases().toString().replace("[", "").replace("]", ""));
 		}
-		if (command.getRequiredPermissionLevel() > 0) {
-			sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getRequiredPermissionLevel());
+		if (command.getMinimumPermissionLevel() > 0) {
+			sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getMinimumPermissionLevel());
 		}
 		sendLocalizedChatMessage(sender, body, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".help");
 		if (!command.getChildren().isEmpty()) {
