@@ -107,7 +107,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	@Override
-	public float getBlockHardness(World par1World, int par2, int par3, int par4) {
+	public float getBlockHardness(World world, int x, int y, int z) {
 		return BuildCraftTransport.pipeDurability;
 	}
 

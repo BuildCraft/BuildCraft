@@ -1156,6 +1156,9 @@ public class EntityRobot extends EntityRobotBase implements
 				if (wearables.size() > 0) {
 					entityDropItem(wearables.remove(wearables.size() - 1), 0);
 					syncWearablesToClient();
+				} else if (itemInUse != null) {
+					entityDropItem(itemInUse, 0);
+					itemInUse = null;
 				} else {
 					convertToItems();
 				}
