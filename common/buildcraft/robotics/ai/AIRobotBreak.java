@@ -22,7 +22,6 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
 	private BlockIndex blockToBreak;
@@ -138,9 +137,9 @@ public class AIRobotBreak extends AIRobot {
 			}
 		}
 
-		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer)robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, robot.getHeldItem()),
+		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, robot.getHeldItem()),
 				block, meta, f, blockToBreak.x, blockToBreak.y, blockToBreak.z);
-		return (f < 0 ? 0 : f);
+		return f < 0 ? 0 : f;
 	}
 
 	@Override

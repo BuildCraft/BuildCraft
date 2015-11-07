@@ -20,7 +20,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.PathFinding;
-import buildcraft.robotics.RobotUtils;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
@@ -124,10 +123,12 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private void setNextInPath() {
 		if (path.size() > 0) {
+			boolean isFirst = prevDistance == Double.MAX_VALUE;
+
 			BlockIndex next = path.getFirst();
 			prevDistance = Double.MAX_VALUE;
 
-			if (BuildCraftAPI.isSoftBlock(robot.worldObj, next.x, next.y, next.z)) {
+			if (isFirst || BuildCraftAPI.isSoftBlock(robot.worldObj, next.x, next.y, next.z)) {
 				setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
 				robot.aimItemAt(next.x, next.y, next.z);
 			} else {
