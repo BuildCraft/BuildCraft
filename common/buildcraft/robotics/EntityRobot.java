@@ -11,9 +11,11 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.netty.buffer.ByteBuf;
@@ -26,6 +28,7 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
@@ -98,6 +101,8 @@ public class EntityRobot extends EntityRobotBase implements
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation(
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
 	public static final int MAX_WEARABLES = 8;
+
+	private static Set<Integer> blacklistedItemsForUpdate = Sets.newHashSet();
 
 	public LaserData laser = new LaserData();
 	public DockingStation linkedDockingStation;
@@ -367,6 +372,18 @@ public class EntityRobot extends EntityRobotBase implements
 				}
 			}
 		}
+
+
+		// tick all carried itemstacks
+		for (int i = 0; i < inv.length; i++) {
+			updateItem(inv[i], i, false);
+		}
+
+		// tick the item the robot is currently holding
+		updateItem(itemInUse, 0, true);
+
+		// do not tick wearables or equipment from EntityLiving
+
 
 		super.onEntityUpdate();
 		this.worldObj.theProfiler.endSection();
@@ -1493,5 +1510,21 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public List<ItemStack> getWearables() {
 		return wearables;
+	}
+
+	private void updateItem(ItemStack stack, int i, boolean held) {
+		if (stack != null && stack.getItem() != null) {
+			int id = Item.getIdFromItem(stack.getItem());
+			// did this item not throw an exception before?
+			if (!blacklistedItemsForUpdate.contains(id)) {
+				try {
+					stack.getItem().onUpdate(stack, worldObj, this, i, held);
+				} catch (Exception e) {
+					// the item threw an exception, print it and do not let it update once more
+					e.printStackTrace();
+					blacklistedItemsForUpdate.add(id);
+				}
+			}
+		}
 	}
 }
