@@ -8,15 +8,14 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockMiner;
@@ -153,9 +152,6 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
     @Override
     public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
-        if (BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos)) == with) {
-            return ConnectOverride.DISCONNECT;
-        }
         return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
     }
 

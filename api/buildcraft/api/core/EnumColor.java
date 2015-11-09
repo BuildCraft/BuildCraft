@@ -15,6 +15,8 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/** Use minecraft's EnumDyeColor in as many places as possible. */
+@Deprecated
 public enum EnumColor implements IStringSerializable {
 
     BLACK,
@@ -47,8 +49,8 @@ public enum EnumColor implements IStringSerializable {
     @SideOnly(Side.CLIENT)
     private static ResourceLocation iconSheet;
 
-	@SideOnly(Side.CLIENT)
-	private static TextureAtlasSprite[] brushSprites;
+    @SideOnly(Side.CLIENT)
+    private static TextureAtlasSprite[] brushSprites;
 
     public int getDarkHex() {
         return DARK_HEX[ordinal()];
@@ -133,13 +135,13 @@ public enum EnumColor implements IStringSerializable {
         return b.toString().trim();
     }
 
-	@SideOnly(Side.CLIENT)
-	public static void registerSprites(TextureAtlasSprite[] sprites) {
-		brushSprites = sprites;
-	}
+    @SideOnly(Side.CLIENT)
+    public static void registerSprites(TextureAtlasSprite[] sprites) {
+        brushSprites = sprites;
+    }
 
-	@SideOnly(Side.CLIENT)
-	public TextureAtlasSprite getSprite() {
-		return brushSprites[ordinal()];
-	}
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getSprite() {
+        return brushSprites[ordinal()];
+    }
 }

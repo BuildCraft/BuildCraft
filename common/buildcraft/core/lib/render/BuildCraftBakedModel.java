@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
+
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
@@ -52,10 +53,11 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     protected static ImmutableMap<TransformType, TRSRTransformation> getBlockTransforms() {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
-        float scale = 0.375f;
-        Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
-        TRSRTransformation trsr = new TRSRTransformation(translation, new Quat4f(10, -45, 170, 1), new Vector3f(0.375F, 0.375F, 0.375F), null);
-        builder.put(TransformType.THIRD_PERSON, trsr);
+        // Copied from ForgeBlockStateV1
+        builder.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16),
+                TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)), new Vector3f(0.375f, 0.375f, 0.375f), null)));
+
+        // builder.put(TransformType.GUI, null);
 
         // translation = new Vector3f(1, 1, 0);
         // trsr = new TRSRTransformation(translation, new Quat4f(0, 0, 0, 1), new Vector3f(1, 1, 1), new Quat4f(0, -90,

@@ -14,6 +14,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -165,5 +166,9 @@ public class EntityResizableCuboid extends Entity {
     @Override
     public int getBrightnessForRender(float par1) {
         return brightness > 0 ? brightness : super.getBrightnessForRender(par1);
+    }
+
+    public void setPosition(Vec3 vec) {
+        setPosition(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 }

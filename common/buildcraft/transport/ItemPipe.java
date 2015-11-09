@@ -18,6 +18,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,6 +29,7 @@ import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
@@ -118,10 +120,18 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
         list.addAll(toolTip);
     }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        return renderPass;
+    }
 
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public void registerModels() {
-    // ModelHelper.registerItemModel(this, 0, "");
-    // }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        for (int i = 0; i < 17; i++) {
+            ModelHelper.registerItemModel(this, i, "_" + i);
+        }
+    }
 }

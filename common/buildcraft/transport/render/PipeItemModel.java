@@ -2,8 +2,6 @@ package buildcraft.transport.render;
 
 import java.util.List;
 
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -11,18 +9,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Vec3;
 
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.RenderResizableCuboid;
+import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemPipe;
+import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {
         super(quads, particle, DefaultVertexFormats.ITEM, getBlockTransforms());
     }
 
-    public static PipeItemModel create(ItemPipe item) {
+    public static PipeItemModel create(ItemPipe item, int colorIndex) {
         List<BakedQuad> quads = Lists.newArrayList();
 
         TextureAtlasSprite sprite = item.getSprite();
@@ -30,17 +32,36 @@ public class PipeItemModel extends BuildCraftBakedModel {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }
 
-        Vector3f center = new Vector3f(0.5f, 0.5f, 0.5f);
-        Vector3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
+        Vec3 center = Utils.VEC_HALF;
+        Vec3 radius = new Vec3(0.25, 0.5, 0.25);
 
-        for (EnumFacing face : EnumFacing.VALUES) {
-            boolean vertical = face.getAxis() == Axis.Y;
-            float[] uvs = new float[4];
-            uvs[U_MIN] = sprite.getInterpolatedU(4);
-            uvs[U_MAX] = sprite.getInterpolatedU(12);
-            uvs[V_MIN] = vertical ? sprite.getInterpolatedV(4) : sprite.getMinV();
-            uvs[V_MAX] = vertical ? sprite.getInterpolatedV(12) : sprite.getMaxV();
-            bakeDoubleFace(quads, face, center, radius, uvs);
+        EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
+        cuboid.texture = sprite;
+        cuboid.setTextureOffset(new Vec3(4, 0, 4));
+        cuboid.setPosition(center.subtract(radius));
+        cuboid.setSize(Utils.multiply(radius, 2));
+
+        RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
+
+        // Set up the colour
+        if (colorIndex != 0) {
+            radius = new Vec3(0.249, 0.499, 0.249);
+            cuboid = new EntityResizableCuboid(null);
+            cuboid.setTextureOffset(new Vec3(4, 0, 4));
+            cuboid.texture = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
+            cuboid.setPosition(center.subtract(radius));
+            cuboid.setSize(Utils.multiply(radius, 2));
+
+            List<BakedQuad> coloredQuads = Lists.newArrayList();
+            // Render it into a different list
+            RenderResizableCuboid.INSTANCE.renderCubeStatic(coloredQuads, cuboid);
+
+            int quadColor = ColorUtils.getRGBColor(colorIndex - 1);
+            // Add all of the quads we just rendered to the main list
+            for (BakedQuad coloredQuad : coloredQuads) {
+                // Change the colour to "quadColor"
+                quads.add(new BakedQuad(coloredQuad.getVertexData(), quadColor, coloredQuad.getFace()));
+            }
         }
 
         return new PipeItemModel(ImmutableList.copyOf(quads), sprite);

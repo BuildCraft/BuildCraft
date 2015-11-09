@@ -19,6 +19,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -686,9 +687,11 @@ public class BuildCraftTransport extends BuildCraftMod {
         ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:pipeBlock");
         event.modelRegistry.putObject(mrl, new PipeBlockModel());
         for (ItemPipe itemPipe : BlockGenericPipe.pipes.keySet()) {
-            mrl = ModelHelper.getItemResourceLocation(itemPipe, "");
-            event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe));
-            BCLog.logger.info("Registering " + itemPipe + " as " + mrl);
+            for (int i = 0; i < 17; i++) {
+                mrl = ModelHelper.getItemResourceLocation(itemPipe, "_" + i);
+                event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe, i));
+                BCLog.logger.info("Registering " + itemPipe + " as " + mrl);
+            }
         }
     }
 }

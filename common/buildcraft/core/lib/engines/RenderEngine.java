@@ -139,7 +139,7 @@ public class RenderEngine extends TileEntitySpecialRenderer {
                 GL11.glRotated(-angle, 0, 1, 0);
             }
             RenderUtils.translate(Utils.vec3(-0.5));
-
+            
             EntityResizableCuboid chamberCuboid = new EntityResizableCuboid(getWorld());
             chamberCuboid.texture = spriteChamber;
             chamberCuboid.setTextureOffset(new Vec3(3, 0, 3));
