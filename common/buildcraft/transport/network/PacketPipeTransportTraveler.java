@@ -42,8 +42,8 @@ public class PacketPipeTransportTraveler extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         data.writeFloat((float) item.pos.xCoord);
         data.writeFloat((float) item.pos.yCoord);
         data.writeFloat((float) item.pos.zCoord);

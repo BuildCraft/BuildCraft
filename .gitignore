@@ -20,6 +20,7 @@ modules
 
 #runtime
 run
+run_server
 
 #mac
 .DS_Store

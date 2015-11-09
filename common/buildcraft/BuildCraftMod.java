@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
@@ -54,12 +55,6 @@ public class BuildCraftMod implements IBuildCraftMod {
         public final void run() {
             try {
                 FMLEmbeddedChannel channel = source.channels.get(Side.SERVER);
-                // if (channel.attr(NetworkRegistry.NET_HANDLER).get() == null) {
-                // If the net handler has not been sent then don't write it out -it will just fail on the sender and
-                // send an empty packet to the receiver
-                // BCLog.logger.info("Dropping " + id + " as the net handler was null");
-                // return;
-                // }
                 editAttributes(channel);
                 channel.writeOutbound(packet);
             } catch (Throwable t) {
@@ -141,7 +136,9 @@ public class BuildCraftMod implements IBuildCraftMod {
     }
 
     static {
+        // Swap them when debugging
         packetSender = Executors.newSingleThreadExecutor();
+        // packetSender = ImmediateExecutor.INSTANCE;
     }
 
     private static void addSendRequest(SendRequest request) {

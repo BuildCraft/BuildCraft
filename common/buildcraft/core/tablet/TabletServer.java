@@ -2,10 +2,11 @@ package buildcraft.core.tablet;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.tablet.TabletBitmap;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.tablet.TabletBitmap;
 
 public class TabletServer extends TabletBase {
     protected final EntityPlayer player;
@@ -56,7 +57,7 @@ public class TabletServer extends TabletBase {
         if (launchProgramInternal(name)) {
             NBTTagCompound compound = new NBTTagCompound();
             compound.setString("programToLaunch", name);
-            BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound));
+            BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound, player));
         }
     }
 
@@ -64,12 +65,12 @@ public class TabletServer extends TabletBase {
         programs.removeLast();
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("doRemoveProgram", true);
-        BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound));
+        BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound, player));
     }
 
     @Override
     public void sendMessage(NBTTagCompound compound) {
         compound.setBoolean("__program", true);
-        BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound));
+        BuildCraftCore.instance.sendToPlayer(player, new PacketTabletMessage(compound, player));
     }
 }

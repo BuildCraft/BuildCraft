@@ -26,7 +26,6 @@ public class ItemBuildCraft extends Item implements IModelRegister {
 
     public ItemBuildCraft(CreativeTabs creativeTab) {
         super();
-
         setCreativeTab(creativeTab);
     }
 

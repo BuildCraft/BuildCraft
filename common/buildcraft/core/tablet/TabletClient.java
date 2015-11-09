@@ -1,10 +1,12 @@
 package buildcraft.core.tablet;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.tablet.TabletBitmap;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.tablet.TabletBitmap;
 
 public class TabletClient extends TabletBase {
     protected final TabletRenderer renderer;
@@ -52,6 +54,6 @@ public class TabletClient extends TabletBase {
     @Override
     public void sendMessage(NBTTagCompound compound) {
         compound.setBoolean("__program", true);
-        BuildCraftCore.instance.sendToServer(new PacketTabletMessage(compound));
+        BuildCraftCore.instance.sendToServer(new PacketTabletMessage(compound, Minecraft.getMinecraft().thePlayer));
     }
 }

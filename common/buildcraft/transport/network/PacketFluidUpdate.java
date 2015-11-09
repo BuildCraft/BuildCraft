@@ -67,8 +67,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
 
         byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
         // System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);

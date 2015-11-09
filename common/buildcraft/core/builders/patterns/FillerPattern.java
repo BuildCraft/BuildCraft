@@ -39,7 +39,7 @@ public abstract class FillerPattern implements IFillerPattern {
     private final ResourceLocation location;
 
     @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite sprite = null;
+    private TextureAtlasSprite sprite;
 
     public FillerPattern(String tag, EnumFillerPattern type) {
         this.tag = tag;
@@ -169,6 +169,7 @@ public abstract class FillerPattern implements IFillerPattern {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
         return sprite;
     }

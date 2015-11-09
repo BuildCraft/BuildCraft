@@ -39,8 +39,8 @@ public class PacketPowerUpdate extends PacketCoordinates {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         data.writeBoolean(overload);
         for (int i = 0; i < displayPower.length; i++) {
             data.writeByte(displayPower[i]);

@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
@@ -22,8 +21,9 @@ public class PacketTabletMessage extends Packet {
         tag = new NBTTagCompound();
     }
 
-    public PacketTabletMessage(NBTTagCompound tag) {
+    public PacketTabletMessage(NBTTagCompound tag, EntityPlayer player) {
         this.tag = tag;
+        this.playerId = player.getEntityId();
     }
 
     public NBTTagCompound getTag() {
@@ -42,9 +42,9 @@ public class PacketTabletMessage extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
-        data.writeInt(player.getEntityId());
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        data.writeInt(playerId);
         int index = data.writerIndex();
         NetworkUtils.writeNBT(data, tag);
         index = data.writerIndex() - index;

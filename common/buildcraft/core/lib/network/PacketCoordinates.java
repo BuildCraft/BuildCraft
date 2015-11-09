@@ -4,10 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 
 import io.netty.buffer.ByteBuf;
 
@@ -24,8 +22,8 @@ public abstract class PacketCoordinates extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         data.writeInt(pos.getX());
         data.writeInt(pos.getY());
         data.writeInt(pos.getZ());

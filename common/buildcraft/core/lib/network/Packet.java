@@ -18,16 +18,22 @@ public abstract class Packet {
      * but at apply time. */
     EntityPlayer player = null;
 
+    /** Default no-args constructor for constructing a received packet */
+    public Packet() {}
+
+    public Packet(int dimId) {
+        this.dimensionId = dimId;
+    }
+
     public void readData(ByteBuf data) {
         dimensionId = data.readInt();
     }
 
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        data.writeInt(world.provider.getDimensionId());
+    public void writeData(ByteBuf data) {
+        data.writeInt(dimensionId);
     }
 
-    /** Called in the main world tick to apply any data that cannot be applied in a different thread. So, everything. 
-     * @param player TODO*/
+    /** Called in the main world tick to apply any data that cannot be applied in a different thread. So, everything. */
     public abstract void applyData(World world, EntityPlayer player);
 
     @Override

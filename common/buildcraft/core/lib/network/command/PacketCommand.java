@@ -53,8 +53,8 @@ public class PacketCommand extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         NetworkUtils.writeUTF(data, command);
         data.writeByte(targets.indexOf(handler));
         handler.write(data, target);

@@ -37,8 +37,8 @@ public class PacketGuiReturn extends Packet {
     }
 
     @Override
-    public void writeData(ByteBuf data, World world, EntityPlayer player) {
-        super.writeData(data, world, player);
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
         if (obj instanceof TileEntity) {
             TileEntity tile = (TileEntity) obj;
             data.writeBoolean(true);

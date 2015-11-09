@@ -22,7 +22,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -68,7 +70,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public FacadeState(NBTTagCompound nbt) {
-            Block block = nbt.hasKey("block") ? (Block) Block.blockRegistry.getObject(nbt.getString("block")) : null;
+            String key = nbt.getString("block");
+            Block block = (Block) Block.blockRegistry.getObject(new ResourceLocation(key));
+            if (block == null) throw new NullPointerException("Could not load a block from the key \"" + key + "\"");
             int metadata = nbt.getByte("metadata");
             state = block.getStateFromMeta(metadata);
             this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getByte("wire")) : null;
@@ -108,9 +112,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public static NBTTagList writeArray(FacadeState[] states) {
-            if (states == null) {
-                return null;
-            }
+            if (states == null) { return null; }
             NBTTagList list = new NBTTagList();
             for (FacadeState state : states) {
                 NBTTagCompound stateNBT = new NBTTagCompound();
@@ -121,9 +123,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public static FacadeState[] readArray(NBTTagList list) {
-            if (list == null) {
-                return null;
-            }
+            if (list == null) { return null; }
             final int length = list.tagCount();
             FacadeState[] states = new FacadeState[length];
             for (int i = 0; i < length; i++) {
@@ -191,9 +191,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static String getFacadeStateDisplayName(FacadeState state) {
-        if (state.state == null) {
-            return StringUtils.localize("item.FacadePhased.state_transparent");
-        }
+        if (state.state == null) { return StringUtils.localize("item.FacadePhased.state_transparent"); }
         // if (state.state.getBlock().getRenderType() == 31) {
         // TODO: Find out what render type is 31... and what this now means
         // meta &= 0x3;
@@ -258,17 +256,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
         for (ItemStack stack : stacks) {
             try {
-                if (block.hasTileEntity(block.getDefaultState())) {
-                    continue;
-                }
+                if (block.hasTileEntity(block.getDefaultState())) continue;
 
                 // Check if all of these functions work correctly.
                 // If an exception is filed, or null is returned, this generally means that
                 // this block is invalid.
                 try {
-                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
-                        continue;
-                    }
+                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) continue;
                 } catch (Throwable t) {
                     continue;
                 }
@@ -285,22 +279,16 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     private static boolean isBlockBlacklisted(Block block) {
         String blockName = Utils.getNameForBlock(block);
 
-        if (blockName == null) {
-            return true;
-        }
+        if (blockName == null) return true;
 
         // Blocks blacklisted by mods should always be treated as blacklisted
-        for (String blacklistedBlock : blacklistedFacades) {
-            if (blockName.equals(blacklistedBlock)) {
-                return true;
-            }
-        }
+        for (String blacklistedBlock : blacklistedFacades)
+            if (blockName.equals(blacklistedBlock)) return true;
 
         // Blocks blacklisted by config should depend on the config settings
         for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-                return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
-            }
+            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) return true
+                ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
         }
 
         return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
@@ -308,16 +296,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
     private static boolean isBlockValidForFacade(Block block) {
         try {
-            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(block.getDefaultState())) {
-                return false;
-            }
-            if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) {
-                return false;
-            }
-
-            if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
-                return false;
-            }
+            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(block.getDefaultState())) return false;
+            if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) return false;
+            if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) return false;
 
             return true;
         } catch (Throwable ignored) {
@@ -326,14 +307,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static FacadeState[] getFacadeStates(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            return new FacadeState[0];
-        }
+        if (!stack.hasTagCompound()) return new FacadeState[0];
         NBTTagCompound nbt = stack.getTagCompound();
         nbt = migrate(stack, nbt);
-        if (!nbt.hasKey("states")) {
-            return new FacadeState[0];
-        }
+        if (!nbt.hasKey("states")) return new FacadeState[0];
         return FacadeState.readArray(nbt.getTagList("states", Constants.NBT.TAG_COMPOUND));
     }
 
@@ -341,25 +318,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         Block block = null, blockAlt = null;
         int metadata = 0, metadataAlt;
         PipeWire wire = null;
-        if (nbt.hasKey("id")) {
-            block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
-        } else if (nbt.hasKey("name")) {
-            block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
-        }
-        if (nbt.hasKey("name_alt")) {
-            blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
-        }
-        if (nbt.hasKey("meta")) {
-            metadata = nbt.getInteger("meta");
-        }
-        if (nbt.hasKey("meta_alt")) {
-            metadataAlt = nbt.getInteger("meta_alt");
-        } else {
-            metadataAlt = stack.getItemDamage() & 0x0000F;
-        }
-        if (nbt.hasKey("wire")) {
-            wire = PipeWire.fromOrdinal(nbt.getInteger("wire"));
-        }
+        if (nbt.hasKey("id")) block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
+        else if (nbt.hasKey("name")) block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
+        if (nbt.hasKey("name_alt")) blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
+        if (nbt.hasKey("meta")) metadata = nbt.getInteger("meta");
+        if (nbt.hasKey("meta_alt")) metadataAlt = nbt.getInteger("meta_alt");
+        else metadataAlt = stack.getItemDamage() & 0x0000F;
+        if (nbt.hasKey("wire")) wire = PipeWire.fromOrdinal(nbt.getInteger("wire"));
         if (block != null) {
             FacadeState[] states;
             FacadeState mainState = FacadeState.create(block.getStateFromMeta(metadata));
@@ -389,13 +354,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     // GETTERS FOR FACADE DATA
     @Override
     public FacadeType getFacadeType(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            return FacadeType.Basic;
-        }
+        if (!stack.hasTagCompound()) { return FacadeType.Basic; }
         NBTTagCompound nbt = stack.getTagCompound();
-        if (!nbt.hasKey("type")) {
-            return FacadeType.Basic;
-        }
+        if (!nbt.hasKey("type")) { return FacadeType.Basic; }
         return FacadeType.fromOrdinal(nbt.getInteger("type"));
     }
 
@@ -406,17 +367,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public void addFacade(ItemStack itemStack) {
-        if (itemStack.stackSize == 0) {
-            itemStack.stackSize = 1;
-        }
+        if (itemStack.stackSize == 0) itemStack.stackSize = 1;
 
         Block block = Block.getBlockFromItem(itemStack.getItem());
-        if (block == null) {
-            return;
-        }
-        if (!block.getMaterial().blocksMovement()) {
-            return;
-        }
+        if (block == null) return;
+        if (!block.getMaterial().blocksMovement()) return;
 
         String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
 
@@ -455,9 +410,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static void blacklistFacade(String blockName) {
-        if (!blacklistedFacades.contains(blockName)) {
-            blacklistedFacades.add(blockName);
-        }
+        if (!blacklistedFacades.contains(blockName)) blacklistedFacades.add(blockName);
     }
 
     public class FacadeRecipe implements IRecipe {
@@ -472,16 +425,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         @Override
         public ItemStack getCraftingResult(InventoryCrafting inventorycrafting) {
             Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
-            if (facade == null || ((Block[]) facade[0]).length != 1) {
-                return null;
-            }
+            if (facade == null || ((Block[]) facade[0]).length != 1) return null;
 
             IBlockState block = ((IBlockState[]) facade[0])[0];
             ItemStack originalFacade = (ItemStack) facade[1];
 
-            if (block == null) {
-                return null;
-            }
+            if (block == null) return null;
 
             return getNextFacadeItemStack(block, originalFacade);
         }
@@ -495,18 +444,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 if (slot != null && slot.getItem() == ItemFacade.this && slotmatch == null) {
                     slotmatch = slot;
                     countOfItems++;
-                } else if (slot != null) {
-                    slotmatch = NO_MATCH;
-                }
+                } else if (slot != null) slotmatch = NO_MATCH;
 
-                if (countOfItems > 1) {
-                    return null;
-                }
+                if (countOfItems > 1) return null;
             }
 
-            if (slotmatch != null && slotmatch != NO_MATCH) {
-                return new Object[] { getBlockStatesForFacade(slotmatch), slotmatch };
-            }
+            if (slotmatch != null && slotmatch != NO_MATCH) return new Object[] { getBlockStatesForFacade(slotmatch), slotmatch };
 
             return null;
         }
@@ -573,9 +516,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static ItemStack getFacade(FacadeState... states) {
-        if (states == null || states.length == 0) {
-            return null;
-        }
+        if (states == null || states.length == 0) return null;
         final boolean basic = states.length == 1 && states[0].wire == null;
 
         ItemStack stack = new ItemStack(BuildCraftTransport.facadeItem, 1, 0);

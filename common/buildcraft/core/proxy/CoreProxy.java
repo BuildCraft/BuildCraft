@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -163,6 +164,9 @@ public class CoreProxy implements ICoreProxy {
     /** This function returns either the player from the handler if it's on the server, or directly from the minecraft
      * instance if it's the client. */
     public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
-        return ((NetHandlerPlayServer) handler).playerEntity;
+        if (handler instanceof NetHandlerPlayServer) {
+            return ((NetHandlerPlayServer) handler).playerEntity;
+        }
+        return null;
     }
 }
