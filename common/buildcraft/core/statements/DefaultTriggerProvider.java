@@ -19,6 +19,8 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
+
+import buildcraft.api.statements.IBlockDefaultTriggers;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
@@ -31,7 +33,15 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
 
-		if (tile instanceof IInventory) {
+		boolean blockInventoryTriggers = false;
+		boolean blockFluidHandlerTriggers = false;
+
+		if (tile instanceof IBlockDefaultTriggers) {
+			blockInventoryTriggers = ((IBlockDefaultTriggers) tile).blockInventoryTriggers(side);
+			blockFluidHandlerTriggers = ((IBlockDefaultTriggers) tile).blockFluidHandlerTriggers(side);
+		}
+
+		if (!blockInventoryTriggers && tile instanceof IInventory) {
 			boolean isSided = tile instanceof ISidedInventory;
 			boolean addTriggers = false;
 
@@ -51,7 +61,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			}
 		}
 
-		if (tile instanceof IFluidHandler) {
+		if (!blockFluidHandlerTriggers && tile instanceof IFluidHandler) {
 			FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(side.getOpposite());
 			if (tanks != null && tanks.length > 0) {
 				res.add(BuildCraftCore.triggerEmptyFluid);
