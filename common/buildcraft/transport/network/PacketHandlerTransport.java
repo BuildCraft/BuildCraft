@@ -11,8 +11,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketSlotChange;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.TileGenericPipe;

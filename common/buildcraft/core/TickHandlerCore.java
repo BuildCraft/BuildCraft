@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.network.PacketHandler;
+import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 
 public enum TickHandlerCore {

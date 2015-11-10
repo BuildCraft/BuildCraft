@@ -7,15 +7,22 @@ package buildcraft.core.lib.network;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 
+import buildcraft.core.lib.network.base.Packet;
+
 import io.netty.buffer.ByteBuf;
 
 public abstract class PacketCoordinates extends Packet {
 
     public BlockPos pos;
 
-    public PacketCoordinates() {}
+    public transient final TileEntity tile;
+
+    public PacketCoordinates() {
+        tile = null;
+    }
 
     public PacketCoordinates(TileEntity tile) {
+        this.tile = tile;
         this.tempWorld = tile.getWorld();
         this.dimensionId = tempWorld.provider.getDimensionId();
         this.pos = tile.getPos();

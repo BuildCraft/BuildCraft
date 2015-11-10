@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 
 import io.netty.buffer.ByteBuf;

@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.TravelingItem;
 

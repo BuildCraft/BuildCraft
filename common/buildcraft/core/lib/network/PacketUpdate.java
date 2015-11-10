@@ -5,6 +5,7 @@
 package buildcraft.core.lib.network;
 
 import buildcraft.api.core.ISerializable;
+import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

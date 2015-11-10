@@ -12,7 +12,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;

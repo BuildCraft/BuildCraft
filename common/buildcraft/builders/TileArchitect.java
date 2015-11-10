@@ -29,7 +29,7 @@ import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;

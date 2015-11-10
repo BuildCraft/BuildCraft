@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
 

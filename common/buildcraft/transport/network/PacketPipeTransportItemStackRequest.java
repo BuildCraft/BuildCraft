@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 

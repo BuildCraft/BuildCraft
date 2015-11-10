@@ -22,7 +22,7 @@ import buildcraft.core.Box.Kind;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.internal.IBoxesProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;

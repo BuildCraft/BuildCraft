@@ -11,6 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

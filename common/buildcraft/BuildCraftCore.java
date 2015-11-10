@@ -36,6 +36,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -95,8 +96,9 @@ import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.network.ChannelHandler;
-import buildcraft.core.lib.network.PacketHandler;
+import buildcraft.core.lib.network.base.ChannelHandler;
+import buildcraft.core.lib.network.base.ChannelHandlerStats;
+import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -266,6 +268,11 @@ public class BuildCraftCore extends BuildCraftMod {
             mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
             mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?",
                     ConfigManager.RestartRequirement.GAME);
+
+            mainConfigManager.register("debug.network.stats", false, "Should all network packets be tracked for statistical purposes?",
+                    ConfigManager.RestartRequirement.NONE);
+            mainConfigManager.register("debug.network.show", false, "Should the network statistics be shown in a gui?",
+                    ConfigManager.RestartRequirement.NONE);
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -500,6 +507,9 @@ public class BuildCraftCore extends BuildCraftMod {
             canEnginesExplode = mainConfigManager.get("general.canEnginesExplode").getBoolean();
             consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
             miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
+
+            ChannelHandler.recordStats = mainConfigManager.get("debug.network.stats").getBoolean();
+            ChannelHandlerStats.showGui = mainConfigManager.get("debug.network.show").getBoolean();
 
             if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
                 Version.check();

@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IBuildCraftMod;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.Utils;
 
 public class BuildCraftMod implements IBuildCraftMod {

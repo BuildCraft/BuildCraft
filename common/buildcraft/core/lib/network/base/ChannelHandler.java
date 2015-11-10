@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.network;
+package buildcraft.core.lib.network.base;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +14,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.network.PacketEntityUpdate;
+import buildcraft.core.lib.network.PacketGuiReturn;
+import buildcraft.core.lib.network.PacketGuiWidget;
+import buildcraft.core.lib.network.PacketSlotChange;
+import buildcraft.core.lib.network.PacketTileState;
+import buildcraft.core.lib.network.PacketTileUpdate;
+import buildcraft.core.lib.network.PacketUpdate;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -24,7 +31,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
     public static boolean recordStats = false;
 
     public static ChannelHandler createChannelHandler() {
-        return recordStats ? new ChannelHandlerStats() : new ChannelHandler();
+        return new Switcher();
     }
 
     private int maxDiscriminator;
@@ -65,5 +72,34 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
         INetHandler handler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
         packet.readData(data);
         packet.player = CoreProxy.proxy.getPlayerFromNetHandler(handler);
+    }
+
+    public static class Switcher extends ChannelHandler {
+        private final ChannelHandler handler, tracker;
+
+        public Switcher() {
+            handler = new ChannelHandler();
+            tracker = new ChannelHandlerStats();
+        }
+
+        @Override
+        public void registerPacketType(Class<? extends Packet> packetType) {
+            handler.registerPacketType(packetType);
+            tracker.registerPacketType(packetType);
+        }
+
+        private ChannelHandler channelHandler() {
+            return recordStats ? tracker : handler;
+        }
+
+        @Override
+        public void encodeInto(ChannelHandlerContext ctx, Packet msg, ByteBuf target) throws Exception {
+            channelHandler().encodeInto(ctx, msg, target);
+        }
+
+        @Override
+        public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, Packet msg) {
+            channelHandler().decodeInto(ctx, source, msg);
+        }
     }
 }

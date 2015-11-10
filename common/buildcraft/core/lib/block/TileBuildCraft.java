@@ -29,8 +29,8 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
-import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileUpdate;
+import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
 
