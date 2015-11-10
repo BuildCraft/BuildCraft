@@ -40,6 +40,7 @@ import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.base.ChannelHandler;
+import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.*;
@@ -112,7 +113,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.EventHandler
     public void initialize(FMLPreInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", ChannelHandler.createChannelHandler(),
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(),
                 new PacketHandler());
 
         String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"

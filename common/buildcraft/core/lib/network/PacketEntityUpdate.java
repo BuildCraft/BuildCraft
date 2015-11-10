@@ -9,23 +9,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
 
 public class PacketEntityUpdate extends PacketUpdate {
     public int entityId;
 
-    public PacketEntityUpdate() {
-        super(PacketIds.ENTITY_UPDATE);
-    }
+    public PacketEntityUpdate() {}
 
     public PacketEntityUpdate(ISerializable payload) {
-        this(PacketIds.ENTITY_UPDATE, payload);
-    }
-
-    public PacketEntityUpdate(int packetId, ISerializable payload) {
-        super(packetId, payload);
+        super(payload);
 
         Entity entity = (Entity) payload;
         entityId = entity.getEntityId();

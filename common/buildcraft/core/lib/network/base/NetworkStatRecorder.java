@@ -17,39 +17,21 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.network.PacketUpdate;
+import buildcraft.core.lib.network.command.PacketCommand;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ChannelHandlerStats extends ChannelHandler {
+public class NetworkStatRecorder {
     static final Map<String, Integer> lengthMap = Maps.newHashMap();
-    static final Map<PacketSource, EnumMap<Type, PacketStats>> packetMap = new MapMaker().makeMap();
+    static final Map<PacketSource, EnumMap<EnumOpType, PacketStats>> packetMap = new MapMaker().makeMap();
 
-    private static boolean showGui = false;
-
-    @Override
-    public void encodeInto(ChannelHandlerContext ctx, Packet packet, ByteBuf data) throws Exception {
-        int start = data.writerIndex();
-        super.encodeInto(ctx, packet, data);
-        int written = data.writerIndex() - start;
-        updateInfo(ctx, written, packet, Type.WRITE);
-    }
-
-    @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, Packet packet) {
-        int start = data.readerIndex();
-        super.decodeInto(ctx, data, packet);
-        int read = data.readerIndex() - start;
-        updateInfo(ctx, read, packet, Type.READ);
-    }
-
-    private void updateInfo(ChannelHandlerContext ctx, long bytes, Packet packet, Type type) {
+    public static void recordStat(ChannelHandlerContext ctx, long bytes, Packet packet, EnumOpType type) {
         PacketSource source = new PacketSource(packet);
         if (!packetMap.containsKey(source)) {
-            EnumMap<Type, PacketStats> map = Maps.newEnumMap(Type.class);
-            map.put(Type.READ, new PacketStats());
-            map.put(Type.WRITE, new PacketStats());
+            EnumMap<EnumOpType, PacketStats> map = Maps.newEnumMap(EnumOpType.class);
+            map.put(EnumOpType.READ, new PacketStats());
+            map.put(EnumOpType.WRITE, new PacketStats());
             packetMap.put(source, map);
 
         }
@@ -60,41 +42,30 @@ public class ChannelHandlerStats extends ChannelHandler {
         }
         int header = lengthMap.get(channelName);
 
-        EnumMap<Type, PacketStats> map = packetMap.get(packet);
+        EnumMap<EnumOpType, PacketStats> map = packetMap.get(source);
         map.get(type).increment(bytes + header);
     }
 
-    public static void setShowGui(boolean newValue) {
-        if (newValue != showGui) {
-            if (newValue) {
-                StatisticsFrame.createStatisticsFrame();
-            } else {
-                StatisticsFrame.destroyStatisticsFrame();
-            }
-        }
-        showGui = newValue;
-    }
-
-    enum Type {
+    enum EnumOpType {
         READ("read", "from"),
         WRITE("wrote", "to");
 
         final String operation, word;
 
-        private Type(String operation, String word) {
+        private EnumOpType(String operation, String word) {
             this.operation = operation;
             this.word = word;
         }
     }
 
     static class PacketStats {
-        private static final int HISTORY_SIZE = 120;
-        private static final long HISTORY_GAP = 1000;
+        public static final int HISTORY_SIZE = 120;
+        public static final long HISTORY_GAP = 1000;
 
-        private final int[] packets = new int[HISTORY_SIZE];
-        private final long[] bytes = new long[HISTORY_SIZE];
-        private final long[] statTime = new long[HISTORY_SIZE];
-        private int currentIndex = 0;
+        final int[] packets = new int[HISTORY_SIZE];
+        final long[] bytes = new long[HISTORY_SIZE];
+        final long[] statTime = new long[HISTORY_SIZE];
+        int currentIndex = 0;
 
         private PacketStats() {
             statTime[currentIndex] = System.currentTimeMillis();
@@ -112,6 +83,13 @@ public class ChannelHandlerStats extends ChannelHandler {
                 currentIndex = 0;
             }
             return currentIndex;
+        }
+
+        public int getLastIndex() {
+            if (currentIndex - 1 < 0) {
+                return HISTORY_SIZE - 1;
+            }
+            return currentIndex - 1;
         }
 
         private void process() {
@@ -134,10 +112,12 @@ public class ChannelHandlerStats extends ChannelHandler {
         public static String extraInfo(Packet packet) {
             if (packet instanceof PacketCoordinates) {
                 TileEntity tile = ((PacketCoordinates) packet).tile;
-                return tile == null ? null : tile.getClass().getName();
+                return tile == null ? "generic" : tile.getClass().getName();
             } else if (packet instanceof PacketUpdate) {
                 ISerializable ser = ((PacketUpdate) packet).payload;
-                return ser == null ? null : ser.getClass().getName();
+                return ser == null ? "generic" : ser.getClass().getName();
+            } else if (packet instanceof PacketCommand) {
+                return ((PacketCommand) packet).command;
             }
             return null;
         }
@@ -148,7 +128,7 @@ public class ChannelHandlerStats extends ChannelHandler {
 
         public PacketSource(Class<? extends Packet> packet, String extraInfo) {
             if (packet == null) throw new NullPointerException("packet");
-            if (extraInfo == null) extraInfo = "simple";
+            if (extraInfo == null) extraInfo = "unknown";
 
             this.clazz = packet;
             this.className = packet.getName();

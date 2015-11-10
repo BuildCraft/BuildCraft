@@ -14,25 +14,17 @@ public abstract class PacketUpdate extends Packet {
     public ISerializable payload;
 
     protected ByteBuf payloadData;
-    private int packetId;
 
     public PacketUpdate() {}
 
-    public PacketUpdate(int packetId, ISerializable payload) {
-        this(packetId);
-
+    public PacketUpdate(ISerializable payload) {
         this.payload = payload;
-    }
-
-    public PacketUpdate(int packetId) {
-        this.packetId = packetId;
         this.isChunkDataPacket = true;
     }
 
     @Override
     public void writeData(ByteBuf data) {
         super.writeData(data);
-        data.writeByte(packetId);
         writeIdentificationData(data);
 
         ByteBuf payloadData = Unpooled.buffer();
@@ -40,7 +32,8 @@ public abstract class PacketUpdate extends Packet {
             payload.writeData(payloadData);
         }
 
-        data.writeInt(payloadData.readableBytes());
+        int readableBytes = payloadData.readableBytes();
+        data.writeInt(readableBytes);
         data.writeBytes(payloadData);
     }
 
@@ -49,7 +42,6 @@ public abstract class PacketUpdate extends Packet {
     @Override
     public void readData(ByteBuf data) {
         super.readData(data);
-        packetId = data.readByte();
         readIdentificationData(data);
         int length = data.readInt();
         payloadData = Unpooled.copiedBuffer(data.readBytes(length));

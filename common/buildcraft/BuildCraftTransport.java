@@ -67,6 +67,7 @@ import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
+import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
@@ -370,7 +371,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        transportChannelHandler = ChannelHandler.createChannelHandler();
+        transportChannelHandler = new ChannelHandler();
         MinecraftForge.EVENT_BUS.register(this);
 
         transportChannelHandler.registerPacketType(PacketFluidUpdate.class);
@@ -690,7 +691,6 @@ public class BuildCraftTransport extends BuildCraftMod {
             for (int i = 0; i < 17; i++) {
                 mrl = ModelHelper.getItemResourceLocation(itemPipe, "_" + i);
                 event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe, i));
-                BCLog.logger.info("Registering " + itemPipe + " as " + mrl);
             }
         }
     }

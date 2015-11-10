@@ -10,7 +10,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.network.PacketIds;
 
 import io.netty.buffer.ByteBuf;
 
@@ -18,15 +17,11 @@ public class PacketTileUpdate extends PacketUpdate {
     public BlockPos pos;
 
     public PacketTileUpdate() {
-        super(PacketIds.TILE_UPDATE);
+        super();
     }
 
     public PacketTileUpdate(TileEntity tile, ISerializable ser) {
-        this(PacketIds.TILE_UPDATE, tile, ser);
-    }
-
-    public PacketTileUpdate(int packetId, TileEntity tile, ISerializable ser) {
-        super(packetId, ser);
+        super(ser);
         tempWorld = tile.getWorld();
         pos = tile.getPos();
     }

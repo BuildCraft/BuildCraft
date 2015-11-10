@@ -56,6 +56,7 @@ import buildcraft.core.config.ConfigManager.RestartRequirement;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.base.ChannelHandler;
+import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BucketHandler;
@@ -378,7 +379,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", ChannelHandler.createChannelHandler(),
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(),
                 new PacketHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new EnergyGuiHandler());

@@ -1,105 +1,84 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network.base;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.network.PacketEntityUpdate;
 import buildcraft.core.lib.network.PacketGuiReturn;
 import buildcraft.core.lib.network.PacketGuiWidget;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.network.PacketTileUpdate;
-import buildcraft.core.lib.network.PacketUpdate;
+import buildcraft.core.lib.network.base.NetworkStatRecorder.EnumOpType;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
-    public static boolean recordStats = false;
+public final class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
+    private static boolean recordStats = false;
+    private int index = 0;
 
-    public static ChannelHandler createChannelHandler() {
-        return new Switcher();
-    }
-
-    private int maxDiscriminator;
-
-    protected ChannelHandler() {
+    public ChannelHandler() {
         // Packets common to buildcraft.core.network
-        addDiscriminator(0, PacketTileUpdate.class);
-        addDiscriminator(1, PacketTileState.class);
-        addDiscriminator(2, PacketSlotChange.class);
-        addDiscriminator(3, PacketGuiReturn.class);
-        addDiscriminator(4, PacketGuiWidget.class);
-        addDiscriminator(5, PacketUpdate.class);
-        addDiscriminator(6, PacketCommand.class);
-        addDiscriminator(7, PacketEntityUpdate.class);
-        maxDiscriminator = 8;
+        registerPacketType(PacketTileUpdate.class);
+        registerPacketType(PacketTileState.class);
+        registerPacketType(PacketSlotChange.class);
+        registerPacketType(PacketGuiReturn.class);
+        registerPacketType(PacketGuiWidget.class);
+        registerPacketType(PacketCommand.class);
+        registerPacketType(PacketEntityUpdate.class);
     }
 
-    public void registerPacketType(Class<? extends Packet> packetType) {
-        addDiscriminator(maxDiscriminator++, packetType);
+    public void registerPacketType(Class<? extends Packet> type) {
+        super.addDiscriminator(index++, type);
+    }
+
+    public static boolean shouldRecordStats() {
+        return recordStats;
+    }
+
+    public static void setRecordStats(boolean newValue) {
+        if (newValue != recordStats) {
+            if (newValue) StatisticsFrame.createStatisticsFrame();
+            else StatisticsFrame.destroyStatisticsFrame();
+        }
+        recordStats = newValue;
+    }
+
+    @Override
+    public ChannelHandler addDiscriminator(int discriminator, Class<? extends Packet> type) {
+        throw new IllegalArgumentException("Use registerPacketType instead!");
     }
 
     @Override
     public void encodeInto(ChannelHandlerContext ctx, Packet packet, ByteBuf data) throws Exception {
-        try {
-            packet.writeData(data);
-        } catch (Throwable t) {
-            BCLog.logger.error("A packet failed to write its data! THIS IS VERY BAD!", t);
-        }
-    }
+        int start = data.writerIndex();
 
-    @SideOnly(Side.CLIENT)
-    private EntityPlayer getMinecraftPlayer() {
-        return Minecraft.getMinecraft().thePlayer;
+        packet.writeData(data);
+
+        int written = data.writerIndex() - start;
+        recordStat(ctx, written, packet, EnumOpType.WRITE);
     }
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, Packet packet) {
+        int start = data.readerIndex();
+
         INetHandler handler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
         packet.readData(data);
         packet.player = CoreProxy.proxy.getPlayerFromNetHandler(handler);
+
+        int read = data.readerIndex() - start;
+        recordStat(ctx, read, packet, EnumOpType.READ);
     }
 
-    public static class Switcher extends ChannelHandler {
-        private final ChannelHandler handler, tracker;
-
-        public Switcher() {
-            handler = new ChannelHandler();
-            tracker = new ChannelHandlerStats();
-        }
-
-        @Override
-        public void registerPacketType(Class<? extends Packet> packetType) {
-            handler.registerPacketType(packetType);
-            tracker.registerPacketType(packetType);
-        }
-
-        private ChannelHandler channelHandler() {
-            return recordStats ? tracker : handler;
-        }
-
-        @Override
-        public void encodeInto(ChannelHandlerContext ctx, Packet msg, ByteBuf target) throws Exception {
-            channelHandler().encodeInto(ctx, msg, target);
-        }
-
-        @Override
-        public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, Packet msg) {
-            channelHandler().decodeInto(ctx, source, msg);
+    private void recordStat(ChannelHandlerContext ctx, long bytes, Packet packet, EnumOpType type) {
+        if (shouldRecordStats()) {
+            NetworkStatRecorder.recordStat(ctx, bytes, packet, type);
         }
     }
 }

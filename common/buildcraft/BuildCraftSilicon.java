@@ -29,6 +29,7 @@ import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
+import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
@@ -92,7 +93,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", ChannelHandler.createChannelHandler(),
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(),
                 new PacketHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());

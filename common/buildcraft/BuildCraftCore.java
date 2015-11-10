@@ -97,7 +97,6 @@ import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
-import buildcraft.core.lib.network.base.ChannelHandlerStats;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.ColorUtils;
@@ -271,8 +270,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
             mainConfigManager.register("debug.network.stats", false, "Should all network packets be tracked for statistical purposes?",
                     ConfigManager.RestartRequirement.NONE);
-            mainConfigManager.register("debug.network.show", false, "Should the network statistics be shown in a gui?",
-                    ConfigManager.RestartRequirement.NONE);
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -347,7 +344,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public void init(FMLInitializationEvent evt) {
         BuildCraftAPI.proxy = CoreProxy.proxy;
 
-        ChannelHandler coreChannelHandler = ChannelHandler.createChannelHandler();
+        ChannelHandler coreChannelHandler = new ChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandler());
@@ -508,8 +505,7 @@ public class BuildCraftCore extends BuildCraftMod {
             consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
             miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
 
-            ChannelHandler.recordStats = mainConfigManager.get("debug.network.stats").getBoolean();
-            ChannelHandlerStats.showGui = mainConfigManager.get("debug.network.show").getBoolean();
+            ChannelHandler.setRecordStats(mainConfigManager.get("debug.network.stats").getBoolean());
 
             if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
                 Version.check();
@@ -683,8 +679,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @SideOnly(Side.CLIENT)
     public void renderOverlay(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (!mc.gameSettings.showDebugInfo)
-            return;
+        if (!mc.gameSettings.showDebugInfo) return;
         if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo) {
             return;
         }
