@@ -112,6 +112,8 @@ public class StatisticsFrame extends JFrame implements TreeSelectionListener {
             }
         });
 
+        setTitle("BuildCraft network traffic");
+
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

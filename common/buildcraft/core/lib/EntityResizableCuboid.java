@@ -40,11 +40,9 @@ public class EntityResizableCuboid extends Entity {
 
     /** Where the texture is considered to start. Essentially is used to point the position of the starting point of the
      * texture */
-    @SideOnly(Side.CLIENT)
     public double textureStartX = 0, textureStartY = 0, textureStartZ = 0;
 
     /** The size of the texture before going back to the start. */
-    @SideOnly(Side.CLIENT)
     public double textureSizeX = 16, textureSizeY = 16, textureSizeZ = 16;
 
     /** What the texture should be offset by. Essentially where should the texture start from. (However it repeats back
@@ -57,7 +55,6 @@ public class EntityResizableCuboid extends Entity {
      * With textureOffsetX set to 2 (and a textureSizeX of 4) would repeat like this:
      * <p>
      * 230123 */
-    @SideOnly(Side.CLIENT)
     public double textureOffsetX = 0, textureOffsetY = 0, textureOffsetZ = 0;
 
     /** An array containing the flips of the textures for each of the sides. 0 is none, 1 flips the U's and 2 flips the
