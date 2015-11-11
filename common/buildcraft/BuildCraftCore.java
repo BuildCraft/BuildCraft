@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
@@ -541,8 +542,9 @@ public class BuildCraftCore extends BuildCraftMod {
                 Blocks.wool, 1, 0), 'i', Items.string);
 
         for (int i = 0; i < 16; i++) {
-            ItemStack outputStack = paintbrushItem.getItemStack(EnumColor.VALUES[i]);
-            CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
+            ItemStack outputStack = paintbrushItem.getItemStack(EnumDyeColor.values()[i]);
+            String dye = ColorUtils.getOreDictionaryName(i);
+            CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, dye);
         }
     }
 

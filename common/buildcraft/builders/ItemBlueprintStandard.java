@@ -17,7 +17,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 public class ItemBlueprintStandard extends ItemBlueprint {
     public ItemBlueprintStandard() {
         super();
-        setTextureLocation("buildcraftbuilders:blueprint/");
+        setTextureLocation("blueprint");
     }
 
     @Override

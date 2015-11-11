@@ -138,7 +138,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
     @Override
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "clean");
-        ModelHelper.registerItemModel(this, 1, "used");
+        ModelHelper.registerItemModel(this, 0, "buildcraftbuilders:", textureName + "_clean");
+        ModelHelper.registerItemModel(this, 1, "buildcraftbuilders:", textureName + "_used");
     }
 }

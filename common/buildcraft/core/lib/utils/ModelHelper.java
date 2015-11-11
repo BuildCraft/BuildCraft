@@ -8,10 +8,10 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
-public final class ModelHelper {
-    private ModelHelper() {
+import buildcraft.api.core.BCLog;
 
-    }
+public enum ModelHelper {
+    INSTANCE;
 
     public static void registerItemModel(Item item, int metadata, String suffix) {
         String type = Utils.getNameForItem(item).replace("|", "");
@@ -20,8 +20,9 @@ public final class ModelHelper {
     }
 
     public static void registerItemModel(Item item, int metadata, String name, String suffix) {
-        String type = name + suffix;
+        String type = name  + suffix;
         type = type.toLowerCase(Locale.ROOT);
+        BCLog.logger.info("Resgistering item model " + item + "#" + metadata + " -> " + type);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata, new ModelResourceLocation(type, "inventory"));
         ModelBakery.addVariantName(item, type);
     }

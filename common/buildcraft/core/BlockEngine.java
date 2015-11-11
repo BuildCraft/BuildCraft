@@ -62,14 +62,10 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
     @Override
     public void registerModels() {
         Item item = ItemBlock.getItemFromBlock(this);
-        // ModelBakery.addVariantName(item, "wood");
-        // ModelBakery.addVariantName(item, "stone");
-        // ModelBakery.addVariantName(item, "iron");
-        // ModelBakery.addVariantName(item, "creative");
-        ModelHelper.registerItemModel(item, 0, "wood");
-        ModelHelper.registerItemModel(item, 1, "stone");
-        ModelHelper.registerItemModel(item, 2, "iron");
-        ModelHelper.registerItemModel(item, 3, "creative");
+        ModelHelper.registerItemModel(item, 0, "_wood");
+        ModelHelper.registerItemModel(item, 1, "_stone");
+        ModelHelper.registerItemModel(item, 2, "_iron");
+        ModelHelper.registerItemModel(item, 3, "_creative");
     }
 
     @Override

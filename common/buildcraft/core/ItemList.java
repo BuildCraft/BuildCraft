@@ -300,7 +300,7 @@ public class ItemList extends ItemBuildCraft implements IList {
 
     @Override
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "");
-        ModelHelper.registerItemModel(this, 1, "used");
+        ModelHelper.registerItemModel(this, 0, "_clean");
+        ModelHelper.registerItemModel(this, 1, "_used");
     }
 }

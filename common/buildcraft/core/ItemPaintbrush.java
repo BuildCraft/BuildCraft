@@ -37,7 +37,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
     }
 
     /** @param color The colour of the paintbrush. Can be null. */
-    public ItemStack getItemStack(EnumColor color) {
+    public ItemStack getItemStack(EnumDyeColor color) {
         ItemStack stack = new ItemStack(this, 1, color == null ? 0 : color.ordinal() + 1);
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
@@ -132,7 +132,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List itemList) {
         for (int i = 0; i < 17; i++) {
-            EnumColor color = i == 0 ? null : EnumColor.VALUES[i - 1];
+            EnumDyeColor color = i == 0 ? null : EnumDyeColor.values()[i - 1];
             itemList.add(this.getItemStack(color));
         }
     }
@@ -153,9 +153,9 @@ public class ItemPaintbrush extends ItemBuildCraft {
 
     @Override
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "/Clean");
+        ModelHelper.registerItemModel(this, 0, "/clean");
         int i = 1;
-        for (EnumColor colour : EnumColor.values()) {
+        for (EnumDyeColor colour : EnumDyeColor.values()) {
             ModelHelper.registerItemModel(this, i, "/" + colour.getName());
             i++;
         }
