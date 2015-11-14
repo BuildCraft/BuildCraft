@@ -30,7 +30,6 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
-import buildcraft.api.statements.IBlockDefaultTriggers;
 import buildcraft.api.transport.IItemPipe;
 
 import buildcraft.core.GuiIds;
@@ -39,6 +38,7 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.statements.IBlockDefaultTriggers;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IBlockDefaultTriggers {
 

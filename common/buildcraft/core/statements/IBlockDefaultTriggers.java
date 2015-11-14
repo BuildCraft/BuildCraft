@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.statements;
+package buildcraft.core.statements;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 
-import buildcraft.api.statements.IBlockDefaultTriggers;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
