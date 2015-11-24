@@ -67,7 +67,6 @@ import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
-import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
@@ -548,7 +547,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     @Mod.EventHandler
     public void serverUnloading(FMLServerStoppingEvent event) {
-        // One last tick
+        // One last tick. This saves us from having to read/write this from/to disk
         for (WorldServer w : DimensionManager.getWorlds()) {
             pipeExtensionListener.tick(new TickEvent.WorldTickEvent(Side.SERVER, TickEvent.Phase.END, w));
         }
