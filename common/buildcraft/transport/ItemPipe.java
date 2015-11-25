@@ -120,7 +120,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
         list.addAll(toolTip);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int renderPass) {

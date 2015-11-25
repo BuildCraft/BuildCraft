@@ -51,7 +51,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     public void readjustSpeed(TravelingItem item) {
         PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(container.pipe, item);
-        container.pipe.eventBus.handleEvent(PipeEventItem.AdjustSpeed.class, event);
+        container.pipe.eventBus.handleEvent(event);
         if (!event.handled) {
             defaultReajustSpeed(item);
         }
@@ -97,7 +97,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         readjustPosition(item);
 
         PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
-        container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
+        container.pipe.eventBus.handleEvent(event);
         if (event.cancelled) {
             return;
         }
@@ -156,7 +156,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         readjustPosition(item);
 
         PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
-        container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
+        container.pipe.eventBus.handleEvent(event);
         if (event.cancelled) {
             return;
         }
@@ -199,7 +199,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         PipeEventItem.FindDest event = new PipeEventItem.FindDest(container.pipe, item, result);
-        container.pipe.eventBus.handleEvent(PipeEventItem.FindDest.class, event);
+        container.pipe.eventBus.handleEvent(event);
 
         if (allowBouncing && result.isEmpty()) {
             if (canReceivePipeObjects(item.input.getOpposite(), item)) {
@@ -277,7 +277,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                     }
                 } else {
                     PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
-                    container.pipe.eventBus.handleEvent(PipeEventItem.ReachedCenter.class, event);
+                    container.pipe.eventBus.handleEvent(event);
                 }
 
             } else if (!item.toCenter && endReached(item)) {
@@ -289,7 +289,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 TileEntity tile = container.getTile(item.output, true);
 
                 PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);
-                container.pipe.eventBus.handleEvent(PipeEventItem.ReachedEnd.class, event);
+                container.pipe.eventBus.handleEvent(event);
                 boolean handleItem = !event.handled;
 
                 // If the item has not been scheduled to removal by the hook
@@ -339,7 +339,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         PipeEventItem.DropItem event = new PipeEventItem.DropItem(container.pipe, item, item.toEntityItem());
-        container.pipe.eventBus.handleEvent(PipeEventItem.DropItem.class, event);
+        container.pipe.eventBus.handleEvent(event);
 
         if (event.entity == null) {
             return;

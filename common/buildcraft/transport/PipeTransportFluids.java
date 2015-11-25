@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -312,8 +313,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         }
 
         if (realDirections.size() > 0) {
-            container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType,
-                    pushAmount), realDirections));
+            container.pipe.eventBus.handleEvent(new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
             float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
             for (EnumFacing direction : realDirections.elementSet()) {

@@ -11,10 +11,23 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
+import buildcraft.core.lib.event.IEventBus;
+import buildcraft.core.lib.event.IEventBusProvider;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
-public class PipeEventBus {
+public class PipeEventBus implements IEventBus<PipeEvent> {
+    public enum Provider implements IEventBusProvider<PipeEvent> {
+        INSTANCE;
+
+        @Override
+        public IEventBus<PipeEvent> newBus() {
+            return new PipeEventBus();
+        }
+    }
+
     private class EventHandler {
         public Method method;
         public Object owner;
@@ -73,6 +86,7 @@ public class PipeEventBus {
         return eventHandlers.get(event);
     }
 
+    @Override
     public void registerHandler(Object handler) {
         if (registeredHandlers.contains(handler)) {
             return;
@@ -90,6 +104,9 @@ public class PipeEventBus {
                     eventHandlerList.add(new EventHandler(m, handler));
                     updateEventHandlers(eventHandlerList);
                     methods.put(m, eventType);
+
+                    BCPipeEventHandler annotation = m.getAnnotation(BCPipeEventHandler.class);
+                    if (annotation == null) BCLog.logger.warn("Need to add @BCPipeEventHandler to the method " + m);
                 }
             }
         }
@@ -101,6 +118,7 @@ public class PipeEventBus {
         Collections.sort(eventHandlerList, COMPARATOR);
     }
 
+    @Override
     public void unregisterHandler(Object handler) {
         if (!registeredHandlers.contains(handler)) {
             return;
@@ -114,8 +132,9 @@ public class PipeEventBus {
         handlerMethods.remove(handler);
     }
 
-    public void handleEvent(Class<? extends PipeEvent> eventClass, PipeEvent event) {
-        for (EventHandler eventHandler : getHandlerList(eventClass)) {
+    @Override
+    public void handleEvent(PipeEvent event) {
+        for (EventHandler eventHandler : getHandlerList(event.getClass())) {
             try {
                 eventHandler.method.invoke(eventHandler.owner, event);
             } catch (Exception e) {

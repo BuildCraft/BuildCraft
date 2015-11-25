@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import com.google.common.eventbus.EventBus;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,21 +33,25 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.internal.IDropControlInventory;
+import buildcraft.core.lib.event.IEventBus;
+import buildcraft.core.lib.event.IEventBusProvider;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
+    // TODO: Change this to EventBusProviderASM!
+    private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus.Provider.INSTANCE;
+
     public int[] signalStrength = new int[] { 0, 0, 0, 0 };
     public TileGenericPipe container;
     public final T transport;
     public final Item item;
     public boolean[] wireSet = new boolean[] { false, false, false, false };
     public final Gate[] gates = new Gate[EnumFacing.VALUES.length];
-    // TODO: Remove PipeEventBus and replace it (completly) with google's event bus.
-    public final EventBus bus = new EventBus("buildcraft.transport.Pipe.eventBus");
-    public PipeEventBus eventBus = new PipeEventBus();
+    public IEventBus<PipeEvent> eventBus = eventProvider.newBus();
 
     private boolean internalUpdateScheduled = false;
     private boolean initialized = false;
