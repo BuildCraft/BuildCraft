@@ -29,40 +29,10 @@ public enum TickHandlerCore {
     INSTANCE;
     private static final List<PacketHandler> packetHandlers = Lists.newCopyOnWriteArrayList();
 
-    private boolean nagged;
-
     public static void addPacketHandler(PacketHandler handler) {
         if (handler != null) {
             packetHandlers.add(handler);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void checkUpToDate(PlayerTickEvent evt) {
-        if (nagged) {
-            return;
-        }
-
-        EntityPlayer player = evt.player;
-
-        // if(!Config.disableVersionCheck) {
-
-        if (Version.needsUpdateNoticeAndMarkAsSeen()) {
-            player.addChatMessage(new ChatComponentTranslation("bc_update.new_version", Version.getRecommendedVersion(), CoreProxy.proxy
-                    .getMinecraftVersion()));
-            player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
-
-            // TODO: This takes too much realstate. See how to improve
-            // Version.displayChangelog(player);
-
-            player.addChatMessage(new ChatComponentTranslation("bc_update.once"));
-            player.addChatMessage(new ChatComponentTranslation("bc_update.again"));
-        }
-
-        // }
-
-        nagged = true;
     }
 
     @SubscribeEvent

@@ -1,9 +1,9 @@
 package buildcraft.transport.pipes.bc8;
 
 import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.IPipeEvent_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipeTile_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
+import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.event.EventBusProviderASM;
 import buildcraft.core.lib.event.IEventBus;

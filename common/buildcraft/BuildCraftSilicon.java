@@ -10,6 +10,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -25,10 +26,8 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.network.EntityIds;
@@ -36,7 +35,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 
-@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
+@Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")
@@ -93,8 +92,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(),
-                new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
         CoreProxy.proxy.registerTileEntity(TileLaser.class, "buildcraft.silicon.TileLaser", "net.minecraft.src.buildcraft.factory.TileLaser");

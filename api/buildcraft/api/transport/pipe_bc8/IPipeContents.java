@@ -34,7 +34,7 @@ public interface IPipeContents {
     }
 
     public interface IPipeContentsItem extends IPipeContentsSeperate {
-        ItemStack getStack();
+        ItemStack cloneItemStack();
 
         IPipePropertyProvider getProperties();
     }

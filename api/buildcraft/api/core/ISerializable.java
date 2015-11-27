@@ -6,7 +6,8 @@ package buildcraft.api.core;
 
 import io.netty.buffer.ByteBuf;
 
-/** Implemented by classes representing serializable packet state */
+/** Use {@link INetworkLoadable_BC8} instead, as that gives you more control over how you use objects */
+@Deprecated
 public interface ISerializable {
     /** Serializes the state to the stream
      *

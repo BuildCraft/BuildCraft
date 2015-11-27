@@ -10,14 +10,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase.NBTPrimitive;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -180,5 +174,41 @@ public final class NBTUtils {
             BCLog.logger.warn(new IllegalArgumentException("Tried to read an enum value when it was not a string! This is probably not good!"));
             return null;
         }
+    }
+
+    public static NBTBase writeObject(Object obj) {
+        if (obj == null) return null;
+        if (obj instanceof Byte) return new NBTTagByte((byte) (Byte) obj);
+        if (obj instanceof Short) return new NBTTagShort((short) (Short) obj);
+        if (obj instanceof Integer) return new NBTTagInt((int) (Integer) obj);
+        if (obj instanceof Long) return new NBTTagLong((long) (Long) obj);
+        if (obj instanceof Float) return new NBTTagFloat((float) (Float) obj);
+        if (obj instanceof Double) return new NBTTagDouble((double) (Double) obj);
+        if (obj instanceof Boolean) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setBoolean("boolean", (boolean) (Boolean) obj);
+            return nbt;
+        }
+        throw new IllegalArgumentException("Cannot write class " + obj.getClass() + " directly to NBT!");
+    }
+
+    public static Object readObject(NBTBase nbt) {
+        if (nbt == null) return null;
+        if (nbt instanceof NBTPrimitive) {
+            NBTPrimitive prim = (NBTPrimitive) nbt;
+            if (prim instanceof NBTTagByte) return prim.getByte();
+            if (prim instanceof NBTTagShort) return prim.getShort();
+            if (prim instanceof NBTTagInt) return prim.getInt();
+            if (prim instanceof NBTTagLong) return prim.getLong();
+            if (prim instanceof NBTTagFloat) return prim.getFloat();
+            if (prim instanceof NBTTagDouble) return prim.getDouble();
+            else throw new Error("Seriously what? When was a new primitive NBT class added?");
+        }
+        if (nbt instanceof NBTTagString) return ((NBTTagString) nbt).getString();
+        if (nbt instanceof NBTTagCompound) {
+            NBTTagCompound comp = (NBTTagCompound) nbt;
+            if (comp.hasKey("boolean")) return comp.getBoolean("boolean");
+        }
+        throw new Error("Tried to load an object from an unknown tag! " + nbt);
     }
 }

@@ -43,6 +43,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -66,8 +67,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.ConfigAccessor;
-import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
@@ -83,14 +82,9 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.IPipeEvent_BC8;
 import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.client.CoreIconProvider;
-import buildcraft.core.command.SubCommandChangelog;
-import buildcraft.core.command.SubCommandVersion;
-import buildcraft.core.config.BuildCraftConfiguration;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
@@ -98,7 +92,6 @@ import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.core.lib.event.EventBusProviderASM;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
@@ -128,7 +121,7 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
+@Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
         dependencies = "required-after:Forge@[11.14.3.1518,11.15)", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
@@ -154,7 +147,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public static int itemLifespan = 1200;
     public static int updateFactor = 10;
     public static long longUpdateFactor = 40;
-    public static BuildCraftConfiguration mainConfiguration;
+    public static Configuration mainConfiguration;
     public static ConfigManager mainConfigManager;
 
     public static BlockEngine engineBlock;
@@ -222,13 +215,10 @@ public class BuildCraftCore extends BuildCraftMod {
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
         BCLog.initLog();
-        ConfigAccessor.addMod(EMod.CORE, this);
 
         new BCCreativeTab("main");
 
         commandBuildcraft.addAlias("bc");
-        commandBuildcraft.addChildCommand(new SubCommandVersion());
-        commandBuildcraft.addChildCommand(new SubCommandChangelog());
 
         BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
         BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
@@ -237,7 +227,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
         BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 
-        mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
+        mainConfiguration = new Configuration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
         mainConfigManager = new ConfigManager(mainConfiguration, this);
         try {
             mainConfiguration.load();
@@ -245,8 +235,6 @@ public class BuildCraftCore extends BuildCraftMod {
             mainConfigManager.getCat("debug").setShowInGui(false);
             mainConfigManager.getCat("vars").setShowInGui(false);
 
-            mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?",
-                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?",
                     ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?",
@@ -510,10 +498,6 @@ public class BuildCraftCore extends BuildCraftMod {
             miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
 
             ChannelHandler.setRecordStats(mainConfigManager.get("debug.network.stats").getBoolean());
-
-            if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
-                Version.check();
-            }
 
             if (mainConfiguration.hasChanged()) {
                 mainConfiguration.save();

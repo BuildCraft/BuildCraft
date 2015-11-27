@@ -11,6 +11,9 @@ import java.util.Set;
 import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.Sets;
 
+/** Um, no. This is not needed anymore, as indervidual items will be stored in a Map<Integer, TravellingItem_BC8>,
+ * provided there are no problems implementing it. */
+@Deprecated
 public class TravelerSet extends ForwardingSet<TravelingItem> {
 
     public boolean iterating;

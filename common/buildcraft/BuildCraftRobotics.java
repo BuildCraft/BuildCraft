@@ -15,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,26 +44,10 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.robotics.BlockRequester;
-import buildcraft.robotics.BlockZonePlan;
-import buildcraft.robotics.BoardProgrammingRecipe;
-import buildcraft.robotics.DockingStationPipe;
-import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.ImplRedstoneBoardRegistry;
-import buildcraft.robotics.ItemRedstoneBoard;
-import buildcraft.robotics.ItemRobot;
-import buildcraft.robotics.ItemRobotStation;
-import buildcraft.robotics.RobotIntegrationRecipe;
-import buildcraft.robotics.RobotRegistryProvider;
-import buildcraft.robotics.RobotStationPluggable;
-import buildcraft.robotics.RoboticsGuiHandler;
-import buildcraft.robotics.RoboticsProxy;
-import buildcraft.robotics.TileRequester;
-import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.*;
 import buildcraft.robotics.ai.*;
 import buildcraft.robotics.boards.*;
 import buildcraft.robotics.map.MapManager;
@@ -71,7 +56,7 @@ import buildcraft.robotics.statements.*;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.silicon.ItemRedstoneChipset;
 
-@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics",
+@Mod(name = "BuildCraft Robotics", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Robotics",
         dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Robotics")

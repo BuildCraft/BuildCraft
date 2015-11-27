@@ -257,7 +257,7 @@ jar {
 //checkstyleApi.exclude "cofh/**"
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
+build.dependsOn sourceJar,/* javadocJar,*/ deobfJar, apiJar
 
 // --------------------
 // maven section

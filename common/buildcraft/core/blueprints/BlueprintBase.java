@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -27,7 +28,7 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.Box;
-import buildcraft.core.Version;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlueprintBase {
@@ -149,7 +150,7 @@ public abstract class BlueprintBase {
     }
 
     private void writeToNBTInternal(NBTTagCompound nbt) {
-        nbt.setString("version", Version.VERSION);
+        nbt.setString("version", DefaultProps.VERSION);
 
         if (this instanceof Template) {
             nbt.setString("kind", "template");

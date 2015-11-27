@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,10 +37,8 @@ import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.config.ConfigManager;
-import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
@@ -50,7 +49,7 @@ import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
 
-@Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
+@Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 
@@ -113,8 +112,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.EventHandler
     public void initialize(FMLPreInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(),
-                new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
 
         String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
             + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"

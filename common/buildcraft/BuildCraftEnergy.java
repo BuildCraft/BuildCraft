@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
+
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -38,8 +39,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.ConfigAccessor;
-import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.enums.EnumEnergyStage;
@@ -50,12 +49,10 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.config.ConfigManager.RestartRequirement;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
@@ -77,7 +74,7 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 
-@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
+@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
@@ -121,8 +118,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        ConfigAccessor.addMod(EMod.ENERGY, this);
-
         BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
@@ -379,8 +374,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(),
-                new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(), new PacketHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new EnergyGuiHandler());
 
@@ -424,15 +418,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
             }
         }
         // failed to find any free biome IDs
-        class BiomeIdLimitException extends RuntimeException {
-            private static final long serialVersionUID = 1L;
+        // class BiomeIdLimitException extends RuntimeException {
+        // private static final long serialVersionUID = 1L;
+        //
+        // public BiomeIdLimitException(String biome) {
+        // super(String.format("You have run out of free Biome ID spaces for %s", biome));
+        // }
+        // }
 
-            public BiomeIdLimitException(String biome) {
-                super(String.format("You have run out of free Biome ID spaces for %s", biome));
-            }
-        }
-
-        throw new BiomeIdLimitException(biomeName);
+        throw new RuntimeException("You have run out of free Biome ID spaces for " + biomeName);
     }
 
     @Mod.EventHandler

@@ -30,6 +30,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -75,7 +76,6 @@ import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.*;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
@@ -85,7 +85,7 @@ import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
 
-@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
+@Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 

@@ -1,18 +1,26 @@
 package buildcraft.api.transport.pipe_bc8;
 
-import net.minecraft.nbt.NBTTagCompound;
+import java.util.Set;
 
-import buildcraft.api.core.INBTStoreable;
-import buildcraft.api.core.ISerializable;
+import net.minecraft.nbt.NBTBase;
+
+import buildcraft.api.core.INBTLoadable_BC8;
+import buildcraft.api.core.INetworkLoadable_BC8;
 
 public interface IPipePropertyProvider {
+    /** This will return either the value of the property (if {@link #hasProperty(IPipeProperty)} returns true) or the
+     * default value of the property. */
     <T> T getValue(IPipeProperty<T> property);
 
     boolean hasProperty(IPipeProperty<?> property);
 
-    /** Defines a property key- this should be stored in a publicly accessible static variable somewhere */
+    Set<IPipeProperty<?>> getPropertySet();
+
+    /** Defines a property key- this should be stored in a publicly accessible static variable somewhere. */
     public interface IPipeProperty<T> {
         String getName();
+
+        T getDefault();
     }
 
     /** Defines a pipe property that has its value queried every time it is asked for its value. */
@@ -21,26 +29,20 @@ public interface IPipePropertyProvider {
     }
 
     /** Defines a pipe property that has a value explicitly set */
-    public interface IPipePropertyValue<T> extends ISerializable, INBTStoreable {
+    public interface IPipePropertyValue<T> extends IPipeProperty<T>, INBTLoadable_BC8<T>, INetworkLoadable_BC8<T> {
         T getValue();
 
-        /** This should read all of its data from a sub-tag in this {@link #readFromNBT(NBTTagCompound)}, preferably
-         * with the name of the property as the key to avoid confusion. */
         @Override
-        void readFromNBT(NBTTagCompound tag);
-
-        /** This should write all of its data to a sub-tag in this {@link NBTTagCompound}, preferably with the name of
-         * the property as the key to avoid confusion */
-        @Override
-        void writeToNBT(NBTTagCompound tag);
+        T readFromNBT(NBTBase tag);
     }
 
     /** Defines a provider that can have value properties changed and added. */
-    public interface IPipePropertyProviderEditable extends IPipePropertyProvider {
+    public interface IPipePropertyProviderEditable extends IPipePropertyProvider, INBTLoadable_BC8<IPipePropertyProviderEditable>,
+            INetworkLoadable_BC8<IPipePropertyProviderEditable> {
         <T> void addProperty(IPipePropertyValue<T> property);
 
-        <T> void removeProperty(IPipeProperty<T> property);
+        <T> void removeProperty(IPipePropertyValue<T> property);
 
-        <T> IPipePropertyValue<T> getProperty(IPipeProperty<T> property);
+        IPipePropertyProvider asReadOnly();
     }
 }

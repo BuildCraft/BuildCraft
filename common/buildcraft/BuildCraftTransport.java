@@ -58,12 +58,12 @@ import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.PowerMode;
-import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
@@ -104,7 +104,7 @@ import buildcraft.transport.statements.TriggerClockTimer.Time;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.stripes.*;
 
-@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Transport")
     public static BuildCraftTransport instance;
@@ -370,6 +370,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
+        PipeAPI_BC8.values();
         transportChannelHandler = new ChannelHandler();
         MinecraftForge.EVENT_BUS.register(this);
 

@@ -40,6 +40,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -342,6 +343,42 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return doRayTrace(world, pos, origin, direction);
     }
 
+    private class TraceTester {
+        final World world;
+        final BlockPos pos;
+        final Vec3 origin;
+        final Vec3 direction;
+
+        MovingObjectPosition closestHit = null;
+        IdentifiableAABB<Part> closestBox = null;
+        EnumFacing closestSide = null;
+        EnumFacing closestSideHit = null;
+        double distance = Double.POSITIVE_INFINITY;
+
+        public TraceTester(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+            this.world = world;
+            this.pos = pos;
+            this.origin = origin;
+            this.direction = direction;
+        }
+
+        void test(IdentifiableAABB<Part> bb, EnumFacing side) {
+            BlockGenericPipe.this.setBlockBounds(bb);
+            MovingObjectPosition mop = BlockGenericPipe.this.collisionRayTrace_super(world, pos, origin, direction);
+            if (mop != null) {
+                double lengthSquared = mop.hitVec.squareDistanceTo(origin);
+
+                if (lengthSquared < distance) {
+                    distance = lengthSquared;
+                    closestHit = mop;
+                    closestBox = bb;
+                    closestSide = side == null ? mop.sideHit : side;
+                    closestSideHit = mop.sideHit;
+                }
+            }
+        }
+    }
+
     public RaytraceResult doRayTrace(final World world, final BlockPos pos, final Vec3 origin, final Vec3 direction) {
         Pipe<?> pipe = getPipe(world, pos);
 
@@ -355,32 +392,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             return null;
         }
 
-        /** pipe hits along x, y, and z axis, gate (all 6 sides) [and wires+facades] */
-        final MovingObjectPosition[] closestHit = new MovingObjectPosition[1];
-        final IdentifiableAABB<Part>[] closestBox = new IdentifiableAABB[1];
-        final EnumFacing[] closestSide = new EnumFacing[1];
-        final EnumFacing[] closestSideHit = new EnumFacing[1];
-        final double[] distance = new double[] { Double.POSITIVE_INFINITY };
-
-        class Tester {
-            void test(IdentifiableAABB<Part> bb, EnumFacing side) {
-                BlockGenericPipe.this.setBlockBounds(bb);
-                MovingObjectPosition mop = BlockGenericPipe.this.collisionRayTrace_super(world, pos, origin, direction);
-                if (mop != null) {
-                    double lengthSquared = mop.hitVec.squareDistanceTo(origin);
-
-                    if (lengthSquared < distance[0]) {
-                        distance[0] = lengthSquared;
-                        closestHit[0] = mop;
-                        closestBox[0] = bb;
-                        closestSide[0] = side == null ? mop.sideHit : side;
-                        closestSideHit[0] = mop.sideHit;
-                    }
-                }
-            }
-        }
-
-        Tester tester = new Tester();
+        TraceTester tester = new TraceTester(world, pos, origin, direction);
 
         tester.test(getPipeBoundingBox(null), null);
 
@@ -402,8 +414,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         setBlockBounds(0, 0, 0, 1, 1, 1);
 
-        if (closestHit[0] != null) {
-            return new RaytraceResult(closestHit[0], closestBox[0], closestSide[0], closestSideHit[0]);
+        if (tester.closestHit != null) {
+            return new RaytraceResult(tester.closestHit, tester.closestBox, tester.closestSide, tester.closestSideHit);
         } else {
             return null;
         }

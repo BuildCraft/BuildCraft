@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Property;
 
 /** Use this to access the various config options. It is recommended that you use this as opposed to the variables in
  * the mod, as users may only install the modules that they want, and not the one you may have refereed to. */
+@Deprecated
 public final class ConfigAccessor {
     public enum EMod {
         CORE,
