@@ -124,6 +124,7 @@ import buildcraft.builders.schematics.SchematicSilverfish;
 import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicTripWireHook;
+import buildcraft.builders.schematics.SchematicTripwire;
 import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
@@ -134,7 +135,6 @@ import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
-import buildcraft.core.builders.schematics.SchematicBlockFloored;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
@@ -371,7 +371,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.flower_pot, SchematicTile.class);
 
-		schemes.registerSchematicBlock(Blocks.tripwire, SchematicBlockFloored.class);
+		schemes.registerSchematicBlock(Blocks.tripwire, SchematicTripwire.class);
 		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
