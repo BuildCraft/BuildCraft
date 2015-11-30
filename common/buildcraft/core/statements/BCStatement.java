@@ -6,6 +6,7 @@ package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -82,10 +83,16 @@ public abstract class BCStatement implements IStatement {
         location = new ResourceLocation(newLocation);
     }
 
+    protected void setBuildCraftLocation(String modulePart, String newLocation) {
+        setLocation("buildcraft" + modulePart + ":" + newLocation);
+    }
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void stitchTextures(TextureStitchEvent.Pre event) {
-        sprite = event.map.registerSprite(location);
+        sprite = null;
+        sprite = event.map.getTextureExtry(location.toString());
+        if (sprite == null) sprite = event.map.registerSprite(location);
     }
 
     @Override

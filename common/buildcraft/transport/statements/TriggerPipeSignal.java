@@ -6,8 +6,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -26,8 +24,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
                 "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
-        this.location = new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active
-            ? "active" : "inactive"));
+        setBuildCraftLocation("transport", "triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active" : "inactive"));
 
         this.active = active;
         this.color = color;

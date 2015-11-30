@@ -16,14 +16,15 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.pipe_bc8.EnumPipePart;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
     public static class Neighbor {
         public TileEntity tile;
-        public EnumFacing side;
+        public EnumPipePart side;
 
-        public Neighbor(TileEntity tile, EnumFacing side) {
+        public Neighbor(TileEntity tile, EnumPipePart side) {
             this.tile = tile;
             this.side = side;
         }
@@ -33,7 +34,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     public TriggerEnergy(boolean high) {
         super("buildcraft:energyStored" + (high ? "high" : "low"));
-
+        this.setBuildCraftLocation("core", "items/triggers/trigger_energy_storage_" + (high ? "high" : "low"));
         this.high = high;
     }
 
@@ -42,8 +43,10 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
         return StringUtils.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
     }
 
-    private boolean isTriggeredEnergyHandler(IEnergyConnection connection, EnumFacing side) {
+    private boolean isTriggeredEnergyHandler(IEnergyConnection connection, EnumPipePart part) {
         int energyStored, energyMaxStored;
+
+        EnumFacing side = part.face;
 
         if (connection instanceof IEnergyHandler) {
             energyStored = ((IEnergyHandler) connection).getEnergyStored(side);
@@ -69,14 +72,16 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
         return false;
     }
 
-    protected static boolean isTriggered(Object tile, EnumFacing side) {
-        return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) && (((IEnergyConnection) tile)
-                .canConnectEnergy(side.getOpposite()));
+    protected static boolean isTriggered(Object tile, EnumPipePart side) {
+        if (tile instanceof IEnergyConnection) {
+            return ((IEnergyConnection) tile).canConnectEnergy(side.opposite().face);
+        }
+        return false;
     }
 
-    protected boolean isActive(Object tile, EnumFacing side) {
+    protected boolean isActive(Object tile, EnumPipePart side) {
         if (isTriggered(tile, side)) {
-            return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
+            return isTriggeredEnergyHandler((IEnergyConnection) tile, side.opposite());
         }
 
         return false;
@@ -114,15 +119,15 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     public static Neighbor getTriggeringNeighbor(TileEntity parent) {
         if (parent instanceof IPipeTile) {
-            for (EnumFacing side : EnumFacing.VALUES) {
-                TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
+            for (EnumPipePart side : EnumPipePart.validFaces()) {
+                TileEntity tile = ((IPipeTile) parent).getNeighborTile(side.face);
                 if (tile != null && isTriggered(tile, side)) {
                     return new Neighbor(tile, side);
                 }
             }
         } else {
-            for (EnumFacing side : EnumFacing.VALUES) {
-                TileEntity tile = parent.getWorld().getTileEntity(parent.getPos().offset(side));
+            for (EnumPipePart side : EnumPipePart.validFaces()) {
+                TileEntity tile = parent.getWorld().getTileEntity(parent.getPos().offset(side.face));
                 if (tile != null && isTriggered(tile, side)) {
                     return new Neighbor(tile, side);
                 }

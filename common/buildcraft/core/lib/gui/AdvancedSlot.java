@@ -15,6 +15,8 @@ import net.minecraft.util.StatCollector;
 
 public abstract class AdvancedSlot {
 
+    /* TODO: Bind this with all block + item textures as a 32 x 32 sprite that only 18 x 18 is used */
+    @Deprecated
     private static final ResourceLocation TEXTURE_SLOT = new ResourceLocation("buildcraftcore:textures/gui/slot.png");
 
     public int x, y;

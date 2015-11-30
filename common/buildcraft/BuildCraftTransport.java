@@ -405,6 +405,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
         BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block.getDefaultState()));
+        BCCreativeTab.get("neptune").setIcon(new ItemStack(Items.cake));
         if (Loader.isModLoaded("BuildCraft|Silicon")) {
             BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
         }

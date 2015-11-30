@@ -105,8 +105,8 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
                     updateEventHandlers(eventHandlerList);
                     methods.put(m, eventType);
 
-                    BCPipeEventHandler annotation = m.getAnnotation(BCPipeEventHandler.class);
-                    if (annotation == null) BCLog.logger.warn("Need to add @BCPipeEventHandler to the method " + m);
+//                    BCPipeEventHandler annotation = m.getAnnotation(BCPipeEventHandler.class);
+//                    if (annotation == null) BCLog.logger.warn("Need to add @BCPipeEventHandler to the method " + m);
                 }
             }
         }

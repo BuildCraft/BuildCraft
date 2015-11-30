@@ -33,6 +33,10 @@ public enum EnumPipePart implements IStringSerializable {
         return facingMap.get(face);
     }
 
+    public static EnumPipePart[] validFaces() {
+        return new EnumPipePart[] { DOWN, UP, NORTH, SOUTH, WEST, EAST };
+    }
+
     private EnumPipePart(EnumFacing face) {
         this.face = face;
     }
@@ -64,5 +68,10 @@ public enum EnumPipePart implements IStringSerializable {
             default:
                 return DOWN;
         }
+    }
+
+    public EnumPipePart opposite() {
+        if (this == CENTER) return null;
+        return fromFacing(face.getOpposite());
     }
 }

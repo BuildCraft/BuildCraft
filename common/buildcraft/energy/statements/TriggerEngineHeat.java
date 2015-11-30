@@ -22,15 +22,15 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
     public EnumEnergyStage stage;
 
     public TriggerEngineHeat(EnumEnergyStage stage) {
-        super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ENGLISH), "buildcraft.engine.stage." + stage.name().toLowerCase(
-                Locale.ENGLISH));
+        super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ROOT), "buildcraft.engine.stage." + stage.name().toLowerCase(Locale.ROOT));
 
+        setBuildCraftLocation("core", "items/triggers/trigger_engine_" + stage.name().toLowerCase(Locale.ROOT));
         this.stage = stage;
     }
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.trigger.engine." + stage.name().toLowerCase(Locale.ENGLISH));
+        return StringUtils.localize("gate.trigger.engine." + stage.name().toLowerCase(Locale.ROOT));
     }
 
     @Override

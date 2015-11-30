@@ -3,6 +3,7 @@ package buildcraft.core.lib.gui;
 import java.util.ArrayList;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,12 +35,11 @@ public abstract class StatementSlot extends AdvancedSlot {
     @Override
     public TextureAtlasSprite getIcon() {
         IStatement stmt = getStatement();
-
-        // if (stmt != null) {
-        // return stmt.getIcon();
-        // } else {
-        return null;
-        // }
+        if (stmt != null) {
+            return stmt.getGuiSprite();
+        } else {
+            return null;
+        }
     }
 
     @Override
