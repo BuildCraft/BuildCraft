@@ -160,7 +160,7 @@ public class TravelingItem {
 
         toCenter = data.getBoolean("toCenter");
         input = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
-        output = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
+        output = NBTUtils.readEnum(data.getTag("output"), EnumFacing.class);
 
         byte c = data.getByte("color");
         if (c != -1) {
