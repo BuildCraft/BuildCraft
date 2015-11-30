@@ -28,9 +28,14 @@ public interface IPipeContents {
     }
 
     public interface IPipeContentsSeperate extends IPipeContents {
-        EnumPipeDirection getDirection();
+        EnumItemJourneyPart getJourneyPart();
 
-        EnumFacing getPart();
+        EnumFacing getDirection();
+
+        /** This should NEVER return numbers less than or equal to 0!
+         * 
+         * @return The number of minecraft blocks this contents moves per minecraft ticks */
+        double getSpeed();
     }
 
     public interface IPipeContentsItem extends IPipeContentsSeperate {

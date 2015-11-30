@@ -1,9 +1,12 @@
 package buildcraft.api.transport.pipe_bc8;
 
+import java.util.Arrays;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,12 +49,12 @@ public final class PipeDefinition_BC8 extends ObjectDefinition {
             IPipeBehaviourFactory factory) {
         super(tag);
         this.type = type;
-        this.maxSprites = textureSuffixes.length;
+        this.maxSprites = textureSuffixes == null ? 1 : textureSuffixes.length;
         this.itemSpriteIndex = itemSpriteIndex;
         this.textureLocationStart = textureStart.endsWith("/") ? textureStart : (textureStart + "/");
         this.spriteLocations = new String[maxSprites];
         for (int i = 0; i < maxSprites; i++) {
-            spriteLocations[i] = textureLocationStart + modUniqueTag + textureSuffixes[i];
+            spriteLocations[i] = textureLocationStart + modUniqueTag + (textureSuffixes == null ? "" : textureSuffixes[i]);
         }
         this.behaviourFactory = factory;
     }
@@ -78,6 +81,6 @@ public final class PipeDefinition_BC8 extends ObjectDefinition {
     @Override
     public String toString() {
         return "PipeDefinition [globalUniqueTag=" + globalUniqueTag + ", modUniqueTag=" + modUniqueTag + ", behaviourFactory=" + behaviourFactory
-            + ", type=" + type + "]";
+            + ", type=" + type + ", spriteLocations=" + Arrays.toString(spriteLocations) + "]";
     }
 }

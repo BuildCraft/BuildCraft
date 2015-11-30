@@ -8,6 +8,10 @@ public interface IPipeEvent_BC8 {
 
     public interface Tick extends IPipeEvent_BC8 {
         long getCurrentTick();
+
+        public interface Client extends Tick {}
+
+        public interface Server extends Tick {}
     }
 
     public interface PropertyQuery<T> extends IPipeEvent_BC8 {

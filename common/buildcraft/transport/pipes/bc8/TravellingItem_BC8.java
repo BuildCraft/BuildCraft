@@ -7,15 +7,17 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 
-import buildcraft.api.core.INBTLoadable_BC8;
-import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.EnumPipeDirection;
+import buildcraft.api.transport.pipe_bc8.EnumItemJourneyPart;
+import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipeContents.IPipeContentsItem;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
+import buildcraft.api.transport.pipe_bc8.IPipeListener;
+import buildcraft.api.transport.pipe_bc8.IPipeListenerFactory;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipeProperty;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
+import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8.Enter;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8.PropertyQuery;
@@ -24,27 +26,34 @@ import buildcraft.transport.PipeTransportItems;
 
 import io.netty.buffer.ByteBuf;
 
-public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_BC8>, INBTLoadable_BC8<TravellingItem_BC8> {
+public class TravellingItem_BC8 implements IPipeListener {
     private final IPipeContentsEditableItem item;
+    private final IPipe_BC8 pipe;
     /** Indicates the in-world tick of when it will reach its destination (Generally the other side of the pipe) */
     private long tickStarted, tickFinished;
 
-    public TravellingItem_BC8(IPipeContentsEditableItem item, long now, long reachDest) {
+    public TravellingItem_BC8(IPipe_BC8 pipe, IPipeContentsEditableItem item, long now, long reachDest) {
+        /* If either of these are null it will cause big problems later on- so don't even allow that to be a
+         * possibility. */
+        if (pipe == null) throw new NullPointerException("pipe");
+        if (item == null) throw new NullPointerException("item");
+        this.pipe = pipe;
         this.item = item;
         this.tickStarted = now;
         this.tickFinished = reachDest;
-    }
-
-    public TravellingItem_BC8(TravellingItem_BC8 item, long now, long finished) {
-        this.item = item.item;
-        this.tickStarted = now;
-        this.tickFinished = finished;
     }
 
     public double getWayThrough(long now) {
         long diff = tickFinished - tickStarted;
         long nowDiff = now - tickStarted;
         return nowDiff / (double) diff;
+    }
+
+    public void genTimings(long now, double distance) {
+        tickStarted = now;
+        double time = distance / item.getSpeed();
+        time = Math.ceil(time);
+        tickFinished = now + (long) (time);
     }
 
     public Vec3 interpolatePosition(Vec3 start, Vec3 end, long tick, float partialTicks) {
@@ -63,8 +72,8 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
     }
 
     public boolean canBeGroupedWith(IPipeContentsItem other) {
-        if (item.getPart() != other.getPart()) return false;
         if (item.getDirection() != other.getDirection()) return false;
+        if (item.getJourneyPart() != other.getJourneyPart()) return false;
         if (!StackHelper.canStacksMerge(item.cloneItemStack(), other.cloneItemStack())) return false;
 
         Set<IPipeProperty<?>> thisProperties = item.getProperties().getPropertySet();
@@ -86,6 +95,7 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
 
         ItemStack thisStack = item.cloneItemStack();
         ItemStack otherStack = other.cloneItemStack();
+        // We can test directly because both of the stacks are cloned.
         int merged = StackHelper.mergeStacks(otherStack, thisStack, true);
         if (merged == otherStack.stackSize) {
             otherStack.stackSize = 0;
@@ -96,8 +106,16 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
         return false;
     }
 
+    // Event handlers
+
     @BCPipeEventHandler
     public void itemInsertion(Enter enter) {
+        // Don't bother to handle it if someone else already has.
+        /* PipeTransportItem will NOT handle it if the number of stacks is greater than or equal to the max, so it falls
+         * down to us to handle it. */
+        if (enter.hasBeenHandled()) return;
+
+        // Only handle the insertion if its an item
         if (enter.getContents() instanceof IPipeContentsEditableItem) {
             // Check if the pipe already has a lot of items, if it doesn't, then just ignore it.
             int stacks = enter.getPipe().getProperties().getValue(PipeAPI_BC8.STACK_COUNT);
@@ -109,8 +127,11 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
             /* Don't add it to ourself if we are far enough away from the entrance. tryEncompass will check for us to
              * see if we are using going in the same direction. */
             if (dist > 0.25) return;
-            /* If an item has been added to a pipe, try and add it to this item rather than creating a new item */
-            tryEncompass(item);
+            /* If an item is about to be added to a pipe, try and add it to this item rather than creating a new item */
+            if (tryEncompass(item)) {
+                // Let everybody know that we have handled this item, so no-one else needs to
+                enter.handle();
+            }
         }
     }
 
@@ -123,14 +144,36 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
             return;
         }
 
+        if (tick instanceof IPipeEvent_BC8.Tick.Client) return;
+
+        EnumItemJourneyPart direction = item.getJourneyPart();
+        if (direction == EnumItemJourneyPart.JUST_ENTERED) {
+            // Setup ourselves NOW, but tick the rest later
+            double normalizedSpeed = item.getSpeed() * PipeTransportItem_BC8.SPEED_NORMALIZER;
+            IPipeEventContents_BC8.ChangeSpeed changeSpeed = null
+                /* new PipeEventContents.ChangeSpeed(item, normalizedSpeed) */;
+            pipe.fireEvent(changeSpeed);
+
+            normalizedSpeed = changeSpeed.getNormalizedSpeed();
+            item.setSpeed(normalizedSpeed / PipeTransportItem_BC8.SPEED_NORMALIZER);
+
+            double distance = 0.25;
+            IConnection_BC8 connection = pipe.getConnections().get(item.getDirection().getOpposite());
+            if (connection != null) distance += connection.getLength();
+
+            // generate our new timings (when we will next tick)
+            genTimings(pipe.getWorld().getTotalWorldTime(), distance);
+
+            // Update the client with our new timings
+            pipe.sendClientUpdate(this);
+            // Tick next tick not this tick
+            return;
+        }
+
         if (tick.getCurrentTick() < tickFinished) return;
-        IPipe_BC8 pipe = tick.getPipe();
 
-        // We have reached the end of where we are, try to do something
-        if (item.getDirection() == EnumPipeDirection.TO_CENTER) {
+        if (direction == EnumItemJourneyPart.TO_CENTER) {
             // We need to find out where we are going, and the new speed of ourselves
-
-            pipe.fireEvent(tick);
 
         } else {
             /* We must be going to the end of the pipe, so we need to insert ourselves into the next pipe, or into an
@@ -158,7 +201,7 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
         IPipeContentsEditableItem item = this.item.readFromNBT(tag.getCompoundTag("item"));
         long started = tag.getLong("tickStarted");
         long finished = tag.getLong("tickFinished");
-        return new TravellingItem_BC8(item, started, finished);
+        return new TravellingItem_BC8(pipe, item, started, finished);
     }
 
     @Override
@@ -173,15 +216,29 @@ public class TravellingItem_BC8 implements INetworkLoadable_BC8<TravellingItem_B
     @Override
     public TravellingItem_BC8 readFromByteBuf(ByteBuf buf) {
         IPipeContentsEditableItem item = this.item.readFromByteBuf(buf);
-        long started = buf.readLong();
-        long finished = buf.readLong();
-        return new TravellingItem_BC8(item, started, finished);
+        long now = pipe.getWorld().getTotalWorldTime();
+        long started = now + buf.readLong();
+        long finished = now + buf.readLong();
+        return new TravellingItem_BC8(pipe, item, started, finished);
     }
 
     @Override
     public void writeToByteBuf(ByteBuf buf) {
         item.writeToByteBuf(buf);
-        buf.writeLong(tickStarted);
-        buf.writeLong(tickFinished);
+        /* Write the delta of ticks, because this way we can counteract all lag between the server and the client. The
+         * client will use its own world tick when calculating timings, so the client will display everything
+         * properly. */
+        long now = pipe.getWorld().getTotalWorldTime();
+        buf.writeShort((short) (tickStarted - now));
+        buf.writeShort((short) (tickFinished - now));
+    }
+
+    public enum Factory implements IPipeListenerFactory {
+        INSTANCE;
+
+        @Override
+        public IPipeListener createNewListener(IPipe_BC8 pipe) {
+            return new TravellingItem_BC8(pipe, new PipeContentsEditableItem(null, null, null), 0, 0);
+        }
     }
 }

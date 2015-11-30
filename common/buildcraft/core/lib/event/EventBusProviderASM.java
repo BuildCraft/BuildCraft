@@ -31,7 +31,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
 
     @Override
     public IEventBus<T> newBus() {
-        return new EventBusASM<T>(this, eventBaseClass);
+        return new EventBusASM<T>(this);
     }
 
     public EventProviderASM<T> getProviderFor(Class<?> clazz) {

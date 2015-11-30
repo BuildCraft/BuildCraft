@@ -30,11 +30,13 @@ public class PacketGuiReturn extends Packet {
     public PacketGuiReturn(IGuiReturnHandler obj) {
         this.obj = obj;
         this.extraData = null;
+        this.tempWorld = obj.getWorld();
     }
 
     public PacketGuiReturn(IGuiReturnHandler obj, byte[] extraData) {
         this.obj = obj;
         this.extraData = extraData;
+        this.tempWorld = obj.getWorld();
     }
 
     @Override

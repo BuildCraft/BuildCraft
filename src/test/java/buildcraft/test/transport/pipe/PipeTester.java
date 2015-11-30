@@ -4,11 +4,13 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class PipeTester {
+import buildcraft.transport.BlockGenericPipe;
 
+public class PipeTester {
     @Test
     public void test() {
-        fail("Not yet implemented");
+        if (BlockGenericPipe.isValid(null)) {
+            fail("haha lol");
+        }
     }
-
 }

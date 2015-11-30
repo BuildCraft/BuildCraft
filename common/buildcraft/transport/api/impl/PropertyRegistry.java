@@ -2,9 +2,9 @@ package buildcraft.transport.api.impl;
 
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyImplicit;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyValue;
-import buildcraft.api.transport.pipe_bc8.IPropertyProvider;
+import buildcraft.api.transport.pipe_bc8.IPropertyRegistry;
 
-public enum PropertyProvider implements IPropertyProvider {
+public enum PropertyRegistry implements IPropertyRegistry {
     INSTANCE;
 
     @Override

@@ -1,11 +1,13 @@
 package buildcraft.api.transport.pipe_bc8;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+
+import io.netty.buffer.ByteBuf;
 
 /** An instance is created by instance of IBehaviourFactory per pipe block in world, and is registered with the pipe
  * event bus to listen and respond to events. */
-public abstract class PipeBehaviour_BC8 {
+public abstract class PipeBehaviour_BC8 implements IPipeListener {
     public final PipeDefinition_BC8 definition;
     public final IPipe_BC8 pipe;
 
@@ -16,10 +18,6 @@ public abstract class PipeBehaviour_BC8 {
         this.pipe = pipe;
     }
 
-    public abstract NBTTagCompound writeToNBT();
-
-    public abstract void readFromNBT(NBTTagCompound nbt);
-
     /** @param side The side of which the pipe should be registered
      * @return An integer between 0 (inclusive) and definition.maxSprites (exclusive). */
     public abstract int getIconIndex(EnumFacing side);
@@ -28,4 +26,10 @@ public abstract class PipeBehaviour_BC8 {
     public int getIconIndexForItem() {
         return getIconIndex(null);
     }
+
+    @Override
+    public abstract PipeBehaviour_BC8 readFromByteBuf(ByteBuf buf);
+
+    @Override
+    public abstract PipeBehaviour_BC8 readFromNBT(NBTBase nbt);
 }

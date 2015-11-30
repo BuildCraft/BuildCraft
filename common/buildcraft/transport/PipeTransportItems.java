@@ -34,13 +34,14 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
-    public static final int MAX_PIPE_STACKS = 64;
-    public static final int MAX_PIPE_ITEMS = 1024;
+    public static final int MAX_PIPE_STACKS = PipeTransportItem_BC8.MAX_PIPE_STACKS;
+    public static final int MAX_PIPE_ITEMS = PipeTransportItem_BC8.MAX_PIPE_ITEMS;
     public boolean allowBouncing = false;
     public final TravelerSet items = new TravelerSet(this);
 

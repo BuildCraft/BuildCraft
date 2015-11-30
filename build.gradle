@@ -38,7 +38,7 @@ dependencies {
 
 minecraft {
     mappings = "stable_16"
-    version = "1.8-11.14.4.1563" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
+    version = "1.8-11.14.4.1577" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 

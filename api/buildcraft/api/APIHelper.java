@@ -41,8 +41,8 @@ public class APIHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> T getNamedInstance(String clsName, String enumName, Class<T> baseVersion, T nullVersion) {
-        if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) throw new IllegalStateException(
-                "Called this API too early, you are not allowed to use BC api before init!");
+        if (!Loader.instance().hasReachedState(LoaderState.PREINITIALIZATION)) throw new IllegalStateException(
+                "Called this API too early, you are not allowed to use BC api before pre init!");
         try {
             Class<?> cls = Class.forName(clsName);
             Object[] arr = cls.getEnumConstants();

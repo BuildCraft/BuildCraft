@@ -128,4 +128,17 @@ public final class NetworkUtils {
         double z = stream.readDouble();
         return new Vec3(x, y, z);
     }
+
+    public static <E extends Enum<E>> void writeEnum(ByteBuf stream, E value) {
+        if (value == null) writeUTF(stream, "!NULL");
+        else writeUTF(stream, value.name());
+    }
+
+    public static <E extends Enum<E>> E readEnum(ByteBuf stream, Class<E> clazz) {
+        String s = readUTF(stream);
+        for (E val : clazz.getEnumConstants()) {
+            if (val.name().equals(s)) return val;
+        }
+        return null;
+    }
 }

@@ -58,7 +58,6 @@ import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -73,6 +72,7 @@ import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.*;
+import buildcraft.transport.block.BlockPipe;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -117,6 +117,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     public static BlockGenericPipe genericPipeBlock;
     public static BlockFilteredBuffer filteredBufferBlock;
+    public static BlockPipe pipeBlock;
 
     public static Item pipeWaterproof;
     public static Item pipeGate;
@@ -210,6 +211,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         // FluidShaderManager.INSTANCE.getRenderer(null);
         new BCCreativeTab("pipes");
         new BCCreativeTab("facades");
+        new BCCreativeTab("neptune");
         if (Loader.isModLoaded("BuildCraft|Silicon")) {
             new BCCreativeTab("gates");
         }
@@ -366,11 +368,12 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         InterModComms.registerHandler(new IMCHandlerTransport());
+
+        TransportPipes_BC8.preInit();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        PipeAPI_BC8.values();
         transportChannelHandler = new ChannelHandler();
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -459,6 +462,8 @@ public class BuildCraftTransport extends BuildCraftMod {
         PipeConnectionAPI.registerConnection(Blocks.chest, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.trapped_chest, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.hopper, smallerBlockConnection);
+
+        TransportPipes_BC8.init();
     }
 
     @Mod.EventHandler
@@ -479,6 +484,8 @@ public class BuildCraftTransport extends BuildCraftMod {
                 e.printStackTrace();
             }
         }
+
+        TransportPipes_BC8.postInit();
     }
 
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {

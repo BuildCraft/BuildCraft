@@ -53,9 +53,11 @@ public interface IPipeContentsEditable extends IPipeContents, INetworkLoadable_B
     }
 
     public interface IPipeContentsEditableSeperate extends IPipeContentsEditable, IPipeContentsSeperate {
-        void setPipeDirection(EnumPipeDirection direction);
+        void setJourneyPart(EnumItemJourneyPart journeyPart);
 
-        void setPart(EnumFacing part);
+        void setDirection(EnumFacing direction);
+
+        void setSpeed(double speed);
     }
 
     public interface IPipeContentsEditableItem extends IPipeContentsEditableSeperate, IPipeContentsItem {

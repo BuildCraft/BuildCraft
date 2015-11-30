@@ -3,7 +3,7 @@ package buildcraft.api.transport.pipe_bc8;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyImplicit;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyValue;
 
-public interface IPropertyProvider {
+public interface IPropertyRegistry {
     <T> IPipePropertyValue<T> getValueProperty(String modId, String name);
 
     <T> IPipePropertyValue<T> registerValueProperty(String name, Class<T> typeClass);
@@ -15,7 +15,7 @@ public interface IPropertyProvider {
     <T> IPipePropertyImplicit<T> registerCutomImplicitProperty(String name, IPipePropertyImplicit<T> property);
 
     // Used in case BuildCraft is not installed
-    enum Void implements IPropertyProvider {
+    enum Void implements IPropertyRegistry {
         INSTANCE;
 
         //@formatter:off

@@ -1,16 +1,17 @@
 package buildcraft.core.lib.event;
 
+import java.util.Collection;
+
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 public class EventBusASM<T> implements IEventBus<T> {
     private final Multimap<Object, IEventHandler<T>> handlers = HashMultimap.create();
     private final EventBusProviderASM<T> provider;
-    private final Class<T> eventClass;
 
-    public EventBusASM(EventBusProviderASM<T> provider, Class<T> eventClass) {
+    public EventBusASM(EventBusProviderASM<T> provider) {
         this.provider = provider;
-        this.eventClass = eventClass;
     }
 
     @Override
@@ -26,7 +27,10 @@ public class EventBusASM<T> implements IEventBus<T> {
 
     @Override
     public void handleEvent(T event) {
-        for (IEventHandler<T> handler : handlers.values()) {
+        // This allows handlers to be registered and unregistered at any time, event during event firing.
+        Collection<IEventHandler<T>> handlers = this.handlers.values();
+        handlers = ImmutableList.copyOf(handlers);
+        for (IEventHandler<T> handler : handlers) {
             handler.handle(event);
         }
     }
