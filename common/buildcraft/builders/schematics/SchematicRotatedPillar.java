@@ -11,7 +11,7 @@ public class SchematicRotatedPillar extends SchematicBlock {
     @Override
     public void rotateLeft(IBuilderContext context) {
         EnumFacing.Axis axis = (Axis) state.getValue(BlockRotatedPillar.AXIS);
-        Comparable<?> newAxis = null;
+        EnumFacing.Axis newAxis = null;
         switch ((EnumFacing.Axis) axis) {
             case X: {
                 newAxis = EnumFacing.Axis.Z;

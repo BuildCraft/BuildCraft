@@ -117,17 +117,17 @@ public abstract class SubCommand implements IModCommand {
         return parent.getFullCommandString() + " " + getCommandName();
     }
 
+    @Override
+    public int compareTo(Object o) {
+        return compareTo((ICommand) o);
+    }
+
     public int compareTo(ICommand command) {
         return this.getCommandName().compareTo(command.getCommandName());
     }
 
     @Override
-    public int compareTo(Object command) {
-        return this.compareTo((ICommand) command);
-    }
-
-    @Override
-    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
         return null;
     }
 }

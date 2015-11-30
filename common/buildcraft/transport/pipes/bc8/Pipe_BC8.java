@@ -112,7 +112,7 @@ public class Pipe_BC8 implements IPipe_BC8 {
         return nbt;
     }
 
-    void initialize() {
+    boolean initialize() {
         if (initNBT != null) {
             NBTTagCompound connections = initNBT.getCompoundTag("connections");
             for (EnumFacing face : EnumFacing.values()) {
@@ -122,7 +122,9 @@ public class Pipe_BC8 implements IPipe_BC8 {
                 if (conn != null) connectionMap.put(face, conn);
             }
             initNBT = null;
+            return true;
         }
+        return false;
     }
 
     @Override

@@ -5,8 +5,8 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.Loader;
@@ -206,9 +207,7 @@ public class MappingRegistry {
 
         // Then, look at the nbt compound contained in this nbt (even if it's a
         // stack) and checks for stacks in it.
-        for (Object keyO : new HashSet(nbt.getKeySet())) {
-            String key = (String) keyO;
-
+        for (String key : (Collection<String>) nbt.getKeySet()) {
             if (nbt.getTag(key) instanceof NBTTagCompound) {
                 try {
                     scanAndTranslateStacksToWorld(nbt.getCompoundTag(key));
@@ -299,6 +298,7 @@ public class MappingRegistry {
     }
 
     private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
+        ResourceLocation location = new ResourceLocation(name);
         String modName = name.split(":")[0];
         if (Loader.isModLoaded(modName)) {
             try {

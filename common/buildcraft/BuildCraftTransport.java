@@ -17,6 +17,7 @@ import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -25,7 +26,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -256,6 +256,9 @@ public class BuildCraftTransport extends BuildCraftMod {
             genericPipeBlock = (BlockGenericPipe) CompatHooks.INSTANCE.getBlock(BlockGenericPipe.class);
 
             CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
+
+            pipeBlock = new BlockPipe();
+            CoreProxy.proxy.registerBlock(pipeBlock.setUnlocalizedName("pipe_block_neptune"), null);
 
             BCCreativeTab pipeTab = BCCreativeTab.get("pipes");
             pipeItemsWood = buildPipe(PipeItemsWood.class, pipeTab, "plankWood", "blockGlassColorless", "plankWood");
@@ -550,7 +553,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     @Mod.EventHandler
     public void serverLoading(FMLServerStartingEvent event) {
         pipeExtensionListener = new PipeExtensionListener();
-        FMLCommonHandler.instance().bus().register(pipeExtensionListener);
+        MinecraftForge.EVENT_BUS.register(pipeExtensionListener);
     }
 
     @Mod.EventHandler
@@ -559,7 +562,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         for (WorldServer w : DimensionManager.getWorlds()) {
             pipeExtensionListener.tick(new TickEvent.WorldTickEvent(Side.SERVER, TickEvent.Phase.END, w));
         }
-        FMLCommonHandler.instance().bus().unregister(pipeExtensionListener);
+        MinecraftForge.EVENT_BUS.unregister(pipeExtensionListener);
         pipeExtensionListener = null;
     }
 
@@ -683,7 +686,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
             if (mapping.type == GameRegistry.Type.ITEM) {
                 if (mapping.name.equals("BuildCraft|Transport:robotStation")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:robotStation"));
+                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robotStation")));
                 }
             }
         }

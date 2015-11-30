@@ -136,7 +136,7 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
 
     private IPipeContents getType() {
         if (definition.type == PipeAPI_BC8.PIPE_TYPE_ITEM) {
-            return PipeAPI_BC8.PIPE_HELPER.getContentsForItems(new ItemStack(Items.apple));
+            return PipeAPI_BC8.PIPE_HELPER.getContentsForItem(new ItemStack(Items.apple));
         } else if (definition.type == PipeAPI_BC8.PIPE_TYPE_FLUID) {
             return PipeAPI_BC8.PIPE_HELPER.getContentsForFluid(new FluidStack(FluidRegistry.WATER, 1));
         } else {

@@ -52,7 +52,7 @@ public enum PipeRegistry implements IPipeRegistry {
 
     @Override
     public Item registerDefinition(PipeDefinition_BC8 definition) {
-        Item item = null;
+        ItemPipe item = new ItemPipe(definition);
         pipeTriMap.put(item, definition);
         return item;
     }

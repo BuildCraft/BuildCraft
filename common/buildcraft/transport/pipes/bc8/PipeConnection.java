@@ -1,5 +1,8 @@
 package buildcraft.transport.pipes.bc8;
 
+import java.util.Collection;
+import java.util.UUID;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -43,6 +46,13 @@ public abstract class PipeConnection implements IConnection_BC8 {
 
     abstract NBTTagCompound saveConnection();
 
+    private static Entity getEntityBuUUID(World world, UUID uuid) {
+        for (Entity ent : (Collection<Entity>) world.loadedEntityList) {
+            if (ent.getPersistentID().equals(uuid)) return ent;
+        }
+        return null;
+    }
+
     public static PipeConnection loadConnection(NBTTagCompound nbt, World world) {
         PipeConnectionType type = NBTUtils.readEnum(nbt.getTag("type"), PipeConnectionType.class);
         if (type == PipeConnectionType.TILE) {
@@ -59,14 +69,18 @@ public abstract class PipeConnection implements IConnection_BC8 {
             double length = nbt.getDouble("length");
             return new Pipe(length, ((IPipeHolder_BC8) tile).getPipe());
         } else if (type == PipeConnectionType.PIPE_ENTITY) {
-            int entId = nbt.getInteger("id");
-            Entity ent = world.getEntityByID(entId);
+            UUID id = UUID.fromString(nbt.getString("uuid"));
+            Entity ent = getEntityBuUUID(world, id);
             if (ent == null) return null;
             if (!(ent instanceof IPipeHolder_BC8)) return null;
             double length = nbt.getDouble("length");
             return new Pipe(length, ((IPipeHolder_BC8) ent).getPipe());
         } else if (type == PipeConnectionType.ENTITY) {
-            // TODO :)
+            UUID id = UUID.fromString(nbt.getString("uuid"));
+            Entity ent = getEntityBuUUID(world, id);
+            if (ent == null) return null;
+            double length = nbt.getDouble("length");
+            return new MovableEntity(length, ent);
         }
 
         BCLog.logger.warn("Tried to load a connection with an unknown type! " + type);
@@ -125,11 +139,36 @@ public abstract class PipeConnection implements IConnection_BC8 {
                 tag.setTag("pos", NBTUtils.writeBlockPos(((TileEntity) pipe.getHolder()).getPos()));
             } else if (pipe.getHolder() instanceof Entity) {
                 tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.PIPE_ENTITY));
-                tag.setInteger("id", ((Entity) pipe.getHolder()).getEntityId());
+                UUID uuid = ((Entity) pipe.getHolder()).getPersistentID();
+                tag.setString("uuid", uuid.toString());
             } else {
                 throw new IllegalStateException("Held a pipe object that had an unknow holder! Make a request if this is needed for " + pipe
                         .getHolder().getClass());
             }
+            return tag;
+        }
+    }
+
+    public static class MovableEntity extends PipeConnection implements IConnection_BC8.MovableEntity {
+        private final Entity entity;
+
+        public MovableEntity(double length, Entity entity) {
+            super(length, entity);
+            this.entity = entity;
+        }
+
+        @Override
+        public Entity getOther() {
+            return entity;
+        }
+
+        @Override
+        NBTTagCompound saveConnection() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setDouble("length", getLength());
+            tag.setTag("type", NBTUtils.writeEnum(PipeConnectionType.ENTITY));
+            UUID uuid = entity.getPersistentID();
+            tag.setString("uuid", uuid.toString());
             return tag;
         }
     }

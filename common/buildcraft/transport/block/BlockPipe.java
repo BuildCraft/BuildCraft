@@ -17,11 +17,11 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.transport.pipes.bc8.TilePipe_BC8;
 
 public class BlockPipe extends BlockBuildCraft {
-    protected BlockPipe(Material material) {
-        super(material);
+    public BlockPipe() {
+        super(Material.glass);
         setCreativeTab(null);
     }
-    
+
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, entity, stack);

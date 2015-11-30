@@ -43,7 +43,7 @@ public class PipeTransportItem_BC8 implements IPipeListener {
 
     @BCPipeEventHandler
     public void attemptConnection(IPipeEventConnection_BC8.AttemptCreate event) {
-        IPipeContentsItem item = PipeAPI_BC8.PIPE_HELPER.getContentsForItems(new ItemStack(Items.apple));
+        IPipeContentsItem item = PipeAPI_BC8.PIPE_HELPER.getContentsForItem(new ItemStack(Items.apple));
         if (event.getConnection().getInserter().getFilterForType(item).matches(item)) {
             event.couldAccept();
         } else if (event.getConnection().getExtractor().givesType(item)) {

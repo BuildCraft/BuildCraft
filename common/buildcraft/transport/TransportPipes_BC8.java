@@ -19,6 +19,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.pipe_bc8.IPipeBehaviourFactory;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.api.impl.EnumPipeType;
 import buildcraft.transport.pipes.bc8.EnumPipeMaterial;
@@ -160,9 +161,10 @@ public class TransportPipes_BC8 {
 
     private static void registerDefinition(EnumPipeMaterial material, EnumPipeType type, PipeDefinition_BC8 definition) {
         Item item = PipeAPI_BC8.PIPE_REGISTRY.registerDefinition(definition);
-        item.setUnlocalizedName("buildcraft_" + item.getUnlocalizedName().replace("item.", ""));
+        // item.setUnlocalizedName("buildcraft_" + item.getUnlocalizedName().replace("item.", ""));
         pipes.put(material, type, definition);
         CoreProxy.proxy.registerItem(item);
+        item.setCreativeTab(BCCreativeTab.get("neptune"));
     }
 
     public static void init() {

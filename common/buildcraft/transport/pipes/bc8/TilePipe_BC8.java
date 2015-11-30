@@ -8,14 +8,14 @@ import buildcraft.api.transport.pipe_bc8.IPipeHolder_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
+import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.transport.api.impl.event.PipeEvent_BC8;
 
 public class TilePipe_BC8 extends TileBuildCraft implements IPipeHolder_BC8 {
     private Pipe_BC8 pipe;
 
-    public TilePipe_BC8() {
-
-    }
+    public TilePipe_BC8() {}
 
     @Override
     public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
@@ -46,8 +46,9 @@ public class TilePipe_BC8 extends TileBuildCraft implements IPipeHolder_BC8 {
     }
 
     @Override
-    public void initialize() {
-        pipe.initialize();
+    public void update() {
+        if (pipe.initialize()) return;
+        IPipeEvent_BC8.Tick tick = getWorld().isRemote ? new PipeEvent_BC8.Tick.Client(pipe) : new PipeEvent_BC8.Tick.Server(pipe);
+        pipe.fireEvent(tick);
     }
-
 }
