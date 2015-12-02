@@ -9,6 +9,7 @@ public final class DefaultProps {
     public static final String MOD = "BuildCraft";
 
     public static final String VERSION = "@VERSION@";
+    public static final String UPDATE_JSON = "https://raw.githubusercontent.com/AlexIIL/BCVersion/master/BuildCraftCore.json";
 
     public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + VERSION;
     public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + VERSION;

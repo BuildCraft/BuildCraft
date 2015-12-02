@@ -13,16 +13,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
@@ -31,14 +33,17 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 
     public BlockLaserTable() {
         super(Material.iron, LASER_TABLE_TYPE);
-
-        setBlockBounds(0, 0, 0, 1, 8F / 16F, 1);
         setHardness(10F);
         setCreativeTab(BCCreativeTab.get("main"));
     }
 
     @Override
     public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
         return false;
     }
 
@@ -98,6 +103,11 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
         for (int i = 0; i < TABLE_MAX; i++) {
             par3List.add(new ItemStack(this, 1, i));
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
+        return new AxisAlignedBB(0, 0, 0, 1, 0.5, 1);
     }
 
     // @Override

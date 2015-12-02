@@ -35,7 +35,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     public TriggerInventory(State state) {
         super("buildcraft:inventory." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.inventory." + state.name().toLowerCase(Locale.ENGLISH));
-
+        setBuildCraftLocation("core", "items/triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT));
         this.state = state;
     }
 

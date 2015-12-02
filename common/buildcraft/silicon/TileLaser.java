@@ -15,7 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
@@ -148,9 +147,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
     protected void findTable() {
         int meta = getBlockMetadata();
 
-        Vec3i range = Utils.vec3i(5);
-        BlockPos min = getPos().subtract(range);
-        BlockPos max = getPos().add(range);
+        BlockPos min = getPos().add(Utils.vec3i(-5));
+        BlockPos max = getPos().add(Utils.vec3i(5));
 
         EnumFacing face = EnumFacing.getFront(meta);
         if (face.getAxisDirection() == AxisDirection.NEGATIVE) {

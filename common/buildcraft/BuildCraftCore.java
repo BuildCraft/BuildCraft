@@ -122,7 +122,7 @@ import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
-        dependencies = "required-after:Forge@[11.14.4.1577,11.15)", guiFactory = "buildcraft.core.config.ConfigManager")
+        dependencies = "required-after:Forge@[11.14.4.1577,11.15)", guiFactory = "buildcraft.core.config.ConfigManager", updateJSON = DefaultProps.UPDATE_JSON)
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
@@ -653,15 +653,20 @@ public class BuildCraftCore extends BuildCraftMod {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void loadTextures(TextureStitchEvent.Post evt) {
-        FluidRenderer.initFluidTextures(evt.map);
+    public void loadTextures(TextureStitchEvent.Pre evt) {
+        CoreIconProvider.registerIcons(evt.map);
         TextureAtlasSprite[] array = new TextureAtlasSprite[16];
         for (EnumColor color : EnumColor.values()) {
             String location = "buildcraftcore:textures/items/paintbrush/" + color.getName().toLowerCase(Locale.ENGLISH);
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
         EnumColor.registerSprites(array);
-        CoreIconProvider.registerIcons(evt.map);
+    }
+    
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void loadTextures(TextureStitchEvent.Post evt) {
+        FluidRenderer.initFluidTextures(evt.map);
     }
 
     @SubscribeEvent

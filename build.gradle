@@ -28,7 +28,7 @@ apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 //apply plugin: 'checkstyle'
 
-version = "7.0.0-wip"
+version = "0.8-alpha"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
@@ -46,7 +46,7 @@ minecraft {
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
     // replacing stuff in the source
-    replace '@VERSION@', project.version
+    replace "@VERSION@", project.version
     replace '@MC_VERSION@', version
 }
 
@@ -89,7 +89,7 @@ processResources
                 
         // replace version and mcversion
         // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand "version":project.version, "mcversion":project.minecraft.version
     }
         
     // copy everything else, that's not the mcmod.info
@@ -111,7 +111,10 @@ def createMCModInfo(def id, def taskName)
     if (temp.exists())
         temp.delete()
     temp.createNewFile()
-    temp.write(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    prettyPrinted = prettyPrinted.replace("\${version}", project.version)
+    prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
+    temp.write(prettyPrinted)
     temp.deleteOnExit()
     return temp
 }

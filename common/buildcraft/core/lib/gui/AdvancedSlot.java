@@ -13,11 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
-public abstract class AdvancedSlot {
+import buildcraft.core.client.CoreIconProvider;
 
-    /* TODO: Bind this with all block + item textures as a 32 x 32 sprite that only 18 x 18 is used */
-    @Deprecated
-    private static final ResourceLocation TEXTURE_SLOT = new ResourceLocation("buildcraftcore:textures/gui/slot.png");
+public abstract class AdvancedSlot {
 
     public int x, y;
     public GuiAdvancedInterface gui;
@@ -73,8 +71,9 @@ public abstract class AdvancedSlot {
         Minecraft mc = Minecraft.getMinecraft();
 
         if (drawBackround) {
-            mc.renderEngine.bindTexture(TEXTURE_SLOT);
-            gui.drawTexturedModalRect(cornerX + x - 1, cornerY + y - 1, 0, 0, 18, 18);
+            mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            gui.drawTexturedModalRect(cornerX + x - 12, cornerY + y - 12, CoreIconProvider.SLOT.getSprite(), 32, 32);
+            // gui.drawTexturedModalRect(cornerX + x - 1, cornerY + y - 1, 0, 0, 18, 18);
         }
 
         if (!isDefined()) {

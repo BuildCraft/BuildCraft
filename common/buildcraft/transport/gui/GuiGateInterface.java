@@ -10,6 +10,8 @@ import java.util.Iterator;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
@@ -252,6 +255,43 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         }
 
         drawBackgroundSlots();
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+
+        int sX = 18;
+        int sY = 6;
+
+        for (IStatement statement : container.getTriggerIterable(false)) {
+            drawStatement(this.guiLeft - sX, this.guiTop + sY, statement);
+            if (sX > 18 * 5) {
+                sX = 18;
+                sY += 18;
+            } else sX += 18;
+        }
+
+        sX = 18;
+        sY = 6;
+
+        for (IStatement statement : container.getActionIterable(false)) {
+            drawStatement(this.guiLeft + this.getXSize() + sX, this.guiTop + sY, statement);
+            if (sX > 18 * 5) {
+                sX = 18;
+                sY += sX=18;
+            } else sX += 18;
+        }
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    private void drawStatement(int x, int y, IStatement state) {
+        drawTexturedModalRect(x - 8, y - 8, CoreIconProvider.SLOT.getSprite(), 32, 32);
+        drawTexturedModalRect(x, y, state.getGuiSprite(), 16, 16);
     }
 
     private void doSlotClick(AdvancedSlot slot, int k) {

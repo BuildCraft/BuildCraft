@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
@@ -68,53 +69,6 @@ public class BlockQuarry extends BlockBuildCraft {
 
         return state;
     }
-
-    // public void searchFrames(World world, BlockPos pos) {
-    // int width2 = 1;
-    // int i = pos.getX();
-    // int j = pos.getY();
-    // int k = pos.getZ();
-    // if (!Utils.checkChunksExist(world, i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-    // return;
-    // }
-    //
-    // IBlockState state = world.getBlockState(pos);
-    // Block block = state.getBlock();
-    //
-    // if (block != BuildCraftBuilders.frameBlock) {
-    // return;
-    // }
-    //
-    // if ((meta & 8) == 0) {
-    // world.setBlockMetadataWithNotify(pos, meta | 8, 0);
-    //
-    // EnumFacing[] dirs = EnumFacing.VALID_DIRECTIONS;
-    //
-    // for (EnumFacing dir : dirs) {
-    // switch (dir) {
-    // case UP:
-    // searchFrames(world, i, j + 1, k);
-    // break;
-    // case DOWN:
-    // searchFrames(world, i, j - 1, k);
-    // break;
-    // case SOUTH:
-    // searchFrames(world, pos + 1);
-    // break;
-    // case NORTH:
-    // searchFrames(world, pos - 1);
-    // break;
-    // case EAST:
-    // searchFrames(world, i + 1, j, k);
-    // break;
-    // case WEST:
-    // default:
-    // searchFrames(world, i - 1, j, k);
-    // break;
-    // }
-    // }
-    // }
-    // }
 
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {

@@ -7,9 +7,11 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -101,10 +103,16 @@ public class ActionParameterSignal implements IStatementParameter {
 
     public static void registerIcons(TextureStitchEvent.Pre event) {
         icons = new TextureAtlasSprite[4];
-        icons[0] = event.map.registerSprite(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_red_active"));
-        icons[1] = event.map.registerSprite(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_blue_active"));
-        icons[2] = event.map.registerSprite(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_green_active"));
-        icons[3] = event.map.registerSprite(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_yellow_active"));
+        icons[0] = getOrRegister(event.map, "buildcrafttransport:triggers/trigger_pipesignal_red_active");
+        icons[1] = getOrRegister(event.map, "buildcrafttransport:triggers/trigger_pipesignal_blue_active");
+        icons[2] = getOrRegister(event.map, "buildcrafttransport:triggers/trigger_pipesignal_green_active");
+        icons[3] = getOrRegister(event.map, "buildcrafttransport:triggers/trigger_pipesignal_yellow_active");
+    }
+
+    private static TextureAtlasSprite getOrRegister(TextureMap map, String location) {
+        TextureAtlasSprite sprite = map.getTextureExtry(location);
+        if (sprite == null) sprite = map.registerSprite(new ResourceLocation(location));
+        return sprite;
     }
 
     @Override

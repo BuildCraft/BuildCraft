@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
@@ -237,6 +238,10 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
     public Iterator<IStatement> getTriggerIterator(boolean descending) {
         return descending ? potentialTriggers.descendingIterator() : potentialTriggers.iterator();
     }
+    
+    public Iterable<IStatement> getTriggerIterable(boolean descending) {
+        return descending ? potentialTriggers.descendingSet() : potentialTriggers;
+    }
 
     public ActionActiveState getActionState(int i) {
         if (gate == null) {
@@ -277,6 +282,10 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
     public Iterator<IStatement> getActionIterator(boolean descending) {
         return descending ? potentialActions.descendingIterator() : potentialActions.iterator();
+    }
+    
+    public Iterable<IStatement> getActionIterable(boolean descending) {
+        return descending ? potentialActions.descendingSet() : potentialActions;
     }
 
     // PACKET GENERATION

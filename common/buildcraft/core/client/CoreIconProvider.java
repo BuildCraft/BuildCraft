@@ -5,7 +5,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 
 public enum CoreIconProvider {
-    ENERGY("");
+    ENERGY(""),
+    SLOT("buildcraftcore:gui/slot");
 
     private final ResourceLocation location;
     private TextureAtlasSprite sprite;

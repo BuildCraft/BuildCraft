@@ -24,6 +24,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -263,6 +264,8 @@ public abstract class BlockBuildCraftBase extends Block {
         return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
     }
 
+    /** You must override one of {@link #getBoxes(IBlockAccess, BlockPos, IBlockState)} or
+     * {@link #getBox(IBlockAccess, BlockPos, IBlockState)} otherwise you will get a crash. */
     public AxisAlignedBB[] getBoxes(IBlockAccess world, BlockPos pos, IBlockState state) {
         return new AxisAlignedBB[] { getBox(world, pos, state) };
     }
@@ -330,7 +333,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
         return getBox(world, pos, world.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
     }
-
+    
     /* @Override public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) { AxisAlignedBB[] bbs =
      * getBoxes(world, pos, world.getBlockState(pos)); AxisAlignedBB bb = bbs[0]; for (int i = 1; i < bbs.length; i++) {
      * bb = bb.union(bbs[i]); } minX = bb.minX; minY = bb.minY; minZ = bb.minZ; maxX = bb.maxX; maxY = bb.maxY; maxZ =
