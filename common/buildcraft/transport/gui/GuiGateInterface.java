@@ -302,7 +302,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             }
             if (sX > 18 * 4) {
                 sX = 0;
-                sY += sX = 18;
+                sY += 18;
             } else sX += 18;
         }
 
@@ -490,9 +490,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 index = i;
                 return;
             }
-            if (sX > 18 * 5) {
-                sX = 18;
-                sY += sX = 18;
+            if (sX > 18 * 4) {
+                sX = 0;
+                sY += 18;
             } else sX += 18;
         }
 
