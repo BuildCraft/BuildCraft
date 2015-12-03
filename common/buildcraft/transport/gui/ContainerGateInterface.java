@@ -238,8 +238,8 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
     public Iterator<IStatement> getTriggerIterator(boolean descending) {
         return descending ? potentialTriggers.descendingIterator() : potentialTriggers.iterator();
     }
-    
-    public Iterable<IStatement> getTriggerIterable(boolean descending) {
+
+    public Collection<IStatement> getTriggerCollection(boolean descending) {
         return descending ? potentialTriggers.descendingSet() : potentialTriggers;
     }
 
@@ -283,8 +283,8 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
     public Iterator<IStatement> getActionIterator(boolean descending) {
         return descending ? potentialActions.descendingIterator() : potentialActions.iterator();
     }
-    
-    public Iterable<IStatement> getActionIterable(boolean descending) {
+
+    public Collection<IStatement> getActionCollection(boolean descending) {
         return descending ? potentialActions.descendingSet() : potentialActions;
     }
 

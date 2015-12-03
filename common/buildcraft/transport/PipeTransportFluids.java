@@ -26,6 +26,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.pipe_bc8.EnumPipePart;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -610,7 +611,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     @Override
     public FluidTankInfo[] getTankInfo(EnumFacing from) {
-        return new FluidTankInfo[] { new FluidTankInfo(fluidType, sections[from.ordinal()].amount) };
+        return new FluidTankInfo[] { new FluidTankInfo(fluidType, sections[EnumPipePart.fromFacing(from).ordinal()].amount) };
     }
 
     @Override

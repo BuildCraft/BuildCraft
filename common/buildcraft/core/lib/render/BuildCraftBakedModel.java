@@ -1,7 +1,11 @@
 package buildcraft.core.lib.render;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
@@ -15,8 +19,11 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
+import net.minecraftforge.client.model.IColoredBakedQuad;
+import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
@@ -37,6 +44,52 @@ public abstract class BuildCraftBakedModel extends BakedModel {
 
     // Size of each array
     public static final int ARRAY_SIZE = 7;
+
+    private static final Map<EnumFacing, Matrix4f> pluggableMap;
+
+    static {
+        ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
+        for (EnumFacing face : EnumFacing.values()) {
+            Matrix4f mat = new Matrix4f();
+            mat.setIdentity();
+
+            if (face == EnumFacing.WEST) {
+                builder.put(face, mat);
+                continue;
+            }
+            mat.setTranslation(new Vector3f(0.5f, 0.5f, 0.5f));
+            Matrix4f m2 = new Matrix4f();
+            m2.setIdentity();
+
+            if (face.getAxis() == Axis.Y) {
+                AxisAngle4f axisAngle = new AxisAngle4f(0, 0, 1, (float) Math.PI * 0.5f * -face.getFrontOffsetY());
+                m2.setRotation(axisAngle);
+                mat.mul(m2);
+
+                m2.setIdentity();
+                m2.setRotation(new AxisAngle4f(1, 0, 0, (float) Math.PI * (1 + face.getFrontOffsetY() * 0.5f)));
+                mat.mul(m2);
+            } else {
+                int ang;
+                if (face == EnumFacing.EAST) ang = 2;
+                else if (face == EnumFacing.NORTH) ang = 3;
+                else ang = 1;
+                AxisAngle4f axisAngle = new AxisAngle4f(0, 1, 0, (float) Math.PI * 0.5f * ang);
+                m2.setRotation(axisAngle);
+                mat.mul(m2);
+            }
+
+            m2.setIdentity();
+            m2.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
+            mat.mul(m2);
+            builder.put(face, mat);
+        }
+        pluggableMap = builder.build();
+    }
+
+    public static Matrix4f rotateTowardsFace(EnumFacing face) {
+        return new Matrix4f(pluggableMap.get(face));
+    }
 
     @SuppressWarnings("deprecation")
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format,
@@ -192,5 +245,83 @@ public abstract class BuildCraftBakedModel extends BakedModel {
             faceRadius.add(faceAdd);
         }
         return getPoints(centerOfFace, faceRadius);
+    }
+
+    public static BakedQuad transform(BakedQuad quad, Matrix4f matrix4f) {
+        int[] data = quad.getVertexData();
+        boolean colour = quad instanceof IColoredBakedQuad;
+        for (int i = 0; i < 4; i++) {
+            Point3f vec = new Point3f();
+            vec.x = Float.intBitsToFloat(data[i * 7 + X]);
+            vec.y = Float.intBitsToFloat(data[i * 7 + Y]);
+            vec.z = Float.intBitsToFloat(data[i * 7 + Z]);
+
+            matrix4f.transform(vec);
+
+            data[i * 7 + X] = Float.floatToRawIntBits(vec.x);
+            data[i * 7 + Y] = Float.floatToRawIntBits(vec.y);
+            data[i * 7 + Z] = Float.floatToRawIntBits(vec.z);
+        }
+        return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    }
+
+    public static BakedQuad replaceShade(BakedQuad quad, int shade) {
+        int[] data = quad.getVertexData();
+        boolean colour = quad instanceof IColoredBakedQuad;
+        for (int i = 0; i < 4; i++) {
+            data[i * 7 + SHADE] = shade;
+        }
+        return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    }
+
+    public static Vector3f normal(BakedQuad quad) {
+        int[] data = quad.getVertexData();
+        Point3f[] positions = new Point3f[3];
+        for (int i = 0; i < 3; i++) {
+            Point3f vec = new Point3f();
+            vec.x = Float.intBitsToFloat(data[i * 7 + X]);
+            vec.y = Float.intBitsToFloat(data[i * 7 + Y]);
+            vec.z = Float.intBitsToFloat(data[i * 7 + Z]);
+            positions[i] = vec;
+        }
+
+        Vector3f a = new Vector3f(positions[1]);
+        a.sub(positions[0]);
+
+        Vector3f b = new Vector3f(positions[2]);
+        b.sub(positions[0]);
+
+        Vector3f c = new Vector3f();
+        c.cross(a, b);
+        return c;
+    }
+
+    public static float diffuseLight(Vector3f normal) {
+        return diffuseLight(normal.x, normal.y, normal.z);
+    }
+
+    public static float diffuseLight(float x, float y, float z) {
+        boolean up = y >= 0;
+
+        float xx = x * x;
+        float yy = y * y;
+        float zz = z * z;
+
+        float t = xx + yy + zz;
+        float light = (xx * 0.6f + zz * 0.8f) / t;
+
+        float yyt = yy / t;
+        if (!up) yyt *= 0.5;
+        light += yyt;
+
+        return light;
+    }
+
+    public static BakedQuad applyDiffuse(BakedQuad quad) {
+        Vector3f normal = normal(quad);
+        float diffuse = diffuseLight(normal);
+        int diffuseI = (int) (diffuse * 0xFF);
+        int shade = 0xFF000000 + diffuseI * 0x010101;
+        return replaceShade(quad, shade);
     }
 }

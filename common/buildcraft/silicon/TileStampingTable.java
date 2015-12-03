@@ -39,18 +39,18 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
     private final LocalInventoryCrafting crafting = new LocalInventoryCrafting();
 
     public WeakReference<EntityPlayer> getInternalPlayer() {
-        return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, getPos().add(0, 1, 0));
+        return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, getPos().up());
     }
 
     @Override
     public void update() {
         super.update();
 
-		if (worldObj.isRemote) {
-			return;
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
-        if (getEnergy() >= getRequiredEnergy()) {
+        if (getEnergy() >= getRequiredEnergy() && getEnergy() > 0) {
             ItemStack input = this.getStackInSlot(0);
 
             if (input == null) {
@@ -177,7 +177,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
         return 5;
     }
 
-	@Override
+    @Override
     public String getInventoryName() {
         return StringUtils.localize("tile.stampingTableBlock.name");
     }
@@ -187,18 +187,18 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
         return slot == 0;
     }
 
-	@Override
-	public int[] getSlotsForFace(EnumFacing side) {
-		return new int[] { 0, 1 };
-	}
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        return SLOTS;
+    }
 
-	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
-		return slot == 0;
-	}
+    @Override
+    public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
+        return slot == 0;
+    }
 
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
-		return slot >= 1;
-	}
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
+        return slot >= 1;
+    }
 }

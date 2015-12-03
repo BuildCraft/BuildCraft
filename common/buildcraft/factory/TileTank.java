@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.EnumSkyBlock;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -18,9 +19,9 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
@@ -62,6 +63,8 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     @Override
     public void update() {
         super.update();
+
+        if (init != 2 || worldObj == null) return;
 
         if (worldObj.isRemote) {
             int lightValue = getFluidLightLevel();

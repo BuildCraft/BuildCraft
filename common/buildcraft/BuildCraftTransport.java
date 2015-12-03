@@ -88,6 +88,7 @@ import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.*;
+import buildcraft.transport.pipes.bc8.TilePipe_BC8;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;

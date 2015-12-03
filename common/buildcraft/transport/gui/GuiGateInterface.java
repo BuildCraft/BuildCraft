@@ -5,6 +5,7 @@
 package buildcraft.transport.gui;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.lwjgl.input.Mouse;
@@ -15,6 +16,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -36,6 +38,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     private final GuiGateInterface instance;
     private final Pipe<?> pipe;
     private Gate gate;
+
+    // Used for dragging triggers and actions to their correct positions
+    private boolean trigger;
+    private int index = -1;
+    private String tooltip = null;
 
     private class TriggerSlot extends StatementSlot {
         public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
@@ -199,7 +206,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         if (gate == null) {
             return;
         }
@@ -208,7 +215,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
         fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
-        drawTooltipForSlotAt(par1, par2);
+        if (index == -1) drawTooltipForSlotAt(mouseX, mouseY);
+        if (tooltip != null) drawTooltip(tooltip, mouseX, mouseY);
     }
 
     @Override
@@ -262,26 +270,54 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_BLEND);
 
+        tooltip = null;
+
         int sX = 18;
         int sY = 6;
 
-        for (IStatement statement : container.getTriggerIterable(false)) {
-            drawStatement(this.guiLeft - sX, this.guiTop + sY, statement);
+        for (IStatement statement : container.getTriggerCollection(false)) {
+            int pX = this.guiLeft - sX;
+            int pY = this.guiTop + sY;
+            if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
+                String desc = statement.getDescription();
+                tooltip = StatCollector.translateToLocal(desc);
+            }
+            drawStatement(pX, pY, statement);
             if (sX > 18 * 5) {
                 sX = 18;
                 sY += 18;
             } else sX += 18;
         }
 
-        sX = 18;
+        sX = 0;
         sY = 6;
 
-        for (IStatement statement : container.getActionIterable(false)) {
-            drawStatement(this.guiLeft + this.getXSize() + sX, this.guiTop + sY, statement);
-            if (sX > 18 * 5) {
-                sX = 18;
-                sY += sX=18;
+        for (IStatement statement : container.getActionCollection(false)) {
+            int pX = this.guiLeft + this.getXSize() + sX;
+            int pY = this.guiTop + sY;
+            drawStatement(pX, pY, statement);
+            if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
+                String desc = statement.getDescription();
+                tooltip = StatCollector.translateToLocal(desc);
+            }
+            if (sX > 18 * 4) {
+                sX = 0;
+                sY += sX = 18;
             } else sX += 18;
+        }
+
+        if (index != -1) {
+            Collection<IStatement> collect;
+            if (trigger) collect = container.getTriggerCollection(false);
+            else collect = container.getActionCollection(false);
+            IStatement state = null;
+            int i = index;
+            Iterator<IStatement> it = collect.iterator();
+            while (i >= 0) {
+                state = it.next();
+                i--;
+            }
+            drawStatement(x, y, state);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);
@@ -421,7 +457,45 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
         if (slot != null) {
             doSlotClick(slot, type);
+            return;
         }
+
+        int sX = 18;
+        int sY = 6;
+
+        Collection<IStatement> collect = container.getTriggerCollection(false);
+        for (int i = 0; i < collect.size(); i++) {
+            int pX = this.guiLeft - sX;
+            int pY = this.guiTop + sY;
+            if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
+                trigger = true;
+                index = i;
+                return;
+            }
+            if (sX > 18 * 5) {
+                sX = 18;
+                sY += 18;
+            } else sX += 18;
+        }
+
+        sX = 0;
+        sY = 6;
+        collect = container.getActionCollection(false);
+
+        for (int i = 0; i < collect.size(); i++) {
+            int pX = this.guiLeft + this.getXSize() + sX;
+            int pY = this.guiTop + sY;
+            if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
+                trigger = false;
+                index = i;
+                return;
+            }
+            if (sX > 18 * 5) {
+                sX = 18;
+                sY += sX = 18;
+            } else sX += 18;
+        }
+
     }
 
     @Override
@@ -433,6 +507,35 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
             doSlotClick(getSlotAtLocation(i, j), wheel > 0 ? 0 : 1);
+        }
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+        super.mouseReleased(mouseX, mouseY, eventType);
+        if (index != -1) {
+            int i = index;
+            index = -1;
+            IStatement changeTo = null;
+            Iterator<IStatement> it;
+            if (trigger) it = container.getTriggerIterator(false);
+            else it = container.getActionIterator(false);
+
+            while (i >= 0) {
+                changeTo = it.next();
+                i--;
+            }
+
+            AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
+            if (slot == null) return;
+            if (trigger && slot instanceof TriggerSlot) {
+                TriggerSlot trig = (TriggerSlot) slot;
+                container.setTrigger(trig.slot, changeTo.getUniqueTag(), true);
+            }
+            if (!trigger && slot instanceof ActionSlot) {
+                ActionSlot trig = (ActionSlot) slot;
+                container.setAction(trig.slot, changeTo.getUniqueTag(), true);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -15,7 +16,9 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.Average;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
 
@@ -111,15 +114,15 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
         return worldObj.getTileEntity(getPos()) == this && !isInvalid();
     }
 
-	@Override
-	public void openInventory(EntityPlayer player) {
+    @Override
+    public void openInventory(EntityPlayer player) {
 
-	}
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player) {
+    @Override
+    public void closeInventory(EntityPlayer player) {
 
-	}
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
@@ -133,6 +136,39 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
         super.readFromNBT(nbt);
         inv.readFromNBT(nbt, "inv");
         energy = nbt.getInteger("energy");
+    }
+
+    protected void outputStack(ItemStack remaining, boolean autoEject) {
+        outputStack(remaining, null, 0, autoEject);
+    }
+
+    protected void outputStack(ItemStack remaining, IInventory inv, int slot, boolean autoEject) {
+        if (autoEject) {
+            if (remaining != null && remaining.stackSize > 0) {
+                remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, getPos(), remaining);
+            }
+
+            if (remaining != null && remaining.stackSize > 0) {
+                remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, getPos(), null, remaining);
+            }
+        }
+
+        if (inv != null && remaining != null && remaining.stackSize > 0) {
+            ItemStack inside = inv.getStackInSlot(slot);
+
+            if (inside == null || inside.stackSize <= 0) {
+                inv.setInventorySlotContents(slot, remaining);
+                return;
+            } else if (StackHelper.canStacksMerge(inside, remaining)) {
+                remaining.stackSize -= StackHelper.mergeStacks(remaining, inside, true);
+            }
+        }
+
+        if (remaining != null && remaining.stackSize > 0) {
+            EntityItem entityitem = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 0.7, getPos().getZ() + 0.5, remaining);
+
+            worldObj.spawnEntityInWorld(entityitem);
+        }
     }
 
     public void getGUINetworkData(int id, int data) {

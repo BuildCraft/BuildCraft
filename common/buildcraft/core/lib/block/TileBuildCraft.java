@@ -43,7 +43,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     protected IControllable.Mode mode;
     private boolean sendNetworkUpdate = false;
 
-    private int init = 0;
+    protected int init = 0;
     private String owner = "[BuildCraft]";
     private RFBattery battery;
 

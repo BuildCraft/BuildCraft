@@ -12,6 +12,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import buildcraft.transport.pipes.bc8.TilePipe_BC8;
 import buildcraft.transport.render.TileEntityPickupFX;
 import buildcraft.transport.render.shader.FluidShaderManager;
 import buildcraft.transport.render.tile.PipeRendererTESR;
@@ -23,6 +24,8 @@ public class TransportProxyClient extends TransportProxy {
         super.registerTileEntities();
         PipeRendererTESR rp = new PipeRendererTESR();
         ClientRegistry.bindTileEntitySpecialRenderer(TileGenericPipe.class, rp);
+        
+//        ClientRegistry.bindTileEntitySpecialRenderer(TilePipe_BC8.class, new );
     }
 
     @Override

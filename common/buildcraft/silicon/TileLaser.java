@@ -207,8 +207,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         }
 
         Vec3 head = Utils.convertMiddle(getPos()).addVector(px, py, pz);
-        Vec3 tail = Utils.convert(laserTarget.getPos()).addVector(0.475 + (worldObj.rand.nextDouble() - 0.5) / 5d, 9 / 16d, 0.475 + (worldObj.rand
-                .nextDouble() - 0.5) / 5d);
+        Vec3 tail = Utils.convert(((TileEntity) laserTarget).getPos());
+        tail = tail.addVector(0.475 + (worldObj.rand.nextDouble() - 0.5) / 5d, 9 / 16d, 0.475 + (worldObj.rand.nextDouble() - 0.5) / 5d);
 
         laser.head = head;
         laser.tail = tail;

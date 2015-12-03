@@ -25,6 +25,4 @@ public interface ILaserTarget {
      *
      * @return true if no longer a valid target object */
     boolean isInvalidTarget();
-
-    BlockPos getPos();
 }
