@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
@@ -69,8 +70,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
     private GuiBetterButton tool, fsButton;
 
-    private List<?> inventorySlots;
-    private List<GuiBetterButton> savedButtonList;
+    private List<Slot> inventorySlots;
+    private List<GuiButton> savedButtonList;
 
     private GuiTextField textField;
 

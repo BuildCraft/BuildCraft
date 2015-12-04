@@ -139,9 +139,8 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotId) {
-        ItemStack output = inventory.getStackInSlotOnClosing(slotId);
-        return output;
+    public ItemStack removeStackFromSlot(int slotId) {
+        return inventory.removeStackFromSlot(slotId);
     }
 
     @Override
@@ -151,7 +150,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
 
     @Override
     public String getInventoryName() {
-        return inventory.getCommandSenderName();
+        return inventory.getName();
     }
 
     @Override

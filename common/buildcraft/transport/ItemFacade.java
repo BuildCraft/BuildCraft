@@ -112,7 +112,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public static NBTTagList writeArray(FacadeState[] states) {
-            if (states == null) { return null; }
+            if (states == null) {
+                return null;
+            }
             NBTTagList list = new NBTTagList();
             for (FacadeState state : states) {
                 NBTTagCompound stateNBT = new NBTTagCompound();
@@ -123,7 +125,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public static FacadeState[] readArray(NBTTagList list) {
-            if (list == null) { return null; }
+            if (list == null) {
+                return null;
+            }
             final int length = list.tagCount();
             FacadeState[] states = new FacadeState[length];
             for (int i = 0; i < length; i++) {
@@ -191,7 +195,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static String getFacadeStateDisplayName(FacadeState state) {
-        if (state.state == null) { return StringUtils.localize("item.FacadePhased.state_transparent"); }
+        if (state.state == null) {
+            return StringUtils.localize("item.FacadePhased.state_transparent");
+        }
         // if (state.state.getBlock().getRenderType() == 31) {
         // TODO: Find out what render type is 31... and what this now means
         // meta &= 0x3;
@@ -318,9 +324,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         Block block = null, blockAlt = null;
         int metadata = 0, metadataAlt;
         PipeWire wire = null;
-        if (nbt.hasKey("id")) block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
-        else if (nbt.hasKey("name")) block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
-        if (nbt.hasKey("name_alt")) blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
+        if (nbt.hasKey("id")) block = Block.blockRegistry.getObjectById(nbt.getInteger("id"));
+        else if (nbt.hasKey("name")) block = Block.blockRegistry.getObject(new ResourceLocation(nbt.getString("name")));
+        if (nbt.hasKey("name_alt")) blockAlt = Block.blockRegistry.getObject(new ResourceLocation(nbt.getString("name_alt")));
         if (nbt.hasKey("meta")) metadata = nbt.getInteger("meta");
         if (nbt.hasKey("meta_alt")) metadataAlt = nbt.getInteger("meta_alt");
         else metadataAlt = stack.getItemDamage() & 0x0000F;
@@ -354,9 +360,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     // GETTERS FOR FACADE DATA
     @Override
     public FacadeType getFacadeType(ItemStack stack) {
-        if (!stack.hasTagCompound()) { return FacadeType.Basic; }
+        if (!stack.hasTagCompound()) {
+            return FacadeType.Basic;
+        }
         NBTTagCompound nbt = stack.getTagCompound();
-        if (!nbt.hasKey("type")) { return FacadeType.Basic; }
+        if (!nbt.hasKey("type")) {
+            return FacadeType.Basic;
+        }
         return FacadeType.fromOrdinal(nbt.getInteger("type"));
     }
 

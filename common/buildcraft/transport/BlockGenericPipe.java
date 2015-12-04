@@ -913,7 +913,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public int isProvidingStrongPower(IBlockAccess iblockaccess, BlockPos pos, IBlockState state, EnumFacing l) {
+    public int getStrongPower(IBlockAccess iblockaccess, BlockPos pos, IBlockState state, EnumFacing l) {
         Pipe<?> pipe = getPipe(iblockaccess, pos);
 
         if (isValid(pipe)) {
@@ -929,7 +929,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing l) {
+    public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing l) {
         Pipe<?> pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {

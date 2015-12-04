@@ -101,9 +101,9 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
         return worldObj.getTileEntity(pos) == this;
     }
-
+    
     @Override
-    public ItemStack getStackInSlotOnClosing(int var1) {
+    public ItemStack removeStackFromSlot(int var1) {
         return null;
     }
 

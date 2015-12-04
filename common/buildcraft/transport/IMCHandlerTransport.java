@@ -8,6 +8,8 @@ import com.google.common.primitives.Ints;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 
@@ -67,7 +69,7 @@ public class IMCHandlerTransport extends IMCHandler {
                     if (Strings.isNullOrEmpty(blockName) || metaId == null) {
                         BCLog.logger.info(String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
                     } else {
-                        Block block = (Block) Block.blockRegistry.getObject(blockName);
+                        Block block = (Block) Block.blockRegistry.getObject(new ResourceLocation(blockName));
                         BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
                     }
                 }

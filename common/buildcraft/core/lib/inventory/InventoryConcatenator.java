@@ -48,8 +48,8 @@ public final class InventoryConcatenator implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return invMap.get(slot).getStackInSlotOnClosing(slotMap.get(slot));
+    public ItemStack removeStackFromSlot(int slot) {
+        return invMap.get(slot).removeStackFromSlot(slotMap.get(slot));
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class InventoryConcatenator implements IInventory {
     }
 
     @Override
-    public String getCommandSenderName() {
+    public String getName() {
         return null;
     }
 

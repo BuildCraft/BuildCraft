@@ -35,8 +35,8 @@ public abstract class InventoryWrapper implements ISidedInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotIndex) {
-        return inventory.getStackInSlotOnClosing(slotIndex);
+    public ItemStack removeStackFromSlot(int slotIndex) {
+        return inventory.removeStackFromSlot(slotIndex);
     }
 
     @Override
@@ -99,8 +99,8 @@ public abstract class InventoryWrapper implements ISidedInventory {
     }
 
     @Override
-    public String getCommandSenderName() {
-        return inventory.getCommandSenderName();
+    public String getName() {
+        return inventory.getName();
     }
 
     @Override

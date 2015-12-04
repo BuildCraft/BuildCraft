@@ -424,8 +424,8 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return visibleInventory.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return visibleInventory.removeStackFromSlot(slot);
     }
 
     @Override

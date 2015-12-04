@@ -76,8 +76,8 @@ public class InventoryCopy implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return original.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return original.removeStackFromSlot(slot);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class InventoryCopy implements IInventory {
     }
 
     @Override
-    public String getCommandSenderName() {
-        return original.getCommandSenderName();
+    public String getName() {
+        return original.getName();
     }
 
     @Override

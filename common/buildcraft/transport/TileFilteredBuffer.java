@@ -44,8 +44,8 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotId) {
-        return inventoryStorage.getStackInSlotOnClosing(slotId);
+    public ItemStack removeStackFromSlot(int slotId) {
+        return inventoryStorage.removeStackFromSlot(slotId);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
     @Override
     public String getInventoryName() {
-        return inventoryStorage.getCommandSenderName();
+        return inventoryStorage.getName();
     }
 
     @Override

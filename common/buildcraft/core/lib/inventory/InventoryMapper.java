@@ -60,8 +60,8 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public String getCommandSenderName() {
-        return inv.getCommandSenderName();
+    public String getName() {
+        return inv.getName();
     }
 
     public void setStackSizeLimit(int limit) {
@@ -89,8 +89,8 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return inv.getStackInSlotOnClosing(start + slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(start + slot);
     }
 
     @Override

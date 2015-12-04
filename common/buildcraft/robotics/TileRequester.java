@@ -9,14 +9,15 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
+
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.ResourceIdRequest;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.robots.StackRequest;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
@@ -77,8 +78,8 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotId) {
-        return inv.getStackInSlotOnClosing(slotId);
+    public ItemStack removeStackFromSlot(int slotId) {
+        return inv.removeStackFromSlot(slotId);
     }
 
     @Override

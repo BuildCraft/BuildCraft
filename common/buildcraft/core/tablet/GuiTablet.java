@@ -54,9 +54,9 @@ public class GuiTablet extends GuiScreen {
         super.initGui();
         // recalculate width/height
         int oldScale = mc.gameSettings.guiScale;
-        ScaledResolution realRes = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution realRes = new ScaledResolution(mc);
         mc.gameSettings.guiScale = realRes.getScaleFactor() == 1 ? 2 : (realRes.getScaleFactor() & (~1));
-        ScaledResolution currentRes = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution currentRes = new ScaledResolution(mc);
         mc.gameSettings.guiScale = oldScale;
 
         glScale = (float) (currentRes.getScaledWidth_double() / realRes.getScaledWidth_double());

@@ -11,7 +11,6 @@ import java.util.WeakHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -254,7 +254,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public String getCommandSenderName() {
+    public String getName() {
         return StatCollector.translateToLocal("item.robot.name");
     }
 
@@ -360,9 +360,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05, steamDirection.yCoord * 0.05,
                 steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
     }
-
+    
     @Override
-    public AxisAlignedBB getBoundingBox() {
+    public AxisAlignedBB getEntityBoundingBox() {
         return new AxisAlignedBB(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
     }
 
@@ -651,7 +651,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int var1) {
+    public ItemStack removeStackFromSlot(int var1) {
         return inv[var1].splitStack(var1);
     }
 
@@ -932,8 +932,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             if (!par1Entity.hitByEntity(this)) {
                 this.setLastAttacker(par1Entity);
                 boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
-
-                EnchantmentHelper.func_151385_b(this, par1Entity);
+                // FIXME! This was probably meant to do something at some point...
+                // EnchantmentHelper.func_151385_b(this, par1Entity);
                 ItemStack itemstack = itemInUse;
                 Object object = par1Entity;
 

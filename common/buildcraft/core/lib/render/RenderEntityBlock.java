@@ -130,11 +130,9 @@ public final class RenderEntityBlock extends Render {
         shadowSize = entity.shadowSize;
         World world = entity.worldObj;
         RenderInfo util = new RenderInfo();
-        if (entity.blockState != null)
-            util.blockState = entity.blockState;
+        if (entity.blockState != null) util.blockState = entity.blockState;
         util.resource = entity.resource;
-        if (entity.texture != null)
-            util.texture = entity.texture;
+        if (entity.texture != null) util.texture = entity.texture;
 
         for (int iBase = 0; iBase < entity.xSize; ++iBase) {
             for (int jBase = 0; jBase < entity.ySize; ++jBase) {
@@ -182,7 +180,7 @@ public final class RenderEntityBlock extends Render {
         BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
         IBakedModel model = renderBlocks.getBlockModelShapes().getModelForState(info.blockState);
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
-        worldRenderer.startDrawingQuads();
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         renderBlocks.getBlockModelRenderer().renderModelStandard(null, model, info.blockState.getBlock(), BlockPos.ORIGIN, worldRenderer, false);
         Tessellator.getInstance().draw();
     }
@@ -200,8 +198,7 @@ public final class RenderEntityBlock extends Render {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer renderer = tessellator.getWorldRenderer();
         // BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        renderer.startDrawingQuads();
-        renderer.setVertexFormat(DefaultVertexFormats.BLOCK);
+        renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);;
         renderer.setTranslation(-x, -y, -z);
 
         ResourceLocation resource = info.resource;
