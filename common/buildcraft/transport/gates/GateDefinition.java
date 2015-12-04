@@ -9,9 +9,11 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.core.lib.sprite.SpriteBuilder;
 import buildcraft.core.lib.utils.StringUtils;
 
 public final class GateDefinition {
@@ -137,8 +139,19 @@ public final class GateDefinition {
 
         @SideOnly(Side.CLIENT)
         public void registerBlockIcon(TextureMap iconRegister) {
-            iconLit = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_" + getTag() + "_lit"));
-            iconDark = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_" + getTag() + "_dark"));
+            String lit = "buildcrafttransport:gates/gate_" + getTag() + "_lit";
+            String dark = "buildcrafttransport:gates/gate_" + getTag() + "_dark";
+            String base = "buildcrafttransport:gates/gate_" + getTag();
+
+            iconLit = new SpriteBuilder(lit + "_generated").addSprite(base, 0xFE).addSprite(lit, 0xFE).build();
+            iconDark = new SpriteBuilder(dark + "_generated").addSprite(base, 0xFE).addSprite(dark, 0xFE).build();
+            iconRegister.setTextureEntry(lit + "_generated", iconLit);
+            iconRegister.setTextureEntry(dark + "_generated", iconDark);
+
+            // iconLit = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_" + getTag() +
+            // "_lit"));
+            // iconDark = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_" + getTag()
+            // + "_dark"));
 
             iconGate = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_" + getTag()));
         }

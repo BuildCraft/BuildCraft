@@ -25,39 +25,12 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.render.GatePluggableRenderer;
 import buildcraft.transport.render.tile.PipeRendererTESR;
 
 import io.netty.buffer.ByteBuf;
 
 public class GatePluggable extends PipePluggable {
-    private static final class GatePluggableRenderer implements IPipePluggableStaticRenderer, IPipePluggableDynamicRenderer {
-        public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
-
-        private GatePluggableRenderer() {
-
-        }
-
-        @Override
-        public void renderDynamicPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
-//            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
-        }
-
-        @Override
-        public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-                EnumFacing face) {
-            return null;
-        }
-
-        // @Override
-        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
-        // pipePluggable,
-        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-        // if (renderPass == 0) {
-        // PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, pos);
-        // }
-        // }
-    }
-
     public GateDefinition.GateMaterial material;
     public GateDefinition.GateLogic logic;
     public IGateExpansion[] expansions;

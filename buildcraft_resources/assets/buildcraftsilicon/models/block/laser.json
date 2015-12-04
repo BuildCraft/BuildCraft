@@ -23,6 +23,7 @@
         }
     ],
     "textures": {
+        "particle":"buildcraftsilicon:blocks/laser/bottom",
         "top":"buildcraftsilicon:blocks/laser/top",
         "side":"buildcraftsilicon:blocks/laser/side",
         "bottom":"buildcraftsilicon:blocks/laser/bottom"
