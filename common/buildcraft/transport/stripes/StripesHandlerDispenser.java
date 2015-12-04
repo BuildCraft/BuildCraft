@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
@@ -53,11 +52,6 @@ public class StripesHandlerDispenser implements IStripesHandler {
         @Override
         public BlockPos getBlockPos() {
             return pos;
-        }
-
-        @Override
-        public Block getBlock() {
-            return world.getBlockState(pos).getBlock();
         }
 
         @Override

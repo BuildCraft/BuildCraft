@@ -1,8 +1,11 @@
 package buildcraft.core.lib.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -78,11 +81,17 @@ public class DynamicTextureBC {
         float f1 = 1F / height;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer wr = tessellator.getWorldRenderer();
-        wr.startDrawingQuads();
-        wr.addVertexWithUV(screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
-        wr.addVertexWithUV(screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
-        wr.addVertexWithUV(screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
-        wr.addVertexWithUV(screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
+        wr.begin(GL11.GL_QUADS, wr.getVertexFormat());
+        vertexUV(wr, screenX + 0, screenY + clipHeight, zLevel, (clipX + 0) * f, (clipY + clipHeight) * f1);
+        vertexUV(wr, screenX + clipWidth, screenY + clipHeight, zLevel, (clipX + clipWidth) * f, (clipY + clipHeight) * f1);
+        vertexUV(wr, screenX + clipWidth, screenY + 0, zLevel, (clipX + clipWidth) * f, (clipY + 0) * f1);
+        vertexUV(wr, screenX + 0, screenY + 0, zLevel, (clipX + 0) * f, (clipY + 0) * f1);
         tessellator.draw();
+    }
+
+    private void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
+        wr.pos(x, y, z);
+        wr.tex(u, v);
+        wr.endVertex();
     }
 }

@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
@@ -83,7 +84,7 @@ public class Template extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:templateItem");
+        Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:templateItem"));
         if (item == null) {
             throw new Error("Could not find the template item! Did you attempt to use this without buildcraft builders installed?");
         }

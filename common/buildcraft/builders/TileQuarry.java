@@ -734,7 +734,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public void setInventorySlotContents(int i, ItemStack itemstack) {}
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
+    public ItemStack removeStackFromSlot(int slot) {
         return null;
     }
 

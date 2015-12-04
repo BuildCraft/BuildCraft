@@ -43,11 +43,11 @@ public enum RenderUtils {
     }
 
     public static void setWorldRendererRGB(WorldRenderer wr, Vec3 color) {
-        wr.setColorOpaque_F((float) color.xCoord, (float) color.yCoord, (float) color.zCoord);
+        wr.color((float) color.xCoord, (float) color.yCoord, (float) color.zCoord, 1);
     }
 
     public static void addWorldRendererVertex(WorldRenderer wr, Vec3 vertex) {
-        wr.addVertex(vertex.xCoord, vertex.yCoord, vertex.zCoord);
+        wr.pos(vertex.xCoord, vertex.yCoord, vertex.zCoord);
     }
 
     public static void putWorldRendererColorMultiplier(WorldRenderer wr, Vec3 color, int index) {

@@ -43,8 +43,8 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return inv.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(slot);
     }
 
     @Override
@@ -101,7 +101,7 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
     }
 
     @Override
-    public String getCommandSenderName() {
+    public String getName() {
         return "Engine";
     }
 

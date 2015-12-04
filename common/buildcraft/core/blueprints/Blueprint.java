@@ -15,7 +15,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -286,7 +288,7 @@ public class Blueprint extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:blueprintItem");
+        Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
         if (item == null) {
             throw new Error("Could not find the blueprint item! Did you attempt to use this without buildcraft builders installed?");
         }

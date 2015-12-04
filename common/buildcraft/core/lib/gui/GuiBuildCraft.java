@@ -24,6 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
@@ -150,12 +151,18 @@ public abstract class GuiBuildCraft extends GuiContainer {
     private void drawCutIcon(TextureAtlasSprite icon, int x, int y, int width, int height, int cut) {
         Tessellator tess = Tessellator.getInstance();
         WorldRenderer wr = tess.getWorldRenderer();
-        wr.startDrawingQuads();
-        wr.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
-        wr.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
-        wr.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
-        wr.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
+        wr.begin(GL11.GL_QUADS, wr.getVertexFormat());
+        vertexUV(wr, x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
+        vertexUV(wr, x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
+        vertexUV(wr, x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
+        vertexUV(wr, x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
         tess.draw();
+    }
+
+    private void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
+        wr.pos(x, y, z);
+        wr.tex(u, v);
+        wr.endVertex();
     }
 
     @Override

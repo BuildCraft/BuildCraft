@@ -13,12 +13,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
 import cofh.api.energy.IEnergyHandler;
@@ -37,7 +37,7 @@ import io.netty.buffer.ByteBuf;
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox, IAdditionalDataTile {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, ITickable, IAdditionalDataTile {
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
@@ -319,7 +319,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         return "";
     }
 
-    public String getCommandSenderName() {
+    public String getName() {
         return getInventoryName();
     }
 

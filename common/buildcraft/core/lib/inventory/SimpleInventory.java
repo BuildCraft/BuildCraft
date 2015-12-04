@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.INBTStoreable;
@@ -148,7 +149,7 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slotId) {
+    public ItemStack removeStackFromSlot(int slotId) {
         if (this.contents[slotId] == null) {
             return null;
         }
@@ -180,7 +181,7 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     }
 
     @Override
-    public String getCommandSenderName() {
+    public String getName() {
         return name;
     }
 

@@ -303,7 +303,7 @@ public class MappingRegistry {
         if (Loader.isModLoaded(modName)) {
             try {
                 FMLMissingMappingsEvent.MissingMapping mapping = new FMLMissingMappingsEvent.MissingMapping(isBlock ? GameRegistry.Type.BLOCK
-                    : GameRegistry.Type.ITEM, name, i);
+                    : GameRegistry.Type.ITEM, location, i);
                 ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping = ArrayListMultimap.create();
                 missingMapping.put(modName, mapping);
                 FMLMissingMappingsEvent event = new FMLMissingMappingsEvent(missingMapping);

@@ -10,6 +10,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -213,13 +214,13 @@ public class BuildCraftSilicon extends BuildCraftMod {
             // Silicon -> Robotics migration code
             if (mapping.type == GameRegistry.Type.ITEM) {
                 if (mapping.name.equals("BuildCraft|Silicon:robot")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:robot"));
+                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robot")));
                 } else if (mapping.name.equals("BuildCraft|Silicon:redstone_board")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:redstone_board"));
+                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:redstone_board")));
                 } else if (mapping.name.equals("BuildCraft|Silicon:requester")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:requester"));
+                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:requester")));
                 } else if (mapping.name.equals("BuildCraft|Silicon:zonePlan")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:zonePlan"));
+                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:zonePlan")));
                 }
             } else if (mapping.type == GameRegistry.Type.BLOCK) {
                 if (mapping.name.equals("BuildCraft|Silicon:requester")) {

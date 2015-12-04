@@ -187,7 +187,7 @@ public class RenderResizableCuboid extends Render {
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.disableLighting();
 
-        wr.startDrawingQuads();
+        wr.begin(GL11.GL_QUADS, wr.getVertexFormat());
 
         for (EnumFacing face : EnumFacing.values()) {
             renderCuboidFace(wr, face, sprites, flips, textureStart, textureSize, size, textureOffset, shadeTypes, formula, faceFormula,
@@ -245,7 +245,7 @@ public class RenderResizableCuboid extends Render {
         vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
         vertex = Utils.withValue(vertex, face.getAxis(), other);
 
-        wr.setTextureUV(ri.uv[U_ARRAY], ri.uv[V_ARRAY]);
+        wr.tex(ri.uv[U_ARRAY], ri.uv[V_ARRAY]);
 
         if (shadeTypes.isEnabled(EnumShadeType.FACE)) {
             RenderUtils.setWorldRendererRGB(wr, aoMap.get(faceFormula.transformToWorld(face)));
@@ -258,8 +258,7 @@ public class RenderResizableCuboid extends Render {
             BlockPos pos = Utils.convertFloor(transVertex);
             Block block = access.getBlockState(pos).getBlock();
             int combindedLight = block.getMixedBrightnessForBlock(access, pos);
-
-            wr.setBrightness(combindedLight);
+            wr.lightmap(combindedLight >> 16 & 65535, combindedLight & 65535);
         }
 
         RenderUtils.addWorldRendererVertex(wr, vertex);
@@ -317,7 +316,7 @@ public class RenderResizableCuboid extends Render {
         if (shadeTypes.isEnabled(EnumShadeType.LIGHT)) {
             int capBlockLight = (int) avgBlockLight;
             int capSkyLight = (int) avgSkyLight;
-            wr.setBrightness((capBlockLight + capSkyLight << 16) & 0xFF00FF);
+            wr.lightmap(capBlockLight, capSkyLight);
         }
 
         Vec3 color;

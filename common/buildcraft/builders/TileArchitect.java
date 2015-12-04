@@ -125,8 +125,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return inv.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(slot);
     }
 
     @Override

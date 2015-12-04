@@ -58,7 +58,7 @@ public class BlockHighlightHandler {
                 nPos = nPos.subtract(x, y, z);
                 for (AxisAlignedBB aabb : aabbs) {
                     AxisAlignedBB changed = aabb.expand(exp, exp, exp).offset(-nPos.xCoord, -nPos.yCoord, -nPos.zCoord);
-                    RenderGlobal.drawOutlinedBoundingBox(changed, -1);
+                    RenderGlobal.func_181561_a(changed);
                 }
                 GL11.glDepthMask(true);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);

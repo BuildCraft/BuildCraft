@@ -61,7 +61,7 @@ public class RenderBuildingItems {
                     @SuppressWarnings("deprecation")
                     IBakedModel model = renderItem.getItemModelMesher().getItemModel(s.stack);
                     if (model != null) {
-                        renderItem.renderItemModel(s.stack);
+                        renderItem.renderItem(s.stack, renderItem.getItemModelMesher().getItemModel(s.stack));
                     } else {
                         BCLog.logger.warn("Model was null for " + s.stack);
                     }

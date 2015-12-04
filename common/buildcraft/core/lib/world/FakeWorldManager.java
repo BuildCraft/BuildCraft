@@ -42,7 +42,6 @@ public class FakeWorldManager {
         this.world = world;
         for (EnumWorldBlockLayer layer : EnumWorldBlockLayer.values()) {
             tessMap.put(layer, new Tessellator(1 << 16));
-            tessMap.get(layer).getWorldRenderer().setVertexFormat(DefaultVertexFormats.BLOCK);
         }
         world.tick();
 
@@ -142,7 +141,7 @@ public class FakeWorldManager {
         } else if (world.hasDeployed) {
             int list = GLAllocation.generateDisplayLists(1);
             GL11.glNewList(list, GL11.GL_COMPILE);
-            renderer.startDrawingQuads();
+            renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
             renderAllBlocks(layer, renderer);
             tess.draw();
             GL11.glEndList();
@@ -193,7 +192,6 @@ public class FakeWorldManager {
             return;
         }
 
-        renderer.setVertexFormat(DefaultVertexFormats.BLOCK);
         boolean checkSides = pos.getY() > 0;
         dispatcher.getBlockModelRenderer().renderModelStandard(world, model, block, pos, renderer, checkSides);
     }

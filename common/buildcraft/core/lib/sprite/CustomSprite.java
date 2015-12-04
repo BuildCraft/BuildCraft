@@ -3,6 +3,7 @@ package buildcraft.core.lib.sprite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,11 @@ public class CustomSprite extends TextureAtlasSprite {
 
         BufferedImage[] images = new BufferedImage[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1];
         images[0] = image;
-        loadSprite(images, null);
+        try {
+            loadSprite(images, null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return false;
     }
 

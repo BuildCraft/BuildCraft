@@ -11,11 +11,12 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -111,8 +112,8 @@ public class BuildingSlotBlock extends BuildingSlot {
 
                 TileEntity e = context.world().getTileEntity(pos);
 
-                if (e != null && e instanceof IUpdatePlayerListBox) {
-                    ((IUpdatePlayerListBox) e).update();
+                if (e != null && e instanceof ITickable) {
+                    ((ITickable) e).update();
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

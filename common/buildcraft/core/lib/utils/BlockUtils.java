@@ -87,7 +87,7 @@ public final class BlockUtils {
             return false;
         }
 
-        if (!world.isAirBlock(pos) && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+        if (!world.isAirBlock(pos) && !world.isRemote && world.getGameRules().getBoolean("doTileDrops")) {
             drops.addAll(getItemStackFromBlock(world, pos));
         }
         world.setBlockToAir(pos);
@@ -222,7 +222,7 @@ public final class BlockUtils {
         double z = pos.getZ() + 0.5;
 
         Explosion explosion = new Explosion(world, null, x, y, z, 3f, false, false);
-        explosion.func_180343_e().add(pos);
+        explosion.getAffectedBlockPositions().add(pos);
         explosion.doExplosionB(true);
 
         for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities) {
@@ -231,7 +231,7 @@ public final class BlockUtils {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, 3f, explosion.func_180343_e(), null));
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(), null));
             }
         }
     }

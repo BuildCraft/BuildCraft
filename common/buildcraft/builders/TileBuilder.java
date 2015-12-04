@@ -461,8 +461,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return inv.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(slot);
     }
 
     @Override

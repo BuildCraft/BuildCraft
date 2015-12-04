@@ -160,8 +160,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int slot) {
-        return inv.getStackInSlotOnClosing(slot);
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(slot);
     }
 
     @Override
