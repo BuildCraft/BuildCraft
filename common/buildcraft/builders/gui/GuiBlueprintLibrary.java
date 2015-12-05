@@ -81,7 +81,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
                 // }
             }
 
-            fontRendererObj.drawString(name, 9, 25 + 9 * c, LibraryAPI.getHandler(bpt.extension).getTextColor());
+            fontRendererObj.drawString(name, 9, 25 + 9 * c, LibraryAPI.getHandlerFor(bpt.extension).getTextColor());
 
             c++;
         }
