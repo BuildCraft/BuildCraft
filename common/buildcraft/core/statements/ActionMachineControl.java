@@ -20,14 +20,14 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
     public final Mode mode;
 
     public ActionMachineControl(Mode mode) {
-        super("buildcraft:machine." + mode.name().toLowerCase(Locale.ENGLISH), "buildcraft.machine." + mode.name().toLowerCase(Locale.ENGLISH));
-
+        super("buildcraft:machine." + mode.name().toLowerCase(Locale.ROOT), "buildcraft.machine." + mode.name().toLowerCase(Locale.ROOT));
+		setBuildCraftLocation("core", "triggers/action_machinecontrol_" + mode.name().toLowerCase(Locale.ROOT));
         this.mode = mode;
     }
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ENGLISH));
+        return StringUtils.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ROOT));
     }
 
     @Override

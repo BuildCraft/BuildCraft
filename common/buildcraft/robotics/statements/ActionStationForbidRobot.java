@@ -22,7 +22,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 
     public ActionStationForbidRobot(boolean invert) {
         super("buildcraft:station." + (invert ? "force" : "forbid") + "_robot");
-        setLocation("buildcraftrobotics:triggers/action_station_robot_" + (invert ? "mandatory" : "forbidden"));
+        setBuildCraftLocation("robotics", "triggers/action_station_robot_" + (invert ? "mandatory" : "forbidden"));
         this.invert = invert;
     }
 

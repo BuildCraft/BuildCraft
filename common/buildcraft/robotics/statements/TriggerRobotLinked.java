@@ -19,7 +19,7 @@ public class TriggerRobotLinked extends BCStatement implements ITriggerInternal 
 
     public TriggerRobotLinked(boolean reserved) {
         super("buildcraft:robot." + (reserved ? "reserved" : "linked"));
-        setLocation("buildcraftrobotics:triggers/trigger_robot_" + (reserved ? "reserved" : "linked"));
+        setBuildCraftLocation("robotics", "triggers/trigger_robot_" + (reserved ? "reserved" : "linked"));
         this.reserved = reserved;
     }
 

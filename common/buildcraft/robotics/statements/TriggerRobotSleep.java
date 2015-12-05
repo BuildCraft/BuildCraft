@@ -19,7 +19,7 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
     public TriggerRobotSleep() {
         super("buildcraft:robot.sleep");
-        setLocation("buildcraftrobotics:triggers/trigger_robot_sleep");
+        setBuildCraftLocation("robotics", "triggers/trigger_robot_sleep");
     }
 
     @Override

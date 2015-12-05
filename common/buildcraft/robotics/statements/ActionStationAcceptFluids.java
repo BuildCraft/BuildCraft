@@ -15,7 +15,7 @@ public class ActionStationAcceptFluids extends BCStatement implements IActionInt
 
     public ActionStationAcceptFluids() {
         super("buildcraft:station.accept_fluids");
-        setLocation("buildcraftrobotics:triggers/action_station_accept_fluids");
+        setBuildCraftLocation("robotics", "triggers/action_station_accept_fluids");
     }
 
     @Override

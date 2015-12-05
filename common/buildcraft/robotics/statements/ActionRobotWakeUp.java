@@ -14,7 +14,7 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
     public ActionRobotWakeUp() {
         super("buildcraft:robot.wakeup");
-        setLocation("buildcraftrobotics:triggers/action_robot_wakeup");
+        setBuildCraftLocation("robotics", "triggers/action_robot_wakeup");
     }
 
     @Override

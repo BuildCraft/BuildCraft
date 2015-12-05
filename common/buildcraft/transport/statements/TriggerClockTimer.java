@@ -6,8 +6,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
@@ -33,7 +31,7 @@ public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 
     public TriggerClockTimer(Time time) {
         super("buildcraft:timer." + time.name().toLowerCase(Locale.ENGLISH));
-        location = new ResourceLocation("buildcrafttransport:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
+        setBuildCraftLocation("transport", "triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
         this.time = time;
     }
 

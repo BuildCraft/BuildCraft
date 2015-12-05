@@ -14,7 +14,7 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
 
     public ActionStationRequestItemsMachine() {
         super("buildcraft:station.provide_machine_request");
-        setLocation("buildcraftrobotics:triggers/action_station_machine_request");
+        setBuildCraftLocation("robotics", "triggers/action_station_machine_request");
     }
 
     @Override

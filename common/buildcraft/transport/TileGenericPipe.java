@@ -7,8 +7,8 @@ package buildcraft.transport;
 import java.util.List;
 
 import com.google.common.base.Throwables;
-
 import org.apache.logging.log4j.Level;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -34,7 +34,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -67,8 +66,6 @@ import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileGenericPipe extends TileEntity implements ITickable, IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler,
         IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IAdditionalDataTile {
@@ -419,6 +416,7 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
                         }
                     }
                 }
+
                 refreshRenderState = false;
             }
 

@@ -12,6 +12,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -317,7 +318,17 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 state = it.next();
                 i--;
             }
-            drawStatement(x, y, state);
+
+			AdvancedSlot hoverSlot = getSlotAtLocation(x, y);
+			boolean isValid = (trigger && hoverSlot instanceof TriggerSlot) || (!trigger && hoverSlot instanceof ActionSlot);
+
+			if (!isValid) {
+				GlStateManager.color(0.95f, 0.6f, 0.6f);
+			}
+
+            drawStatement(x - 8, y - 8, state);
+
+			GlStateManager.color(1.0f, 1.0f, 1.0f);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);

@@ -39,7 +39,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     public TriggerInventoryLevel(TriggerType type) {
         super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT), "buildcraft.inventorylevel." + type.name().toLowerCase(
                 Locale.ROOT), "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT));
-        setBuildCraftLocation("core", "items/triggers/trigger_inventory_"+type.name().toLowerCase(Locale.ROOT));
+        setBuildCraftLocation("core", "triggers/trigger_inventory_"+type.name().toLowerCase(Locale.ROOT));
         this.type = type;
     }
 

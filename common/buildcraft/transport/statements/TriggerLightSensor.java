@@ -1,7 +1,6 @@
 package buildcraft.transport.statements;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 
 import buildcraft.api.statements.IStatementContainer;
@@ -18,7 +17,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
 
     public TriggerLightSensor(boolean bright) {
         super("buildcraft:light_" + (bright ? "bright" : "dark"));
-        location = new ResourceLocation("buildcrafttransport:triggers/trigger_light_" + (bright ? "bright" : "dark"));
+		setBuildCraftLocation("transport", "triggers/trigger_light_" + (bright ? "bright" : "dark"));
         this.bright = bright;
     }
 

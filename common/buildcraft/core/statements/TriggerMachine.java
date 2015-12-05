@@ -19,6 +19,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
     public TriggerMachine(boolean active) {
         super("buildcraft:work." + (active ? "scheduled" : "done"), "buildcraft.work." + (active ? "scheduled" : "done"));
+		setBuildCraftLocation("core", "triggers/trigger_machine_" + (active ? "active" : "inactive"));
 
         this.active = active;
     }
@@ -42,9 +43,4 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
         return false;
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister register) {
-    // icon = register.registerIcon("buildcraftcore:triggers/trigger_machine_" + (active ? "active" : "inactive"));
-    // }
 }

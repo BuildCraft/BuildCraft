@@ -6,7 +6,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -40,8 +39,8 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
     private PipeContents kind;
 
     public TriggerPipeContents(PipeContents kind) {
-        super(new ResourceLocation("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH)),
-                "buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
+        super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ROOT), "buildcraft.pipe.contents." + kind.name());
+		setBuildCraftLocation("transport", "triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ROOT));
         this.kind = kind;
         kind.trigger = this;
     }

@@ -37,7 +37,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
         }
 
         public String getSpriteLocation() {
-            return "buildcraftrobotics:triggers/action_robot_" + name;
+            return "triggers/action_robot_" + name;
         }
     }
 
@@ -45,7 +45,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
     public ActionRobotWorkInArea(AreaType areaType) {
         super(areaType.getTag());
-        setLocation(areaType.getSpriteLocation());
+        setBuildCraftLocation("robotics", areaType.getSpriteLocation());
         this.areaType = areaType;
     }
 

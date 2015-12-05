@@ -29,7 +29,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
     public ActionRobotGotoStation() {
         super("buildcraft:robot.goto_station");
-        setLocation("buildcraftrobotics:triggers/action_robot_goto_station");
+        setBuildCraftLocation("robotics", "triggers/action_robot_goto_station");
     }
 
     @Override

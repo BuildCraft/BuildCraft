@@ -23,8 +23,7 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
     public TriggerEngineHeat(EnumEnergyStage stage) {
         super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ROOT), "buildcraft.engine.stage." + stage.name().toLowerCase(Locale.ROOT));
-
-        setBuildCraftLocation("core", "items/triggers/trigger_engine_" + stage.name().toLowerCase(Locale.ROOT));
+        setBuildCraftLocation("energy", "triggers/trigger_engineheat_" + stage.name().toLowerCase(Locale.ROOT));
         this.stage = stage;
     }
 

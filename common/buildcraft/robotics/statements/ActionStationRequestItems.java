@@ -20,7 +20,7 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 
     public ActionStationRequestItems() {
         super("buildcraft:station.request_items");
-        setLocation("buildcraftrobotics:triggers/action_station_request_items");
+        setBuildCraftLocation("robotics", "triggers/action_station_request_items");
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 
     public ActionStationAcceptItems() {
         super("buildcraft:station.accept_items");
-        setLocation("buildcraftrobotics:triggers/action_station_accept_items");
+        setBuildCraftLocation("robotics", "triggers/action_station_accept_items");
         StatementManager.statements.put("buildcraft:station.drop_in_pipe", this);
     }
 

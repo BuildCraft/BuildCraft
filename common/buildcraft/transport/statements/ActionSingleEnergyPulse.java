@@ -16,7 +16,7 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
 
     public ActionSingleEnergyPulse() {
         super("buildcraft:pulsar.single", "buildcraft.pulser.single");
-        location = new ResourceLocation("buildcrafttransport:triggers/action_single_pulsar");
+		setBuildCraftLocation("transport", "triggers/action_single_pulsar");
     }
 
     @Override
