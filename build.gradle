@@ -51,7 +51,7 @@ minecraft {
 
     // replacing stuff in the source
     replace "@VERSION@", project.version
-    replace '@MC_VERSION@', version
+    replace "@MC_VERSION@", version
 }
 
 // configure  the source folders
