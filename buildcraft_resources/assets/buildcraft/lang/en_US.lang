@@ -38,7 +38,7 @@ buildcraft.boardRobotCrafter.desc=Crafts items
 buildcraft.boardRobotDelivery.desc=Delivers items upon request
 buildcraft.boardRobotPump.desc=Pumps out liquids
 buildcraft.boardRobotStripes.desc=Uhh... Stripes!
-buildcraft.boardRobotStripes.desc=Mines stone
+buildcraft.boardRobotBreaker.desc=Mines stone
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
@@ -59,6 +59,8 @@ chat.pipe.power.iron.level.160=Medium
 chat.pipe.power.iron.level.320=High
 chat.pipe.power.iron.level.640=Very High
 chat.pipe.power.iron.level.1280=Full Capacity
+
+color.clear=Clear
 
 color.black=Black
 color.blue=Blue
@@ -585,5 +587,5 @@ command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts
 command.buildcraft.buildcraft.op.format=Format: /%s
 
 command.buildcraft.buildcraft.deop.desc=- %s : Deop FakePlayer
-command.buildcraft.buildcraft.deop.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
+command.buildcraft.buildcraft.deop.help=Ungives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
 command.buildcraft.buildcraft.deop.format=Format: /%s

@@ -30,6 +30,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	private float finalX, finalY, finalZ;
 	private double maxDistance = 0;
 	private BlockIndex lastBlockInPath;
+	private boolean loadedFromNBT;
 
 	public AIRobotGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -64,6 +65,13 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	@Override
 	public void update() {
+		if (loadedFromNBT) {
+			// Prevent a race condition with terminate() being called in
+			// setNextInPath.
+			setNextInPath();
+			loadedFromNBT = false;
+		}
+
 		if (path == null && pathSearch == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
@@ -115,14 +123,24 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private void setNextInPath() {
 		if (path.size() > 0) {
+			boolean isFirst = prevDistance == Double.MAX_VALUE;
+
 			BlockIndex next = path.getFirst();
-			if (BuildCraftAPI.isSoftBlock(robot.worldObj, next.x, next.y, next.z)) {
+			prevDistance = Double.MAX_VALUE;
+
+			if (isFirst || BuildCraftAPI.isSoftBlock(robot.worldObj, next.x, next.y, next.z)) {
 				setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
-				prevDistance = Double.MAX_VALUE;
 				robot.aimItemAt(next.x, next.y, next.z);
 			} else {
-				setSuccess(false);
-				terminate();
+				// Path invalid!
+				path = null;
+
+				if (pathSearchJob != null) {
+					pathSearchJob.terminate();
+					robot.motionX = 0;
+					robot.motionY = 0;
+					robot.motionZ = 0;
+				}
 			}
 		}
 	}
@@ -181,8 +199,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			for (int i = 0; i < pathList.tagCount(); ++i) {
 				path.add(new BlockIndex(pathList.getCompoundTagAt(i)));
 			}
-
-			setNextInPath();
 		}
+
+		loadedFromNBT = true;
 	}
 }

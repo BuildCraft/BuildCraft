@@ -88,20 +88,10 @@ public final class BlockUtils {
 		return false;
 	}
 
-	public static boolean harvestBlock(WorldServer world, int x, int y, int z, ItemStack tool) {
-		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z),
-				world.getBlockMetadata(x, y, z), CoreProxy.proxy.getBuildCraftPlayer(world).get());
-		MinecraftForge.EVENT_BUS.post(breakEvent);
-
-		if (breakEvent.isCanceled()) {
-			return false;
-		}
-
-		Block block = world.getBlock(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-
+	public static EntityPlayer getFakePlayerWithTool(WorldServer world, int x, int y, int z, ItemStack tool) {
 		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, x, y, z).get();
 		int i = 0;
+
 		while (player.getHeldItem() != tool && i < 9) {
 			if (i > 0) {
 				player.inventory.setInventorySlotContents(i - 1, null);
@@ -111,7 +101,27 @@ public final class BlockUtils {
 			i++;
 		}
 
+		return player;
+	}
+
+	public static boolean harvestBlock(WorldServer world, int x, int y, int z, ItemStack tool) {
+		Block block = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+
+		EntityPlayer player = getFakePlayerWithTool(world, x, y, z, tool);
+
+		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), player);
+		MinecraftForge.EVENT_BUS.post(breakEvent);
+
+		if (breakEvent.isCanceled()) {
+			return false;
+		}
+
 		if (!block.canHarvestBlock(player, meta)) {
+			return false;
+		}
+
+		if (tool != null && tool.getItem() != null && tool.getItem().onBlockStartBreak(tool, x, y, z, player)) {
 			return false;
 		}
 
@@ -178,17 +188,16 @@ public final class BlockUtils {
 		return true;
 	}
 
-	public static float getBlockHardnessMining(World world, int x, int y, int z, Block b) {
+	public static float getBlockHardnessMining(World world, int x, int y, int z, Block b, ItemStack tool) {
 		if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
-			float relativeHardness = b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, x, y, z);
+			float relativeHardness = b.getPlayerRelativeBlockHardness(getFakePlayerWithTool((WorldServer) world, x, y, z, tool), world, x, y, z);
+
 			if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
 				return -1.0F;
-			} else {
-				return relativeHardness;
 			}
-		} else {
-			return b.getBlockHardness(world, x, y, z);
 		}
+
+		return b.getBlockHardness(world, x, y, z);
 	}
 
 	public static boolean isUnbreakableBlock(World world, int x, int y, int z, Block b) {
@@ -196,7 +205,7 @@ public final class BlockUtils {
 			return false;
 		}
 
-		return getBlockHardnessMining(world, x, y, z, b) < 0;
+		return getBlockHardnessMining(world, x, y, z, b, null) < 0;
 	}
 
 	public static boolean isUnbreakableBlock(World world, int x, int y, int z) {

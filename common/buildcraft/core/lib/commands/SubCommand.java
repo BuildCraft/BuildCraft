@@ -94,13 +94,13 @@ public abstract class SubCommand implements IModCommand {
 	}
 
 	@Override
-	public final int getRequiredPermissionLevel() {
+	public final int getMinimumPermissionLevel() {
 		return permLevel.permLevel;
 	}
 
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return sender.canCommandSenderUseCommand(getRequiredPermissionLevel(), getCommandName());
+		return sender.canCommandSenderUseCommand(getMinimumPermissionLevel(), getCommandName());
 	}
 
 	@Override

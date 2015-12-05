@@ -88,16 +88,16 @@ public final class StatementManager {
 	}
 
 	public static List<IActionExternal> getExternalActions(ForgeDirection side, TileEntity entity) {
-		List<IActionExternal> result = new LinkedList<IActionExternal>();
+		List<IActionExternal> result;
 
 		if (entity instanceof IOverrideDefaultStatements) {
 			result = ((IOverrideDefaultStatements) entity).overrideActions();
 			if (result != null) {
 				return result;
-			} else {
-				result = new LinkedList<IActionExternal>();
 			}
 		}
+
+		result = new LinkedList<IActionExternal>();
 		
 		for (IActionProvider provider : actionProviders) {
 			Collection<IActionExternal> toAdd = provider.getExternalActions(side, entity);

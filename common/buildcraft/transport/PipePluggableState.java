@@ -23,15 +23,18 @@ public class PipePluggableState implements ISerializable {
 
 	public void setPluggables(PipePluggable[] pluggables) {
 		this.pluggables = pluggables;
-		this.pluggableMatrix.clean();
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			this.pluggableMatrix.setConnected(dir, pluggables[dir.ordinal()] != null);
-		}
 	}
 
 	@Override
 	public void writeData(ByteBuf data) {
+		this.pluggableMatrix.clean();
+
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			this.pluggableMatrix.setConnected(dir, pluggables[dir.ordinal()] != null);
+		}
+
 		this.pluggableMatrix.writeData(data);
+
 		for (PipePluggable p : pluggables) {
 			if (p != null) {
 				data.writeShort(PipeManager.pipePluggables.indexOf(p.getClass()));
@@ -43,6 +46,7 @@ public class PipePluggableState implements ISerializable {
 	@Override
 	public void readData(ByteBuf data) {
 		this.pluggableMatrix.readData(data);
+
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (this.pluggableMatrix.isConnected(dir)) {
 				try {

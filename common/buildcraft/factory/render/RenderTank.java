@@ -30,9 +30,16 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		TileTank tank = (TileTank) CoreProxy.proxy.getServerTile(tileentity);
 
 		FluidStack liquid = tank.tank.getFluid();
-		int color = tank.tank.colorRenderCache;
-		if (liquid == null || liquid.amount <= 0) {
+		if (liquid == null || liquid.getFluid() == null || liquid.amount <= 0) {
 			return;
+		}
+
+		// Workaround: The colorRenderCache from the server tile from getServerTile(...) does not get synced properly
+		int color;
+		if(tank.getWorldObj().isRemote) {
+			color = tank.tank.colorRenderCache;
+		} else {
+			color = liquid.getFluid().getColor(liquid);
 		}
 
 		int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, tileentity.getWorldObj(), false);

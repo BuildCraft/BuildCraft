@@ -173,8 +173,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 		int flags = data.readUnsignedByte();
 
 		meta = flags & 0x0F;
-		transparent = (flags & 0x80) > 0;
-		renderAsHollow = (flags & 0x40) > 0;
+		transparent = (flags & 0x80) != 0;
+		renderAsHollow = (flags & 0x40) != 0;
 	}
 
 	private void prepareStates() {

@@ -17,8 +17,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.PipeWire;
 
 public class WireMatrix {
-
-	//private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
 	private final BitSet hasWire = new BitSet(PipeWire.values().length);
 	private final BitSetCodec bitSetCodec = new BitSetCodec();
 
@@ -94,7 +92,7 @@ public class WireMatrix {
 		bitSetCodec.decode(data.readByte(), hasWire);
 		for (int i = 0; i < PipeWire.values().length; i++) {
 			wires[i].readData(data);
-			wireIconIndex[i] = data.readByte();
+			wireIconIndex[i] = data.readUnsignedByte();
 		}
 	}
 }

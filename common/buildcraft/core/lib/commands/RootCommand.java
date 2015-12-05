@@ -56,6 +56,11 @@ public class RootCommand extends CommandBase implements IModCommand {
 	}
 
 	@Override
+	public int getMinimumPermissionLevel() {
+		return 0;
+	}
+
+	@Override
 	public List<String> getCommandAliases() {
 		return aliases;
 	}

@@ -101,7 +101,7 @@ public final class FacadeRenderHelper {
 
 		Block renderBlock = pluggable.getCurrentBlock();
 
-		if (renderBlock != null) {
+		if (renderBlock != null && tile != null) {
 			IBlockAccess facadeBlockAccess = new FacadeBlockAccess(tile.getWorld(), direction);
 
 			// If the facade is meant to render in the current pass

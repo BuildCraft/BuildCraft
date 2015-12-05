@@ -11,6 +11,7 @@ package buildcraft.core.statements;
 import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -18,6 +19,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
+
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
@@ -30,17 +32,35 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
 
-		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
-			res.add(BuildCraftCore.triggerEmptyInventory);
-			res.add(BuildCraftCore.triggerContainsInventory);
-			res.add(BuildCraftCore.triggerSpaceInventory);
-			res.add(BuildCraftCore.triggerFullInventory);
-			res.add(BuildCraftCore.triggerInventoryBelow25);
-			res.add(BuildCraftCore.triggerInventoryBelow50);
-			res.add(BuildCraftCore.triggerInventoryBelow75);
+		boolean blockInventoryTriggers = false;
+		boolean blockFluidHandlerTriggers = false;
+
+		if (tile instanceof IBlockDefaultTriggers) {
+			blockInventoryTriggers = ((IBlockDefaultTriggers) tile).blockInventoryTriggers(side);
+			blockFluidHandlerTriggers = ((IBlockDefaultTriggers) tile).blockFluidHandlerTriggers(side);
 		}
 
-		if (tile instanceof IFluidHandler) {
+		if (!blockInventoryTriggers && tile instanceof IInventory) {
+			boolean isSided = tile instanceof ISidedInventory;
+			boolean addTriggers = false;
+
+			if (isSided) {
+				int[] accessibleSlots = ((ISidedInventory) tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal());
+				addTriggers = accessibleSlots != null && accessibleSlots.length > 0;
+			}
+
+			if (addTriggers || (!isSided && ((IInventory) tile).getSizeInventory() > 0)) {
+				res.add(BuildCraftCore.triggerEmptyInventory);
+				res.add(BuildCraftCore.triggerContainsInventory);
+				res.add(BuildCraftCore.triggerSpaceInventory);
+				res.add(BuildCraftCore.triggerFullInventory);
+				res.add(BuildCraftCore.triggerInventoryBelow25);
+				res.add(BuildCraftCore.triggerInventoryBelow50);
+				res.add(BuildCraftCore.triggerInventoryBelow75);
+			}
+		}
+
+		if (!blockFluidHandlerTriggers && tile instanceof IFluidHandler) {
 			FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(side.getOpposite());
 			if (tanks != null && tanks.length > 0) {
 				res.add(BuildCraftCore.triggerEmptyFluid);

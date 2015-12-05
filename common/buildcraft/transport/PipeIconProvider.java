@@ -138,6 +138,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeStainedOverlay("pipeStainedOverlay"),
 		PipeLens("pipeLens"),
 		PipeFilter("pipeFilter"),
+		PipeLensClearOverlay("pipeLensClearOverlay"),
 		PipeLensOverlay("pipeLensOverlay"),
 		PipePlug("pipePlug"),
 		//

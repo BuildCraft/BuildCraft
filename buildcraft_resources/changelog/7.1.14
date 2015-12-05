@@ -1,0 +1,6 @@
+Bugs fixed:
+
+* [#3128] Fluid Tanks displaying liquids as white (even with their color set) (iTitus)
+* [#3120] Gate triggers not taking the inventory's maximum stack size into account (iTitus)
+* [#3119] Tinker Construct's Auto-Repair modifier not working properly with robots (iTitus)
+* Builders not placing floating tripwires (ProgrammerHero)

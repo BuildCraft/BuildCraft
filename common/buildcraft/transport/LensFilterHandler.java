@@ -21,6 +21,8 @@ public class LensFilterHandler {
 		int myColor = event.item.color == null ? -1 : event.item.color.ordinal();
 
 		for (ForgeDirection dir : event.destinations) {
+			boolean hasFilter = false;
+			boolean hasLens = false;
 			int sideColor = -1;
 			int sideLensColor = -1;
 
@@ -29,8 +31,10 @@ public class LensFilterHandler {
 			PipePluggable pluggable = container.getPipePluggable(dir);
 			if (pluggable != null && pluggable instanceof LensPluggable) {
 				if (((LensPluggable) pluggable).isFilter) {
+					hasFilter = true;
 					sideColor = ((LensPluggable) pluggable).color;
 				} else {
+					hasLens = true;
 					sideLensColor = ((LensPluggable) pluggable).color;
 				}
 			}
@@ -42,28 +46,30 @@ public class LensFilterHandler {
 				pluggable = otherContainer.getPipePluggable(dir.getOpposite());
 				if (pluggable != null && pluggable instanceof LensPluggable && ((LensPluggable) pluggable).isFilter) {
 					int otherColor = ((LensPluggable) pluggable).color;
-					if (sideColor >= 0 && otherColor != sideColor) {
+					if (hasFilter && otherColor != sideColor) {
 						// Filter colors conflict - the side is unpassable
 						continue;
-					} else if (sideLensColor >= 0) {
+					} else if (hasLens) {
 						// The closer lens color differs from the further away filter color - the side is unpassable OR treated as colorless
 						if (sideLensColor == otherColor) {
+							hasFilter = false;
 							sideColor = -1;
 						} else {
 							continue;
 						}
 					} else {
+						hasFilter = true;
 						sideColor = otherColor;
 					}
 				}
 			}
 
-			if (myColor == sideColor) {
-				encounteredColor = true;
-				correctColored.add(dir);
-			}
-
-			if (sideColor == -1) {
+			if (hasFilter) {
+				if (myColor == sideColor) {
+					encounteredColor = true;
+					correctColored.add(dir);
+				}
+			} else {
 				notColored.add(dir);
 			}
 		}
