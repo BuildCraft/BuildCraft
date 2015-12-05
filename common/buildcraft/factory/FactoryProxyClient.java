@@ -7,7 +7,10 @@ package buildcraft.factory;
 import java.lang.reflect.Method;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
+
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.BuildCraftFactory;
@@ -34,7 +37,9 @@ public class FactoryProxyClient extends FactoryProxy {
     }
 
     @Override
-    public void initializeEntityRenders() {}
+    public void initializeEntityRenders() {
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(BuildCraftFactory.refineryBlock), 0, TileRefinery.class);
+	}
 
     @Override
     public void initializeNEIIntegration() {

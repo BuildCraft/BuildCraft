@@ -87,6 +87,11 @@ public class BlockRefinery extends BlockBuildCraft {
         return true;
     }
 
+	@Override
+	public int getRenderType() {
+		return 2;
+	}
+
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;
