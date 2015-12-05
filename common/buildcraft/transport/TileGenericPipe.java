@@ -63,6 +63,8 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.network.base.Packet;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
@@ -97,16 +99,16 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
     private int glassColor = -1;
 
     public static class CoreState implements ISerializable {
-        public int pipeId = -1;
+        public String pipeId = null;
 
         @Override
         public void writeData(ByteBuf data) {
-            data.writeInt(pipeId);
+            NetworkUtils.writeUTF(data, pipeId);
         }
 
         @Override
         public void readData(ByteBuf data) {
-            pipeId = data.readInt();
+            pipeId = NetworkUtils.readUTF(data);
         }
     }
 
@@ -272,10 +274,10 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         }
 
         if (pipe != null) {
-            nbt.setInteger("pipeId", Item.getIdFromItem(pipe.item));
+            nbt.setString("pipeId", Item.itemRegistry.getNameForObject(pipe.item).toString());
             pipe.writeToNBT(nbt);
         } else {
-            nbt.setInteger("pipeId", coreState.pipeId);
+            nbt.setString("pipeId", coreState.pipeId);
         }
 
         sideProperties.writeToNBT(nbt);
@@ -302,15 +304,24 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
             }
         }
 
-        coreState.pipeId = nbt.getInteger("pipeId");
-        Item item = Item.getItemById(coreState.pipeId);
+        if (nbt.hasKey("pipeId", NBTUtils.STRING)) {
+            coreState.pipeId = nbt.getString("pipeId");
+        }
+        if (nbt.hasKey("pipeId", NBTUtils.INT)) {
+            int id = nbt.getInteger("pipeId");
+            Item item = Item.itemRegistry.getObjectById(id);
+            ResourceLocation loc = Item.itemRegistry.getNameForObject(item);
+            if (loc == null) coreState.pipeId = "";
+            else coreState.pipeId = loc.toString();
+        }
+        Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
         if (item instanceof ItemPipe) {
             pipe = BlockGenericPipe.createPipe((ItemPipe) item);
         } else {
-            ResourceLocation regName = Item.itemRegistry.getNameForObject(item);
-            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + regName);
+            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
             pipe = null;
         }
+
         bindPipe();
         if (pipe != null) {
             pipe.readFromNBT(nbt);
@@ -590,7 +601,7 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
     private void bindPipe() {
         if (!pipeBound && pipe != null) {
             pipe.setTile(this);
-            coreState.pipeId = Item.getIdFromItem(pipe.item);
+            coreState.pipeId = Item.itemRegistry.getNameForObject(pipe.item).toString();
             pipeBound = true;
         }
     }
@@ -1011,8 +1022,8 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
                     break;
                 }
 
-                if (pipe == null && coreState.pipeId != 0) {
-                    initialize(BlockGenericPipe.createPipe((ItemPipe) Item.itemRegistry.getObjectById(coreState.pipeId)));
+                if (pipe == null && coreState.pipeId != null) {
+                    initialize(BlockGenericPipe.createPipe((ItemPipe) Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId))));
                 }
 
                 if (pipe == null) {
