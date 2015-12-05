@@ -32,7 +32,8 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
     public State state;
 
     public TriggerFluidContainer(State state) {
-        super("buildcraft:fluid." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.fluid." + state.name().toLowerCase(Locale.ENGLISH));
+        super("buildcraft:fluid." + state.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + state.name().toLowerCase(Locale.ROOT));
+		setBuildCraftLocation("core", "triggers/trigger_liquidcontainer_" + state.name().toLowerCase(Locale.ROOT));
         this.state = state;
     }
 
@@ -43,7 +44,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.trigger.fluid." + state.name().toLowerCase(Locale.ENGLISH));
+        return StringUtils.localize("gate.trigger.fluid." + state.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
@@ -106,11 +107,6 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
         return false;
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister register) {
-    // icon = register.registerIcon("buildcraftcore:triggers/trigger_liquidcontainer_" + state.name().toLowerCase());
-    // }
 
     @Override
     public IStatementParameter createParameter(int index) {

@@ -657,7 +657,7 @@ public class BuildCraftCore extends BuildCraftMod {
         CoreIconProvider.registerIcons(evt.map);
         TextureAtlasSprite[] array = new TextureAtlasSprite[16];
         for (EnumColor color : EnumColor.values()) {
-            String location = "buildcraftcore:textures/items/paintbrush/" + color.getName().toLowerCase(Locale.ENGLISH);
+            String location = "buildcraftcore:items/paintbrush/" + color.name().toLowerCase(Locale.ROOT);
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
         EnumColor.registerSprites(array);

@@ -6,8 +6,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -20,8 +18,8 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
     public final EnumColor color;
 
     public ActionExtractionPreset(EnumColor color) {
-        super(new ResourceLocation("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH)),
-                "buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+        super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+		setBuildCraftLocation("transport", "triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
 
         this.color = color;
     }

@@ -18,7 +18,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     public TriggerRedstoneInput(boolean active) {
         super("buildcraft:redstone.input." + (active ? "active" : "inactive"), active ? "buildcraft.redtone.input.active"
             : "buildcraft.redtone.input.inactive");
-        setBuildCraftLocation("core", "trigger_redstone_input_" + (active ? "active" : "inactive"));
+        setBuildCraftLocation("core", "triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
         this.active = active;
     }
 

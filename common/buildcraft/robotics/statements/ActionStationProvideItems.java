@@ -15,7 +15,7 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
 
     public ActionStationProvideItems() {
         super("buildcraft:station.provide_items");
-        setLocation("buildcraftrobotics:triggers/action_station_provide_items");
+        setBuildCraftLocation("robotics", "triggers/action_station_provide_items");
     }
 
     @Override

@@ -34,7 +34,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     public TriggerEnergy(boolean high) {
         super("buildcraft:energyStored" + (high ? "high" : "low"));
-        this.setBuildCraftLocation("core", "items/triggers/trigger_energy_storage_" + (high ? "high" : "low"));
+        this.setBuildCraftLocation("core", "triggers/trigger_energy_storage_" + (high ? "high" : "low"));
         this.high = high;
     }
 

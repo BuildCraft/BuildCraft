@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -15,7 +13,8 @@ import buildcraft.core.statements.BCStatement;
 public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 
     public ActionEnergyPulsar() {
-        super(new ResourceLocation("buildcrafttransport:triggers/action_pulsar"), "buildcraft:pulsar.constant", "buildcraft.pulser.constant");
+        super("buildcraft:pulsar.constant", "buildcraft.pulser.constant");
+		setBuildCraftLocation("transport", "triggers/action_pulsar");
     }
 
     @Override

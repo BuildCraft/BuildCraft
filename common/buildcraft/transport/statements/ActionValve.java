@@ -7,7 +7,6 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -43,7 +42,8 @@ public class ActionValve extends BCStatement implements IActionInternal {
     public ActionValve(ValveState valveState) {
         super("buildcraft:pipe.valve." + valveState.name().toLowerCase(Locale.ENGLISH));
         state = valveState;
-        location = new ResourceLocation("buildcrafttransport:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
+
+		setBuildCraftLocation("transport", "triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

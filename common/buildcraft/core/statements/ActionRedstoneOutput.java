@@ -22,7 +22,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     public ActionRedstoneOutput() {
         super("buildcraft:redstone.output", "buildcraft.redstone.output");
-        setBuildCraftLocation("core", "items/triggers/action_redstoneoutput");
+        setBuildCraftLocation("core", "triggers/action_redstoneoutput");
     }
 
     @Override

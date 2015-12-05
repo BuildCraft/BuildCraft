@@ -19,7 +19,7 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 
     public TriggerRobotInStation() {
         super("buildcraft:robot.in.station");
-        setLocation("buildcraftrobotics:triggers/trigger_robot_in_station");
+        setBuildCraftLocation("robotics", "triggers/trigger_robot_in_station");
     }
 
     @Override

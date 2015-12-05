@@ -25,7 +25,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
 
     public ActionRobotFilterTool() {
         super("buildcraft:robot.work_filter_tool");
-        setLocation("buildcraftrobotics:triggers/action_robot_filter_tool");
+        setBuildCraftLocation("robotics", "triggers/action_robot_filter_tool");
     }
 
     @Override

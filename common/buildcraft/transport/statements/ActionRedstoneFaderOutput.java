@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.ActionRedstoneOutput;
@@ -16,7 +14,7 @@ public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements I
 
     public ActionRedstoneFaderOutput(int level) {
         super(String.format("buildcraft:redstone.output.%02d", level));
-        location = new ResourceLocation(String.format("buildcrafttransport:triggers/redstone_%02d", level));
+        setBuildCraftLocation("transport", String.format("triggers/redstone_%02d", level));
         this.level = level;
     }
 

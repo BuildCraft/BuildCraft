@@ -20,8 +20,7 @@ import buildcraft.api.statements.StatementManager;
 public abstract class BCStatement implements IStatement {
 
     protected final String uniqueTag;
-    // This is not final so sub-classes can change it if they need later on
-    protected ResourceLocation location;
+    private ResourceLocation location;
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite sprite;
@@ -31,22 +30,11 @@ public abstract class BCStatement implements IStatement {
      *
      * @param uniqueTag */
     public BCStatement(String... uniqueTag) {
-        this(new ResourceLocation("buildcraftcore:items/triggers/" + uniqueTag[0]), uniqueTag);
-    }
-
-    /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardized tags if needed,
-     * otherwise just pass a single string. The first passed string will be the one used when saved to disk.
-     * 
-     * @deprecated use the above one, and set the ResourceLocation seperately
-     *
-     * @param uniqueTag */
-    protected BCStatement(ResourceLocation loc, String... uniqueTag) {
-        this.uniqueTag = uniqueTag[0];
-        for (String tag : uniqueTag) {
-            StatementManager.statements.put(tag, this);
-        }
-        location = loc;
-        MinecraftForge.EVENT_BUS.register(this);
+		this.uniqueTag = uniqueTag[0];
+		for (String tag : uniqueTag) {
+			StatementManager.statements.put(tag, this);
+		}
+		MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override

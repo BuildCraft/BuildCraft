@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -20,9 +18,8 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
     public final int level;
 
     public TriggerRedstoneFaderInput(int level) {
-        super(new ResourceLocation(String.format("buildcrafttransport:triggers/redstone_%02d", level)), String.format("buildcraft:redtone.input.%02d",
-                level));
-
+        super(String.format("buildcraft:redtone.input.%02d", level));
+		setBuildCraftLocation("transport", String.format("triggers/redstone_%02d", level));
         this.level = level;
     }
 
