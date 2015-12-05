@@ -122,7 +122,8 @@ import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.8]",
-        dependencies = "required-after:Forge@[11.15.0.1608,11.16)", guiFactory = "buildcraft.core.config.ConfigManager", updateJSON = DefaultProps.UPDATE_JSON)
+        dependencies = "required-after:Forge@[11.15.0.1608,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
+        updateJSON = DefaultProps.UPDATE_JSON)
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
@@ -612,6 +613,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
             // If we did nothing to it, ignore it
             if (name.equals(mapping.name)) {
+                BCLog.logger.info("Remap " + mapping.name + " not used");
                 continue;
             }
 
@@ -662,7 +664,7 @@ public class BuildCraftCore extends BuildCraftMod {
         }
         EnumColor.registerSprites(array);
     }
-    
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Post evt) {

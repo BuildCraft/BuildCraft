@@ -117,6 +117,10 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
         }
     }
 
+	public boolean isWorking() {
+		return buildersInAction.size() > 0;
+	}
+
     @Override
     public Collection<BuildingItem> getBuilders() {
         return buildersInAction;

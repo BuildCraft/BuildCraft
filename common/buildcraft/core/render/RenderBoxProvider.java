@@ -17,11 +17,11 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.internal.IBoxesProvider;
 
-public class RenderBoxProvider extends TileEntitySpecialRenderer {
+public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
     public RenderBoxProvider() {}
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int anArgument) {
+    public void renderTileEntityAt(T tileentity, double x, double y, double z, float f, int anArgument) {
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glEnable(GL11.GL_CULL_FACE);

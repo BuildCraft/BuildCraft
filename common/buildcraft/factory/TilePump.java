@@ -481,16 +481,6 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
     @Override
     public boolean canConnectRedstoneEngine(EnumFacing side) {
-        return true;
-    }
-
-    public int getIconGlowLevel(int renderPass) {
-        if (renderPass == 1) { // Red LED
-            return ledState & 15;
-        } else if (renderPass == 2) { // Green LED
-            return (ledState >> 4) > 0 ? 15 : 0;
-        } else {
-            return -1;
-        }
+        return !BuildCraftFactory.pumpsNeedRealPower;
     }
 }

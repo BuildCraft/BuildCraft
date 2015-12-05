@@ -49,6 +49,7 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.internal.IDropControlInventory;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;

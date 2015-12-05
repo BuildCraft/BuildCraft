@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import java.lang.reflect.Method;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
@@ -14,9 +12,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 
@@ -38,19 +34,7 @@ public class FactoryProxyClient extends FactoryProxy {
 
     @Override
     public void initializeEntityRenders() {
-		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(BuildCraftFactory.refineryBlock), 0, TileRefinery.class);
-	}
-
-    @Override
-    public void initializeNEIIntegration() {
-        try {
-            Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
-            Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
-            method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
-            BCLog.logger.debug("NEI detected, adding NEI overlay");
-        } catch (Exception e) {
-            BCLog.logger.debug("NEI not detected.");
-        }
+        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(BuildCraftFactory.refineryBlock), 0, TileRefinery.class);
     }
 
     @Override

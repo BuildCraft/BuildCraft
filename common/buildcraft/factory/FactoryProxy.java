@@ -5,6 +5,7 @@
 package buildcraft.factory;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.SidedProxy;
 
 import buildcraft.core.lib.EntityResizableCuboid;

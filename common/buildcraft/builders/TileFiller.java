@@ -37,7 +37,6 @@ import buildcraft.core.lib.utils.Utils;
 import io.netty.buffer.ByteBuf;
 
 public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer {
-
     private static int POWER_ACTIVATION = 500;
 
     public FillerPattern currentPattern = PatternNone.INSTANCE;

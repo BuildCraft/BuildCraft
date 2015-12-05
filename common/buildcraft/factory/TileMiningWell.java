@@ -135,16 +135,6 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
         }
     }
 
-    public int getIconGlowLevel(int renderPass) {
-        if (renderPass == 2) { // Red LED
-            return ledState & 15;
-        } else if (renderPass == 3) { // Green LED
-            return (ledState >> 4) > 0 ? 15 : 0;
-        } else {
-            return -1;
-        }
-    }
-
     @Override
     public boolean hasWork() {
         return isDigging;

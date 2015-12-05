@@ -54,7 +54,7 @@ public final class RenderEntityBlock extends Render {
         public TextureAtlasSprite texture = null;
         public TextureAtlasSprite[] textureArray = null;
         public boolean[] renderSide = new boolean[6];
-        public float light = -1f;
+		public int light = -1;
         public int brightness = -1;
 
         public RenderInfo() {

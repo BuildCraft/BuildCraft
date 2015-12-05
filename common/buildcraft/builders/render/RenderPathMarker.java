@@ -18,7 +18,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.render.RenderLaser;
 
-public class RenderPathMarker extends TileEntitySpecialRenderer {
+public class RenderPathMarker extends TileEntitySpecialRenderer<TilePathMarker> {
 
     private ModelBase model = new ModelBase() {};
     private ModelRenderer box;
@@ -32,9 +32,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int aThing) {
-        TilePathMarker marker = (TilePathMarker) tileentity;
-
+    public void renderTileEntityAt(TilePathMarker marker, double x, double y, double z, float f, int aThing) {
         if (marker != null) {
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -44,7 +42,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslated(x, y, z);
-            GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
+            GL11.glTranslated(-marker.getPos().getX(), -marker.getPos().getY(), -marker.getPos().getZ());
 
             for (LaserData laser : marker.lasers) {
                 if (laser != null) {

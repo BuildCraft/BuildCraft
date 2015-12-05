@@ -5,6 +5,7 @@
 package buildcraft.core;
 
 // TODO: Convert to an enum!
+@Deprecated
 public final class GuiIds {
 
     public static final int ARCHITECT_TABLE = 10;

@@ -20,7 +20,7 @@ import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuildingItems;
 import buildcraft.core.render.RenderLaser;
 
-public class RenderConstructionMarker extends RenderBoxProvider {
+public class RenderConstructionMarker extends RenderBoxProvider<TileConstructionMarker> {
 
     private final RenderBuildingItems renderItems = new RenderBuildingItems();
 
@@ -36,10 +36,8 @@ public class RenderConstructionMarker extends RenderBoxProvider {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int aThing) {
-        super.renderTileEntityAt(tileentity, x, y, z, f, aThing);
-
-        TileConstructionMarker marker = (TileConstructionMarker) tileentity;
+    public void renderTileEntityAt(TileConstructionMarker marker, double x, double y, double z, float f, int aThing) {
+        super.renderTileEntityAt(marker, x, y, z, f, aThing);
 
         if (marker != null) {
             GL11.glPushMatrix();
@@ -50,7 +48,7 @@ public class RenderConstructionMarker extends RenderBoxProvider {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslated(x, y, z);
-            GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
+            GL11.glTranslated(-marker.getPos().getX(), -marker.getPos().getY(), -marker.getPos().getZ());
 
             if (marker.laser != null) {
                 GL11.glPushMatrix();
@@ -67,7 +65,7 @@ public class RenderConstructionMarker extends RenderBoxProvider {
             GL11.glPopAttrib();
             GL11.glPopMatrix();
 
-            renderItems.render(tileentity, x, y, z);
+            renderItems.render(marker, x, y, z);
         }
     }
 

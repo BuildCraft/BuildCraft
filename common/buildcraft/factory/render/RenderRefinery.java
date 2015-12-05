@@ -12,10 +12,10 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -24,7 +24,7 @@ import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 
-public class RenderRefinery extends TileEntitySpecialRenderer {
+public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
 
     private static final Vec3 TANK_SIZE = new Vec3(0.5, 1, 0.5);
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refinery/refinery.png");
@@ -59,12 +59,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int arg) {
-
-        render((TileRefinery) tileentity, x, y, z);
-    }
-
-    private void render(TileRefinery tile, double x, double y, double z) {
+    public void renderTileEntityAt(TileRefinery tile, double x, double y, double z, float partialTicks, int arg) {
         FluidStack liquid1 = null, liquid2 = null, liquidResult = null;
         int color1 = 0xFFFFFF, color2 = 0xFFFFFF, colorResult = 0xFFFFFF;
 

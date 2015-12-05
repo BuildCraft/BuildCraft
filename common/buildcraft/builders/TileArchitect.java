@@ -27,6 +27,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.internal.IBoxProvider;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.base.Packet;

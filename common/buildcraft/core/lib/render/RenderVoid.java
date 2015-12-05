@@ -9,18 +9,18 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderVoid extends Render {
+public class RenderVoid<E extends Entity> extends Render<E> {
     public RenderVoid() {
         super(Minecraft.getMinecraft().getRenderManager());
     }
 
     @Override
-    public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
+    public void doRender(E entity, double d, double d1, double d2, float f, float f1) {
 
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
+    protected ResourceLocation getEntityTexture(E entity) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

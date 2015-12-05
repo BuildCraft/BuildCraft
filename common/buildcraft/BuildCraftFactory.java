@@ -70,6 +70,7 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static Achievement refineAndRedefineAchievement;
 
     public static int miningDepth = 256;
+	public static boolean pumpsNeedRealPower = false;
     public static PumpDimensionList pumpDimensionList;
 
     @Mod.EventHandler
@@ -123,8 +124,8 @@ public class BuildCraftFactory extends BuildCraftMod {
                 ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
-        BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc,
-                ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.pumpsNeedRealPower", false, "Do pumps need real (non-redstone) power?", ConfigManager.RestartRequirement.WORLD);
 
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -203,6 +204,7 @@ public class BuildCraftFactory extends BuildCraftMod {
             reloadConfig(ConfigManager.RestartRequirement.NONE);
         } else {
             miningDepth = BuildCraftCore.mainConfigManager.get("general.miningDepth").getInt();
+			pumpsNeedRealPower = BuildCraftCore.mainConfigManager.get("general.pumpsNeedRealPower").getBoolean();
             pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfigManager.get("general.pumpDimensionControl").getString());
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {

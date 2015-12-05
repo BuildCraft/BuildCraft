@@ -8,21 +8,17 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.builders.TileAbstractBuilder;
 
-public class RenderBuilder extends RenderBoxProvider {
-
-    private final RenderBuildingItems renderItems = new RenderBuildingItems();
+public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvider<B> {
+    private static final RenderBuildingItems renderItems = new RenderBuildingItems();
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int arg) {
-        super.renderTileEntityAt(tileentity, x, y, z, f, arg);
-
-        TileAbstractBuilder builder = (TileAbstractBuilder) tileentity;
+    public void renderTileEntityAt(B builder, double x, double y, double z, float f, int arg) {
+        super.renderTileEntityAt(builder, x, y, z, f, arg);
 
         if (builder != null) {
             GL11.glPushMatrix();
@@ -33,7 +29,7 @@ public class RenderBuilder extends RenderBoxProvider {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslated(x, y, z);
-            GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
+            GL11.glTranslated(-builder.getPos().getX(), -builder.getPos().getY(), -builder.getPos().getZ());
 
             if (builder.getPathLaser() != null) {
                 for (LaserData laser : builder.getPathLaser()) {
@@ -50,7 +46,7 @@ public class RenderBuilder extends RenderBoxProvider {
             GL11.glPopAttrib();
             GL11.glPopMatrix();
 
-            renderItems.render(tileentity, x, y, z);
+            renderItems.render(builder, x, y, z);
         }
     }
 

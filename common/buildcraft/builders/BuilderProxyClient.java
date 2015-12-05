@@ -7,10 +7,12 @@ package buildcraft.builders;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.builders.render.RenderArchitect;
+import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderPathMarker;
 import buildcraft.builders.urbanism.TileUrbanist;
@@ -32,15 +34,21 @@ public class BuilderProxyClient extends BuilderProxy {
     public void registerBlockRenderers() {
         super.registerBlockRenderers();
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider<TileUrbanist>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder<TileFiller>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
         ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
+        // ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new
+        // RenderLEDTile(BuildCraftBuilders.architectBlock));
+        // ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new
+        // RenderLEDTile(BuildCraftBuilders.fillerBlock));
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder<TileQuarry>());
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid<EntityMechanicalArm>());
     }
 
     @Override

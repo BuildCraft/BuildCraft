@@ -7,7 +7,6 @@ package buildcraft.factory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -19,8 +18,6 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFloodGate extends BlockBuildCraft {
-    private TextureAtlasSprite valve, transparent;
-
     public BlockFloodGate() {
         super(Material.iron);
     }
