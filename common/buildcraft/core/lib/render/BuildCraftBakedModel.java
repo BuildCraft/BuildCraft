@@ -45,7 +45,7 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     // Size of each array
     public static final int ARRAY_SIZE = 7;
 
-    private static final Map<EnumFacing, Matrix4f> pluggableMap;
+    private static final Map<EnumFacing, Matrix4f> rotationMap;
 
     static {
         ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
@@ -84,11 +84,11 @@ public abstract class BuildCraftBakedModel extends BakedModel {
             mat.mul(m2);
             builder.put(face, mat);
         }
-        pluggableMap = builder.build();
+        rotationMap = builder.build();
     }
 
     public static Matrix4f rotateTowardsFace(EnumFacing face) {
-        return new Matrix4f(pluggableMap.get(face));
+        return new Matrix4f(rotationMap.get(face));
     }
 
     @SuppressWarnings("deprecation")

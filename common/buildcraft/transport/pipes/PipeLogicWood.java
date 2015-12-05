@@ -10,6 +10,8 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;

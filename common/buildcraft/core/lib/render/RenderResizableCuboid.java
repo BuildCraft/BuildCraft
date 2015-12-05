@@ -32,7 +32,7 @@ import net.minecraft.world.IBlockAccess;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.utils.Utils;
 
-public class RenderResizableCuboid extends Render {
+public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     public interface IBlockLocation {
         Vec3 transformToWorld(Vec3 vec);
     }
@@ -118,17 +118,17 @@ public class RenderResizableCuboid extends Render {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
+    protected ResourceLocation getEntityTexture(EntityResizableCuboid entity) {
         return null;
     }
 
     @Override
-    public boolean shouldRender(Entity entity, ICamera camera, double camX, double camY, double camZ) {
+    public boolean shouldRender(EntityResizableCuboid entity, ICamera camera, double camX, double camY, double camZ) {
         return true;
     }
 
     @Override
-    public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(EntityResizableCuboid entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
         final Vec3 entPos = Utils.getInterpolatedVec(entity, partialTicks);

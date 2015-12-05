@@ -22,6 +22,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -302,7 +303,14 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         }
 
         coreState.pipeId = nbt.getInteger("pipeId");
-        pipe = BlockGenericPipe.createPipe((ItemPipe) Item.getItemById(coreState.pipeId));
+        Item item = Item.getItemById(coreState.pipeId);
+        if (item instanceof ItemPipe) {
+            pipe = BlockGenericPipe.createPipe((ItemPipe) item);
+        } else {
+            ResourceLocation regName = Item.itemRegistry.getNameForObject(item);
+            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + regName);
+            pipe = null;
+        }
         bindPipe();
         if (pipe != null) {
             pipe.readFromNBT(nbt);
