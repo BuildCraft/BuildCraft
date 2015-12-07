@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicFire extends SchematicBlock {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(Items.flint_and_steel));
     }
 

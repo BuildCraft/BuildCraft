@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.BlockRailBase;
@@ -28,7 +28,7 @@ public class SchematicRail extends SchematicBlock {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         // If we set it to NORTH_SOUTH here (and don't update) then when we set it to the actual state in the post
         // processing it just ignores the update because they are the same
         if (state == defaultDirection) context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.MARK_BLOCK_FOR_UPDATE);

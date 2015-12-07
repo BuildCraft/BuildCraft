@@ -412,6 +412,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
             // INIT FILLER PATTERNS
             FillerManager.registry.addPattern(PatternFill.INSTANCE);
+            FillerManager.registry.addPattern(PatternNone.INSTANCE);
             FillerManager.registry.addPattern(new PatternFlatten());
             FillerManager.registry.addPattern(new PatternHorizon());
             FillerManager.registry.addPattern(new PatternClear());
@@ -689,6 +690,10 @@ public class BuildCraftCore extends BuildCraftMod {
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
         EnumColor.registerSprites(array);
+        PatternParameterCenter.registerSprites(evt.map);
+        PatternParameterHollow.registerSprites(evt.map);
+        PatternParameterXZDir.registerSprites(evt.map);
+        PatternParameterYDir.registerSprites(evt.map);
     }
 
     @SubscribeEvent

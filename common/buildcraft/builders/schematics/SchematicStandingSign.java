@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.BlockStandingSign;
 import net.minecraft.init.Items;
@@ -16,7 +16,7 @@ import buildcraft.api.blueprints.SchematicTile;
 
 public class SchematicStandingSign extends SchematicTile {
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(Items.sign));
     }
 

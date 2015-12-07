@@ -5,10 +5,12 @@
 package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+
 import net.minecraftforge.fluids.FluidStack;
 
 public class SchematicFluid extends SchematicBlock {
@@ -20,7 +22,7 @@ public class SchematicFluid extends SchematicBlock {
     }
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         if (getLevel() == 0) {
             requirements.add(fluidItem);
         }
@@ -51,7 +53,7 @@ public class SchematicFluid extends SchematicBlock {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         if (getLevel() == 0) {
             context.world().setBlockState(pos, state, 3);
         }

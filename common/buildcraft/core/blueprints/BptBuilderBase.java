@@ -303,4 +303,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
         MinecraftForge.EVENT_BUS.post(placeEvent);
         return placeEvent.isCanceled();
     }
+    @Override
+    public String toString() {
+        return "BptBuilderBase [blueprint=" + blueprint + ", context=" + context + ", usedLocations=" + usedLocations + ", done=" + done + ", pos="
+            + pos + ", initialized=" + initialized + ", nextBuildDate=" + nextBuildDate + "]";
+    }
 }

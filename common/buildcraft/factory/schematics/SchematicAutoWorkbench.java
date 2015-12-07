@@ -5,7 +5,7 @@
 package buildcraft.factory.schematics;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,7 +50,7 @@ public class SchematicAutoWorkbench extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         super.placeInWorld(context, pos, stacks);
 
         TileAutoWorkbench autoWb = getTile(context, pos);

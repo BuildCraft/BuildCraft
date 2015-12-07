@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -24,7 +24,7 @@ public class SchematicRedstoneWire extends SchematicBlockFloored {
     }
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(customStack.copy());
     }
 
@@ -34,7 +34,7 @@ public class SchematicRedstoneWire extends SchematicBlockFloored {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, state, 3);
     }
 

@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -15,7 +15,7 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicTileIgnoreState extends SchematicTile {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(state.getBlock(), state.getBlock().getMetaFromState(state)));
     }
 
@@ -30,7 +30,7 @@ public class SchematicTileIgnoreState extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, state, 3);
     }
 

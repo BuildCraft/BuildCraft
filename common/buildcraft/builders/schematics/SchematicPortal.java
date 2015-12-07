@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -19,7 +19,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicPortal extends SchematicBlock {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
 
     }
 
@@ -29,7 +29,7 @@ public class SchematicPortal extends SchematicBlock {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {}
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {}
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {

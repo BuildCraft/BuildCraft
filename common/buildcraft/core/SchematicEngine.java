@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -44,7 +44,7 @@ public class SchematicEngine extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         super.placeInWorld(context, pos, stacks);
 
         TileEngineBase engine = (TileEngineBase) context.world().getTileEntity(pos);

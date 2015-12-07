@@ -8,7 +8,7 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ import buildcraft.core.builders.schematics.SchematicBlockFloored;
 public class SchematicCactus extends SchematicBlockFloored {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(Blocks.cactus));
     }
 
@@ -30,7 +30,7 @@ public class SchematicCactus extends SchematicBlockFloored {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, Blocks.cactus.getDefaultState(), 3);
     }
 

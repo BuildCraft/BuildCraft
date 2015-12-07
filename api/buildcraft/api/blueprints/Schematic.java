@@ -5,6 +5,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -103,41 +104,27 @@ public abstract class Schematic {
     }
 
     /** Apply translations to all positions in the schematic to center in the builder referential */
-    public void translateToWorld(Vec3 transform) {
-
-    }
+    public void translateToWorld(Vec3 transform) {}
 
     /** Translates blocks and item ids to the blueprint referential */
-    public void idsToBlueprint(MappingRegistry registry) {
-
-    }
+    public void idsToBlueprint(MappingRegistry registry) {}
 
     /** Translates blocks and item ids to the world referential */
-    public void idsToWorld(MappingRegistry registry) {
-
-    }
+    public void idsToWorld(MappingRegistry registry) {}
 
     /** Initializes a schematic for blueprint according to an objet placed on {x, y, z} on the world. For blocks, block
      * and meta fields will be initialized automatically. */
-    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
-
-    }
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {}
 
     /** Places the block in the world, at the location specified in the slot, using the stack in parameters */
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-
-    }
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {}
 
     /** Write specific requirements coming from the world to the blueprint. */
-    public void storeRequirements(IBuilderContext context, BlockPos pos) {
-
-    }
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {}
 
     /** Returns the requirements needed to build this block. When the requirements are met, they will be removed all at
      * once from the builder, before calling writeToWorld. */
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-
-    }
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {}
 
     /** Returns the amount of energy required to build this slot, depends on the stacks selected for the build. */
     public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {

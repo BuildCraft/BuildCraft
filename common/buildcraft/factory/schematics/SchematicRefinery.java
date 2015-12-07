@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -18,7 +18,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 public class SchematicRefinery extends SchematicTile {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(BuildCraftFactory.refineryBlock));
     }
 
@@ -44,7 +44,7 @@ public class SchematicRefinery extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         // to support refineries coming from older blueprints
         tileNBT.removeTag("tank1");
         tileNBT.removeTag("tank2");

@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -16,7 +16,7 @@ import buildcraft.api.blueprints.SchematicTile;
 
 public class SchematicEnderChest extends SchematicTile {
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(Blocks.obsidian, 8));
         requirements.add(new ItemStack(Items.ender_eye, 1));
     }

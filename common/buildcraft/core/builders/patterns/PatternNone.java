@@ -19,5 +19,4 @@ public class PatternNone extends FillerPattern {
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
         return new Template(0, 0, 0);
     }
-
 }

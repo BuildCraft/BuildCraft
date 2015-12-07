@@ -4,7 +4,7 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,12 +31,12 @@ public class SchematicMask extends SchematicBlockBase {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         if (isConcrete) {
             if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), pos)) {
                 return;
             } else {
-                ItemStack stack = stacks.getFirst();
+                ItemStack stack = stacks.get(0);
                 EntityPlayer player = BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get();
 
                 // force the block to be air block, in case it's just a soft

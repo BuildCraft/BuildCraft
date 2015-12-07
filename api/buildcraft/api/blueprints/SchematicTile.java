@@ -5,7 +5,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -42,7 +42,7 @@ public class SchematicTile extends SchematicBlock {
 
     /** Places the block in the world, at the location specified in the slot. */
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         super.placeInWorld(context, pos, stacks);
 
         if (state.getBlock().hasTileEntity(state)) {

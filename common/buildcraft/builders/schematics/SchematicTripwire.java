@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -17,7 +17,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicTripwire extends SchematicBlock {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(Items.string));
     }
 
@@ -27,7 +27,7 @@ public class SchematicTripwire extends SchematicBlock {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, Blocks.tripwire.getDefaultState(), 3);
     }
 

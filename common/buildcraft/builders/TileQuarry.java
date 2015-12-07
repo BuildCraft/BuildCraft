@@ -178,7 +178,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         createUtilsIfNeeded();
-
         if (getStage() == Stage.BUILDING) {
             if (builder != null && !builder.isDone(this)) {
                 builder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
@@ -624,13 +623,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         PatternQuarryFrame pqf = PatternQuarryFrame.INSTANCE;
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
-        // TODO (PASS 1): Fix this to make it work properly with the new frame mechanics
-        if (bpt != null) {
-            builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, getPos().getY(), box.zMin));
-            speed = 0;
-            stage = Stage.BUILDING;
-            sendNetworkUpdate();
-        }
+        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, getPos().getY(), box.zMin));
+        speed = 0;
+        stage = Stage.BUILDING;
+        sendNetworkUpdate();
     }
 
     @Override

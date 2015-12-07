@@ -6,7 +6,7 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -33,7 +33,7 @@ public class SchematicEntity extends Schematic {
     public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         Collections.addAll(requirements, storedRequirements);
     }
 

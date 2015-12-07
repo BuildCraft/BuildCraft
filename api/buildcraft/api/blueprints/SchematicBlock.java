@@ -32,7 +32,7 @@ public class SchematicBlock extends SchematicBlockBase {
     private boolean doNotUse = false;
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         if (state != null) {
             if (storedRequirements.length != 0) {
                 Collections.addAll(requirements, storedRequirements);
@@ -48,7 +48,7 @@ public class SchematicBlock extends SchematicBlockBase {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         super.placeInWorld(context, pos, stacks);
 
         this.setBlockInWorld(context, pos);

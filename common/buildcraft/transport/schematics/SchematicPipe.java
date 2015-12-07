@@ -9,7 +9,7 @@
 package buildcraft.transport.schematics;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,18 +19,14 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
-import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingNotFoundException;
-import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe.SideProperties;
-import buildcraft.transport.BlockGenericPipe;
 
 public class SchematicPipe extends SchematicTile {
 
@@ -146,7 +142,7 @@ public class SchematicPipe extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         tileNBT.setInteger("x", pos.getX());
         tileNBT.setInteger("y", pos.getY());
         tileNBT.setInteger("z", pos.getZ());

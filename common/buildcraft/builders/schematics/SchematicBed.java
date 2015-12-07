@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +19,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicBed extends SchematicBlock {
 
     @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
             requirements.add(new ItemStack(Items.bed));
         }
@@ -38,7 +38,7 @@ public class SchematicBed extends SchematicBlock {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD));
         BlockPos feetPos = pos.offset(state.getValue(getFacingProp()), -1);
         context.world().setBlockState(feetPos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT));
