@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.statements;
@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -19,9 +19,7 @@ import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.RobotUtils;
-import buildcraft.transport.TileGenericPipe;
 
 public class RobotsActionProvider implements IActionProvider {
 
@@ -61,13 +59,6 @@ public class RobotsActionProvider implements IActionProvider {
         }
 
         for (DockingStation station : stations) {
-            TileEntity sideTile = ((TileGenericPipe) tile).getTile(station.side);
-            Block sideBlock = ((TileGenericPipe) tile).getBlock(station.side);
-
-            if (sideTile instanceof IPipeTile) {
-                continue;
-            }
-
             if (station.getItemInput() != null) {
                 result.add(BuildCraftRobotics.actionStationProvideItems);
             }

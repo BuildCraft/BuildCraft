@@ -37,7 +37,7 @@ public class BCConfigElement<T> extends ConfigElement {
                     continue;
                 }
 
-                ConfigElement temp = new BCConfigElement(child);
+				ConfigElement temp = new BCConfigElement<Object>(child);
                 if (temp.showInGui()) {
                     elements.add(temp);
                 }

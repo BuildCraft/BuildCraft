@@ -1,12 +1,14 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
 
 import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,6 +23,7 @@ import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.inventory.filters.IFluidFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
 import buildcraft.robotics.ai.AIRobotPumpBlock;
@@ -74,8 +77,9 @@ public class BoardRobotPump extends RedstoneBoardRobot {
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }
-        } else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
+        } else if (ai instanceof AIRobotPumpBlock) {
             releaseBlockFound();
+        } else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 
             if (!ai.success()) {
                 startDelegateAI(new AIRobotGotoSleep(robot));
@@ -112,4 +116,25 @@ public class BoardRobotPump extends RedstoneBoardRobot {
         return fluidFilter.matches(fluid);
     }
 
+    @Override
+    public boolean canLoadFromNBT() {
+        return true;
+    }
+
+    @Override
+    public void writeSelfToNBT(NBTTagCompound nbt) {
+        super.writeSelfToNBT(nbt);
+        if (blockFound != null) {
+            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
+        }
+    }
+
+    @Override
+    public void loadSelfFromNBT(NBTTagCompound nbt) {
+        super.loadSelfFromNBT(nbt);
+
+        if (nbt.hasKey("blockFound")) {
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
+        }
+    }
 }

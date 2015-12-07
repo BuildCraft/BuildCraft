@@ -9,6 +9,8 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
@@ -21,6 +23,7 @@ import io.netty.buffer.ByteBuf;
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public ItemFacade.FacadeState[] states;
     private ItemFacade.FacadeState activeState;
+    private IPipeTile pipe;
 
     // Client sync
     private IBlockState state;
@@ -32,6 +35,16 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     public FacadePluggable() {}
+
+    @Override
+    public void invalidate() {
+        this.pipe = null;
+    }
+
+    @Override
+    public void validate(IPipeTile pipe, EnumFacing direction) {
+        this.pipe = pipe;
+    }
 
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
@@ -144,14 +157,35 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     private void prepareStates() {
-        if (activeState == null) {
+        if (states != null && states.length > 1) {
+            if (pipe == null || pipe.getPipe() == null) {
+                activeState = states[0];
+                return;
+            }
+
+            IPipe p = pipe.getPipe();
+            int defaultStateId = -1;
+            int activeStateId = -1;
+
+            for (int i = 0; i < states.length; i++) {
+                ItemFacade.FacadeState state = states[i];
+                if (state.wire == null) {
+                    defaultStateId = i;
+                    continue;
+                }
+                if (p.isWireActive(state.wire)) {
+                    activeStateId = i;
+                    break;
+                }
+            }
+
+            activeState = activeStateId < 0 ? (defaultStateId < 0 ? states[0] : states[defaultStateId]) : states[activeStateId];
+        } else if (activeState == null) {
             activeState = states != null && states.length > 0 ? states[0] : null;
         }
     }
 
-    protected void setActiveState(int id) {
-        if (id >= 0 && id < states.length) {
-            activeState = states[id];
-        }
+    public void setActiveState(int activeState2) {
+        BCLog.logger.error("TRIED TO SET THE ACTIVE STATE OF A FACEDE PLUGGABLE TO " + activeState2);
     }
 }

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
@@ -11,13 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.EnumSkyBlock;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
@@ -25,6 +19,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.core.lib.utils.BlockUtils;
 
 import io.netty.buffer.ByteBuf;
 
@@ -82,6 +77,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
         if (hasUpdate) {
             worldObj.notifyBlockOfStateChange(pos, blockType);
+            BlockUtils.onComparatorUpdate(worldObj, pos, getBlockType());
             hasUpdate = false;
         }
 
@@ -116,6 +112,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     }
 
     /* HELPER FUNCTIONS */
+
     /** @return Last tank block below this one or this one if it is the last. */
     public TileTank getBottomTank() {
 
@@ -255,18 +252,16 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
         TileTank tile = getBottomTank();
 
-        int capacity = tank.getCapacity();
-
         if (tile != null && tile.tank.getFluid() != null) {
             compositeTank.setFluid(tile.tank.getFluid().copy());
         } else {
             return new FluidTankInfo[] { compositeTank.getInfo() };
         }
 
+        int capacity = tile.tank.getCapacity();
         tile = getTankAbove(tile);
 
         while (tile != null) {
-
             FluidStack liquid = tile.tank.getFluid();
             if (liquid == null || liquid.amount == 0) {
                 // NOOP

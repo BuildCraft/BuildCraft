@@ -1,5 +1,5 @@
-/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
@@ -31,10 +31,8 @@ public class SchematicRail extends SchematicBlock {
     public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
         // If we set it to NORTH_SOUTH here (and don't update) then when we set it to the actual state in the post
         // processing it just ignores the update because they are the same
-        if (state == defaultDirection)
-            context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.MARK_BLOCK_FOR_UPDATE);
-        else
-            context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.UPDATE_NONE);
+        if (state == defaultDirection) context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.MARK_BLOCK_FOR_UPDATE);
+        else context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.UPDATE_NONE);
     }
 
     @Override

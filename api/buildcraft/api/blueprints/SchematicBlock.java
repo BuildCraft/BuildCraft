@@ -4,11 +4,7 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -21,11 +17,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 
 public class SchematicBlock extends SchematicBlockBase {
-
     public IBlockState state = null;
     public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
@@ -90,17 +86,21 @@ public class SchematicBlock extends SchematicBlockBase {
         }
     }
 
+    /** Get a list of relative block coordinates which have to be built before this block can be placed. */
+    public Set<BlockPos> getPrerequisiteBlocks(IBuilderContext context) {
+        Set<BlockPos> indexes = new HashSet<BlockPos>();
+        if (state.getBlock() instanceof BlockFalling) {
+            indexes.add(new BlockPos(0, -1, 0));
+        }
+        return indexes;
+    }
+
     @Override
     public BuildingStage getBuildStage() {
-        Block block = state.getBlock();
-        if (block instanceof BlockFalling) {
-            return BuildingStage.SUPPORTED;
-        } else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+        if (state.getBlock() instanceof BlockFluidBase || state.getBlock() instanceof BlockLiquid) {
             return BuildingStage.EXPANDING;
-        } else if (block.isOpaqueCube()) {
-            return BuildingStage.STANDALONE;
         } else {
-            return BuildingStage.SUPPORTED;
+            return BuildingStage.STANDALONE;
         }
     }
 
@@ -183,25 +183,24 @@ public class SchematicBlock extends SchematicBlockBase {
         return getItemStack(state, 1);
     }
 
-    public EnumFacing getFace(IProperty prop) {
-        return (EnumFacing) state.getValue(prop);
-    }
-
     // Pretty much all blocks (that rotate) rotate this way now
     @Override
     public void rotateLeft(IBuilderContext context) {
-        @SuppressWarnings("unchecked")
+        IProperty<EnumFacing> facingProp = getFacingProp();
+        if (facingProp != null) {
+            EnumFacing face = state.getValue(facingProp);
+            if (face.getAxis() == Axis.Y) return;
+            state = state.withProperty(facingProp, face.rotateY());
+        }
+    }
+
+    protected IProperty<EnumFacing> getFacingProp() {
         Collection<IProperty> props = state.getPropertyNames();
         for (IProperty prop : props) {
-            if ("facing".equals(prop.getName())) {
-                EnumFacing face = getFace(prop);
-                if (face.getAxis() == Axis.Y) {
-                    // Don't attempt to rotate if its facing up or down
-                    break;
-                }
-                state = state.withProperty(prop, face.rotateY());
-                break;
+            if ("facing".equals(prop.getName()) && state.getValue(prop) instanceof EnumFacing) {
+                return prop;
             }
         }
+        return null;
     }
 }

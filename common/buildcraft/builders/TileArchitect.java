@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -16,18 +16,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.internal.IBoxProvider;
-import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.base.Packet;
@@ -41,8 +42,14 @@ import buildcraft.core.lib.utils.Utils;
 import io.netty.buffer.ByteBuf;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
+    public enum Mode {
+        NONE,
+        EDIT,
+        COPY
+    }
 
     public String currentAuthorName = "";
+    public Mode mode = Mode.NONE;
 
     public Box box = new Box();
     public String name = "";
@@ -53,12 +60,16 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     public ArrayList<BlockPos> subBlueprints = new ArrayList<BlockPos>();
 
     private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
-
     private RecursiveBlueprintReader reader;
-    private boolean isProcessing;
+    private boolean clientIsWorking, initialized;
 
     public TileArchitect() {
         box.kind = Kind.BLUE_STRIPES;
+    }
+
+    public void storeBlueprintStack(ItemStack blueprintStack) {
+        setInventorySlotContents(1, blueprintStack);
+        decrStackSize(0, 1);
     }
 
     @Override
@@ -66,12 +77,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         super.update();
 
         if (!worldObj.isRemote) {
-            if (reader != null) {
+            if (mode == Mode.COPY && reader != null) {
                 reader.iterate();
 
                 if (reader.isDone()) {
                     reader = null;
-                    isProcessing = false;
                     sendNetworkUpdate();
                 }
             }
@@ -82,16 +92,28 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     public void initialize() {
         super.initialize();
 
-        if (!worldObj.isRemote) {
+        if (!worldObj.isRemote && !initialized) {
             if (!box.isInitialized()) {
                 IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
                 if (a != null) {
+                    mode = Mode.COPY;
                     box.initialize(a);
                     a.removeFromWorld();
                     sendNetworkUpdate();
+                    return;
+                } else {
+                    if (BuildCraftCore.DEVELOPER_MODE) {
+                        mode = Mode.EDIT;
+                    } else {
+                        mode = Mode.NONE;
+                    }
                 }
+            } else {
+                mode = Mode.COPY;
             }
+            initialized = true;
+            sendNetworkUpdate();
         }
     }
 
@@ -110,7 +132,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         ItemStack result = inv.decrStackSize(i, j);
 
         if (i == 0) {
-            initializeComputing();
+            initializeBlueprint();
         }
 
         return result;
@@ -121,7 +143,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         inv.setInventorySlotContents(i, itemstack);
 
         if (i == 0) {
-            initializeComputing();
+            initializeBlueprint();
         }
     }
 
@@ -137,7 +159,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        return worldObj.getTileEntity(pos) == this;
+        return mode != Mode.NONE && worldObj.getTileEntity(pos) == this;
     }
 
     @Override
@@ -150,6 +172,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
         inv.readFromNBT(nbt);
 
+        mode = Mode.values()[nbt.getByte("mode")];
         name = nbt.getString("name");
         currentAuthorName = nbt.getString("lastAuthor");
 
@@ -178,6 +201,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
         inv.writeToNBT(nbt);
 
+        nbt.setByte("mode", (byte) mode.ordinal());
         nbt.setString("name", name);
         nbt.setString("lastAuthor", currentAuthorName);
 
@@ -194,15 +218,22 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         nbt.setTag("subBlueprints", subBptList);
     }
 
+    private boolean getIsWorking() {
+        return mode == Mode.COPY ? reader != null : false;
+    }
+
     @Override
     public void writeData(ByteBuf stream) {
         box.writeData(stream);
         NetworkUtils.writeUTF(stream, name);
-        readConfiguration.writeData(stream);
-        stream.writeBoolean(reader != null);
-        stream.writeShort(subLasers.size());
-        for (LaserData ld : subLasers) {
-            ld.writeData(stream);
+        stream.writeBoolean(getIsWorking());
+        stream.writeByte(mode.ordinal());
+        if (mode == Mode.COPY) {
+            readConfiguration.writeData(stream);
+            stream.writeShort(subLasers.size());
+            for (LaserData ld : subLasers) {
+                ld.writeData(stream);
+            }
         }
     }
 
@@ -210,20 +241,18 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     public void readData(ByteBuf stream) {
         box.readData(stream);
         name = NetworkUtils.readUTF(stream);
-        readConfiguration.readData(stream);
-        boolean newIsProcessing = stream.readBoolean();
-        if (newIsProcessing != isProcessing) {
-            isProcessing = newIsProcessing;
-            worldObj.markBlockRangeForRenderUpdate(getPos().getX(), getPos().getY(), getPos().getZ(), getPos().getX(), getPos().getY(), getPos()
-                    .getZ());
-        }
+        clientIsWorking = stream.readBoolean();
+        mode = Mode.values()[stream.readByte()];
 
-        int size = stream.readUnsignedShort();
-        subLasers.clear();
-        for (int i = 0; i < size; i++) {
-            LaserData ld = new LaserData();
-            ld.readData(stream);
-            subLasers.add(ld);
+        if (mode == Mode.COPY) {
+            readConfiguration.readData(stream);
+            int size = stream.readUnsignedShort();
+            subLasers.clear();
+            for (int i = 0; i < size; i++) {
+                LaserData ld = new LaserData();
+                ld.readData(stream);
+                subLasers.add(ld);
+            }
         }
     }
 
@@ -233,12 +262,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         destroy();
     }
 
-    private void initializeComputing() {
+    private void initializeBlueprint() {
         if (getWorld().isRemote) {
             return;
         }
 
-        reader = new RecursiveBlueprintReader(this);
+        if (mode == Mode.COPY) {
+            reader = new RecursiveBlueprintReader(this);
+        }
         sendNetworkUpdate();
     }
 
@@ -316,9 +347,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     public void addSubBlueprint(TileEntity sub) {
-        addSubBlueprint(sub.getPos());
-
-        sendNetworkUpdate();
+        if (mode == Mode.COPY) {
+            addSubBlueprint(sub.getPos());
+            sendNetworkUpdate();
+        }
     }
 
     private void addSubBlueprint(BlockPos index) {
@@ -334,5 +366,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     @Override
     public String getInventoryName() {
         return "Template";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 }

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.statements;
@@ -8,22 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.robots.DockingStation;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.core.lib.inventory.filters.ArrayFluidFilter;
-import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
-import buildcraft.core.lib.inventory.filters.IFluidFilter;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
-import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
-import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
+import buildcraft.api.statements.*;
+import buildcraft.core.lib.inventory.filters.*;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 
@@ -38,11 +29,6 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
     public String getDescription() {
         return StringUtils.localize("gate.action.robot.filter");
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_filter");
-    // }
 
     @Override
     public int minParameters() {

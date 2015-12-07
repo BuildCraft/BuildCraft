@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.lib.render;
 
 import java.util.Arrays;
@@ -23,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -35,6 +40,7 @@ public final class RenderEntityBlock extends Render {
 
     private RenderEntityBlock() {
         super(Minecraft.getMinecraft().getRenderManager());
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 
     @Override
@@ -58,7 +64,6 @@ public final class RenderEntityBlock extends Render {
         public int brightness = -1;
 
         public RenderInfo() {
-            setRenderAllSides();
         }
 
         public RenderInfo(IBlockState state, TextureAtlasSprite[] texture) {
@@ -120,59 +125,11 @@ public final class RenderEntityBlock extends Render {
     @Override
     public void doRender(Entity entity, double i, double j, double k, float f, float f1) {
         doRenderBlock((EntityResizableCuboid) entity, i, j, k);
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 
     public void doRenderBlock(EntityResizableCuboid entity, double i, double j, double k) {
-        if (entity.isDead) {
-            return;
-        }
-
-        shadowSize = entity.shadowSize;
-        World world = entity.worldObj;
-        RenderInfo util = new RenderInfo();
-        if (entity.blockState != null) util.blockState = entity.blockState;
-        util.resource = entity.resource;
-        if (entity.texture != null) util.texture = entity.texture;
-
-        for (int iBase = 0; iBase < entity.xSize; ++iBase) {
-            for (int jBase = 0; jBase < entity.ySize; ++jBase) {
-                for (int kBase = 0; kBase < entity.zSize; ++kBase) {
-
-                    util.minX = 0;
-                    util.minY = 0;
-                    util.minZ = 0;
-
-                    double remainX = entity.xSize - iBase;
-                    double remainY = entity.ySize - jBase;
-                    double remainZ = entity.zSize - kBase;
-
-                    util.maxX = remainX > 1.0 ? 1.0 : remainX;
-                    util.maxY = remainY > 1.0 ? 1.0 : remainY;
-                    util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
-                    // GlStateManager.enableTexture2D();
-                    GlStateManager.enableRescaleNormal();
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef((float) i, (float) j, (float) k);
-                    GL11.glRotatef(entity.rotationX, 1, 0, 0);
-                    GL11.glRotatef(entity.rotationY, 0, 1, 0);
-                    GL11.glRotatef(entity.rotationZ, 0, 0, 1);
-                    GL11.glTranslatef(iBase, jBase, kBase);
-
-                    int lightX, lightY, lightZ;
-
-                    lightX = (int) (Math.floor(entity.posX) + iBase);
-                    lightY = (int) (Math.floor(entity.posY) + jBase);
-                    lightZ = (int) (Math.floor(entity.posZ) + kBase);
-
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    renderBlock(util, world, 0, 0, 0, new BlockPos(lightX, lightY, lightZ), false, true);
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    GL11.glPopMatrix();
-                    GlStateManager.disableRescaleNormal();
-
-                }
-            }
-        }
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 
     /** Render a render info by its state, ignoring any textures you might have set */
@@ -183,10 +140,12 @@ public final class RenderEntityBlock extends Render {
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         renderBlocks.getBlockModelRenderer().renderModelStandard(null, model, info.blockState.getBlock(), BlockPos.ORIGIN, worldRenderer, false);
         Tessellator.getInstance().draw();
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 
     public void renderBlock(RenderInfo info, IBlockAccess blockAccess, int x, int y, int z, boolean doLight, boolean doTessellating) {
         renderBlock(info, blockAccess, x, y, z, new BlockPos(x, y, z), doLight, doTessellating);
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 
     /** Render 6 sides according to the lengths that have been set in the render info */
@@ -218,5 +177,6 @@ public final class RenderEntityBlock extends Render {
         tessellator.draw();
 
         GlStateManager.popMatrix();
+        throw new IllegalStateException("DEPRECATED LOL");
     }
 }

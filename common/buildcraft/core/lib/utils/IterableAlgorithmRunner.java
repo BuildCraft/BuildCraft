@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
@@ -34,13 +34,12 @@ public class IterableAlgorithmRunner extends Thread {
                 }
 
                 long startTime = new Date().getTime();
-                long elapsedtime = 0;
 
                 pathFinding.iterate();
 
-                elapsedtime = new Date().getTime() - startTime;
-                double timeToWait = elapsedtime * 1.5;
-                sleep((long) timeToWait);
+                long elapsedTime = new Date().getTime() - startTime;
+                int timeToWait = (int) MathUtils.clamp((int) Math.ceil(elapsedTime * 1.5), 1, 500);
+                sleep(timeToWait);
             }
         } catch (Throwable t) {
             t.printStackTrace();

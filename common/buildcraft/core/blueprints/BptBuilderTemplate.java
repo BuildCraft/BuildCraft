@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
@@ -36,17 +36,19 @@ public class BptBuilderTemplate extends BptBuilderBase {
     protected void internalInit() {
         if (blueprint.excavate) {
             for (int j = blueprint.sizeY - 1; j >= 0; --j) {
+                int yCoord = j + pos.getY() - blueprint.anchorY;
+
+                if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+                    continue;
+                }
+
                 for (int i = 0; i < blueprint.sizeX; ++i) {
+                    int xCoord = i + pos.getX() - blueprint.anchorX;
+
                     for (int k = 0; k < blueprint.sizeZ; ++k) {
-                        int xCoord = i + pos.getX() - blueprint.anchorX;
-                        int yCoord = j + pos.getY() - blueprint.anchorY;
                         int zCoord = k + pos.getZ() - blueprint.anchorZ;
 
-                        if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-                            continue;
-                        }
-
-                        SchematicBlockBase slot = blueprint.contents[i][j][k];
+                        SchematicBlockBase slot = blueprint.get(i, j, k);
 
                         if (slot == null && !isLocationUsed(xCoord, yCoord, zCoord)) {
                             BuildingSlotBlock b = new BuildingSlotBlock();
@@ -64,17 +66,19 @@ public class BptBuilderTemplate extends BptBuilderBase {
         }
 
         for (int j = 0; j < blueprint.sizeY; ++j) {
+            int yCoord = j + pos.getY() - blueprint.anchorY;
+
+            if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+                continue;
+            }
+
             for (int i = 0; i < blueprint.sizeX; ++i) {
+                int xCoord = i + pos.getX() - blueprint.anchorX;
+
                 for (int k = 0; k < blueprint.sizeZ; ++k) {
-                    int xCoord = i + pos.getX() - blueprint.anchorX;
-                    int yCoord = j + pos.getY() - blueprint.anchorY;
                     int zCoord = k + pos.getZ() - blueprint.anchorZ;
 
-                    if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-                        continue;
-                    }
-
-                    SchematicBlockBase slot = blueprint.contents[i][j][k];
+                    SchematicBlockBase slot = blueprint.get(i, j, k);
 
                     if (slot != null && !isLocationUsed(xCoord, yCoord, zCoord)) {
                         BuildingSlotBlock b = new BuildingSlotBlock();

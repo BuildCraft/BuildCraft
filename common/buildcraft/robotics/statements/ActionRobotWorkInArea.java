@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.statements;
@@ -11,7 +11,6 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
@@ -22,9 +21,9 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
         WORK("work_in_area"),
         LOAD_UNLOAD("load_unload_area");
 
-        private String name;
+        private final String name;
 
-        private AreaType(String iName) {
+        AreaType(String iName) {
             name = iName;
         }
 
@@ -41,7 +40,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
         }
     }
 
-    private AreaType areaType;
+    private final AreaType areaType;
 
     public ActionRobotWorkInArea(AreaType areaType) {
         super(areaType.getTag());
@@ -53,11 +52,6 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
     public String getDescription() {
         return StringUtils.localize(areaType.getUnlocalizedName());
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icon = iconRegister.registerIcon(areaType.getIcon());
-    // }
 
     public static IZone getArea(StatementSlot slot) {
         if (slot.parameters[0] == null) {
@@ -86,7 +80,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
     @Override
     public IStatementParameter createParameter(int index) {
-        return new StatementParameterItemStack();
+        return new StatementParameterMapLocation();
     }
 
     @Override

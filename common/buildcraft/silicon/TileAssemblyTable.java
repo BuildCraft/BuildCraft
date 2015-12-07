@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
@@ -9,9 +9,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,20 +19,19 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.RobotManager;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
     public String currentRecipeId = "";
@@ -66,9 +62,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
     public void update() { // WARNING: run only server-side, see canUpdate()
         super.update();
 
-		if (worldObj.isRemote) {
-			return;
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
         if (queuedNetworkUpdate) {
             sendNetworkUpdate();
@@ -88,32 +84,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
         }
 
         if (getEnergy() >= currentRecipe.craft(this, true).energyCost) {
-            setEnergy(0);
-
             if (currentRecipe.canBeCrafted(this)) {
-                ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
-
-                if (RobotManager.registryProvider != null) {
-                    EntityRobotBase robot = RobotManager.registryProvider.getRegistry(worldObj).robotTaking(new ResourceIdAssemblyTable(this));
-
-                    if (robot != null) {
-                        remaining = robot.receiveItem(this, remaining);
-                    }
-                }
-
-                if (remaining != null && remaining.stackSize > 0) {
-                    remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, getPos(), remaining);
-                }
-
-                if (remaining != null && remaining.stackSize > 0) {
-                    remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, getPos(), null, remaining);
-                }
-
-                if (remaining != null && remaining.stackSize > 0) {
-                    EntityItem entityitem = new EntityItem(worldObj, getPos().getX() + 0.5, getPos().getY() + 0.7, getPos().getZ() + 0.5, remaining);
-
-                    worldObj.spawnEntityInWorld(entityitem);
-                }
+                CraftingResult<ItemStack> result = currentRecipe.craft(this, false);
+                setEnergy(Math.max(0, getEnergy() - result.energyCost));
+                outputStack(result.crafted.copy(), true);
 
                 setNextCurrentRecipe();
             }
@@ -159,18 +133,22 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
     private void generatePlannedOutputIcons() {
         for (String s : plannedOutput) {
             IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(s);
-            CraftingResult<ItemStack> result = recipe.craft(this, true);
-            if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
-                plannedOutputIcons.put(s, result);
-            } else if (recipe instanceof IFlexibleRecipeViewable) {
-                // !! HACK !! TODO !! HACK !!
-                Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
-                if (out instanceof ItemStack) {
-                    result = new CraftingResult<ItemStack>();
-                    result.crafted = (ItemStack) out;
-                    result.recipe = recipe;
+            if (recipe != null) {
+                CraftingResult<ItemStack> result = recipe.craft(this, true);
+                if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
                     plannedOutputIcons.put(s, result);
+                } else if (recipe instanceof IFlexibleRecipeViewable) {
+                    // !! HACK !! TODO !! HACK !!
+                    Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
+                    if (out instanceof ItemStack) {
+                        result = new CraftingResult<ItemStack>();
+                        result.crafted = (ItemStack) out;
+                        result.recipe = recipe;
+                        plannedOutputIcons.put(s, result);
+                    }
                 }
+            } else {
+                plannedOutput.remove(s);
             }
         }
 
@@ -184,7 +162,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
     @Override
     public void writeData(ByteBuf stream) {
         super.writeData(stream);
-		NetworkUtils.writeUTF(stream, currentRecipeId);
+        NetworkUtils.writeUTF(stream, currentRecipeId);
         stream.writeByte(plannedOutput.size());
         for (String s : plannedOutput) {
             NetworkUtils.writeUTF(stream, s);
@@ -195,7 +173,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
-		NBTTagList list = nbt.getTagList("plannedIds", Constants.NBT.TAG_STRING);
+        NBTTagList list = nbt.getTagList("plannedIds", Constants.NBT.TAG_STRING);
 
         for (int i = 0; i < list.tagCount(); ++i) {
             IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(list.getStringTagAt(i));
@@ -285,7 +263,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
             queueNetworkUpdate();
         }
-	}
+    }
 
     public void cancelPlanOutput(IFlexibleRecipe<ItemStack> recipe) {
         if (isAssembling(recipe)) {
@@ -301,7 +279,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
         queueNetworkUpdate();
     }
 
-	public void setNextCurrentRecipe() {
+    public void setNextCurrentRecipe() {
         boolean takeNext = false;
 
         for (String recipeId : plannedOutput) {
@@ -335,7 +313,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
         setCurrentRecipe(null);
     }
 
-	public void rpcSelectRecipe(final String id, final boolean select) {
+    public void rpcSelectRecipe(final String id, final boolean select) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, id);

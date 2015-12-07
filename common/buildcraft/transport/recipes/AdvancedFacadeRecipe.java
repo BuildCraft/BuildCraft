@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.recipes;
@@ -9,12 +9,12 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.recipes.IntegrationRecipeBC;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
 

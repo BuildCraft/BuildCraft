@@ -4,4 +4,6 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.transport;
 
-public interface IStripesPipe extends IPipe, IStripesActivator {}
+import cofh.api.energy.IEnergyHandler;
+
+public interface IStripesPipe extends IPipe, IStripesActivator, IEnergyHandler {}

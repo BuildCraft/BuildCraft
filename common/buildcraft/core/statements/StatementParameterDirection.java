@@ -1,14 +1,16 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -19,9 +21,19 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {
 
-    private static TextureAtlasSprite[] icons;
+    private static TextureAtlasSprite[] sprites;
 
     public EnumFacing direction = null;
+
+    public static void registerIcons(TextureMap map) {
+        sprites = new TextureAtlasSprite[5];
+        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down"));
+        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up"));
+        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north"));
+        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_south"));
+        sprites[4] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_west"));
+        sprites[5] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_east"));
+    }
 
     public StatementParameterDirection() {
 
@@ -37,7 +49,7 @@ public class StatementParameterDirection implements IStatementParameter {
         if (direction == null) {
             return null;
         } else {
-            return icons[direction.ordinal()];
+            return sprites[direction.ordinal()];
         }
     }
 
@@ -90,17 +102,6 @@ public class StatementParameterDirection implements IStatementParameter {
     public String getUniqueTag() {
         return "buildcraft:pipeActionDirection";
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icons =
-    // new TextureAtlasSprite[] { iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_down"),
-    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_up"),
-    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_north"),
-    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_south"),
-    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_west"),
-    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_east") };
-    // }
 
     @Override
     public IStatementParameter rotateLeft() {

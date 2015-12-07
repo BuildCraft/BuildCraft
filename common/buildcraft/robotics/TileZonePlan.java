@@ -1,8 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
+
+import java.util.Arrays;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,11 +15,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IChatComponent;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.IZone;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.base.Packet;
@@ -25,6 +28,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.gui.ContainerZonePlan;
+import buildcraft.robotics.map.MapWorld;
 
 import io.netty.buffer.ByteBuf;
 
@@ -32,18 +36,28 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
     public static final int RESOLUTION = 2048;
     public static final int CRAFT_TIME = 120;
+    private static final int PREVIEW_BLOCKS_PER_PIXEL = 10;
     private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
 
     public int chunkStartX, chunkStartZ;
-
     public short progress = 0;
-
     public String mapName = "";
 
+    private final byte[] previewColors = new byte[80];
+    private final SimpleInventory inv = new SimpleInventory(3, "inv", 64);
+    private final SafeTimeTracker previewRecalcTimer = new SafeTimeTracker(100);
+
+    private boolean previewColorsPushed = false;
     private ZonePlan[] selectedAreas = new ZonePlan[16];
     private int currentSelectedArea = 0;
 
-    private SimpleInventory inv = new SimpleInventory(3, "inv", 64);
+    public byte[] getPreviewTexture(boolean force) {
+        if (!previewColorsPushed || force) {
+            previewColorsPushed = true;
+            return previewColors;
+        }
+        return null;
+    }
 
     @Override
     public void initialize() {
@@ -62,6 +76,10 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
         if (worldObj.isRemote) {
             return;
+        }
+
+        if (previewRecalcTimer.markTimeIfDelay(worldObj)) {
+            recalculatePreview();
         }
 
         if (inv.getStackInSlot(0) != null && inv.getStackInSlot(1) == null && inv.getStackInSlot(0).getItem() instanceof ItemMapLocation) {
@@ -84,6 +102,25 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
             }
         } else if (progress != 0) {
             progress = 0;
+            sendNetworkUpdate();
+        }
+    }
+
+    private void recalculatePreview() {
+        byte[] newPreviewColors = new byte[80];
+        MapWorld mw = BuildCraftRobotics.manager.getWorld(worldObj);
+
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 10; x++) {
+                int tx = (x * PREVIEW_BLOCKS_PER_PIXEL) - (5 * PREVIEW_BLOCKS_PER_PIXEL) + (PREVIEW_BLOCKS_PER_PIXEL / 2);
+                int ty = (y * PREVIEW_BLOCKS_PER_PIXEL) - (4 * PREVIEW_BLOCKS_PER_PIXEL) + (PREVIEW_BLOCKS_PER_PIXEL / 2);
+                newPreviewColors[y * 10 + x] = (byte) mw.getColor(getPos().getX() - (getPos().getX() % PREVIEW_BLOCKS_PER_PIXEL) + tx, getPos().getZ()
+                    - (getPos().getZ() % PREVIEW_BLOCKS_PER_PIXEL) + ty);
+            }
+        }
+
+        if (!Arrays.equals(previewColors, newPreviewColors)) {
+            System.arraycopy(newPreviewColors, 0, previewColors, 0, 80);
             sendNetworkUpdate();
         }
     }
@@ -130,12 +167,15 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     public void writeData(ByteBuf stream) {
         stream.writeShort(progress);
         NetworkUtils.writeUTF(stream, mapName);
+        stream.writeBytes(previewColors, 0, 80);
     }
 
     @Override
     public void readData(ByteBuf stream) {
         progress = stream.readShort();
         mapName = NetworkUtils.readUTF(stream);
+        stream.readBytes(previewColors, 0, 80);
+        previewColorsPushed = false;
     }
 
     private void importMap(ItemStack stack) {

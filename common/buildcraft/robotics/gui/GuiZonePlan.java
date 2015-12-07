@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
@@ -22,7 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -35,6 +34,7 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.ZonePlan;
 
 import io.netty.buffer.ByteBuf;
 
@@ -60,7 +60,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     private int mapXMin = 0;
     private int mapYMin = 0;
 
-    private int zoomLevel = 1;
+    private float blocksPerPixel = 1.0f;
     private int cx;
     private int cz;
 
@@ -160,7 +160,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
                 data.writeInt(cz);
                 data.writeShort(getContainer().mapTexture.width);
                 data.writeShort(getContainer().mapTexture.height);
-                data.writeByte(zoomLevel);
+                data.writeFloat(blocksPerPixel);
             }
         }));
     }
@@ -212,7 +212,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         }
 
         if (!isFullscreen()) {
-            drawBackgroundSlots();
+            drawBackgroundSlots(x, y);
 
             bindTexture(texture);
 
@@ -232,15 +232,11 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        int blocksX = Math.round((mouseX - mapXMin) * blocksPerPixel);
+        int blocksZ = Math.round((mouseY - mapYMin) * blocksPerPixel);
 
-        textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
-
-        int blocksX = (mouseX - mapXMin) * zoomLevel;
-        int blocksZ = (mouseY - mapYMin) * zoomLevel;
-
-        int blockStartX = cx - mapWidth * zoomLevel / 2;
-        int blockStartZ = cz - mapHeight * zoomLevel / 2;
+        int blockStartX = Math.round(cx - mapWidth * blocksPerPixel / 2);
+        int blockStartZ = Math.round(cz - mapHeight * blocksPerPixel / 2);
 
         boolean clickOnMap = mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin && mouseY <= mapYMin
             + getContainer().mapTexture.height;
@@ -252,22 +248,27 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
                 uploadMap();
                 refreshSelectedArea();
+                return;
             } else {
                 inSelection = true;
                 selX1 = mouseX;
                 selY1 = mouseY;
                 selX2 = 0;
                 selY2 = 0;
+                return;
             }
-        } else {
-            AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
+        }
 
-            if (slot instanceof AreaSlot) {
-                colorSelected = (AreaSlot) slot;
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
 
-                newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
-                getContainer().loadArea(colorSelected.color.ordinal());
-            }
+        AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
+
+        if (slot instanceof AreaSlot) {
+            colorSelected = (AreaSlot) slot;
+
+            newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
+            getContainer().loadArea(colorSelected.color.ordinal());
         }
     }
 
@@ -290,21 +291,21 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         if (eventType != -1 && inSelection) {
             boolean val = tool.displayString.equals("+");
-            int blockStartX = cx - mapWidth * zoomLevel / 2;
-            int blockStartZ = cz - mapHeight * zoomLevel / 2;
+            int blockStartX = Math.round(cx - mapWidth * blocksPerPixel / 2);
+            int blockStartZ = Math.round(cz - mapHeight * blocksPerPixel / 2);
 
             int x1 = selX1 < selX2 ? selX1 : selX2;
             int x2 = selX1 < selX2 ? selX2 : selX1;
             int y1 = selY1 < selY2 ? selY1 : selY2;
             int y2 = selY1 < selY2 ? selY2 : selY1;
 
-            int lengthX = (x2 - x1) * zoomLevel;
-            int lengthY = (y2 - y1) * zoomLevel;
+            int lengthX = Math.round((x2 - x1) * blocksPerPixel);
+            int lengthY = Math.round((y2 - y1) * blocksPerPixel);
 
             for (int i = 0; i <= lengthX; ++i) {
                 for (int j = 0; j <= lengthY; ++j) {
-                    int x = blockStartX + (x1 - mapXMin) * zoomLevel + i;
-                    int z = blockStartZ + (y1 - mapYMin) * zoomLevel + j;
+                    int x = Math.round(blockStartX + (x1 - mapXMin) * blocksPerPixel) + i;
+                    int z = Math.round(blockStartZ + (y1 - mapYMin) * blocksPerPixel) + j;
 
                     getContainer().currentAreaSelection.set(x, z, val);
                 }
@@ -317,6 +318,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     }
 
     private void toFullscreen() {
+        if (blocksPerPixel > 4.0f) {
+            blocksPerPixel = 4.0f;
+        }
+
         mapWidth = this.mc.displayWidth;
         mapHeight = this.mc.displayHeight;
 
@@ -326,8 +331,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         uploadMap();
         refreshSelectedArea();
 
-        container.inventorySlots = new LinkedList();
-        buttonList = new LinkedList();
+        container.inventorySlots = new LinkedList<Slot>();
+        buttonList = new LinkedList<GuiButton>();
     }
 
     private void toWindowed() {
@@ -342,6 +347,30 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         container.inventorySlots = inventorySlots;
         buttonList = savedButtonList;
+    }
+
+    private boolean incBlocksPerPixel() {
+        if (blocksPerPixel > 0.125f) {
+            if (blocksPerPixel <= 1.0f) {
+                blocksPerPixel /= 2;
+            } else {
+                blocksPerPixel--;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean decBlocksPerPixel() {
+        if ((isFullscreen() && blocksPerPixel < 4.0f) || (!isFullscreen() && blocksPerPixel < 8.0f)) {
+            if (blocksPerPixel >= 1.0f) {
+                blocksPerPixel++;
+            } else {
+                blocksPerPixel *= 2;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -362,12 +391,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         } else if (val == Keyboard.KEY_F5) {
             uploadMap();
             refreshSelectedArea();
-        } else if (carac == '+' && zoomLevel > 1) {
-            zoomLevel--;
+        } else if (carac == '+' && incBlocksPerPixel()) {
             uploadMap();
             refreshSelectedArea();
-        } else if (carac == '-' && zoomLevel < 6) {
-            zoomLevel++;
+        } else if (carac == '-' && decBlocksPerPixel()) {
             uploadMap();
             refreshSelectedArea();
         } else if (carac == 'm' || (carac == 27 && isFullscreen())) {
@@ -388,17 +415,18 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         for (int i = 0; i < currentSelection.width; ++i) {
             for (int j = 0; j < currentSelection.height; ++j) {
-                int blockStartX = cx - mapWidth * zoomLevel / 2;
-                int blockStartZ = cz - mapHeight * zoomLevel / 2;
+                int blockStartX = Math.round(cx - mapWidth * blocksPerPixel / 2);
+                int blockStartZ = Math.round(cz - mapHeight * blocksPerPixel / 2);
+                int c = (int) Math.ceil(blocksPerPixel);
 
                 double r = 0;
                 double g = 0;
                 double b = 0;
 
-                for (int stepi = 0; stepi < zoomLevel; ++stepi) {
-                    for (int stepj = 0; stepj < zoomLevel; ++stepj) {
-                        int x = blockStartX + i * zoomLevel + stepi;
-                        int z = blockStartZ + j * zoomLevel + stepj;
+                for (int stepi = 0; stepi < c; ++stepi) {
+                    for (int stepj = 0; stepj < c; ++stepj) {
+                        int x = Math.round(blockStartX + i * blocksPerPixel) + stepi;
+                        int z = Math.round(blockStartZ + j * blocksPerPixel) + stepj;
 
                         if (getContainer().currentAreaSelection.get(x, z)) {
                             r += rAdd;
@@ -408,9 +436,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
                     }
                 }
 
-                r /= zoomLevel * zoomLevel;
-                g /= zoomLevel * zoomLevel;
-                b /= zoomLevel * zoomLevel;
+                r /= c * c;
+                g /= c * c;
+                b /= c * c;
 
                 if (r != 0) {
                     currentSelection.setColori(i, j, (int) r, (int) g, (int) b, (int) (alpha * 255.0F));
@@ -454,12 +482,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
             + getContainer().mapTexture.height) {
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                if (zoomLevel < 6 && wheel > 0) {
-                    zoomLevel++;
+                if (wheel > 0 && decBlocksPerPixel()) {
                     uploadMap();
                     refreshSelectedArea();
-                } else if (zoomLevel > 1 && wheel < 0) {
-                    zoomLevel--;
+                } else if (wheel < 0 && incBlocksPerPixel()) {
                     uploadMap();
                     refreshSelectedArea();
                 }

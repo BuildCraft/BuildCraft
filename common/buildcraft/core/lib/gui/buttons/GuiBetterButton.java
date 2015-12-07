@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.buttons;
@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,8 +18,6 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiButton implements IToolTipProvider {
-
-    public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/buttons.png");
     protected final IButtonTextureSet texture;
     private ToolTip toolTip;
 
@@ -59,7 +57,7 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
     }
 
     protected void bindButtonTextures(Minecraft minecraft) {
-        minecraft.renderEngine.bindTexture(BUTTON_TEXTURES);
+        minecraft.renderEngine.bindTexture(texture.getTexture());
     }
 
     @Override
@@ -88,8 +86,9 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
         return toolTip;
     }
 
-    public void setToolTip(ToolTip tips) {
+    public GuiBetterButton setToolTip(ToolTip tips) {
         this.toolTip = tips;
+        return this;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
@@ -29,7 +29,7 @@ public final class GateDefinition {
         }
     }
 
-    public static enum GateMaterial {
+    public enum GateMaterial {
 
         REDSTONE("gate_interface_1.png", 146, 1, 0, 0, 1),
         IRON("gate_interface_2.png", 164, 2, 0, 0, 2),
@@ -50,7 +50,7 @@ public final class GateDefinition {
         @SideOnly(Side.CLIENT)
         private TextureAtlasSprite iconItem;
 
-        private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots, int actionParameterSlots, int maxWireColor) {
+        GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots, int actionParameterSlots, int maxWireColor) {
             this.guiFile = new ResourceLocation("buildcrafttransport:textures/gui/" + guiFile);
             this.guiHeight = guiHeight;
             this.numSlots = numSlots;
@@ -95,7 +95,7 @@ public final class GateDefinition {
         }
     }
 
-    public static enum GateLogic {
+    public enum GateLogic {
 
         AND,
         OR;

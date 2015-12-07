@@ -1,10 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -12,15 +12,16 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
+import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.core.lib.gui.ItemSlot;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
@@ -30,15 +31,11 @@ import io.netty.buffer.ByteBuf;
 public class GuiBuilder extends GuiAdvancedInterface {
     private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
     private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");
-    private IInventory playerInventory;
     private TileBuilder builder;
     private GuiButton selectedButton;
-    private int sbPosition, sbLength;
-    private boolean sbInside;
 
     public GuiBuilder(EntityPlayer player, TileBuilder builder) {
         super(new ContainerBuilder(player, builder), builder, BLUEPRINT_TEXTURE);
-        this.playerInventory = player.inventory;
         this.builder = builder;
         xSize = 256;
         ySize = 225;
@@ -47,9 +44,13 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
         for (int i = 0; i < 6; ++i) {
             for (int j = 0; j < 4; ++j) {
-                slots.set(i * 4 + j, new ItemSlot(this, 179 + j * 18, 18 + i * 18));
+                slots.set(i * 4 + j, new SlotBuilderRequirement(this, 179 + j * 18, 18 + i * 18));
             }
         }
+    }
+
+    private ContainerBuilder getContainerBuilder() {
+        return (ContainerBuilder) getContainer();
     }
 
     @Override
@@ -64,11 +65,36 @@ public class GuiBuilder extends GuiAdvancedInterface {
             fontRendererObj.drawString(StringUtils.localize("gui.building.fluids"), 178, 133, 0x404040);
         }
 
+        drawTooltips(par1, par2);
+    }
+
+    private void drawTooltips(int par1, int par2) {
+        int top = guiTop + 145;
+        for (int i = 0; i < builder.fluidTanks.length; i++) {
+            int left = guiLeft + 179 + 18 * i;
+            if (par1 >= left && par2 >= top && par1 < (left + 16) && par2 < (left + 47)) {
+                List<String> fluidTip = new ArrayList<String>();
+                Tank tank = builder.fluidTanks[i];
+                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                    fluidTip.add(tank.getFluid().getLocalizedName());
+                    if (!BuildCraftCore.hideFluidNumbers) {
+                        fluidTip.add(EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + tank.getFluid().amount + " mB");
+                    }
+                } else {
+                    fluidTip.add(StatCollector.translateToLocal("gui.fluidtank.empty"));
+                }
+                drawHoveringText(fluidTip, par1 - guiLeft, par2 - guiTop, fontRendererObj);
+                return;
+            }
+        }
+
         drawTooltipForSlotAt(par1, par2);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        // We cannot do super here due to some crazy shenanigans with a dynamically
+        // resized GUI.
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         boolean isBlueprint = builder.getStackInSlot(0) != null;
 
@@ -79,31 +105,23 @@ public class GuiBuilder extends GuiAdvancedInterface {
             drawTexturedModalRect(guiLeft + 169, guiTop, 169, 0, 256 - 169, ySize);
         }
 
-        List<ItemStack> needs = builder.getNeededItems();
+        List<RequirementItemStack> needs = builder.getNeededItems();
 
         if (needs != null) {
             if (needs.size() > slots.size()) {
-                sbLength = (needs.size() - slots.size() + 3) / 4;
-                if (sbPosition >= sbLength) {
-                    sbPosition = sbLength;
-                }
-
-                // render scrollbar
-                drawTexturedModalRect(guiLeft + 172, guiTop + 17, 18, 0, 6, 108);
-                int sbPixelPosition = sbPosition * 95 / sbLength;
-                drawTexturedModalRect(guiLeft + 172, guiTop + 17 + sbPixelPosition, 24, 0, 6, 14);
+                getContainerBuilder().scrollbarWidget.hidden = false;
+                getContainerBuilder().scrollbarWidget.setLength((needs.size() - slots.size() + 3) / 4);
             } else {
-                sbPosition = 0;
-                sbLength = 0;
+                getContainerBuilder().scrollbarWidget.hidden = true;
             }
 
-            int offset = sbPosition * 4;
+            int offset = getContainerBuilder().scrollbarWidget.getPosition() * 4;
             for (int s = 0; s < slots.size(); s++) {
                 int ts = offset + s;
                 if (ts >= needs.size()) {
-                    ((ItemSlot) slots.get(s)).stack = null;
+                    ((SlotBuilderRequirement) slots.get(s)).stack = null;
                 } else {
-                    ((ItemSlot) slots.get(s)).stack = needs.get(ts).copy();
+                    ((SlotBuilderRequirement) slots.get(s)).stack = needs.get(ts);
                 }
             }
 
@@ -111,23 +129,34 @@ public class GuiBuilder extends GuiAdvancedInterface {
                 b.visible = true;
             }
         } else {
-            sbPosition = 0;
-            sbLength = 0;
-            for (int s = 0; s < slots.size(); s++) {
-                ((ItemSlot) slots.get(s)).stack = null;
+            getContainerBuilder().scrollbarWidget.hidden = true;
+            for (AdvancedSlot slot : slots) {
+                ((SlotBuilderRequirement) slot).stack = null;
             }
             for (GuiButton b : (List<GuiButton>) buttonList) {
                 b.visible = false;
             }
         }
 
-        if (isBlueprint) {
-            drawBackgroundSlots();
+        drawWidgets(x, y);
 
+        if (isBlueprint) {
+            drawBackgroundSlots(x, y);
+        }
+
+        if (isBlueprint) {
             for (int i = 0; i < builder.fluidTanks.length; i++) {
                 Tank tank = builder.fluidTanks[i];
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                     drawFluid(tank.getFluid(), guiLeft + 179 + 18 * i, guiTop + 145, 16, 47, tank.getCapacity());
+                }
+            }
+
+            mc.renderEngine.bindTexture(BLUEPRINT_TEXTURE);
+
+            for (int i = 0; i < builder.fluidTanks.length; i++) {
+                Tank tank = builder.fluidTanks[i];
+                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                     drawTexturedModalRect(guiLeft + 179 + 18 * i, guiTop + 145, 0, 54, 16, 47);
                 }
             }
@@ -143,49 +172,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
-        int guiX = mouseX - guiLeft;
-        int guiY = mouseY - guiTop;
-        if (sbLength > 0 && button == 0) {
-            if (guiX >= 172 && guiX < 178 && guiY >= 17 && guiY < 125) {
-                sbInside = true;
-                updateToSbHeight(guiY - 17);
-            }
-        }
-        super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    private void updateToSbHeight(int h) {
-        int hFrac = (h * sbLength + 54) / 108;
-        sbPosition = hFrac;
-    }
-
-    @Override
-    protected void mouseClickMove(int x, int y, int button, long time) {
-        super.mouseClickMove(x, y, button, time);
-        if (sbInside && button == 0) {
-            int guiY = y - guiTop;
-            if (sbLength > 0) {
-                if (guiY >= 17 && guiY < 125) {
-                    updateToSbHeight(guiY - 17);
-                }
-            }
-        }
-    }
-
-    @Override
     protected void mouseReleased(int mouseX, int mouseY, int eventType) {
         super.mouseReleased(mouseX, mouseY, eventType);
-        if (sbInside && eventType == 0) {
-            int guiY = mouseY - guiTop;
-            if (sbLength > 0) {
-                if (guiY >= 17 && guiY < 125) {
-                    updateToSbHeight(guiY - 17);
-                    sbInside = false;
-                }
-            }
-        }
-
         if (this.selectedButton != null && eventType == 0) {
             this.selectedButton.mouseReleased(mouseX, mouseY);
             this.selectedButton = null;

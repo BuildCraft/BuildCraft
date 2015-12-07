@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldSettings;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -19,11 +20,7 @@ import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.robotics.ai.AIRobotDisposeItems;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
-import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
-import buildcraft.robotics.ai.AIRobotRecharge;
+import buildcraft.robotics.ai.*;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
 
@@ -85,7 +82,11 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
                 startDelegateAI(new AIRobotDisposeItems(robot));
             }
 
-            requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild.getContext());
+            if (robot.worldObj.getWorldInfo().getGameType() != WorldSettings.GameType.CREATIVE) {
+                requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild.getContext());
+            } else {
+                requirementsToLookFor = new LinkedList<ItemStack>();
+            }
 
             if (requirementsToLookFor == null) {
                 launchingDelay = 40;

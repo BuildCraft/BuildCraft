@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -12,24 +12,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 
-public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHandler {
+public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
@@ -56,13 +59,13 @@ public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHan
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
-        return logic.blockActivated(entityplayer);
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing side) {
+        return logic.blockActivated(entityplayer, EnumPipePart.fromFacing(side));
     }
 
     @Override
     public void onNeighborBlockChange(int blockId) {
-        logic.onNeighborBlockChange(blockId);
+        logic.onNeighborBlockChange();
         super.onNeighborBlockChange(blockId);
     }
 
@@ -111,13 +114,19 @@ public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHan
             battery.setEnergy(0);
             ticksSincePull = 0;
             speedMultiplier = 1.0F;
+
+            onPostTick();
         }
+    }
+
+    public void onPostTick() {
+
     }
 
     private boolean shouldTick() {
         if (ticksSincePull < 8) {
             return false;
-        } else {
+        } else if (ticksSincePull < 16) {
             // Check if we have just enough energy for the next stack.
             int meta = container.getBlockMetadata();
 
@@ -176,8 +185,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHan
                 Vec3 entPos = Utils.convertMiddle(tile.getPos()).add(Utils.convert(side, -0.6));
 
                 TravelingItem entity = makeItem(entPos, stack);
-                entity.setSpeed(entity.getSpeed() * speedMultiplier);
-                transport.injectItem(entity, side.getOpposite());
+                entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
+                transport.injectItem(entity, side);
             }
         }
     }

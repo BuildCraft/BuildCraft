@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
@@ -7,16 +7,19 @@ package buildcraft.core;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 
 public class SpringPopulate {
 
@@ -26,7 +29,7 @@ public class SpringPopulate {
         boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
                 PopulateChunkEvent.Populate.EventType.CUSTOM);
 
-        if (!doGen) {
+        if (!doGen || !EnumSpring.WATER.canGen) {
             event.setResult(Result.ALLOW);
             return;
         }
@@ -39,15 +42,14 @@ public class SpringPopulate {
     }
 
     private void doPopulate(World world, Random random, int x, int z) {
-
-        // A spring will be generated every 40th chunk.
-        if (random.nextFloat() > 0.025f) {
+        int dimId = world.provider.getDimensionId();
+        // No water springs will generate in the Nether or End.
+        if (dimId == -1 || dimId == 1) {
             return;
         }
 
-        // Do not generate water in the End or the Nether
-        BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenerator(new BlockPos(x, 10, z));
-        if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
+        // A spring will be generated every 40th chunk.
+        if (random.nextFloat() > 0.025f) {
             return;
         }
 
@@ -61,34 +63,24 @@ public class SpringPopulate {
             if (candidate != Blocks.bedrock) {
                 continue;
             }
-            world.setBlockState(pos.up(), BuildCraftCore.springBlock.getDefaultState());
 
-            for (int j = i + 2; j < world.getActualHeight() - 10; j++) {
-                BlockPos above = pos.up(j);
-                if (!boreToSurface(world, above)) {
-                    if (world.isAirBlock(above)) {
-                        world.setBlockState(above, Blocks.water.getDefaultState());
-                    }
+            // Handle flat bedrock maps
+            int y = i > 0 ? i : i - 1;
 
+            IBlockState springState = BuildCraftCore.springBlock.getDefaultState();
+            springState = springState.withProperty(BlockBuildCraftBase.SPRING_TYPE, EnumSpring.WATER);
+
+            world.setBlockState(new BlockPos(posX, y, posZ), springState);
+
+            for (int j = y + 2; j < world.getActualHeight(); j++) {
+                if (world.isAirBlock(new BlockPos(posX, j, posZ))) {
                     break;
+                } else {
+                    world.setBlockState(new BlockPos(posX, j, posZ), Blocks.water.getDefaultState());
                 }
             }
 
             break;
         }
-    }
-
-    private boolean boreToSurface(World world, BlockPos pos) {
-        if (world.isAirBlock(pos)) {
-            return false;
-        }
-
-        Block existing = world.getBlockState(pos).getBlock();
-        if (existing != Blocks.stone && existing != Blocks.dirt && existing != Blocks.gravel && existing != Blocks.grass) {
-            return false;
-        }
-
-        world.setBlockState(pos, Blocks.water.getDefaultState());
-        return true;
     }
 }

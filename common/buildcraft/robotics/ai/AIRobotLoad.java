@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -39,7 +39,6 @@ public class AIRobotLoad extends AIRobot {
     @Override
     public void update() {
         if (filter == null) {
-            // loading error
             terminate();
             return;
         }
@@ -64,10 +63,11 @@ public class AIRobotLoad extends AIRobot {
             return false;
         }
 
-        for (IInvSlot slot : InventoryIterator.getIterable(tileInventory)) {
+        for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, station.getItemInputSide().face)) {
             ItemStack stack = slot.getStackInSlot();
 
-            if (stack == null || !filter.matches(stack) || !ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
+            if (stack == null || !slot.canTakeStackFromSlot(stack) || !filter.matches(stack) || !ActionStationProvideItems.canExtractItem(station,
+                    stack) || !ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
                 continue;
             }
 

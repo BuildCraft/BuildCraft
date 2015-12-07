@@ -1,12 +1,12 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -44,14 +44,12 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     public int progressIn = 0;
     public int progressOut = 0;
 
-    public ArrayList<LibraryId> currentPage;
+    public List<LibraryId> entries;
 
     public int selected = -1;
 
     public EntityPlayer uploadingPlayer = null;
     public EntityPlayer downloadingPlayer = null;
-
-    public int pageId = 0;
 
     private LibraryId blueprintDownloadId;
     private byte[] blueprintDownload;
@@ -63,7 +61,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     public void refresh() {
         if (worldObj.isRemote) {
             BuildCraftBuilders.clientDB.refresh();
-            setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+            entries = BuildCraftBuilders.clientDB.getBlueprintIds();
+            selected = -1;
         }
     }
 
@@ -74,36 +73,13 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
         refresh();
     }
 
-    public void setCurrentPage(ArrayList<LibraryId> newPage) {
-        currentPage = newPage;
-        selected = -1;
-    }
-
-    public void pageNext() {
-        if (pageId < BuildCraftBuilders.clientDB.getPageNumber() - 1) {
-            pageId++;
-        }
-
-        setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
-    }
-
-    public void pagePrev() {
-        if (pageId > 0) {
-            pageId--;
-        }
-
-        setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
-    }
-
     public void deleteSelectedBpt() {
         if (selected != -1) {
-            BuildCraftBuilders.clientDB.deleteBlueprint(currentPage.get(selected));
-
-            if (pageId > BuildCraftBuilders.clientDB.getPageNumber() - 1 && pageId > 0) {
-                pageId--;
+            BuildCraftBuilders.clientDB.deleteBlueprint(entries.get(selected));
+            entries = BuildCraftBuilders.clientDB.getBlueprintIds();
+            if (selected >= entries.size()) {
+                selected--;
             }
-
-            setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
         }
     }
 
@@ -298,16 +274,16 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
         if (side.isClient()) {
             if ("requestSelectedBlueprint".equals(command)) {
                 if (isOutputConsistent()) {
-                    if (selected > -1 && selected < currentPage.size()) {
+                    if (selected > -1 && selected < entries.size()) {
                         // Work around 32k max limit on client->server
-                        final NBTTagCompound compound = BuildCraftBuilders.clientDB.load(currentPage.get(selected));
-                        compound.setString("__filename", currentPage.get(selected).name);
+                        final NBTTagCompound compound = BuildCraftBuilders.clientDB.load(entries.get(selected));
+                        compound.setString("__filename", entries.get(selected).name);
                         final byte[] bptData = NBTUtils.save(compound);
                         final int chunks = (bptData.length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
                         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerBegin", new CommandWriter() {
                             public void write(ByteBuf data) {
-                                currentPage.get(selected).writeData(data);
+                                entries.get(selected).writeData(data);
                                 data.writeShort(chunks);
                             }
                         }));
@@ -343,7 +319,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 
                     NBTTagCompound nbt = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data));
                     BuildCraftBuilders.clientDB.add(id, nbt);
-                    setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+                    entries = BuildCraftBuilders.clientDB.getBlueprintIds();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -409,10 +385,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     }
 
     private boolean isOutputConsistent() {
-        if (selected == -1 || getStackInSlot(2) == null) {
+        if (selected <= -1 || selected >= entries.size() || getStackInSlot(2) == null) {
             return false;
         }
 
-        return LibraryAPI.getHandlerFor(currentPage.get(selected).extension).isHandler(getStackInSlot(2), LibraryTypeHandler.HandlerType.LOAD);
+        return LibraryAPI.getHandlerFor(entries.get(selected).extension).isHandler(getStackInSlot(2), LibraryTypeHandler.HandlerType.LOAD);
     }
 }

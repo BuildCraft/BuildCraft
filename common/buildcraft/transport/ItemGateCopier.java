@@ -9,9 +9,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
@@ -43,31 +45,40 @@ public class ItemGateCopier extends ItemBuildCraft {
         Block block = world.getBlockState(pos).getBlock();
         TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound data = NBTUtils.getItemData(stack);
+        PipePluggable pluggable = null;
         Gate gate = null;
 
-        if (tile == null || !(tile instanceof TileGenericPipe) || !(block instanceof BlockGenericPipe)) {
+        if (tile == null || !(tile instanceof IPipeTile)) {
             isCopying = true;
         } else {
-            RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, pos, player);
-
-            if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
-                PipePluggable pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
-                if (pluggable instanceof GatePluggable) {
-                    gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
+            if (tile instanceof TileGenericPipe && block instanceof BlockGenericPipe) {
+                RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, pos, player);
+                if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
+                    pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
                 }
+            } else {
+                pluggable = ((IPipeTile) tile).getPipePluggable(side);
             }
+        }
+
+        if (pluggable instanceof GatePluggable) {
+            gate = ((GatePluggable) pluggable).realGate;
         }
 
         if (isCopying) {
             if (gate == null) {
                 stack.setTagCompound(new NBTTagCompound());
                 player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
-            } else {
-                gate.writeStatementsToNBT(data);
-                data.setByte("material", (byte) gate.material.ordinal());
-                data.setByte("logic", (byte) gate.logic.ordinal());
-                player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gateCopied"));
+                return true;
             }
+
+            data = new NBTTagCompound();
+            stack.setTagCompound(data);
+
+            gate.writeStatementsToNBT(data);
+            data.setByte("material", (byte) gate.material.ordinal());
+            data.setByte("logic", (byte) gate.logic.ordinal());
+            player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gateCopied"));
 
             // Tell ItemModelMesher that this is NOT damageable, so it will use the meta for the icon
             data.setBoolean("Unbreakable", true);
@@ -104,7 +115,9 @@ public class ItemGateCopier extends ItemBuildCraft {
                 player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.warning.load"));
             }
 
-            ((TileGenericPipe) tile).sendNetworkUpdate();
+            if (tile instanceof TileGenericPipe) {
+                ((TileGenericPipe) tile).sendNetworkUpdate();
+            }
             player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gatePasted"));
             return true;
         }

@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon;
 
 import java.util.List;
@@ -24,7 +28,6 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.core.lib.utils.Utils;
 
 public class TileProgrammingTable extends TileLaserTableBase implements IInventory, ISidedInventory, ICommandReceiver {
     public static final int WIDTH = 6;
@@ -62,26 +65,13 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
             return;
         }
 
-        if (optionId >= 0 && this.getStackInSlot(1) == null && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
+		if (optionId >= 0 && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
             if (currentRecipe.canCraft(this.getStackInSlot(0))) {
                 ItemStack remaining = currentRecipe.craft(this.getStackInSlot(0), options.get(optionId));
                 if (remaining != null && remaining.stackSize > 0) {
                     setEnergy(0);
-                    this.decrStackSize(0, remaining.stackSize);
-
-                    if (remaining.stackSize > 0) {
-                        remaining.stackSize -= Utils.addToRandomInventoryAround(worldObj, getPos(), remaining);
-                    }
-
-                    if (remaining.stackSize > 0) {
-                        remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, getPos(), null, remaining);
-                    }
-
-                    if (remaining.stackSize > 0) {
-                        this.setInventorySlotContents(1, remaining);
-                    } else {
-                        this.setInventorySlotContents(1, null);
-                    }
+					decrStackSize(0, remaining.stackSize);
+					outputStack(remaining, this, 1, false);
                 }
             }
             findRecipe();
@@ -112,7 +102,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     public void readData(ByteBuf stream) {
         super.readData(stream);
         currentRecipeId = NetworkUtils.readUTF(stream);
-        optionId = stream.readUnsignedByte();
+		optionId = stream.readByte();
         updateRecipe();
     }
 
@@ -168,7 +158,9 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
             }
         }
 
-        if ((oldId != null && !oldId.equals(currentRecipeId)) || (oldId == null && currentRecipeId != null)) {
+		if ((oldId != null && currentRecipeId != null && !oldId.equals(currentRecipeId))
+				|| (oldId == null && currentRecipeId != null)
+				|| (oldId != null && currentRecipeId == null)) {
             optionId = -1;
             updateRecipe();
             queueNetworkUpdate();
@@ -195,9 +187,11 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     @Override
     public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
         if (side.isServer() && "select".equals(command)) {
-            optionId = stream.readUnsignedByte();
+			optionId = stream.readByte();
             if (optionId >= options.size()) {
-                optionId = 0;
+				optionId = -1;
+			} else if (optionId < -1) {
+				optionId = -1;
             }
 
             queueNetworkUpdate();

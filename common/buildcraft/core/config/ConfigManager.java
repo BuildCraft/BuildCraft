@@ -25,7 +25,7 @@ public class ConfigManager implements IModGuiFactory {
 
             for (String s : config.getCategoryNames()) {
                 if (!s.contains(".")) {
-                    configElements.add(new BCConfigElement(config.getCategory(s)));
+					configElements.add(new BCConfigElement<Object>(config.getCategory(s)));
                 }
             }
         }
@@ -62,12 +62,12 @@ public class ConfigManager implements IModGuiFactory {
     }
 
     private Property create(String s, Object o) {
-        Property p = null;
+		Property p;
         if (o instanceof Integer) {
             p = new Property(s, o.toString(), Property.Type.INTEGER);
         } else if (o instanceof String) {
             p = new Property(s, (String) o, Property.Type.STRING);
-        } else if (o instanceof Double) {
+		} else if (o instanceof Double || o instanceof Float) {
             p = new Property(s, o.toString(), Property.Type.DOUBLE);
         } else if (o instanceof Float) {
             p = new Property(s, o.toString(), Property.Type.DOUBLE);

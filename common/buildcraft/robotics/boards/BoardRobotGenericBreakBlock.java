@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
@@ -11,6 +11,8 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
+import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
 
 public abstract class BoardRobotGenericBreakBlock extends BoardRobotGenericSearchBlock {
 
@@ -26,9 +28,11 @@ public abstract class BoardRobotGenericBreakBlock extends BoardRobotGenericSearc
             startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
                 @Override
                 public boolean matches(ItemStack stack) {
-                    return isExpectedTool(stack);
+                    return stack != null && (stack.getItemDamage() < stack.getMaxDamage()) && isExpectedTool(stack);
                 }
             }));
+        } else if (robot.getHeldItem() != null && robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+            startDelegateAI(new AIRobotGotoStationAndUnload(robot));
         } else if (blockFound() != null) {
             startDelegateAI(new AIRobotBreak(robot, blockFound()));
         } else {
@@ -38,7 +42,11 @@ public abstract class BoardRobotGenericBreakBlock extends BoardRobotGenericSearc
 
     @Override
     public void delegateAIEnded(AIRobot ai) {
-        if (ai instanceof AIRobotBreak) {
+        if (ai instanceof AIRobotFetchAndEquipItemStack || ai instanceof AIRobotGotoStationAndUnload) {
+            if (!ai.success()) {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        } else if (ai instanceof AIRobotBreak) {
             releaseBlockFound(ai.success());
         }
         super.delegateAIEnded(ai);

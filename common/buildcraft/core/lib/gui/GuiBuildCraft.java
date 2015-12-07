@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.lib.gui;
 
 import java.io.IOException;
@@ -82,16 +86,16 @@ public abstract class GuiBuildCraft extends GuiContainer {
         InventoryPlayer playerInv = this.mc.thePlayer.inventory;
 
         if (playerInv.getItemStack() == null) {
-            drawToolTips(container.getWidgets(), mouseX - left, mouseY - top);
-            drawToolTips(buttonList, mouseX, mouseY);
-            drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY);
+			drawToolTips(container.getWidgets(), mouseX - left, mouseY - top, left, top);
+			drawToolTips(buttonList, mouseX, mouseY, 0, 0);
+			drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY, 0, 0);
         }
 
         GL11.glPopMatrix();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
-    private void drawToolTips(Collection<?> objects, int mouseX, int mouseY) {
+	private void drawToolTips(Collection<?> objects, int mouseX, int mouseY, int offsetX, int offsetY) {
         for (Object obj : objects) {
             if (!(obj instanceof IToolTipProvider)) {
                 continue;
@@ -108,7 +112,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
             tips.onTick(mouseOver);
             if (mouseOver && tips.isReady()) {
                 tips.refresh();
-                drawToolTips(tips, mouseX, mouseY);
+				drawToolTips(tips, mouseX + offsetX, mouseY + offsetY);
             }
         }
     }
@@ -174,6 +178,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
         int mX = mouseX - guiLeft;
         int mY = mouseY - guiTop;
 
+		drawWidgets(mX, mY);
+	}
+
+	protected void drawWidgets(int mX, int mY) {
         for (Widget widget : container.getWidgets()) {
             if (widget.hidden) {
                 continue;
@@ -368,8 +376,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
             int xShift = ((gui.width - gui.xSize) / 2) + gui.xSize;
             int yShift = ((gui.height - gui.ySize) / 2) + 8;
 
-            for (int i = 0; i < ledgers.size(); i++) {
-                Ledger ledger = ledgers.get(i);
+			for (Ledger ledger : ledgers) {
                 if (!ledger.isVisible()) {
                     continue;
                 }
@@ -387,8 +394,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
 
         protected void drawLedgers(int mouseX, int mouseY) {
-
-            int xPos = 8;
+			int yPos = 8;
             for (Ledger ledger : ledgers) {
 
                 ledger.update();
@@ -396,8 +402,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
                     continue;
                 }
 
-                ledger.draw(xSize, xPos);
-                xPos += ledger.getHeight();
+				ledger.draw(xSize, yPos);
+				yPos += ledger.getHeight();
             }
 
             Ledger ledger = getAtPosition(mouseX, mouseY);
@@ -439,7 +445,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
         public int currentShiftX = 0;
         public int currentShiftY = 0;
         protected int overlayColor = 0xffffff;
-        protected int limitWidth = 128;
         protected int maxWidth = 124;
         protected int minWidth = 24;
         protected int currentWidth = minWidth;

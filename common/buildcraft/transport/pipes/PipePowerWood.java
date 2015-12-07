@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.pipes;
 
 import java.util.List;
@@ -35,15 +39,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
     protected int solidIconIndex = PipeIconProvider.TYPE.PipePowerWood_Solid.ordinal();
     protected RFBattery battery;
 
-    private boolean full;
-    private int requestedEnergy, sources, lastRequestedEnergy;
-
+	private int requestedEnergy, lastRequestedEnergy, sources;
     private boolean allowExtraction = false;
 
     public PipePowerWood(Item item) {
         super(new PipeTransportPower(), item);
 
-        battery = new RFBattery(320 * 50, 320, 0);
+		battery = new RFBattery(40960, 40960, 0);
         transport.initFromPipe(getClass());
     }
 
@@ -98,14 +100,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
             return;
         }
 
-        if (sources == 0) {
-            return;
-        }
-
         if (allowExtraction) {
             allowExtraction = false;
 
-            int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
+			int energyMaxExtract = Math.min(transport.maxPower, battery.getMaxEnergyStored() - battery.getEnergyStored());
             energyMaxExtract /= sources;
 
             for (EnumFacing o : EnumFacing.VALUES) {
@@ -195,7 +193,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
             return maxReceive;
         }
         if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
-            return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : maxReceive, simulate);
+			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : Math.min(maxReceive, battery.getMaxEnergyStored() - battery.getEnergyStored()), simulate);
         } else {
             return 0;
         }

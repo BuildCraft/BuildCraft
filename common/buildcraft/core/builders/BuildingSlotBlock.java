@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders;
@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,18 +21,10 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingNotFoundException;
-import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.BuildCraftBuilders;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.ConfigAccessor;
-import buildcraft.api.core.ConfigAccessor.EMod;
-import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.blueprints.IndexRequirementMap;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 
@@ -38,6 +32,9 @@ public class BuildingSlotBlock extends BuildingSlot {
 
     public BlockPos pos;
     public SchematicBlockBase schematic;
+
+    // TODO: Remove this ugly hack
+    public IndexRequirementMap internalRequirementRemovalListener;
 
     public enum Mode {
         ClearIfInvalid,
@@ -58,22 +55,45 @@ public class BuildingSlotBlock extends BuildingSlot {
     }
 
     @Override
-    public void writeToWorld(IBuilderContext context) {
+    public boolean writeToWorld(IBuilderContext context) {
+        if (internalRequirementRemovalListener != null) {
+            internalRequirementRemovalListener.remove(this);
+        }
+
         if (mode == Mode.ClearIfInvalid) {
             if (!getSchematic().isAlreadyBuilt(context, pos)) {
-                if (ConfigAccessor.getBoolean(EMod.BUILDERS, "builders.dropBrokenBlocks", false)) {
+                if (BuildCraftBuilders.dropBrokenBlocks) {
                     BlockUtils.breakBlock((WorldServer) context.world(), pos);
                 } else {
                     context.world().setBlockToAir(pos);
+                    return true;
                 }
             }
         } else {
             try {
                 getSchematic().placeInWorld(context, pos, stackConsumed);
 
-                // This is slightly hackish, but it's a very important way to verify
-                // the stored requirements.
+                // This is also slightly hackish, but that's what you get when
+                // you're unable to break an API too much.
+                if (!getSchematic().isAlreadyBuilt(context, pos)) {
+                    if (context.world().isAirBlock(pos)) {
+                        return false;
+                    } else if (!(getSchematic() instanceof SchematicBlock) || context.world().getBlockState(pos).getBlock().isAssociatedBlock(
+                            ((SchematicBlock) getSchematic()).state.getBlock())) {
+                        BCLog.logger.warn(
+                                "Placed block does not match expectations! Most likely a bug in BuildCraft or a supported mod. Removed mismatched block.");
+                        IBlockState state = context.world().getBlockState(pos);
+                        BCLog.logger.warn("Location: " + pos + " - Block: " + Block.blockRegistry.getNameForObject(state.getBlock()) + "@" + state);
+                        context.world().removeTileEntity(pos);
+                        context.world().setBlockToAir(pos);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
 
+                // This is slightly hackish, but it's a very important way to verify
+                // the stored requirements for anti-cheating purposes.
                 if (!context.world().isAirBlock(pos) && getSchematic().getBuildingPermission() == BuildingPermission.ALL
                     && getSchematic() instanceof SchematicBlock) {
                     SchematicBlock sb = (SchematicBlock) getSchematic();
@@ -85,7 +105,7 @@ public class BuildingSlotBlock extends BuildingSlot {
                     for (ItemStack s : sb.storedRequirements) {
                         boolean contains = false;
                         for (ItemStack ss : oldRequirements) {
-                            if (StackHelper.isMatchingItem(s, ss)) {
+                            if (getSchematic().isItemMatchingRequirement(s, ss)) {
                                 contains = true;
                                 break;
                             }
@@ -96,7 +116,7 @@ public class BuildingSlotBlock extends BuildingSlot {
                             BCLog.logger.warn("Location: " + pos + " - ItemStack: " + s.toString());
                             context.world().removeTileEntity(pos);
                             context.world().setBlockToAir(pos);
-                            return;
+                            return true;
                         }
                     }
                     // Restore the stored requirements.
@@ -115,11 +135,16 @@ public class BuildingSlotBlock extends BuildingSlot {
                 if (e != null && e instanceof ITickable) {
                     ((ITickable) e).update();
                 }
+
+                return true;
             } catch (Throwable t) {
                 t.printStackTrace();
                 context.world().setBlockToAir(pos);
+                return false;
             }
         }
+
+        return false;
     }
 
     @Override
@@ -202,7 +227,7 @@ public class BuildingSlotBlock extends BuildingSlot {
     }
 
     @Override
-    public LinkedList<ItemStack> getStacksToDisplay() {
+    public List<ItemStack> getStacksToDisplay() {
         if (mode == Mode.ClearIfInvalid) {
             return stackConsumed;
         } else {

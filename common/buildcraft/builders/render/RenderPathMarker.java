@@ -11,11 +11,10 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.builders.TilePathMarker;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderPathMarker extends TileEntitySpecialRenderer<TilePathMarker> {

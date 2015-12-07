@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 
 package buildcraft.core.lib.gui.buttons;
 
@@ -15,43 +19,35 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+
+
 @SideOnly(Side.CLIENT)
-public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger {
+public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger, IToolTipProvider {
+	private final int size, u, v, baseU, baseV;
+	private final ResourceLocation texture;
 
-    public enum ButtonImage {
-        BLANK(1, 19),
-        WHITE_LIST(19, 19),
-        BLACK_LIST(37, 19),
-        ROUND_ROBIN(55, 19);
+	private ArrayList<IButtonClickEventListener> listeners = new ArrayList<IButtonClickEventListener>();
+	private boolean active = false;
+	private ToolTip toolTip;
 
-        private final int u, v;
+	public GuiImageButton(int id, int x, int y, int size, ResourceLocation texture, int u, int v) {
+		this(id, x, y, size, texture, 0, 0, u, v);
+	}
 
-        ButtonImage(int u, int v) {
+	public GuiImageButton(int id, int x, int y, int size, ResourceLocation texture, int baseU, int baseV, int u, int v) {
+		super(id, x, y, size, size, "");
+		this.size = size;
             this.u = u;
             this.v = v;
+		this.baseU = baseU;
+		this.baseV = baseV;
+		this.texture = texture;
         }
 
-        public int getU() {
-            return u;
-        }
-
-        public int getV() {
-            return v;
-        }
-    }
-
-    public static final ResourceLocation ICON_BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/icon_button.png");
-
-    public static final int SIZE = 18;
-
-    private ArrayList<IButtonClickEventListener> listeners = new ArrayList<IButtonClickEventListener>();
-    private ButtonImage image = ButtonImage.BLANK;
-    private boolean active = false;
-
-    public GuiImageButton(int id, int x, int y, ButtonImage image) {
-        super(id, x, y, SIZE, SIZE, "");
-
-        this.image = image;
+	public int getSize() {
+		return size;
     }
 
     public boolean isActive() {
@@ -68,20 +64,20 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 
     @Override
     public void drawButton(Minecraft minecraft, int x, int y) {
-
         if (!visible) {
             return;
         }
 
-        minecraft.renderEngine.bindTexture(ICON_BUTTON_TEXTURES);
+		minecraft.renderEngine.bindTexture(texture);
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
 
         int buttonState = getButtonState(x, y);
 
-        drawTexturedModalRect(xPosition, yPosition, buttonState * SIZE, 0, SIZE, SIZE);
-
-        drawTexturedModalRect(xPosition + 1, yPosition + 1, image.getU(), image.getV(), SIZE - 2, SIZE - 2);
+		drawTexturedModalRect(xPosition, yPosition, baseU + buttonState * size, baseV, size, size);
+		drawTexturedModalRect(xPosition + 1, yPosition + 1, u, v, size - 2, size - 2);
 
         mouseDragged(minecraft, x, y);
     }
@@ -136,6 +132,26 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
     }
 
     private boolean isMouseOverButton(int mouseX, int mouseY) {
-        return mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + SIZE && mouseY < yPosition + SIZE;
+		return mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + size && mouseY < yPosition + size;
+	}
+
+	@Override
+	public ToolTip getToolTip() {
+		return toolTip;
+	}
+
+	public GuiImageButton setToolTip(ToolTip tips) {
+		this.toolTip = tips;
+		return this;
+	}
+
+	@Override
+	public boolean isToolTipVisible() {
+		return visible;
+	}
+
+	@Override
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return isMouseOverButton(mouseX, mouseY);
     }
 }

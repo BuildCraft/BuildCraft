@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,11 +25,7 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.blueprints.Template;
+import buildcraft.core.blueprints.*;
 import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
@@ -91,7 +88,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.contents[x][y][z] = new SchematicMask(true);
+                        template.put(x, y, z, new SchematicMask(true));
                     }
                 }
             }
@@ -100,13 +97,11 @@ public abstract class FillerPattern implements IFillerPattern {
 
     /** Generates an empty in a given area */
     public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-        int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
         for (int y = yMax; y >= yMin; y--) {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.contents[x][y][z] = null;
+                        template.put(x, y, z, null);
                     }
                 }
             }
@@ -115,13 +110,11 @@ public abstract class FillerPattern implements IFillerPattern {
 
     /** Generates a flatten in a given area */
     public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-        int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
         for (int x = xMin; x <= xMax; ++x) {
             for (int z = zMin; z <= zMax; ++z) {
                 for (int y = yMax; y >= yMin; --y) {
                     if (isValid(x, y, z, template)) {
-                        template.contents[x][y][z] = new SchematicMask(true);
+                        template.put(x, y, z, new SchematicMask(true));
                     }
                 }
             }
@@ -139,8 +132,8 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = 0; x < box.sizeX(); ++x) {
                 for (int y = 0; y < box.sizeY(); ++y) {
                     for (int z = 0; z < box.sizeZ(); ++z) {
-                        if (tmpl.contents[x][y][z] != null) {
-                            result.contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(state);
+                        if (tmpl.get(x, y, z) != null) {
+                            result.put(x, y, z, SchematicRegistry.INSTANCE.createSchematicBlock(state));
                         }
 
                     }

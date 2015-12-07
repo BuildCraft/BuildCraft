@@ -1,8 +1,8 @@
 package buildcraft.builders.schematics;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.BlockFrame;
 import buildcraft.builders.BlockFrame.EFrameConnection;
 

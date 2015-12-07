@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
@@ -7,8 +7,9 @@ package buildcraft.energy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.common.util.FakePlayer;
 
 import buildcraft.BuildCraftCore;
@@ -45,11 +46,10 @@ public class TileEngineCreative extends TileEngineBase {
 
                 if (!(player instanceof FakePlayer)) {
                     if (BuildCraftCore.hidePowerNumbers) {
-                        player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
-                                StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
+                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", StringUtils.localize(
+                                "chat.pipe.power.iron.level." + powerMode.maxPower)));
                     } else {
-                        player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"),
-                                powerMode.maxPower)));
+                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode", powerMode.maxPower));
                     }
                 }
 
@@ -104,7 +104,7 @@ public class TileEngineCreative extends TileEngineBase {
         super.engineUpdate();
 
         if (isRedstonePowered) {
-            addEnergy(calculateCurrentOutput());
+            addEnergy(getIdealOutput());
         }
     }
 
@@ -114,22 +114,12 @@ public class TileEngineCreative extends TileEngineBase {
     }
 
     @Override
-    public int maxEnergyReceived() {
-        return calculateCurrentOutput();
-    }
-
-    @Override
-    public int maxEnergyExtracted() {
-        return calculateCurrentOutput();
-    }
-
-    @Override
     public int getMaxEnergy() {
-        return calculateCurrentOutput();
+        return getIdealOutput();
     }
 
     @Override
-    public int calculateCurrentOutput() {
+    public int getIdealOutput() {
         return powerMode.maxPower;
     }
 }

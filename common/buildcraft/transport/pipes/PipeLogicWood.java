@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -10,11 +10,10 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicWood {
@@ -27,27 +26,35 @@ public abstract class PipeLogicWood {
 
     private void switchSource() {
         int meta = pipe.container.getBlockMetadata();
-        EnumFacing newFacing = null;
+        EnumPipePart oldFacing = EnumPipePart.fromMeta(meta);
+        EnumPipePart newFacing = oldFacing.next();
 
-        for (int i = meta + 1; i <= meta + 6; ++i) {
-            EnumFacing facing = EnumFacing.getFront(i % 6);
-            if (isValidFacing(facing)) {
-                newFacing = facing;
+        boolean first = true;
+        while (oldFacing != newFacing || first) {
+            first = false;
+            if (isValidFacing(newFacing.face)) {
                 break;
             }
-        }
-        int ordinal = -1;
-
-        if (newFacing == null) {
-            ordinal = 6;// The old ForgeDirection.UNKNOWN ordinal
-        } else {
-            ordinal = newFacing.ordinal();
+            newFacing = oldFacing.next();
         }
 
-        if (ordinal != meta) {
-            IBlockState state = pipe.container.getWorld().getBlockState(pipe.container.getPos());
-            pipe.container.getWorld().setBlockState(pipe.container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, ordinal));
-            pipe.container.scheduleRenderUpdate();
+        if (newFacing == oldFacing) {
+            newFacing = EnumPipePart.CENTER;
+        }
+
+        setSource(newFacing);
+    }
+
+    private void setSource(EnumPipePart newFacing) {
+        if (newFacing == EnumPipePart.CENTER || isValidFacing(newFacing.face)) {
+            int meta = pipe.container.getBlockMetadata();
+
+            if (newFacing.ordinal() != meta) {
+                IBlockState state = pipe.container.getWorld().getBlockState(pipe.container.getPos());
+                state = state.withProperty(BlockGenericPipe.GENERIC_PIPE_DATA, newFacing.ordinal());
+                pipe.container.getWorld().setBlockState(pipe.container.getPos(), state);
+                pipe.container.scheduleRenderUpdate();
+            }
         }
     }
 
@@ -90,10 +97,19 @@ public abstract class PipeLogicWood {
         }
     }
 
+    @Deprecated
     public boolean blockActivated(EntityPlayer entityplayer) {
+        return blockActivated(entityplayer, EnumPipePart.CENTER);
+    }
+
+    public boolean blockActivated(EntityPlayer entityplayer, EnumPipePart side) {
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
         if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
-            switchSource();
+            if (side != EnumPipePart.CENTER) {
+                setSource(side);
+            } else {
+                switchSource();
+            }
             ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
             return true;
         }
@@ -101,7 +117,7 @@ public abstract class PipeLogicWood {
         return false;
     }
 
-    public void onNeighborBlockChange(int blockId) {
+    public void onNeighborBlockChange() {
         if (!pipe.container.getWorld().isRemote) {
             switchSourceIfNeeded();
         }

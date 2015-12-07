@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
 import java.util.ArrayList;
@@ -33,6 +37,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -145,8 +150,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     private static final Block NULL_BLOCK = null;
     private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
+	private static final Block[] PREVIEW_FACADES = new Block[]{
+			Blocks.planks, Blocks.stonebrick, Blocks.glass
+	};
+	private static int RANDOM_FACADE_ID = -1;
+
     public ItemFacade() {
-        super(BCCreativeTab.get("facades"));
+		super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
 
         setHasSubtypes(true);
         setMaxDamage(0);
@@ -156,7 +166,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     public String getItemStackDisplayName(ItemStack itemstack) {
         switch (getFacadeType(itemstack)) {
             case Basic:
-                return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
+				FacadeState[] states = getFacadeStates(itemstack);
+				String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
+				return super.getItemStackDisplayName(itemstack) + ": " + displayName;
             case Phased:
                 return StringUtils.localize("item.FacadePhased.name");
             default:
@@ -215,12 +227,30 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+		if (BuildCraftTransport.showAllFacadesCreative) {
         for (ItemStack stack : allFacades) {
             itemList.add(stack);
         }
         for (ItemStack stack : allHollowFacades) {
             itemList.add(stack);
         }
+		} else {
+			List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
+			for (Block b : PREVIEW_FACADES) {
+				if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
+					ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));
+					itemList.add(facade);
+					FacadeState state = getFacadeStates(facade)[0];
+					hollowFacades.add(getFacade(new FacadeState(state.state, state.wire, true)));
+				}
+			}
+			if (RANDOM_FACADE_ID < 0) {
+				RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
+			}
+			itemList.add(allFacades.get(RANDOM_FACADE_ID));
+			itemList.addAll(hollowFacades);
+			itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
+		}
     }
 
     public void initialize() {

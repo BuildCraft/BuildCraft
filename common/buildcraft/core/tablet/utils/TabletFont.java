@@ -1,10 +1,6 @@
 package buildcraft.core.tablet.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import buildcraft.api.tablet.TabletBitmap;
 
@@ -70,7 +66,6 @@ public final class TabletFont {
         }
     }
 
-    private String family;
     private boolean isBold;
     private boolean isItalic;
     private int pointSize, maxW, maxH, ascent, descent;
@@ -89,7 +84,7 @@ public final class TabletFont {
             loaded += 8;
 
             if ("FAMI".equals(section)) {
-                this.family = readString(stream, sectionLength);
+                readString(stream, sectionLength);
             } else if ("WEIG".equals(section)) {
                 this.isBold = "bold".equals(readString(stream, sectionLength));
             } else if ("SLAN".equals(section)) {

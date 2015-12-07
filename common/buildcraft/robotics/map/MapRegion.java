@@ -1,13 +1,14 @@
 package buildcraft.robotics.map;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IntHashMap;
 
 import buildcraft.api.core.INBTStoreable;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class MapRegion implements INBTStoreable {
-    private final TIntObjectHashMap<MapChunk> chunks = new TIntObjectHashMap<MapChunk>();
+	private final IntHashMap chunks = new IntHashMap();
     private final int x, z;
 
     public MapRegion(int x, int z) {
@@ -24,27 +25,29 @@ public class MapRegion implements INBTStoreable {
     }
 
     public boolean hasChunk(int x, int z) {
-        return chunks.contains((z << 4) | x);
+		return chunks.containsItem((z << 4) | x);
     }
 
     public MapChunk getChunk(int x, int z) {
         int id = (z << 4) | x;
-        MapChunk chunk = chunks.get(id);
+		MapChunk chunk = (MapChunk) chunks.lookup(id);
         if (chunk == null) {
             chunk = new MapChunk(x, z);
-            chunks.put(id, chunk);
+			chunks.addKey(id, chunk);
         }
         return chunk;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        chunks.clear();
+		chunks.clearMap();
 
+		if (tag != null) {
         for (int i = 0; i < 256; i++) {
             if (tag.hasKey("r" + i)) {
                 MapChunk chunk = new MapChunk(tag.getCompoundTag("r" + i));
-                chunks.put(i, chunk);
+					chunks.addKey(i, chunk);
+				}
             }
         }
     }
@@ -52,10 +55,12 @@ public class MapRegion implements INBTStoreable {
     @Override
     public void writeToNBT(NBTTagCompound tag) {
         for (int i = 0; i < 256; i++) {
-            MapChunk chunk = chunks.get(i);
+			MapChunk chunk = (MapChunk) chunks.lookup(i);
             if (chunk != null) {
                 NBTTagCompound chunkNBT = new NBTTagCompound();
+				synchronized (chunk) {
                 chunk.writeToNBT(chunkNBT);
+				}
                 tag.setTag("r" + i, chunkNBT);
             }
         }

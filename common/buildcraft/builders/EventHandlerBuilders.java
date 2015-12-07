@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.core.TilePathMarker;
+
 public class EventHandlerBuilders {
 
     @SubscribeEvent

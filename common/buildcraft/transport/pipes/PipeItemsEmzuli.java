@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -11,12 +11,14 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
@@ -25,10 +27,9 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
-import buildcraft.BuildCraftTransport;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.statements.ActionExtractionPreset;
 
 import io.netty.buffer.ByteBuf;
@@ -49,14 +50,23 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
+    public void onPostTick() {
+        // TODO: This has a side-effect of skipping an extract every now and
+        // then if an item cannot be found, but at least it's 100% reliable.
+
+        super.onPostTick();
+        incrementFilter();
+    }
+
+    @Override
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing side) {
         if (entityplayer.getCurrentEquippedItem() != null) {
             if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
                 return false;
             }
         }
 
-        if (super.blockActivated(entityplayer)) {
+        if (super.blockActivated(entityplayer, side)) {
             return true;
         }
 
@@ -80,14 +90,12 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
     /** Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain
      * cases, the extractable slot depends on the position of the pipe. */
+
     @Override
     public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
-
         if (activeFlags.isEmpty()) {
             return null;
         }
-
-        incrementFilter();
 
         if (filters.getStackInSlot(currentFilter % filterCount) == null || !activeFlags.get(currentFilter % filterCount)) {
             return null;
@@ -104,26 +112,33 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
     }
 
     @Override
-    public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-        for (int i : inventory.getSlotsForFace(from)) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null && stack.stackSize > 0) {
-                ItemStack filter = getCurrentFilter();
-                if (filter == null) {
-                    return null;
-                }
-                if (!StackHelper.isMatchingItemOrList(stack, filter)) {
-                    continue;
-                }
-                if (!inventory.canExtractItem(i, stack, from)) {
-                    continue;
-                }
-                if (doRemove) {
-                    int stackSize = (int) Math.floor(battery.useEnergy(10, stack.stackSize * 10, false) / 10);
+    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+        if (inventory == null) {
+            return null;
+        }
 
-                    return inventory.decrStackSize(i, stackSize);
+        ItemStack filter = getCurrentFilter();
+        if (filter == null) {
+            return null;
+        }
+
+        for (int k : inventory.getSlotsForFace(from)) {
+            ItemStack slot = inventory.getStackInSlot(k);
+
+            if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
+                if (!StackHelper.isMatchingItemOrList(slot, filter)) {
+                    continue;
+                }
+
+                if (doRemove) {
+                    int maxStackSize = slot.stackSize;
+                    int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+                    int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+                    battery.useEnergy(energyUsed, energyUsed, false);
+
+                    return inventory.decrStackSize(k, stackSize);
                 } else {
-                    return stack;
+                    return slot;
                 }
             }
         }
@@ -220,6 +235,6 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
     }
 
     private ItemStack getCurrentFilter() {
-        return filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+        return filters.getStackInSlot(currentFilter % filterCount);
     }
 }

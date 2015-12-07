@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
@@ -17,7 +17,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -27,20 +28,34 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.events.RobotPlacementEvent;
+import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.transport.Pipe;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
 
 public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
     public ItemRobot() {
         super(BCCreativeTab.get("boards"));
+        setMaxStackSize(1);
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        NBTTagCompound cpt = getNBT(stack);
+        RedstoneBoardRobotNBT boardNBT = getRobotNBT(cpt);
+
+        if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
+            return 1;
+        } else {
+            return 16;
+        }
     }
 
     public EntityRobot createRobot(ItemStack stack, World world) {
@@ -83,11 +98,11 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
             int energy = getEnergy(cpt);
             int pct = energy * 100 / EntityRobotBase.MAX_ENERGY;
-            String enInfo = pct + "% Charged";
+            String enInfo = pct + "% " + StringUtils.localize("tip.gate.charged");
             if (energy == EntityRobotBase.MAX_ENERGY) {
-                enInfo = "Full Charge";
+                enInfo = StringUtils.localize("tip.gate.fullcharge");
             } else if (energy == 0) {
-                enInfo = "No Charge";
+                enInfo = StringUtils.localize("tip.gate.nocharge");
             }
             enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD
                 : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
@@ -188,12 +203,14 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
                     if (robotNBT == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
                         return true;
                     }
-                    RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, robotNBT.getID());
-                    FMLCommonHandler.instance().bus().post(robotEvent);
+
+                    EntityRobot robot = ((ItemRobot) currentItem.getItem()).createRobot(currentItem, world);
+
+                    RobotEvent.Place robotEvent = new RobotEvent.Place(robot, player);
+                    MinecraftForge.EVENT_BUS.post(robotEvent);
                     if (robotEvent.isCanceled()) {
                         return true;
                     }
-                    EntityRobot robot = ((ItemRobot) currentItem.getItem()).createRobot(currentItem, world);
 
                     if (robot != null && robot.getRegistry() != null) {
                         robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());

@@ -1,28 +1,33 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.ISerializable;
-import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockDecoration;
 import buildcraft.core.StackAtPosition;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -163,13 +168,19 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
             IBlockState state = context.world().getBlockState(dest);
 
-            context.world().playAuxSFXAtEntity(null, 2001, dest, Block.getStateId(state));
-
             /* if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) { BlockUtil.breakBlock(context.world(),
              * destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough); } else {
              * BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal); } */
 
-            slotToBuild.writeToWorld(context);
+            if (slotToBuild.writeToWorld(context)) {
+                context.world().playAuxSFXAtEntity(null, 2001, dest, Block.getStateId(state));
+            } else {
+                for (ItemStack s : slotToBuild.stackConsumed) {
+                    if (s != null && !(s.getItem() instanceof ItemBlock && Block.getBlockFromItem(s.getItem()) instanceof BlockDecoration)) {
+                        InvUtils.dropItems(context.world(), s, dest);
+                    }
+                }
+            }
         }
     }
 
@@ -256,7 +267,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
         slotToBuild.readFromNBT(nbt.getCompoundTag("slotToBuild"), registry);
     }
 
-    public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
+    public void setStacksToDisplay(List<ItemStack> stacks) {
         if (stacks != null) {
             for (ItemStack s : stacks) {
                 for (int i = 0; i < s.stackSize; ++i) {

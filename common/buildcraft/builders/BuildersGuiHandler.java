@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -8,19 +8,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-import buildcraft.builders.gui.ContainerArchitect;
-import buildcraft.builders.gui.ContainerBlueprintLibrary;
-import buildcraft.builders.gui.ContainerBuilder;
-import buildcraft.builders.gui.ContainerFiller;
-import buildcraft.builders.gui.GuiArchitect;
-import buildcraft.builders.gui.GuiBlueprintLibrary;
-import buildcraft.builders.gui.GuiBuilder;
-import buildcraft.builders.gui.GuiFiller;
-import buildcraft.builders.urbanism.ContainerUrbanist;
-import buildcraft.builders.urbanism.GuiUrbanist;
-import buildcraft.builders.urbanism.TileUrbanist;
+import buildcraft.builders.gui.*;
 import buildcraft.core.GuiIds;
 
 public class BuildersGuiHandler implements IGuiHandler {
@@ -59,12 +50,6 @@ public class BuildersGuiHandler implements IGuiHandler {
                     return null;
                 }
                 return new GuiFiller(player, (TileFiller) tile);
-
-            case GuiIds.URBANIST:
-                if (!(tile instanceof TileUrbanist)) {
-                    return null;
-                }
-                return new GuiUrbanist(player, (TileUrbanist) tile);
 
             default:
                 return null;
@@ -105,13 +90,6 @@ public class BuildersGuiHandler implements IGuiHandler {
                     return null;
                 }
                 return new ContainerFiller(player, (TileFiller) tile);
-
-            case GuiIds.URBANIST:
-                if (!(tile instanceof TileUrbanist)) {
-                    return null;
-                } else {
-                    return new ContainerUrbanist(player, (TileUrbanist) tile);
-                }
 
             default:
                 return null;

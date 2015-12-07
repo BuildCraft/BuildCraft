@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +33,7 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
         }
 
         addSlot(new SlotOutput(table, 9, 138, 49));
-        addSlot(new SlotUntouchable(table, 10, 101, 36));
+		addSlot(new SlotUntouchable(table.clientOutputInv, 0, 101, 36));
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 9; x++) {
@@ -50,8 +54,8 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        for (int i = 0; i < crafters.size(); i++) {
-            table.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		for (Object crafter : crafters) {
+			table.sendGUINetworkData(this, (ICrafting) crafter);
         }
     }
 

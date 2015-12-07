@@ -1,20 +1,16 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
@@ -25,15 +21,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.lib.items.ItemBlockBuildCraft;
-import buildcraft.core.lib.utils.Utils;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -61,10 +51,6 @@ public class CoreProxy implements ICoreProxy {
         entity.worldObj.removeEntity(entity);
     }
 
-    /* WRAPPER */
-    @SuppressWarnings("rawtypes")
-    public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {}
-
     public String getItemDisplayName(ItemStack newStack) {
         return "";
     }
@@ -74,49 +60,8 @@ public class CoreProxy implements ICoreProxy {
 
     public void initializeEntityRendering() {}
 
-    /* REGISTRATION */
-    public void registerBlock(Block block) {
-        registerBlock(block, ItemBlockBuildCraft.class);
-    }
-
-    public void registerBlock(Block block, Class<? extends ItemBlock> item) {
-        GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
-    }
-
-    public void registerItem(Item item) {
-        registerItem(item, item.getUnlocalizedName().replace("item.", ""));
-    }
-
-    public void registerItem(Item item, String overridingName) {
-        GameRegistry.registerItem(item, overridingName);
-    }
-
-    public void registerTileEntity(Class<? extends TileEntity> clas, String ident) {
-        GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
-    }
-
-    public void registerTileEntity(Class<? extends TileEntity> clas, String id, String... alternatives) {
-        GameRegistry.registerTileEntityWithAlternatives(CompatHooks.INSTANCE.getTile(clas), id, alternatives);
-    }
-
     public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
         stack.onCrafting(world, player, stack.stackSize);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void addCraftingRecipe(ItemStack result, Object... recipe) {
-        String name = Utils.getNameForItem(result.getItem());
-        if (name != null) {
-            CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void addShapelessRecipe(ItemStack result, Object... recipe) {
-        String name = Utils.getNameForItem(result.getItem());
-        if (name != null) {
-            CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
-        }
     }
 
     public String playerName() {
@@ -169,4 +114,16 @@ public class CoreProxy implements ICoreProxy {
         }
         return null;
     }
+
+    public <T extends TileEntity> T getServerTile(T source) {
+        return source;
+    }
+
+    public EntityPlayer getClientPlayer() {
+        return null;
+    }
+
+    public void postRegisterBlock(Block block) {}
+    
+    public void postRegisterItem(Item item) {}
 }

@@ -98,7 +98,7 @@ public class PlugPluggable extends PipePluggable {
 
     @Override
     public ItemStack[] getDropItems(IPipeTile pipe) {
-        return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
+		return new ItemStack[]{new ItemStack(BuildCraftTransport.plugItem)};
     }
 
     @Override

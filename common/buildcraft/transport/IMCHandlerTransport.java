@@ -40,13 +40,14 @@ public class IMCHandlerTransport extends IMCHandler {
             NBTTagCompound recipe = msg.getNBTValue();
             if (!recipe.hasKey("id") || !recipe.hasKey("expansion") || !recipe.hasKey("input")) {
                 failed = true;
-                return;
-            }
+			} else {
             IGateExpansion exp = GateExpansions.getExpansion(recipe.getString("expansion"));
             ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("input"));
             if (exp == null || is == null) {
                 failed = true;
-                return;
+				} else {
+					GateExpansions.registerExpansion(exp, is);
+				}
             }
         }
         if (failed) {

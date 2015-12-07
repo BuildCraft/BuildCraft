@@ -19,9 +19,9 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 	@Override
 	public boolean isHandler(ItemStack stack, HandlerType type) {
 		if (isBlueprint) {
-			return stack.getItem() instanceof ItemBlueprintStandard;
+			return stack.getItem() instanceof ItemBlueprintStandard && (type == HandlerType.LOAD || ItemBlueprint.isContentReadable(stack));
 		} else {
-			return stack.getItem() instanceof ItemBlueprintTemplate;
+			return stack.getItem() instanceof ItemBlueprintTemplate && (type == HandlerType.LOAD || ItemBlueprint.isContentReadable(stack));
 		}
 	}
 
@@ -32,7 +32,8 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 
     @Override
     public String getName(ItemStack stack) {
-        return ItemBlueprint.getId(stack).name;
+		LibraryId id = ItemBlueprint.getId(stack);
+		return id != null ? id.name : "<<CORRUPT>>";
     }
 
 	@Override

@@ -1,14 +1,25 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.silicon;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
-import buildcraft.silicon.BlockLaserTable;
 
 public class ItemLaserTable extends ItemBlockBuildCraft {
 
@@ -38,6 +49,14 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
     }
 
     @Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean adv) {
+		if (stack.getItemDamage() == 1) {
+			strings.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
+		}
+	}
+
+	@Override
     public int getMetadata(int meta) {
         return meta < BlockLaserTable.TABLE_MAX ? meta : 0;
     }

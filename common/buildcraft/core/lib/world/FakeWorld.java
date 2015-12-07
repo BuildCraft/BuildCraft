@@ -70,7 +70,7 @@ public class FakeWorld extends World {
 
         for (BlockPos pos : Utils.allInBoxIncludingCorners(start, end)) {
             BlockPos array = pos.subtract(start);
-            SchematicBlockBase block = template.contents[array.getX()][array.getY()][array.getZ()];
+            SchematicBlockBase block = template.get(array.getX(), array.getY(), array.getZ());
 
             if (block != null) {
                 setBlockState(pos, filledBlock);

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -12,22 +12,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
@@ -49,7 +48,6 @@ import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.internal.IDropControlInventory;
-import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
@@ -95,7 +93,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private NBTTagCompound initNBT = null;
 
     private BlockMiner miner;
-
     private int ledState;
 
     public TileQuarry() {
@@ -123,8 +120,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             }
 
             if (findTarget(false)) {
-                if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
-                    setHead(box.xMin + 1, pos.getY() + 2, box.zMin + 1);
+                if ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)) {
+                    setHead(box.xMin + 1, getPos().getY() + 2, box.zMin + 1);
                 }
             }
         } else {
@@ -196,8 +193,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             // We are sending a network packet update ONLY below.
             // In this case, since idling() does it anyway, we should return.
             return;
-        } else if (getStage() == Stage.MOVING) {
-            int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
+        } else if (stage == Stage.MOVING) {
+            int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20D + (double) getBattery().getEnergyStored() / 10), false);
 
             if (energyUsed >= 20) {
 
@@ -230,8 +227,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (miner == null) {
-            // Hmm.
-            setStage(Stage.IDLE);
+            // Hmm. Probably shouldn't be mining if there's no miner.
+            stage = Stage.IDLE;
             return;
         }
 
@@ -239,30 +236,45 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         getBattery().useEnergy(rfTaken, rfTaken, false);
 
         if (miner.hasMined()) {
-            // Collect any lost items laying around
+            // Collect any lost items laying around.
             double[] head = getHead();
             AxisAlignedBB axis = new AxisAlignedBB(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
-            @SuppressWarnings("rawtypes")
-            List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-            for (int ii = 0; ii < result.size(); ii++) {
-                if (result.get(ii) instanceof EntityItem) {
-                    EntityItem entity = (EntityItem) result.get(ii);
-                    if (entity.isDead) {
-                        continue;
-                    }
-
-                    ItemStack mineable = entity.getEntityItem();
-                    if (mineable.stackSize <= 0) {
-                        continue;
-                    }
-                    CoreProxy.proxy.removeEntity(entity);
-                    miner.mineStack(mineable);
+            List<EntityItem> result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+            for (EntityItem entity : result) {
+                if (entity.isDead) {
+                    continue;
                 }
-            }
 
-            setStage(Stage.IDLE);
-            miner = null;
+                ItemStack mineable = entity.getEntityItem();
+                if (mineable.stackSize <= 0) {
+                    continue;
+                }
+                CoreProxy.proxy.removeEntity(entity);
+                miner.mineStack(mineable);
+            }
         }
+
+        setStage(Stage.IDLE);
+        miner = null;
+
+        if (!findFrame()) {
+            initializeBlueprintBuilder();
+            stage = Stage.BUILDING;
+        } else {
+            stage = Stage.IDLE;
+        }
+    }
+
+    protected boolean findFrame() {
+        for (EnumFacing face : EnumFacing.Plane.HORIZONTAL.facings()) {
+            if (box.contains(getPos().offset(face))) {
+                return worldObj.getBlockState(getPos().offset(face)).getBlock() == BuildCraftBuilders.frameBlock;
+            }
+        }
+
+        // Could not find any location in box - this is strange, so obviously
+        // we're going to ignore it!
+        return true;
     }
 
     protected void idling() {
@@ -308,12 +320,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         int[] nextTarget = visitList.removeFirst();
 
         if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for
-            // changes
-            for (int y = nextTarget[1] + 1; y < pos.getY() + 3; y++) {
-                BlockPos pos = new BlockPos(nextTarget[0], y, nextTarget[2]);
-                IBlockState state = worldObj.getBlockState(pos);
-                Block block = state.getBlock();
-                if (BlockUtils.isAnObstructingBlock(block, worldObj, pos) || !BuildCraftAPI.isSoftBlock(worldObj, pos)) {
+                                         // changes
+            for (int y = nextTarget[1] + 1; y < getPos().getY() + 3; y++) {
+                if (isQuarriableBlock(new BlockPos(nextTarget[0], y, nextTarget[2]))) {
                     createColumnVisitList();
                     columnVisitListIsUpdated = true;
                     nextTarget = null;
@@ -336,8 +345,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     /** Make the column visit list: called once per layer */
     private void createColumnVisitList() {
         visitList.clear();
-
-        Integer[][] columnHeights = new Integer[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
         boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 
         for (int searchY = pos.getY() + 3; searchY >= 1; --searchY) {
@@ -368,33 +375,20 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
                 for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
                     if (!blockedColumns[searchX][searchZ]) {
-                        Integer height = columnHeights[searchX][searchZ];
                         int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
-
-                        if (height == null) {
-                            columnHeights[searchX][searchZ] = height = worldObj.getHeight(new BlockPos(bx, 0, bz)).getY();
-                        }
-
-                        if (height > 0 && height < by && worldObj.provider.getDimensionId() != -1) {
-                            continue;
-                        }
 
                         BlockPos pos = new BlockPos(bx, by, bz);
                         IBlockState state = worldObj.getBlockState(pos);
+                        Block block = state.getBlock();
 
                         if (!BlockUtils.canChangeBlock(state, worldObj, pos)) {
                             blockedColumns[searchX][searchZ] = true;
-                        } else if (!BuildCraftAPI.isSoftBlock(worldObj, pos)) {
+                        } else if (!BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock)) {
                             visitList.add(new int[] { bx, by, bz });
-                        }
-
-                        if (height == 0 && !worldObj.isAirBlock(pos)) {
-                            columnHeights[searchX][searchZ] = by;
                         }
 
                         // Stop at two planes - generally any obstructions will have been found and will force a
                         // recompute prior to this
-
                         if (visitList.size() > builder.blueprint.sizeZ * builder.blueprint.sizeX * 2) {
                             return;
                         }
@@ -402,6 +396,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 }
             }
         }
+
     }
 
     @Override
@@ -484,7 +479,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     private boolean isQuarriableBlock(BlockPos pos) {
         IBlockState state = worldObj.getBlockState(pos);
-        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos);
+        Block block = state.getBlock();
+        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid)
+            && !(block instanceof IFluidBlock);
     }
 
     @Override
@@ -542,6 +539,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (BuildCraftBuilders.quarryLoadsChunks && chunkTicket == null) {
             chunkTicket = ForgeChunkManager.requestTicket(BuildCraftBuilders.instance, worldObj, Type.NORMAL);
         }
+
         if (chunkTicket != null) {
             chunkTicket.getModData().setInteger("quarryX", pos.getX());
             chunkTicket.getModData().setInteger("quarryY", pos.getY());
@@ -564,17 +562,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         int xSize = a.xMax() - a.xMin() + 1;
         int zSize = a.zMax() - a.zMin() + 1;
 
-        if (chunkTicket != null) {
-            if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-                if (placedBy != null) {
-                    placedBy.addChatMessage(new ChatComponentText(String.format(
-                            "Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize, chunkTicket
-                                    .getMaxChunkListDepth())));
-                }
-
-                a = new DefaultAreaProvider(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10);
-                useDefault = true;
+        if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
+            if (placedBy != null) {
+                placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall", xSize, zSize, chunkTicket != null
+                    ? chunkTicket.getMaxChunkListDepth() : 0));
             }
+
+            a = new DefaultAreaProvider(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10);
+            useDefault = true;
         }
 
         xSize = a.xMax() - a.xMin() + 1;
@@ -630,9 +625,12 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
         // TODO (PASS 1): Fix this to make it work properly with the new frame mechanics
-
-        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, pos.getY(), box.zMin));
-        setStage(Stage.BUILDING);
+        if (bpt != null) {
+            builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, getPos().getY(), box.zMin));
+            speed = 0;
+            stage = Stage.BUILDING;
+            sendNetworkUpdate();
+        }
     }
 
     @Override
@@ -646,8 +644,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         stream.writeDouble(headPosY);
         stream.writeDouble(headPosZ);
         stream.writeFloat((float) speed);
-        stream.writeFloat((float) headTrajectory);
-        int flags = getStage().ordinal();
+        stream.writeFloat(headTrajectory);
+        int flags = stage.ordinal();
         flags |= movingHorizontally ? 0x10 : 0;
         flags |= movingVertically ? 0x20 : 0;
         stream.writeByte(flags);
@@ -861,18 +859,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-            placedBy.addChatMessage(new ChatComponentText(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", pos.getX(),
-                    pos.getY(), pos.getZ(), chunks.size())));
-        }
-    }
-
-    public int getIconGlowLevel(int renderPass) {
-        if (renderPass == 2) { // Red LED
-            return ledState & 15;
-        } else if (renderPass == 3) { // Green LED
-            return (ledState >> 4) > 0 ? 15 : 0;
-        } else {
-            return -1;
+            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos(), chunks.size()));
         }
     }
 

@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -31,7 +35,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
         public final boolean inputOpen;
         public final boolean outputOpen;
 
-        private ValveState(boolean in, boolean out) {
+		ValveState(boolean in, boolean out) {
             inputOpen = in;
             outputOpen = out;
         }

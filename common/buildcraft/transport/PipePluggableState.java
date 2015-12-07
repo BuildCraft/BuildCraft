@@ -11,7 +11,7 @@ import buildcraft.transport.utils.ConnectionMatrix;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipePluggableState implements ISerializable, IPipePluggableState {
+public class PipePluggableState implements ISerializable, IPipePluggableState , Comparable<PipePluggableState>{
     private PipePluggable[] pluggables = new PipePluggable[6];
     private final ConnectionMatrix pluggableMatrix = new ConnectionMatrix();
 
@@ -48,12 +48,17 @@ public class PipePluggableState implements ISerializable, IPipePluggableState {
         for (EnumFacing dir : EnumFacing.VALUES) {
             if (this.pluggableMatrix.isConnected(dir)) {
                 try {
-                    PipePluggable p = PipeManager.pipePluggables.get(data.readUnsignedShort()).newInstance();
-                    p.readData(data);
+					Class<? extends PipePluggable> pc = PipeManager.pipePluggables.get(data.readUnsignedShort());
+					if (pluggables[dir.ordinal()] == null || pc != pluggables[dir.ordinal()].getClass()) {
+						PipePluggable p = pc.newInstance();
                     pluggables[dir.ordinal()] = p;
+					}
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+				if (pluggables[dir.ordinal()] != null) {
+					pluggables[dir.ordinal()].readData(data);
+				}
             } else {
                 pluggables[dir.ordinal()] = null;
             }
@@ -71,5 +76,10 @@ public class PipePluggableState implements ISerializable, IPipePluggableState {
             return null;
         }
         return pluggables[face.ordinal()];
+    }
+
+    @Override
+    public int compareTo(PipePluggableState o) {
+        return 0;
     }
 }

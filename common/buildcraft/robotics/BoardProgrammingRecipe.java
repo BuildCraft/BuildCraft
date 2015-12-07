@@ -23,7 +23,8 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
         @Override
         public int compare(ItemStack o1, ItemStack o2) {
-            return recipe.getEnergyCost(o1) - recipe.getEnergyCost(o2);
+			int i = (recipe.getEnergyCost(o1) - recipe.getEnergyCost(o2)) * 200;
+			return i != 0 ? i : ItemRedstoneBoard.getBoardNBT(o1).getID().compareTo(ItemRedstoneBoard.getBoardNBT(o2).getID());
         }
     }
 
@@ -35,7 +36,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
     @Override
     public List<ItemStack> getOptions(int width, int height) {
         List<ItemStack> options = new ArrayList<ItemStack>(width * height);
-        for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+		for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
             nbt.createBoard(NBTUtils.getItemData(stack));
             options.add(stack);

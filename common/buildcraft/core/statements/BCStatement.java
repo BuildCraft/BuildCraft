@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
@@ -30,11 +30,11 @@ public abstract class BCStatement implements IStatement {
      *
      * @param uniqueTag */
     public BCStatement(String... uniqueTag) {
-		this.uniqueTag = uniqueTag[0];
-		for (String tag : uniqueTag) {
-			StatementManager.statements.put(tag, this);
-		}
-		MinecraftForge.EVENT_BUS.register(this);
+        this.uniqueTag = uniqueTag[0];
+        for (String tag : uniqueTag) {
+            StatementManager.statements.put(tag, this);
+        }
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override

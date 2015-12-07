@@ -96,7 +96,7 @@ public class BuildCraftTests extends BuildCraftMod {
 		quitAfterRun = optionset.has(quitOption);
 
 		if (testFile != null && !"".equals(testFile)) {
-			FMLCommonHandler.instance().bus().register(this);
+			MinecraftForge.EVENT_BUS.register(this);
 			System.out.println("[TEST 0] [LOAD TEST] \"" + testFile + "\"");
 		}
 	}

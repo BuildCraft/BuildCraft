@@ -1,14 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -41,7 +37,7 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
-public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
+public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe, Comparable<Pipe<T>> {
     // TODO: Change this to EventBusProviderASM!
     private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus.Provider.INSTANCE;
 
@@ -53,8 +49,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public final Gate[] gates = new Gate[EnumFacing.VALUES.length];
     public IEventBus<PipeEvent> eventBus = eventProvider.newBus();
 
-    private boolean internalUpdateScheduled = false;
     private boolean initialized = false;
+    private boolean scheduleWireUpdate;
 
     private ArrayList<ActionState> actionStates = new ArrayList<ActionState>();
 
@@ -63,8 +59,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         this.item = item;
 
         eventBus.registerHandler(this);
-        // TODO: Move to globalHandlers once a priority system is in place
-        eventBus.registerHandler(new LensFilterHandler());
     }
 
     public void setTile(TileEntity tile) {
@@ -80,7 +74,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         }
     }
 
-    public boolean blockActivated(EntityPlayer entityplayer) {
+    public boolean blockActivated(EntityPlayer player, EnumFacing side) {
         return false;
     }
 
@@ -91,8 +85,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public void onBlockPlacedBy(EntityLivingBase placer) {}
 
     public void onNeighborBlockChange(int blockId) {
-        transport.onNeighborBlockChange(blockId);
-
+        for (EnumFacing face : EnumFacing.values()) {
+            transport.onNeighborChange(face);
+        }
     }
 
     public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
@@ -134,11 +129,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public void updateEntity() {
         transport.updateEntity();
 
-        if (internalUpdateScheduled) {
-            internalUpdate();
-            internalUpdateScheduled = false;
-        }
-
         actionStates.clear();
 
         // Update the gate if we have any
@@ -149,11 +139,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
                     gate.tick();
                 }
             }
-        }
-    }
 
-    private void internalUpdate() {
-        updateSignalState();
+            if (scheduleWireUpdate) {
+                updateSignalState();
+            }
+        }
     }
 
     public void writeToNBT(NBTTagCompound data) {
@@ -207,107 +197,91 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         initialized = true;
     }
 
-    private void readNearbyPipesSignal(PipeWire color) {
-        boolean foundBiggerSignal = false;
-
-        for (EnumFacing o : EnumFacing.VALUES) {
-            TileEntity tile = container.getTile(o);
-
-            if (tile instanceof IPipeTile) {
-                IPipeTile tilePipe = (IPipeTile) tile;
-                Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
-
-                if (BlockGenericPipe.isFullyDefined(pipe)) {
-                    if (isWireConnectedTo(tile, color, o)) {
-                        foundBiggerSignal |= receiveSignal(pipe.signalStrength[color.ordinal()] - 1, color);
-                    }
-                }
-            }
-        }
-
-        if (!foundBiggerSignal && signalStrength[color.ordinal()] != 0) {
-            signalStrength[color.ordinal()] = 0;
-            // worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
-            container.scheduleRenderUpdate();
-
-            for (EnumFacing o : EnumFacing.VALUES) {
-                TileEntity tile = container.getTile(o);
-
-                if (tile instanceof IPipeTile) {
-                    IPipeTile tilePipe = (IPipeTile) tile;
-                    Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
-
-                    if (BlockGenericPipe.isFullyDefined(pipe)) {
-                        pipe.internalUpdateScheduled = true;
-                    }
-                }
-            }
-        }
-    }
-
     public void updateSignalState() {
         for (PipeWire c : PipeWire.values()) {
-            updateSignalStateForColor(c);
+            if (wireSet[c.ordinal()]) {
+                updateSignalState(c);
+            }
         }
     }
 
-    private void updateSignalStateForColor(PipeWire wire) {
-        if (!wireSet[wire.ordinal()]) {
-            return;
-        }
+    private void updateSignalState(PipeWire c) {
+        int prevStrength = signalStrength[c.ordinal()];
+        boolean isBroadcast = false;
 
-        // STEP 1: compute internal signal strength
-
-        boolean readNearbySignal = true;
-        for (Gate gate : gates) {
-            if (gate != null && gate.broadcastSignal.get(wire.ordinal())) {
-                receiveSignal(255, wire);
-                readNearbySignal = false;
+        for (Gate g : gates) {
+            if (g != null && (g.broadcastSignal & (1 << c.ordinal())) != 0) {
+                isBroadcast = true;
+                break;
             }
         }
 
-        if (readNearbySignal) {
-            readNearbyPipesSignal(wire);
-        }
+        if (isBroadcast) {
+            if (prevStrength < 255) {
+                propagateSignalState(c, 255);
+            }
+        } else {
+            List<Pipe<?>> pipes = new ArrayList<Pipe<?>>();
+            int maxStrength = 0;
 
-        // STEP 2: transmit signal in nearby blocks
-
-        if (signalStrength[wire.ordinal()] > 1) {
-            for (EnumFacing o : EnumFacing.VALUES) {
-                TileEntity tile = container.getTile(o);
-
+            for (EnumFacing dir : EnumFacing.values()) {
+                TileEntity tile = container.getTile(dir);
                 if (tile instanceof IPipeTile) {
-                    IPipeTile tilePipe = (IPipeTile) tile;
-                    Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
-
-                    if (BlockGenericPipe.isFullyDefined(pipe) && pipe.wireSet[wire.ordinal()]) {
-                        if (isWireConnectedTo(tile, wire, o)) {
-                            pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
+                    Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+                    if (isWireConnectedTo(tile, pipe, c, dir)) {
+                        pipes.add(pipe);
+                        int pipeStrength = pipe.signalStrength[c.ordinal()];
+                        if (pipeStrength > maxStrength) {
+                            maxStrength = pipeStrength;
                         }
                     }
                 }
             }
-        }
-    }
 
-    private boolean receiveSignal(int signal, PipeWire color) {
-        if (container.getWorld() == null) {
-            return false;
-        }
+            if (maxStrength > prevStrength && maxStrength > 1) {
+                signalStrength[c.ordinal()] = maxStrength - 1;
+            } else {
+                signalStrength[c.ordinal()] = 0;
+            }
 
-        int oldSignal = signalStrength[color.ordinal()];
-
-        if (signal >= signalStrength[color.ordinal()] && signal != 0) {
-            signalStrength[color.ordinal()] = signal;
-            internalUpdateScheduled = true;
-
-            if (oldSignal == 0) {
+            if (prevStrength != signalStrength[c.ordinal()]) {
                 container.scheduleRenderUpdate();
             }
 
-            return true;
-        } else {
-            return false;
+            if (signalStrength[c.ordinal()] == 0) {
+                for (Pipe<?> p : pipes) {
+                    if (p.signalStrength[c.ordinal()] > 0) {
+                        p.updateSignalState(c);
+                    }
+                }
+            } else {
+                for (Pipe<?> p : pipes) {
+                    if (p.signalStrength[c.ordinal()] < (signalStrength[c.ordinal()] - 1)) {
+                        p.updateSignalState(c);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void propagateSignalState(PipeWire c, int s) {
+        signalStrength[c.ordinal()] = s;
+        for (EnumFacing face : EnumFacing.values()) {
+            TileEntity tile = container.getTile(face);
+            if (tile instanceof IPipeTile) {
+                Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+                if (isWireConnectedTo(tile, pipe, c, face)) {
+                    if (s == 0) {
+                        if (pipe.signalStrength[c.ordinal()] > 0) {
+                            pipe.updateSignalState(c);
+                        }
+                    } else {
+                        if (pipe.signalStrength[c.ordinal()] < s) {
+                            pipe.updateSignalState(c);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -426,9 +400,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
         for (EnumFacing direction : EnumFacing.VALUES) {
             if (container.hasPipePluggable(direction)) {
-                for (ItemStack stack : container.getPipePluggable(direction).getDropItems(container)) {
-                    result.add(stack);
-                }
+                Collections.addAll(result, container.getPipePluggable(direction).getDropItems(container));
             }
         }
 
@@ -454,7 +426,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             gates[i] = null;
         }
 
-        internalUpdateScheduled = true;
+        scheduleWireUpdate = true;
         container.scheduleRenderUpdate();
     }
 
@@ -469,8 +441,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             return false;
         }
 
-        Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+        return isWireConnectedTo(tile, (Pipe) (((IPipeTile) tile).getPipe()), color, dir);
+    }
 
+    public boolean isWireConnectedTo(TileEntity tile, Pipe pipe, PipeWire color, EnumFacing dir) {
         if (!BlockGenericPipe.isFullyDefined(pipe)) {
             return false;
         }
@@ -557,5 +531,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
     private Collection<ActionState> getActionStates() {
         return actionStates;
+    }
+
+    public void scheduleWireUpdate() {
+        scheduleWireUpdate = true;
+    }
+
+    public int compareTo(Pipe<T> pipe) {
+        return 0;
     }
 }

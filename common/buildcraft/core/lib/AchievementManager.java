@@ -2,8 +2,9 @@ package buildcraft.core.lib;
 
 import net.minecraft.item.Item;
 import net.minecraft.stats.Achievement;
+
 import net.minecraftforge.common.AchievementPage;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
@@ -14,7 +15,7 @@ public class AchievementManager {
         page = new AchievementPage(name);
         AchievementPage.registerAchievementPage(page);
 
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public Achievement registerAchievement(Achievement a) {

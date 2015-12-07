@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.render;
@@ -10,11 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
+
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,7 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.lib.render.ICustomHighlight;
 
 public class BlockHighlightHandler {
-
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void handleBlockHighlight(DrawBlockHighlightEvent e) {
@@ -53,6 +49,7 @@ public class BlockHighlightHandler {
                 GL11.glLineWidth(2F);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glDepthMask(false);
+
                 double exp = ((ICustomHighlight) block).getExpansion();
                 exp += expansion / 32D;
                 nPos = nPos.subtract(x, y, z);
@@ -60,6 +57,7 @@ public class BlockHighlightHandler {
                     AxisAlignedBB changed = aabb.expand(exp, exp, exp).offset(-nPos.xCoord, -nPos.yCoord, -nPos.zCoord);
                     RenderGlobal.func_181561_a(changed);
                 }
+
                 GL11.glDepthMask(true);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);
                 GL11.glDisable(GL11.GL_BLEND);

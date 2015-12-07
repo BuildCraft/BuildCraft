@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -41,6 +41,9 @@ public class AIRobotSearchStation extends AIRobot {
         DockingStation potentialStation = null;
 
         for (DockingStation station : robot.getRegistry().getStations()) {
+            if (!station.isInitialized()) {
+                continue;
+            }
 
             if (station.isTaken() && station.robotIdTaking() != robot.getRobotId()) {
                 continue;

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -18,12 +18,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
@@ -38,27 +34,17 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.ISerializable;
+import buildcraft.api.core.*;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.ICustomPipeConnection;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeConnectionAPI;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.*;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.TileBuffer;
-import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.PacketTileState;
@@ -73,8 +59,8 @@ import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileGenericPipe extends TileEntity implements ITickable, IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler,
-        IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IAdditionalDataTile {
+public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
+        ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable {
 
     public boolean initialized = false;
     public final PipeRenderState renderState = new PipeRenderState();
@@ -89,6 +75,7 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
     protected boolean deletePipe = false;
     protected boolean sendClientUpdate = false;
     protected boolean blockNeighborChange = false;
+    protected int blockNeighborChangedSides = 0;
     protected boolean refreshRenderState = false;
     protected boolean pipeBound = false;
     protected boolean resyncGateExpansions = false;
@@ -98,7 +85,7 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
     private TileBuffer[] tileBuffer;
     private int glassColor = -1;
 
-    public static class CoreState implements ISerializable {
+    public static class CoreState implements ISerializable, Comparable<CoreState> {
         public String pipeId = null;
 
         @Override
@@ -109,6 +96,11 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         @Override
         public void readData(ByteBuf data) {
             pipeId = NetworkUtils.readUTF(data);
+        }
+
+        @Override
+        public int compareTo(CoreState o) {
+            return 0;
         }
     }
 
@@ -138,30 +130,16 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
                 }
                 try {
                     NBTTagCompound pluggableData = nbt.getCompoundTag(key);
-                    Class<?> pluggableClass = null;
-                    // Migration support for 6.1.x/6.2.x // No Longer Required
-                    // if (pluggableData.hasKey("pluggableClass")) {
-                    // String c = pluggableData.getString("pluggableClass");
-                    // if ("buildcraft.transport.gates.ItemGate$GatePluggable".equals(c)) {
-                    // pluggableClass = GatePluggable.class;
-                    // } else if ("buildcraft.transport.ItemFacade$FacadePluggable".equals(c)) {
-                    // pluggableClass = FacadePluggable.class;
-                    // } else if ("buildcraft.transport.ItemPlug$PlugPluggable".equals(c)) {
-                    // pluggableClass = PlugPluggable.class;
-                    // } else if ("buildcraft.transport.gates.ItemRobotStation$RobotStationPluggable".equals(c)
-                    // || "buildcraft.transport.ItemRobotStation$RobotStationPluggable".equals(c)) {
-                    // pluggableClass = PipeManager.getPluggableByName("robotStation");
-                    // }
-                    // } else {
-                    pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
-                    // }
-                    if (!PipePluggable.class.isAssignableFrom(pluggableClass)) {
-                        BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
-                        continue;
+                    Class<?> pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
+                    if (pluggableClass != null) {
+                        if (!PipePluggable.class.isAssignableFrom(pluggableClass)) {
+                            BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
+                            continue;
+                        }
+                        PipePluggable pluggable = (PipePluggable) pluggableClass.newInstance();
+                        pluggable.readFromNBT(pluggableData);
+                        pluggables[i] = pluggable;
                     }
-                    PipePluggable pluggable = (PipePluggable) pluggableClass.newInstance();
-                    pluggable.readFromNBT(pluggableData);
-                    pluggables[i] = pluggable;
                 } catch (Exception e) {
                     BCLog.logger.warn("Failed to load side state");
                     e.printStackTrace();
@@ -367,7 +345,7 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         scheduleRenderUpdate();
         sendNetworkUpdate();
         if (pipe != null) {
-            BlockGenericPipe.updateNeighbourSignalState(pipe);
+            pipe.scheduleWireUpdate();
         }
     }
 
@@ -422,7 +400,12 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
             }
 
             if (blockNeighborChange) {
-                computeConnections();
+                for (int i = 0; i < 6; i++) {
+                    if ((blockNeighborChangedSides & (1 << i)) != 0) {
+                        blockNeighborChangedSides ^= 1 << i;
+                        computeConnection(EnumFacing.getFront(i));
+                    }
+                }
                 pipe.onNeighborBlockChange(0);
                 blockNeighborChange = false;
                 refreshRenderState = true;
@@ -473,7 +456,6 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
 
     public boolean setPipeColor(int color) {
         if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
-            renderState.glassColorDirty = true;
             glassColor = color;
             notifyBlockChanged();
             worldObj.notifyBlockOfStateChange(pos, blockType);
@@ -556,14 +538,20 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         boolean changed = renderState.isDirty();
         // TODO (Pass 1): If the pluggable state has changed, also update it!
 
-        if (renderState.isDirty()) {
+        if (renderState.isDirty())
+
+        {
             renderState.clean();
         }
+
         sendNetworkUpdate();
         return changed;
+
     }
 
     public void initialize(Pipe<?> pipe) {
+        initialized = false;
+
         this.blockType = getBlockType();
 
         if (pipe == null) {
@@ -612,6 +600,12 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
 
     public void scheduleNeighborChange() {
         blockNeighborChange = true;
+        blockNeighborChangedSides = 0x3F;
+    }
+
+    public void scheduleNeighborChange(EnumPipePart part) {
+        blockNeighborChange = true;
+        blockNeighborChangedSides |= part == EnumPipePart.CENTER ? 0x3F : (1 << part.ordinal());
     }
 
     @Override
@@ -630,6 +624,10 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
                 Vec3 itemPos = Utils.convertMiddle(getPos()).add(Utils.convert(from, 0.4));
 
                 TravelingItem pipedItem = TravelingItem.make(itemPos, payload);
+                if (pipedItem.isCorrupted()) {
+                    return 0;
+                }
+
                 pipedItem.color = color;
                 ((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite());
             }
@@ -699,7 +697,6 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         return null;
     }
 
-    @Override
     public void sendNetworkUpdate() {
         sendClientUpdate = true;
     }
@@ -832,29 +829,34 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
     }
 
     protected void computeConnections() {
+        for (EnumFacing face : EnumFacing.values()) {
+            computeConnection(face);
+        }
+    }
+
+    protected void computeConnection(EnumFacing side) {
         TileBuffer[] cache = getTileCache();
         if (cache == null) {
             return;
         }
 
-        for (EnumFacing side : EnumFacing.VALUES) {
-            TileBuffer t = cache[side.ordinal()];
-            // For blocks which are not loaded, keep the old connection value.
-            // if (t.exists() || !initialized) {
-            // t.refresh();
+        TileBuffer t = cache[side.ordinal()];
+        // For blocks which are not loaded, keep the old connection value.
+        // if (t.exists() || !initialized) {
+        // t.refresh();
 
-            pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(worldObj.getTileEntity(pos.offset(side))/* t.getTile(
-                                                                                                            * ) */, side);
-            // }
-        }
+        pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(worldObj.getTileEntity(pos.offset(side))/* t.getTile(
+                                                                                                        * ) */, side);
+        // }
     }
 
     @Override
     public boolean isPipeConnected(EnumFacing with) {
         if (worldObj.isRemote) {
             return renderState.pipeConnectionMatrix.isConnected(with);
+        } else {
+            return pipeConnectionsBuffer[with.ordinal()];
         }
-        return pipeConnectionsBuffer[with.ordinal()];
     }
 
     @Override
@@ -1290,5 +1292,13 @@ public class TileGenericPipe extends TileEntity implements ITickable, IFluidHand
         if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
             ((IDebuggable) getPipePluggable(side)).getDebugInfo(left, right, side);
         }
+    }
+
+    @Override
+    public ConnectOverride overridePipeConnection(PipeType type, EnumFacing with) {
+        if (type == PipeType.POWER && hasPipePluggable(with) && getPipePluggable(with) instanceof IEnergyHandler) {
+            return ConnectOverride.CONNECT;
+        }
+        return ConnectOverride.DEFAULT;
     }
 }

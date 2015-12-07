@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftTransport;
@@ -54,19 +55,23 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(container.pipe, item);
         container.pipe.eventBus.handleEvent(event);
         if (!event.handled) {
-            defaultReajustSpeed(item);
+            defaultReadjustSpeed(item, event.slowdownAmount);
         }
     }
 
-    public void defaultReajustSpeed(TravelingItem item) {
+    protected void defaultReadjustSpeed(TravelingItem item, float slowdownAmount) {
         float speed = item.getSpeed();
 
-        if (speed > TransportConstants.PIPE_NORMAL_SPEED) {
-            speed -= TransportConstants.PIPE_NORMAL_SPEED;
+        if (speed > TransportConstants.PIPE_MAX_SPEED) {
+            speed = TransportConstants.PIPE_MAX_SPEED;
         }
 
-        if (speed < TransportConstants.PIPE_NORMAL_SPEED) {
-            speed = TransportConstants.PIPE_NORMAL_SPEED;
+        if (speed > TransportConstants.PIPE_MIN_SPEED) {
+            speed -= slowdownAmount;
+        }
+
+        if (speed < TransportConstants.PIPE_MIN_SPEED) {
+            speed = TransportConstants.PIPE_MIN_SPEED;
         }
 
         item.setSpeed(speed);
@@ -224,9 +229,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
         if (entity instanceof IPipeTile) {
             Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
-            if (pipe == null || pipe.transport == null) {
-                return false;
-            }
 
             if (pipe == null || pipe.transport == null) {
                 return false;
@@ -287,6 +289,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                     continue;
                 }
 
+                if (item.output == null) {
+                    // TODO: Figure out why this is actually happening.
+                    items.scheduleRemoval(item);
+                    BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.x() + ", " + container.y() + ", "
+                        + container.z() + "!");
+                    continue;
+                }
+
                 TileEntity tile = container.getTile(item.output, true);
 
                 PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);
@@ -297,7 +307,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 if (handleItem && items.scheduleRemoval(item)) {
                     handleTileReached(item, tile);
                 }
-
             }
         }
         items.iterating = false;

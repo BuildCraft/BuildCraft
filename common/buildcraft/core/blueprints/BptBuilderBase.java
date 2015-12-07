@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.blueprints;
 
 import java.util.BitSet;
@@ -21,6 +25,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
@@ -211,7 +216,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     public void createDestroyItems(BuildingSlotBlock slot) {
-        int hardness = (int) Math.ceil(getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
+		int hardness = (int) Math.ceil((double) getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
 
         for (int i = 0; i < hardness; ++i) {
             slot.addStackConsumed(new ItemStack(BuildCraftCore.decoratedBlock));
@@ -223,8 +228,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
-        NBTTagList clearList = new NBTTagList();
-
         nbt.setByteArray("usedLocationList", BitSetUtils.toByteArray(usedLocations));
 
         NBTTagList buildingList = new NBTTagList();

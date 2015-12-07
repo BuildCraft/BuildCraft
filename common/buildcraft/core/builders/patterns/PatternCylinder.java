@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
@@ -18,8 +18,24 @@ public class PatternCylinder extends FillerPattern {
     }
 
     @Override
+    public int maxParameters() {
+        return 1;
+    }
+
+    @Override
+    public int minParameters() {
+        return 1;
+    }
+
+    @Override
+    public IStatementParameter createParameter(int index) {
+        return new PatternParameterHollow(true);
+    }
+
+    @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
         Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
+        boolean filled = parameters.length > 0 && ((PatternParameterHollow) parameters[0]).filled;
 
         int xMin = 0;
         int yMin = 0;
@@ -40,6 +56,7 @@ public class PatternCylinder extends FillerPattern {
 
         if (xRadius == 0 || zRadius == 0) {
             fill(xMin, yMin, zMin, xMax, yMax, zMax, result);
+            return result;
         }
 
         int dx = xRadius, dz = 0;
@@ -53,7 +70,11 @@ public class PatternCylinder extends FillerPattern {
 
         if (twoASquare > 0) {
             while (stoppingX >= stoppingZ) {
-                fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                if (filled) {
+                    fillSquare(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                } else {
+                    fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                }
 
                 ++dz;
                 stoppingZ += twoASquare;
@@ -78,7 +99,11 @@ public class PatternCylinder extends FillerPattern {
 
         if (twoBSquare > 0) {
             while (stoppingX <= stoppingZ) {
-                fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                if (filled) {
+                    fillSquare(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                } else {
+                    fillFourColumns(xCenter, zCenter, dx, dz, xFix, zFix, yMin, yMax, result);
+                }
 
                 ++dx;
                 stoppingX += twoBSquare;
@@ -94,6 +119,35 @@ public class PatternCylinder extends FillerPattern {
         }
 
         return result;
+    }
+
+    private boolean fillSquare(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, Template template) {
+        int x1, x2, z1, z2;
+
+        x1 = xCenter + dx + xFix;
+        z1 = zCenter + dz + zFix;
+
+        x2 = xCenter - dx;
+        z2 = zCenter + dz + zFix;
+
+        fill(x2, yMin, z2, x1, yMax, z1, template);
+
+        x1 = xCenter - dx;
+        z1 = zCenter - dz;
+
+        fill(x1, yMin, z1, x2, yMax, z2, template);
+
+        x2 = xCenter + dx + xFix;
+        z2 = zCenter - dz;
+
+        fill(x1, yMin, z1, x2, yMax, z2, template);
+
+        x1 = xCenter + dx + xFix;
+        z1 = zCenter + dz + zFix;
+
+        fill(x2, yMin, z2, x1, yMax, z1, template);
+
+        return true;
     }
 
     private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz, int xFix, int zFix, int yMin, int yMax, Template template) {

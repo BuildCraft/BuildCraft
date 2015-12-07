@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
@@ -24,6 +28,7 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -101,7 +106,7 @@ public class Blueprint extends BlueprintBase {
         try {
             slot.initializeFromObjectAt(context, pos);
             slot.storeRequirements(context, pos);
-            contents[posX][posY][posZ] = slot;
+			put(posX, posY, posZ, slot);
         } catch (Throwable t) {
             // Defensive code against errors in implementers
             t.printStackTrace();
@@ -117,7 +122,7 @@ public class Blueprint extends BlueprintBase {
                         buildingPermission = BuildingPermission.CREATIVE_ONLY;
                     }
                 } else {
-                    contents[posX][posY][posZ] = null;
+					put(posX, posY, posZ, null);
                 }
                 break;
             case NONE:
@@ -168,11 +173,12 @@ public class Blueprint extends BlueprintBase {
         for (int x = 0; x < sizeX; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
+					SchematicBlockBase schematic = get(x, y, z);
                     NBTTagCompound cpt = new NBTTagCompound();
 
-                    if (contents[x][y][z] != null) {
-                        contents[x][y][z].idsToBlueprint(mapping);
-                        contents[x][y][z].writeSchematicToNBT(cpt, mapping);
+					if (schematic != null) {
+						schematic.idsToBlueprint(mapping);
+						schematic.writeSchematicToNBT(cpt, mapping);
                     }
 
                     nbtContents.appendTag(cpt);
@@ -224,14 +230,14 @@ public class Blueprint extends BlueprintBase {
 
                         if (block != null) {
                             int meta = cpt.getInteger("blockMeta");
-                            contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block.getStateFromMeta(meta));
-                            if (contents[x][y][z] != null) {
-                                contents[x][y][z].readSchematicFromNBT(cpt, mapping);
+							SchematicBlockBase schematic = SchematicRegistry.INSTANCE.createSchematicBlock(block.getStateFromMeta(meta));
+							if (schematic != null) {
+								schematic.readSchematicFromNBT(cpt, mapping);
 
-                                if (!contents[x][y][z].doNotUse()) {
-                                    contents[x][y][z].idsToWorld(mapping);
+								if (!schematic.doNotUse()) {
+									schematic.idsToWorld(mapping);
 
-                                    switch (contents[x][y][z].getBuildingPermission()) {
+									switch (schematic.getBuildingPermission()) {
                                         case ALL:
                                             break;
                                         case CREATIVE_ONLY:
@@ -244,16 +250,17 @@ public class Blueprint extends BlueprintBase {
                                             break;
                                     }
                                 } else {
-                                    contents[x][y][z] = null;
+									schematic = null;
                                     isComplete = false;
                                 }
                             }
+							put(x, y, z, schematic);
                         } else {
-                            contents[x][y][z] = null;
+							put(x, y, z, null);
                             isComplete = false;
                         }
                     } else {
-                        contents[x][y][z] = null;
+						put(x, y, z, null);
                     }
                 }
             }
@@ -288,7 +295,7 @@ public class Blueprint extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
+        Item item = Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
         if (item == null) {
             throw new Error("Could not find the blueprint item! Did you attempt to use this without buildcraft builders installed?");
         }

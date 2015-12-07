@@ -7,6 +7,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.EnumPipePart;
+
 public interface IPipeContents {
     public interface IPipeContentsBulk extends IPipeContents {
         /** Get the part of the pipe the contents is held within */

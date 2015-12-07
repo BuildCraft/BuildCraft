@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.api.blueprints.BuilderAPI;
@@ -21,7 +22,6 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
-
     private BlockPos blockToBreak;
     private float blockDamage = 0;
 
@@ -51,8 +51,22 @@ public class AIRobotBreak extends AIRobot {
 
     @Override
     public void update() {
-        if (state == null || state.getBlock().isAir(robot.worldObj, blockToBreak)) {
+        if (state == null) {
+            state = robot.worldObj.getBlockState(blockToBreak);
+            if (state.getBlock().isAir(robot.worldObj, blockToBreak)) {
+                setSuccess(false);
+                terminate();
+                return;
+            }
+            state = robot.worldObj.getBlockState(blockToBreak);
+            hardness = state.getBlock().getBlockHardness(robot.worldObj, blockToBreak);
+            speed = getBreakSpeed(robot, robot.getHeldItem(), state, blockToBreak);
+        }
+
+        if (state.getBlock().isAir(robot.worldObj, blockToBreak) || hardness < 0) {
+            setSuccess(false);
             terminate();
+            return;
         }
 
         if (hardness != 0) {
@@ -66,18 +80,22 @@ public class AIRobotBreak extends AIRobot {
             robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, -1);
             blockDamage = 0;
 
+            boolean continueBreaking = true;
+
             if (robot.getHeldItem() != null) {
-                robot.getHeldItem().getItem().onBlockStartBreak(robot.getHeldItem(), blockToBreak, CoreProxy.proxy.getBuildCraftPlayer(
-                        (WorldServer) robot.worldObj).get());
+                if (robot.getHeldItem().getItem().onBlockStartBreak(robot.getHeldItem(), blockToBreak, CoreProxy.proxy.getBuildCraftPlayer(
+                        (WorldServer) robot.worldObj).get())) {
+                    continueBreaking = false;
+                }
             }
 
-            if (BlockUtils.breakBlock((WorldServer) robot.worldObj, blockToBreak, 6000)) {
+            if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem())) {
                 robot.worldObj.playAuxSFXAtEntity(null, 2001, blockToBreak, Block.getStateId(state));
 
                 if (robot.getHeldItem() != null) {
                     robot.getHeldItem().getItem().onBlockDestroyed(robot.getHeldItem(), robot.worldObj, state.getBlock(), blockToBreak, robot);
 
-                    if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+                    if (robot.getHeldItem().stackSize == 0) {
                         robot.setItemInUse(null);
                     }
                 }
@@ -103,12 +121,11 @@ public class AIRobotBreak extends AIRobot {
 
         if (f > 1.0F) {
             int i = EnchantmentHelper.getEfficiencyModifier(robot);
-            ItemStack itemstack = usingItem;
 
-            if (i > 0 && itemstack != null) {
+            if (i > 0) {
                 float f1 = i * i + 1;
 
-                boolean canHarvest = ForgeHooks.canToolHarvestBlock(robot.worldObj, pos, itemstack);
+                boolean canHarvest = ForgeHooks.canToolHarvestBlock(robot.worldObj, pos, usingItem);
 
                 if (!canHarvest && f <= 1.0F) {
                     f += f1 * 0.08F;
@@ -124,6 +141,11 @@ public class AIRobotBreak extends AIRobot {
     @Override
     public int getEnergyCost() {
         return (int) Math.ceil((float) BuilderAPI.BREAK_ENERGY * 2 / 30.0F);
+    }
+
+    @Override
+    public boolean canLoadFromNBT() {
+        return true;
     }
 
     @Override

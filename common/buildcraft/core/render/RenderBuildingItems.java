@@ -1,5 +1,5 @@
-/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.render;
@@ -58,7 +58,6 @@ public class RenderBuildingItems {
                 GL11.glTranslatef(0, 0.25F, 0);
                 GL11.glScalef(renderScale, renderScale, renderScale);
                 if (s.stack != null) {
-                    @SuppressWarnings("deprecation")
                     IBakedModel model = renderItem.getItemModelMesher().getItemModel(s.stack);
                     if (model != null) {
                         renderItem.renderItem(s.stack, renderItem.getItemModelMesher().getItemModel(s.stack));

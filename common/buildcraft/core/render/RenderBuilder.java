@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
@@ -20,7 +24,6 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
     public void renderTileEntityAt(B builder, double x, double y, double z, float f, int arg) {
         super.renderTileEntityAt(builder, x, y, z, f, arg);
 
-        if (builder != null) {
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
             GL11.glEnable(GL11.GL_CULL_FACE);
@@ -48,6 +51,5 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
 
             renderItems.render(builder, x, y, z);
         }
-    }
 
 }

@@ -44,6 +44,10 @@ public final class ResourceUtils {
      * @param objectName
      * @return */
     public static String getObjectPrefix(String objectName) {
+        if (objectName == null) {
+            return null;
+        }
+
         int splitLocation = objectName.indexOf(":");
         return objectName.substring(0, splitLocation).replaceAll("[^a-zA-Z0-9\\s]", "") + objectName.substring(splitLocation);
     }

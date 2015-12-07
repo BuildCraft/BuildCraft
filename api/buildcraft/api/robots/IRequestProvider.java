@@ -6,18 +6,37 @@ package buildcraft.api.robots;
 
 import net.minecraft.item.ItemStack;
 
+/**
+ * Provide requests of items that need to be fulfilled.
+ *
+ * Requests are organized as an linear array, where null entries mark slots
+ * without a requests. A request in a slot, or the amount of slots, is allowed
+ * to change before a call to {@link #offerItem(int, ItemStack)}, but it is not
+ * recommended that this is frequent, since the request delivery won't fail
+ * until it is offered the previous request.
+ */
 public interface IRequestProvider {
-    /** Return the total number of request slots available from this provider. */
-    int getNumberOfRequests();
+	/**
+	 * Return the total number of request slots available from this provider.
+	 *
+	 * @return
+	 */
+	int getRequestsCount();
 
-    /** Return the stack requested in slot i, provided that this request is not in process of being provided by a
-     * robot. */
-    StackRequest getAvailableRequest(int i);
+	/**
+	 * Return a stack with the request in the slot.
+	 *
+	 * @param slot
+	 * @return the request in the slot, or null if there's no request.
+	 */
+	ItemStack getRequest(int slot);
 
-    /** Allocate the request at slot i to the robot given in parameter, and return true if the allocation is
-     * successful. */
-    boolean takeRequest(int i, EntityRobotBase robot);
-
-    /** Provide a stack to fulfill request at index i. Return the stack minus items that have been taken. */
-    ItemStack provideItemsForRequest(int i, ItemStack stack);
+	/**
+	 * Fulfill the request in slot with the stack given and return any excess.
+	 *
+	 * @param slot
+	 * @param stack
+	 * @return any excess that was not used to fulfill the request.
+	 */
+	ItemStack offerItem(int slot, ItemStack stack);
 }

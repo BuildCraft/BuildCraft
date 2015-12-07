@@ -13,13 +13,22 @@ import net.minecraftforge.fluids.FluidStack;
 
 import cofh.api.energy.IEnergyReceiver;
 
-import buildcraft.api.transport.pipe_bc8.*;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
+import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
+import buildcraft.api.transport.pipe_bc8.IContentsFilter;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
 import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
+import buildcraft.api.transport.pipe_bc8.IPipeContents;
+import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableFluid;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditablePower;
 import buildcraft.api.transport.pipe_bc8.IPipeHelper.EnumCombiningOp;
+import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeBehaviour_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.AttemptCreate;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventInteract_BC8;

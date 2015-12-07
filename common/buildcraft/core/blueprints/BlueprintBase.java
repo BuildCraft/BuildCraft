@@ -1,15 +1,16 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.blueprints;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -35,7 +36,6 @@ public abstract class BlueprintBase {
 
     public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
 
-    public SchematicBlockBase[][][] contents;
     public int anchorX, anchorY, anchorZ;
     public int sizeX, sizeY, sizeZ;
     public LibraryId id = new LibraryId();
@@ -46,15 +46,15 @@ public abstract class BlueprintBase {
     public boolean isComplete = true;
 
     protected MappingRegistry mapping = new MappingRegistry();
+	protected SchematicBlockBase[] contents;
 
-    private ComputeDataThread computeData;
-    private byte[] data;
+    private NBTTagCompound nbt;
     private EnumFacing mainDir = EnumFacing.EAST;
 
     public BlueprintBase() {}
 
     public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-        contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -65,41 +65,46 @@ public abstract class BlueprintBase {
         anchorZ = 0;
     }
 
-    public void translateToBlueprint(Vec3 transform) {
-        for (int x = 0; x < sizeX; ++x) {
-            for (int y = 0; y < sizeY; ++y) {
-                for (int z = 0; z < sizeZ; ++z) {
-                    if (contents[x][y][z] != null) {
-                        contents[x][y][z].translateToBlueprint(transform);
+	private int toArrayPos(int x, int y, int z) {
+		return (y * sizeZ + z) * sizeX + x;
                     }
+
+	public SchematicBlockBase get(int x, int y, int z) {
+		return contents[(y * sizeZ + z) * sizeX + x];
                 }
+
+	public void put(int x, int y, int z, SchematicBlockBase s) {
+		contents[(y * sizeZ + z) * sizeX + x] = s;
+	}
+
+	public void translateToBlueprint(Vec3 transform) {
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToBlueprint(transform);
             }
         }
     }
 
-    public void translateToWorld(Vec3 transform) {
-        for (int x = 0; x < sizeX; ++x) {
-            for (int y = 0; y < sizeY; ++y) {
-                for (int z = 0; z < sizeZ; ++z) {
-                    if (contents[x][y][z] != null) {
-                        contents[x][y][z].translateToWorld(transform);
-                    }
-                }
+	public void translateToWorld(Vec3 transform) {
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToWorld(transform);
             }
         }
     }
 
     public void rotateLeft(BptContext context) {
-        SchematicBlockBase[][][] newContents = new SchematicBlockBase[sizeZ][sizeY][sizeX];
+		SchematicBlockBase[] newContents = new SchematicBlockBase[sizeZ * sizeY * sizeX];
 
         for (int x = 0; x < sizeZ; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeX; ++z) {
-                    newContents[x][y][z] = contents[z][y][(sizeZ - 1) - x];
+					int pos = (y * sizeX + z) * sizeZ + x;
+					newContents[pos] = contents[toArrayPos(z, y, (sizeZ - 1) - x)];
 
-                    if (newContents[x][y][z] != null) {
+					if (newContents[pos] != null) {
                         try {
-                            newContents[x][y][z].rotateLeft(context);
+							newContents[pos].rotateLeft(context);
                         } catch (Throwable t) {
                             // Defensive code against errors in implementers
                             t.printStackTrace();
@@ -129,8 +134,6 @@ public abstract class BlueprintBase {
             sub.setInteger("x", (int) np.xCoord);
             sub.setInteger("z", (int) np.zCoord);
             sub.setByte("dir", (byte) dir.ordinal());
-
-            NBTTagCompound bpt = sub.getCompoundTag("bpt");
         }
 
         context.rotateLeft();
@@ -220,7 +223,7 @@ public abstract class BlueprintBase {
             excavate = true;
         }
 
-        contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
 
         try {
             loadContents(nbt);
@@ -255,59 +258,25 @@ public abstract class BlueprintBase {
     public BptContext getContext(World world, Box box) {
         return new BptContext(world, box, mapping);
     }
-
-    public void addSubBlueprint(BlueprintBase bpt, BlockPos pos, EnumFacing dir) {
-        NBTTagCompound nbt = new NBTTagCompound();
-
-        nbt.setInteger("x", pos.getX());
-        nbt.setInteger("y", pos.getY());
-        nbt.setInteger("z", pos.getZ());
-        nbt.setByte("dir", (byte) dir.ordinal());
-
-        NBTTagCompound bptNBT = getNBT();
-        nbt.setTag("bpt", bptNBT);
-
-        subBlueprintsNBT.add(nbt);
+    
+    public void addSubBlueprint(BlueprintBase subBpt, BlockPos pos, EnumFacing dir) {
+        NBTTagCompound subNBT = new NBTTagCompound();
+        
+        subNBT.setInteger("x", pos.getX());
+        subNBT.setInteger("y", pos.getY());
+        subNBT.setInteger("z", pos.getZ());
+        subNBT.setByte("dir", (byte) dir.ordinal());
+        subNBT.setTag("bpt", subBpt.getNBT());
+        
+        subBlueprintsNBT.add(subNBT);
     }
 
-    class ComputeDataThread extends Thread {
-        public NBTTagCompound nbt;
-
-        @Override
-        public void run() {
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                CompressedStreamTools.writeCompressed(nbt, baos);
-                BlueprintBase.this.setData(baos.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+	public NBTTagCompound getNBT() {
+		if (nbt == null) {
+			nbt = new NBTTagCompound();
+			writeToNBTInternal(nbt);
         }
-    }
-
-    /** This function will return the binary data associated to this blueprint. This data is computed asynchronously. If
-     * the data is not yet available, null will be returned. */
-    public synchronized byte[] getData() {
-        if (data != null) {
-            return data;
-        } else if (computeData == null) {
-            computeData = new ComputeDataThread();
-            computeData.nbt = new NBTTagCompound();
-            writeToNBTInternal(computeData.nbt);
-            computeData.start();
-        }
-
-        return null;
-    }
-
-    public synchronized NBTTagCompound getNBT() {
-        if (computeData == null) {
-            computeData = new ComputeDataThread();
-            computeData.nbt = new NBTTagCompound();
-            writeToNBTInternal(computeData.nbt);
-            computeData.start();
-        }
-        return computeData.nbt;
+		return nbt;
     }
 
     public BlueprintBase adjustToWorld(World world, BlockPos pos, EnumFacing o) {
@@ -338,10 +307,6 @@ public abstract class BlueprintBase {
         translateToWorld(transform);
 
         return this;
-    }
-
-    public synchronized void setData(byte[] b) {
-        data = b;
     }
 
     public abstract void loadContents(NBTTagCompound nbt) throws BptError;

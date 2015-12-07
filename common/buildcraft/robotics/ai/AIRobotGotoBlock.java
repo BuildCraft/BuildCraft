@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -9,8 +9,10 @@ import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -59,7 +61,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
             pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX), (int) Math.floor(robot.posY), (int) Math.floor(
                     robot.posZ)), finalPos, maxDistance);
 
-            pathSearchJob = new IterableAlgorithmRunner(pathSearch, 100);
+            pathSearchJob = new IterableAlgorithmRunner(pathSearch, 50);
             pathSearchJob.start();
         } else if (path != null && next != null) {
             double distance = robot.getDistance(next.xCoord, next.yCoord, next.zCoord);
@@ -106,9 +108,14 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     private void setNextInPath() {
         if (path.size() > 0) {
             BlockPos next = path.getFirst();
-            setDestination(robot, Utils.convertMiddle(next));
-            prevDistance = Double.MAX_VALUE;
-            robot.aimItemAt(next);
+            if (BuildCraftAPI.isSoftBlock(robot.worldObj, next)) {
+                setDestination(robot, Utils.convertMiddle(next));
+                prevDistance = Double.MAX_VALUE;
+                robot.aimItemAt(next);
+            } else {
+                setSuccess(false);
+                terminate();
+            }
         }
     }
 

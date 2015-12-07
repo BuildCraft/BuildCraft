@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -13,9 +13,9 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
+import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.robotics.statements.ActionStationInputItems;
+import buildcraft.robotics.statements.ActionStationAcceptItems;
 
 public class AIRobotUnload extends AIRobot {
 
@@ -49,26 +49,46 @@ public class AIRobotUnload extends AIRobot {
             return false;
         }
 
-        for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, null)) {
+        EnumFacing injectSide = station.getItemOutputSide().face;
+        if (!output.canInjectItems(injectSide)) {
+            return false;
+        }
+
+        for (IInvSlot robotSlot : InventoryIterator.getIterable(robot)) {
             if (robotSlot.getStackInSlot() == null) {
                 continue;
             }
 
-            if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackFilter(robotSlot.getStackInSlot()), ActionStationInputItems.class)) {
-                return false;
+            if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackOrListFilter(robotSlot.getStackInSlot()),
+                    ActionStationAcceptItems.class)) {
+                continue;
             }
-
-            EnumFacing injectSide = station.side().getOpposite();
 
             ItemStack stack = robotSlot.getStackInSlot();
             int used = output.injectItem(stack, doUnload, injectSide, null);
+
             if (used > 0) {
                 if (doUnload) {
-                    stack.stackSize -= used;
-                    if (stack.stackSize > 0) {
-                        robotSlot.setStackInSlot(stack);
+                    robotSlot.decreaseStackInSlot(used);
+                }
+                return true;
+            }
+        }
+
+        if (robot.getHeldItem() != null) {
+            if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackOrListFilter(robot.getHeldItem()), ActionStationAcceptItems.class)) {
+                return false;
+            }
+
+            ItemStack stack = robot.getHeldItem();
+            int used = output.injectItem(stack, doUnload, injectSide, null);
+
+            if (used > 0) {
+                if (doUnload) {
+                    if (stack.stackSize <= used) {
+                        robot.setItemInUse(null);
                     } else {
-                        robotSlot.setStackInSlot(null);
+                        stack.stackSize -= used;
                     }
                 }
                 return true;

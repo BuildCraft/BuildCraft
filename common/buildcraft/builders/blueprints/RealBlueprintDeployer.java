@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.blueprints;
@@ -13,11 +13,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.builders.LibraryDatabase;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.LibraryId;
+import buildcraft.core.blueprints.*;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 

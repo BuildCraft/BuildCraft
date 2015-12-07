@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
@@ -12,8 +12,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.lib.items.ItemBuildCraft;
@@ -21,7 +23,7 @@ import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
-    public static enum Chipset {
+    public enum Chipset {
 
         RED,
         IRON,
@@ -74,11 +76,18 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
         }
     }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		for (Chipset chipset : Chipset.values()) {
-			ModelHelper.registerItemModel(this, chipset.ordinal(), "/" + chipset.name().toLowerCase(Locale.ROOT));
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        for (Chipset chipset : Chipset.values()) {
+            ModelHelper.registerItemModel(this, chipset.ordinal(), "/" + chipset.name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    public void registerItemStacks() {
+        for (Chipset chipset : Chipset.VALUES) {
+            OreDictionary.registerOre("chipset" + chipset.name().toUpperCase().substring(0, 1) + chipset.name().toLowerCase().substring(1), chipset
+                    .getStack());
+        }
+    }
 }

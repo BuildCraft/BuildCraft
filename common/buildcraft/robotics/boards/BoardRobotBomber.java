@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
@@ -19,11 +19,7 @@ import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
-import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
-import buildcraft.robotics.ai.AIRobotLoad;
-import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
+import buildcraft.robotics.ai.*;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {
 

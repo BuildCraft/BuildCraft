@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -40,7 +39,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
     public TriggerPipeContents(PipeContents kind) {
         super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ROOT), "buildcraft.pipe.contents." + kind.name());
-		setBuildCraftLocation("transport", "triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ROOT));
+        setBuildCraftLocation("transport", "triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ROOT));
         this.kind = kind;
         kind.trigger = this;
     }
@@ -88,46 +87,34 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
         } else if (pipe.transport instanceof PipeTransportFluids) {
             PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
-            FluidStack searchedFluid = null;
-
-            if (parameter != null && parameter.getItemStack() != null) {
-                searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
-            }
-
             if (kind == PipeContents.empty) {
-                for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
-                    if (b.fluid != null && b.fluid.amount != 0) {
-                        return false;
-                    }
-                }
-
-                return true;
+                return transportFluids.fluidType == null;
             } else {
-                for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
-                    if (b.fluid != null && b.fluid.amount != 0) {
-                        if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
-                            return true;
-                        }
-                    }
-                }
+                if (parameter != null && parameter.getItemStack() != null) {
+                    FluidStack searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 
-                return false;
+                    if (searchedFluid != null) {
+                        return transportFluids.fluidType != null && searchedFluid.isFluidEqual(transportFluids.fluidType);
+                    }
+                } else {
+                    return transportFluids.fluidType != null;
+                }
             }
         } else if (pipe.transport instanceof PipeTransportPower) {
             PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
             switch (kind) {
                 case empty:
-                    for (double s : transportPower.displayPower) {
-                        if (s > 1e-4) {
+                    for (short s : transportPower.displayPower) {
+                        if (s > 0) {
                             return false;
                         }
                     }
 
                     return true;
                 case containsEnergy:
-                    for (double s : transportPower.displayPower) {
-                        if (s > 1e-4) {
+                    for (short s : transportPower.displayPower) {
+                        if (s > 0) {
                             return true;
                         }
                     }

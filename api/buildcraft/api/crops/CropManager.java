@@ -45,7 +45,7 @@ public final class CropManager {
                 return true;
             }
         }
-        return defaultHandler.canSustainPlant(world, seed, pos);
+        return defaultHandler.isSeed(seed) && defaultHandler.canSustainPlant(world, seed, pos);
     }
 
     public static boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
@@ -67,13 +67,13 @@ public final class CropManager {
     }
 
     public static boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
+        IBlockState state = world.getBlockState(pos);
         for (ICropHandler cropHandler : handlers) {
-            IBlockState state = world.getBlockState(pos);
             if (cropHandler.isMature(world, state, pos)) {
                 return cropHandler.harvestCrop(world, pos, drops);
             }
         }
-        return defaultHandler.harvestCrop(world, pos, drops);
+        return defaultHandler.isMature(world, state, pos) && defaultHandler.harvestCrop(world, pos, drops);
     }
 
 }

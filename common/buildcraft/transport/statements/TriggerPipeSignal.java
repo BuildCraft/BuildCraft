@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -50,11 +54,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 
         if (active) {
-            if (pipe.signalStrength[color.ordinal()] == 0) {
+			if (pipe.signalStrength[color.ordinal()] == 0) {
                 return false;
             }
         } else {
-            if (pipe.signalStrength[color.ordinal()] > 0) {
+			if (pipe.signalStrength[color.ordinal()] > 0) {
                 return false;
             }
         }
@@ -65,11 +69,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
                 if (signal.color != null) {
                     if (signal.active) {
-                        if (pipe.signalStrength[signal.color.ordinal()] == 0) {
+						if (pipe.signalStrength[signal.color.ordinal()] == 0) {
                             return false;
                         }
                     } else {
-                        if (pipe.signalStrength[signal.color.ordinal()] > 0) {
+						if (pipe.signalStrength[signal.color.ordinal()] > 0) {
                             return false;
                         }
                     }

@@ -1,15 +1,14 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 
@@ -17,13 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+
+import net.minecraftforge.fluids.*;
 
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -103,7 +97,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     }
 
     private boolean placeFluid(BlockPos pos, Fluid fluid) {
-        Block block = BlockUtils.getBlock(worldObj, pos);
+        Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
 
         if (canPlaceFluidAt(block, pos)) {
             boolean placed;
@@ -203,7 +197,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
                 return;
             }
 
-            Block block = BlockUtils.getBlock(worldObj, pos);
+            Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
             if (BlockUtils.getFluid(block) == tank.getFluidType()) {
                 fluidsFound.add(pos);
             }

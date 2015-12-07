@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -27,6 +27,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
@@ -39,12 +40,10 @@ import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
-// TODO: MAKE POWER FLOW WORK!
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
     public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
 
-    private static final int DISPLAY_SMOOTHING = 10;
     private static final int OVERLOAD_TICKS = 60;
     public static final short POWER_STAGES = 1 << 6;
 
@@ -60,12 +59,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public int[] dbgEnergyOutput = new int[6];
     public int[] dbgEnergyOffered = new int[6];
 
+    private final AverageInt[] powerAverage = new AverageInt[6];
     private final TileEntity[] tiles = new TileEntity[6];
     private final Object[] providers = new Object[6];
 
     private boolean needsInit = true;
-
-    private short[] prevDisplayPower = new short[6];
 
     private int[] powerQuery = new int[6];
 
@@ -82,6 +80,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public PipeTransportPower() {
         for (int i = 0; i < 6; ++i) {
             powerQuery[i] = 0;
+            powerAverage[i] = new AverageInt(10);
         }
     }
 
@@ -116,8 +115,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                 // Disregard engines for this.
                 return false;
             }
-            if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
-                IEnergyConnection handler = (IEnergyConnection) tile;
+
+            Object provider = CompatHooks.INSTANCE.getEnergyProvider(tile);
+
+            if (provider instanceof IEnergyHandler || provider instanceof IEnergyReceiver) {
+                IEnergyConnection handler = (IEnergyConnection) provider;
                 if (handler.canConnectEnergy(side.getOpposite())) {
                     return true;
                 }
@@ -146,11 +148,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     @Override
-    public void onNeighborBlockChange(int blockId) {
-        super.onNeighborBlockChange(blockId);
-        for (EnumFacing side : EnumFacing.VALUES) {
-            updateTile(side);
-        }
+    public void onNeighborChange(EnumFacing side) {
+        super.onNeighborChange(side);
+        updateTile(side);
     }
 
     private void updateTile(EnumFacing side) {
@@ -162,7 +162,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             tiles[o] = null;
             internalPower[o] = 0;
             internalNextPower[o] = 0;
-            displayPower[o] = 0;
+            powerAverage[o].clear();
             displayFlow[o] = 0;
         }
         providers[o] = getEnergyProvider(o);
@@ -204,8 +204,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-        System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
-        Arrays.fill(displayPower, (short) 0);
+        // FIXME: LEFT OVER FROM MERGE! LOOK AT THIS!
         Arrays.fill(displayFlow, (short) 0);
 
         // Send the power to nearby pipes who requested it
@@ -222,56 +221,58 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                 }
 
                 if (totalPowerQuery > 0) {
-                    double[] internalPowerHold = new double[6];
-                    System.arraycopy(internalPower, 0, internalPowerHold, 0, 6);
-
+                    int unusedPowerQuery = totalPowerQuery;
                     for (int j = 0; j < 6; ++j) {
                         if (j != i && powerQuery[j] > 0) {
                             Object ep = providers[j];
-                            double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
+                            double watts = Math.min(internalPower[i] * powerQuery[j] / unusedPowerQuery, internalPower[i]);
+                            unusedPowerQuery -= powerQuery[j];
 
-                            if (ep instanceof IPipeTile) {
+                            if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
                                 Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
                                 PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
                                 watts = nearbyTransport.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), watts);
                                 internalPower[i] -= watts;
                                 dbgEnergyOutput[j] += watts;
+
+                                powerAverage[j].push((int) Math.ceil(watts));
+                                powerAverage[i].push((int) Math.ceil(watts));
                             } else {
                                 int iWatts = (int) watts;
                                 if (ep instanceof IEnergyHandler) {
                                     IEnergyHandler handler = (IEnergyHandler) ep;
-                                    if (handler.canConnectEnergy(EnumFacing.VALUES[j].getOpposite())) {
-                                        watts = handler.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), iWatts, false);
+                                    if (handler.canConnectEnergy(EnumFacing.values()[j].getOpposite())) {
+                                        iWatts = handler.receiveEnergy(EnumFacing.values()[j].getOpposite(), iWatts, false);
                                     }
-                                    internalPower[i] -= iWatts;
-                                    dbgEnergyOutput[j] += iWatts;
                                 } else if (ep instanceof IEnergyReceiver) {
                                     IEnergyReceiver handler = (IEnergyReceiver) ep;
-                                    if (handler.canConnectEnergy(EnumFacing.VALUES[j].getOpposite())) {
-                                        watts = handler.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), iWatts, false);
+                                    if (handler.canConnectEnergy(EnumFacing.values()[j].getOpposite())) {
+                                        iWatts = handler.receiveEnergy(EnumFacing.values()[j].getOpposite(), iWatts, false);
                                     }
-                                    internalPower[i] -= iWatts;
-                                    dbgEnergyOutput[j] += iWatts;
                                 }
-                            }
 
-                            displayPower[j] += watts;
-                            displayPower[i] += watts;
-                            displayFlow[i] = 1;
-                            displayFlow[j] = -1;
+                                internalPower[i] -= iWatts;
+                                dbgEnergyOutput[j] += iWatts;
+
+                                powerAverage[j].push(iWatts);
+                                powerAverage[i].push(iWatts);
+                            }
                         }
                     }
                 }
             }
         }
-        float highestPower = 0.0F;
+
+        short highestPower = 0;
         for (int i = 0; i < 6; i++) {
-            displayPower[i] = (short) Math.floor((float) (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1) + displayPower[i]) / DISPLAY_SMOOTHING);
+            powerAverage[i].tick();
+            displayPower[i] = (short) Math.round(powerAverage[i].getAverage());
             if (displayPower[i] > highestPower) {
                 highestPower = displayPower[i];
             }
         }
-        overload += highestPower > ((float) maxPower) * 0.95F ? 1 : -1;
+
+        overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
         if (overload < 0) {
             overload = 0;
         }
@@ -287,7 +288,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
             Object tile = providers[dir.ordinal()];
 
-            if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
+            if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipe() != null && ((Pipe<?>) ((IPipeTile) tile)
+                    .getPipe()).transport instanceof PipeTransportPower) {
                 continue;
             }
             if (tile instanceof IEnergyHandler) {
@@ -328,9 +330,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         for (int i = 0; i < 6; ++i) {
             if (transferQuery[i] != 0 && tiles[i] != null) {
                 TileEntity entity = tiles[i];
-                if (entity instanceof IPipeTile) {
+                if (entity instanceof IPipeTile && ((IPipeTile) entity).getPipeType() == IPipeTile.PipeType.POWER) {
                     IPipeTile nearbyTile = (IPipeTile) entity;
-                    if (nearbyTile.getPipe() == null) {
+                    if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
                         continue;
                     }
                     PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
@@ -478,15 +480,15 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     static {
-        powerCapacities.put(PipePowerCobblestone.class, 80);
-        powerCapacities.put(PipePowerStone.class, 160);
-        powerCapacities.put(PipePowerWood.class, 320);
-        powerCapacities.put(PipePowerSandstone.class, 320);
-        powerCapacities.put(PipePowerQuartz.class, 640);
-        powerCapacities.put(PipePowerIron.class, 1280);
-        powerCapacities.put(PipePowerGold.class, 2560);
-        powerCapacities.put(PipePowerEmerald.class, 2560);
-        powerCapacities.put(PipePowerDiamond.class, 10240);
+        powerCapacities.put(PipePowerCobblestone.class, TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerStone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerWood.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerSandstone.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerQuartz.class, 8 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerDiamond.class, 128 * TransportConstants.PIPE_POWER_BASE_CAP);
 
         powerResistances.put(PipePowerCobblestone.class, 0.05F);
         powerResistances.put(PipePowerStone.class, 0.025F);

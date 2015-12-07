@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.builders.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,16 +15,21 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
 
 public class ContainerBuilder extends BuildCraftContainer {
-
     IInventory playerInventory;
     TileBuilder builder;
+	protected ScrollbarWidget scrollbarWidget;
 
     public ContainerBuilder(EntityPlayer player, TileBuilder builder) {
         super(player, builder.getSizeInventory());
         this.playerInventory = player.inventory;
         this.builder = builder;
+
+		this.scrollbarWidget = new ScrollbarWidget(172, 17, 18, 0, 108);
+		this.scrollbarWidget.hidden = true;
+		this.addWidget(scrollbarWidget);
 
         addSlotToContainer(new Slot(builder, 0, 80, 27));
 
@@ -43,10 +52,14 @@ public class ContainerBuilder extends BuildCraftContainer {
         if (!builder.getWorld().isRemote && playerInventory instanceof InventoryPlayer) {
             // Refresh the requirements list for the player opening the GUI,
             // in case he does not have it.
-            builder.updateRequirements(((InventoryPlayer) playerInventory).player);
+			builder.updateRequirementsOnGuiOpen(((InventoryPlayer) playerInventory).player);
             builder.addGuiWatcher(((InventoryPlayer) playerInventory).player);
         }
     }
+
+	public TileBuilder getBuilder() {
+		return builder;
+	}
 
     @Override
     public void onContainerClosed(EntityPlayer player) {

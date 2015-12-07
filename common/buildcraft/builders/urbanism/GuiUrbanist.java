@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -128,7 +129,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
             tools[selectedTool].drawGuiContainerBackgroundLayer(this, f, x, y);
         }
 
-        drawBackgroundSlots();
+        drawBackgroundSlots(x, y);
 
         if (selectedTool != -1) {
             tools[selectedTool].drawSelection(this, f, x, y);

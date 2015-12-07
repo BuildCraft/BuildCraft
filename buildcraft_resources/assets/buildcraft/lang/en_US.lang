@@ -19,6 +19,7 @@ buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 buildcraft.boardRobotStripes=Stripes
+buildcraft.boardRobotBreaker=Breaker
 
 buildcraft.boardRobotPicker.desc=Picks up items
 buildcraft.boardRobotLumberjack.desc=Breaks logs
@@ -38,6 +39,7 @@ buildcraft.boardRobotCrafter.desc=Crafts items
 buildcraft.boardRobotDelivery.desc=Delivers items upon request
 buildcraft.boardRobotPump.desc=Pumps out liquids
 buildcraft.boardRobotStripes.desc=Uhh... Stripes!
+buildcraft.boardRobotStripes.desc=Mines stone
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
@@ -103,10 +105,8 @@ config.general.boards.blacklist=Robot blacklist
 config.general.pumpsConsumeWater=Pumps consume water
 config.general.updateCheck=Check for updates
 config.general.fuel.fuel.combustion=Combustion engine fuel multiplier
-config.general.fuel.lava.combustion=Combustion engine lava multiplier
 config.general.fuel.oil.combustion=Combustion engine oil multiplier
 config.general.fuel.fuel.combustion.energyOutput=Combustion engine fuel output
-config.general.fuel.lava.combustion.energyOutput=Combustion engine lava output
 config.general.fuel.oil.combustion.energyOutput=Combustion engine oil output
 config.general.itemLifespan=Item lifespan (seconds)
 config.general.canEnginesExplode=Engines explode
@@ -118,6 +118,7 @@ config.general.pipes.facadeBlacklistAsWhitelist=Invert facade blacklist
 config.general.pipes.facadeNoLaserRecipe=Add facade recipe without laser
 config.general.pipes.hardness=Hardness
 config.general.pipes.slimeballWaterproofRecipe=Add slimeball sealant recipe
+config.general.pumpsNeedRealPower=Pumps need real power
 config.general.quarry=Quarry Options
 config.general.quarry.oneTimeUse=One-time use
 config.general.quarry.doChunkLoading=Automatic chunk loading
@@ -142,13 +143,22 @@ config.worldgen.biomes.excessiveOilIDs=Biomes with excessive oil
 config.worldgen.biomes.excludeOilIDs=Biomes without oil
 config.worldgen.biomes.increasedOilIDs=Biomes with increased oil
 
-
 direction.north=North
 direction.west=West
 direction.east=East
 direction.south=South
 direction.up=Top
 direction.down=Bottom
+
+direction.center.0=North-West
+direction.center.1=North
+direction.center.2=North-East
+direction.center.3=West
+direction.center.4=Center
+direction.center.5=East
+direction.center.6=South-West
+direction.center.7=South
+direction.center.8=South-East
 
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
@@ -160,6 +170,8 @@ fillerpattern.box=Box
 fillerpattern.cylinder=Cylinder
 fillerpattern.frame=Frame
 fillerpattern.none=None
+fillerpattern.parameter.hollow=Hollow
+fillerpattern.parameter.filled=Filled
 
 fluid.oil=Oil
 fluid.fuel=Fuel
@@ -183,7 +195,7 @@ gate.action.station.accept_items=Accept Items
 gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.station.allow_craft=Allow Craft
-gate.action.station.provide_machine_request=Provide Computed Items
+gate.action.station.provide_machine_request=Request Needed Items
 gate.action.station.accept_fluids=Accept Fluids
 gate.action.station.povide_fluids=Provide Fluids
 gate.action.robot.work_in_area=Work in Area
@@ -259,6 +271,10 @@ gate.trigger.time.0=Night
 gate.trigger.time.6=Morning
 gate.trigger.time.12=Afternoon
 gate.trigger.time.18=Evening
+gate.trigger.fuelLevelBelow=Fuel level below %d%%
+gate.trigger.coolantLevelBelow=Coolant level below %d%%
+
+gui.fluidtank.empty=Empty
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks
@@ -355,6 +371,7 @@ item.PipeFluidsQuartz.name=Quartz Fluid Pipe
 item.PipeFluidsGold.name=Golden Fluid Pipe
 item.PipeFluidsEmerald.name=Emerald Fluid Pipe
 item.PipeFluidsDiamond.name=Diamond Fluid Pipe
+item.PipeFluidsClay.name=Clay Fluid Pipe
 item.PipePowerWood.name=Wooden Kinesis Pipe
 item.PipePowerCobblestone.name=Cobblestone Kinesis Pipe
 item.PipePowerStone.name=Stone Kinesis Pipe
@@ -382,6 +399,7 @@ item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
 item.Lens.name=Lens
 item.Filter.name=Filter
+item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
@@ -449,12 +467,14 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
-tip.PipeFluidsCobblestone=Won't connect to Stone
+tip.PipeFluidsClay=Insertion pipe
+tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe
 tip.PipeFluidsIron=Valve pipe
+tip.PipeFluidsQuartz=Won't connect to Cobblestone or Stone
 tip.PipeFluidsSandstone=Only connects to other pipes
-tip.PipeFluidsStone=Won't connect to Cobblestone
+tip.PipeFluidsStone=Won't connect to Cobblestone or Quartz
 tip.PipeFluidsVoid=Destroys fluids
 tip.PipeFluidsWood=Extraction pipe
 tip.PipeItemsClay=Insertion pipe
@@ -477,6 +497,16 @@ tip.PipePowerIron=Selectable Limiter Pipe
 tip.PipePowerSandstone=Only connects to other pipes
 tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
+tip.deprecated=Deprecated
+
+tip.gate.charged=Charged
+tip.gate.fullcharge=Full Charge
+tip.gate.nocharge=No Charge
+
+tip.filler.excavate.on=Excavate
+tip.filler.excavate.off=Do Not Excavate
+
+tip.list.matches=Matches
 
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
@@ -486,6 +516,10 @@ tip.shift.PipeItemsEmzuli=Set extraction preset filters in GUI\nA preset can pai
 tip.shift.PipeItemsLapis=Sneak-click to change color
 tip.shift.PipeItemsObsidian=Power with an engine\nMore power - greater distance
 tip.shift.PipePowerIron=Change the limit with a wrench or gates
+
+tip.PipeItemsEmerald.whitelist=Whitelist
+tip.PipeItemsEmerald.blacklist=Blacklist
+tip.PipeItemsEmerald.roundrobin=Round Robin (In Order)
 
 tip.tool.add=Add
 tip.tool.fullscreen=Fullscreen
@@ -538,6 +572,10 @@ bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
+bc_update.changelog=Type '/buildcraft changelog' to see the changelog
+
+chat.buildcraft.quarry.tooSmall=[BuildCraft] Quarry size is outside of chunkloading bounds or too small %d %d (%d)
+chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will keep %d chunks loaded
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:
@@ -564,3 +602,10 @@ buildcraft.guide.chapter.block=Blocks
 buildcraft.guide.chapter.item=Items
 buildcraft.guide.chapter.gears=Gears
 
+command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
+command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
+command.buildcraft.buildcraft.op.format=Format: /%s
+
+command.buildcraft.buildcraft.deop.desc=- %s : Deop FakePlayer
+command.buildcraft.buildcraft.deop.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)
+command.buildcraft.buildcraft.deop.format=Format: /%s

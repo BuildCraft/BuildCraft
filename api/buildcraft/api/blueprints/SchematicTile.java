@@ -36,6 +36,10 @@ public class SchematicTile extends SchematicBlock {
         }
     }
 
+    public void onNBTLoaded() {
+
+    }
+
     /** Places the block in the world, at the location specified in the slot. */
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
@@ -59,6 +63,9 @@ public class SchematicTile extends SchematicBlock {
             if (tile != null) {
                 tile.writeToNBT(tileNBT);
             }
+
+            tileNBT = (NBTTagCompound) tileNBT.copy();
+            onNBTLoaded();
         }
     }
 
@@ -97,6 +104,7 @@ public class SchematicTile extends SchematicBlock {
         super.readSchematicFromNBT(nbt, registry);
 
         tileNBT = nbt.getCompoundTag("blockCpt");
+        onNBTLoaded();
     }
 
     @Override

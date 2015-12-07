@@ -11,7 +11,6 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.statements.BCStatement;
 
-/** Created by asie on 3/14/15. */
 public class TriggerLightSensor extends BCStatement implements ITriggerInternal {
     private final boolean bright;
 

@@ -12,10 +12,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.events.BlockInteractionEvent;
+import net.minecraftforge.common.MinecraftForge;
+
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
@@ -33,11 +34,11 @@ public class BlockUrbanist extends BlockBuildCraft {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8,
             float par9) {
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, pos.getX(), pos.getY(), pos.getZ());
+//            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
         BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, state);
-        FMLCommonHandler.instance().bus().post(event);
+        MinecraftForge.EVENT_BUS.post(event);
         if (event.isCanceled()) {
             return false;
         }

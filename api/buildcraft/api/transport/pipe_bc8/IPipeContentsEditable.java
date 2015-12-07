@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.Fluid;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.INBTLoadable_BC8;
 import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;

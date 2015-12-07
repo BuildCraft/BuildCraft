@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
@@ -24,16 +24,6 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
     }
 
     @Override
-    public int minEnergyReceived() {
-        return 0;
-    }
-
-    @Override
-    public int maxEnergyReceived() {
-        return 500;
-    }
-
-    @Override
     protected EnumEnergyStage computeEnergyStage() {
         double energyLevel = getEnergyLevel();
         if (energyLevel < 0.33f) {
@@ -45,6 +35,11 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
         } else {
             return EnumEnergyStage.RED;
         }
+    }
+
+    @Override
+    public int getCurrentOutputLimit() {
+        return 10;
     }
 
     @Override
@@ -92,19 +87,22 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
     }
 
     @Override
-    public int calculateCurrentOutput() {
+    public int getIdealOutput() {
         return 10;
     }
 
-    @Override
-    public int maxEnergyExtracted() {
-        return 10;
-    }
-
-    // TODO: HACK
     @Override
     public boolean canConnectEnergy(EnumFacing from) {
         return false;
+    }
+
+    public int getEnergyStored(EnumFacing side) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(EnumFacing side) {
+        return 0;
     }
 
     @Override

@@ -1,8 +1,15 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.energy;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -11,13 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 
+import net.minecraftforge.fluids.*;
+
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.enums.EnumEnergyStage;
@@ -26,6 +30,9 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IOverrideDefaultStatements;
+import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
@@ -34,7 +41,7 @@ import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
 
-public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
+public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IOverrideDefaultStatements {
 
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
     public static float HEAT_PER_RF = 0.00023F;
@@ -111,6 +118,28 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                 return 0;
         }
     }
+
+	public boolean hasFuelBelowThreshold(float threshold) {
+		FluidStack fuel = tankFuel.getFluid();
+
+		if (fuel == null) {
+			return true;
+		}
+
+		float percentage = (float) fuel.amount / (float) MAX_LIQUID;
+		return percentage < threshold;
+	}
+
+	public boolean hasCoolantBelowThreshold(float threshold) {
+		FluidStack coolant = tankCoolant.getFluid();
+
+		if (coolant == null) {
+			return true;
+		}
+
+		float percentage = (float) coolant.amount / (float) MAX_LIQUID;
+		return percentage < threshold;
+	}
 
     private float getBiomeTempScalar() {
         if (biomeCache == null) {
@@ -297,18 +326,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         switch (id) {
             // Fluid Fuel ID
             case 15:
-                Fluid fluid = FluidRegistry.getFluid(value);
-                if (fluid != null) {
-                    tankFuel.setFluid(new FluidStack(fluid, tankFuelAmountCache));
+				if (FluidRegistry.getFluid(value) != null) {
+					tankFuel.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankFuelAmountCache));
                 } else {
                     tankFuel.setFluid(null);
                 }
                 break;
             // Fluid Coolant ID
             case 16:
-                fluid = FluidRegistry.getFluid(value);
-                if (fluid != null) {
-                    tankCoolant.setFluid(new FluidStack(fluid, tankCoolantAmountCache));
+				if (FluidRegistry.getFluid(value) != null) {
+					tankCoolant.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankCoolantAmountCache));
                 } else {
                     tankCoolant.setFluid(null);
                 }
@@ -383,12 +410,15 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if (resource == null || resource.getFluid() == null) {
+			return 0;
+		}
+
         if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
             return tankCoolant.fill(resource, doFill);
         } else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
             int filled = tankFuel.fill(resource, doFill);
-            if (filled > 0 && tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null && tankFuel.getFluid()
-                    .getFluid() != currentFuel) {
+			if (filled > 0 && tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null && (currentFuel == null || tankFuel.getFluid().getFluid() != currentFuel.getFluid())) {
                 currentFuel = BuildcraftFuelRegistry.fuel.getFuel(tankFuel.getFluid().getFluid());
             }
             return filled;
@@ -398,9 +428,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-    public boolean canFill(EnumFacing from, Fluid fluid) {
-        return from != orientation && (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null || BuildcraftFuelRegistry.fuel.getFuel(
-                fluid) != null);
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return from != orientation && fluid != null &&
+				(BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
+						BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
     }
 
     @Override
@@ -429,22 +460,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-    public int maxEnergyReceived() {
-        return 20000;
-    }
-
-    @Override
-    public int maxEnergyExtracted() {
-        return 5000;
-    }
-
-    @Override
     public int getMaxEnergy() {
         return 100000;
     }
 
     @Override
-    public int calculateCurrentOutput() {
+	public int getIdealOutput() {
         if (currentFuel == null) {
             return 0;
         } else {
@@ -456,4 +477,33 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     public boolean hasCustomName() {
         return false;
     }
+
+	@Override
+	public List<ITriggerExternal> overrideTriggers() {
+		List<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
+
+		triggers.add(BuildCraftCore.triggerEmptyInventory);
+		triggers.add(BuildCraftCore.triggerContainsInventory);
+		triggers.add(BuildCraftCore.triggerSpaceInventory);
+		triggers.add(BuildCraftCore.triggerFullInventory);
+
+		triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
+		triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
+		triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);
+		triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
+		triggers.add(BuildCraftEnergy.triggerEngineOverheat);
+
+		triggers.add(BuildCraftEnergy.triggerCoolantBelow25);
+		triggers.add(BuildCraftEnergy.triggerCoolantBelow50);
+
+		triggers.add(BuildCraftEnergy.triggerFuelBelow25);
+		triggers.add(BuildCraftEnergy.triggerFuelBelow50);
+
+		return triggers;
+	}
+
+	@Override
+	public List<IActionExternal> overrideActions() {
+		return null;
+	}
 }

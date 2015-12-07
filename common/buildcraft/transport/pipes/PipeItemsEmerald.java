@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -21,9 +22,8 @@ import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.BuildCraftTransport;
-import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 
 import io.netty.buffer.ByteBuf;
 
@@ -74,14 +74,14 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing side) {
         if (entityplayer.getCurrentEquippedItem() != null) {
             if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
                 return false;
             }
         }
 
-        if (super.blockActivated(entityplayer)) {
+        if (super.blockActivated(entityplayer, side)) {
             return true;
         }
 
@@ -131,11 +131,15 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
             if (doRemove) {
                 int maxStackSize = stack.stackSize;
                 int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
-                speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
-                int energyUsed = (int) (stackSize * 10 * speedMultiplier);
-                battery.useEnergy(energyUsed, energyUsed, false);
+                if (stackSize > 0) {
+                    speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
+                    int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+                    battery.useEnergy(energyUsed, energyUsed, false);
 
-                stack = inventory.decrStackSize(k, stackSize);
+                    stack = inventory.decrStackSize(k, stackSize);
+                } else {
+                    return null;
+                }
             }
 
             return new ItemStack[] { stack };
@@ -196,20 +200,20 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     private void incrementFilter() {
-        currentFilter++;
+        currentFilter = (currentFilter + 1) % filters.getSizeInventory();
         int count = 0;
-        while (filters.getStackInSlot(currentFilter % filters.getSizeInventory()) == null && count < filters.getSizeInventory()) {
-            currentFilter++;
+        while (filters.getStackInSlot(currentFilter) == null && count < filters.getSizeInventory()) {
+            currentFilter = (currentFilter + 1) % filters.getSizeInventory();
             count++;
         }
     }
 
     private ItemStack getCurrentFilter() {
-        ItemStack filter = filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+        ItemStack filter = filters.getStackInSlot(currentFilter);
         if (filter == null) {
             incrementFilter();
         }
-        return filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+        return filters.getStackInSlot(currentFilter);
     }
 
     public IInventory getFilters() {
@@ -223,14 +227,18 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     @Override
     public void writeData(ByteBuf data) {
         NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
+        filters.writeToNBT(nbt);
+        settings.writeToNBT(nbt);
         NetworkUtils.writeNBT(data, nbt);
+        data.writeByte(currentFilter);
     }
 
     @Override
     public void readData(ByteBuf data) {
         NBTTagCompound nbt = NetworkUtils.readNBT(data);
-        readFromNBT(nbt);
+        filters.readFromNBT(nbt);
+        settings.readFromNBT(nbt);
+        currentFilter = data.readUnsignedByte();
     }
 
     @Override
@@ -240,7 +248,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
         filters.readFromNBT(nbt);
         settings.readFromNBT(nbt);
 
-        currentFilter = nbt.getInteger("currentFilter");
+        currentFilter = nbt.getInteger("currentFilter") % filters.getSizeInventory();
     }
 
     @Override

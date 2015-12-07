@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core;
 
 import net.minecraft.entity.Entity;
@@ -69,7 +73,14 @@ public class EntityLaser extends Entity {
         preventEntitySpawning = false;
         noClip = true;
         isImmuneToFire = true;
-        dataWatcher.addObject(8, Byte.valueOf((byte) 1));
+		dataWatcher.addObject(8, (double)0);
+		dataWatcher.addObject(9, (double)0);
+		dataWatcher.addObject(10,(double) 0);
+		dataWatcher.addObject(11,(double) 0);
+		dataWatcher.addObject(12,(double) 0);
+		dataWatcher.addObject(13,(double) 0);
+
+		dataWatcher.addObject(14, (byte) 0);
     }
 
     @Override
@@ -101,7 +112,23 @@ public class EntityLaser extends Entity {
     }
 
     protected void updateDataServer() {
-        dataWatcher.updateObject(8, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
+		dataWatcher.updateObject(8, encodeDouble(data.head.xCoord));
+		dataWatcher.updateObject(9, encodeDouble(data.head.yCoord));
+		dataWatcher.updateObject(10, encodeDouble(data.head.zCoord));
+		dataWatcher.updateObject(11, encodeDouble(data.tail.xCoord));
+		dataWatcher.updateObject(12, encodeDouble(data.tail.yCoord));
+		dataWatcher.updateObject(13, encodeDouble(data.tail.zCoord));
+
+		dataWatcher.updateObject(14, (byte) (data.isVisible ? 1 : 0));
+	}
+
+	public void setPositions(Vec3 head, Vec3 tail) {
+		data.head = head;
+		data.tail = tail;
+
+		setPositionAndRotation(head.xCoord, head.yCoord, head.zCoord, 0, 0);
+
+		needsUpdate = true;
     }
 
     public void show() {

@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.transport;
 
 import java.util.List;
@@ -70,7 +74,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
                 return true;
             }
 
-            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), entityplayer)) {
+            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), entityplayer, side)) {
                 block.onBlockPlacedBy(world, pos, block.getDefaultState(), entityplayer, itemstack);
 
                 if (!world.isRemote) {
@@ -82,12 +86,14 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
                         .getVolume() + 1.0F) / 2.0F, block.stepSound.getFrequency() * 0.8F);
 
                 itemstack.stackSize--;
-            }
 
             return true;
         } else {
             return false;
         }
+		} else {
+			return false;
+		}
     }
 
     @SideOnly(Side.CLIENT)
@@ -116,7 +122,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
             int color = (stack.getItemDamage() - 1) & 15;
             list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
         }
-        Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
+		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
         List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
         list.addAll(toolTip);
     }

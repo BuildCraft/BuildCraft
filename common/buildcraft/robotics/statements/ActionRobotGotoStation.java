@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.statements;
@@ -37,11 +37,6 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
         return StringUtils.localize("gate.action.robot.goto_station");
     }
 
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_goto_station");
-    // }
-
     @Override
     public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
         IRobotRegistry registry = RobotManager.registryProvider.getRegistry(container.getTile().getWorld());
@@ -63,7 +58,9 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
                     newStation = getStation((StatementParameterItemStack) parameters[0], registry);
                 }
 
-                robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+                if (newStation != null) {
+                    robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+                }
             }
         }
     }

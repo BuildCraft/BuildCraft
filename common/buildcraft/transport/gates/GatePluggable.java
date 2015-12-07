@@ -1,32 +1,27 @@
 package buildcraft.transport.gates;
 
-import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.GatePluggableRenderer;
-import buildcraft.transport.render.tile.PipeRendererTESR;
 
 import io.netty.buffer.ByteBuf;
 
@@ -87,7 +82,8 @@ public class GatePluggable extends PipePluggable {
         buf.writeBoolean(realGate != null ? realGate.isGatePulsing() : false);
 
         final int expansionsSize = expansions.length;
-        buf.writeInt(expansionsSize);
+        buf.writeShort(expansionsSize);
+
         for (IGateExpansion expansion : expansions) {
             buf.writeShort(GateExpansions.getExpansionID(expansion));
         }
@@ -100,8 +96,9 @@ public class GatePluggable extends PipePluggable {
         isLit = buf.readBoolean();
         isPulsing = buf.readBoolean();
 
-        final int expansionsSize = buf.readInt();
+        final int expansionsSize = buf.readUnsignedShort();
         expansions = new IGateExpansion[expansionsSize];
+
         for (int i = 0; i < expansionsSize; i++) {
             expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
         }

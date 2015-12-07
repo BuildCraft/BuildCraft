@@ -6,7 +6,6 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -29,15 +28,20 @@ import buildcraft.api.core.IInvSlot;
 public abstract class Schematic {
     /** Blocks are build in various stages, in order to make sure that a block can indeed be placed, and that it's
      * unlikely to disturb other blocks. */
-    public static enum BuildingStage {
-        /** Standalone blocks can be placed in the air, and they don't change once placed. */
+    public enum BuildingStage {
+        /** Standalone blocks do not change once placed. */
         STANDALONE,
 
-        /** Supported blocks may require to be placed on a standalone block, e.g. a torch. */
-        SUPPORTED,
-
-        /** Expanding blocks will grow and may disturb other block locations, like e.g. water */
+        /** Expanding blocks will grow and may disturb other block locations, like liquids. */
         EXPANDING
+    }
+
+    /** This is called to verify whether the required item is equal to the supplied item.
+     *
+     * Primarily rely on this for checking metadata/NBT - the item ID itself might have been filtered out by previously
+     * running code. */
+    public boolean isItemMatchingRequirement(ItemStack suppliedStack, ItemStack requiredStack) {
+        return BuilderAPI.schematicHelper.isEqualItem(suppliedStack, requiredStack);
     }
 
     /** This is called each time an item matches a requirement. By default, it will increase damage of items that can be
@@ -75,12 +79,14 @@ public abstract class Schematic {
             }
         }
 
-        if (stack.stackSize == 0 && stack.getItem().getContainerItem() != null) {
-            Item container = stack.getItem().getContainerItem();
-            ItemStack newStack = new ItemStack(container);
-            slot.setStackInSlot(newStack);
-        } else if (stack.stackSize == 0) {
-            slot.setStackInSlot(null);
+        if (stack.stackSize == 0) {
+            stack.stackSize = 1;
+            if (stack.getItem().hasContainerItem(stack)) {
+                ItemStack newStack = stack.getItem().getContainerItem(stack);
+                slot.setStackInSlot(newStack);
+            } else {
+                slot.setStackInSlot(null);
+            }
         }
 
         return result;

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
@@ -8,23 +8,28 @@ import java.io.IOException;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.lib.gui.AdvancedSlot;
-import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.core.lib.gui.GuiTools;
-import buildcraft.core.lib.gui.StatementParameterSlot;
-import buildcraft.core.lib.gui.StatementSlot;
+import buildcraft.core.lib.gui.*;
+import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.buttons.IButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class GuiFiller extends GuiAdvancedInterface {
     class FillerParameterSlot extends StatementParameterSlot {
@@ -34,7 +39,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 
         @Override
         public IStatementParameter getParameter() {
-            if (slot >= instance.filler.patternParameters.length) {
+            if (instance.filler.patternParameters == null || slot >= instance.filler.patternParameters.length) {
                 return null;
             } else {
                 return instance.filler.patternParameters[slot];
@@ -48,14 +53,14 @@ public class GuiFiller extends GuiAdvancedInterface {
     }
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
-    private final IInventory playerInventory;
+    private static final IButtonTextureSet EXCAVATE_OFF = new ButtonTextureSet(240, -16, 16, 16, TEXTURE);
+    private static final IButtonTextureSet EXCAVATE_ON = new ButtonTextureSet(224, -16, 16, 16, TEXTURE);
     private final TileFiller filler;
     private final GuiFiller instance;
     private final StatementSlot fakeStatementSlot;
 
     public GuiFiller(EntityPlayer player, TileFiller filler) {
         super(new ContainerFiller(player, filler), filler, TEXTURE);
-        this.playerInventory = player.inventory;
         this.filler = filler;
         this.instance = this;
         this.fakeStatementSlot = new StatementSlot(instance, -1, -1, 0) {
@@ -68,6 +73,15 @@ public class GuiFiller extends GuiAdvancedInterface {
         ySize = 240;
     }
 
+    private IButtonTextureSet getExcavateTexture() {
+        return filler.isExcavate() ? EXCAVATE_ON : EXCAVATE_OFF;
+    }
+
+    private GuiBetterButton getExcavateButton() {
+        return new GuiBetterButton(2, guiLeft + 150, guiTop + 30, 16, getExcavateTexture(), "").setToolTip(new ToolTip(500, new ToolTipLine(
+                StatCollector.translateToLocal("tip.filler.excavate." + (filler.isExcavate() ? "on" : "off")))));
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -75,6 +89,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 
         buttonList.add(new GuiBetterButton(0, guiLeft + 38 - 18, guiTop + 30, 10, StandardButtonTextureSets.LEFT_BUTTON, ""));
         buttonList.add(new GuiBetterButton(1, guiLeft + 38 + 16 + 8, guiTop + 30, 10, StandardButtonTextureSets.RIGHT_BUTTON, ""));
+        buttonList.add(getExcavateButton());
 
         slots.clear();
         for (int i = 0; i < 4; i++) {
@@ -90,6 +105,16 @@ public class GuiFiller extends GuiAdvancedInterface {
             filler.currentPattern = (FillerPattern) FillerManager.registry.getPreviousPattern(filler.currentPattern);
         } else if (button.id == 1) {
             filler.currentPattern = (FillerPattern) FillerManager.registry.getNextPattern(filler.currentPattern);
+        } else if (button.id == 2) {
+            filler.setExcavate(!filler.isExcavate());
+
+            buttonList.set(2, getExcavateButton());
+
+            BuildCraftCore.instance.sendToServer(new PacketCommand(filler, "setFlags", new CommandWriter() {
+                public void write(ByteBuf data) {
+                    data.writeBoolean(filler.isExcavate());
+                }
+            }));
         }
 
         filler.rpcSetPatternFromString(filler.currentPattern.getUniqueTag());
@@ -118,15 +143,19 @@ public class GuiFiller extends GuiAdvancedInterface {
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
         super.drawGuiContainerBackgroundLayer(f, mx, my);
-        drawBackgroundSlots();
+        drawBackgroundSlots(mx, my);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
+        super.drawGuiContainerForegroundLayer(mx, my);
+
         String title = StringUtils.localize("tile.fillerBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
         fontRendererObj.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
         fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
         GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
+
+        drawTooltipForSlotAt(mx, my);
     }
 }

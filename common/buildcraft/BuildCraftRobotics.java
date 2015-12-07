@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
@@ -14,7 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -22,31 +21,26 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
+import buildcraft.core.*;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.*;
 import buildcraft.robotics.ai.*;
 import buildcraft.robotics.boards.*;
@@ -85,12 +79,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
     public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
     public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
     public static IActionInternal actionStationForceRobot = new ActionStationForbidRobot(true);
-    public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(true);
+    public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(false);
     public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItems();
     public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
-
-    public static Achievement timeForSomeLogicAchievement;
-    public static Achievement tinglyLaserAchievement;
 
     public static List<String> blacklistedRobots;
 
@@ -107,22 +98,22 @@ public class BuildCraftRobotics extends BuildCraftMod {
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 
         robotItem = new ItemRobot().setUnlocalizedName("robot");
-        CoreProxy.proxy.registerItem(robotItem);
+        BCRegistry.INSTANCE.registerItem(robotItem, false);
 
         robotStationItem = new ItemRobotStation().setUnlocalizedName("robotStation");
-        CoreProxy.proxy.registerItem(robotStationItem);
+        BCRegistry.INSTANCE.registerItem(robotStationItem, false);
 
         redstoneBoard = new ItemRedstoneBoard();
         redstoneBoard.setUnlocalizedName("redstone_board");
-        CoreProxy.proxy.registerItem(redstoneBoard);
+        BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
 
         zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
         zonePlanBlock.setUnlocalizedName("zonePlan");
-        CoreProxy.proxy.registerBlock(zonePlanBlock);
+        BCRegistry.INSTANCE.registerBlock(zonePlanBlock, false);
 
         requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
         requesterBlock.setUnlocalizedName("requester");
-        CoreProxy.proxy.registerBlock(requesterBlock);
+        BCRegistry.INSTANCE.registerBlock(requesterBlock, false);
 
         RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
@@ -174,6 +165,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
                     "yellow"), 512000);
         }
 
+        StatementManager.registerParameterClass(StatementParameterRobot.class);
+        StatementManager.registerParameterClass(StatementParameterMapLocation.class);
         StatementManager.registerActionProvider(new RobotsActionProvider());
         StatementManager.registerTriggerProvider(new RobotsTriggerProvider());
     }
@@ -189,11 +182,13 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
         BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
 
+        BuilderAPI.schematicRegistry.registerSchematicBlock(requesterBlock, SchematicTile.class);
+
         PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
         EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 
-        CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
-        CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
+        BCRegistry.INSTANCE.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
+        BCRegistry.INSTANCE.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
         RobotManager.registryProvider = new RobotRegistryProvider();
 
@@ -269,39 +264,47 @@ public class BuildCraftRobotics extends BuildCraftMod {
         RobotManager.registerDockingStation(DockingStationPipe.class, "dockingStationPipe");
 
         RoboticsProxy.proxy.registerRenderers();
+
+        ListRegistry.itemClassAsType.add(ItemRobot.class);
     }
 
     public static void loadRecipes() {
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem), "PPP", "PRP", "C C", 'P', "ingotIron", 'R', BuildCraftSilicon.redstoneCrystal,
-                'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotItem), "PPP", "PRP", "C C", 'P', "ingotIron", 'R', "crystalRedstone", 'C',
+                ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard), "PPP", "PRP", "PPP", 'R', "dustRedstone", 'P', Items.paper);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(redstoneBoard), "PPP", "PRP", "PPP", 'R', "dustRedstone", 'P', Items.paper);
 
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0), "IRI", "GMG", "IDI", 'M', Items.map, 'R', "dustRedstone", 'G',
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0), "IRI", "GMG", "IDI", 'M', Items.map, 'R', "dustRedstone", 'G',
                 "gearGold", 'D', "gearDiamond", 'I', "ingotIron");
 
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0), "IPI", "GCG", "IRI", 'C', Blocks.chest, 'R', "dustRedstone", 'P',
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0), "IPI", "GCG", "IRI", 'C', "chestWood", 'R', "dustRedstone", 'P',
                 Blocks.piston, 'G', "gearIron", 'I', "ingotIron");
 
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI", 'I', "ingotIron", 'C',
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI", 'I', "ingotIron", 'C',
                 ItemRedstoneChipset.Chipset.GOLD.getStack());
 
         BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
         BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe());
     }
 
-    @Mod.EventHandler
-    public void serverUnload(FMLServerStoppingEvent event) {
-        if (managerThread != null) {
+    private void stopMapManager() {
+        if (manager != null) {
             manager.stop();
-            manager.saveAllWorlds();
-            managerThread.interrupt();
-
             MinecraftForge.EVENT_BUS.unregister(manager);
+            MinecraftForge.EVENT_BUS.unregister(manager);
+        }
+
+        if (managerThread != null) {
+            managerThread.interrupt();
         }
 
         managerThread = null;
         manager = null;
+    }
+
+    @Mod.EventHandler
+    public void serverUnload(FMLServerStoppingEvent event) {
+        stopMapManager();
     }
 
     @Mod.EventHandler
@@ -314,11 +317,21 @@ public class BuildCraftRobotics extends BuildCraftMod {
             e.printStackTrace();
         }
 
+        stopMapManager();
+
         manager = new MapManager(f);
         managerThread = new Thread(manager);
         managerThread.start();
 
+        BoardRobotPicker.onServerStart();
+
         MinecraftForge.EVENT_BUS.register(manager);
+        MinecraftForge.EVENT_BUS.register(manager);
+    }
+
+    @Mod.EventHandler
+    public void serverLoadFinish(FMLServerStartedEvent event) {
+        manager.initialize();
     }
 
     @Mod.EventHandler
@@ -328,6 +341,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {
         if (restartType == ConfigManager.RestartRequirement.GAME) {
+
             blacklistedRobots = new ArrayList<String>();
             blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general", "boards.blacklist").getStringList()));
             reloadConfig(ConfigManager.RestartRequirement.WORLD);

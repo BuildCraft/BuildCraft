@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
@@ -7,11 +7,7 @@ package buildcraft.factory;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,11 +22,7 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.gui.ContainerDummy;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.InventoryConcatenator;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
@@ -248,15 +240,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
         }
 
         craftMatrix.rebuildCache();
-
-        // Legacy Code
-        if (data.hasKey("stackList")) {
-            ItemStack[] stacks = new ItemStack[9];
-            InvUtils.readStacksFromNBT(data, "stackList", stacks);
-            for (int i = 0; i < 9; i++) {
-                craftMatrix.setInventorySlotContents(i, stacks[i]);
-            }
-        }
     }
 
     @Override
@@ -411,7 +394,20 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
     @Override
     public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
-        return slot < 9;
+        if (slot >= 9) {
+            return false;
+        }
+        ItemStack slotStack = inv.getStackInSlot(slot);
+        if (StackHelper.canStacksMerge(stack, slotStack)) {
+            return true;
+        }
+        for (int i = 0; i < 9; i++) {
+            ItemStack inputStack = craftMatrix.getStackInSlot(i);
+            if (inputStack != null && StackHelper.isMatchingItem(inputStack, stack, true, false)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

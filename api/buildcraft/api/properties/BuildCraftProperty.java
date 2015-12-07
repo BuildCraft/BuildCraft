@@ -12,7 +12,7 @@ import net.minecraft.util.MathHelper;
 
 /** This class exists primarily to allow for a property to be used as either a normal IProperty, or an
  * IUnlistedProperty. It also exists to give IProperty's generic types. */
-public class BuildCraftProperty<T> implements IProperty {
+public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T> {
     private final String name;
     private final Class<T> clazz;
     protected final List<T> values;
@@ -88,7 +88,7 @@ public class BuildCraftProperty<T> implements IProperty {
     }
 
     @Override
-    public Collection<T> getAllowedValues() {
+    public List<T> getAllowedValues() {
         return values;
     }
 
@@ -114,9 +114,8 @@ public class BuildCraftProperty<T> implements IProperty {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public T getValue(IBlockState state) {
-        return (T) state.getValue(this);
+        return state.getValue(this);
     }
 
     @Override
@@ -133,7 +132,7 @@ public class BuildCraftProperty<T> implements IProperty {
     }
 
     // Helper methods for arguments
-    public IProperty asMetaProperty() {
+    public IProperty<T> asMetaProperty() {
         return this;
     }
 }

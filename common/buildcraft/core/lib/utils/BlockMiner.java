@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
@@ -72,7 +73,12 @@ public class BlockMiner {
     }
 
     public int acceptEnergy(int offeredAmount) {
-        energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
+		if (BlockUtils.isUnbreakableBlock(world, pos)) {
+			hasFailed = true;
+			return 0;
+		}
+
+		energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
 
         int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
         energyAccepted += usedAmount;
@@ -101,8 +107,7 @@ public class BlockMiner {
 
                 world.playAuxSFXAtEntity(null, 2001, pos, Block.getStateId(state));
 
-                Utils.preDestroyBlock(world, pos);
-                world.setBlockToAir(pos);
+				world.setBlockToAir(pos);
             } else {
                 hasFailed = true;
             }

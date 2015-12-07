@@ -1,8 +1,13 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -11,6 +16,8 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class PatternParameterYDir implements IStatementParameter {
+    private static TextureAtlasSprite spriteUp, spriteDown;
+
     public boolean up = false;
 
     public PatternParameterYDir() {
@@ -20,6 +27,12 @@ public class PatternParameterYDir implements IStatementParameter {
     public PatternParameterYDir(boolean up) {
         this();
         this.up = up;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerSprites(TextureMap map) {
+        spriteUp = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/stairs_ascend"));
+        spriteDown = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/stairs_descend"));
     }
 
     @Override
@@ -54,12 +67,11 @@ public class PatternParameterYDir implements IStatementParameter {
 
     @Override
     public IStatementParameter rotateLeft() {
-        return null;
+        return this;
     }
 
     @Override
     public TextureAtlasSprite getIcon() {
-        // return Minecraft.getMinecraft().getTextureManager().getTexture(new ResourceLocation("TODO"));
-        return null;
+        return up ? spriteUp : spriteDown;
     }
 }

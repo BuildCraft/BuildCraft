@@ -1,45 +1,39 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.robots.DockingStation;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IRobotRegistry;
-import buildcraft.api.robots.ResourceId;
-import buildcraft.api.robots.RobotManager;
+import buildcraft.api.robots.*;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
     protected World world;
-    protected HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+    protected final HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
 
     private long nextRobotID = Long.MIN_VALUE;
 
-    private HashMap<Long, EntityRobot> robotsLoaded = new HashMap<Long, EntityRobot>();
-    private HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
-    private HashMap<Long, HashSet<ResourceId>> resourcesTakenByRobot = new HashMap<Long, HashSet<ResourceId>>();
-
-    private HashMap<Long, HashSet<StationIndex>> stationsTakenByRobot = new HashMap<Long, HashSet<StationIndex>>();
+    private final LongHashMap robotsLoaded = new LongHashMap();
+    private final HashSet<EntityRobot> robotsLoadedSet = new HashSet<EntityRobot>();
+    private final HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
+    private final LongHashMap resourcesTakenByRobot = new LongHashMap();
+    private final LongHashMap stationsTakenByRobot = new LongHashMap();
 
     public RobotRegistry(String id) {
         super(id);
@@ -61,11 +55,29 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         if (robot.getRobotId() == EntityRobotBase.NULL_ROBOT_ID) {
             ((EntityRobot) robot).setUniqueRobotId(getNextRobotId());
         }
-        if (robotsLoaded.containsKey(robot.getRobotId())) {
+        if (robotsLoaded.containsItem(robot.getRobotId())) {
             BCLog.logger.warn("Robot with id %d was not unregistered properly", robot.getRobotId());
         }
 
-        robotsLoaded.put(robot.getRobotId(), (EntityRobot) robot);
+        addRobotLoaded((EntityRobot) robot);
+    }
+
+    private HashSet<ResourceId> getResourcesTakenByRobot(long robotId) {
+        return (HashSet<ResourceId>) resourcesTakenByRobot.getValueByKey(robotId);
+    }
+
+    private HashSet<StationIndex> getStationsTakenByRobot(long robotId) {
+        return (HashSet<StationIndex>) stationsTakenByRobot.getValueByKey(robotId);
+    }
+
+    private void addRobotLoaded(EntityRobot robot) {
+        robotsLoaded.add(robot.getRobotId(), robot);
+        robotsLoadedSet.add(robot);
+    }
+
+    private void removeRobotLoaded(EntityRobot robot) {
+        robotsLoaded.remove(robot.getRobotId());
+        robotsLoadedSet.remove(robot);
     }
 
     @Override
@@ -73,7 +85,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         markDirty();
 
         releaseResources(robot, true);
-        robotsLoaded.remove(robot.getRobotId());
+        removeRobotLoaded((EntityRobot) robot);
     }
 
     @Override
@@ -81,13 +93,13 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         markDirty();
 
         releaseResources(robot, false, true);
-        robotsLoaded.remove(robot.getRobotId());
+        removeRobotLoaded((EntityRobot) robot);
     }
 
     @Override
     public EntityRobot getLoadedRobot(long id) {
-        if (robotsLoaded.containsKey(id)) {
-            return robotsLoaded.get(id);
+        if (robotsLoaded.containsItem(id)) {
+            return (EntityRobot) robotsLoaded.getValueByKey(id);
         } else {
             return null;
         }
@@ -106,7 +118,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
         long robotId = resourcesTaken.get(resourceId);
 
-        if (robotsLoaded.containsKey(robotId) && !robotsLoaded.get(robotId).isDead) {
+        if (robotsLoaded.containsItem(robotId) && !((EntityRobot) robotsLoaded.getValueByKey(robotId)).isDead) {
             return robotId;
         } else {
             // If the robot is either not loaded or dead, the resource is not
@@ -120,10 +132,10 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     public synchronized EntityRobot robotTaking(ResourceId resourceId) {
         long robotId = robotIdTaking(resourceId);
 
-        if (robotId == EntityRobotBase.NULL_ROBOT_ID || !robotsLoaded.containsKey(robotId)) {
+        if (robotId == EntityRobotBase.NULL_ROBOT_ID || !robotsLoaded.containsItem(robotId)) {
             return null;
         } else {
-            return robotsLoaded.get(robotId);
+            return (EntityRobot) robotsLoaded.getValueByKey(robotId);
         }
     }
 
@@ -145,13 +157,11 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         if (!resourcesTaken.containsKey(resourceId)) {
             resourcesTaken.put(resourceId, robotId);
 
-            if (!resourcesTakenByRobot.containsKey(robotId)) {
-                resourcesTakenByRobot.put(robotId, new HashSet<ResourceId>());
+            if (!resourcesTakenByRobot.containsItem(robotId)) {
+                resourcesTakenByRobot.add(robotId, new HashSet<ResourceId>());
             }
 
-            resourcesTakenByRobot.get(robotId).add(resourceId);
-
-            resourceId.taken(robotId);
+            getResourcesTakenByRobot(robotId).add(resourceId);
 
             return true;
         } else {
@@ -170,9 +180,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         if (resourcesTaken.containsKey(resourceId)) {
             long robotId = resourcesTaken.get(resourceId);
 
-            resourcesTakenByRobot.get(resourcesTaken.get(resourceId)).remove(resourceId);
+            getResourcesTakenByRobot(robotId).remove(resourceId);
             resourcesTaken.remove(resourceId);
-            resourceId.released(robotId);
         }
     }
 
@@ -188,8 +197,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll, boolean resetEntities) {
         markDirty();
 
-        if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
-            HashSet<ResourceId> resourceSet = (HashSet<ResourceId>) resourcesTakenByRobot.get(robot.getRobotId()).clone();
+        if (resourcesTakenByRobot.containsItem(robot.getRobotId())) {
+            HashSet<ResourceId> resourceSet = (HashSet<ResourceId>) getResourcesTakenByRobot(robot.getRobotId()).clone();
 
             for (ResourceId id : resourceSet) {
                 release(id);
@@ -198,8 +207,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
             resourcesTakenByRobot.remove(robot.getRobotId());
         }
 
-        if (stationsTakenByRobot.containsKey(robot.getRobotId())) {
-            HashSet<StationIndex> stationSet = (HashSet<StationIndex>) stationsTakenByRobot.get(robot.getRobotId()).clone();
+        if (stationsTakenByRobot.containsItem(robot.getRobotId())) {
+            HashSet<StationIndex> stationSet = (HashSet<StationIndex>) getStationsTakenByRobot(robot.getRobotId()).clone();
 
             for (StationIndex s : stationSet) {
                 DockingStation d = stations.get(s);
@@ -266,8 +275,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
                     station.robotTaking().setMainStation(null);
                 }
             } else if (station.robotIdTaking() != EntityRobotBase.NULL_ROBOT_ID) {
-                if (stationsTakenByRobot.get(station.robotIdTaking()) != null) {
-                    stationsTakenByRobot.get(station.robotIdTaking()).remove(index);
+                if (stationsTakenByRobot.containsItem(station.robotIdTaking())) {
+                    getStationsTakenByRobot(station.robotIdTaking()).remove(index);
                 }
             }
 
@@ -277,17 +286,17 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
     @Override
     public synchronized void take(DockingStation station, long robotId) {
-        if (!stationsTakenByRobot.containsKey(robotId)) {
-            stationsTakenByRobot.put(robotId, new HashSet<StationIndex>());
+        if (!stationsTakenByRobot.containsItem(robotId)) {
+            stationsTakenByRobot.add(robotId, new HashSet<StationIndex>());
         }
 
-        stationsTakenByRobot.get(robotId).add(new StationIndex(station));
+        getStationsTakenByRobot(robotId).add(new StationIndex(station));
     }
 
     @Override
     public synchronized void release(DockingStation station, long robotId) {
-        if (stationsTakenByRobot.containsKey(robotId)) {
-            stationsTakenByRobot.get(robotId).remove(new StationIndex(station));
+        if (stationsTakenByRobot.containsItem(robotId)) {
+            getStationsTakenByRobot(robotId).remove(new StationIndex(station));
         }
     }
 
@@ -340,7 +349,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         for (int i = 0; i < stationList.tagCount(); ++i) {
             NBTTagCompound cpt = stationList.getCompoundTagAt(i);
 
-            Class<? extends DockingStation> cls = null;
+            Class<? extends DockingStation> cls;
 
             if (!cpt.hasKey("stationType")) {
                 cls = DockingStationPipe.class;
@@ -370,9 +379,14 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload e) {
         if (e.world == this.world) {
-            for (EntityRobot robot : new ArrayList<EntityRobot>(robotsLoaded.values())) {
+            for (EntityRobot robot : new ArrayList<EntityRobot>(robotsLoadedSet)) {
                 if (!e.world.loadedEntityList.contains(robot)) {
                     robot.onChunkUnload();
+                }
+            }
+            for (DockingStation station : new ArrayList<DockingStation>(stations.values())) {
+                if (world.isAirBlock(station.getPos())) {
+                    station.onChunkUnload();
                 }
             }
         }

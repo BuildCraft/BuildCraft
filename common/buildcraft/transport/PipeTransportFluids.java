@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.HashMultiset;
+import com.google.common.collect.EnumMultiset;
 import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +15,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -23,10 +22,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pipe_bc8.EnumPipePart;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -40,7 +39,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the
      * same volume. */
-    public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
     public static int MAX_TRAVEL_DELAY = 12;
     public static short INPUT_TTL = 60; // 100
     public static short OUTPUT_TTL = 80; // 80
@@ -101,7 +99,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         }
 
         /** Get the amount of fluid available to move. This nicely takes care of the travel delay mechanic.
-         * 
+         *
          * @return */
         public int getAvailable() {
             int all = amount;
@@ -112,7 +110,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         }
 
         public int getMaxFillRate() {
-            return Math.min(capacity - amount, flowRate - incoming[currentTime]);
+            return Math.min(getCapacity() - amount, flowRate - incoming[currentTime]);
         }
 
         public void readFromNBT(NBTTagCompound compoundTag) {
@@ -144,7 +142,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     private final short[] outputTTL = new short[] { OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL };
     private final short[] outputCooldown = new short[] { 0, 0, 0, 0, 0, 0 };
     private final boolean[] canReceiveCache = new boolean[6];
-    private byte initClient = 0;
     private int clientSyncCounter = 0;
     private int capacity, flowRate;
     private int travelDelay = MAX_TRAVEL_DELAY;
@@ -169,6 +166,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         sections[6] = new PipeSection();
     }
 
+    /** This value has to be the same on client and server!
+     *
+     * @return */
     public int getCapacity() {
         return capacity;
     }
@@ -178,9 +178,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     }
 
     public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
-        capacity = LIQUID_IN_PIPE;
+        capacity = 25 * Math.min(1000, BuildCraftTransport.pipeFluidsBaseFlowRate);
         flowRate = fluidCapacities.get(pipeClass);
-        travelDelay = MathUtils.clamp(Math.round(16 / (flowRate / 10)), 1, MAX_TRAVEL_DELAY);
+        travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / BuildCraftTransport.pipeFluidsBaseFlowRate)), 1, MAX_TRAVEL_DELAY);
     }
 
     @Override
@@ -229,13 +229,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             flow[i] = 0;
         }
 
-        if (fluidType != null) {
-            moveFluids();
-        }
+        moveFluids();
 
         if (networkSyncTracker.markTimeIfDelay(container.getWorld())) {
             boolean init = false;
-            if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
+            if (++clientSyncCounter > BuildCraftCore.longUpdateFactor * 2) {
                 clientSyncCounter = 0;
                 init = true;
             }
@@ -248,17 +246,20 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     }
 
     private void moveFluids() {
-        short newTimeSlot = (short) (container.getWorld().getTotalWorldTime() % travelDelay);
-        short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
+        if (fluidType != null) {
+            short newTimeSlot = (short) (container.getWorld().getTotalWorldTime() % travelDelay);
+            int outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 
-        moveFromPipe(outputCount);
-        moveFromCenter();
-        moveToCenter();
+            moveFromPipe(outputCount);
+            moveFromCenter();
+            moveToCenter();
+        } else {
+            computeTTLs();
+        }
     }
 
-    private void moveFromPipe(short outputCount) {
+    private void moveFromPipe(int outputCount) {
         // Move liquid from the non-center to the connected output blocks
-        boolean pushed = false;
         if (outputCount > 0) {
             for (EnumFacing o : directions) {
                 if (transferState[o.ordinal()] == TransferState.Output) {
@@ -272,26 +273,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
                     if (liquidToPush.amount > 0) {
                         int filled = ((IFluidHandler) target).fill(o.getOpposite(), liquidToPush, true);
-                        section.drain(filled, true);
-                        pushed = true;
                         if (filled <= 0) {
                             outputTTL[o.ordinal()]--;
+                        } else {
+                            section.drain(filled, true);
                         }
                     }
                 }
-            }
-        }
-
-        if (pushed) {
-            boolean hasFluid = false;
-            for (PipeSection s : sections) {
-                if (s.amount > 0) {
-                    hasFluid = true;
-                    break;
-                }
-            }
-            if (!hasFluid) {
-                setFluidType(null);
             }
         }
     }
@@ -306,7 +294,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
         int testAmount = flowRate;
         // Move liquid from the center to the output sides
-        Multiset<EnumFacing> realDirections = HashMultiset.create(6);
+        Multiset<EnumFacing> realDirections = EnumMultiset.create(EnumFacing.class);
         for (EnumFacing direction : directions) {
             if (transferState[direction.ordinal()] == TransferState.Output) {
                 realDirections.add(direction);
@@ -336,21 +324,22 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     private void moveToCenter() {
         int transferInCount = 0;
-        int spaceAvailable = capacity - sections[6].amount;
+        int spaceAvailable = getCapacity() - sections[6].amount;
 
         for (EnumFacing dir : directions) {
             inputPerTick[dir.ordinal()] = 0;
             if (transferState[dir.ordinal()] != TransferState.Output) {
                 inputPerTick[dir.ordinal()] = sections[dir.ordinal()].drain(flowRate, false);
-                transferInCount++;
+                if (inputPerTick[dir.ordinal()] > 0) {
+                    transferInCount++;
+                }
             }
         }
 
         float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
         for (EnumFacing dir : directions) {
             // Move liquid from input sides to the center
-            if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
-
+            if (inputPerTick[dir.ordinal()] > 0) {
                 int amountToDrain = (int) (inputPerTick[dir.ordinal()] * min);
                 if (amountToDrain < 1) {
                     amountToDrain++;
@@ -366,46 +355,71 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         }
     }
 
-    private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
-        short outputCount = 0;
+    private void computeTTLs() {
+        for (int i = 0; i < 6; i++) {
+            if (transferState[i] == TransferState.Input) {
+                if (inputTTL[i] > 0) {
+                    inputTTL[i]--;
+                } else {
+                    transferState[i] = TransferState.None;
+                }
+            }
+
+            if (outputCooldown[i] > 0) {
+                outputCooldown[i]--;
+            }
+        }
+    }
+
+    private int computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
+        int outputCount = 0;
+        int fluidAmount = 0;
 
         // Processes all internal tanks
-        for (int ordinal : orientations) {
-            sections[ordinal].setTime(newTimeSlot);
-            sections[ordinal].moveFluids();
-            if (ordinal == 6) {
+        for (EnumPipePart direction : EnumPipePart.values()) {
+            int dirI = direction.ordinal();
+            PipeSection section = sections[dirI];
+
+            fluidAmount += section.amount;
+            section.setTime(newTimeSlot);
+            section.moveFluids();
+
+            // Input processing
+            if (direction == EnumPipePart.CENTER) {
                 continue;
             }
-            EnumFacing direction = EnumFacing.VALUES[ordinal];
-            sections[ordinal].setTime(newTimeSlot);
-            sections[ordinal].moveFluids();
-            if (transferState[ordinal] == TransferState.Input) {
-                inputTTL[ordinal]--;
-                if (inputTTL[ordinal] <= 0) {
-                    transferState[ordinal] = TransferState.None;
+            if (transferState[dirI] == TransferState.Input) {
+                inputTTL[dirI]--;
+                if (inputTTL[dirI] <= 0) {
+                    transferState[dirI] = TransferState.None;
                 }
                 continue;
             }
-            if (!container.pipe.outputOpen(direction)) {
-                transferState[ordinal] = TransferState.None;
+            if (!container.pipe.outputOpen(direction.face)) {
+                transferState[dirI] = TransferState.None;
                 continue;
             }
-            if (outputCooldown[ordinal] > 0) {
-                outputCooldown[ordinal]--;
+            if (outputCooldown[dirI] > 0) {
+                outputCooldown[dirI]--;
                 continue;
             }
-            if (outputTTL[ordinal] <= 0) {
-                transferState[ordinal] = TransferState.None;
-                outputCooldown[ordinal] = OUTPUT_COOLDOWN;
-                outputTTL[ordinal] = OUTPUT_TTL;
+            if (outputTTL[dirI] <= 0) {
+                transferState[dirI] = TransferState.None;
+                outputCooldown[dirI] = OUTPUT_COOLDOWN;
+                outputTTL[dirI] = OUTPUT_TTL;
                 continue;
             }
-            if (canReceiveCache[ordinal] && outputOpen(direction)) {
-                transferState[ordinal] = TransferState.Output;
+            if (canReceiveCache[dirI] && container.pipe.outputOpen(direction.face)) {
+                transferState[dirI] = TransferState.Output;
                 outputCount++;
             }
 
         }
+
+        if (fluidAmount == 0) {
+            setFluidType(null);
+        }
+
         return outputCount;
     }
 
@@ -418,21 +432,14 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         boolean changed = false;
         BitSet delta = new BitSet(8);
 
-        if (initClient > 0) {
-            initClient -= NETWORK_SYNC_TICKS;
-            if (initClient <= 1) {
-                changed = true;
-                initClient = 0;
-                delta.set(0, 8);
-            }
-        }
-
         FluidRenderData renderCacheCopy = this.renderCache;
 
-        if ((fluidType == null && renderCacheCopy.fluidID != 0) || (fluidType != null && renderCacheCopy.fluidID != fluidType.getFluid().getID())) {
+        if (initPacket || (fluidType == null && renderCacheCopy.fluidID != 0) || (fluidType != null && renderCacheCopy.fluidID != fluidType.getFluid()
+                .getID())) {
             changed = true;
             renderCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
             renderCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
+            renderCache.flags = FluidRenderData.getFlags(fluidType);
             delta.set(0);
         }
 
@@ -443,7 +450,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             if (displayQty == 0 && camount > 0 || initPacket) {
                 displayQty = camount;
             }
-            displayQty = Math.min(capacity, displayQty);
+            displayQty = Math.min(getCapacity(), displayQty);
 
             if (pamount != displayQty || initPacket) {
                 changed = true;
@@ -483,7 +490,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     public void sendDescriptionPacket() {
         super.sendDescriptionPacket();
 
-        initClient = 6;
+        PacketFluidUpdate update = computeFluidUpdate(true, true);
+        BuildCraftTransport.instance.sendToPlayers(update, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
     }
 
     public FluidStack getStack(EnumFacing direction) {
@@ -615,18 +623,16 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     }
 
     @Override
-    public void onNeighborBlockChange(int blockId) {
-        super.onNeighborBlockChange(blockId);
+    public void onNeighborChange(EnumFacing direction) {
+        super.onNeighborChange(direction);
 
-        for (EnumFacing direction : directions) {
-            if (!container.isPipeConnected(direction)) {
-                sections[direction.ordinal()].reset();
-                transferState[direction.ordinal()] = TransferState.None;
-                renderCache.amount[direction.ordinal()] = 0;
-                canReceiveCache[direction.ordinal()] = false;
-            } else {
-                canReceiveCache[direction.ordinal()] = canReceiveFluid(direction);
-            }
+        if (!container.isPipeConnected(direction)) {
+            sections[direction.ordinal()].reset();
+            transferState[direction.ordinal()] = TransferState.None;
+            renderCache.amount[direction.ordinal()] = 0;
+            canReceiveCache[direction.ordinal()] = false;
+        } else {
+            canReceiveCache[direction.ordinal()] = canReceiveFluid(direction);
         }
     }
 
@@ -647,16 +653,21 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     }
 
     static {
+        fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+        fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsCobblestone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsIron.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsQuartz.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
         fluidCapacities.put(PipeFluidsSandstone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsStone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+        fluidCapacities.put(PipeFluidsClay.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsIron.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsQuartz.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+        fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
     }
 
     @Override
@@ -672,7 +683,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             }
             String line = " - " + sectionName + " = ";
             line += (pipe.amount > 0 ? EnumChatFormatting.GREEN : "");
-            line += pipe.amount + "" + EnumChatFormatting.RESET + "/" + LIQUID_IN_PIPE + "mB";
+            line += pipe.amount + "" + EnumChatFormatting.RESET + "mB";
             left.add(line);
         }
     }

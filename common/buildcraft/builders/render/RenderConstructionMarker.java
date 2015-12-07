@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.render;
@@ -12,7 +12,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.EntityLaser;
@@ -21,7 +20,6 @@ import buildcraft.core.render.RenderBuildingItems;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderConstructionMarker extends RenderBoxProvider<TileConstructionMarker> {
-
     private final RenderBuildingItems renderItems = new RenderBuildingItems();
 
     private ModelBase model = new ModelBase() {};

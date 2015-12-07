@@ -9,14 +9,14 @@ public abstract class PipeEventPower extends PipeEvent {
     /** The amount of power left after processing. */
     public int power;
 
-    public PipeEventPower(Pipe pipe, EnumFacing from, int power) {
+    public PipeEventPower(Pipe<?> pipe, EnumFacing from, int power) {
         super(pipe);
         this.from = from;
         this.power = power;
     }
 
     public static class Request extends PipeEventPower {
-        public Request(Pipe pipe, EnumFacing from, int power) {
+        public Request(Pipe<?> pipe, EnumFacing from, int power) {
             super(pipe, from, power);
         }
     }
@@ -24,7 +24,7 @@ public abstract class PipeEventPower extends PipeEvent {
     public static class Receive extends PipeEventPower {
         public boolean override;
 
-        public Receive(Pipe pipe, EnumFacing from, int power) {
+        public Receive(Pipe<?> pipe, EnumFacing from, int power) {
             super(pipe, from, power);
             this.override = false;
         }

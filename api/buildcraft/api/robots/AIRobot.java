@@ -175,7 +175,7 @@ public class AIRobot {
             NBTTagCompound sub = nbt.getCompoundTag("delegateAI");
 
             try {
-                Class<?> aiRobotClass = null;
+                Class<?> aiRobotClass;
                 if (sub.hasKey("class")) {
                     // Migration support for 6.4.x
                     aiRobotClass = RobotManager.getAIRobotByLegacyClassName(sub.getString("class"));
@@ -184,9 +184,9 @@ public class AIRobot {
                 }
                 if (aiRobotClass != null) {
                     delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class).newInstance(robot);
+                    delegateAI.parentAI = this;
 
                     if (delegateAI.canLoadFromNBT()) {
-                        delegateAI.parentAI = this;
                         delegateAI.loadFromNBT(sub);
                     }
                 }
@@ -200,7 +200,7 @@ public class AIRobot {
         AIRobot ai = null;
 
         try {
-            Class<?> aiRobotClass = null;
+            Class<?> aiRobotClass;
             if (nbt.hasKey("class")) {
                 // Migration support for 6.4.x
                 aiRobotClass = RobotManager.getAIRobotByLegacyClassName(nbt.getString("class"));

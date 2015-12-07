@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -14,7 +14,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
-import buildcraft.builders.render.RenderPathMarker;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderVoid;
@@ -38,14 +37,7 @@ public class BuilderProxyClient extends BuilderProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
         ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder<TileFiller>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
         ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
-
-        // ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new
-        // RenderLEDTile(BuildCraftBuilders.architectBlock));
-        // ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new
-        // RenderLEDTile(BuildCraftBuilders.fillerBlock));
-
         ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder<TileQuarry>());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid<EntityMechanicalArm>());

@@ -6,9 +6,9 @@ import java.util.Set;
 public final class LibraryAPI {
 	private static final Set<LibraryTypeHandler> handlers = new HashSet<LibraryTypeHandler>();
 
-    private LibraryAPI() {
+	private LibraryAPI() {
 
-    }
+	}
 
 	public static Set<LibraryTypeHandler> getHandlerSet() {
 		return handlers;
@@ -19,7 +19,7 @@ public final class LibraryAPI {
 	}
 
 	public static LibraryTypeHandler getHandlerFor(String extension) {
-		for(LibraryTypeHandler h : handlers) {
+		for (LibraryTypeHandler h : handlers) {
 			if (h.isInputExtension(extension)) {
 				return h;
 			}

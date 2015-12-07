@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
@@ -7,11 +7,11 @@ package buildcraft.robotics.gui;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
+
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -20,10 +20,13 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.ZonePlan;
+import buildcraft.robotics.map.MapWorld;
 
 import io.netty.buffer.ByteBuf;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
+    private static final int MAX_PACKET_LENGTH = 30000;
 
     public DynamicTextureBC mapTexture;
     public ZonePlan currentAreaSelection;
@@ -87,9 +90,10 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
                 gui.refreshSelectedArea();
             } else if ("receiveImage".equals(command)) {
                 int size = stream.readUnsignedMedium();
+                int pos = stream.readUnsignedMedium();
 
-                for (int i = 0; i < size; ++i) {
-                    mapTexture.colorMap[i] = 0xFF000000 | MapColor.mapColorArray[stream.readUnsignedByte()].colorValue;
+                for (int i = 0; i < Math.min(size - pos, MAX_PACKET_LENGTH); ++i) {
+                    mapTexture.colorMap[pos + i] = 0xFF000000 | MapColor.mapColorArray[stream.readUnsignedByte()].colorValue;
                 }
             }
         } else if (side.isServer()) {
@@ -106,7 +110,7 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
                 plan.readData(stream);
                 map.setArea(index, plan);
             } else if ("computeMap".equals(command)) {
-                computeMap(stream.readInt(), stream.readInt(), stream.readUnsignedShort(), stream.readUnsignedShort(), stream.readUnsignedByte(),
+                computeMap(stream.readInt(), stream.readInt(), stream.readUnsignedShort(), stream.readUnsignedShort(), stream.readFloat(),
                         (EntityPlayer) sender);
             } else if ("setName".equals(command)) {
                 map.mapName = NetworkUtils.readUTF(stream);
@@ -114,18 +118,21 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
         }
     }
 
-    private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
+    private void computeMap(int cx, int cz, int width, int height, float blocksPerPixel, EntityPlayer player) {
         final byte[] textureData = new byte[width * height];
 
-        int startX = cx - width * blocksPerPixel / 2;
-        int startZ = cz - height * blocksPerPixel / 2;
+        MapWorld w = BuildCraftRobotics.manager.getWorld(map.getWorld());
+        int startX = Math.round(cx - width * blocksPerPixel / 2);
+        int startZ = Math.round(cz - height * blocksPerPixel / 2);
+        int mapStartX = map.chunkStartX << 4;
+        int mapStartZ = map.chunkStartZ << 4;
 
         for (int i = 0; i < width; ++i) {
             for (int j = 0; j < height; ++j) {
-                int x = startX + i * blocksPerPixel;
-                int z = startZ + j * blocksPerPixel;
-                int ix = x - (map.chunkStartX << 4);
-                int iz = z - (map.chunkStartZ << 4);
+                int x = Math.round(startX + i * blocksPerPixel);
+                int z = Math.round(startZ + j * blocksPerPixel);
+                int ix = x - mapStartX;
+                int iz = z - mapStartZ;
 
                 if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
                     textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorld()).getColor(x, z);
@@ -133,11 +140,17 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
             }
         }
 
-        BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
-            public void write(ByteBuf data) {
-                data.writeMedium(textureData.length);
-                data.writeBytes(textureData);
-            }
-        }));
+        final int len = MAX_PACKET_LENGTH;
+
+        for (int i = 0; i < textureData.length; i += len) {
+            final int pos = i;
+            BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
+                public void write(ByteBuf data) {
+                    data.writeMedium(textureData.length);
+                    data.writeMedium(pos);
+                    data.writeBytes(textureData, pos, Math.min(textureData.length - pos, len));
+                }
+            }));
+        }
     }
 }

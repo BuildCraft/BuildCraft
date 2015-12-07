@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
@@ -13,11 +13,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
-import buildcraft.api.robots.ResourceIdRequest;
-import buildcraft.api.robots.RobotManager;
-import buildcraft.api.robots.StackRequest;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
@@ -58,7 +54,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
         }
     }
 
-    public ItemStack getRequest(int index) {
+    public ItemStack getRequestTemplate(int index) {
         return requests.getStackInSlot(index);
     }
 
@@ -161,47 +157,48 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     }
 
     @Override
-    public int getNumberOfRequests() {
+    public int getRequestsCount() {
         return NB_ITEMS;
     }
 
     @Override
-    public StackRequest getAvailableRequest(int i) {
+    public ItemStack getRequest(int i) {
         if (requests.getStackInSlot(i) == null) {
             return null;
         } else if (isFulfilled(i)) {
             return null;
-        } else if (RobotManager.registryProvider.getRegistry(worldObj).isTaken(new ResourceIdRequest(this, i))) {
-            return null;
         } else {
-            StackRequest r = new StackRequest();
+            ItemStack request = requests.getStackInSlot(i).copy();
 
-            r.index = i;
-            r.stack = requests.getStackInSlot(i);
-            r.requester = this;
+            ItemStack existingStack = inv.getStackInSlot(i);
+            if (existingStack == null) {
+                return request;
+            }
 
-            return r;
+            if (!StackHelper.isMatchingItemOrList(request, existingStack)) {
+                return null;
+            }
+
+            request.stackSize -= existingStack.stackSize;
+            if (request.stackSize <= 0) {
+                return null;
+            }
+
+            return request;
         }
     }
 
     @Override
-    public boolean takeRequest(int i, EntityRobotBase robot) {
-        if (requests.getStackInSlot(i) == null) {
-            return false;
-        } else if (isFulfilled(i)) {
-            return false;
-        } else {
-            return RobotManager.registryProvider.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
-        }
-    }
-
-    @Override
-    public ItemStack provideItemsForRequest(int i, ItemStack stack) {
+    public ItemStack offerItem(int i, ItemStack stack) {
         ItemStack existingStack = inv.getStackInSlot(i);
 
         if (requests.getStackInSlot(i) == null) {
             return stack;
         } else if (existingStack == null) {
+            if (!StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
+                return stack;
+            }
+
             int maxQty = requests.getStackInSlot(i).stackSize;
 
             if (stack.stackSize <= maxQty) {
@@ -219,7 +216,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
             }
         } else if (!StackHelper.isMatchingItemOrList(stack, existingStack)) {
             return stack;
-        } else if (existingStack == null || StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
+        } else if (StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
             int maxQty = requests.getStackInSlot(i).stackSize;
 
             if (existingStack.stackSize + stack.stackSize <= maxQty) {

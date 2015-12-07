@@ -4,11 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import net.minecraft.util.BlockPos;
+import buildcraft.api.robots.ResourceIdBlock;
 
-import buildcraft.api.robots.ResourceId;
-
-public class ResourceIdAssemblyTable extends ResourceId {
+public class ResourceIdAssemblyTable extends ResourceIdBlock {
 
     public ResourceIdAssemblyTable() {
 

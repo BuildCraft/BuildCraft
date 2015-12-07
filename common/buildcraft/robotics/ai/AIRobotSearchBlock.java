@@ -10,13 +10,7 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
-import buildcraft.core.lib.utils.BlockScannerExpanding;
-import buildcraft.core.lib.utils.BlockScannerRandom;
-import buildcraft.core.lib.utils.BlockScannerZoneRandom;
-import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.core.lib.utils.IterableAlgorithmRunner;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.PathFindingSearch;
+import buildcraft.core.lib.utils.*;
 
 public class AIRobotSearchBlock extends AIRobot {
 
@@ -28,6 +22,10 @@ public class AIRobotSearchBlock extends AIRobot {
     private Iterator<BlockPos> blockIter;
     private double maxDistanceToEnd;
     private IZone zone;
+
+    public AIRobotSearchBlock(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
     public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound, double iMaxDistanceToEnd) {
         super(iRobot);
@@ -89,6 +87,11 @@ public class AIRobotSearchBlock extends AIRobot {
     @Override
     public boolean success() {
         return blockFound != null;
+    }
+
+    @Override
+    public boolean canLoadFromNBT() {
+        return true;
     }
 
     @Override

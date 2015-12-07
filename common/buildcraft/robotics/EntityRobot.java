@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
@@ -9,26 +9,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
 
-import net.minecraft.block.Block;
+import com.google.common.collect.Iterables;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,15 +49,13 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IZone;
-import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IRobotOverlayItem;
-import buildcraft.api.robots.RobotManager;
+import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.events.RobotEvent;
+import buildcraft.api.robots.*;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -57,6 +64,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
@@ -81,6 +89,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     private static final int DATA_ACTIVE_CLIENT = 21;
     private static final int DATA_BATTERY_ENERGY = 22;
 
+    public static final int MAX_WEARABLES = 8;
+
     public LaserData laser = new LaserData();
     public DockingStation linkedDockingStation;
     public BlockPos linkedDockingStationIndex;
@@ -102,6 +112,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public float itemActiveStage = 0;
     public long lastUpdateTime = 0;
 
+    private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(10);
+    private boolean isMovingOutOfStuck;
+
     private DockingStation currentDockingStation;
     private List<ItemStack> wearables = new ArrayList<ItemStack>();
 
@@ -111,7 +124,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
     private ResourceLocation texture;
 
-    private WeakHashMap<Entity, Boolean> unreachableEntities = new WeakHashMap<Entity, Boolean>();
+    private WeakHashMap<Entity, Long> unreachableEntities = new WeakHashMap<Entity, Long>();
 
     private NBTTagList stackRequestNBT;
 
@@ -224,7 +237,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public void setLaserDestination(float x, float y, float z) {
         if (x != laser.tail.xCoord || y != laser.tail.yCoord || z != laser.tail.zCoord) {
             laser.tail = new Vec3(x, y, z);
-
             needsUpdate = true;
         }
     }
@@ -324,8 +336,27 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 currentDockingStation = getRegistry().getStation(currentDockingStationIndex, currentDockingStationSide);
             }
 
+            if (posY < -128) {
+                isDead = true;
+
+                BCLog.logger.info("Destroying robot " + this.toString() + " - Fallen into Void");
+                getRegistry().killRobot(this);
+            }
+
+            // The commented out part is the part which unstucks robots.
+            // It has been known to cause a lot of issues in 7.1.11.
+            // If you want to try and fix it, go ahead.
+            // Right now it will simply stop them from moving.
+
+            /* if (expensiveVerificationsTracker.markTimeIfDelay(worldObj)) { int collisions = 0; int bx = (int)
+             * Math.floor(posX); int by = (int) Math.floor(posY); int bz = (int) Math.floor(posZ); if (by >= 0 && by <
+             * worldObj.getActualHeight() && !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) { List clist = new
+             * ArrayList(); Block block = worldObj.getBlock(bx, by, bz); block.addCollisionBoxesToList(worldObj, bx, by,
+             * bz, getBoundingBox(), clist, this); collisions = clist.size(); } if (collisions > 0) { isMovingOutOfStuck
+             * = true; motionX = 0.0F; motionY = 0.05F; motionZ = 0.0F; } else if (isMovingOutOfStuck) {
+             * isMovingOutOfStuck = false; board.abortDelegateAI(); motionY = 0.0F; } } if (!isMovingOutOfStuck) { */
             if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
-                this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
+                this.worldObj.theProfiler.startSection("bcRobotAI");
                 mainAI.cycle();
                 this.worldObj.theProfiler.endSection();
 
@@ -344,6 +375,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     // @Override
     // protected void updateEntityActionState() {}
 
+    @Override
+    public boolean handleWaterMovement() {
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
     private void updateEnergyFX() {
         energyFX += energySpendPerCycle;
@@ -360,7 +396,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05, steamDirection.yCoord * 0.05,
                 steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
     }
-    
+
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
         return new AxisAlignedBB(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
@@ -378,14 +414,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             BCLog.logger.info("Shutting down robot " + this.toString() + " - " + reason);
             mainAI.startDelegateAI(new AIRobotShutdown(this));
         }
-    }
-
-    private void iterateBehaviorDocked() {
-        motionX = 0F;
-        motionY = 0F;
-        motionZ = 0F;
-
-        setNullBoundingBox();
     }
 
     @Override
@@ -413,12 +441,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void setCurrentItemOrArmor(int i, ItemStack itemstack) {}
-
-    @Override
-    public void fall(float dist, float damageMultiplier) {}
-
-    @Override
-    protected void updateFallState(double y, boolean onGround, Block block, BlockPos pos) {}
 
     @Override
     public void moveEntityWithHeading(float par1, float par2) {
@@ -478,9 +500,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (wearables.size() > 0) {
             NBTTagList wearableList = new NBTTagList();
 
-            for (int i = 0; i < wearables.size(); i++) {
+            for (ItemStack wearable : wearables) {
                 NBTTagCompound item = new NBTTagCompound();
-                wearables.get(i).writeToNBT(item);
+                wearable.writeToNBT(item);
                 wearableList.appendTag(item);
             }
 
@@ -533,7 +555,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (nbt.hasKey("wearables")) {
             NBTTagList list = nbt.getTagList("wearables", 10);
             for (int i = 0; i < list.tagCount(); i++) {
-                wearables.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
+                ItemStack stack = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
+                if (stack != null) {
+                    wearables.add(stack);
+                }
             }
         }
 
@@ -652,7 +677,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public ItemStack removeStackFromSlot(int var1) {
-        return inv[var1].splitStack(var1);
+        ItemStack stack = inv[var1];
+        inv[var1] = null;
+        return stack;
     }
 
     @Override
@@ -800,8 +827,36 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource par1, float par2) {
-        // deactivate being hit
+    public boolean attackEntityFrom(DamageSource source, float f) {
+        // Ignore hits from mobs or when docked.
+        Entity src = source.getSourceOfDamage();
+        if (src != null && !(src instanceof EntityFallingBlock) && !(src instanceof IMob) && currentDockingStation == null) {
+            if (ForgeHooks.onLivingAttack(this, source, f)) {
+                return false;
+            }
+
+            if (!worldObj.isRemote) {
+                hurtTime = maxHurtTime = 10;
+
+                int mul = 2600;
+                for (ItemStack s : wearables) {
+                    if (s.getItem() instanceof ItemArmor) {
+                        mul = mul * 2 / (2 + ((ItemArmor) s.getItem()).damageReduceAmount);
+                    } else {
+                        mul *= 0.7;
+                    }
+                }
+
+                int energy = Math.round(f * mul);
+                if (battery.getEnergyStored() - energy > 0) {
+                    battery.setEnergy(battery.getEnergyStored() - energy);
+                    return true;
+                } else {
+                    onRobotHit(true);
+                }
+            }
+            return true;
+        }
         return false;
     }
 
@@ -928,17 +983,54 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
+        BlockPos entPos = Utils.convertFloor(Utils.getVec(par1Entity));
+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, entPos).get(),
+                par1Entity))) {
+            return;
+        }
         if (par1Entity.canAttackWithItem()) {
             if (!par1Entity.hitByEntity(this)) {
-                this.setLastAttacker(par1Entity);
-                boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
-                // FIXME! This was probably meant to do something at some point...
-                // EnchantmentHelper.func_151385_b(this, par1Entity);
-                ItemStack itemstack = itemInUse;
-                Object object = par1Entity;
+                float attackDamage = 2.0F;
+                int knockback = 0;
 
-                if (itemstack != null && object instanceof EntityLivingBase) {
-                    itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) object, this);
+                if (par1Entity instanceof EntityLivingBase) {
+                    // FIXME: This was probably meant to do something at some point
+                    // attackDamage += EnchantmentHelper.getEnchantmentModifierDamage(this, (EntityLivingBase)
+                    // par1Entity);
+                    knockback += EnchantmentHelper.getKnockbackModifier(this);
+                }
+
+                if (attackDamage > 0.0F) {
+                    int fireAspect = EnchantmentHelper.getFireAspectModifier(this);
+
+                    if (par1Entity instanceof EntityLivingBase && fireAspect > 0 && !par1Entity.isBurning()) {
+                        par1Entity.setFire(fireAspect * 4);
+                    }
+
+                    if (par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), attackDamage)) {
+                        this.setLastAttacker(par1Entity);
+
+                        if (knockback > 0) {
+                            par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F),
+                                    0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F));
+                            this.motionX *= 0.6D;
+                            this.motionZ *= 0.6D;
+                            this.setSprinting(false);
+                        }
+                        // FIXME: This was probably meant to do something at some point...
+
+                        // if (par1Entity instanceof EntityLivingBase) {
+                        // EnchantmentHelper.((EntityLivingBase) par1Entity, this);
+                        // }
+                        //
+                        // EnchantmentHelper.func_151385_b(this, par1Entity);
+
+                        ItemStack itemstack = itemInUse;
+
+                        if (itemstack != null && par1Entity instanceof EntityLivingBase) {
+                            itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) par1Entity, this);
+                        }
+                    }
                 }
             }
         }
@@ -959,12 +1051,14 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     private IZone getZone(AreaType areaType) {
-        for (StatementSlot s : linkedDockingStation.getActiveActions()) {
-            if (s.statement instanceof ActionRobotWorkInArea && ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
-                IZone zone = ActionRobotWorkInArea.getArea(s);
+        if (linkedDockingStation != null) {
+            for (StatementSlot s : linkedDockingStation.getActiveActions()) {
+                if (s.statement instanceof ActionRobotWorkInArea && ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
+                    IZone zone = ActionRobotWorkInArea.getArea(s);
 
-                if (zone != null) {
-                    return zone;
+                    if (zone != null) {
+                        return zone;
+                    }
                 }
             }
         }
@@ -996,29 +1090,65 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void unreachableEntityDetected(Entity entity) {
-        unreachableEntities.put(entity, true);
+        unreachableEntities.put(entity, worldObj.getTotalWorldTime() + 1200);
     }
 
     @Override
     public boolean isKnownUnreachable(Entity entity) {
-        return unreachableEntities.containsKey(entity);
+        if (unreachableEntities.containsKey(entity)) {
+            if (unreachableEntities.get(entity) >= worldObj.getTotalWorldTime()) {
+                return true;
+            } else {
+                unreachableEntities.remove(entity);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    protected void onRobotHit(boolean attacked) {
+        if (!worldObj.isRemote) {
+            if (attacked) {
+                convertToItems();
+            } else {
+                if (wearables.size() > 0) {
+                    entityDropItem(wearables.remove(wearables.size() - 1), 0);
+                    syncWearablesToClient();
+                } else {
+                    convertToItems();
+                }
+            }
+        }
     }
 
     @Override
     protected boolean interact(EntityPlayer player) {
         ItemStack stack = player.getCurrentEquippedItem();
         if (stack == null || stack.getItem() == null) {
-            return super.interact(player);
+            return false;
         }
 
-        if (player.isSneaking() && stack.getItem() instanceof IToolWrench) {
-            if (!worldObj.isRemote) {
-                convertToItems();
-            } else {
-                ((IToolWrench) stack.getItem()).wrenchUsed(player, this);
+        RobotEvent.Interact robotInteractEvent = new RobotEvent.Interact(this, player, stack);
+        MinecraftForge.EVENT_BUS.post(robotInteractEvent);
+        if (robotInteractEvent.isCanceled()) {
+            return false;
+        }
+
+        if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+            RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
+            MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
+            if (robotDismantleEvent.isCanceled()) {
+                return false;
+            }
+
+            onRobotHit(false);
+
+            if (worldObj.isRemote) {
+                ((ItemWrench) stack.getItem()).wrenchUsed(player, this);
             }
             return true;
-        } else if (wearables.size() < 8 && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == 0) {
+        } else if (wearables.size() < MAX_WEARABLES && stack.getItem().isValidArmor(stack, 0, this)) {
             if (!worldObj.isRemote) {
                 wearables.add(stack.splitStack(1));
                 syncWearablesToClient();
@@ -1026,10 +1156,20 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 player.swingItem();
             }
             return true;
-        } else if (wearables.size() < 8 && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(
-                stack)) {
+        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem())
+                .isValidRobotOverlay(stack)) {
             if (!worldObj.isRemote) {
                 wearables.add(stack.splitStack(1));
+                syncWearablesToClient();
+            } else {
+                player.swingItem();
+            }
+            return true;
+        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof ItemSkull) {
+            if (!worldObj.isRemote) {
+                ItemStack skullStack = stack.splitStack(1);
+                initSkullItem(skullStack);
+                wearables.add(skullStack);
                 syncWearablesToClient();
             } else {
                 player.swingItem();
@@ -1037,6 +1177,41 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             return true;
         } else {
             return super.interact(player);
+        }
+    }
+
+    private void initSkullItem(ItemStack skullStack) {
+        if (skullStack.hasTagCompound()) {
+            NBTTagCompound nbttagcompound = skullStack.getTagCompound();
+            GameProfile gameProfile = null;
+
+            if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_COMPOUND)) {
+                gameProfile = NBTUtil.readGameProfileFromNBT(nbttagcompound.getCompoundTag("SkullOwner"));
+            } else if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_STRING) && !StringUtils.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
+                gameProfile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
+            }
+            if (gameProfile != null && !StringUtils.isNullOrEmpty(gameProfile.getName())) {
+                if (!gameProfile.isComplete() || !gameProfile.getProperties().containsKey("textures")) {
+                    // TODO: FIND OUT HOW SKULLS LOAD GAME PROFILES
+                    // gameProfile = MinecraftServer.getServer().getGameProfileRepository().(gameProfile.getName());
+
+                    if (gameProfile != null) {
+                        Property property = (Property) Iterables.getFirst(gameProfile.getProperties().get("textures"), (Object) null);
+
+                        if (property == null) {
+                            // gameProfile =
+                            // MinecraftServer.getServer().func_147130_as().fillProfileProperties(gameProfile, true);
+                        }
+                    }
+                }
+            }
+            if (gameProfile != null && gameProfile.isComplete() && gameProfile.getProperties().containsKey("textures")) {
+                NBTTagCompound profileNBT = new NBTTagCompound();
+                NBTUtil.writeGameProfile(profileNBT, gameProfile);
+                nbttagcompound.setTag("SkullOwner", profileNBT);
+            } else {
+                nbttagcompound.removeTag("SkullOwner");
+            }
         }
     }
 
@@ -1223,17 +1398,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public FluidTankInfo[] getTankInfo(EnumFacing from) {
         return new FluidTankInfo[] { new FluidTankInfo(tank, maxFluid) };
     }
-
-    // @SideOnly(Side.CLIENT)
-    // public TextureAtlasSprite getItemIcon(ItemStack stack, int renderPass) {
-    // TextureAtlasSprite iicon = super.getItemIcon(stack, renderPass);
-    //
-    // if (iicon == null) {
-    // iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
-    // }
-    //
-    // return iicon;
-    // }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {

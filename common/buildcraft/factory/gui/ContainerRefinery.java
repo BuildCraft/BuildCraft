@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.gui;
@@ -7,6 +7,7 @@ package buildcraft.factory.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+
 import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.BuildCraftFactory;
@@ -38,7 +39,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return refinery.isUseableByPlayer(entityplayer);
+        return entityplayer.worldObj.getTileEntity(refinery.getPos()) == refinery;
     }
 
     /* SETTING AND GETTING FILTERS */
@@ -71,8 +72,8 @@ public class ContainerRefinery extends BuildCraftContainer {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        for (int i = 0; i < crafters.size(); i++) {
-            refinery.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+        for (Object crafter : crafters) {
+            refinery.sendGUINetworkData(this, (ICrafting) crafter);
         }
     }
 }

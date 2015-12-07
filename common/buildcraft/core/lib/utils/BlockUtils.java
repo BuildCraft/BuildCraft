@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
@@ -16,12 +16,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -32,13 +36,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class BlockUtils {
-    private static Chunk lastChunk;
-
     /** Deactivate constructor */
     private BlockUtils() {}
 
@@ -79,6 +81,38 @@ public final class BlockUtils {
         return false;
     }
 
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool) {
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world).get());
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+
+        if (breakEvent.isCanceled()) {
+            return false;
+        }
+
+        IBlockState state = world.getBlockState(pos);
+
+        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
+        int i = 0;
+        while (player.getHeldItem() != tool && i < 9) {
+            if (i > 0) {
+                player.inventory.setInventorySlotContents(i - 1, null);
+            }
+
+            player.inventory.setInventorySlotContents(i, tool);
+            i++;
+        }
+
+        if (!state.getBlock().canHarvestBlock(world, pos, player)) {
+            return false;
+        }
+
+        state.getBlock().onBlockHarvested(world, pos, state, player);
+        state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos));
+        world.setBlockToAir(pos);
+
+        return true;
+    }
+
     public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops) {
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -108,46 +142,58 @@ public final class BlockUtils {
         world.spawnEntityInWorld(entityitem);
     }
 
-    public static boolean isAnObstructingBlock(Block block, World world, BlockPos pos) {
-        if (block == null || block.isAir(world, pos)) {
-            return false;
-        }
-        return true;
-    }
-
     public static boolean canChangeBlock(World world, BlockPos pos) {
         return canChangeBlock(world.getBlockState(pos), world, pos);
     }
 
     public static boolean canChangeBlock(IBlockState state, World world, BlockPos pos) {
-        if (state == null)
-            return true;
+        if (state == null) return true;
 
         Block block = state.getBlock();
         if (block == null || block.isAir(world, pos)) {
             return true;
         }
 
-        if (block.getBlockHardness(world, pos) < 0) {
-            return false;
-        }
-
-        // TODO: Make this support all "heavy" liquids, not just oil/lava
-        if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null && "oil".equals(((IFluidBlock) block).getFluid().getName())) {
+        if (isUnbreakableBlock(world, pos, block)) {
             return false;
         }
 
         if (block == Blocks.lava || block == Blocks.flowing_lava) {
             return false;
+        } else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null) {
+            Fluid f = ((IFluidBlock) block).getFluid();
+            if (f.getDensity(world, pos) >= 3000) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    public static boolean isUnbreakableBlock(World world, BlockPos pos) {
-        Block b = world.getBlockState(pos).getBlock();
+    public static float getBlockHardnessMining(World world, BlockPos pos, Block b) {
+        if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
+            float relativeHardness = b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, pos);
+            if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
+                                            // is < 0.0F.
+                return -1.0F;
+            } else {
+                return relativeHardness;
+            }
+        } else {
+            return b.getBlockHardness(world, pos);
+        }
+    }
 
-        return b != null && b.getBlockHardness(world, pos) < 0;
+    public static boolean isUnbreakableBlock(World world, BlockPos pos, Block b) {
+        if (b == null) {
+            return false;
+        }
+
+        return getBlockHardnessMining(world, pos, b) < 0;
+    }
+
+    public static boolean isUnbreakableBlock(World world, BlockPos pos) {
+        return isUnbreakableBlock(world, pos, world.getBlockState(pos).getBlock());
     }
 
     /** Returns true if a block cannot be harvested without a tool. */
@@ -231,7 +277,8 @@ public final class BlockUtils {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(), null));
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
+                        null));
             }
         }
     }
@@ -242,37 +289,19 @@ public final class BlockUtils {
     }
 
     /** The following functions let you avoid unnecessary chunk loads, which is nice. */
-
-    private static Chunk getChunkUnforced(World world, int x, int z) {
-        Chunk chunk = lastChunk;
-        if (chunk != null) {
-            if (chunk.isLoaded()) {
-                if (chunk.getWorld() == world && chunk.xPosition == x && chunk.zPosition == z) {
-                    return chunk;
-                }
-            } else {
-                lastChunk = null;
-            }
-        }
-
-        chunk = world.getChunkProvider().chunkExists(x, z) ? world.getChunkProvider().provideChunk(x, z) : null;
-        lastChunk = chunk;
-        return chunk;
+    public static TileEntity getTileEntity(World world, BlockPos pos) {
+        return getTileEntity(world, pos, false);
     }
 
-    public static Block getBlock(World world, BlockPos pos) {
-        return getBlock(world, pos, false);
-    }
-
-    public static Block getBlock(World world, BlockPos pos, boolean force) {
+    public static TileEntity getTileEntity(World world, BlockPos pos, boolean force) {
         if (!force) {
             if (pos.getY() < 0 || pos.getY() > 255) {
-                return Blocks.air;
+                return null;
             }
-            Chunk chunk = getChunkUnforced(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getBlock(pos.getX() & 15, pos.getY(), pos.getZ() & 15) : Blocks.air;
+            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
+            return chunk != null ? chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) : null;
         } else {
-            return world.getBlockState(pos).getBlock();
+            return world.getTileEntity(pos);
         }
     }
 
@@ -281,13 +310,17 @@ public final class BlockUtils {
     }
 
     public static IBlockState getBlockState(World world, BlockPos pos, boolean force) {
-        if (force) {
-            return world.getBlockState(pos);
+        if (!force) {
+            if (pos.getY() < 0 || pos.getY() >= world.getHeight()) {
+                return Blocks.air.getDefaultState();
+            }
+            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
+            return chunk != null ? chunk.getBlockState(pos) : Blocks.air.getDefaultState();
         } else {
             if (pos.getY() < 0 || pos.getY() > 255) {
                 return Blocks.air.getDefaultState();
             }
-            Chunk chunk = getChunkUnforced(world, pos.getX() >> 4, pos.getZ() >> 4);
+            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getBlockState(pos) : Blocks.air.getDefaultState();
         }
     }
@@ -317,5 +350,36 @@ public final class BlockUtils {
             done = stack.getItem().onItemUse(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F);
         }
         return done;
+    }
+
+    public static void onComparatorUpdate(World world, BlockPos pos, Block block) {
+        world.updateComparatorOutputLevel(pos, block);
+    }
+
+    public static TileEntityChest getOtherDoubleChest(TileEntity inv) {
+        if (inv instanceof TileEntityChest) {
+            TileEntityChest chest = (TileEntityChest) inv;
+
+            TileEntityChest adjacent = null;
+
+            if (chest.adjacentChestXNeg != null) {
+                adjacent = chest.adjacentChestXNeg;
+            }
+
+            if (chest.adjacentChestXPos != null) {
+                adjacent = chest.adjacentChestXPos;
+            }
+
+            if (chest.adjacentChestZNeg != null) {
+                adjacent = chest.adjacentChestZNeg;
+            }
+
+            if (chest.adjacentChestZPos != null) {
+                adjacent = chest.adjacentChestZPos;
+            }
+
+            return adjacent;
+        }
+        return null;
     }
 }

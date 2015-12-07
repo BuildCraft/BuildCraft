@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,7 +26,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -349,7 +347,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         for (int i = orientation.getIndex() + 1; i <= orientation.getIndex() + 6; ++i) {
             EnumFacing o = EnumFacing.VALUES[i % 6];
 
-            TileEntity tile = getTile(o);
+            Object tile = getEnergyProvider(o);
 
             if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
                 orientation = o;
@@ -413,14 +411,10 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public void getGUINetworkData(int id, int value) {
         switch (id) {
             case 0:
-                int iEnergy = Math.round(energy);
-                iEnergy = (iEnergy & 0xffff0000) | (value & 0xffff);
-                energy = iEnergy;
+                energy = (energy & 0xffff0000) | (value & 0xffff);
                 break;
             case 1:
-                iEnergy = Math.round(energy);
-                iEnergy = (iEnergy & 0xffff) | ((value & 0xffff) << 16);
-                energy = iEnergy;
+                energy = (energy & 0xffff) | ((value & 0xffff) << 16);
                 break;
             case 2:
                 currentOutput = value;
@@ -432,9 +426,9 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-        iCrafting.sendProgressBarUpdate(container, 0, Math.round(energy) & 0xffff);
-        iCrafting.sendProgressBarUpdate(container, 1, (Math.round(energy) & 0xffff0000) >> 16);
-        iCrafting.sendProgressBarUpdate(container, 2, Math.round(currentOutput));
+        iCrafting.sendProgressBarUpdate(container, 0, energy & 0xffff);
+        iCrafting.sendProgressBarUpdate(container, 1, (energy & 0xffff0000) >> 16);
+        iCrafting.sendProgressBarUpdate(container, 2, currentOutput);
         iCrafting.sendProgressBarUpdate(container, 3, Math.round(heat * 100));
     }
 
@@ -454,7 +448,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public int extractEnergy(int energyMax, boolean doExtract) {
-        int max = Math.min(energyMax, maxEnergyExtracted());
+        int max = Math.min(energyMax, getCurrentOutputLimit());
 
         int extracted;
 
@@ -489,19 +483,15 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
     public abstract int getMaxEnergy();
 
-    public int minEnergyReceived() {
-        return 20;
-    }
-
-    public abstract int maxEnergyReceived();
-
-    public abstract int maxEnergyExtracted();
-
     public int getEnergyStored() {
         return energy;
     }
 
-    public abstract int calculateCurrentOutput();
+    public abstract int getIdealOutput();
+
+    public int getCurrentOutputLimit() {
+        return Integer.MAX_VALUE;
+    }
 
     @Override
     public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {

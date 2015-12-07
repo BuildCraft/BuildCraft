@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -42,34 +43,10 @@ public class StripesHandlerBucket implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        IBlockState state = world.getBlockState(pos);
-        Block block = state.getBlock();
-        if (block == Blocks.air) {
-            IBlockState underblock = world.getBlockState(pos.down());
-
-            if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, pos.down())) {
+        if (world.isAirBlock(pos)) {
+            BlockPos place = new BlockPos(pos.getX(), direction.ordinal() < 2 ? pos.getY() : (pos.getY() - 1), pos.getZ());
+            if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, place)) {
                 activator.sendItem(emptyBucket, direction.getOpposite());
-                stack.stackSize--;
-                if (stack.stackSize > 0) {
-                    activator.sendItem(stack, direction.getOpposite());
-                }
-
-                return true;
-            } else {
-                if (!FluidContainerRegistry.isEmptyContainer(stack)) {
-                    activator.sendItem(stack, direction.getOpposite());
-                    return true;
-                }
-
-                FluidStack fluidStack = BlockUtils.drainBlock(underblock, world, pos.down(), true);
-                ItemStack filledBucket = getFilledBucket(fluidStack, underblock.getBlock());
-
-                if (fluidStack == null || filledBucket == null) {
-                    activator.sendItem(stack, direction.getOpposite());
-                    return true;
-                }
-
-                activator.sendItem(filledBucket, direction.getOpposite());
                 stack.stackSize--;
                 if (stack.stackSize > 0) {
                     activator.sendItem(stack, direction.getOpposite());
@@ -78,7 +55,34 @@ public class StripesHandlerBucket implements IStripesHandler {
                 return true;
             }
         }
-        return false;
+
+        if (!FluidContainerRegistry.isEmptyContainer(stack)) {
+            activator.sendItem(stack, direction.getOpposite());
+            return true;
+        }
+
+        IBlockState targetBlock = world.getBlockState(pos);
+        FluidStack fluidStack = BlockUtils.drainBlock(targetBlock, world, pos, true);
+
+        if (fluidStack == null) {
+            targetBlock = world.getBlockState(pos.down());
+            fluidStack = BlockUtils.drainBlock(targetBlock, world, pos.down(), true);
+        }
+
+        ItemStack filledBucket = getFilledBucket(fluidStack, targetBlock.getBlock());
+
+        if (fluidStack == null || filledBucket == null) {
+            activator.sendItem(stack, direction.getOpposite());
+            return true;
+        }
+
+        activator.sendItem(filledBucket, direction.getOpposite());
+        stack.stackSize--;
+        if (stack.stackSize > 0) {
+            activator.sendItem(stack, direction.getOpposite());
+        }
+
+        return true;
     }
 
 }

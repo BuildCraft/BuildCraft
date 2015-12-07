@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
@@ -17,7 +17,7 @@ public class StackAtPosition implements ISerializable {
     public Vec3 pos;
     public boolean display;
 
-    // Rendering
+    // Rendering only!
     public boolean generatedListId;
     public int glListId;
 
@@ -29,5 +29,19 @@ public class StackAtPosition implements ISerializable {
     @Override
     public void writeData(ByteBuf stream) {
         NetworkUtils.writeStack(stream, stack);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof StackAtPosition)) {
+            return false;
+        }
+        StackAtPosition other = (StackAtPosition) o;
+        return other.stack.equals(stack) && other.pos.equals(pos) && other.display == display;
+    }
+
+    @Override
+    public int hashCode() {
+        return stack.hashCode() * 17 + pos.hashCode();
     }
 }

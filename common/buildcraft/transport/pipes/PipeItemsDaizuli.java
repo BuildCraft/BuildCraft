@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -14,30 +14,30 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumColor;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TransportConstants;
-import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerializable {
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISerializable {
 
     private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
     private int solidIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Solid.ordinal();
@@ -80,7 +80,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer player) {
+    public boolean blockActivated(EntityPlayer player, EnumFacing side) {
         if (player.isSneaking()) {
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
             if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
@@ -96,7 +96,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
             return true;
         }
 
-        return logic.blockActivated(player);
+        return logic.blockActivated(player, EnumPipePart.fromFacing(side));
     }
 
     @Override
@@ -149,16 +149,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
     }
 
     public void eventHandler(PipeEventItem.AdjustSpeed event) {
-        event.handled = true;
-        TravelingItem item = event.item;
-
-        if (item.getSpeed() > TransportConstants.PIPE_NORMAL_SPEED) {
-            item.setSpeed(item.getSpeed() - TransportConstants.PIPE_NORMAL_SPEED / 4.0F);
-        }
-
-        if (item.getSpeed() < TransportConstants.PIPE_NORMAL_SPEED) {
-            item.setSpeed(TransportConstants.PIPE_NORMAL_SPEED);
-        }
+        event.slowdownAmount /= 4;
     }
 
     @Override

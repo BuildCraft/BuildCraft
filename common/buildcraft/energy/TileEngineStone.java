@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
@@ -43,6 +43,11 @@ public class TileEngineStone extends TileEngineWithInventory {
     }
 
     @Override
+    public int getCurrentOutputLimit() {
+        return (int) Math.floor((float) getIdealOutput() * heat / IDEAL_HEAT);
+    }
+
+    @Override
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (super.onBlockActivated(player, side)) {
             return true;
@@ -69,7 +74,7 @@ public class TileEngineStone extends TileEngineWithInventory {
         if (burnTime > 0) {
             burnTime--;
             if (isRedstonePowered) {
-                currentOutput = calculateCurrentOutput();
+                currentOutput = getIdealOutput();
                 addEnergy(currentOutput);
             }
         } else {
@@ -136,22 +141,12 @@ public class TileEngineStone extends TileEngineWithInventory {
     }
 
     @Override
-    public int maxEnergyReceived() {
-        return 2000;
-    }
-
-    @Override
-    public int maxEnergyExtracted() {
-        return 1000;
-    }
-
-    @Override
     public int getMaxEnergy() {
         return 10000;
     }
 
     @Override
-    public int calculateCurrentOutput() {
+    public int getIdealOutput() {
         if (burnItem != null && burnItem.getItem() == Items.paper) {
             return 1;
         }

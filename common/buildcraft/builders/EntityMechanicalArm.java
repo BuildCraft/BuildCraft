@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -22,8 +22,6 @@ public class EntityMechanicalArm extends Entity {
     private double yRoot;
     private double zRoot;
 
-    private boolean inProgressionXZ = false;
-    private boolean inProgressionY = false;
     private int headX, headY, headZ;
     private EntityResizableCuboid xArm, yArm, zArm, head;
 
@@ -93,7 +91,7 @@ public class EntityMechanicalArm extends Entity {
 
     private void findAndJoinQuarry() {
         TileEntity te = worldObj.getTileEntity(new BlockPos((int) posX, (int) posY, (int) posZ));
-        if (te != null && te instanceof TileQuarry) {
+        if (te instanceof TileQuarry) {
             parent = (TileQuarry) te;
             parent.setArm(this);
         } else {

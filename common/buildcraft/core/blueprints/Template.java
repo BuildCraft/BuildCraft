@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.blueprints;
 
 import net.minecraft.item.Item;
@@ -39,7 +43,7 @@ public class Template extends BlueprintBase {
         int posZ = (int) nPos.zCoord;
 
         if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
-            contents[posX][posY][posZ] = new SchematicMask(true);
+			put(posX, posY, posZ, new SchematicMask(true));
         }
     }
 
@@ -55,7 +59,7 @@ public class Template extends BlueprintBase {
         for (int x = 0; x < sizeX; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
-                    data[ind] = (byte) ((contents[x][y][z] == null) ? 0 : 1);
+					data[ind] = (byte) ((get(x, y, z) == null) ? 0 : 1);
                     ind++;
                 }
             }
@@ -73,7 +77,7 @@ public class Template extends BlueprintBase {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
                     if (data[ind] == 1) {
-                        contents[x][y][z] = new SchematicMask(true);
+						put(x, y, z, new SchematicMask(true));
                     }
 
                     ind++;
@@ -84,7 +88,7 @@ public class Template extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:templateItem"));
+        Item item = Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:templateItem"));
         if (item == null) {
             throw new Error("Could not find the template item! Did you attempt to use this without buildcraft builders installed?");
         }

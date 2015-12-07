@@ -1,15 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -19,9 +14,9 @@ import buildcraft.api.core.IZone;
 
 public class PathFindingSearch implements IIterableAlgorithm {
 
-    public static int PATH_ITERATIONS = 1000;
+    public static final int PATH_ITERATIONS = 1000;
 
-    private static HashMap<Integer, HashSet<BlockPos>> reservations = new HashMap<Integer, HashSet<BlockPos>>();
+    private static final HashMap<Integer, HashSet<BlockPos>> reservations = new HashMap<Integer, HashSet<BlockPos>>();
 
     private World world;
     private BlockPos start;
@@ -109,7 +104,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
             if (pathFinding.isDone()) {
                 LinkedList<BlockPos> path = pathFinding.getResult();
                 if (path != null && path.size() > 0) {
-                    if (reserve(path.getLast())) {
+                    if (reserve(pathFinding.end())) {
                         return;
                     }
                 }

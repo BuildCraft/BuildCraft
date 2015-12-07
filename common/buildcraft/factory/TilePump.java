@@ -1,14 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -16,18 +12,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 
+import net.minecraftforge.fluids.*;
+
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
@@ -157,8 +149,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isBlocked(BlockPos pos) {
-        Material mat = BlockUtils.getBlock(worldObj, pos).getMaterial();
-
+        Material mat = BlockUtils.getBlockState(worldObj, pos).getBlock().getMaterial();
         return mat.blocksMovement();
     }
 
@@ -250,7 +241,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         int y = aimY;
         int z = pos.getZ();
         BlockPos pos = new BlockPos(x, y, z);
-        Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, pos));
+        Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlockState(worldObj, pos).getBlock());
 
         if (pumpingFluid == null) {
             return;
@@ -310,7 +301,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isPumpableFluid(BlockPos pos) {
-        Fluid fluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, pos));
+        Fluid fluid = BlockUtils.getFluid(BlockUtils.getBlockState(worldObj, pos).getBlock());
 
         if (fluid == null) {
             return false;

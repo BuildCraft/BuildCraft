@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -33,7 +34,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     public TriggerFluidContainer(State state) {
         super("buildcraft:fluid." + state.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + state.name().toLowerCase(Locale.ROOT));
-		setBuildCraftLocation("core", "triggers/trigger_liquidcontainer_" + state.name().toLowerCase(Locale.ROOT));
+        setBuildCraftLocation("core", "triggers/trigger_liquidcontainer_" + state.name().toLowerCase(Locale.ROOT));
         this.state = state;
     }
 

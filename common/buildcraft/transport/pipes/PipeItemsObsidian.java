@@ -1,27 +1,30 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -29,7 +32,6 @@ import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.StackFilter;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -38,17 +40,12 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnergyHandler {
-    private RFBattery battery = new RFBattery(2560, 640, 0);
-
-    private int[] entitiesDropped;
-    private int entitiesDroppedIndex = 0;
+public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
+    private final RFBattery battery = new RFBattery(2560, 640, 0);
+    private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<Entity, Long>();
 
     public PipeItemsObsidian(Item item) {
         super(new PipeTransportItems(), item);
-
-        entitiesDropped = new int[32];
-        Arrays.fill(entitiesDropped, -1);
     }
 
     @Override
@@ -165,20 +162,20 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnerg
                 return true;
             }
 
-            if (distance == 1 && entity instanceof EntityMinecartChest) {
-                EntityMinecartChest cart = (EntityMinecartChest) entity;
+            if (distance == 1 && entity instanceof EntityMinecart && entity instanceof IInventory) {
+                EntityMinecart cart = (EntityMinecart) entity;
                 if (!cart.isDead) {
                     ITransactor trans = Transactor.getTransactorFor(cart);
                     EnumFacing openOrientation = getOpenOrientation();
                     ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
 
                     if (stack != null && battery.useEnergy(10, 10, false) > 0) {
-                        trans.remove(StackFilter.ALL, openOrientation, true);
-                        EntityItem entityitem = new EntityItem(container.getWorld(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
-                        entityitem.setDefaultPickupDelay();
-                        container.getWorld().spawnEntityInWorld(entityitem);
-                        pullItemIntoPipe(entityitem, 1);
-
+                        stack = trans.remove(StackFilter.ALL, openOrientation, true);
+                        if (stack != null) {
+                            Vec3 pos = Utils.convertMiddle(container.getPos());
+                            TravelingItem item = TravelingItem.make(pos, stack);
+                            transport.injectItem(item, openOrientation.getOpposite());
+                        }
                         return true;
                     }
                 }
@@ -199,7 +196,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnerg
             container.getWorld().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorld().rand.nextFloat() - container.getWorld().rand
                     .nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
-            ItemStack stack = null;
+            ItemStack stack;
 
             double speed = 0.01F;
 
@@ -221,6 +218,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnerg
                 } else {
                     stack = contained.splitStack(energyUsed / distance / 10);
                 }
+
+                battery.useEnergy(energyUsed, energyUsed, false);
 
                 speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);
                 speed = speed / 2F - 0.05;
@@ -249,12 +248,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnerg
     }
 
     public void eventHandler(PipeEventItem.DropItem event) {
-        if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
-            entitiesDroppedIndex = 0;
-        } else {
-            entitiesDroppedIndex++;
-        }
-        entitiesDropped[entitiesDroppedIndex] = event.entity.getEntityId();
+        entityDropTime.put(event.entity, event.entity.worldObj.getTotalWorldTime() + 200);
     }
 
     public boolean canSuck(Entity entity, int distance) {
@@ -268,10 +262,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnerg
                 return false;
             }
 
-            for (int element : entitiesDropped) {
-                if (item.getEntityId() == element) {
-                    return false;
-                }
+            long wt = entity.worldObj.getTotalWorldTime();
+            if (entityDropTime.containsKey(entity) && entityDropTime.get(entity) >= wt) {
+                return false;
             }
 
             return battery.getEnergyStored() >= distance * 10;

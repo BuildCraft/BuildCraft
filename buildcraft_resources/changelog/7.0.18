@@ -1,0 +1,18 @@
+Improvements:
+
+* [#2941] Knights and Butchers now respect all your fancy sword enchantments, knockbacks and damage modifiers. Woo! (asie)
+* [#2926] Fluid pipes are now extra glowy (asie)
+
+Bugs fixed:
+
+* [#2942] Autarchic Gates not reacting to short pulses on Single Energy Pulse mode (asie)
+* [#2935, attempted] Programming Table robot board mixups (asie)
+* [#2929] Builders unable to place liquid in survival mode (asie)
+* [#2921] Architect Table's defined area box not visible >64 blocks (ganymedes01)
+* [#2914] Advanced Crafting Table excess tick times in certain circumstances (asie)
+* [#2898] Robot crash on chunk unload/reload (hea3ven)
+* [#2862] Pipe name not displaying in WAILA (asie)
+* Fluid tanks rendering incorrectly in Builder (asie)
+* Knight/Butcher not emitting Forge attack events (asie)
+* Restoring robot block breaking state could fail (hea3ven)
+* Stripes pipes placing extra blocks, and the behaviour of the stripes robot placing blocks (hea3ven)

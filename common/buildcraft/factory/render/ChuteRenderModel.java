@@ -18,24 +18,21 @@ import buildcraft.core.lib.render.BuildCraftBakedModel;
 
 public class ChuteRenderModel extends BuildCraftBakedModel {
     public static TextureAtlasSprite sideTexture = null;
-    @SuppressWarnings("deprecation")
     private final IBakedModel parent;
 
-    @SuppressWarnings("deprecation")
     protected ChuteRenderModel(ImmutableList<BakedQuad> quads, IBakedModel parent) {
         super(quads, null, DefaultVertexFormats.BLOCK);
         this.parent = parent;
     }
 
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public static ChuteRenderModel create(IBakedModel parent) {
         if (parent == null) {
             /* The "chute.json" block model file contains the top and bottom boxes, so it will look strange if it
              * doesn't exist. Just print out a warning to make sure they know that this is why. Print out a full stack
              * trace because this really shouldn't happen, and it makes it much more obvious in the logfile where the
              * error message is. */
-            new IllegalStateException("For some reason, the block model for the chute block was missing!"
-                + "\nThis is not meant to happen, you have a bad JAR file!").printStackTrace();
+            throw new IllegalStateException("For some reason, the block model for the chute block was missing!"
+                + "\nThis is not meant to happen, you have a bad JAR file!");
         }
         List<BakedQuad> lst = Lists.newArrayList(parent.getGeneralQuads());
 

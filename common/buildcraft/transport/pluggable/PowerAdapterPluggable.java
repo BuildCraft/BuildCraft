@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
@@ -17,11 +18,11 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.BuildCraftTransport;
 
 import io.netty.buffer.ByteBuf;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {
+    private static final int MAX_POWER = 40;
     private IPipeTile container;
 
     public class PowerAdapterPluggableRenderer implements IPipePluggableStaticRenderer {
@@ -116,7 +117,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
     @Override
     public ItemStack[] getDropItems(IPipeTile pipe) {
-        return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
+        return new ItemStack[] { new ItemStack(BuildCraftTransport.powerAdapterItem) };
     }
 
     @Override
@@ -158,11 +159,11 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        int maxR = Math.min(40, maxReceive);
-        if (container instanceof IEnergyHandler) {
-            int energyCanReceive = ((IEnergyHandler) container).receiveEnergy(from, maxR, true);
+        int maxR = Math.min(MAX_POWER, maxReceive);
+        if (container != null && container.getPipe() instanceof IEnergyHandler) {
+            int energyCanReceive = ((IEnergyHandler) container.getPipe()).receiveEnergy(from, maxR, true);
             if (!simulate) {
-                return ((IEnergyHandler) container).receiveEnergy(from, energyCanReceive, false);
+                return ((IEnergyHandler) container.getPipe()).receiveEnergy(from, energyCanReceive, false);
             } else {
                 return energyCanReceive;
             }
@@ -177,8 +178,8 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
     @Override
     public int getEnergyStored(EnumFacing from) {
-        if (container instanceof IEnergyHandler) {
-            return ((IEnergyHandler) container).getEnergyStored(from);
+        if (container.getPipe() instanceof IEnergyHandler) {
+            return ((IEnergyHandler) container.getPipe()).getEnergyStored(from);
         } else {
             return 0;
         }
@@ -186,8 +187,8 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
     @Override
     public int getMaxEnergyStored(EnumFacing from) {
-        if (container instanceof IEnergyHandler) {
-            return ((IEnergyHandler) container).getMaxEnergyStored(from);
+        if (container.getPipe() instanceof IEnergyHandler) {
+            return ((IEnergyHandler) container.getPipe()).getMaxEnergyStored(from);
         } else {
             return 0;
         }
@@ -196,5 +197,10 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
     @Override
     public boolean canConnectEnergy(EnumFacing from) {
         return true;
+    }
+
+    @Override
+    public boolean requiresRenderUpdate(PipePluggable o) {
+        return false;
     }
 }

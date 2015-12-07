@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -42,14 +42,17 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.properties.BuildCraftExtendedProperty;
@@ -61,8 +64,8 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
 import buildcraft.core.lib.utils.ICustomStateMapper;
@@ -82,7 +85,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended(
             "pluggable_state", PipePluggableState.class);
 
-    public static final BuildCraftExtendedProperty<Pipe> PIPE_PIPE = BuildCraftExtendedProperty.createExtended("pipe_pipe", Pipe.class);
+    public static final BuildCraftExtendedProperty<Pipe<?>> PIPE_PIPE = BuildCraftExtendedProperty.createExtended("pipe_pipe", Pipe.class);
 
     public static Map<ItemPipe, Class<? extends Pipe<?>>> pipes = Maps.newHashMap();
     public static Map<BlockPos, Pipe<?>> pipeRemoved = Maps.newHashMap();
@@ -91,7 +94,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     private static final EnumFacing[] DIR_VALUES = EnumFacing.values();
 
-    public static enum Part {
+    public enum Part {
         Pipe,
         Pluggable,
         Wire
@@ -533,10 +536,14 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
 
         pipeRemoved.put(pos, pipe);
-        world.removeTileEntity(pos);
-        if (pipe != null) {
-            updateNeighbourSignalState(pipe);
+        for (EnumFacing dir : EnumFacing.values()) {
+            TileEntity tile = world.getTileEntity(pos.offset(dir));
+            if (tile instanceof IPipeTile) {
+                Pipe<?> tpipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+                tpipe.scheduleWireUpdate();
+            }
         }
+        world.removeTileEntity(pos);
     }
 
     @Override
@@ -605,9 +612,19 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos) {
+        // HACK: WAILA compatibility
+        EntityPlayer clientPlayer = CoreProxy.proxy.getClientPlayer();
+        if (clientPlayer != null) {
+            return getPickBlock(target, world, pos, clientPlayer);
+        } else {
+            return new ItemStack(getPipe(world, pos).item, 1, getPipe(world, pos).container.getItemMetadata());
+        }
+    }
+
+    @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
         RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
-        BCLog.logger.info("Picked " + rayTraceResult);
 
         if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
             switch (rayTraceResult.hitPart) {
@@ -651,14 +668,25 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
     }
 
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        TileEntity tile = world.getTileEntity(pos);
+
+        if (tile instanceof TileGenericPipe) {
+            for (EnumFacing face : EnumFacing.values()) {
+                if (pos.offset(face).equals(neighbor)) {
+                    ((TileGenericPipe) tile).scheduleNeighborChange(EnumPipePart.fromFacing(face));
+                    return;
+                }
+            }
+        }
+    }
+
     private int getRedstoneInputToPipe(World world, BlockPos pos, EnumFacing d) {
-        // TODO (PASS 1): TEST THIS!
-        return world.getRedstonePower(pos, d);
-        // int i = d.ordinal();
-        // int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
+        // int input = world.getStrongPower(pos.offset(d), d);
         // if (input == 0) {
-        // input = world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
-        // if (input == 0 && d != EnumFacing.DOWN) {
+        return world.getRedstonePower(pos.offset(d), d);
+        // if (input == 0 && d != ForgeDirection.DOWN) {
         // Block block = world.getBlock(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
         // if (block instanceof BlockRedstoneWire) {
         // return world.getBlockMetadata(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
@@ -728,7 +756,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             } else if (currentItem.getItem() instanceof IToolWrench) {
                 // Only check the instance at this point. Call the IToolWrench
                 // interface callbacks for the individual pipe/logic calls
-                return pipe.blockActivated(player);
+                RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
+                if (rayTraceResult != null) {
+                    EnumFacing hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : null;
+                    return pipe.blockActivated(player, hitSide);
+                } else {
+                    return pipe.blockActivated(player, null);
+                }
             } else if (currentItem.getItem() instanceof IMapLocation) {
                 // We want to be able to record pipe locations
                 return false;
@@ -770,7 +804,14 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                 clickedGate.openGui(player);
                 return true;
             } else {
-                return pipe.blockActivated(player);
+                if (pipe.blockActivated(player, side)) {
+                    return true;
+                }
+
+                if (rayTrace != null) {
+                    EnumFacing hitSide = rayTrace.hitPart == Part.Pipe ? rayTrace.sideHit : null;
+                    return pipe.blockActivated(player, hitSide);
+                }
             }
         }
 
@@ -828,6 +869,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             pipe.signalStrength[color.ordinal()] = 0;
 
             pipe.updateSignalState();
+
             pipe.container.scheduleRenderUpdate();
             return true;
         }
@@ -843,9 +885,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             pipe.signalStrength[color.ordinal()] = 0;
             pipe.wireSet[color.ordinal()] = false;
 
-            pipe.updateSignalState();
-
-            updateNeighbourSignalState(pipe);
+            pipe.propagateSignalState(color, 0);
 
             if (isFullyDefined(pipe)) {
                 pipe.resolveActions();
@@ -953,7 +993,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         ItemPipe item = new ItemPipe(creativeTab);
         item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 
-        CoreProxy.proxy.registerItem(item, item.getUnlocalizedName());
+        BCRegistry.INSTANCE.registerItem(item, true);
 
         pipes.put(item, clas);
 
@@ -984,9 +1024,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return null;
     }
 
-    public static boolean placePipe(Pipe<?> pipe, World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public static boolean placePipe(Pipe<?> pipe, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side) {
         if (world.isRemote) {
             return true;
+        }
+
+        if (player != null) {
+            IBlockState stateAgainst = world.getBlockState(pos.offset(side.getOpposite()));
+            BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(new BlockSnapshot(world, pos, state), stateAgainst, player);
+            MinecraftForge.EVENT_BUS.post(placeEvent);
+            if (placeEvent.isCanceled()) {
+                return false;
+            }
         }
 
         boolean placed = world.setBlockState(pos, state, 3);
@@ -997,7 +1046,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                 TileGenericPipe tilePipe = (TileGenericPipe) tile;
                 tilePipe.initialize(pipe);
                 tilePipe.sendNetworkUpdate();
-                FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), pos));
+                MinecraftForge.EVENT_BUS.post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), pos));
             }
         }
 
@@ -1141,23 +1190,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return false;
     }
 
-    public static void updateNeighbourSignalState(Pipe<?> pipe) {
-        if (pipe != null && pipe.container != null) {
-            TileBuffer[] neighbours = pipe.container.getTileCache();
-
-            if (neighbours != null) {
-                for (int i = 0; i < 6; i++) {
-                    if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile && !neighbours[i].getTile().isInvalid()
-                        && ((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-                        ((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
-                    }
-                }
-            }
-        }
-    }
-
-    // @Override
-    public TextureAtlasSprite getIcon(IBlockAccess world, BlockPos pos, int side) {
+    public TextureAtlasSprite getSprite(IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileGenericPipe) {
             Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();

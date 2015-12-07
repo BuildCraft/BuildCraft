@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.api.core.BCLog;
@@ -37,13 +38,13 @@ public class TransportGuiHandler implements IGuiHandler {
                 return new ContainerFilteredBuffer(player, filteredBuffer);
             }
 
-			if (!(tile instanceof IPipeTile)) {
+            if (!(tile instanceof IPipeTile)) {
                 return null;
             }
 
-			IPipeTile pipe = (IPipeTile) tile;
+            IPipeTile pipe = (IPipeTile) tile;
 
-			if (pipe.getPipe() == null) {
+            if (pipe.getPipe() == null) {
                 return null;
             }
 
@@ -87,31 +88,31 @@ public class TransportGuiHandler implements IGuiHandler {
                 return new GuiFilteredBuffer(player, filteredBuffer);
             }
 
-            if (!(tile instanceof TileGenericPipe)) {
+			if (!(tile instanceof IPipeTile)) {
                 return null;
             }
 
-            TileGenericPipe pipe = (TileGenericPipe) tile;
+			IPipeTile pipe = (IPipeTile) tile;
 
-            if (pipe.pipe == null) {
+			if (pipe.getPipe() == null) {
                 return null;
             }
 
             switch (id) {
                 case GuiIds.PIPE_DIAMOND:
-                    return new GuiDiamondPipe(player, (IDiamondPipe) pipe.pipe);
+                    return new GuiDiamondPipe(player, (IDiamondPipe) pipe.getPipe());
 
                 case GuiIds.PIPE_EMERALD_ITEM:
-                    return new GuiEmeraldPipe(player, (PipeItemsEmerald) pipe.pipe);
+                    return new GuiEmeraldPipe(player, (PipeItemsEmerald) pipe.getPipe());
 
                 case GuiIds.PIPE_LOGEMERALD_ITEM:
-                    return new GuiEmzuliPipe(player, (PipeItemsEmzuli) pipe.pipe);
+                    return new GuiEmzuliPipe(player, (PipeItemsEmzuli) pipe.getPipe());
 
                 case GuiIds.PIPE_EMERALD_FLUID:
-                    return new GuiEmeraldFluidPipe(player, (PipeFluidsEmerald) pipe.pipe);
+                    return new GuiEmeraldFluidPipe(player, (PipeFluidsEmerald) pipe.getPipe());
 
                 case GuiIds.GATES:
-                    return new GuiGateInterface(player, pipe.pipe);
+                    return new GuiGateInterface(player, pipe.getPipe());
 
                 default:
                     return null;

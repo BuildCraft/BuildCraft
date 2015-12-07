@@ -1,9 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.properties;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -12,12 +13,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {
-
-    public HashSet<Integer> ores = new HashSet<Integer>();
+    private final HashSet<Integer> ores = new HashSet<Integer>();
 
     public WorldPropertyIsOre(int harvestLevel) {
         initBlockHarvestTools();
@@ -56,12 +58,19 @@ public class WorldPropertyIsOre extends WorldProperty {
         if (block == null) {
             return false;
         } else {
-            ItemStack stack = new ItemStack(block, 1, 0);
+            List<ItemStack> toCheck = new ArrayList<ItemStack>();
+            toCheck.add(new ItemStack(block, 1, block.getMetaFromState(state)));
 
-            if (stack.getItem() != null) {
-                for (int id : OreDictionary.getOreIDs(stack)) {
-                    if (ores.contains(id)) {
-                        return true;
+            if (block.hasTileEntity(state) && blockAccess instanceof World) {
+                toCheck.addAll(block.getDrops((World) blockAccess, pos, state, 0));
+            }
+
+            for (ItemStack stack : toCheck) {
+                if (stack.getItem() != null) {
+                    for (int id : OreDictionary.getOreIDs(stack)) {
+                        if (ores.contains(id)) {
+                            return true;
+                        }
                     }
                 }
             }

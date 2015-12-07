@@ -1,7 +1,8 @@
 package buildcraft.core;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -16,31 +17,33 @@ import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
 
 public class BlockEngine extends BlockEngineBase implements IModelRegister {
-    private final List<Class<? extends TileEngineBase>> engineTiles;
-    private final List<String> names;
+    private final Class<? extends TileEngineBase>[] engineTiles;
+    private final String[] names;
 
     public BlockEngine() {
         super();
         setUnlocalizedName("engineBlock");
 
-        engineTiles = new ArrayList<Class<? extends TileEngineBase>>(16);
-        names = new ArrayList<String>(16);
+        engineTiles = new Class[16];
+        names = new String[16];
     }
 
     @Override
     public String getUnlocalizedName(int metadata) {
-        return names.get(metadata % names.size());
+        return names[metadata] != null ? names[metadata] : "unknown";
     }
 
-    public void registerTile(Class<? extends TileEngineBase> engineTile, String name) {
-        engineTiles.add(engineTile);
-        names.add(name);
+    public void registerTile(Class<? extends TileEngineBase> engineTile, int meta, String name) {
+        if (BCRegistry.INSTANCE.isEnabled("engines", name)) {
+            engineTiles[meta]= engineTile;
+            names[meta]= name;
+        }
     }
 
     @Override
     public TileEntity createTileEntity(World world, int metadata) {
         try {
-            return engineTiles.get(metadata % engineTiles.size()).newInstance();
+            return (TileEntity) engineTiles[metadata].newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -50,13 +53,17 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-        for (int i = 0; i < engineTiles.size(); i++) {
-            itemList.add(new ItemStack(this, 1, i));
+        int i = 0;
+        for (String name : names) {
+            if (name != null) {
+                itemList.add(new ItemStack(this, 1, i));
+            }
+            i++;
         }
     }
 
-    public int getEngineCount() {
-        return engineTiles.size();
+    public boolean hasEngine(int meta) {
+        return engineTiles[meta] != null;
     }
 
     @Override

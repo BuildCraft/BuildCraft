@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -18,18 +19,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyHandler, ISerializable, IDebuggable {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable, IDebuggable {
     private static final int ENERGY_MULTIPLIER = 50;
 
     public int fluidToExtract;
@@ -58,13 +60,13 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
-        return logic.blockActivated(entityplayer);
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing side) {
+        return logic.blockActivated(entityplayer, EnumPipePart.fromFacing(side));
     }
 
     @Override
     public void onNeighborBlockChange(int blockId) {
-        logic.onNeighborBlockChange(blockId);
+        logic.onNeighborBlockChange();
         super.onNeighborBlockChange(blockId);
     }
 
@@ -108,7 +110,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
         FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
         FluidStack extracted;
 
-        if (tankInfo.fluid != null && tankInfo.fluid != null) {
+        if (tankInfo.fluid != null) {
             extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid, amount), false);
         } else {
             extracted = fluidHandler.drain(side.getOpposite(), amount, false);
@@ -119,11 +121,20 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
         if (extracted != null) {
             inserted = transport.fill(side, extracted, true);
             if (inserted > 0) {
-                fluidHandler.drain(side.getOpposite(), new FluidStack(extracted.getFluid(), inserted), true);
+                extracted.amount = inserted;
+                fluidHandler.drain(side.getOpposite(), extracted, true);
             }
         }
 
         return inserted;
+    }
+
+    protected int getEnergyMultiplier() {
+        return 5 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+    }
+
+    protected int getMaxExtractionFluid() {
+        return 100 * BuildCraftTransport.pipeFluidsBaseFlowRate;
     }
 
     @Override
@@ -165,10 +176,10 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
             return 0;
         }
 
-        int maxToReceive = (1000 - fluidToExtract) / ENERGY_MULTIPLIER;
+        int maxToReceive = (getMaxExtractionFluid() - fluidToExtract) / getEnergyMultiplier();
         int received = Math.min(maxReceive, maxToReceive);
         if (!simulate) {
-            fluidToExtract += ENERGY_MULTIPLIER * received;
+            fluidToExtract += getEnergyMultiplier() * received;
         }
         return received;
     }
@@ -185,7 +196,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
 
     @Override
     public int getMaxEnergyStored(EnumFacing from) {
-        return 1000 / ENERGY_MULTIPLIER;
+        return 1000 / getEnergyMultiplier();
     }
 
     @Override

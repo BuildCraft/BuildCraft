@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -60,17 +60,17 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
     protected abstract void openGui(BlueprintBase bpt);
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
         if (NBTUtils.getItemData(stack).hasKey("name")) {
             String name = NBTUtils.getItemData(stack).getString("name");
 
             if ("".equals(name)) {
-                list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
+                list.add(StringUtils.localize("item.blueprint.unnamed"));
             } else {
-                list.add(String.format(name));
+                list.add(name);
             }
 
-            list.add(String.format(StringUtils.localize("item.blueprint.author") + " " + NBTUtils.getItemData(stack).getString("author")));
+            list.add(StringUtils.localize("item.blueprint.author") + " " + NBTUtils.getItemData(stack).getString("author"));
         } else {
             list.add(StringUtils.localize("item.blueprint.blank"));
         }
@@ -79,9 +79,9 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             BuildingPermission p = BuildingPermission.values()[NBTUtils.getItemData(stack).getByte("permission")];
 
             if (p == BuildingPermission.CREATIVE_ONLY) {
-                list.add(String.format(StringUtils.localize("item.blueprint.creative_only")));
+                list.add(StringUtils.localize("item.blueprint.creative_only"));
             } else if (p == BuildingPermission.NONE) {
-                list.add(String.format(StringUtils.localize("item.blueprint.no_build")));
+                list.add(StringUtils.localize("item.blueprint.no_build"));
             }
         }
 
@@ -89,7 +89,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             boolean isComplete = NBTUtils.getItemData(stack).getBoolean("isComplete");
 
             if (!isComplete) {
-                list.add(String.format(StringUtils.localize("item.blueprint.incomplete")));
+                list.add(StringUtils.localize("item.blueprint.incomplete"));
             }
         }
     }
@@ -97,6 +97,10 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return NBTUtils.getItemData(stack).hasKey("name") ? 1 : 16;
+    }
+
+    public static boolean isContentReadable(ItemStack stack) {
+        return getId(stack) != null;
     }
 
     public static LibraryId getId(ItemStack stack) {

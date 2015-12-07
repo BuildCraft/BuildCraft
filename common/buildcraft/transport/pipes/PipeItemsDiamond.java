@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -84,7 +85,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
     }
 
     @Override
-    public boolean blockActivated(EntityPlayer entityplayer) {
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing direction) {
         if (entityplayer.getCurrentEquippedItem() != null) {
             if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
                 return false;
@@ -123,6 +124,25 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
         return false;
     }
 
+    private void clearDest(PipeEventItem.FindDest event) {
+        for (EnumFacing dir : event.destinations) {
+            if (filters.filterCounts[dir.ordinal()] > 0) {
+                for (int slot = 0; slot < 9; ++slot) {
+                    int v = dir.ordinal() * 9 + slot;
+                    if ((usedFilters & (1 << v)) == 0) {
+                        continue;
+                    }
+
+                    ItemStack filter = getFilters().getStackInSlot(v);
+
+                    if (StackHelper.isMatchingItemOrList(filter, event.item.getItemStack())) {
+                        usedFilters ^= 1 << v;
+                    }
+                }
+            }
+        }
+    }
+
     @PipeEventPriority(priority = -4194304)
     public void eventHandler(PipeEventItem.FindDest event) {
         // We're running last and we can safely assume that nothing else
@@ -134,7 +154,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
         }
 
         if (usedFilters != 0) {
-            usedFilters = 0;
+            clearDest(event);
             if (findDest(event)) {
                 return;
             }
@@ -169,13 +189,17 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
     @Override
     public void writeData(ByteBuf data) {
         NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
+        filters.writeToNBT(nbt);
+        nbt.setLong("usedFilters", usedFilters);
         NetworkUtils.writeNBT(data, nbt);
     }
 
     @Override
     public void readData(ByteBuf data) {
         NBTTagCompound nbt = NetworkUtils.readNBT(data);
-        readFromNBT(nbt);
+        filters.readFromNBT(nbt);
+        if (nbt.hasKey("usedFilters")) {
+            usedFilters = nbt.getLong("usedFilters");
+        }
     }
 }

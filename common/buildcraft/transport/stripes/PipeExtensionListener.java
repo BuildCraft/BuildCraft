@@ -15,19 +15,20 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.BuildCraftTransport;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.utils.TransportUtils;
 
-/** Created by asie on 3/20/15. */
 public class PipeExtensionListener {
     private class PipeExtensionRequest {
         public ItemStack stack;
@@ -81,6 +82,8 @@ public class PipeExtensionListener {
                 w.getTileEntity(r.pos).writeToNBT(nbt);
                 w.setBlockToAir(r.pos);
 
+                boolean failedPlacement = false;
+
                 // Step 2: If retracting, remove previous pipe; if extending, add new pipe
                 BlockPos targetPos = Utils.convertFloor(target);
                 if (retract) {
@@ -108,8 +111,8 @@ public class PipeExtensionListener {
                 pipeTile.update();
 
                 // Step 4: Hope for the best, clean up.
-                PipeTransportItems items = (PipeTransportItems) pipeTile.pipe.transport;
-                if (!retract) {
+                PipeTransportItems items = (PipeTransportItems) ((Pipe) pipeTile.getPipe()).transport;
+                if (!retract && !failedPlacement) {
                     r.stack.stackSize--;
                 }
 
@@ -122,10 +125,13 @@ public class PipeExtensionListener {
                     }
                 }
 
-                if (!retract) {
+                if (!retract && !failedPlacement) {
                     TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.pos);
                     newPipeTile.update();
                     pipeTile.scheduleNeighborChange();
+                    if (pipeTile.getPipe() != null) {
+                        ((Pipe) pipeTile.getPipe()).scheduleWireUpdate();
+                    }
                 }
             }
             rSet.clear();

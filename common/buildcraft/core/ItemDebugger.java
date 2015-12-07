@@ -11,7 +11,6 @@ import net.minecraft.world.World;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 
-/** Created by asie on 3/7/15. */
 @Deprecated
 public class ItemDebugger extends ItemBuildCraft {
     public ItemDebugger() {

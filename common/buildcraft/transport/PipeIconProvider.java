@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
@@ -10,13 +10,14 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
@@ -104,6 +105,7 @@ public class PipeIconProvider implements IIconProvider {
         PipeFluidsSandstone("sandstone_fluid"),
         PipeFluidsStone("stone_fluid"),
         PipeFluidsVoid("void_fluid"),
+        PipeFluidsClay("clay_fluid"),
         //
         PipeFluidsDiamond_Item("diamond_fluid_itemstack"),
         PipeFluidsDiamond_Center("diamond_fluid"),
@@ -163,19 +165,19 @@ public class PipeIconProvider implements IIconProvider {
         @SideOnly(Side.CLIENT)
         private TextureAtlasSprite icon;
 
-        private TYPE(String iconTag, String iconTagColorBlind) {
+        TYPE(String iconTag, String iconTagColorBlind) {
             this.iconTag = iconTag;
             this.iconTagColorBlind = iconTagColorBlind;
         }
 
-        private TYPE(String iconTag) {
+        TYPE(String iconTag) {
             this(iconTag, iconTag);
         }
 
         @SideOnly(Side.CLIENT)
         private void registerIcon(TextureMap iconRegister) {
             String name = BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag;
-            if (name.indexOf(":") < 0) {
+            if (!name.contains(":")) {
                 name = "transport:pipes/" + name;
             }
             icon = iconRegister.registerSprite(new ResourceLocation("buildcraft" + name));
@@ -187,7 +189,7 @@ public class PipeIconProvider implements IIconProvider {
     }
 
     public static final Map<EnumFacing, TYPE> diamondPipeItems, diamondPipeFluids;
-    public static final Map<EnumColor, TYPE> lapisPipe, dazuliPipe;
+    public static final Map<EnumDyeColor, TYPE> lapisPipe, dazuliPipe;
 
     static {
         diamondPipeItems = Maps.newHashMap();
@@ -202,7 +204,7 @@ public class PipeIconProvider implements IIconProvider {
         lapisPipe = Maps.newHashMap();
         dazuliPipe = Maps.newHashMap();
 
-        for (EnumColor face : EnumColor.VALUES) {
+        for (EnumDyeColor face : EnumDyeColor.values()) {
             lapisPipe.put(face, TYPE.VALUES[TYPE.PipeItemsLapis_Black.ordinal() + face.ordinal()]);
             dazuliPipe.put(face, TYPE.VALUES[TYPE.PipeItemsDaizuli_Black.ordinal() + face.ordinal()]);
         }

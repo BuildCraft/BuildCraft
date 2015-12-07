@@ -4,17 +4,50 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.api.robots;
 
-import net.minecraft.tileentity.TileEntity;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class ResourceIdRequest extends ResourceId {
+import net.minecraft.nbt.NBTTagCompound;
+
+import buildcraft.api.core.EnumPipePart;
+
+public class ResourceIdRequest extends ResourceIdBlock {
+
+    private int slot;
 
     public ResourceIdRequest() {
 
     }
 
-    public ResourceIdRequest(TileEntity tile, int i) {
-        pos = tile.getPos();
-        localId = i;
+    public ResourceIdRequest(DockingStation station, int slot) {
+        pos = station.index();
+        side = EnumPipePart.fromFacing(station.side());
+        this.slot = slot;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) return false;
+        ResourceIdRequest compareId = (ResourceIdRequest) obj;
+
+        return slot == compareId.slot;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(super.hashCode()).append(slot).build();
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        nbt.setInteger("localId", slot);
+    }
+
+    @Override
+    protected void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        slot = nbt.getInteger("localId");
+    }
 }

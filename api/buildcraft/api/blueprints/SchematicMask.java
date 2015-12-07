@@ -6,6 +6,9 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -34,13 +37,23 @@ public class SchematicMask extends SchematicBlockBase {
                 return;
             } else {
                 ItemStack stack = stacks.getFirst();
+                EntityPlayer player = BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get();
 
                 // force the block to be air block, in case it's just a soft
                 // block which replacement is not straightforward
                 context.world().setBlockToAir(pos);
 
-                stack.onItemUse(BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(), context.world(), pos, EnumFacing.UP,
-                        0.0f, 0.0f, 0.0f);
+                // Find nearest solid surface to place on
+                for (EnumFacing face : EnumFacing.values()) {
+                    BlockPos offset = pos.offset(face);
+                    if (!BuildCraftAPI.isSoftBlock(context.world(), offset)) {
+                        ItemBlock itemBlock = (ItemBlock) stack.getItem();
+                        IBlockState state = itemBlock.block.onBlockPlaced(context.world(), pos, face, 0, 0, 0, stack.getMetadata(), player);
+                        itemBlock.placeBlockAt(stack, player, context.world(), offset, face, 0, 0, 0, state);
+                        continue;
+                    }
+                }
+
             }
         } else {
             context.world().setBlockToAir(pos);
@@ -50,9 +63,9 @@ public class SchematicMask extends SchematicBlockBase {
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
         if (isConcrete) {
-            return !BuildCraftAPI.isSoftBlock(context.world(), pos);
+            return !BuildCraftAPI.getWorldProperty("replaceable").get(context.world(), pos);
         } else {
-            return BuildCraftAPI.isSoftBlock(context.world(), pos);
+            return BuildCraftAPI.getWorldProperty("replaceable").get(context.world(), pos);
         }
     }
 

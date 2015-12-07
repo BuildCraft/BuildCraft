@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
@@ -8,11 +8,14 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.buttons.GuiImageButton;
 import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
 import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.PacketGuiReturn;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmerald;
@@ -21,7 +24,7 @@ import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
 public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventListener {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
-
+    private static final ResourceLocation TEXTURE_BUTTON = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald_button.png");
     private static final int WHITE_LIST_BUTTON_ID = 1;
     private static final int BLACK_LIST_BUTTON_ID = 2;
     private static final int ROUND_ROBIN_BUTTON_ID = 3;
@@ -37,8 +40,6 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
         this.pipe = pipe;
 
-        pipe.getFilters();
-
         xSize = 175;
         ySize = 161;
     }
@@ -49,18 +50,19 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
         this.buttonList.clear();
 
-        this.whiteListButton = new GuiImageButton(WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, GuiImageButton.ButtonImage.WHITE_LIST);
+        this.whiteListButton = new GuiImageButton(WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
         this.whiteListButton.registerListener(this);
+        this.whiteListButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.whitelist"))));
         this.buttonList.add(this.whiteListButton);
 
-        this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41,
-                GuiImageButton.ButtonImage.BLACK_LIST);
+        this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
         this.blackListButton.registerListener(this);
+        this.blackListButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.blacklist"))));
         this.buttonList.add(this.blackListButton);
 
-        this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41,
-                GuiImageButton.ButtonImage.ROUND_ROBIN);
+        this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
         this.roundRobinButton.registerListener(this);
+        this.roundRobinButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.roundrobin"))));
         this.buttonList.add(this.roundRobinButton);
 
         switch (pipe.getSettings().getFilterMode()) {
@@ -74,16 +76,6 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
                 this.roundRobinButton.activate();
                 break;
         }
-    }
-
-    @Override
-    public void onGuiClosed() {
-        if (pipe.getWorld().isRemote) {
-            PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer());
-            pkt.sendPacket();
-        }
-
-        super.onGuiClosed();
     }
 
     @Override
@@ -110,6 +102,11 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
                 pipe.getSettings().setFilterMode(FilterMode.ROUND_ROBIN);
                 break;
+        }
+
+        if (pipe.getWorld().isRemote) {
+            PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer());
+            pkt.sendPacket();
         }
     }
 

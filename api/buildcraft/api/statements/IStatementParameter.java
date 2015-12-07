@@ -22,9 +22,6 @@ public interface IStatementParameter {
 
     ItemStack getItemStack();
 
-    // @SideOnly(Side.CLIENT)
-    // void registerIcons(TextureAtlasSpriteRegister iconRegister);
-
     /** Return the parameter description in the UI */
     String getDescription();
 

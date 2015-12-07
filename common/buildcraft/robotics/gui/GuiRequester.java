@@ -1,11 +1,10 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -19,11 +18,8 @@ public class GuiRequester extends GuiAdvancedInterface {
 
     private TileRequester requester;
 
-    private IInventory playerInventory;
-
     private static class RequestSlot extends AdvancedSlot {
 
-        private ItemStack item;
         private int index;
 
         public RequestSlot(GuiAdvancedInterface gui, int iIndex, int x, int y) {
@@ -34,12 +30,6 @@ public class GuiRequester extends GuiAdvancedInterface {
 
         public void setItem(ItemStack itemStack) {
             TileRequester requester = ((GuiRequester) gui).requester;
-
-            if (itemStack != null) {
-                item = itemStack.copy();
-            } else {
-                item = null;
-            }
 
             requester.setRequest(index, itemStack);
             ((GuiRequester) gui).getContainer().getRequestList();
@@ -63,7 +53,6 @@ public class GuiRequester extends GuiAdvancedInterface {
         ySize = 181;
 
         requester = iRequester;
-        playerInventory = player.inventory;
 
         for (int x = 0; x < 4; ++x) {
             for (int y = 0; y < 5; ++y) {
@@ -76,7 +65,7 @@ public class GuiRequester extends GuiAdvancedInterface {
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         super.drawGuiContainerBackgroundLayer(f, x, y);
 
-        drawBackgroundSlots();
+        drawBackgroundSlots(x, y);
     }
 
     @Override

@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 public class AchievementManager {
-    public AchievementPage page;
+	public final AchievementPage page;
 
     public AchievementManager(String name) {
         page = new AchievementPage(name);

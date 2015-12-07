@@ -9,9 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 
@@ -126,7 +128,7 @@ public abstract class DockingStation {
             int x = indexNBT.getInteger("i");
             int y = indexNBT.getInteger("j");
             int z = indexNBT.getInteger("k");
-            pos = new BlockPos(pos);
+            pos = new BlockPos(x, y, z);
         } else {
             int[] array = nbt.getIntArray("pos");
             if (array.length == 3) {
@@ -160,7 +162,7 @@ public abstract class DockingStation {
     }
 
     public boolean linkIsDocked() {
-        if (isTaken()) {
+        if (robotTaking() != null) {
             return robotTaking().getDockingStation() == this;
         } else {
             return false;
@@ -181,16 +183,32 @@ public abstract class DockingStation {
         return null;
     }
 
+    public EnumPipePart getItemOutputSide() {
+        return EnumPipePart.CENTER;
+    }
+
     public IInventory getItemInput() {
         return null;
+    }
+
+    public EnumPipePart getItemInputSide() {
+        return EnumPipePart.CENTER;
     }
 
     public IFluidHandler getFluidOutput() {
         return null;
     }
 
+    public EnumPipePart getFluidOutputSide() {
+        return EnumPipePart.CENTER;
+    }
+
     public IFluidHandler getFluidInput() {
         return null;
+    }
+
+    public EnumPipePart getFluidInputSide() {
+        return EnumPipePart.CENTER;
     }
 
     public boolean providesPower() {
@@ -201,4 +219,7 @@ public abstract class DockingStation {
         return null;
     }
 
+    public void onChunkUnload() {
+
+    }
 }

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
@@ -19,7 +19,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -34,6 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -41,7 +41,6 @@ import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.*;
 import buildcraft.factory.render.ChuteRenderModel;
 import buildcraft.factory.schematics.SchematicAutoWorkbench;
@@ -70,30 +69,116 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static Achievement refineAndRedefineAchievement;
 
     public static int miningDepth = 256;
-	public static boolean pumpsNeedRealPower = false;
+    public static boolean pumpsNeedRealPower = false;
     public static PumpDimensionList pumpDimensionList;
+
+    @Mod.EventHandler
+    public void initialize(FMLPreInitializationEvent evt) {
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
+
+        String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
+            + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
+            + "Entries are comma seperated, banned fluids have precedence over allowed ones."
+            + "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
+
+        BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the mining well only be usable once after placing?",
+                ConfigManager.RestartRequirement.NONE);
+
+        BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
+        BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc,
+                ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.pumpsNeedRealPower", false, "Do pumps need real (non-redstone) power?",
+                ConfigManager.RestartRequirement.WORLD);
+
+        reloadConfig(ConfigManager.RestartRequirement.GAME);
+
+        miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
+        if (BCRegistry.INSTANCE.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"), false)) {
+            plainPipeBlock = new BlockPlainPipe();
+            BCRegistry.INSTANCE.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"), true);
+        }
+
+        autoWorkbenchBlock = (BlockAutoWorkbench) CompatHooks.INSTANCE.getBlock(BlockAutoWorkbench.class);
+        BCRegistry.INSTANCE.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"), false);
+
+        tankBlock = (BlockTank) CompatHooks.INSTANCE.getBlock(BlockTank.class);
+        BCRegistry.INSTANCE.registerBlock(tankBlock.setUnlocalizedName("tankBlock"), false);
+
+        pumpBlock = (BlockPump) CompatHooks.INSTANCE.getBlock(BlockPump.class);
+        BCRegistry.INSTANCE.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"), false);
+
+        floodGateBlock = (BlockFloodGate) CompatHooks.INSTANCE.getBlock(BlockFloodGate.class);
+        BCRegistry.INSTANCE.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"), false);
+
+        refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
+        BCRegistry.INSTANCE.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"), false);
+
+        chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
+        BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
+
+        FactoryProxy.proxy.initializeEntityRenders();
+
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public static void loadRecipes() {
+        if (miningWellBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(miningWellBlock, 1), "ipi", "igi", "iPi", 'p', "dustRedstone", 'i', "ingotIron", 'g',
+                    "gearIron", 'P', Items.iron_pickaxe);
+        }
+
+        if (pumpBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(pumpBlock), "ipi", "igi", "TBT", 'p', "dustRedstone", 'i', "ingotIron", 'T',
+                    tankBlock, 'g', "gearIron", 'B', Items.bucket);
+        }
+
+        if (autoWorkbenchBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), "gwg", 'w', "craftingTableWood", 'g', "gearStone");
+
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), "g", "w", "g", 'w', "craftingTableWood", 'g', "gearStone");
+        }
+
+        if (tankBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(tankBlock), "ggg", "g g", "ggg", 'g', "blockGlass");
+        }
+
+        if (refineryBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(refineryBlock), "RTR", "TGT", 'T', tankBlock != null ? tankBlock : "blockGlass", 'G',
+                    "gearDiamond", 'R', Blocks.redstone_torch);
+        }
+
+        if (chuteBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(chuteBlock), "ICI", " G ", 'I', "ingotIron", 'C', "chestWood", 'G', "gearStone");
+
+            BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(chuteBlock), Blocks.hopper, "gearStone");
+        }
+
+        if (floodGateBlock != null) {
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(floodGateBlock), "IGI", "FTF", "IFI", 'I', "ingotIron", 'T', tankBlock != null
+                ? tankBlock : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
+        }
+
+    }
 
     @Mod.EventHandler
     public void load(FMLInitializationEvent evt) {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new FactoryGuiHandler());
 
-        // EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM,
-        // instance, 50, 1, true);
-
-        CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "buildcraft.factory.MiningWell", "MiningWell");
-        CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "buildcraft.factory.AutoWorkbench", "AutoWorkbench");
-        CoreProxy.proxy.registerTileEntity(TilePump.class, "buildcraft.factory.Pump", "net.minecraft.src.buildcraft.factory.TilePump");
-        CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "buildcraft.factory.FloodGate", "net.minecraft.src.buildcraft.factory.TileFloodGate");
-        CoreProxy.proxy.registerTileEntity(TileTank.class, "buildcraft.factory.Tank", "net.minecraft.src.buildcraft.factory.TileTank");
-        CoreProxy.proxy.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
-        CoreProxy.proxy.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
+        BCRegistry.INSTANCE.registerTileEntity(TileMiningWell.class, "buildcraft.factory.MiningWell", "MiningWell");
+        BCRegistry.INSTANCE.registerTileEntity(TileAutoWorkbench.class, "buildcraft.factory.AutoWorkbench", "AutoWorkbench");
+        BCRegistry.INSTANCE.registerTileEntity(TilePump.class, "buildcraft.factory.Pump", "net.minecraft.src.buildcraft.factory.TilePump");
+        BCRegistry.INSTANCE.registerTileEntity(TileFloodGate.class, "buildcraft.factory.FloodGate",
+                "net.minecraft.src.buildcraft.factory.TileFloodGate");
+        BCRegistry.INSTANCE.registerTileEntity(TileTank.class, "buildcraft.factory.Tank", "net.minecraft.src.buildcraft.factory.TileTank");
+        BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
+        BCRegistry.INSTANCE.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
 
         FactoryProxy.proxy.initializeTileEntities();
 
         BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTileIgnoreState.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
-        BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicTileIgnoreState.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(chuteBlock, SchematicTile.class);
@@ -111,92 +196,6 @@ public class BuildCraftFactory extends BuildCraftMod {
         }
     }
 
-    @Mod.EventHandler
-    public void initialize(FMLPreInitializationEvent evt) {
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
-
-        String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
-            + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
-            + "Entries are comma seperated, banned fluids have precedence over allowed ones."
-            + "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
-
-        BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the mining well only be usable once after placing?",
-                ConfigManager.RestartRequirement.NONE);
-
-        BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
-		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
-		BuildCraftCore.mainConfigManager.register("general.pumpsNeedRealPower", false, "Do pumps need real (non-redstone) power?", ConfigManager.RestartRequirement.WORLD);
-
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
-
-        miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
-        CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
-
-        plainPipeBlock = new BlockPlainPipe();
-        CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
-
-        autoWorkbenchBlock = (BlockAutoWorkbench) CompatHooks.INSTANCE.getBlock(BlockAutoWorkbench.class);
-        CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
-
-        tankBlock = (BlockTank) CompatHooks.INSTANCE.getBlock(BlockTank.class);
-        CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
-
-        pumpBlock = (BlockPump) CompatHooks.INSTANCE.getBlock(BlockPump.class);
-        CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
-
-        floodGateBlock = (BlockFloodGate) CompatHooks.INSTANCE.getBlock(BlockFloodGate.class);
-        CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
-
-        refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
-        CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
-
-        chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
-        CoreProxy.proxy.registerBlock(chuteBlock.setUnlocalizedName("chuteBlock"));
-
-        FactoryProxy.proxy.initializeEntityRenders();
-
-        FMLCommonHandler.instance().bus().register(this);
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    public static void loadRecipes() {
-        if (miningWellBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1), "ipi", "igi", "iPi", 'p', "dustRedstone", 'i', "ingotIron", 'g',
-                    "gearIron", 'P', Items.iron_pickaxe);
-        }
-
-        if (pumpBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), "ipi", "igi", "TBT", 'p', "dustRedstone", 'i', "ingotIron", 'T', tankBlock,
-                    'g', "gearIron", 'B', Items.bucket);
-        }
-
-        if (autoWorkbenchBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), "gwg", 'w', Blocks.crafting_table, 'g', "gearStone");
-
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock), "g", "w", "g", 'w', Blocks.crafting_table, 'g', "gearStone");
-        }
-
-        if (tankBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(tankBlock), "ggg", "g g", "ggg", 'g', "blockGlass");
-        }
-
-        if (refineryBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock), "RTR", "TGT", 'T', tankBlock != null ? tankBlock : "blockGlass", 'G',
-                    "gearDiamond", 'R', Blocks.redstone_torch);
-        }
-
-        if (chuteBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(chuteBlock), "ICI", " G ", 'I', "ingotIron", 'C', Blocks.chest, 'G', "gearStone");
-
-            CoreProxy.proxy.addShapelessRecipe(new ItemStack(chuteBlock), Blocks.hopper, "gearStone");
-        }
-
-        if (floodGateBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock), "IGI", "FTF", "IFI", 'I', "ingotIron", 'T', tankBlock != null ? tankBlock
-                : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
-        }
-    }
-
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {
         if (restartType == ConfigManager.RestartRequirement.GAME) {
             reloadConfig(ConfigManager.RestartRequirement.WORLD);
@@ -204,7 +203,7 @@ public class BuildCraftFactory extends BuildCraftMod {
             reloadConfig(ConfigManager.RestartRequirement.NONE);
         } else {
             miningDepth = BuildCraftCore.mainConfigManager.get("general.miningDepth").getInt();
-			pumpsNeedRealPower = BuildCraftCore.mainConfigManager.get("general.pumpsNeedRealPower").getBoolean();
+            pumpsNeedRealPower = BuildCraftCore.mainConfigManager.get("general.pumpsNeedRealPower").getBoolean();
             pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfigManager.get("general.pumpDimensionControl").getString());
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {

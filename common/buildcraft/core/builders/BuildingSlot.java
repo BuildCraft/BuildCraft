@@ -1,10 +1,15 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.builders;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +28,8 @@ public abstract class BuildingSlot {
 
     public boolean built = false;
 
-    public void writeToWorld(IBuilderContext context) {
-
+	public boolean writeToWorld(IBuilderContext context) {
+		return false;
     }
 
     public void writeCompleted(IBuilderContext context, double complete) {
@@ -49,7 +54,7 @@ public abstract class BuildingSlot {
         stackConsumed.add(stack);
     }
 
-    public LinkedList<ItemStack> getStacksToDisplay() {
+	public List<ItemStack> getStacksToDisplay() {
         return getSchematic().getStacksToDisplay(stackConsumed);
     }
 

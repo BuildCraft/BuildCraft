@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
@@ -22,6 +22,7 @@ import net.minecraft.util.StatCollector;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
@@ -30,14 +31,13 @@ import buildcraft.core.lib.gui.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
     IInventory playerInventory;
     private final ContainerGateInterface container;
     private final GuiGateInterface instance;
-    private final Pipe<?> pipe;
+    private final IPipe pipe;
     private Gate gate;
 
     // Used for dragging triggers and actions to their correct positions
@@ -46,7 +46,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     private String tooltip = null;
 
     private class TriggerSlot extends StatementSlot {
-        public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
+        public TriggerSlot(int x, int y, IPipe pipe, int slot) {
             super(instance, x, y, slot);
         }
 
@@ -57,7 +57,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     private class ActionSlot extends StatementSlot {
-        public ActionSlot(int x, int y, Pipe<?> pipe, int slot) {
+        public ActionSlot(int x, int y, IPipe pipe, int slot) {
             super(instance, x, y, slot);
         }
 
@@ -68,7 +68,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     class TriggerParameterSlot extends StatementParameterSlot {
-        public TriggerParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
+        public TriggerParameterSlot(int x, int y, IPipe pipe, int slot, StatementSlot iStatementSlot) {
             super(instance, x, y, slot, iStatementSlot);
         }
 
@@ -84,7 +84,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     class ActionParameterSlot extends StatementParameterSlot {
-        public ActionParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
+        public ActionParameterSlot(int x, int y, IPipe pipe, int slot, StatementSlot iStatementSlot) {
             super(instance, x, y, slot, iStatementSlot);
         }
 
@@ -99,7 +99,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         }
     }
 
-    public GuiGateInterface(EntityPlayer player, Pipe<?> pipe) {
+    public GuiGateInterface(EntityPlayer player, IPipe pipe) {
         super(new ContainerGateInterface(player, pipe), null, null);
 
         container = (ContainerGateInterface) this.inventorySlots;
@@ -263,7 +263,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             }
         }
 
-        drawBackgroundSlots();
+        drawBackgroundSlots(x, y);
 
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
@@ -319,16 +319,16 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 i--;
             }
 
-			AdvancedSlot hoverSlot = getSlotAtLocation(x, y);
-			boolean isValid = (trigger && hoverSlot instanceof TriggerSlot) || (!trigger && hoverSlot instanceof ActionSlot);
+            AdvancedSlot hoverSlot = getSlotAtLocation(x, y);
+            boolean isValid = (trigger && hoverSlot instanceof TriggerSlot) || (!trigger && hoverSlot instanceof ActionSlot);
 
-			if (!isValid) {
-				GlStateManager.color(0.95f, 0.6f, 0.6f);
-			}
+            if (!isValid) {
+                GlStateManager.color(0.95f, 0.6f, 0.6f);
+            }
 
             drawStatement(x - 8, y - 8, state);
 
-			GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.color(1.0f, 1.0f, 1.0f);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);

@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
@@ -9,8 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.properties.BuildCraftProperties;
@@ -21,9 +23,7 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternNone;
@@ -43,10 +43,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     public IStatementParameter[] patternParameters;
 
     private BptBuilderTemplate currentTemplate;
-    private BptContext context;
 
     private final Box box = new Box();
     private boolean done = false;
+    private boolean excavate = true;
     private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
     private NBTTagCompound initNBT = null;
@@ -55,6 +55,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         inv.addListener(this);
         box.kind = Kind.STRIPES;
         initPatternParameters();
+    }
+
+    public boolean isExcavate() {
+        return excavate;
     }
 
     @Override
@@ -69,17 +73,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
         if (a != null) {
             box.initialize(a);
-
-            if (a instanceof TileMarker) {
-                a.removeFromWorld();
-            }
-
+            a.removeFromWorld();
             sendNetworkUpdate();
         }
 
-        if (currentPattern != null && currentTemplate == null && box.isInitialized()) {
-            currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
-            context = currentTemplate.getContext();
+        if (currentTemplate == null) {
+            initTemplate();
         }
 
         if (initNBT != null && currentTemplate != null) {
@@ -87,6 +86,13 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
 
         initNBT = null;
+    }
+
+    private void initTemplate() {
+        if (currentPattern != null && box.isInitialized() && box.sizeX() > 0 && box.sizeY() > 0 && box.sizeZ() > 0) {
+            currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
+            currentTemplate.blueprint.excavate = excavate;
+        }
     }
 
     @Override
@@ -119,9 +125,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             }
         }
 
-        if (currentPattern != null && currentTemplate == null) {
-            currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
-            context = currentTemplate.getContext();
+        if (currentTemplate == null) {
+            initTemplate();
         }
 
         if (currentTemplate != null) {
@@ -192,7 +197,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             box.initialize(nbt.getCompoundTag("box"));
         }
 
-        setDone(nbt.getBoolean("done"));
+        done = nbt.getBoolean("done");
+        excavate = nbt.hasKey("excavate") ? nbt.getBoolean("excavate") : true;
 
         // The rest of load has to be done upon initialize.
         initNBT = (NBTTagCompound) nbt.getCompoundTag("bpt").copy();
@@ -212,7 +218,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         box.writeToNBT(boxStore);
         nbt.setTag("box", boxStore);
 
-        nbt.setBoolean("done", isDone());
+        nbt.setBoolean("done", done);
+        nbt.setBoolean("excavate", excavate);
 
         NBTTagCompound bptNBT = new NBTTagCompound();
 
@@ -295,7 +302,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     public void writeData(ByteBuf data) {
         super.writeData(data);
         box.writeData(data);
-        data.writeBoolean(isDone());
+        data.writeByte((done ? 1 : 0) | (excavate ? 2 : 0));
         NetworkUtils.writeUTF(data, currentPattern.getUniqueTag());
 
         NBTTagCompound parameterData = new NBTTagCompound();
@@ -307,7 +314,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     public void readData(ByteBuf data) {
         super.readData(data);
         box.readData(data);
-        setDone(data.readBoolean());
+        int flags = data.readUnsignedByte();
+        done = (flags & 1) > 0;
+        excavate = (flags & 2) > 0;
         FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(NetworkUtils.readUTF(data));
         NBTTagCompound parameterData = NetworkUtils.readNBT(data);
         readParametersFromNBT(parameterData);
@@ -343,12 +352,25 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     @Override
     public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
         super.receiveCommand(command, side, sender, stream);
-        if (side.isServer() && "setPattern".equals(command)) {
-            String name = NetworkUtils.readUTF(stream);
-            setPattern((FillerPattern) FillerManager.registry.getPattern(name));
-        } else if (side.isServer() && "setParameters".equals(command)) {
-            NBTTagCompound patternData = NetworkUtils.readNBT(stream);
-            readParametersFromNBT(patternData);
+        if (side.isServer()) {
+            if ("setPattern".equals(command)) {
+                String name = NetworkUtils.readUTF(stream);
+                setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+
+                done = false;
+            } else if ("setParameters".equals(command)) {
+                NBTTagCompound patternData = NetworkUtils.readNBT(stream);
+                readParametersFromNBT(patternData);
+
+                currentTemplate = null;
+                done = false;
+            } else if ("setFlags".equals(command)) {
+                excavate = stream.readBoolean();
+                currentTemplate = null;
+
+                sendNetworkUpdate();
+                done = false;
+            }
         }
     }
 
@@ -387,17 +409,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }));
     }
 
-    @Deprecated
-    public int getIconGlowLevel(int renderPass) {
-        if (renderPass == 1) { // Red LED
-            return isDone() ? 15 : 0;
-        } else if (renderPass == 2) { // Green LED
-            return 0;
-        } else {
-            return -1;
-        }
-    }
-
     private boolean isDone() {
         return done;
     }
@@ -407,5 +418,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         if (worldObj != null) {
             worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BuildCraftProperties.LED_DONE, done));
         }
+    }
+
+    public void setExcavate(boolean excavate) {
+        this.excavate = excavate;
     }
 }

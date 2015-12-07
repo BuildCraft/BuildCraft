@@ -1,6 +1,5 @@
 package buildcraft.core.lib.block;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -151,7 +150,7 @@ public abstract class BlockBuildCraftBase extends Block {
         boolean canRotate = false;
         boolean canSixRotate = false;
 
-        for (BuildCraftProperty<?> prop : properties) {
+        for (BuildCraftProperty prop : properties) {
             if (prop == null) {
                 continue;
             }
@@ -168,14 +167,14 @@ public abstract class BlockBuildCraftBase extends Block {
                 canSixRotate = true;
             }
 
-            Collection<?> allowedValues = prop.getAllowedValues();
-            defaultState = defaultState.withProperty(prop, (Comparable<?>) allowedValues.iterator().next());
+            List<? extends Comparable> allowedValues = prop.getAllowedValues();
+            defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
 
             Map<IBlockState, Integer> newValidStates = Maps.newHashMap();
             int mul = metas.contains(prop) ? allowedValues.size() : 1;
             for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
                 int index = 0;
-                Collections.sort((List) allowedValues);
+                Collections.sort(allowedValues);
                 for (Object comp : allowedValues) {
                     int pos = entry.getValue() * mul + index;
                     newValidStates.put(entry.getKey().withProperty(prop, (Comparable<?>) comp), pos);
@@ -333,7 +332,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
         return getBox(world, pos, world.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
     }
-    
+
     /* @Override public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) { AxisAlignedBB[] bbs =
      * getBoxes(world, pos, world.getBlockState(pos)); AxisAlignedBB bb = bbs[0]; for (int i = 1; i < bbs.length; i++) {
      * bb = bb.union(bbs[i]); } minX = bb.minX; minY = bb.minY; minZ = bb.minZ; maxX = bb.maxX; maxY = bb.maxY; maxZ =

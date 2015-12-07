@@ -1,7 +1,11 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+/**
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * http://www.mod-buildcraft.com
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * License 1.0, or MMPL. Please check the contents of the license located in
+ * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ */
 package buildcraft.core.lib.utils;
 
 import java.util.ArrayList;
@@ -43,6 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.power.IEngine;
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -55,6 +60,7 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.network.Packet;
 
 public final class Utils {
     // Commonly used vectors
@@ -92,10 +98,21 @@ public final class Utils {
         }
     }
 
-    /** Deactivate constructor */
-    private Utils() {}
+	public static boolean isRegistered(Block block) {
+		return block != null && Block.getIdFromBlock(block) >= 0;
+	}
 
-    /** Tries to add the passed stack to any valid inventories around the given coordinates.
+	public static boolean isRegistered(Item item) {
+		return item != null && Item.getIdFromItem(item) >= 0;
+	}
+
+	public static boolean isRegistered(ItemStack stack) {
+		return stack != null && isRegistered(stack.getItem());
+	}
+
+	/**
+	 * Tries to add the passed stack to any valid inventories around the given
+	 * coordinates.
      *
      * @param stack
      * @param world

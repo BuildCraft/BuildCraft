@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
@@ -58,7 +58,11 @@ public class AIRobotGotoStation extends AIRobot {
         if (station == null) {
             terminate();
         } else if (ai instanceof AIRobotGotoBlock) {
-            startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(stationIndex).add(Utils.convert(stationSide, 0.5))));
+            if (ai.success()) {
+                startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(stationIndex).add(Utils.convert(stationSide, 0.5))));
+            } else {
+                terminate();
+            }
         } else {
             setSuccess(true);
             if (stationSide.getAxis() != Axis.Y) {

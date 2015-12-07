@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
@@ -16,7 +16,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumSpring;
-import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.utils.XorShift128Random;
 
@@ -36,7 +35,7 @@ public class BlockSpring extends BlockBuildCraftBase {
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
         for (EnumSpring type : EnumSpring.VALUES) {
             list.add(new ItemStack(this, 1, type.ordinal()));
         }
@@ -53,8 +52,8 @@ public class BlockSpring extends BlockBuildCraftBase {
     }
 
     // @Override
-    // public void onNeighborBlockChange(World world, BlockPos pos, int blockid) {
-    // assertSpring(world, pos);
+    // public void onNeighborBlockChange(World world, int x, int y, int z, int blockid) {
+    // assertSpring(world, x, y, z);
     // }
 
     @Override

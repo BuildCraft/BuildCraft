@@ -1,5 +1,5 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
@@ -12,11 +12,11 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pipe_bc8.EnumPipePart;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
@@ -62,7 +62,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
         }
 
         if (energyMaxStored > 0) {
-            float level = energyStored / energyMaxStored;
+            float level = (float) energyStored / (float) energyMaxStored;
             if (high) {
                 return level > 0.95F;
             } else {
