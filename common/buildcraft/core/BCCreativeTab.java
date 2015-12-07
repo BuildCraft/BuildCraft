@@ -28,7 +28,6 @@ public class BCCreativeTab extends CreativeTabs {
     }
 
     public static BCCreativeTab get(String name) {
-        System.out.println(name + " = " + tabs.get(name));
         return tabs.get(name);
     }
 

@@ -28,24 +28,23 @@ public abstract class PipeLogicWood {
         int meta = pipe.container.getBlockMetadata();
         EnumPipePart oldFacing = EnumPipePart.fromMeta(meta);
         EnumPipePart newFacing = oldFacing.next();
+        if (oldFacing == EnumPipePart.CENTER) {
+            oldFacing = oldFacing.next();
+        }
 
         boolean first = true;
         while (oldFacing != newFacing || first) {
             first = false;
-            if (isValidFacing(newFacing.face)) {
-                break;
+            if (setSource(newFacing)) {
+                return;
             }
-            newFacing = oldFacing.next();
+            newFacing = newFacing.next();
         }
 
-        if (newFacing == oldFacing) {
-            newFacing = EnumPipePart.CENTER;
-        }
-
-        setSource(newFacing);
+        setSource(EnumPipePart.CENTER);
     }
 
-    private void setSource(EnumPipePart newFacing) {
+    private boolean setSource(EnumPipePart newFacing) {
         if (newFacing == EnumPipePart.CENTER || isValidFacing(newFacing.face)) {
             int meta = pipe.container.getBlockMetadata();
 
@@ -55,7 +54,9 @@ public abstract class PipeLogicWood {
                 pipe.container.getWorld().setBlockState(pipe.container.getPos(), state);
                 pipe.container.scheduleRenderUpdate();
             }
+            return true;
         }
+        return false;
     }
 
     private void switchSourceIfNeeded() {
@@ -74,11 +75,11 @@ public abstract class PipeLogicWood {
     private boolean isValidFacing(EnumFacing side) {
         TileBuffer[] tileBuffer = pipe.container.getTileCache();
         if (tileBuffer == null) {
-            return true;
+            return false;
         }
 
         if (!tileBuffer[side.ordinal()].exists()) {
-            return true;
+            return false;
         }
 
         if (pipe.container.hasBlockingPluggable(side)) {

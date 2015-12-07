@@ -83,12 +83,9 @@ public class CoreProxyClient extends CoreProxy {
     }
 
     @Override
-    public void initializeRendering() {
+    public void init() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
-    }
 
-    @Override
-    public void initializeEntityRendering() {
         RenderingRegistry.registerEntityRenderingHandler(EntityResizableCuboid.class, RenderResizableCuboid.INSTANCE);
         RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
 

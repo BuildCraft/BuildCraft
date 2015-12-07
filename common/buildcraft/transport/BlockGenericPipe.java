@@ -146,6 +146,16 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(GENERIC_PIPE_DATA);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(GENERIC_PIPE_DATA, meta);
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int tintIndex) {
         // Just return the tinitIndex (It IS the colour needed- PipeBlockModel sorts that all out)

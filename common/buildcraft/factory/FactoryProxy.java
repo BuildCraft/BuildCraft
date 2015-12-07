@@ -14,7 +14,7 @@ public class FactoryProxy {
     @SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
     public static FactoryProxy proxy;
 
-    public void initializeTileEntities() {}
+    public void fmlInit() {}
 
     public void initializeEntityRenders() {}
 

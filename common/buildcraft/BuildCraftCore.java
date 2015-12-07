@@ -330,7 +330,6 @@ public class BuildCraftCore extends BuildCraftMod {
         BCRegistry.INSTANCE.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"), false);
 
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 
         MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
@@ -397,8 +396,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
         BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
-        CoreProxy.proxy.initializeRendering();
-        CoreProxy.proxy.initializeEntityRendering();
+        CoreProxy.proxy.init();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new CoreGuiHandler());
 

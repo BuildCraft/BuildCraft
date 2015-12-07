@@ -69,7 +69,6 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 
     @Override
     public void renderTileEntityAt(TileEngineBase engine, double x, double y, double z, float f, int wtfIsThis) {
-
         if (engine != null) {
             World world = engine.getWorld();
             BlockPos pos = engine.getPos();

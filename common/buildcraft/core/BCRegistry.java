@@ -14,6 +14,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public final class BCRegistry {
     public static final BCRegistry INSTANCE = new BCRegistry();
@@ -39,6 +40,7 @@ public final class BCRegistry {
         String name = block.getUnlocalizedName().replace("tile.", "");
         if (forced || regCfg.get("blocks", name, true).getBoolean()) {
             GameRegistry.registerBlock(block, item, name);
+            CoreProxy.proxy.postRegisterBlock(block);
             return true;
         }
         return false;
@@ -48,6 +50,7 @@ public final class BCRegistry {
         String name = item.getUnlocalizedName().replace("item.", "");
         if (forced || regCfg.get("items", name, true).getBoolean()) {
             GameRegistry.registerItem(item, name);
+            CoreProxy.proxy.postRegisterItem(item);
             return true;
         }
         return false;

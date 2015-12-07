@@ -22,7 +22,6 @@ public enum ModelHelper {
     public static void registerItemModel(Item item, int metadata, String name, String suffix) {
         String type = name  + suffix;
         type = type.toLowerCase(Locale.ROOT);
-        BCLog.logger.info("Resgistering item model " + item + "#" + metadata + " -> " + type);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata, new ModelResourceLocation(type, "inventory"));
         ModelBakery.addVariantName(item, type);
     }

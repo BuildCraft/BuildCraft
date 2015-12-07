@@ -18,8 +18,8 @@ public class FactoryProxyClient extends FactoryProxy {
     public static TextureAtlasSprite pumpTexture;
 
     @Override
-    public void initializeTileEntities() {
-        super.initializeTileEntities();
+    public void fmlInit() {
+        super.fmlInit();
 
         if (BuildCraftFactory.tankBlock != null) {
             ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());

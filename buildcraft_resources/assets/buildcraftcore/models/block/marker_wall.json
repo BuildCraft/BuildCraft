@@ -1,6 +1,6 @@
 {
     "parent": "block/torch_wall",
     "textures": {
-        "torch": "buildcraftbuilders:blocks/marker/volume"
+        "torch": "buildcraftcore:blocks/marker/volume"
     }
 }

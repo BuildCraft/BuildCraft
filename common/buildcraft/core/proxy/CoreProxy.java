@@ -56,9 +56,7 @@ public class CoreProxy implements ICoreProxy {
     }
 
     /* GFX */
-    public void initializeRendering() {}
-
-    public void initializeEntityRendering() {}
+    public void init() {}
 
     public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
         stack.onCrafting(world, player, stack.stackSize);

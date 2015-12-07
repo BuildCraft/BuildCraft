@@ -232,27 +232,58 @@ public class BuildCraftBuilders extends BuildCraftMod {
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
-        HeuristicBlockDetection.start();
-        ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
+    public void preInit(FMLPreInitializationEvent evt) {
+        templateItem = new ItemBlueprintTemplate();
+        templateItem.setUnlocalizedName("templateItem");
+        BCRegistry.INSTANCE.registerItem(templateItem, false);
 
-        if (debugPrintSchematicList) {
-            try {
-                PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
-                writer.println("*** REGISTERED SCHEMATICS ***");
-                SchematicRegistry reg = (SchematicRegistry) BuilderAPI.schematicRegistry;
-                for (String s : reg.schematicBlocks.keySet()) {
-                    writer.println(s + " -> " + reg.schematicBlocks.get(s).clazz.getCanonicalName());
-                }
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        blueprintItem = new ItemBlueprintStandard();
+        blueprintItem.setUnlocalizedName("blueprintItem");
+        BCRegistry.INSTANCE.registerItem(blueprintItem, false);
+
+        quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
+        BCRegistry.INSTANCE.registerBlock(quarryBlock.setUnlocalizedName("quarryBlock"), false);
+
+        fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
+        BCRegistry.INSTANCE.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"), false);
+
+        frameBlock = new BlockFrame();
+        BCRegistry.INSTANCE.registerBlock(frameBlock.setUnlocalizedName("frameBlock"), true);
+
+        builderBlock = (BlockBuilder) CompatHooks.INSTANCE.getBlock(BlockBuilder.class);
+        BCRegistry.INSTANCE.registerBlock(builderBlock.setUnlocalizedName("builderBlock"), false);
+
+        architectBlock = (BlockArchitect) CompatHooks.INSTANCE.getBlock(BlockArchitect.class);
+        BCRegistry.INSTANCE.registerBlock(architectBlock.setUnlocalizedName("architectBlock"), false);
+
+        libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
+        BCRegistry.INSTANCE.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"), false);
+
+        BCRegistry.INSTANCE.registerTileEntity(TileQuarry.class, "buildcraft.builders.Quarry", "Machine");
+        BCRegistry.INSTANCE.registerTileEntity(TileMarker.class, "buildcraft.builders.Marker", "Marker");
+        BCRegistry.INSTANCE.registerTileEntity(TileFiller.class, "buildcraft.builders.Filler", "Filler");
+        BCRegistry.INSTANCE.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder", "net.minecraft.src.builders.TileBuilder");
+        BCRegistry.INSTANCE.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect", "net.minecraft.src.builders.TileTemplate");
+        BCRegistry.INSTANCE.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker", "net.minecraft.src.builders.TilePathMarker");
+        BCRegistry.INSTANCE.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary",
+                "net.minecraft.src.builders.TileBlueprintLibrary");
+
+        constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
+        BCRegistry.INSTANCE.registerBlock(constructionMarkerBlock.setUnlocalizedName("constructionMarkerBlock"), ItemConstructionMarker.class, false);
+
+        BCRegistry.INSTANCE.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker",
+                "net.minecraft.src.builders.TileConstructionMarker");
+
+        SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
+
+        if (BuildCraftCore.mainConfiguration.hasChanged()) {
+            BuildCraftCore.mainConfiguration.save();
         }
 
-        // Refresh the client database once all the library type handlers are registered
-        // The server database is refreshed later
-        clientDB.refresh();
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
+
+        StatementManager.registerActionProvider(new BuildersActionProvider());
     }
 
     @Mod.EventHandler
@@ -409,7 +440,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.jungle_fence, SchematicStandalone.class);
         schemes.registerSchematicBlock(Blocks.oak_fence, SchematicStandalone.class);
         schemes.registerSchematicBlock(Blocks.spruce_fence, SchematicStandalone.class);
-        schemes.registerSchematicBlock(Blocks.daylight_detector, SchematicStandalone.class);
         schemes.registerSchematicBlock(Blocks.iron_bars, SchematicStandalone.class);
 
         // Standard entities
@@ -465,58 +495,27 @@ public class BuildCraftBuilders extends BuildCraftMod {
     }
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
-        templateItem = new ItemBlueprintTemplate();
-        templateItem.setUnlocalizedName("templateItem");
-        BCRegistry.INSTANCE.registerItem(templateItem, false);
+    public void postInit(FMLPostInitializationEvent evt) {
+        HeuristicBlockDetection.start();
+        ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
 
-        blueprintItem = new ItemBlueprintStandard();
-        blueprintItem.setUnlocalizedName("blueprintItem");
-        BCRegistry.INSTANCE.registerItem(blueprintItem, false);
-
-        quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
-        BCRegistry.INSTANCE.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"), false);
-
-        fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
-        BCRegistry.INSTANCE.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"), false);
-
-        frameBlock = new BlockFrame();
-        BCRegistry.INSTANCE.registerBlock(frameBlock.setUnlocalizedName("frameBlock"), true);
-
-        builderBlock = (BlockBuilder) CompatHooks.INSTANCE.getBlock(BlockBuilder.class);
-        BCRegistry.INSTANCE.registerBlock(builderBlock.setUnlocalizedName("builderBlock"), false);
-
-        architectBlock = (BlockArchitect) CompatHooks.INSTANCE.getBlock(BlockArchitect.class);
-        BCRegistry.INSTANCE.registerBlock(architectBlock.setUnlocalizedName("architectBlock"), false);
-
-        libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
-        BCRegistry.INSTANCE.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"), false);
-
-        BCRegistry.INSTANCE.registerTileEntity(TileQuarry.class, "buildcraft.builders.Quarry", "Machine");
-        BCRegistry.INSTANCE.registerTileEntity(TileMarker.class, "buildcraft.builders.Marker", "Marker");
-        BCRegistry.INSTANCE.registerTileEntity(TileFiller.class, "buildcraft.builders.Filler", "Filler");
-        BCRegistry.INSTANCE.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder", "net.minecraft.src.builders.TileBuilder");
-        BCRegistry.INSTANCE.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect", "net.minecraft.src.builders.TileTemplate");
-        BCRegistry.INSTANCE.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker", "net.minecraft.src.builders.TilePathMarker");
-        BCRegistry.INSTANCE.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary",
-                "net.minecraft.src.builders.TileBlueprintLibrary");
-
-        constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
-        BCRegistry.INSTANCE.registerBlock(constructionMarkerBlock.setUnlocalizedName("constructionMarkerBlock"), ItemConstructionMarker.class, false);
-
-        BCRegistry.INSTANCE.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker",
-                "net.minecraft.src.builders.TileConstructionMarker");
-
-        SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
-
-        if (BuildCraftCore.mainConfiguration.hasChanged()) {
-            BuildCraftCore.mainConfiguration.save();
+        if (debugPrintSchematicList) {
+            try {
+                PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
+                writer.println("*** REGISTERED SCHEMATICS ***");
+                SchematicRegistry reg = (SchematicRegistry) BuilderAPI.schematicRegistry;
+                for (String s : reg.schematicBlocks.keySet()) {
+                    writer.println(s + " -> " + reg.schematicBlocks.get(s).clazz.getCanonicalName());
+                }
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(this);
-
-        StatementManager.registerActionProvider(new BuildersActionProvider());
+        // Refresh the client database once all the library type handlers are registered
+        // The server database is refreshed later
+        clientDB.refresh();
     }
 
     public static void loadRecipes() {

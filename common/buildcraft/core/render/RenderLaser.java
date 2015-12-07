@@ -18,8 +18,8 @@ import net.minecraft.world.World;
 
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
-import buildcraft.core.lib.render.RenderEntityBlock;
-import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
+import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.render.RenderResizableCuboid;
 
 public class RenderLaser extends Render<EntityLaser> {
     // FIXME: REWRITE THE LASER RENDERER
@@ -63,7 +63,7 @@ public class RenderLaser extends Render<EntityLaser> {
                     scaledBoxes[size][i] = GLAllocation.generateDisplayLists(1);
                     GL11.glNewList(scaledBoxes[size][i], GL11.GL_COMPILE);
 
-                    RenderInfo block = new RenderInfo();
+                    EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
 
                     float minSize = 0.2F * size / 100F;
                     float maxSize = 0.4F * size / 100F;
@@ -74,15 +74,10 @@ public class RenderLaser extends Render<EntityLaser> {
 
                     float diff = (float) (Math.cos(i / 20F * 2 * Math.PI) * range / 2F);
 
-                    block.minX = 0.0;
-                    block.minY = -maxSize / 2F + diff;
-                    block.minZ = -maxSize / 2F + diff;
+                    cuboid.setPosition(new Vec3(0, -maxSize / 2f - diff, -maxSize / 2f - diff));
+                    cuboid.setSize(new Vec3(STEP, maxSize / 2f - diff, maxSize / 2f - diff));
 
-                    block.maxX = STEP;
-                    block.maxY = maxSize / 2F - diff;
-                    block.maxZ = maxSize / 2F - diff;
-
-                    RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0, 0, false, true);
+                    RenderResizableCuboid.INSTANCE.renderCube(cuboid);
 
                     GL11.glEndList();
                 }

@@ -1,6 +1,6 @@
 {
     "parent": "block/torch_wall",
     "textures": {
-        "torch": "buildcraftbuilders:blocks/marker/path_off"
+        "torch": "buildcraftcore:blocks/marker/path_off"
     }
 }

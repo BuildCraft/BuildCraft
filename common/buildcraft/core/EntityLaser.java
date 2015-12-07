@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 import net.minecraft.entity.Entity;
@@ -24,6 +20,14 @@ public class EntityLaser extends Entity {
 
     public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraftcore:textures/lasers/stripes_blue.png");
     public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraftcore:textures/lasers/stripes_yellow.png");
+
+    private static final int NETWORK_HEAD_X = 8;
+    private static final int NETWORK_HEAD_Y = 9;
+    private static final int NETWORK_HEAD_Z = 10;
+    private static final int NETWORK_TAIL_X = 11;
+    private static final int NETWORK_TAIL_Y = 12;
+    private static final int NETWORK_TAIL_Z = 13;
+    private static final int NETWORK_VISIBLE = 14;
 
     public final LaserData data = new LaserData();
 
@@ -66,6 +70,8 @@ public class EntityLaser extends Entity {
         setSize(10, 10);
 
         this.laserTexture = laserTexture;
+
+        updateDataServer();
     }
 
     @Override
@@ -73,14 +79,14 @@ public class EntityLaser extends Entity {
         preventEntitySpawning = false;
         noClip = true;
         isImmuneToFire = true;
-		dataWatcher.addObject(8, (double)0);
-		dataWatcher.addObject(9, (double)0);
-		dataWatcher.addObject(10,(double) 0);
-		dataWatcher.addObject(11,(double) 0);
-		dataWatcher.addObject(12,(double) 0);
-		dataWatcher.addObject(13,(double) 0);
+        dataWatcher.addObject(NETWORK_HEAD_X, (float) 0);
+        dataWatcher.addObject(NETWORK_HEAD_Y, (float) 0);
+        dataWatcher.addObject(NETWORK_HEAD_Z, (float) 0);
+        dataWatcher.addObject(NETWORK_TAIL_X, (float) 0);
+        dataWatcher.addObject(NETWORK_TAIL_Y, (float) 0);
+        dataWatcher.addObject(NETWORK_TAIL_Z, (float) 0);
 
-		dataWatcher.addObject(14, (byte) 0);
+        dataWatcher.addObject(NETWORK_VISIBLE, (byte) 0);
     }
 
     @Override
@@ -108,27 +114,26 @@ public class EntityLaser extends Entity {
     }
 
     protected void updateDataClient() {
-        data.isVisible = dataWatcher.getWatchableObjectByte(8) == 1;
+        data.isVisible = dataWatcher.getWatchableObjectByte(NETWORK_VISIBLE) == 1;
     }
 
     protected void updateDataServer() {
-		dataWatcher.updateObject(8, encodeDouble(data.head.xCoord));
-		dataWatcher.updateObject(9, encodeDouble(data.head.yCoord));
-		dataWatcher.updateObject(10, encodeDouble(data.head.zCoord));
-		dataWatcher.updateObject(11, encodeDouble(data.tail.xCoord));
-		dataWatcher.updateObject(12, encodeDouble(data.tail.yCoord));
-		dataWatcher.updateObject(13, encodeDouble(data.tail.zCoord));
+        dataWatcher.updateObject(NETWORK_HEAD_X, (float) data.head.xCoord);
+        dataWatcher.updateObject(NETWORK_HEAD_Y, (float) data.head.yCoord);
+        dataWatcher.updateObject(NETWORK_HEAD_Z, (float) data.head.zCoord);
+        dataWatcher.updateObject(NETWORK_TAIL_X, (float) data.tail.xCoord);
+        dataWatcher.updateObject(NETWORK_TAIL_Y, (float) data.tail.yCoord);
+        dataWatcher.updateObject(NETWORK_TAIL_Z, (float) data.tail.zCoord);
+        dataWatcher.updateObject(NETWORK_VISIBLE, (byte) (data.isVisible ? 1 : 0));
+    }
 
-		dataWatcher.updateObject(14, (byte) (data.isVisible ? 1 : 0));
-	}
+    public void setPositions(Vec3 head, Vec3 tail) {
+        data.head = head;
+        data.tail = tail;
 
-	public void setPositions(Vec3 head, Vec3 tail) {
-		data.head = head;
-		data.tail = tail;
+        setPositionAndRotation(head.xCoord, head.yCoord, head.zCoord, 0, 0);
 
-		setPositionAndRotation(head.xCoord, head.yCoord, head.zCoord, 0, 0);
-
-		needsUpdate = true;
+        needsUpdate = true;
     }
 
     public void show() {
@@ -149,12 +154,8 @@ public class EntityLaser extends Entity {
         return laserTexture;
     }
 
-    protected int encodeDouble(double d) {
-        return (int) (d * 8192);
-    }
-
-    protected double decodeDouble(int i) {
-        return i / 8192D;
+    protected double decodeDouble(float i) {
+        return i;
     }
 
     // The read/write to nbt seem to be useless
