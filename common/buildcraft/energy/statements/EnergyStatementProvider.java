@@ -16,6 +16,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.energy.TileEngineIron;
 
 public class EnergyStatementProvider implements ITriggerProvider {
 
@@ -35,6 +36,14 @@ public class EnergyStatementProvider implements ITriggerProvider {
             triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
             triggers.add(BuildCraftEnergy.triggerEngineOverheat);
         }
+
+		if (tile instanceof TileEngineIron) {
+			triggers.add(BuildCraftEnergy.triggerCoolantBelow25);
+			triggers.add(BuildCraftEnergy.triggerCoolantBelow50);
+
+			triggers.add(BuildCraftEnergy.triggerFuelBelow25);
+			triggers.add(BuildCraftEnergy.triggerFuelBelow50);
+		}
 
         return triggers;
     }

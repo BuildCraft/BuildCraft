@@ -66,6 +66,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
         }
 
         if (tile instanceof IInventory) {
+			IInventory inventory = (IInventory) tile;
             ItemStack searchStack = parameters[0].getItemStack();
 
             if (searchStack == null) {
@@ -74,7 +75,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
             int stackSpace = 0;
             int foundItems = 0;
-            for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {
+			for (IInvSlot slot : InventoryIterator.getIterable(inventory, side.getOpposite())) {
                 if (slot.canPutStackInSlot(searchStack)) {
                     ItemStack stackInSlot = slot.getStackInSlot();
                     if (stackInSlot == null || StackHelper.canStacksOrListsMerge(stackInSlot, searchStack)) {
@@ -85,7 +86,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             }
 
             if (stackSpace > 0) {
-                float percentage = foundItems / ((float) stackSpace * (float) searchStack.getMaxStackSize());
+				float percentage = foundItems / ((float) stackSpace * (float) Math.min(searchStack.getMaxStackSize(), inventory.getInventoryStackLimit()));
                 return percentage < type.level;
             }
 

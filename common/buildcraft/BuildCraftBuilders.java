@@ -50,6 +50,7 @@ import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.schematics.SchematicBlockCreative;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.config.ConfigManager;
 
@@ -286,6 +287,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicBlock.class);
 
         schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicBlock.class);
+        schemes.registerSchematicBlock(Blocks.tripwire, SchematicTripwire.class);
 
         schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 

@@ -14,8 +14,6 @@ import io.netty.buffer.ByteBuf;
 
 @Deprecated
 public class WireMatrix {
-
-    // private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
     private final BitSet hasWire = new BitSet(PipeWire.values().length);
     private final BitSetCodec bitSetCodec = new BitSetCodec();
 

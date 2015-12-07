@@ -28,6 +28,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     private BlockPos finalPos;
     private double maxDistance = 0;
     private BlockPos lastBlockInPath;
+    private boolean loadedFromNBT;
 
     public AIRobotGotoBlock(EntityRobotBase iRobot) {
         super(iRobot);
@@ -57,6 +58,13 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
     @Override
     public void update() {
+        if (loadedFromNBT) {
+            // Prevent a race condition with terminate() being called in
+            // setNextInPath.
+            setNextInPath();
+            loadedFromNBT = false;
+        }
+
         if (path == null && pathSearch == null) {
             pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX), (int) Math.floor(robot.posY), (int) Math.floor(
                     robot.posZ)), finalPos, maxDistance);
@@ -107,14 +115,24 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
     private void setNextInPath() {
         if (path.size() > 0) {
+
+            boolean isFirst = prevDistance == Double.MAX_VALUE;
+
             BlockPos next = path.getFirst();
-            if (BuildCraftAPI.isSoftBlock(robot.worldObj, next)) {
+            if (isFirst || BuildCraftAPI.isSoftBlock(robot.worldObj, next)) {
                 setDestination(robot, Utils.convertMiddle(next));
                 prevDistance = Double.MAX_VALUE;
                 robot.aimItemAt(next);
             } else {
-                setSuccess(false);
-                terminate();
+                // Path invalid!
+                path = null;
+
+                if (pathSearchJob != null) {
+                    pathSearchJob.terminate();
+                    robot.motionX = 0;
+                    robot.motionY = 0;
+                    robot.motionZ = 0;
+                }
             }
         }
     }
@@ -167,8 +185,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
             for (int i = 0; i < pathList.tagCount(); ++i) {
                 path.add(NBTUtils.readBlockPos(pathList.get(i)));
             }
-
-            setNextInPath();
         }
+
+        loadedFromNBT = true;
     }
 }

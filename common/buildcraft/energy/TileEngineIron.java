@@ -8,9 +8,6 @@
  */
 package buildcraft.energy;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -21,7 +18,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 import net.minecraftforge.fluids.*;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.enums.EnumEnergyStage;
@@ -30,9 +26,6 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IOverrideDefaultStatements;
-import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
@@ -40,8 +33,9 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.statements.IBlockDefaultTriggers;
 
-public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IOverrideDefaultStatements {
+public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IBlockDefaultTriggers {
 
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
     public static float HEAT_PER_RF = 0.00023F;
@@ -479,31 +473,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
 	@Override
-	public List<ITriggerExternal> overrideTriggers() {
-		List<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
-
-		triggers.add(BuildCraftCore.triggerEmptyInventory);
-		triggers.add(BuildCraftCore.triggerContainsInventory);
-		triggers.add(BuildCraftCore.triggerSpaceInventory);
-		triggers.add(BuildCraftCore.triggerFullInventory);
-
-		triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerEngineOverheat);
-
-		triggers.add(BuildCraftEnergy.triggerCoolantBelow25);
-		triggers.add(BuildCraftEnergy.triggerCoolantBelow50);
-
-		triggers.add(BuildCraftEnergy.triggerFuelBelow25);
-		triggers.add(BuildCraftEnergy.triggerFuelBelow50);
-
-		return triggers;
+	public boolean blockInventoryTriggers(EnumFacing side) {
+		return false;
 	}
 
 	@Override
-	public List<IActionExternal> overrideActions() {
-		return null;
+	public boolean blockFluidHandlerTriggers(EnumFacing side) {
+		return true;
 	}
 }

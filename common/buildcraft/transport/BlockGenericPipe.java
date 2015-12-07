@@ -4,11 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -31,13 +27,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -885,10 +875,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             pipe.signalStrength[color.ordinal()] = 0;
             pipe.wireSet[color.ordinal()] = false;
 
-            pipe.propagateSignalState(color, 0);
+            if (!pipe.container.getWorld().isRemote) {
+                pipe.propagateSignalState(color, 0);
 
-            if (isFullyDefined(pipe)) {
-                pipe.resolveActions();
+                if (isFullyDefined(pipe)) {
+                    pipe.resolveActions();
+                }
             }
 
             pipe.container.scheduleRenderUpdate();

@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -16,7 +17,6 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
@@ -35,55 +35,6 @@ public class LensPluggable extends PipePluggable {
         private LensPluggableRenderer() {
 
         }
-        // TODO (PASS 0: Fix this!
-        //
-        // @Override
-        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
-        // pipePluggable,
-        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-        // float[][] zeroState = new float[3][2];
-        //
-        // // X START - END
-        // zeroState[0][0] = 0.1875F;
-        // zeroState[0][1] = 0.8125F;
-        // // Y START - END
-        // zeroState[1][0] = 0.000F;
-        // zeroState[1][1] = 0.125F;
-        // // Z START - END
-        // zeroState[2][0] = 0.1875F;
-        // zeroState[2][1] = 0.8125F;
-        //
-        // if (renderPass == 1) {
-        // blockStateMachine.setRenderMask(1 << side.ordinal() | (1 << (side.ordinal() ^ 1)));
-        //
-        // for (int i = 0; i < 3; i++) {
-        // zeroState[i][0] += zFightOffset;
-        // zeroState[i][1] -= zFightOffset;
-        // }
-        // blockStateMachine.getTextureState().setToStack(
-        // BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
-        // ((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - ((LensPluggable) pipePluggable).color));
-        //
-        // blockStateMachine.setRenderAllSides();
-        // } else {
-        // if (((LensPluggable) pipePluggable).isFilter) {
-        // blockStateMachine.getTextureState().setToStack(
-        // BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeFilter.ordinal()));
-        // } else {
-        // blockStateMachine.getTextureState().setToStack(
-        // BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLens.ordinal()));
-        // }
-        // }
-        //
-        // float[][] rotated = MatrixTranformations.deepClone(zeroState);
-        // MatrixTranformations.transform(rotated, side);
-        //
-        // renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1],
-        // rotated[2][1]);
-        // renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
-        //
-        // ((FakeBlock) blockStateMachine).setColor(0xFFFFFF);
-        // }
 
         @Override
         public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
@@ -99,6 +50,10 @@ public class LensPluggable extends PipePluggable {
     public LensPluggable(ItemStack stack) {
         color = stack.getItemDamage() & 15;
         isFilter = stack.getItemDamage() >= 16;
+        if (stack.getItemDamage() >= 32) {
+            isFilter = stack.getItemDamage() == 33;
+            color = -1;
+        }
     }
 
     @Override
@@ -115,7 +70,12 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public ItemStack[] getDropItems(IPipeTile pipe) {
-        return new ItemStack[] { new ItemStack(BuildCraftTransport.lensItem, 1, color | (isFilter ? 16 : 0)) };
+        int meta = color | (isFilter ? 16 : 0);
+        if (color == -1) {
+            meta = isFilter ? 33 : 32;
+        }
+
+        return new ItemStack[] { new ItemStack(BuildCraftTransport.lensItem, 1, meta) };
     }
 
     @Override
@@ -159,13 +119,13 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public void writeData(ByteBuf data) {
-        data.writeByte(color | (isFilter ? 0x20 : 0));
+        data.writeByte(((color + 1) & 0x1F) | (isFilter ? 0x20 : 0));
     }
 
     @Override
     public void readData(ByteBuf data) {
         int flags = data.readUnsignedByte();
-        color = flags & 15;
+        color = (flags & 0x1F) - 1;
         isFilter = (flags & 0x20) > 0;
     }
 
@@ -177,7 +137,11 @@ public class LensPluggable extends PipePluggable {
 
     private void color(TravelingItem item) {
         if ((item.toCenter && item.input.getOpposite() == side) || (!item.toCenter && item.output == side)) {
-            item.color = EnumColor.fromId(color);
+            if (color == -1) {
+                item.color = null;
+            } else {
+                item.color = EnumColor.fromId(color);
+            }
         }
     }
 

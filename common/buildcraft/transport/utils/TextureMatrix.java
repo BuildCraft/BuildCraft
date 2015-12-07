@@ -28,14 +28,14 @@ public class TextureMatrix {
     }
 
     public void writeData(ByteBuf data) {
-        for (int iconIndexe : iconIndexes) {
-            data.writeByte(iconIndexe);
+		for (int iconIndex : iconIndexes) {
+			data.writeByte(iconIndex);
         }
     }
 
     public void readData(ByteBuf data) {
         for (int i = 0; i < iconIndexes.length; i++) {
-            int icon = data.readByte();
+			int icon = data.readUnsignedByte();
             if (iconIndexes[i] != icon) {
                 iconIndexes[i] = icon;
                 dirty = true;

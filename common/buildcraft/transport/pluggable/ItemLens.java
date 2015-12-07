@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pluggable;
 
 import java.util.List;
@@ -17,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,18 +31,6 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
         setHasSubtypes(true);
     }
 
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public TextureAtlasSprite getIconFromDamageForRenderPass(int meta, int pass) {
-    // return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
-    // }
-    //
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public boolean requiresMultipleRenderPasses() {
-    // return true;
-    // }
-
     public int getDye(ItemStack stack) {
         return 15 - (stack.getItemDamage() & 15);
     }
@@ -53,13 +38,21 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int pass) {
+        if (stack.getItemDamage() >= 32) {
+            return 16777215;
+        }
         return pass == 0 ? ColorUtils.getRGBColor(getDye(stack)) : 16777215;
     }
 
     @Override
     public String getItemStackDisplayName(ItemStack itemstack) {
-        return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize("color."
-            + ColorUtils.getName(getDye(itemstack))) + ")";
+        if (itemstack.getItemDamage() >= 32) {
+            return StringUtils.localize(itemstack.getItemDamage() == 33 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize(
+                    "color.clear") + ")";
+        } else {
+            return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize(
+                    "color." + ColorUtils.getName(getDye(itemstack))) + ")";
+        }
     }
 
     @Override
@@ -67,16 +60,11 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
         return true;
     }
 
-    // @Override
-    // public String[] getIconNames() {
-    // return new String[] { "lens/lensFrame", "lens/transparent", "lens/filterFrame" };
-    // }
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List itemList) {
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 34; i++) {
             itemList.add(new ItemStack(item, 1, i));
         }
     }

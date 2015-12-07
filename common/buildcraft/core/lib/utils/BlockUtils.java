@@ -29,11 +29,7 @@ import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.BuildCraftCore;
@@ -92,15 +88,6 @@ public final class BlockUtils {
         IBlockState state = world.getBlockState(pos);
 
         EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
-        int i = 0;
-        while (player.getHeldItem() != tool && i < 9) {
-            if (i > 0) {
-                player.inventory.setInventorySlotContents(i - 1, null);
-            }
-
-            player.inventory.setInventorySlotContents(i, tool);
-            i++;
-        }
 
         if (!state.getBlock().canHarvestBlock(world, pos, player)) {
             return false;
@@ -111,6 +98,22 @@ public final class BlockUtils {
         world.setBlockToAir(pos);
 
         return true;
+    }
+
+    public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, ItemStack tool) {
+        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
+        int i = 0;
+
+        while (player.getHeldItem() != tool && i < 9) {
+            if (i > 0) {
+                player.inventory.setInventorySlotContents(i - 1, null);
+            }
+
+            player.inventory.setInventorySlotContents(i, tool);
+            i++;
+        }
+
+        return player;
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops) {
@@ -176,12 +179,9 @@ public final class BlockUtils {
             if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
                                             // is < 0.0F.
                 return -1.0F;
-            } else {
-                return relativeHardness;
             }
-        } else {
-            return b.getBlockHardness(world, pos);
         }
+        return b.getBlockHardness(world, pos);
     }
 
     public static boolean isUnbreakableBlock(World world, BlockPos pos, Block b) {

@@ -84,11 +84,11 @@ public final class StatementManager {
             result = ((IOverrideDefaultStatements) entity).overrideActions();
             if (result != null) {
                 return result;
-            } else {
-                result = new LinkedList<IActionExternal>();
             }
         }
 
+		result = new LinkedList<IActionExternal>();
+		
         for (IActionProvider provider : actionProviders) {
             Collection<IActionExternal> toAdd = provider.getExternalActions(side, entity);
 

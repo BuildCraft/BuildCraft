@@ -58,36 +58,48 @@ public final class BCRegistry {
         GameRegistry.registerTileEntityWithAlternatives(CompatHooks.INSTANCE.getTile(clas), ident[0], ident);
     }
 
+    private boolean isInvalidRecipeElement(Object o) {
+        if (o == null) {
+            return true;
+        }
+        if (o instanceof Block && !Utils.isRegistered((Block) o)) {
+            return true;
+        }
+        if (o instanceof Item && !Utils.isRegistered((Item) o)) {
+            return true;
+        }
+        if (o instanceof ItemStack && !Utils.isRegistered((ItemStack) o)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void addCraftingRecipe(ItemStack result, Object... recipe) {
+        if (isInvalidRecipeElement(result)) {
+            return;
+        }
+
         for (Object o : recipe) {
-            if (o == null) {
-                return;
-            }
-            if (o instanceof Block && !Utils.isRegistered((Block) o)) {
-                return;
-            }
-            if (o instanceof Item && !Utils.isRegistered((Item) o)) {
-                return;
-            }
-            if (o instanceof ItemStack && !Utils.isRegistered((ItemStack) o)) {
+            if (isInvalidRecipeElement(o)) {
                 return;
             }
         }
+
         GameRegistry.addRecipe(new ShapedOreRecipe(result, recipe));
     }
 
     public void addShapelessRecipe(ItemStack result, Object... recipe) {
+        if (isInvalidRecipeElement(result)) {
+            return;
+        }
+
         for (Object o : recipe) {
-            if (o instanceof Block && Block.getIdFromBlock((Block) o) < 0) {
-                return;
-            }
-            if (o instanceof Item && Item.getIdFromItem((Item) o) < 0) {
-                return;
-            }
-            if (o instanceof ItemStack && ((ItemStack) o).getItem() == null) {
+            if (isInvalidRecipeElement(o)) {
                 return;
             }
         }
+
         GameRegistry.addRecipe(new ShapelessOreRecipe(result, recipe));
     }
 

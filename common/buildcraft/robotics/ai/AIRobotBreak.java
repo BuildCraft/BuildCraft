@@ -13,6 +13,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.robots.AIRobot;
@@ -135,7 +136,9 @@ public class AIRobotBreak extends AIRobot {
             }
         }
 
-        return f;
+		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()),
+				state, f, blockToBreak);
+		return f < 0 ? 0 : f;
     }
 
     @Override

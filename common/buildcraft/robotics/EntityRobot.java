@@ -4,12 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -21,6 +19,7 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
@@ -49,7 +48,6 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IZone;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.*;
 import buildcraft.api.statements.StatementSlot;
@@ -91,6 +89,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     public static final int MAX_WEARABLES = 8;
 
+    private static Set<Integer> blacklistedItemsForUpdate = Sets.newHashSet();
+
     public LaserData laser = new LaserData();
     public DockingStation linkedDockingStation;
     public BlockPos linkedDockingStationIndex;
@@ -111,9 +111,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public boolean itemActive = false;
     public float itemActiveStage = 0;
     public long lastUpdateTime = 0;
-
-    private SafeTimeTracker expensiveVerificationsTracker = new SafeTimeTracker(10);
-    private boolean isMovingOutOfStuck;
 
     private DockingStation currentDockingStation;
     private List<ItemStack> wearables = new ArrayList<ItemStack>();
@@ -343,18 +340,6 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 getRegistry().killRobot(this);
             }
 
-            // The commented out part is the part which unstucks robots.
-            // It has been known to cause a lot of issues in 7.1.11.
-            // If you want to try and fix it, go ahead.
-            // Right now it will simply stop them from moving.
-
-            /* if (expensiveVerificationsTracker.markTimeIfDelay(worldObj)) { int collisions = 0; int bx = (int)
-             * Math.floor(posX); int by = (int) Math.floor(posY); int bz = (int) Math.floor(posZ); if (by >= 0 && by <
-             * worldObj.getActualHeight() && !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) { List clist = new
-             * ArrayList(); Block block = worldObj.getBlock(bx, by, bz); block.addCollisionBoxesToList(worldObj, bx, by,
-             * bz, getBoundingBox(), clist, this); collisions = clist.size(); } if (collisions > 0) { isMovingOutOfStuck
-             * = true; motionX = 0.0F; motionY = 0.05F; motionZ = 0.0F; } else if (isMovingOutOfStuck) {
-             * isMovingOutOfStuck = false; board.abortDelegateAI(); motionY = 0.0F; } } if (!isMovingOutOfStuck) { */
             if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
                 this.worldObj.theProfiler.startSection("bcRobotAI");
                 mainAI.cycle();
@@ -367,8 +352,17 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             }
         }
 
-        // TODO (PASS 0): Is it ok to NOT call the entity update? (from EntityRobot)
-        // super.onEntityUpdate();
+        // tick all carried itemstacks
+        for (int i = 0; i < inv.length; i++) {
+            updateItem(inv[i], i, false);
+        }
+
+        // tick the item the robot is currently holding
+        updateItem(itemInUse, 0, true);
+
+        // do not tick wearables or equipment from EntityLiving
+
+        super.onEntityUpdate();
         this.worldObj.theProfiler.endSection();
     }
 
@@ -1115,6 +1109,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 if (wearables.size() > 0) {
                     entityDropItem(wearables.remove(wearables.size() - 1), 0);
                     syncWearablesToClient();
+                } else if (itemInUse != null) {
+                    entityDropItem(itemInUse, 0);
+                    itemInUse = null;
                 } else {
                     convertToItems();
                 }
@@ -1446,4 +1443,20 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void clear() {}
+
+    private void updateItem(ItemStack stack, int i, boolean held) {
+        if (stack != null && stack.getItem() != null) {
+            int id = Item.getIdFromItem(stack.getItem());
+            // did this item not throw an exception before?
+            if (!blacklistedItemsForUpdate.contains(id)) {
+                try {
+                    stack.getItem().onUpdate(stack, worldObj, this, i, held);
+                } catch (Exception e) {
+                    // the item threw an exception, print it and do not let it update once more
+                    e.printStackTrace();
+                    blacklistedItemsForUpdate.add(id);
+                }
+            }
+        }
+    }
 }
