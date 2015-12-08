@@ -12,11 +12,11 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 public interface IMultiButtonState {
 
-	String getLabel();
+    String getLabel();
 
-	String name();
+    String name();
 
-	IButtonTextureSet getTextureSet();
+    IButtonTextureSet getTextureSet();
 
-	ToolTip getToolTip();
+    ToolTip getToolTip();
 }

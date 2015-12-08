@@ -8,39 +8,55 @@
  */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import buildcraft.core.lib.utils.NetworkUtils;
 
+import io.netty.buffer.ByteBuf;
+
 public class PacketSlotChange extends PacketCoordinates {
+    public interface ITile {
+        void updateCraftingMatrix(int slot, ItemStack stack);
+    }
 
-	public int slot;
-	public ItemStack stack;
+    public int slot;
+    public ItemStack stack;
 
-	public PacketSlotChange() {
-	}
+    public PacketSlotChange() {}
 
-	public PacketSlotChange(int id, int x, int y, int z, int slot, ItemStack stack) {
-		super(id, x, y, z);
-		this.slot = slot;
-		this.stack = stack;
-	}
+    public PacketSlotChange(TileEntity tile, int slot, ItemStack stack) {
+        super(tile);
+        this.slot = slot;
+        this.stack = stack;
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		super.writeData(data);
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
 
-		data.writeShort(slot);
-		NetworkUtils.writeStack(data, stack);
-	}
+        data.writeShort(slot);
+        NetworkUtils.writeStack(data, stack);
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		super.readData(data);
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
 
-		this.slot = data.readUnsignedShort();
-		stack = NetworkUtils.readStack(data);
-	}
+        this.slot = data.readUnsignedShort();
+        stack = NetworkUtils.readStack(data);
+    }
+
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (!world.isBlockLoaded(pos)) {
+            return;
+        }
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof ITile) {
+            ((ITile) tile).updateCraftingMatrix(slot, stack);
+        }
+    }
 }

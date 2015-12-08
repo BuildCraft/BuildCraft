@@ -1,18 +1,12 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import io.netty.buffer.ByteBuf;
-
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -22,149 +16,138 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 
-public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable, ILEDProvider {
-	private boolean isDigging = true;
-	private BlockMiner miner;
-	private int ledState;
-	private int ticksSinceAction = 9001;
+import io.netty.buffer.ByteBuf;
 
-	private SafeTimeTracker updateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
+public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
+    private boolean isDigging = true;
+    private BlockMiner miner;
+    private int ledState;
+    private int ticksSinceAction = 9001;
 
-	public TileMiningWell() {
-		super();
-		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BREAK_ENERGY, BuilderAPI.BREAK_ENERGY * 4 + BuilderAPI.BUILD_ENERGY, 0));
-	}
+    private SafeTimeTracker updateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 
-	/**
-	 * Dig the next available piece of land if not done. As soon as it reaches
-	 * bedrock, lava or goes below 0, it's considered done.
-	 */
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+    public TileMiningWell() {
+        super();
+        this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BREAK_ENERGY, BuilderAPI.BREAK_ENERGY * 4 + BuilderAPI.BUILD_ENERGY, 0));
+    }
 
-		if (worldObj.isRemote) {
-			return;
-		}
+    /** Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's
+     * considered done. */
+    @Override
+    public void update() {
+        super.update();
 
-		if (updateTracker.markTimeIfDelay(worldObj)) {
-			sendNetworkUpdate();
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
-		ticksSinceAction++;
+        if (updateTracker.markTimeIfDelay(worldObj)) {
+            sendNetworkUpdate();
+        }
 
-		if (mode == Mode.Off) {
-			if (miner != null) {
-				miner.invalidate();
-				miner = null;
-			}
-			isDigging = false;
-			return;
-		}
+        ticksSinceAction++;
 
-		if (getBattery().getEnergyStored() == 0) {
-			return;
-		}
+        if (mode == Mode.Off) {
+            if (miner != null) {
+                miner.invalidate();
+                miner = null;
+            }
+            isDigging = false;
+            return;
+        }
 
-		if (miner == null) {
-			World world = worldObj;
+        if (getBattery().getEnergyStored() == 0) {
+            return;
+        }
 
-			int depth = yCoord - 1;
+        if (miner == null) {
+            World world = worldObj;
 
-			while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
-				depth = depth - 1;
-			}
+            BlockPos search = pos.down();
 
-			if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
-				isDigging = false;
-				// Drain energy, because at 0 energy this will stop doing calculations.
-				getBattery().useEnergy(0, 10, false);
-				return;
-			}
+            while (world.getBlockState(search).getBlock() == BuildCraftFactory.plainPipeBlock) {
+                search = search.down();
+            }
 
-			if (world.isAirBlock(xCoord, depth, zCoord) || world.getBlock(xCoord, depth, zCoord).isReplaceable(world, xCoord, depth, zCoord)) {
-				ticksSinceAction = 0;
-				world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
-			} else {
-				miner = new BlockMiner(world, this, xCoord, depth, zCoord);
-			}
-		}
+            if (search.getY() < 1 || search.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, search)) {
+                isDigging = false;
+                // Drain energy, because at 0 energy this will stop doing calculations.
+                getBattery().useEnergy(0, 10, false);
+                return;
+            }
 
-		if (miner != null) {
-			isDigging = true;
-			ticksSinceAction = 0;
+            if (world.isAirBlock(search) || world.getBlockState(search).getBlock().isReplaceable(world, search)) {
+                ticksSinceAction = 0;
+                world.setBlockState(search, BuildCraftFactory.plainPipeBlock.getDefaultState());
+            } else {
+                miner = new BlockMiner(world, this, search);
+            }
+        }
 
-			int usedEnergy = miner.acceptEnergy(getBattery().getEnergyStored());
-			getBattery().useEnergy(usedEnergy, usedEnergy, false);
+        if (miner != null) {
+            isDigging = true;
+            ticksSinceAction = 0;
 
-			if (miner.hasFailed()) {
-				isDigging = false;
-			}
+            int usedEnergy = miner.acceptEnergy(getBattery().getEnergyStored());
+            getBattery().useEnergy(usedEnergy, usedEnergy, false);
 
-			if (miner.hasFailed() || miner.hasMined()) {
-				miner = null;
-			}
-		}
-	}
+            if (miner.hasFailed()) {
+                isDigging = false;
+            }
 
-	@Override
-	public void invalidate() {
-		super.invalidate();
-		if (miner != null) {
-			miner.invalidate();
-		}
-		if (worldObj != null && yCoord > 2) {
-			BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
-		}
-	}
+            if (miner.hasFailed() || miner.hasMined()) {
+                miner = null;
+            }
+        }
+    }
 
-	@Override
-	public void writeData(ByteBuf stream) {
-		super.writeData(stream);
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (miner != null) {
+            miner.invalidate();
+        }
+        if (worldObj != null && pos.getY() > 2) {
+            BuildCraftFactory.miningWellBlock.removePipes(worldObj, pos);
+        }
+    }
 
-		ledState = (ticksSinceAction < 2 ? 16 : 0) | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
-		stream.writeByte(ledState);
-	}
+    @Override
+    public void writeData(ByteBuf stream) {
+        super.writeData(stream);
 
-	@Override
-	public void readData(ByteBuf stream) {
-		super.readData(stream);
+        ledState = (ticksSinceAction < 2 ? 16 : 0) | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
+        stream.writeByte(ledState);
+    }
 
-		int newLedState = stream.readUnsignedByte();
-		if (newLedState != ledState) {
-			ledState = newLedState;
-			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-		}
-	}
+    @Override
+    public void readData(ByteBuf stream) {
+        super.readData(stream);
 
-	@Override
-	public boolean hasWork() {
-		return isDigging;
-	}
+        int newLedState = stream.readUnsignedByte();
+        if (newLedState != ledState) {
+            ledState = newLedState;
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        }
+    }
 
-	@Override
-	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type,
-												  ForgeDirection with) {
-		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
-	}
+    @Override
+    public boolean hasWork() {
+        return isDigging;
+    }
 
-	@Override
-	public boolean acceptsControlMode(Mode mode) {
-		return mode == Mode.Off || mode == Mode.On;
-	}
+    @Override
+    public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
+        return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
+    }
 
-	@Override
-	public int getLEDLevel(int led) {
-		if (led == 0) { // Red LED
-			return ledState & 15;
-		} else { // Green LED
-			return (ledState >> 4) > 0 ? 15 : 0;
-		}
-	}
+    @Override
+    public boolean acceptsControlMode(Mode mode) {
+        return mode == Mode.Off || mode == Mode.On;
+    }
 }

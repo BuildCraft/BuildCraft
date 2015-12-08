@@ -12,18 +12,14 @@ import buildcraft.api.core.ISerializable;
 
 public interface ISyncedTile {
 
-	/**
-	 * called by the PacketHandler for each state contained in a StatePacket
-	 *
-	 * @param stateId
-	 * @return an object that should be refreshed from the state
-	 */
-	ISerializable getStateInstance(byte stateId);
+    /** called by the PacketHandler for each state contained in a StatePacket
+     *
+     * @param stateId
+     * @return an object that should be refreshed from the state */
+    ISerializable getStateInstance(byte stateId);
 
-	/**
-	 * Called after a state has been updated
-	 *
-	 * @param stateId
-	 */
-	void afterStateUpdated(byte stateId);
+    /** Called after a state has been updated
+     *
+     * @param stateId */
+    void afterStateUpdated(byte stateId);
 }

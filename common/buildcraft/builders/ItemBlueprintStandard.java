@@ -8,20 +8,30 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.builders.gui.GuiBlueprint;
+import buildcraft.core.blueprints.BlueprintBase;
+
 public class ItemBlueprintStandard extends ItemBlueprint {
-	public ItemBlueprintStandard() {
-		super();
-	}
+    public ItemBlueprintStandard() {
+        super();
+        setTextureLocation("blueprint");
+    }
 
-	@Override
-	public String getIconType() {
-		return "blueprint";
-	}
+    @Override
+    public EnumBlueprintType getType(ItemStack stack) {
+        return EnumBlueprintType.BLUEPRINT;
+    }
 
-	@Override
-	public Type getType(ItemStack stack) {
-		return Type.BLUEPRINT;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected void openGui(BlueprintBase bpt) {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiBlueprint(bpt));
+    }
 }

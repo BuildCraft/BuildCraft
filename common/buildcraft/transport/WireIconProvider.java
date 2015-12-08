@@ -8,50 +8,53 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import java.util.Locale;
+import java.util.Map;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import com.google.common.collect.Maps;
 
-import buildcraft.api.core.IIconProvider;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 
-public class WireIconProvider implements IIconProvider {
+import buildcraft.api.transport.PipeWire;
 
-	public static final int Texture_Red_Dark = 0;
-	public static final int Texture_Red_Lit = 1;
-	public static final int Texture_Blue_Dark = 2;
-	public static final int Texture_Blue_Lit = 3;
-	public static final int Texture_Green_Dark = 4;
-	public static final int Texture_Green_Lit = 5;
-	public static final int Texture_Yellow_Dark = 6;
-	public static final int Texture_Yellow_Lit = 7;
+public class WireIconProvider {
 
-	public static final int MAX = 8;
+    public enum Type {
+        RED_DARK(PipeWire.RED, false),
+        RED_LIT(PipeWire.RED, true),
+        BLUE_DARK(PipeWire.BLUE, false),
+        BLUE_LIT(PipeWire.BLUE, true),
+        GREEN_DARK(PipeWire.GREEN, false),
+        GREEN_LIT(PipeWire.GREEN, true),
+        YELLOW_DARK(PipeWire.YELLOW, false),
+        YELLOW_LIT(PipeWire.YELLOW, true);
 
-	@SideOnly(Side.CLIENT)
-	private IIcon[] icons;
+        private final ResourceLocation location;
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int pipeIconIndex) {
-		return icons[pipeIconIndex];
-	}
+        Type(PipeWire type, boolean lit) {
+            if (lit) {
+                litMap.put(type, this);
+            } else {
+                darkMap.put(type, this);
+            }
+            location = new ResourceLocation("buildcraftcore:blocks/misc/texture_" + name().toLowerCase(Locale.ENGLISH));
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[MAX];
+    private static final Map<PipeWire, Type> darkMap = Maps.newEnumMap(PipeWire.class);
+    private static final Map<PipeWire, Type> litMap = Maps.newEnumMap(PipeWire.class);
+    private static Map<Type, TextureAtlasSprite> icons = Maps.newEnumMap(Type.class);
 
-		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_dark");
-		icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_lit");
-		icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_dark");
-		icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_lit");
-		icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_dark");
-		icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_lit");
-		icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_dark");
-		icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_lit");
+    public TextureAtlasSprite getIcon(PipeWire wire, boolean lit) {
+        return icons.get((lit ? litMap : darkMap).get(wire));
+    }
 
-	}
+    public static void registerIcons(TextureMap iconRegister) {
+        for (Type type : Type.values()) {
+            icons.put(type, iconRegister.registerSprite(type.location));
+        }
+    }
 
 }

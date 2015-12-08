@@ -8,56 +8,61 @@
  */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.network.PacketIds;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketTileUpdate extends PacketUpdate {
-	public int posX;
-	public int posY;
-	public int posZ;
+    public BlockPos pos;
 
-	public PacketTileUpdate() {
-		super(PacketIds.TILE_UPDATE);
-	}
+    public PacketTileUpdate() {
+        super();
+    }
 
-	public PacketTileUpdate(ISerializable tile) {
-		this(PacketIds.TILE_UPDATE, tile);
-	}
+    public PacketTileUpdate(TileEntity tile, ISerializable ser) {
+        super(ser);
+        tempWorld = tile.getWorld();
+        pos = tile.getPos();
+    }
 
-	public PacketTileUpdate(int packetId, ISerializable tile) {
-		super(packetId, tile);
+    @Override
+    public void writeIdentificationData(ByteBuf data) {
+        data.writeInt(pos.getX());
+        data.writeInt(pos.getY());
+        data.writeInt(pos.getZ());
+    }
 
-		TileEntity entity = (TileEntity) tile;
-		posX = entity.xCoord;
-		posY = entity.yCoord;
-		posZ = entity.zCoord;
-	}
+    @Override
+    public void readIdentificationData(ByteBuf data) {
+        pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
+    }
 
-	@Override
-	public void writeIdentificationData(ByteBuf data) {
-		data.writeInt(posX);
-		data.writeShort(posY);
-		data.writeInt(posZ);
-	}
+    public boolean targetExists(World world) {
+        return !world.isAirBlock(pos);
+    }
 
-	@Override
-	public void readIdentificationData(ByteBuf data) {
-		posX = data.readInt();
-		posY = data.readShort();
-		posZ = data.readInt();
-	}
+    public TileEntity getTarget(World world) {
+        return world.getTileEntity(pos);
+    }
 
-	public boolean targetExists(World world) {
-		return world.blockExists(posX, posY, posZ);
-	}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (!targetExists(world)) {
+            return;
+        }
 
-	public TileEntity getTarget(World world) {
-		return world.getTileEntity(posX, posY, posZ);
-	}
+        TileEntity tile = getTarget(world);
 
+        if (!(tile instanceof ISerializable)) {
+            return;
+        }
+
+        ISerializable ser = (ISerializable) tile;
+        ser.readData(payloadData);
+    }
 }

@@ -29,279 +29,276 @@ import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeViewable {
-	private class PreviewCrafter implements IFlexibleCrafter {
-		private final SimpleInventory inventory;
-		private final IFlexibleCrafter crafter;
+    private class PreviewCrafter implements IFlexibleCrafter {
+        private final SimpleInventory inventory;
+        private final IFlexibleCrafter crafter;
 
-		// TODO: Make a safe copy of fluids too
-		public PreviewCrafter(IFlexibleCrafter crafter) {
-			this.crafter = crafter;
-			this.inventory = new SimpleInventory(crafter.getCraftingItemStackSize(), "Preview", 64);
-			for (int i = 0; i < inventory.getSizeInventory(); i++) {
-				ItemStack s = crafter.getCraftingItemStack(i);
-				if (s != null) {
-					inventory.setInventorySlotContents(i, s.copy());
-				}
-			}
-		}
+        // TODO: Make a safe copy of fluids too
+        public PreviewCrafter(IFlexibleCrafter crafter) {
+            this.crafter = crafter;
+            this.inventory = new SimpleInventory(crafter.getCraftingItemStackSize(), "Preview", 64);
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack s = crafter.getCraftingItemStack(i);
+                if (s != null) {
+                    inventory.setInventorySlotContents(i, s.copy());
+                }
+            }
+        }
 
-		@Override
-		public int getCraftingItemStackSize() {
-			return inventory.getSizeInventory();
-		}
+        @Override
+        public int getCraftingItemStackSize() {
+            return inventory.getSizeInventory();
+        }
 
-		@Override
-		public ItemStack getCraftingItemStack(int slotid) {
-			return inventory.getStackInSlot(slotid);
-		}
+        @Override
+        public ItemStack getCraftingItemStack(int slotid) {
+            return inventory.getStackInSlot(slotid);
+        }
 
-		@Override
-		public ItemStack decrCraftingItemStack(int slotid, int val) {
-			return inventory.decrStackSize(slotid, val);
-		}
+        @Override
+        public ItemStack decrCraftingItemStack(int slotid, int val) {
+            return inventory.decrStackSize(slotid, val);
+        }
 
-		@Override
-		public FluidStack getCraftingFluidStack(int tankid) {
-			return crafter.getCraftingFluidStack(tankid);
-		}
+        @Override
+        public FluidStack getCraftingFluidStack(int tankid) {
+            return crafter.getCraftingFluidStack(tankid);
+        }
 
-		@Override
-		public FluidStack decrCraftingFluidStack(int tankid, int val) {
-			return crafter.decrCraftingFluidStack(tankid, val);
-		}
+        @Override
+        public FluidStack decrCraftingFluidStack(int tankid, int val) {
+            return crafter.decrCraftingFluidStack(tankid, val);
+        }
 
-		@Override
-		public int getCraftingFluidStackSize() {
-			return crafter.getCraftingFluidStackSize();
-		}
-	}
+        @Override
+        public int getCraftingFluidStackSize() {
+            return crafter.getCraftingFluidStackSize();
+        }
+    }
 
-	public int energyCost = 0;
-	public long craftingTime = 0;
-	public String id;
+    public int energyCost = 0;
+    public long craftingTime = 0;
+    public String id;
 
-	public T output = null;
+    public T output = null;
 
-	public ArrayList<ItemStack> inputItems = new ArrayList<ItemStack>();
-	public ArrayList<List<ItemStack>> inputItemsWithAlternatives = new ArrayList<List<ItemStack>>();
+    public ArrayList<ItemStack> inputItems = new ArrayList<ItemStack>();
+    public ArrayList<List<ItemStack>> inputItemsWithAlternatives = new ArrayList<List<ItemStack>>();
 
-	public ArrayList<FluidStack> inputFluids = new ArrayList<FluidStack>();
+    public ArrayList<FluidStack> inputFluids = new ArrayList<FluidStack>();
 
-	public FlexibleRecipe() {
+    public FlexibleRecipe() {
 
-	}
+    }
 
-	public FlexibleRecipe(String id, T output, int iEnergyCost, long craftingTime, Object... input) {
-		setContents(id, output, iEnergyCost, craftingTime, input);
-	}
+    public FlexibleRecipe(String id, T output, int iEnergyCost, long craftingTime, Object... input) {
+        setContents(id, output, iEnergyCost, craftingTime, input);
+    }
 
-	public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
-		id = iid;
+    public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
+        id = iid;
 
-		if (ioutput == null) {
-			throw new IllegalArgumentException("The output of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
-		} else if (ioutput instanceof ItemStack) {
-			output = (T) ioutput;
-		} else if (ioutput instanceof Item) {
-			output = (T) new ItemStack((Item) ioutput);
-		} else if (ioutput instanceof Block) {
-			output = (T) new ItemStack((Block) ioutput);
-		} else if (ioutput instanceof FluidStack) {
-			output = (T) ioutput;
-		} else {
-			throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as output! (" + ioutput.getClass() + ")");
-		}
+        if (ioutput == null) {
+            throw new IllegalArgumentException("The output of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
+        } else if (ioutput instanceof ItemStack) {
+            output = (T) ioutput;
+        } else if (ioutput instanceof Item) {
+            output = (T) new ItemStack((Item) ioutput);
+        } else if (ioutput instanceof Block) {
+            output = (T) new ItemStack((Block) ioutput);
+        } else if (ioutput instanceof FluidStack) {
+            output = (T) ioutput;
+        } else {
+            throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as output! (" + ioutput.getClass() + ")");
+        }
 
-		energyCost = iEnergyCost;
-		craftingTime = iCraftingTime;
+        energyCost = iEnergyCost;
+        craftingTime = iCraftingTime;
 
-		for (Object i : input) {
-			if (i == null) {
-				throw new IllegalArgumentException("An input of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
-			} else if (i instanceof ItemStack) {
-				inputItems.add((ItemStack) i);
-			} else if (i instanceof Item) {
-				inputItems.add(new ItemStack((Item) i));
-			} else if (i instanceof Block) {
-				inputItems.add(new ItemStack((Block) i));
-			} else if (i instanceof FluidStack) {
-				inputFluids.add((FluidStack) i);
-			} else if (i instanceof List) {
-				inputItemsWithAlternatives.add((List) i);
-			} else if (i instanceof String) {
-				inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
-			} else {
-				throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as input! (" + i.getClass() + ")");
-			}
-		}
-	}
+        for (Object i : input) {
+            if (i == null) {
+                throw new IllegalArgumentException("An input of FlexibleRecipe " + iid + " is null! Rejecting recipe.");
+            } else if (i instanceof ItemStack) {
+                inputItems.add((ItemStack) i);
+            } else if (i instanceof Item) {
+                inputItems.add(new ItemStack((Item) i));
+            } else if (i instanceof Block) {
+                inputItems.add(new ItemStack((Block) i));
+            } else if (i instanceof FluidStack) {
+                inputFluids.add((FluidStack) i);
+            } else if (i instanceof List) {
+                inputItemsWithAlternatives.add((List) i);
+            } else if (i instanceof String) {
+                inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
+            } else {
+                throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as input! (" + i.getClass() + ")");
+            }
+        }
+    }
 
+    @Override
+    public boolean canBeCrafted(IFlexibleCrafter crafter) {
+        return craft(crafter, true) != null;
+    }
 
-	@Override
-	public boolean canBeCrafted(IFlexibleCrafter crafter) {
-		return craft(crafter, true) != null;
-	}
+    @Override
+    public CraftingResult<T> craft(IFlexibleCrafter baseCrafter, boolean preview) {
+        if (output == null) {
+            return null;
+        }
 
-	@Override
-	public CraftingResult<T> craft(IFlexibleCrafter baseCrafter, boolean preview) {
-		if (output == null) {
-			return null;
-		}
+        IFlexibleCrafter crafter = baseCrafter;
+        if (preview) {
+            crafter = new FakeFlexibleCrafter(baseCrafter);
+        }
 
-		IFlexibleCrafter crafter = baseCrafter;
-		if (preview) {
-			crafter = new FakeFlexibleCrafter(baseCrafter);
-		}
+        CraftingResult<T> result = new CraftingResult<T>();
 
-		CraftingResult<T> result = new CraftingResult<T>();
+        result.recipe = this;
+        result.energyCost = energyCost;
+        result.craftingTime = craftingTime;
 
-		result.recipe = this;
-		result.energyCost = energyCost;
-		result.craftingTime = craftingTime;
+        for (ItemStack requirement : inputItems) {
+            IStackFilter filter = new ArrayStackFilter(requirement);
+            int amount = requirement.stackSize;
 
-		for (ItemStack requirement : inputItems) {
-			IStackFilter filter = new ArrayStackFilter(requirement);
-			int amount = requirement.stackSize;
+            if (consumeItems(crafter, result, filter, amount) != 0) {
+                return null;
+            }
+        }
 
-			if (consumeItems(crafter, result, filter, amount) != 0) {
-				return null;
-			}
-		}
+        // Item stacks with alternatives consumption
 
-		// Item stacks with alternatives consumption
+        for (List<ItemStack> requirements : inputItemsWithAlternatives) {
+            IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[requirements.size()]));
+            int amount = requirements.get(0).stackSize;
 
-		for (List<ItemStack> requirements : inputItemsWithAlternatives) {
-			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[requirements.size()]));
-			int amount = requirements.get(0).stackSize;
+            if (consumeItems(crafter, result, filter, amount) != 0) {
+                return null;
+            }
+        }
 
-			if (consumeItems(crafter, result, filter, amount) != 0) {
-				return null;
-			}
-		}
+        // Fluid stacks consumption
 
-		// Fluid stacks consumption
+        for (FluidStack requirement : inputFluids) {
+            int amount = requirement.amount;
 
-		for (FluidStack requirement : inputFluids) {
-			int amount = requirement.amount;
+            for (int tankid = 0; tankid < crafter.getCraftingFluidStackSize(); tankid++) {
+                FluidStack fluid = crafter.getCraftingFluidStack(tankid);
 
-			for (int tankid = 0; tankid < crafter.getCraftingFluidStackSize(); tankid++) {
-				FluidStack fluid = crafter.getCraftingFluidStack(tankid);
-
-				if (fluid != null && fluid.isFluidEqual(requirement)) {
+                if (fluid != null && fluid.isFluidEqual(requirement)) {
 					int amountUsed;
 
-					if (fluid.amount > amount) {
-						amountUsed = amount;
+                    if (fluid.amount > amount) {
+                        amountUsed = amount;
 
-						if (!preview) {
-							crafter.decrCraftingFluidStack(tankid, amount);
-						}
+                        if (!preview) {
+                            crafter.decrCraftingFluidStack(tankid, amount);
+                        }
 
-						amount = 0;
-					} else {
-						amountUsed = fluid.amount;
+                        amount = 0;
+                    } else {
+                        amountUsed = fluid.amount;
 
-						if (!preview) {
-							crafter.decrCraftingFluidStack(tankid, fluid.amount);
-						}
+                        if (!preview) {
+                            crafter.decrCraftingFluidStack(tankid, fluid.amount);
+                        }
 
-						amount -= fluid.amount;
-					}
+                        amount -= fluid.amount;
+                    }
 
-					result.usedFluids.add(new FluidStack(requirement.getFluid(), amountUsed));
-				}
+                    result.usedFluids.add(new FluidStack(requirement.getFluid(), amountUsed));
+                }
 
-				if (amount == 0) {
-					break;
-				}
-			}
+                if (amount == 0) {
+                    break;
+                }
+            }
 
-			if (amount != 0) {
-				return null;
-			}
-		}
+            if (amount != 0) {
+                return null;
+            }
+        }
 
-		// Output generation
+        // Output generation
 
-		result.crafted = output;
+        result.crafted = output;
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	private int consumeItems(IFlexibleCrafter crafter, CraftingResult<T> result, IStackFilter filter,
-							 int amount) {
-		int expected = amount;
+    private int consumeItems(IFlexibleCrafter crafter, CraftingResult<T> result, IStackFilter filter, int amount) {
+        int expected = amount;
 
-		for (int slotid = 0; slotid < crafter.getCraftingItemStackSize(); ++slotid) {
-			ItemStack stack = crafter.getCraftingItemStack(slotid);
+        for (int slotid = 0; slotid < crafter.getCraftingItemStackSize(); ++slotid) {
+            ItemStack stack = crafter.getCraftingItemStack(slotid);
 
-			if (stack != null && filter.matches(stack)) {
+            if (stack != null && filter.matches(stack)) {
 				ItemStack removed;
 
-				if (stack.stackSize >= expected) {
-					removed = crafter.decrCraftingItemStack(slotid, expected);
-					expected = 0;
-				} else {
-					removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
-					expected -= removed.stackSize;
-				}
+                if (stack.stackSize >= expected) {
+                    removed = crafter.decrCraftingItemStack(slotid, expected);
+                    expected = 0;
+                } else {
+                    removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
+                    expected -= removed.stackSize;
+                }
 
-				result.usedItems.add(removed);
-			}
+                result.usedItems.add(removed);
+            }
 
-			if (expected == 0) {
-				return 0;
-			}
-		}
+            if (expected == 0) {
+                return 0;
+            }
+        }
 
-		return amount;
-	}
+        return amount;
+    }
 
-	@Override
-	public CraftingResult<T> canCraft(ItemStack expectedOutput) {
-		if (output instanceof ItemStack
-				&& StackHelper.isMatchingItem(expectedOutput, (ItemStack) output)) {
-			CraftingResult<T> result = new CraftingResult<T>();
+    @Override
+    public CraftingResult<T> canCraft(ItemStack expectedOutput) {
+        if (output instanceof ItemStack && StackHelper.isMatchingItem(expectedOutput, (ItemStack) output)) {
+            CraftingResult<T> result = new CraftingResult<T>();
 
-			result.recipe = this;
-			result.usedFluids = inputFluids;
-			result.usedItems = inputItems;
-			result.crafted = output;
+            result.recipe = this;
+            result.usedFluids = inputFluids;
+            result.usedItems = inputItems;
+            result.crafted = output;
 
-			return result;
-		} else {
-			return null;
-		}
-	}
+            return result;
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public Object getOutput() {
-		return output;
-	}
+    @Override
+    public Object getOutput() {
+        return output;
+    }
 
-	@Override
-	public Collection<Object> getInputs() {
-		ArrayList<Object> inputs = new ArrayList<Object>();
+    @Override
+    public Collection<Object> getInputs() {
+        ArrayList<Object> inputs = new ArrayList<Object>();
 
-		inputs.addAll(inputItems);
-		inputs.addAll(inputItemsWithAlternatives);
-		inputs.addAll(inputFluids);
+        inputs.addAll(inputItems);
+        inputs.addAll(inputItemsWithAlternatives);
+        inputs.addAll(inputFluids);
 
-		return inputs;
-	}
+        return inputs;
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return energyCost;
-	}
+    @Override
+    public int getEnergyCost() {
+        return energyCost;
+    }
 
-	@Override
-	public long getCraftingTime() {
-		return craftingTime;
-	}
+    @Override
+    public long getCraftingTime() {
+        return craftingTime;
+    }
 }

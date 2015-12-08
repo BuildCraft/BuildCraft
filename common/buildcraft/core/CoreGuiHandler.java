@@ -10,8 +10,7 @@ package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.core.list.ContainerListNew;
 import buildcraft.core.list.ContainerListOld;
@@ -20,23 +19,23 @@ import buildcraft.core.list.GuiListOld;
 
 public class CoreGuiHandler implements IGuiHandler {
 
-	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (id == GuiIds.LIST_OLD) {
 			return new GuiListOld(player);
 		} else if (id == GuiIds.LIST_NEW) {
 			return new GuiListNew(player);
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		if (id == GuiIds.LIST_OLD) {
 			return new ContainerListOld(player);
 		} else if (id == GuiIds.LIST_NEW) {
 			return new ContainerListNew(player);
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 }

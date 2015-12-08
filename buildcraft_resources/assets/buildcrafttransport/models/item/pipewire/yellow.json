@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftcore:item/buildcraft_base",
+    "textures": {
+        "layer0": "buildcrafttransport:items/pipewire/yellow"
+    }
+}

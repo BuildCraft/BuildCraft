@@ -10,14 +10,12 @@ package buildcraft.core.lib.inventory.filters;
 
 import net.minecraftforge.fluids.Fluid;
 
-/**
- * Returns true if the stack matches any one one of the filter stacks.
- */
+/** Returns true if the stack matches any one one of the filter stacks. */
 public class PassThroughFluidFilter implements IFluidFilter {
 
-	@Override
-	public boolean matches(Fluid fluid) {
-		return fluid != null;
-	}
+    @Override
+    public boolean matches(Fluid fluid) {
+        return fluid != null;
+    }
 
 }

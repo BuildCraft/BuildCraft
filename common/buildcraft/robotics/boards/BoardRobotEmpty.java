@@ -7,17 +7,17 @@ import buildcraft.robotics.ai.AIRobotGotoSleep;
 
 public class BoardRobotEmpty extends RedstoneBoardRobot {
 
-	public BoardRobotEmpty(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public BoardRobotEmpty(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public RedstoneBoardRobotNBT getNBTHandler() {
-		return RedstoneBoardRobotEmptyNBT.instance;
-	}
+    @Override
+    public RedstoneBoardRobotNBT getNBTHandler() {
+        return RedstoneBoardRobotEmptyNBT.instance;
+    }
 
-	@Override
-	public void update() {
-		startDelegateAI(new AIRobotGotoSleep(robot));
-	}
+    @Override
+    public void update() {
+        startDelegateAI(new AIRobotGotoSleep(robot));
+    }
 }

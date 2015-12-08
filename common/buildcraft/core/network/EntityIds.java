@@ -10,12 +10,9 @@ package buildcraft.core.network;
 
 public final class EntityIds {
 
-	public static final int ROBOT = 10;
-	public static final int PACKAGE_THROWABLE = 11;
+    public static final int ROBOT = 10;
+    public static final int PACKAGE_THROWABLE = 11;
 
-	/**
-	 * Deactivate constructor
-	 */
-	private EntityIds() {
-	}
+    /** Deactivate constructor */
+    private EntityIds() {}
 }

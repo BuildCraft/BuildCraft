@@ -9,16 +9,18 @@
 package buildcraft.core.properties;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import buildcraft.api.core.BuildCraftAPI;
 
 public class WorldPropertyIsSoft extends WorldProperty {
-	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block == null
-				|| block.isAir(blockAccess, x, y, z)
-				|| BuildCraftAPI.softBlocks.contains(block)
-				|| block.isReplaceable(blockAccess, x, y, z);
-	}
+    @Override
+    public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+        Block block = state.getBlock();
+        return block == null || block.isAir(blockAccess, pos) || BuildCraftAPI.softBlocks.contains(block) || block.isReplaceable((World) blockAccess,
+                pos);
+    }
 }

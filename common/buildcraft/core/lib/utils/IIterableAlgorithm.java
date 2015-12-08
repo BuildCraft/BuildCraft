@@ -10,8 +10,8 @@ package buildcraft.core.lib.utils;
 
 public interface IIterableAlgorithm {
 
-	void iterate();
+    void iterate();
 
-	boolean isDone();
+    boolean isDone();
 
 }

@@ -1,5 +1,6 @@
 # Master language file
 
+buildcraft.boardRobotClean=Clean
 buildcraft.boardRobotPicker=Picker
 buildcraft.boardRobotLumberjack=Lumberjack
 buildcraft.boardRobotPlanter=Planter
@@ -50,7 +51,7 @@ chat.gateCopier.warning.logic=§6Warning: Target has different logic type!
 chat.gateCopier.warning.load=§6Warning: Gate triggers/actions might be missing!
 chat.gateCopier.warning.slots=§6Warning: Target has less slots!
 chat.gateCopier.warning.triggerParameters=§6Warning: Target has less trigger parameters!
-chat.pipe.power.iron.mode=Switched to %d RF/t limit
+chat.pipe.power.iron.mode=Switched to %d Mj/t limit
 chat.pipe.power.iron.mode.numberless=Switched to %s limit
 chat.pipe.power.iron.level.20=Very Low
 chat.pipe.power.iron.level.40=Low
@@ -170,6 +171,7 @@ fillerpattern.stairs=Stairs
 fillerpattern.box=Box
 fillerpattern.cylinder=Cylinder
 fillerpattern.frame=Frame
+fillerpattern.none=None
 fillerpattern.parameter.hollow=Hollow
 fillerpattern.parameter.filled=Filled
 
@@ -339,6 +341,17 @@ item.blueprint.no_build=No Building
 item.blueprint.incomplete=Incomplete
 item.mapLocation.name=Map Location
 item.gateCopier.name=Gate Copier
+
+item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
+item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe
+item.buildcraft_pipe_stone_item.name=Stone Transport Pipe
+item.buildcraft_pipe_andersite_item.name=Andersite Transport Pipe
+item.buildcraft_pipe_andersite_polished_item.name=Polished Andersite Transport Pipe
+item.buildcraft_pipe_diorite_item.name=Diorite Transport Pipe
+item.buildcraft_pipe_diorite_polished_item.name=Polished Diorite Transport Pipe
+item.buildcraft_pipe_granite_item.name=Granite Transport Pipe
+item.buildcraft_pipe_granite_polished_item.name=Polished Granite Transport Pipe
+
 item.PipeItemsWood.name=Wooden Transport Pipe
 item.PipeItemsCobblestone.name=Cobblestone Transport Pipe
 item.PipeItemsStone.name=Stone Transport Pipe
@@ -376,6 +389,8 @@ item.PipeFluidsVoid.name=Void Fluid Pipe
 item.PipeItemsSandstone.name=Sandstone Transport Pipe
 item.PipeFluidsSandstone.name=Sandstone Fluid Pipe
 item.PipePowerSandstone.name=Sandstone Kinesis Pipe
+
+
 item.PipeRobotStation.name=Docking Station
 item.Facade.name=Facade
 item.Facade.state_hollow=Hollow
@@ -390,6 +405,8 @@ item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
+item.guideBook.name=Guide Book
+item.robot_goggles.name=Robot Goggles
 
 itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
@@ -402,15 +419,15 @@ tile.assemblyTableBlock.name=Assembly Table
 tile.assemblyWorkbenchBlock.name=Advanced Crafting Table
 tile.autoWorkbenchBlock.name=Auto Workbench
 tile.blockFuel.name=Fuel
-tile.blockHopper.name=Chute
+tile.chuteBlock.name=Chute
 tile.blockOil.name=Oil
 tile.builderBlock.name=Builder
 tile.chargingTableBlock.name=Charging Table
 tile.constructionMarkerBlock.name=Construction Mark
-tile.engineCreative.name=Creative Engine
-tile.engineIron.name=Combustion Engine
-tile.engineStone.name=Stirling Engine
-tile.engineWood.name=Redstone Engine
+buildcraft.energy.engineCreative.name=Creative Engine
+buildcraft.energy.engineIron.name=Combustion Engine
+buildcraft.energy.engineStone.name=Stirling Engine
+buildcraft.core.engine.wood.name=Redstone Engine
 tile.fillerBlock.name=Filler
 tile.filteredBufferBlock.name=Filtered Buffer
 tile.floodGateBlock.name=Flood Gate
@@ -418,7 +435,7 @@ tile.frameBlock.name=Frame
 tile.integrationTableBlock.name=Integration Table
 tile.laserBlock.name=Laser
 tile.libraryBlock.name=Electronic Library
-tile.machineBlock.name=Quarry
+tile.quarryBlock.name=Quarry
 tile.markerBlock.name=Land Mark
 tile.miningWellBlock.name=Mining Well
 tile.packagerBlock.name=Recipe Packager
@@ -581,6 +598,11 @@ command.buildcraft.buildcraft.version.format=Format: /%s
 command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
 command.buildcraft.buildcraft.changelog.help=Displays the latest BC changelog.
 command.buildcraft.buildcraft.changelog.format=Format: /%s
+
+buildcraft.guide.chapter.=EMPTY CHAPTER!
+buildcraft.guide.chapter.block=Blocks
+buildcraft.guide.chapter.item=Items
+buildcraft.guide.chapter.gears=Gears
 
 command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
 command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)

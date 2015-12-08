@@ -12,13 +12,17 @@ import java.util.BitSet;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -34,9 +38,7 @@ import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
@@ -45,258 +47,265 @@ import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
-	public BlueprintBase blueprint;
-	public BptContext context;
-	protected BitSet usedLocations;
-	protected boolean done;
-	protected int x, y, z;
-	protected boolean initialized = false;
+    public BlueprintBase blueprint;
+    public BptContext context;
+    protected BitSet usedLocations;
+    protected boolean done;
+    protected BlockPos pos;
+    protected boolean initialized = false;
 
-	private long nextBuildDate = 0;
+    private long nextBuildDate = 0;
 
-	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
-		this.blueprint = bluePrint;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.usedLocations = new BitSet(bluePrint.sizeX * bluePrint.sizeY * bluePrint.sizeZ);
-		done = false;
+    public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
+        this.blueprint = bluePrint;
+        this.pos = pos;
+        this.usedLocations = new BitSet(bluePrint.sizeX * bluePrint.sizeY * bluePrint.sizeZ);
+        done = false;
 
-		Box box = new Box();
-		box.initialize(this);
+        Box box = new Box();
+        box.initialize(this);
 
-		context = bluePrint.getContext(world, box);
-	}
+        context = bluePrint.getContext(world, box);
+    }
 
-	protected boolean isLocationUsed(int i, int j, int k) {
-		int xCoord = i - x + blueprint.anchorX;
-		int yCoord = j - y + blueprint.anchorY;
-		int zCoord = k - z + blueprint.anchorZ;
-		return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
-	}
+    @Deprecated
+    protected boolean isLocationUsed(int x, int y, int z) {
+        return isLocationUsed(new BlockPos(x, y, z));
+    }
 
-	protected void markLocationUsed(int i, int j, int k) {
-		int xCoord = i - x + blueprint.anchorX;
-		int yCoord = j - y + blueprint.anchorY;
-		int zCoord = k - z + blueprint.anchorZ;
-		usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
-	}
+    protected boolean isLocationUsed(BlockPos toTest) {
+        int xCoord = toTest.getX() - pos.getX() + blueprint.anchorX;
+        int yCoord = toTest.getY() - pos.getY() + blueprint.anchorY;
+        int zCoord = toTest.getZ() - pos.getZ() + blueprint.anchorZ;
+        return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
+    }
 
-	public void initialize() {
-		if (!initialized) {
-			internalInit();
-			initialized = true;
-		}
-	}
+    @Deprecated
+    protected void markLocationUsed(int x, int y, int z) {
+        markLocationUsed(new BlockPos(x, y, z));
+    }
 
-	protected abstract void internalInit();
+    protected void markLocationUsed(BlockPos toMark) {
+        int xCoord = toMark.getX() - pos.getX() + blueprint.anchorX;
+        int yCoord = toMark.getY() - pos.getY() + blueprint.anchorY;
+        int zCoord = toMark.getZ() - pos.getZ() + blueprint.anchorZ;
+        usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
+    }
 
-	protected abstract BuildingSlot reserveNextBlock(World world);
+    public void initialize() {
+        if (!initialized) {
+            internalInit();
+            initialized = true;
+        }
+    }
 
-	protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
+    protected abstract void internalInit();
 
-	public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
-		initialize();
+    protected abstract BuildingSlot reserveNextBlock(World world);
 
-		if (world.getTotalWorldTime() < nextBuildDate) {
-			return false;
-		}
+    protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-		BuildingSlot slot = getNextBlock(world, builder);
+    public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
+        initialize();
 
-		if (buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F)) {
-			nextBuildDate = world.getTotalWorldTime() + slot.buildTime();
-			return true;
-		} else {
-			return false;
-		}
-	}
+        if (world.getTotalWorldTime() < nextBuildDate) {
+            return false;
+        }
 
-	public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y,
-							 double z) {
-		initialize();
+        BuildingSlot slot = getNextBlock(world, builder);
 
-		if (slot != null) {
-			slot.built = true;
-			BuildingItem i = new BuildingItem();
-			i.origin = new Position(x, y, z);
-			i.destination = slot.getDestination();
-			i.slotToBuild = slot;
-			i.context = getContext();
-			i.setStacksToDisplay(slot.getStacksToDisplay());
-			builder.addAndLaunchBuildingItem(i);
+        if (buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F)) {
+            nextBuildDate = world.getTotalWorldTime() + slot.buildTime();
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-			return true;
-		}
+    public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y, double z) {
+        initialize();
 
-		return false;
-	}
+        if (slot != null) {
+            slot.built = true;
+            BuildingItem i = new BuildingItem();
+            i.origin = new Vec3(x, y, z);
+            i.destination = slot.getDestination();
+            i.slotToBuild = slot;
+            i.context = getContext();
+            i.setStacksToDisplay(slot.getStacksToDisplay());
+            builder.addAndLaunchBuildingItem(i);
 
-	public BuildingSlot reserveNextSlot(World world) {
-		initialize();
+            return true;
+        }
 
-		return reserveNextBlock(world);
-	}
+        return false;
+    }
 
-	@Override
-	public int xMin() {
-		return x - blueprint.anchorX;
-	}
+    public BuildingSlot reserveNextSlot(World world) {
+        initialize();
 
-	@Override
-	public int yMin() {
-		return y - blueprint.anchorY;
-	}
+        return reserveNextBlock(world);
+    }
 
-	@Override
-	public int zMin() {
-		return z - blueprint.anchorZ;
-	}
+    @Override
+    public int xMin() {
+        return pos.getX() - blueprint.anchorX;
+    }
 
-	@Override
-	public int xMax() {
-		return x + blueprint.sizeX - blueprint.anchorX - 1;
-	}
+    @Override
+    public int yMin() {
+        return pos.getY() - blueprint.anchorY;
+    }
 
-	@Override
-	public int yMax() {
-		return y + blueprint.sizeY - blueprint.anchorY - 1;
-	}
+    @Override
+    public int zMin() {
+        return pos.getZ() - blueprint.anchorZ;
+    }
 
-	@Override
-	public int zMax() {
-		return z + blueprint.sizeZ - blueprint.anchorZ - 1;
-	}
+    @Override
+    public int xMax() {
+        return pos.getX() + blueprint.sizeX - blueprint.anchorX - 1;
+    }
 
-	@Override
-	public void removeFromWorld() {
+    @Override
+    public int yMax() {
+        return pos.getY() + blueprint.sizeY - blueprint.anchorY - 1;
+    }
 
-	}
+    @Override
+    public int zMax() {
+        return pos.getZ() + blueprint.sizeZ - blueprint.anchorZ - 1;
+    }
 
-	public AxisAlignedBB getBoundingBox() {
-		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
-	}
+    @Override
+    public void removeFromWorld() {
 
-	public void postProcessing(World world) {
+    }
 
-	}
+    public AxisAlignedBB getBoundingBox() {
+        return new AxisAlignedBB(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+    }
 
-	public BptContext getContext() {
-		return context;
-	}
+    public void postProcessing(World world) {
 
-	public boolean isDone(IBuildingItemsProvider builder) {
-		return done && builder.getBuilders().size() == 0;
-	}
+    }
 
-	private int getBlockBreakEnergy(BuildingSlotBlock slot) {
-		return BlockUtils.computeBlockBreakEnergy(context.world(), slot.x, slot.y, slot.z);
-	}
+    public BptContext getContext() {
+        return context;
+    }
 
-	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
-		return builder.energyAvailable() >= getBlockBreakEnergy(slot);
-	}
+    public boolean isDone(IBuildingItemsProvider builder) {
+        return done && builder.getBuilders().size() == 0;
+    }
 
-	public void consumeEnergyToDestroy(TileAbstractBuilder builder, BuildingSlotBlock slot) {
-		builder.consumeEnergy(getBlockBreakEnergy(slot));
-	}
+    private int getBlockBreakEnergy(BuildingSlotBlock slot) {
+        return BlockUtils.computeBlockBreakEnergy(context.world(), slot.pos);
+    }
 
-	public void createDestroyItems(BuildingSlotBlock slot) {
+    protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
+        return builder.energyAvailable() >= getBlockBreakEnergy(slot);
+    }
+
+    public void consumeEnergyToDestroy(TileAbstractBuilder builder, BuildingSlotBlock slot) {
+        builder.consumeEnergy(getBlockBreakEnergy(slot));
+    }
+
+    public void createDestroyItems(BuildingSlotBlock slot) {
 		int hardness = (int) Math.ceil((double) getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
 
-		for (int i = 0; i < hardness; ++i) {
-			slot.addStackConsumed(new ItemStack(BuildCraftCore.buildToolBlock));
-		}
-	}
+        for (int i = 0; i < hardness; ++i) {
+            slot.addStackConsumed(new ItemStack(BuildCraftCore.decoratedBlock));
+        }
+    }
 
-	public void useRequirements(IInventory inv, BuildingSlot slot) {
+    public void useRequirements(IInventory inv, BuildingSlot slot) {
 
-	}
+    }
 
-	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
-		nbt.setByteArray("usedLocationList", BitSetUtils.toByteArray(usedLocations));
+    public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
+        nbt.setByteArray("usedLocationList", BitSetUtils.toByteArray(usedLocations));
 
-		NBTTagList buildingList = new NBTTagList();
+        NBTTagList buildingList = new NBTTagList();
 
-		for (BuildingItem item : builder.getBuilders()) {
-			NBTTagCompound sub = new NBTTagCompound();
-			item.writeToNBT(sub);
-			buildingList.appendTag(sub);
-		}
+        for (BuildingItem item : builder.getBuilders()) {
+            NBTTagCompound sub = new NBTTagCompound();
+            item.writeToNBT(sub);
+            buildingList.appendTag(sub);
+        }
 
-		nbt.setTag("buildersInAction", buildingList);
-	}
+        nbt.setTag("buildersInAction", buildingList);
+    }
 
-	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
-		if (nbt.hasKey("usedLocationList")) {
-			usedLocations = BitSetUtils.fromByteArray(nbt.getByteArray("usedLocationList"));
-		}
+    public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
+        if (nbt.hasKey("usedLocationList")) {
+            usedLocations = BitSetUtils.fromByteArray(nbt.getByteArray("usedLocationList"));
+        }
 
-		NBTTagList buildingList = nbt
-				.getTagList("buildersInAction",
-						Constants.NBT.TAG_COMPOUND);
+        NBTTagList buildingList = nbt.getTagList("buildersInAction", Constants.NBT.TAG_COMPOUND);
 
-		for (int i = 0; i < buildingList.tagCount(); ++i) {
-			BuildingItem item = new BuildingItem();
+        for (int i = 0; i < buildingList.tagCount(); ++i) {
+            BuildingItem item = new BuildingItem();
 
-			try {
-				item.readFromNBT(buildingList.getCompoundTagAt(i));
-				item.context = getContext();
-				builder.getBuilders().add(item);
-			} catch (MappingNotFoundException e) {
-				BCLog.logger.log(Level.WARN, "can't load building item", e);
-			}
-		}
+            try {
+                item.readFromNBT(buildingList.getCompoundTagAt(i));
+                item.context = getContext();
+                builder.getBuilders().add(item);
+            } catch (MappingNotFoundException e) {
+                BCLog.logger.log(Level.WARN, "can't load building item", e);
+            }
+        }
 
-		// 6.4.6 and below migration
+        // 6.4.6 and below migration
 
-		if (nbt.hasKey("clearList")) {
-			NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
+        if (nbt.hasKey("clearList")) {
+            NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
-			for (int i = 0; i < clearList.tagCount(); ++i) {
-				NBTTagCompound cpt = clearList.getCompoundTagAt(i);
-				BlockIndex o = new BlockIndex(cpt);
-				markLocationUsed(o.x, o.y, o.z);
-			}
-		}
+            for (int i = 0; i < clearList.tagCount(); ++i) {
+                NBTBase cpt = clearList.get(i);
+                BlockPos o = NBTUtils.readBlockPos(cpt);
+                markLocationUsed(o.getX(), o.getY(), o.getZ());
+            }
+        }
 
-		if (nbt.hasKey("builtList")) {
-			NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
+        if (nbt.hasKey("builtList")) {
+            NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
 
-			for (int i = 0; i < builtList.tagCount(); ++i) {
-				NBTTagCompound cpt = builtList.getCompoundTagAt(i);
-				BlockIndex o = new BlockIndex(cpt);
-				markLocationUsed(o.x, o.y, o.z);
-			}
-		}
-	}
+            for (int i = 0; i < builtList.tagCount(); ++i) {
+                NBTBase cpt = builtList.get(i);
+                BlockPos o = NBTUtils.readBlockPos(cpt);
+                markLocationUsed(o.getX(), o.getY(), o.getZ());
+            }
+        }
+    }
 
-	protected boolean isBlockBreakCanceled(World world, int x, int y, int z) {
-		if (!world.isAirBlock(x, y, z)) {
-			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, world, world.getBlock(x, y, z),
-					world.getBlockMetadata(x, y, z),
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
-			MinecraftForge.EVENT_BUS.post(breakEvent);
-			return breakEvent.isCanceled();
-		}
-		return false;
-	}
+    protected boolean isBlockBreakCanceled(World world, BlockPos pos) {
+        if (!world.isAirBlock(pos)) {
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(
+                    (WorldServer) world).get());
+            MinecraftForge.EVENT_BUS.post(breakEvent);
+            return breakEvent.isCanceled();
+        }
+        return false;
+    }
 
-	protected boolean isBlockPlaceCanceled(World world, int x, int y, int z, SchematicBlockBase schematic) {
-		Block block = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).block : Blocks.stone;
-		int meta = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).meta : 0;
+    protected boolean isBlockPlaceCanceled(World world, BlockPos pos, SchematicBlockBase schematic) {
+        IBlockState state = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).state : Blocks.stone.getDefaultState();
 
-		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
-				new BlockSnapshot(world, x, y, z, block, meta),
-				Blocks.air,
-				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, x, y, z).get()
-		);
+        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pos).get();
 
-		MinecraftForge.EVENT_BUS.post(placeEvent);
-		return placeEvent.isCanceled();
-	}
+        BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(new BlockSnapshot(world, pos, state), Blocks.air.getDefaultState(), player);
+
+        MinecraftForge.EVENT_BUS.post(placeEvent);
+        return placeEvent.isCanceled();
+    }
+    @Override
+    public String toString() {
+        return "BptBuilderBase [blueprint=" + blueprint + ", context=" + context + ", usedLocations=" + usedLocations + ", done=" + done + ", pos="
+            + pos + ", initialized=" + initialized + ", nextBuildDate=" + nextBuildDate + "]";
+    }
 }

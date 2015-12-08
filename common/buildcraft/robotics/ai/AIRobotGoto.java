@@ -1,53 +1,42 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
+
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class AIRobotGoto extends AIRobot {
 
-	protected float nextX, nextY, nextZ;
-	protected double dirX, dirY, dirZ;
+    protected Vec3 next, dir;
 
-	public AIRobotGoto(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotGoto(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	protected void setDestination(EntityRobotBase robot, float x, float y, float z) {
-		nextX = x;
-		nextY = y;
-		nextZ = z;
+    protected void setDestination(EntityRobotBase robot, Vec3 dest) {
+        next = dest;
+        dir = next.subtract(robot.posX, robot.posY, robot.posZ);
 
-		dirX = nextX - robot.posX;
-		dirY = nextY - robot.posY;
-		dirZ = nextZ - robot.posZ;
+        double magnitude = dir.lengthVector();
 
-		double magnitude = Math.sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+        if (magnitude != 0) {
+            dir = Utils.multiply(dir, 1 / magnitude);
+        } else {
+            dir = new Vec3(0, 0, 0);
+        }
 
-		if (magnitude != 0) {
-			dirX /= magnitude;
-			dirY /= magnitude;
-			dirZ /= magnitude;
-		} else {
-			dirX = 0;
-			dirY = 0;
-			dirZ = 0;
-		}
+        robot.motionX = dir.xCoord / 10f;
+        robot.motionY = dir.yCoord / 10f;
+        robot.motionZ = dir.zCoord / 10f;
+    }
 
-		robot.motionX = dirX / 10F;
-		robot.motionY = dirY / 10F;
-		robot.motionZ = dirZ / 10F;
-	}
-
-	@Override
-	public int getEnergyCost() {
-		return 3;
-	}
+    @Override
+    public int getEnergyCost() {
+        return 3;
+    }
 }

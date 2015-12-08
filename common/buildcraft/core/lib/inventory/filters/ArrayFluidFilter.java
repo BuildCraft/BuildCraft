@@ -14,46 +14,43 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-/**
- * Returns true if the stack matches any one one of the filter stacks.
- */
+/** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
 
-	protected Fluid[] fluids;
+    protected Fluid[] fluids;
 
-	public ArrayFluidFilter(ItemStack... stacks) {
-		fluids = new Fluid[stacks.length];
+    public ArrayFluidFilter(ItemStack... stacks) {
+        fluids = new Fluid[stacks.length];
 
-		for (int i = 0; i < stacks.length; ++i) {
-			FluidStack stack = FluidContainerRegistry.getFluidForFilledItem(stacks[i]);
-			if (stack != null) {
-				fluids[i] = stack.getFluid();
-			}
-		}
-	}
+        for (int i = 0; i < stacks.length; ++i) {
+            FluidStack stack = FluidContainerRegistry.getFluidForFilledItem(stacks[i]);
+            if (stack != null) {
+                fluids[i] = stack.getFluid();
+            }
+        }
+    }
 
-	public ArrayFluidFilter(Fluid... iFluids) {
-		fluids = iFluids;
-	}
+    public ArrayFluidFilter(Fluid... iFluids) {
+        fluids = iFluids;
+    }
 
+    public boolean hasFilter() {
+        for (Fluid filter : fluids) {
+            if (filter != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean hasFilter() {
-		for (Fluid filter : fluids) {
-			if (filter != null) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean matches(Fluid fluid) {
+        for (Fluid filter : fluids) {
+            if (filter != null && fluid.getID() == filter.getID()) {
+                return true;
+            }
+        }
 
-	@Override
-	public boolean matches(Fluid fluid) {
-		for (Fluid filter : fluids) {
-			if (filter != null && fluid.getID() == filter.getID()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+        return false;
+    }
 }

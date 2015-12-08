@@ -26,46 +26,46 @@ import buildcraft.robotics.ai.AIRobotSearchEntity;
 
 public class BoardRobotButcher extends RedstoneBoardRobot {
 
-	public BoardRobotButcher(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public BoardRobotButcher(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BCBoardNBT.REGISTRY.get("butcher");
-	}
+    @Override
+    public RedstoneBoardRobotNBT getNBTHandler() {
+        return BCBoardNBT.REGISTRY.get("butcher");
+    }
 
-	@Override
-	public final void update() {
-		if (robot.getHeldItem() == null) {
-			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
-				@Override
-				public boolean matches(ItemStack stack) {
-					return stack.getItem() instanceof ItemSword;
-				}
-			}));
-		} else {
-			startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
-				@Override
-				public boolean matches(Entity entity) {
-					return entity instanceof EntityAnimal;
-				}
-			}, 250, robot.getZoneToWork()));
-		}
-	}
+    @Override
+    public final void update() {
+        if (robot.getHeldItem() == null) {
+            startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
+                @Override
+                public boolean matches(ItemStack stack) {
+                    return stack.getItem() instanceof ItemSword;
+                }
+            }));
+        } else {
+            startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
+                @Override
+                public boolean matches(Entity entity) {
+                    return entity instanceof EntityAnimal;
+                }
+            }, 250, robot.getZoneToWork()));
+        }
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		} else if (ai instanceof AIRobotSearchEntity) {
-			if (ai.success()) {
-				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
-			} else {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotFetchAndEquipItemStack) {
+            if (!ai.success()) {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        } else if (ai instanceof AIRobotSearchEntity) {
+            if (ai.success()) {
+                startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
+            } else {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        }
+    }
 }

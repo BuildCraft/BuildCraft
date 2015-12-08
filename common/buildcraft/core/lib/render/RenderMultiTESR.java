@@ -4,20 +4,20 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
-public class RenderMultiTESR extends TileEntitySpecialRenderer {
-	private final TileEntitySpecialRenderer[] renderers;
+public class RenderMultiTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
+    private final TileEntitySpecialRenderer<T>[] renderers;
 
-	public RenderMultiTESR(TileEntitySpecialRenderer[] renderers) {
-		this.renderers = renderers;
-		for (TileEntitySpecialRenderer r : renderers) {
-			r.func_147497_a(TileEntityRendererDispatcher.instance);
-		}
-	}
+    public RenderMultiTESR(TileEntitySpecialRenderer<T>... renderers) {
+        this.renderers = renderers;
+        for (TileEntitySpecialRenderer<T> r : renderers) {
+            r.setRendererDispatcher(TileEntityRendererDispatcher.instance);
+        }
+    }
 
-	@Override
-	public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float f) {
-		for (TileEntitySpecialRenderer r : renderers) {
-			r.renderTileEntityAt(tile, x, y, z, f);
-		}
-	}
+    @Override
+    public void renderTileEntityAt(T tile, double x, double y, double z, float f, int arg) {
+        for (TileEntitySpecialRenderer<T> r : renderers) {
+            r.renderTileEntityAt(tile, x, y, z, f, arg);
+        }
+    }
 }

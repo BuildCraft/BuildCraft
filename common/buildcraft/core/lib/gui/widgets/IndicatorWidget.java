@@ -8,31 +8,31 @@
  */
 package buildcraft.core.lib.gui.widgets;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 public class IndicatorWidget extends Widget {
 
-	public final IIndicatorController controller;
+    public final IIndicatorController controller;
 
-	public IndicatorWidget(IIndicatorController controller, int x, int y, int u, int v, int w, int h) {
-		super(x, y, u, v, w, h);
-		this.controller = controller;
-	}
+    public IndicatorWidget(IIndicatorController controller, int x, int y, int u, int v, int w, int h) {
+        super(x, y, u, v, w, h);
+        this.controller = controller;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
-		int scale = controller.getScaledLevel(h);
-		gui.drawTexturedModalRect(guiX + x, guiY + y + h - scale, u, v + h - scale, w, scale);
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
+        int scale = controller.getScaledLevel(h);
+        gui.drawTexturedModalRect(guiX + x, guiY + y + h - scale, u, v + h - scale, w, scale);
+    }
 
-	@Override
-	public ToolTip getToolTip() {
-		return controller.getToolTip();
-	}
+    @Override
+    public ToolTip getToolTip() {
+        return controller.getToolTip();
+    }
 
 }

@@ -8,64 +8,62 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotPumpBlock extends AIRobot {
 
-	private BlockIndex blockToPump;
-	private long waited = 0;
-	private int pumped = 0;
+    private BlockPos blockToPump;
+    private long waited = 0;
+    private int pumped = 0;
 
-	public AIRobotPumpBlock(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotPumpBlock(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockIndex iBlockToPump) {
-		this(iRobot);
+    public AIRobotPumpBlock(EntityRobotBase iRobot, BlockPos iBlockToPump) {
+        this(iRobot);
 
-		blockToPump = iBlockToPump;
-	}
+        blockToPump = iBlockToPump;
+    }
 
-	@Override
-	public void start() {
-		robot.aimItemAt(blockToPump.x, blockToPump.y, blockToPump.z);
-	}
+    @Override
+    public void start() {
+        robot.aimItemAt(blockToPump);
+    }
 
-	@Override
-	public void preempt(AIRobot ai) {
-		super.preempt(ai);
-	}
+    @Override
+    public void preempt(AIRobot ai) {
+        super.preempt(ai);
+    }
 
-	@Override
-	public void update() {
-		if (waited < 40) {
-			waited++;
-		} else {
-			FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, false);
-			if (fluidStack != null) {
-				if (robot.fill(ForgeDirection.UNKNOWN, fluidStack, true) > 0) {
-					BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y,
-							blockToPump.z, true);
-				}
-			}
-			terminate();
-		}
+    @Override
+    public void update() {
+        if (waited < 40) {
+            waited++;
+        } else {
+            FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump, false);
+            if (fluidStack != null) {
+                if (robot.fill(null, fluidStack, true) > 0) {
+                    BlockUtils.drainBlock(robot.worldObj, blockToPump, true);
+                }
+            }
+            terminate();
+        }
 
-	}
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return 5;
-	}
+    @Override
+    public int getEnergyCost() {
+        return 5;
+    }
 
-	@Override
-	public boolean success() {
-		return pumped > 0;
-	}
+    @Override
+    public boolean success() {
+        return pumped > 0;
+    }
 }

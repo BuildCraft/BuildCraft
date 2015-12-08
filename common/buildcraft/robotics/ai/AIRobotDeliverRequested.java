@@ -21,45 +21,45 @@ import buildcraft.robotics.StackRequest;
 
 public class AIRobotDeliverRequested extends AIRobot {
 
-	private StackRequest requested;
-	private boolean delivered = false;
+    private StackRequest requested;
+    private boolean delivered = false;
 
-	public AIRobotDeliverRequested(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotDeliverRequested(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotDeliverRequested(EntityRobotBase robot, StackRequest request) {
-		this(robot);
+    public AIRobotDeliverRequested(EntityRobotBase robot, StackRequest request) {
+        this(robot);
 
-		requested = request;
-	}
+        requested = request;
+    }
 
-	@Override
-	public void start() {
+    @Override
+    public void start() {
 		if (requested != null) {
 			startDelegateAI(new AIRobotGotoStation(robot, requested.getStation(robot.worldObj)));
 		} else {
 			setSuccess(false);
 			terminate();
 		}
-	}
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStation) {
-			if (!ai.success()) {
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotGotoStation) {
+            if (!ai.success()) {
 				setSuccess(false);
-				terminate();
-				return;
-			}
+                terminate();
+                return;
+            }
 
 			IInvSlot slot = InvUtils.getItem(robot, new ArrayStackOrListFilter(requested.getStack()));
 
-			if (slot == null) {
+            if (slot == null) {
 				setSuccess(false);
-				terminate();
-				return;
-			}
+                terminate();
+                return;
+            }
 
 			IRequestProvider requester = requested.getRequester(robot.worldObj);
 			if (requester == null) {
@@ -69,17 +69,17 @@ public class AIRobotDeliverRequested extends AIRobot {
 			}
 			ItemStack newStack = requester.offerItem(requested.getSlot(), slot.getStackInSlot().copy());
 
-			if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
-				slot.setStackInSlot(newStack);
-			}
-			terminate();
-		}
-	}
+                if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
+                    slot.setStackInSlot(newStack);
+                }
+            terminate();
+        }
+    }
 
-	@Override
-	public boolean success() {
-		return delivered;
-	}
+    @Override
+    public boolean success() {
+        return delivered;
+    }
 
 	@Override
 	public boolean canLoadFromNBT() {

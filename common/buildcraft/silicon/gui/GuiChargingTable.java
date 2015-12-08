@@ -8,18 +8,18 @@
  */
 package buildcraft.silicon.gui;
 
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.silicon.TileChargingTable;
 
 public class GuiChargingTable extends GuiLaserTable {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/charging_table.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/charging_table.png");
 
-	public GuiChargingTable(InventoryPlayer playerInventory, TileChargingTable chargingTable) {
-		super(playerInventory, new ContainerChargingTable(playerInventory, chargingTable), chargingTable, TEXTURE);
-		xSize = 176;
-		ySize = 132;
-	}
+    public GuiChargingTable(EntityPlayer player, TileChargingTable chargingTable) {
+        super(player, new ContainerChargingTable(player, chargingTable), chargingTable, TEXTURE);
+        xSize = 176;
+        ySize = 132;
+    }
 }

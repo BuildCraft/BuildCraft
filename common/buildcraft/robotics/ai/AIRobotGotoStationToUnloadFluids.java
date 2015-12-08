@@ -15,30 +15,29 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
-	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(),
-				robot.getZoneToLoadUnload()));
-	}
+    @Override
+    public void update() {
+        startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoStation) {
-			setSuccess(ai.success());
-			terminate();
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotSearchAndGotoStation) {
+            setSuccess(ai.success());
+            terminate();
+        }
+    }
 
-	private class StationFilter implements IStationFilter {
+    private class StationFilter implements IStationFilter {
 
-		@Override
-		public boolean matches(DockingStation station) {
-			return AIRobotUnloadFluids.unload(robot, station, false) > 0;
-		}
+        @Override
+        public boolean matches(DockingStation station) {
+            return AIRobotUnloadFluids.unload(robot, station, false) > 0;
+        }
 
-	}
+    }
 }

@@ -1,62 +1,69 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.transport;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 public interface IPipeTile extends IInjectable {
-	enum PipeType {
-		ITEM, FLUID, POWER, STRUCTURE
-	}
+    enum PipeType {
+        ITEM,
+        FLUID,
+        POWER,
+        STRUCTURE
+    }
 
-	PipeType getPipeType();
+    PipeType getPipeType();
 
-	World getWorld();
+    World getWorld();
 
-	int x();
+    @Deprecated
+    int x();
 
-	int y();
+    @Deprecated
+    int y();
 
-	int z();
+    @Deprecated
+    int z();
 
-	/**
-	 * True if the pipe is connected to the block/pipe in the specific direction
-	 * 
-	 * @param with
-	 * @return true if connect
-	 */
-	boolean isPipeConnected(ForgeDirection with);
+    /** True if the pipe is connected to the block/pipe in the specific direction
+     * 
+     * @param with
+     * @return true if connect */
+    boolean isPipeConnected(EnumFacing with);
 
-	Block getNeighborBlock(ForgeDirection dir);
-	TileEntity getNeighborTile(ForgeDirection dir);
-	IPipe getNeighborPipe(ForgeDirection dir);
-	
-	IPipe getPipe();
-	int getPipeColor();
+    Block getNeighborBlock(EnumFacing dir);
 
-	PipePluggable getPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
-	boolean hasPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
-	boolean hasBlockingPluggable(ForgeDirection direction);
+    TileEntity getNeighborTile(EnumFacing dir);
 
-	void scheduleNeighborChange();
-	void scheduleRenderUpdate();
+    IPipe getNeighborPipe(EnumFacing dir);
 
-	// For compatibility with BC 6.2.x and below
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color);
+    IPipe getPipe();
 
-	@Deprecated // Now in IInjectable
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
+    int getPipeColor();
+
+    PipePluggable getPipePluggable(EnumFacing direction); // Now in IPluggableProvider
+
+    boolean hasPipePluggable(EnumFacing direction); // Now in IPluggableProvider
+
+    boolean hasBlockingPluggable(EnumFacing direction);
+
+    void scheduleNeighborChange();
+
+    void scheduleRenderUpdate();
+
+    // For compatibility with BC 6.2.x and below
+    int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color);
+
+    @Deprecated
+    // Now in IInjectable
+    int injectItem(ItemStack stack, boolean doAdd, EnumFacing from);
 }

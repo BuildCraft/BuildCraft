@@ -25,13 +25,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.BuildCraftMod;
 import buildcraft.core.DefaultProps;
@@ -64,11 +64,11 @@ public class BuildCraftTests extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		blockTestPathfinding = new BlockTestPathfinding();
 		CoreProxy.proxy.registerBlock(blockTestPathfinding);
-		blockTestPathfinding.setBlockName("testPathFinding");
+		blockTestPathfinding.setUnlocalizedName("testPathFinding");
 		CoreProxy.proxy.registerTileEntity(TileTestPathfinding.class, "net.minecraft.src.builders.TileTestPathfinding");
 
 		blockTestCase = new BlockTestCase();
-		blockTestCase.setBlockName("testCase");
+		blockTestCase.setUnlocalizedName("testCase");
 		CoreProxy.proxy.registerBlock(blockTestCase);
 		CoreProxy.proxy.registerTileEntity(TileTestCase.class, "buildcraft.tests.testcase.TileTestCase");
 
@@ -96,7 +96,7 @@ public class BuildCraftTests extends BuildCraftMod {
 		quitAfterRun = optionset.has(quitOption);
 
 		if (testFile != null && !"".equals(testFile)) {
-			FMLCommonHandler.instance().bus().register(this);
+			MinecraftForge.EVENT_BUS.register(this);
 			System.out.println("[TEST 0] [LOAD TEST] \"" + testFile + "\"");
 		}
 	}

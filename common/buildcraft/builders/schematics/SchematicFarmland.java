@@ -8,36 +8,37 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicFarmland extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.dirt));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+        requirements.add(new ItemStack(Blocks.dirt));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, 0, 3);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
+        context.world().setBlockState(pos, state);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Block block = context.world().getBlock(x, y, z);
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        Block block = context.world().getBlockState(pos).getBlock();
 
-		return block == Blocks.farmland;
-	}
+        return block == Blocks.farmland;
+    }
 }

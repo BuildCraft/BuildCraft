@@ -16,38 +16,34 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 public class SlotBase extends Slot implements IToolTipProvider {
 
-	private ToolTip toolTips;
+    private ToolTip toolTips;
 
-	public SlotBase(IInventory iinventory, int slotIndex, int posX, int posY) {
-		super(iinventory, slotIndex, posX, posY);
-	}
+    public SlotBase(IInventory iinventory, int slotIndex, int posX, int posY) {
+        super(iinventory, slotIndex, posX, posY);
+    }
 
-	public boolean canShift() {
-		return true;
-	}
+    public boolean canShift() {
+        return true;
+    }
 
-	/**
-	 * @return the toolTips
-	 */
-	@Override
-	public ToolTip getToolTip() {
-		return toolTips;
-	}
+    /** @return the toolTips */
+    @Override
+    public ToolTip getToolTip() {
+        return toolTips;
+    }
 
-	/**
-	 * @param toolTips the tooltips to set
-	 */
-	public void setToolTips(ToolTip toolTips) {
-		this.toolTips = toolTips;
-	}
+    /** @param toolTips the tooltips to set */
+    public void setToolTips(ToolTip toolTips) {
+        this.toolTips = toolTips;
+    }
 
-	@Override
-	public boolean isToolTipVisible() {
-		return getStack() == null;
-	}
+    @Override
+    public boolean isToolTipVisible() {
+        return getStack() == null;
+    }
 
-	@Override
-	public boolean isMouseOver(int mouseX, int mouseY) {
-		return mouseX >= xDisplayPosition && mouseX <= xDisplayPosition + 16 && mouseY >= yDisplayPosition && mouseY <= yDisplayPosition + 16;
-	}
+    @Override
+    public boolean isMouseOver(int mouseX, int mouseY) {
+        return mouseX >= xDisplayPosition && mouseX <= xDisplayPosition + 16 && mouseY >= yDisplayPosition && mouseY <= yDisplayPosition + 16;
+    }
 }

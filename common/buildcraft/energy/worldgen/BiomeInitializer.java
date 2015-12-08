@@ -8,28 +8,27 @@
  */
 package buildcraft.energy.worldgen;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftEnergy;
 
 public class BiomeInitializer {
 
-	public BiomeInitializer() {
-	}
+    public BiomeInitializer() {}
 
-	@SubscribeEvent
-	public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
-		int i;
-		if (BuildCraftEnergy.biomeOilDesert != null) {
-			for (i = 0; i < event.newBiomeGens.length; i++) {
-				event.newBiomeGens[i] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[i]);
-			}
-		}
-		if (BuildCraftEnergy.biomeOilOcean != null) {
-			for (i = 0; i < event.newBiomeGens.length; i++) {
-				event.newBiomeGens[i] = new GenLayerAddOilOcean(event.seed, 1500L, event.newBiomeGens[i]);
-			}
-		}
-	}
+    @SubscribeEvent
+    public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
+        int i;
+        if (BuildCraftEnergy.biomeOilDesert != null) {
+            for (i = 0; i < event.newBiomeGens.length; i++) {
+                event.newBiomeGens[i] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[i]);
+            }
+        }
+        if (BuildCraftEnergy.biomeOilOcean != null) {
+            for (i = 0; i < event.newBiomeGens.length; i++) {
+                event.newBiomeGens[i] = new GenLayerAddOilOcean(event.seed, 1500L, event.newBiomeGens[i]);
+            }
+        }
+    }
 }

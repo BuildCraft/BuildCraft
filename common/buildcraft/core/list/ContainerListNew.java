@@ -8,13 +8,11 @@
  */
 package buildcraft.core.list;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
@@ -24,12 +22,14 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 
+import io.netty.buffer.ByteBuf;
+
 public class ContainerListNew extends BuildCraftContainer implements ICommandReceiver {
 	public ListHandlerNew.Line[] lines;
 	private EntityPlayer player;
 
 	public ContainerListNew(EntityPlayer iPlayer) {
-		super(iPlayer.inventory.getSizeInventory());
+		super(iPlayer, iPlayer.inventory.getSizeInventory());
 
 		player = iPlayer;
 

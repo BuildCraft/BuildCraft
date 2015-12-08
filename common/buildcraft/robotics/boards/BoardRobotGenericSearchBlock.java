@@ -2,14 +2,14 @@ package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
@@ -17,132 +17,124 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
-	private ArrayList<Block> blockFilter = new ArrayList<Block>();
-	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
+    private BlockPos blockFound;
+    private ArrayList<IBlockState> blockFilter = new ArrayList<IBlockState>();
 
-	public BoardRobotGenericSearchBlock(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public BoardRobotGenericSearchBlock(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	/**
-	 * This function has to be derived in a thread safe manner, as it may be
-	 * called from parallel jobs. In particular, world should not be directly
-	 * used, only through WorldProperty class and subclasses.
-	 */
-	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
+    /** This function has to be derived in a thread safe manner, as it may be called from parallel jobs. In particular,
+     * world should not be directly used, only through WorldProperty class and subclasses. */
+    public abstract boolean isExpectedBlock(World world, BlockPos pos);
 
-	@Override
-	public void update() {
-		updateFilter();
+    @Override
+    public void update() {
+        updateFilter();
 
-		startDelegateAI(new AIRobotSearchAndGotoBlock(robot, false, new IBlockFilter() {
-			@Override
-			public boolean matches(World world, int x, int y, int z) {
-				if (isExpectedBlock(world, x, y, z)
-						&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
-					return matchesGateFilter(world, x, y, z);
-				} else {
-					return false;
-				}
-			}
-		}));
-	}
+        startDelegateAI(new AIRobotSearchAndGotoBlock(robot, false, new IBlockFilter() {
+            @Override
+            public boolean matches(World world, BlockPos pos) {
+                if (isExpectedBlock(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos))) {
+                    return matchesGateFilter(world, pos);
+                } else {
+                    return false;
+                }
+            }
+        }));
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoBlock) {
-			if (ai.success()) {
-				blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
-			} else {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotSearchAndGotoBlock) {
+            if (ai.success()) {
+                blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
+            } else {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        }
+    }
 
-	@Override
-	public void end() {
-		releaseBlockFound(true);
-	}
+    @Override
+    public void end() {
+        releaseBlockFound(true);
+    }
 
-	protected BlockIndex blockFound() {
-		return blockFound;
-	}
+    protected BlockPos blockFound() {
+        return blockFound;
+    }
 
-	protected void releaseBlockFound(boolean success) {
-		if (blockFound != null) {
-			// TODO: if !ai.success() -> can't break block, blacklist it
-			robot.getRegistry().release(new ResourceIdBlock(blockFound));
-			blockFound = null;
-		}
-	}
+    protected void releaseBlockFound(boolean success) {
+        if (blockFound != null) {
+            // TODO: if !ai.success() -> can't break block, blacklist it
+            robot.getRegistry().release(new ResourceIdBlock(blockFound));
+            blockFound = null;
+        }
+    }
 
-	public final void updateFilter() {
-		blockFilter.clear();
-		metaFilter.clear();
+    public final void updateFilter() {
+        blockFilter.clear();
 
-		for (StatementSlot slot : robot.getLinkedStation().getActiveActions()) {
-			if (slot.statement instanceof ActionRobotFilter) {
-				for (IStatementParameter p : slot.parameters) {
-					if (p != null && p instanceof StatementParameterItemStack) {
-						StatementParameterItemStack param = (StatementParameterItemStack) p;
-						ItemStack stack = param.getItemStack();
+        for (StatementSlot slot : robot.getLinkedStation().getActiveActions()) {
+            if (slot.statement instanceof ActionRobotFilter) {
+                for (IStatementParameter p : slot.parameters) {
+                    if (p != null && p instanceof StatementParameterItemStack) {
+                        StatementParameterItemStack param = (StatementParameterItemStack) p;
+                        ItemStack stack = param.getItemStack();
 
-						if (stack != null && stack.getItem() instanceof ItemBlock) {
-							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
-							metaFilter.add(stack.getItemDamage());
-						}
-					}
-				}
-			}
-		}
-	}
+                        if (stack != null && stack.getItem() instanceof ItemBlock) {
+                            ItemBlock item = (ItemBlock) stack.getItem();
+                            blockFilter.add(item.block.getStateFromMeta(stack.getMetadata()));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	protected boolean matchesGateFilter(World world, int x, int y, int z) {
-		if (blockFilter.size() == 0) {
-			return true;
-		}
+    protected boolean matchesGateFilter(World world, BlockPos pos) {
+        if (blockFilter.size() == 0) {
+            return true;
+        }
 
-		Block block;
-		int meta;
-		synchronized (world) {
-			block = world.getBlock(x, y, z);
-			meta = world.getBlockMetadata(x, y, z);
-		}
+        IBlockState state;
+        int meta;
+        synchronized (world) {
+            state = world.getBlockState(pos);
+        }
 
-		for (int i = 0; i < blockFilter.size(); ++i) {
-			if (blockFilter.get(i) == block && metaFilter.get(i) == meta) {
-				return true;
-			}
-		}
+        for (IBlockState filter : blockFilter) {
+            if (filter == state) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public void writeSelfToNBT(NBTTagCompound nbt) {
-		super.writeSelfToNBT(nbt);
+    @Override
+    public void writeSelfToNBT(NBTTagCompound nbt) {
+        super.writeSelfToNBT(nbt);
 
-		if (blockFound != null) {
-			NBTTagCompound sub = new NBTTagCompound();
-			blockFound.writeTo(sub);
-			nbt.setTag("indexStored", sub);
-		}
-	}
+        if (blockFound != null) {
+            nbt.setTag("indexStored", NBTUtils.writeBlockPos(blockFound));
+        }
+    }
 
-	@Override
-	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		super.loadSelfFromNBT(nbt);
+    @Override
+    public void loadSelfFromNBT(NBTTagCompound nbt) {
+        super.loadSelfFromNBT(nbt);
 
-		if (nbt.hasKey("indexStored")) {
-			blockFound = new BlockIndex(nbt.getCompoundTag("indexStored"));
-		}
-	}
+        if (nbt.hasKey("indexStored")) {
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("indexStored"));
+        }
+    }
 
 }

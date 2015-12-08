@@ -11,20 +11,20 @@ package buildcraft.core.lib.gui;
 import net.minecraft.item.ItemStack;
 
 public class ItemSlot extends AdvancedSlot {
-	public ItemStack stack;
+    public ItemStack stack;
 
-	public ItemSlot(GuiAdvancedInterface gui, int x, int y) {
-		super(gui, x, y);
-	}
+    public ItemSlot(GuiAdvancedInterface gui, int x, int y) {
+        super(gui, x, y);
+    }
 
-	public ItemSlot(GuiAdvancedInterface gui, int x, int y, ItemStack iStack) {
-		super(gui, x, y);
+    public ItemSlot(GuiAdvancedInterface gui, int x, int y, ItemStack iStack) {
+        super(gui, x, y);
 
-		stack = iStack;
-	}
+        stack = iStack;
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return stack;
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return stack;
+    }
 }

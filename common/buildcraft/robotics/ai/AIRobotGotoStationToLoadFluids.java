@@ -16,38 +16,37 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
-	private IFluidFilter filter;
+    private IFluidFilter filter;
 
-	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler) {
-		this(iRobot);
+    public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler) {
+        this(iRobot);
 
-		filter = iFiler;
-	}
+        filter = iFiler;
+    }
 
-	@Override
-	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(),
-				robot.getZoneToLoadUnload()));
-	}
+    @Override
+    public void update() {
+        startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchAndGotoStation) {
-			setSuccess(ai.success());
-			terminate();
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotSearchAndGotoStation) {
+            setSuccess(ai.success());
+            terminate();
+        }
+    }
 
-	private class StationFilter implements IStationFilter {
+    private class StationFilter implements IStationFilter {
 
-		@Override
-		public boolean matches(DockingStation station) {
-			return AIRobotLoadFluids.load(robot, station, filter, false) > 0;
-		}
+        @Override
+        public boolean matches(DockingStation station) {
+            return AIRobotLoadFluids.load(robot, station, filter, false) > 0;
+        }
 
-	}
+    }
 }

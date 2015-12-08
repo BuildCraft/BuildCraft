@@ -8,54 +8,48 @@
  */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
 import buildcraft.api.core.ISerializable;
+import buildcraft.core.lib.network.base.Packet;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public abstract class PacketUpdate extends Packet {
-	public ByteBuf stream;
-	public ISerializable payload;
+    public ISerializable payload;
 
-	private int packetId;
+    protected ByteBuf payloadData;
 
-	public PacketUpdate() {
-	}
+    public PacketUpdate() {}
 
-	public PacketUpdate(int packetId, ISerializable payload) {
-		this(packetId);
+    public PacketUpdate(ISerializable payload) {
+        this.payload = payload;
+        this.isChunkDataPacket = true;
+    }
 
-		this.payload = payload;
-	}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        writeIdentificationData(data);
 
-	public PacketUpdate(int packetId) {
-		this.packetId = packetId;
-		this.isChunkDataPacket = true;
-	}
+        ByteBuf payloadData = Unpooled.buffer();
+        if (payload != null) {
+            payload.writeData(payloadData);
+        }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeByte(packetId);
-		writeIdentificationData(data);
+        int readableBytes = payloadData.readableBytes();
+        data.writeInt(readableBytes);
+        data.writeBytes(payloadData);
+    }
 
-		if (payload != null) {
-			payload.writeData(data);
-		}
-	}
+    public abstract void writeIdentificationData(ByteBuf data);
 
-	public abstract void writeIdentificationData(ByteBuf data);
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        readIdentificationData(data);
+        int length = data.readInt();
+        payloadData = Unpooled.copiedBuffer(data.readBytes(length));
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		packetId = data.readByte();
-		readIdentificationData(data);
-
-		stream = data; // for further reading
-	}
-
-	public abstract void readIdentificationData(ByteBuf data);
-
-	@Override
-	public int getID() {
-		return packetId;
-	}
+    public abstract void readIdentificationData(ByteBuf data);
 }

@@ -30,11 +30,11 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 		return isBlueprint ? 0x305080 : 0;
 	}
 
-	@Override
-	public String getName(ItemStack stack) {
+    @Override
+    public String getName(ItemStack stack) {
 		LibraryId id = ItemBlueprint.getId(stack);
 		return id != null ? id.name : "<<CORRUPT>>";
-	}
+    }
 
 	@Override
 	public ItemStack load(ItemStack stack, NBTTagCompound compound) {
@@ -45,22 +45,22 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 		return blueprint.getStack();
 	}
 
-	@Override
-	public boolean store(ItemStack stack, NBTTagCompound compound) {
-		LibraryId id = ItemBlueprint.getId(stack);
-		if (id == null) {
-			return false;
-		}
+    @Override
+    public boolean store(ItemStack stack, NBTTagCompound compound) {
+        LibraryId id = ItemBlueprint.getId(stack);
+        if (id == null) {
+            return false;
+        }
 
-		NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
-		if (nbt == null) {
-			return false;
-		}
+        NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
+        if (nbt == null) {
+            return false;
+        }
 
-		for (Object o : nbt.func_150296_c()) {
-			compound.setTag((String) o, nbt.getTag((String) o));
-		}
-		id.write(compound);
-		return true;
-	}
+        for (Object o : nbt.getKeySet()) {
+            compound.setTag((String) o, nbt.getTag((String) o));
+        }
+        id.write(compound);
+        return true;
+    }
 }

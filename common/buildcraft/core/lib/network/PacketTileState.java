@@ -8,88 +8,115 @@
  */
 package buildcraft.core.lib.network;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.ISerializable;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import buildcraft.api.core.ISerializable;
-import buildcraft.core.network.PacketIds;
-
 public class PacketTileState extends PacketCoordinates {
 
-	private ByteBuf state;
+    private ByteBuf state;
 
-	private class StateWithId {
-		public byte stateId;
-		public ISerializable state;
+    private class StateWithId {
+        public byte stateId;
+        public ISerializable state;
 
-		public StateWithId(byte stateId, ISerializable state) {
-			this.stateId = stateId;
-			this.state = state;
-		}
-	}
+        public StateWithId(byte stateId, ISerializable state) {
+            this.stateId = stateId;
+            this.state = state;
+        }
 
-	private List<StateWithId> stateList = new LinkedList<StateWithId>();
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("StateWithId [stateId=");
+            builder.append(stateId);
+            builder.append(", state=");
+            builder.append(state == null ? "null" : state.getClass());
+            builder.append("]");
+            return builder.toString();
+        }
+    }
 
-	/**
-	 * Default constructor for incoming packets
-	 */
-	public PacketTileState() {
-	}
+    private List<StateWithId> stateList = new LinkedList<StateWithId>();
 
-	/**
-	 * Constructor for outgoing packets
-	 *
-	 * @param x, y, z - the coordinates the tile to sync
-	 */
-	public PacketTileState(int x, int y, int z) {
-		super(PacketIds.STATE_UPDATE, x, y, z);
-		isChunkDataPacket = true;
-	}
+    /** Default constructor for incoming packets */
+    public PacketTileState() {}
 
-	@Override
-	public int getID() {
-		return PacketIds.STATE_UPDATE;
-	}
+    /** Constructor for outgoing packets
+     *
+     * @param pos - the coordinates the tile to sync */
+    public PacketTileState(TileEntity tile) {
+        super(tile);
+        tempWorld = tile.getWorld();
+        isChunkDataPacket = true;
+    }
 
-	public void applyStates(ISyncedTile tile) throws IOException {
-		byte stateCount = state.readByte();
-		for (int i = 0; i < stateCount; i++) {
-			byte stateId = state.readByte();
-			tile.getStateInstance(stateId).readData(state);
-			tile.afterStateUpdated(stateId);
-		}
-	}
+    public void addStateForSerialization(byte stateId, ISerializable state) {
+        stateList.add(new StateWithId(stateId, state));
+    }
 
-	public void addStateForSerialization(byte stateId, ISerializable state) {
-		stateList.add(new StateWithId(stateId, state));
-	}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
 
-	@Override
-	public void writeData(ByteBuf data) {
-		super.writeData(data);
+        ByteBuf tmpState = Unpooled.buffer();
 
-		ByteBuf tmpState = Unpooled.buffer();
+        tmpState.writeByte(stateList.size());
+        for (StateWithId stateWithId : stateList) {
+            tmpState.writeByte(stateWithId.stateId);
+            stateWithId.state.writeData(tmpState);
+        }
 
-		tmpState.writeByte(stateList.size());
-		for (StateWithId stateWithId : stateList) {
-			tmpState.writeByte(stateWithId.stateId);
-			stateWithId.state.writeData(tmpState);
-		}
+        data.writeShort((short) tmpState.readableBytes());
+        data.writeBytes(tmpState.readBytes(tmpState.readableBytes()));
+    }
 
-		data.writeShort((short) tmpState.readableBytes());
-		data.writeBytes(tmpState.readBytes(tmpState.readableBytes()));
-	}
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
 
-	@Override
-	public void readData(ByteBuf data) {
-		super.readData(data);
+        state = Unpooled.buffer();
+        int length = data.readUnsignedShort();
+        state.writeBytes(data.readBytes(length));
+    }
 
-		state = Unpooled.buffer();
-		int length = data.readUnsignedShort();
-		state.writeBytes(data.readBytes(length));
-	}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        TileEntity tile = world.getTileEntity(pos);
+
+        if (tile instanceof ISyncedTile) {
+            ISyncedTile tile1 = (ISyncedTile) tile;
+            byte stateCount = state.readByte();
+            for (int i = 0; i < stateCount; i++) {
+                byte stateId = state.readByte();
+                tile1.getStateInstance(stateId).readData(state);
+                tile1.afterStateUpdated(stateId);
+            }
+        } else {
+            BCLog.logger.debug("Ignored the packet (" + getClass() + ") @ " + pos + " as (" + tile + " instanceof ISyncedTile) was false!");
+        }
+    }
+
+    @Override
+    public String toString() {
+        final int maxLen = 10;
+        StringBuilder builder = new StringBuilder();
+        builder.append("PacketTileState [state=");
+        builder.append(state == null ? "-1" : state.readableBytes());
+        builder.append(", stateList=");
+        builder.append(stateList != null ? stateList.subList(0, Math.min(stateList.size(), maxLen)) : null);
+        builder.append(", super=");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 }

@@ -8,8 +8,8 @@
  */
 package buildcraft.transport;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ISolidSideTile {
-	boolean isSolidOnSide(ForgeDirection side);
+    boolean isSolidOnSide(EnumFacing side);
 }

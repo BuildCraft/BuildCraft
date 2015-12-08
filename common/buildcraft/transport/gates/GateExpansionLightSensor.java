@@ -12,35 +12,35 @@ import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.BuildCraftTransport;
 
 public final class GateExpansionLightSensor extends GateExpansionBuildcraft implements IGateExpansion {
 
-	public static GateExpansionLightSensor INSTANCE = new GateExpansionLightSensor();
+    public static GateExpansionLightSensor INSTANCE = new GateExpansionLightSensor();
 
-	private GateExpansionLightSensor() {
-		super("light_sensor");
-	}
+    private GateExpansionLightSensor() {
+        super("light_sensor");
+    }
 
-	@Override
-	public GateExpansionController makeController(TileEntity pipeTile) {
-		return new GateExpansionControllerLightSensor(pipeTile);
-	}
+    @Override
+    public GateExpansionController makeController(TileEntity pipeTile) {
+        return new GateExpansionControllerLightSensor(pipeTile);
+    }
 
-	private class GateExpansionControllerLightSensor extends GateExpansionController {
+    private class GateExpansionControllerLightSensor extends GateExpansionController {
 
-		public GateExpansionControllerLightSensor(TileEntity pipeTile) {
-			super(GateExpansionLightSensor.this, pipeTile);
-		}
+        public GateExpansionControllerLightSensor(TileEntity pipeTile) {
+            super(GateExpansionLightSensor.this, pipeTile);
+        }
 
-		@Override
-		public void addTriggers(List<ITriggerInternal> list) {
-			super.addTriggers(list);
-			list.add(BuildCraftTransport.triggerLightSensorBright);
-			list.add(BuildCraftTransport.triggerLightSensorDark);
-		}
-	}
+        @Override
+        public void addTriggers(List<ITriggerInternal> list) {
+            super.addTriggers(list);
+            list.add(BuildCraftTransport.triggerLightSensorBright);
+            list.add(BuildCraftTransport.triggerLightSensorDark);
+        }
+    }
 }

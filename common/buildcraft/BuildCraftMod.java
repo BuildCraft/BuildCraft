@@ -10,192 +10,204 @@ package buildcraft;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
+import net.minecraftforge.fml.common.network.FMLOutboundHandler;
+import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IBuildCraftMod;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.ThreadSafeUtils;
+import buildcraft.core.lib.utils.Utils;
 
-public class BuildCraftMod {
-	private static PacketSender sender = new PacketSender();
-	private static Thread senderThread = new Thread(sender);
+public class BuildCraftMod implements IBuildCraftMod {
+    private static final Executor packetSender;
 
-	public EnumMap<Side, FMLEmbeddedChannel> channels;
+    public EnumMap<Side, FMLEmbeddedChannel> channels;
+    protected Map<String, Property> options = Maps.newHashMap();
 
-	abstract static class SendRequest {
-		final Packet packet;
-		final BuildCraftMod source;
+    abstract class SendRequest implements Runnable {
+        final Packet packet;
+        final BuildCraftMod source;
 
-		SendRequest(BuildCraftMod source, Packet packet) {
-			this.packet = packet;
-			this.source = source;
-		}
+        SendRequest(Packet packet) {
+            this.packet = packet;
+            this.source = BuildCraftMod.this;
+            if (packet.tempWorld == null) {
+                NullPointerException npe = new NullPointerException("The packet's world was null! Cannot send this!");
+                BCLog.logger.fatal("// Blame AlexIIL", npe);
+                throw npe;
+            }
+        }
 
-		abstract boolean isValid(EntityPlayer player);
-	}
+        @Override
+        public final void run() {
+            try {
+                FMLEmbeddedChannel channel = source.channels.get(Side.SERVER);
+                editAttributes(channel);
+                channel.writeOutbound(packet);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
 
-	class PlayerSendRequest extends SendRequest {
-		EntityPlayer player;
+        abstract void editAttributes(FMLEmbeddedChannel channel);
+    }
 
-		PlayerSendRequest(BuildCraftMod source, Packet packet, EntityPlayer player) {
-			super(source, packet);
-			this.player = player;
-		}
+    class PlayerSendRequest extends SendRequest {
+        EntityPlayer player;
 
-		boolean isValid(EntityPlayer player) {
-			return this.player.equals(player);
-		}
-	}
+        PlayerSendRequest(Packet packet, EntityPlayer player) {
+            super(packet);
+            this.player = player;
+        }
 
-	class EntitySendRequest extends SendRequest {
-		Entity entity;
+        @Override
+        void editAttributes(FMLEmbeddedChannel channel) {
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+        }
+    }
 
-		EntitySendRequest(BuildCraftMod source, Packet packet, Entity entity) {
-			super(source, packet);
-			this.entity = entity;
-		}
+    class EntitySendRequest extends LocationSendRequest {
+        Entity entity;
 
-		boolean isValid(EntityPlayer player) {
-			if (player.worldObj.equals(entity.worldObj)) {
-				if (player.worldObj instanceof WorldServer) {
-					return ((WorldServer) player.worldObj).getEntityTracker().getTrackingPlayers(entity).contains(player);
-				} else {
-					return true;
-				}
-			} else {
-				return false;
-			}
-		}
-	}
+        EntitySendRequest(Packet packet, Entity entity, int maxDistance) {
+            super(packet, entity.worldObj.provider.getDimensionId(), Utils.getVec(entity), maxDistance);
+            this.entity = entity;
+        }
+    }
 
-	class WorldSendRequest extends SendRequest {
-		final int dimensionId;
+    class WorldSendRequest extends SendRequest {
+        final int dimensionId;
 
-		WorldSendRequest(BuildCraftMod source, Packet packet, int dimensionId) {
-			super(source, packet);
-			this.dimensionId = dimensionId;
-		}
+        WorldSendRequest(Packet packet, int dimensionId) {
+            super(packet);
+            this.dimensionId = dimensionId;
+        }
 
-		boolean isValid(EntityPlayer player) {
-			return player.worldObj.provider.dimensionId == dimensionId;
-		}
-	}
+        @Override
+        void editAttributes(FMLEmbeddedChannel channel) {
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.DIMENSION);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
+        }
+    }
 
-	class LocationSendRequest extends SendRequest {
-		final int dimensionId;
-		final int x, y, z, md;
+    class LocationSendRequest extends SendRequest {
+        final int dimensionId;
+        final int maxDistance;
+        final Vec3 pos;
 
-		LocationSendRequest(BuildCraftMod source, Packet packet, int dimensionId, int x, int y, int z, int md) {
-			super(source, packet);
-			this.dimensionId = dimensionId;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.md = md * md;
-		}
+        LocationSendRequest(Packet packet, int dimensionId, Vec3 pos, int distance) {
+            super(packet);
+            this.dimensionId = dimensionId;
+            this.pos = pos;
+            this.maxDistance = distance * distance;
+        }
 
-		boolean isValid(EntityPlayer player) {
-			return dimensionId == player.worldObj.provider.dimensionId
-					&& player.getDistanceSq(x, y, z) <= md;
-		}
-	}
+        @Override
+        void editAttributes(FMLEmbeddedChannel channel) {
+            TargetPoint point = new TargetPoint(dimensionId, pos.xCoord, pos.yCoord, pos.zCoord, maxDistance);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.ALLAROUNDPOINT);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        }
+    }
 
-	static class PacketSender implements Runnable {
-		private Queue<SendRequest> packets = new ConcurrentLinkedQueue<SendRequest>();
+    class AllSendRequest extends SendRequest {
+        AllSendRequest(Packet packet) {
+            super(packet);
+        }
 
-		@Override
-		public void run() {
-			while (true) {
-				try {
-					Thread.sleep(10);
-				} catch (Exception e) {
+        @Override
+        void editAttributes(FMLEmbeddedChannel channel) {
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.ALL);
+        }
+    }
 
-				}
+    static {
+        // Swap them when debugging
+        packetSender = Executors.newSingleThreadExecutor();
+        // packetSender = ImmediateExecutor.INSTANCE;
+    }
 
-				while (!packets.isEmpty()) {
-					try {
-						SendRequest r = packets.remove();
-						net.minecraft.network.Packet p = ThreadSafeUtils.generatePacketFrom(r.packet, r.source.channels.get(Side.SERVER));
-						List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-						for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {
-							if (r.isValid(player)) {
-								NetHandlerPlayServer handler = player.playerNetServerHandler;
-								if (handler == null) {
-									continue;
-								}
+    private static void addSendRequest(SendRequest request) {
+        packetSender.execute(request);
+    }
 
-								NetworkManager manager = handler.netManager;
-								if (manager == null || !manager.isChannelOpen()) {
-									continue;
-								}
+    public void sendToPlayers(Packet packet, World world, BlockPos pos, int maxDistance) {
+        addSendRequest(new LocationSendRequest(packet, world.provider.getDimensionId(), Utils.convertMiddle(pos), maxDistance));
+    }
 
-								manager.scheduleOutboundPacket(p);
-							}
-						}
-					} catch (Exception e) {
-						BCLog.logger.error("The BuildCraft packet sender thread raised an exception! Please report to GitHub.");
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+    public void sendToPlayersNear(Packet packet, TileEntity tile, int maxDistance) {
+        sendToPlayers(packet, tile.getWorld(), tile.getPos(), maxDistance);
+    }
 
-		public boolean add(SendRequest r) {
-			return packets.offer(r);
-		}
-	}
+    public void sendToPlayersNear(Packet packet, TileEntity tile) {
+        sendToPlayersNear(packet, tile, DefaultProps.NETWORK_UPDATE_RANGE);
+    }
 
-	static {
-		senderThread.start();
-	}
+    public void sendToWorld(Packet packet, World world) {
+        addSendRequest(new WorldSendRequest(packet, world.provider.getDimensionId()));
+    }
 
-	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
-		sender.add(new LocationSendRequest(this, packet, world.provider.dimensionId, x, y, z, maxDistance));
-	}
+    public void sendToEntity(Packet packet, Entity entity) {
+        addSendRequest(new EntitySendRequest(packet, entity, DefaultProps.NETWORK_UPDATE_RANGE));
+    }
 
-	public void sendToPlayersNear(Packet packet, TileEntity tileEntity, int maxDistance) {
-		sender.add(new LocationSendRequest(this, packet, tileEntity.getWorldObj().provider.dimensionId, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, maxDistance));
-	}
+    public void sendToPlayer(EntityPlayer player, Packet packet) {
+        addSendRequest(new PlayerSendRequest(packet, player));
+    }
 
-	public void sendToPlayersNear(Packet packet, TileEntity tileEntity) {
-		sendToPlayersNear(packet, tileEntity, DefaultProps.NETWORK_UPDATE_RANGE);
-	}
+    public void sendToAll(Packet packet) {
+        addSendRequest(new AllSendRequest(packet));
+    }
 
-	public void sendToWorld(Packet packet, World world) {
-		sender.add(new WorldSendRequest(this, packet, world.provider.dimensionId));
-	}
+    public void sendToServer(Packet packet) {
+        if (packet.tempWorld == null) {
+            NullPointerException npe = new NullPointerException("The packet's world was null! Cannot send this! (Client)");
+            BCLog.logger.fatal("// Blame AlexIIL", npe);
+            throw npe;
+        }
+        try {
+            channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
+            channels.get(Side.CLIENT).writeOutbound(packet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void sendToEntity(Packet packet, Entity entity) {
-		sender.add(new EntitySendRequest(this, packet, entity));
-	}
+    @Override
+    public Property getOption(String name) {
+        if (options.containsKey(name)) {
+            return options.get(name);
+        }
+        return null;
+    }
 
-	public void sendToPlayer(EntityPlayer entityplayer, Packet packet) {
-		sender.add(new PlayerSendRequest(this, packet, entityplayer));
-	}
-
-	public void sendToServer(Packet packet) {
-		try {
-			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
-			channels.get(Side.CLIENT).writeOutbound(packet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    /** WARNING: INTERNAL USE ONLY! */
+    public void putOption(String name, Property value) {
+        options.put(name, value);
+    }
 }

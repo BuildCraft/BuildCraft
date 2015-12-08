@@ -2,6 +2,7 @@
 .project
 .classpath
 .metadata
+*.launch
 org.*
 bin
 
@@ -15,9 +16,15 @@ out
 #gradle
 build
 .gradle
+modules
 
 #runtime
 run
+run_server
 
 #mac
 .DS_Store
+
+#Custom code to inject the the dev environment
+custom
+

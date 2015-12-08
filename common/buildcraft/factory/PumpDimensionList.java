@@ -17,82 +17,80 @@ import net.minecraftforge.fluids.Fluid;
 
 public class PumpDimensionList {
 
-	private List<Entry> entries;
+    private List<Entry> entries;
 
-	public PumpDimensionList(String string) {
+    public PumpDimensionList(String string) {
 
-		entries = new LinkedList<Entry>();
+        entries = new LinkedList<Entry>();
 
-		for (String entryString : string.trim().split(",")) {
+        for (String entryString : string.trim().split(",")) {
 
-			Entry e = new Entry();
+            Entry e = new Entry();
 
-			if (entryString.startsWith("+/")) {
-				e.isWhitelist = true;
-			} else if (entryString.startsWith("-/")) {
-				e.isWhitelist = false;
-			} else {
-				throw new RuntimeException("Malformed pumping.controlList entry: " + entryString + " (must start with +/ or -/)");
-			}
+            if (entryString.startsWith("+/")) {
+                e.isWhitelist = true;
+            } else if (entryString.startsWith("-/")) {
+                e.isWhitelist = false;
+            } else {
+                throw new RuntimeException("Malformed pumping.controlList entry: " + entryString + " (must start with +/ or -/)");
+            }
 
-			String secondString = entryString.substring(2);
-			int i = secondString.indexOf('/');
+            String secondString = entryString.substring(2);
+            int i = secondString.indexOf('/');
 
-			if (i < 0) {
-				throw new RuntimeException("Malformed pumping.controlList entry: " + secondString
-						+ " (missing second /)");
-			}
+            if (i < 0) {
+                throw new RuntimeException("Malformed pumping.controlList entry: " + secondString + " (missing second /)");
+            }
 
-			String dimIDString = secondString.substring(0, i);
+            String dimIDString = secondString.substring(0, i);
 
-			if ("*".equals(dimIDString)) {
-				e.matchAnyDim = true;
-			} else {
-				e.dimID = Integer.parseInt(dimIDString);
-			}
+            if ("*".equals(dimIDString)) {
+                e.matchAnyDim = true;
+            } else {
+                e.dimID = Integer.parseInt(dimIDString);
+            }
 
-			e.fluidName = secondString.substring(i + 1).toLowerCase(Locale.ENGLISH);
+            e.fluidName = secondString.substring(i + 1).toLowerCase(Locale.ENGLISH);
 
-			if (e.fluidName.equals("*")) {
-				e.matchAnyFluid = true;
-			}
+            if (e.fluidName.equals("*")) {
+                e.matchAnyFluid = true;
+            }
 
-			entries.add(0, e);
-		}
+            entries.add(0, e);
+        }
 
-		entries = new ArrayList<Entry>(entries);
-	}
+        entries = new ArrayList<Entry>(entries);
+    }
 
-	private class Entry {
-		boolean isWhitelist;
-		String fluidName;
-		int dimID;
-		boolean matchAnyFluid;
-		boolean matchAnyDim;
+    private class Entry {
+        boolean isWhitelist;
+        String fluidName;
+        int dimID;
+        boolean matchAnyFluid;
+        boolean matchAnyDim;
 
-		boolean matches(Fluid fluid, int dim) {
-			if (!matchAnyFluid) {
-				if (!fluid.getName().equals(fluidName)) {
-					return false;
-				}
-			}
+        boolean matches(Fluid fluid, int dim) {
+            if (!matchAnyFluid) {
+                if (!fluid.getName().equals(fluidName)) {
+                    return false;
+                }
+            }
 
-			if (!matchAnyDim && dimID != dim) {
-				return false;
-			}
+            if (!matchAnyDim && dimID != dim) {
+                return false;
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
-	public boolean isFluidAllowed(Fluid fluid, int dim) {
-		for (Entry e : entries) {
-			if (e.matches(fluid, dim)) {
-				return e.isWhitelist;
-			}
-		}
-		return false;
-	}
-
+    public boolean isFluidAllowed(Fluid fluid, int dim) {
+        for (Entry e : entries) {
+            if (e.matches(fluid, dim)) {
+                return e.isWhitelist;
+            }
+        }
+        return false;
+    }
 
 }

@@ -8,43 +8,39 @@
  */
 package buildcraft.core.blueprints;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.ISerializable;
 
+import io.netty.buffer.ByteBuf;
+
 public class BlueprintReadConfiguration implements ISerializable {
-	public boolean rotate = true;
-	public boolean excavate = true;
-	public boolean allowCreative = false;
+    public boolean rotate = true;
+    public boolean excavate = true;
+    public boolean allowCreative = false;
 
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setBoolean("rotate", rotate);
-		nbttagcompound.setBoolean("excavate", excavate);
-		nbttagcompound.setBoolean("allowCreative", allowCreative);
-	}
+    public void writeToNBT(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setBoolean("rotate", rotate);
+        nbttagcompound.setBoolean("excavate", excavate);
+        nbttagcompound.setBoolean("allowCreative", allowCreative);
+    }
 
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		rotate = nbttagcompound.getBoolean("rotate");
-		excavate = nbttagcompound.getBoolean("excavate");
-		allowCreative = nbttagcompound.getBoolean("allowCreative");
-	}
+    public void readFromNBT(NBTTagCompound nbttagcompound) {
+        rotate = nbttagcompound.getBoolean("rotate");
+        excavate = nbttagcompound.getBoolean("excavate");
+        allowCreative = nbttagcompound.getBoolean("allowCreative");
+    }
 
-	@Override
-	public void readData(ByteBuf stream) {
-		int flags = stream.readUnsignedByte();
-		rotate = (flags & 1) != 0;
-		excavate = (flags & 2) != 0;
-		allowCreative = (flags & 4) != 0;
-	}
+    @Override
+    public void readData(ByteBuf stream) {
+        int flags = stream.readUnsignedByte();
+        rotate = (flags & 1) != 0;
+        excavate = (flags & 2) != 0;
+        allowCreative = (flags & 4) != 0;
+    }
 
-	@Override
-	public void writeData(ByteBuf stream) {
-		stream.writeByte(
-				(rotate ? 1 : 0) |
-						(excavate ? 2 : 0) |
-						(allowCreative ? 4 : 0)
-		);
-	}
+    @Override
+    public void writeData(ByteBuf stream) {
+        stream.writeByte((rotate ? 1 : 0) | (excavate ? 2 : 0) | (allowCreative ? 4 : 0));
+    }
 }

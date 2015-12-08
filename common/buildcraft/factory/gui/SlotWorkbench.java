@@ -14,17 +14,17 @@ import net.minecraft.item.ItemStack;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
 
 public class SlotWorkbench extends SlotPhantom {
-	public SlotWorkbench(IInventory iinventory, int slotIndex, int posX, int posY) {
-		super(iinventory, slotIndex, posX, posY);
-	}
+    public SlotWorkbench(IInventory iinventory, int slotIndex, int posX, int posY) {
+        super(iinventory, slotIndex, posX, posY);
+    }
 
-	@Override
-	public boolean isItemValid(ItemStack stack) {
-		return stack != null && !stack.getItem().hasContainerItem(stack);
-	}
+    @Override
+    public boolean isItemValid(ItemStack stack) {
+        return stack != null && !stack.getItem().hasContainerItem(stack);
+    }
 
-	@Override
-	public boolean canShift() {
-		return false;
-	}
+    @Override
+    public boolean canShift() {
+        return false;
+    }
 }

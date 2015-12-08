@@ -18,38 +18,38 @@ import buildcraft.api.filler.IFillerRegistry;
 
 public class FillerRegistry implements IFillerRegistry {
 
-	private TreeMap<String, IFillerPattern> patterns = new TreeMap<String, IFillerPattern>();
+    private TreeMap<String, IFillerPattern> patterns = new TreeMap<String, IFillerPattern>();
 
-	@Override
-	public void addPattern(IFillerPattern pattern) {
-		patterns.put(pattern.getUniqueTag(), pattern);
-	}
+    @Override
+    public void addPattern(IFillerPattern pattern) {
+        patterns.put(pattern.getUniqueTag(), pattern);
+    }
 
-	@Override
-	public IFillerPattern getPattern(String patternName) {
-		return patterns.get(patternName);
-	}
+    @Override
+    public IFillerPattern getPattern(String patternName) {
+        return patterns.get(patternName);
+    }
 
-	@Override
-	public IFillerPattern getNextPattern(IFillerPattern currentPattern) {
-		Entry<String, IFillerPattern> pattern = patterns.higherEntry(currentPattern.getUniqueTag());
-		if (pattern == null) {
-			pattern = patterns.firstEntry();
-		}
-		return pattern.getValue();
-	}
+    @Override
+    public IFillerPattern getNextPattern(IFillerPattern currentPattern) {
+        Entry<String, IFillerPattern> pattern = patterns.higherEntry(currentPattern.getUniqueTag());
+        if (pattern == null) {
+            pattern = patterns.firstEntry();
+        }
+        return pattern.getValue();
+    }
 
-	@Override
-	public IFillerPattern getPreviousPattern(IFillerPattern currentPattern) {
-		Entry<String, IFillerPattern> pattern = patterns.lowerEntry(currentPattern.getUniqueTag());
-		if (pattern == null) {
-			pattern = patterns.lastEntry();
-		}
-		return pattern.getValue();
-	}
+    @Override
+    public IFillerPattern getPreviousPattern(IFillerPattern currentPattern) {
+        Entry<String, IFillerPattern> pattern = patterns.lowerEntry(currentPattern.getUniqueTag());
+        if (pattern == null) {
+            pattern = patterns.lastEntry();
+        }
+        return pattern.getValue();
+    }
 
-	@Override
-	public Collection<IFillerPattern> getPatterns() {
-		return Collections.unmodifiableCollection(patterns.values());
-	}
+    @Override
+    public Collection<IFillerPattern> getPatterns() {
+        return Collections.unmodifiableCollection(patterns.values());
+    }
 }

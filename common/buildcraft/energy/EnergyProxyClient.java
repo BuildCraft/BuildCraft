@@ -10,13 +10,13 @@ package buildcraft.energy;
 
 public class EnergyProxyClient extends EnergyProxy {
 
-	@Override
-	public void registerTileEntities() {
-		super.registerTileEntities();
-	}
+    @Override
+    public void registerTileEntities() {
+        super.registerTileEntities();
+    }
 
-	@Override
-	public void registerBlockRenderers() {
+    @Override
+    public void registerBlockRenderers() {
 
-	}
+    }
 }

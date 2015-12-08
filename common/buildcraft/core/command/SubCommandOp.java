@@ -15,7 +15,7 @@ public class SubCommandOp extends SubCommand {
 
 	@Override
 	public void processSubCommand(ICommandSender sender, String[] args) {
-		MinecraftServer.getServer().getConfigurationManager().func_152605_a(BuildCraftCore.gameProfile);
+		MinecraftServer.getServer().getConfigurationManager().addOp(BuildCraftCore.gameProfile);
 		CommandHelpers.sendLocalizedChatMessage(sender, "commands.op.success", "[BuildCraft]");
 	}
 }

@@ -12,55 +12,55 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class BuildingSlotIterator {
-	private static int ITERATIONS_MAX = 500;
+    private static int ITERATIONS_MAX = 500;
 
-	private final LinkedList<BuildingSlotBlock> buildList;
-	private Iterator<BuildingSlotBlock> current;
-	private int nbIterations;
+    private final LinkedList<BuildingSlotBlock> buildList;
+    private Iterator<BuildingSlotBlock> current;
+    private int nbIterations;
 
 	/**
 	 * Creates an iterator on the list, which will cycle through iterations per
 	 * chunk.
 	 */
-	public BuildingSlotIterator(LinkedList<BuildingSlotBlock> buildList) {
-		this.buildList = buildList;
-	}
+    public BuildingSlotIterator(LinkedList<BuildingSlotBlock> buildList) {
+        this.buildList = buildList;
+    }
 
-	public void startIteration() {
-		if (current == null || !current.hasNext()) {
-			current = buildList.iterator();
-		}
+    public void startIteration() {
+        if (current == null || !current.hasNext()) {
+            current = buildList.iterator();
+        }
 
-		nbIterations = 0;
-	}
+        nbIterations = 0;
+    }
 
-	public boolean hasNext() {
-		return current.hasNext() && nbIterations < ITERATIONS_MAX;
-	}
+    public boolean hasNext() {
+        return current.hasNext() && nbIterations < ITERATIONS_MAX;
+    }
 
-	public BuildingSlotBlock next() {
-		BuildingSlotBlock next = current.next();
+    public BuildingSlotBlock next() {
+        BuildingSlotBlock next = current.next();
 
-		if (next == null) {
-			// we're only accepting to pass through a null element if this is
-			// the first iteration. Otherwise, elements before null need to
-			// be worked out.
-			if (nbIterations == 0) {
-				current.remove();
-			}
-		}
+        if (next == null) {
+            // we're only accepting to pass through a null element if this is
+            // the first iteration. Otherwise, elements before null need to
+            // be worked out.
+            if (nbIterations == 0) {
+                current.remove();
+            }
+        }
 
-		nbIterations++;
-		return next;
-	}
+        nbIterations++;
+        return next;
+    }
 
-	public void remove() {
-		current.remove();
-	}
+    public void remove() {
+        current.remove();
+    }
 
-	public void reset() {
-		current = buildList.iterator();
-		nbIterations = 0;
-	}
+    public void reset() {
+        current = buildList.iterator();
+        nbIterations = 0;
+    }
 
 }

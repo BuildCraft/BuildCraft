@@ -1,320 +1,318 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import io.netty.buffer.ByteBuf;
+import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.EnumSkyBlock;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.utils.BlockUtils;
 
-public class TileTank extends TileBuildCraft implements IFluidHandler {
-	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
-	public final TankManager<Tank> tankManager = new TankManager<Tank>(tank);
-	public boolean hasUpdate = false;
-	public boolean hasNetworkUpdate = false;
-	public SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
-	private int prevLightValue = 0;
-	private int cachedComparatorOverride = 0;
+import io.netty.buffer.ByteBuf;
 
-	@Override
-	public void initialize() {
-		super.initialize();
-		updateComparators();
-	}
+public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggable {
+    public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
+    public final TankManager<Tank> tankManager = new TankManager<Tank>(tank);
+    public boolean hasUpdate = false;
+    public boolean hasNetworkUpdate = false;
+    public SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
+    private int prevLightValue = 0;
+    private int cachedComparatorOverride = 0;
 
-	protected void updateComparators() {
-		int co = calculateComparatorInputOverride();
-		TileTank uTank = getBottomTank();
-		while (uTank != null) {
-			uTank.cachedComparatorOverride = co;
-			uTank.hasUpdate = true;
-			uTank = getTankAbove(uTank);
-		}
-	}
+    @Override
+    public void initialize() {
+        super.initialize();
+        updateComparators();
+    }
 
-	protected void onBlockBreak() {
-		if (!tank.isEmpty()) {
-			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(
-					tank.getFluid(),
-					worldObj, xCoord, yCoord, zCoord
-			));
-		}
-	}
+    public void updateComparators() {
+        int co = calculateComparatorInputOverride();
+        TileTank uTank = getBottomTank();
+        while (uTank != null) {
+            uTank.cachedComparatorOverride = co;
+            uTank.hasUpdate = true;
+            uTank = getTankAbove(uTank);
+        }
+    }
 
-	/* UPDATING */
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+    public void onBlockBreak() {
+        if (!tank.isEmpty()) {
+            FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(tank.getFluid(), worldObj, pos));
+        }
+    }
 
-		if (worldObj.isRemote) {
-			int lightValue = getFluidLightLevel();
-			if (prevLightValue != lightValue) {
-				prevLightValue = lightValue;
-				worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
-			}
-			return;
-		}
+    /* UPDATING */
+    @Override
+    public void update() {
+        super.update();
 
-		// Have liquid flow down into tanks below if any.
-		if (tank.getFluid() != null) {
-			moveFluidBelow();
-		}
+        if (init != 2 || worldObj == null) return;
 
-		if (hasUpdate) {
-			BlockUtils.onComparatorUpdate(worldObj, xCoord, yCoord, zCoord, getBlockType());
-			hasUpdate = false;
-		}
+        if (worldObj.isRemote) {
+            int lightValue = getFluidLightLevel();
+            if (prevLightValue != lightValue) {
+                prevLightValue = lightValue;
+                worldObj.setLightFor(EnumSkyBlock.BLOCK, pos, lightValue);
+            }
+            return;
+        }
 
-		if (hasNetworkUpdate && tracker.markTimeIfDelay(worldObj)) {
-			sendNetworkUpdate();
-			hasNetworkUpdate = false;
-		}
-	}
+        // Have liquid flow down into tanks below if any.
+        if (tank.getFluid() != null) {
+            moveFluidBelow();
+        }
 
-	/* NETWORK */
-	@Override
-	public void writeData(ByteBuf data) {
-		tankManager.writeData(data);
-	}
+        if (hasUpdate) {
+            worldObj.notifyBlockOfStateChange(pos, blockType);
+            BlockUtils.onComparatorUpdate(worldObj, pos, getBlockType());
+            hasUpdate = false;
+        }
 
-	@Override
-	public void readData(ByteBuf stream) {
-		tankManager.readData(stream);
-	}
+        if (hasNetworkUpdate && tracker.markTimeIfDelay(worldObj)) {
+            sendNetworkUpdate();
+            hasNetworkUpdate = false;
+        }
+    }
 
-	/* SAVING & LOADING */
-	@Override
-	public void readFromNBT(NBTTagCompound data) {
-		super.readFromNBT(data);
-		tankManager.readFromNBT(data);
-	}
+    /* NETWORK */
+    @Override
+    public void writeData(ByteBuf data) {
+        tankManager.writeData(data);
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound data) {
-		super.writeToNBT(data);
-		tankManager.writeToNBT(data);
-	}
+    @Override
+    public void readData(ByteBuf stream) {
+        tankManager.readData(stream);
+    }
 
-	/* HELPER FUNCTIONS */
+    /* SAVING & LOADING */
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        tankManager.readFromNBT(data);
+    }
 
-	/**
-	 * @return Last tank block below this one or this one if it is the last.
-	 */
-	public TileTank getBottomTank() {
+    @Override
+    public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        tankManager.writeToNBT(data);
+    }
 
-		TileTank lastTank = this;
+    /* HELPER FUNCTIONS */
 
-		while (true) {
-			TileTank below = getTankBelow(lastTank);
-			if (below != null) {
-				lastTank = below;
-			} else {
-				break;
-			}
-		}
+    /** @return Last tank block below this one or this one if it is the last. */
+    public TileTank getBottomTank() {
 
-		return lastTank;
-	}
+        TileTank lastTank = this;
 
-	public TileTank getTopTank() {
-		TileTank lastTank = this;
+        while (true) {
+            TileTank below = getTankBelow(lastTank);
+            if (below != null) {
+                lastTank = below;
+            } else {
+                break;
+            }
+        }
 
-		while (true) {
-			TileTank above = getTankAbove(lastTank);
-			if (above != null) {
-				lastTank = above;
-			} else {
-				break;
-			}
-		}
+        return lastTank;
+    }
 
-		return lastTank;
-	}
+    public TileTank getTopTank() {
+        TileTank lastTank = this;
 
-	public static TileTank getTankBelow(TileTank tile) {
-		TileEntity below = tile.getTile(ForgeDirection.DOWN);
-		if (below instanceof TileTank) {
-			return (TileTank) below;
-		} else {
-			return null;
-		}
-	}
+        while (true) {
+            TileTank above = getTankAbove(lastTank);
+            if (above != null) {
+                lastTank = above;
+            } else {
+                break;
+            }
+        }
 
-	public static TileTank getTankAbove(TileTank tile) {
-		TileEntity above = tile.getTile(ForgeDirection.UP);
-		if (above instanceof TileTank) {
-			return (TileTank) above;
-		} else {
-			return null;
-		}
-	}
+        return lastTank;
+    }
 
-	public void moveFluidBelow() {
-		TileTank below = getTankBelow(this);
-		if (below == null) {
-			return;
-		}
+    public static TileTank getTankBelow(TileTank tile) {
+        TileEntity below = tile.getTile(EnumFacing.DOWN);
+        if (below instanceof TileTank) {
+            return (TileTank) below;
+        } else {
+            return null;
+        }
+    }
 
-		int oldComparator = getComparatorInputOverride();
-		int used = below.tank.fill(tank.getFluid(), true);
+    public static TileTank getTankAbove(TileTank tile) {
+        TileEntity above = tile.getTile(EnumFacing.UP);
+        if (above instanceof TileTank) {
+            return (TileTank) above;
+        } else {
+            return null;
+        }
+    }
 
-		if (used > 0) {
-			hasNetworkUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
-			below.hasNetworkUpdate = true; // redundant because below.fill sets hasUpdate
+    public void moveFluidBelow() {
+        TileTank below = getTankBelow(this);
+        if (below == null) {
+            return;
+        }
 
-			if (oldComparator != calculateComparatorInputOverride()) {
-				updateComparators();
-			}
+        int oldComparator = getComparatorInputOverride();
+        int used = below.tank.fill(tank.getFluid(), true);
 
-			tank.drain(used, true);
-		}
-	}
+        if (used > 0) {
+            hasNetworkUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
+            below.hasNetworkUpdate = true; // redundant because below.fill sets hasUpdate
 
-	/* ITANKCONTAINER */
-	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (resource == null) {
-			return 0;
-		}
+            if (oldComparator != calculateComparatorInputOverride()) {
+                updateComparators();
+            }
 
-		FluidStack resourceCopy = resource.copy();
-		int totalUsed = 0;
-		TileTank tankToFill = getBottomTank();
+            tank.drain(used, true);
+        }
+    }
 
-		FluidStack liquid = tankToFill.tank.getFluid();
-		if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resourceCopy)) {
-			return 0;
-		}
+    /* ITANKCONTAINER */
+    @Override
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+        if (resource == null) {
+            return 0;
+        }
 
-		int oldComparator = getComparatorInputOverride();
+        FluidStack resourceCopy = resource.copy();
+        int totalUsed = 0;
+        TileTank tankToFill = getBottomTank();
 
-		while (tankToFill != null && resourceCopy.amount > 0) {
-			int used = tankToFill.tank.fill(resourceCopy, doFill);
-			resourceCopy.amount -= used;
-			if (used > 0) {
-				tankToFill.hasNetworkUpdate = true;
-			}
+        FluidStack liquid = tankToFill.tank.getFluid();
+        if (liquid != null && liquid.amount > 0 && !liquid.isFluidEqual(resourceCopy)) {
+            return 0;
+        }
 
-			totalUsed += used;
-			tankToFill = getTankAbove(tankToFill);
-		}
+        int oldComparator = getComparatorInputOverride();
 
-		if (oldComparator != calculateComparatorInputOverride()) {
-			updateComparators();
-		}
+        while (tankToFill != null && resourceCopy.amount > 0) {
+            int used = tankToFill.tank.fill(resourceCopy, doFill);
+            resourceCopy.amount -= used;
+            if (used > 0) {
+                tankToFill.hasNetworkUpdate = true;
+            }
 
-		return totalUsed;
-	}
+            totalUsed += used;
+            tankToFill = getTankAbove(tankToFill);
+        }
 
-	@Override
-	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
-		TileTank bottom = getBottomTank();
-		bottom.hasNetworkUpdate = true;
-		int oldComparator = getComparatorInputOverride();
-		FluidStack output = bottom.tank.drain(maxEmpty, doDrain);
+        if (oldComparator != calculateComparatorInputOverride()) {
+            updateComparators();
+        }
 
-		if (oldComparator != calculateComparatorInputOverride()) {
-			updateComparators();
-		}
+        return totalUsed;
+    }
 
-		return output;
-	}
+    @Override
+    public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
+        TileTank bottom = getBottomTank();
+        bottom.hasNetworkUpdate = true;
+        int oldComparator = getComparatorInputOverride();
+        FluidStack output = bottom.tank.drain(maxEmpty, doDrain);
 
-	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (resource == null) {
-			return null;
-		}
-		TileTank bottom = getBottomTank();
-		if (!resource.isFluidEqual(bottom.tank.getFluid())) {
-			return null;
-		}
-		return drain(from, resource.amount, doDrain);
-	}
+        if (oldComparator != calculateComparatorInputOverride()) {
+            updateComparators();
+        }
 
-	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-		FluidTank compositeTank = new FluidTank(tank.getCapacity());
+        return output;
+    }
 
-		TileTank tile = getBottomTank();
+    @Override
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+        if (resource == null) {
+            return null;
+        }
+        TileTank bottom = getBottomTank();
+        if (!resource.isFluidEqual(bottom.tank.getFluid())) {
+            return null;
+        }
+        return drain(from, resource.amount, doDrain);
+    }
 
-		if (tile != null && tile.tank.getFluid() != null) {
-			compositeTank.setFluid(tile.tank.getFluid().copy());
-		} else {
-			return new FluidTankInfo[]{compositeTank.getInfo()};
-		}
+    @Override
+    public FluidTankInfo[] getTankInfo(EnumFacing direction) {
+        FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
-		int capacity = tile.tank.getCapacity();
-		tile = getTankAbove(tile);
+        TileTank tile = getBottomTank();
 
-		while (tile != null) {
-			FluidStack liquid = tile.tank.getFluid();
-			if (liquid == null || liquid.amount == 0) {
-				// NOOP
-			} else if (!compositeTank.getFluid().isFluidEqual(liquid)) {
-				break;
-			} else {
-				compositeTank.getFluid().amount += liquid.amount;
-			}
+        if (tile != null && tile.tank.getFluid() != null) {
+            compositeTank.setFluid(tile.tank.getFluid().copy());
+        } else {
+            return new FluidTankInfo[] { compositeTank.getInfo() };
+        }
 
-			capacity += tile.tank.getCapacity();
-			tile = getTankAbove(tile);
-		}
+        int capacity = tile.tank.getCapacity();
+        tile = getTankAbove(tile);
 
-		compositeTank.setCapacity(capacity);
-		return new FluidTankInfo[]{compositeTank.getInfo()};
-	}
+        while (tile != null) {
+            FluidStack liquid = tile.tank.getFluid();
+            if (liquid == null || liquid.amount == 0) {
+                // NOOP
+            } else if (!compositeTank.getFluid().isFluidEqual(liquid)) {
+                break;
+            } else {
+                compositeTank.getFluid().amount += liquid.amount;
+            }
 
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		Fluid tankFluid = getBottomTank().tank.getFluidType();
-		return tankFluid == null || tankFluid == fluid;
-	}
+            capacity += tile.tank.getCapacity();
+            tile = getTankAbove(tile);
+        }
 
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		Fluid tankFluid = getBottomTank().tank.getFluidType();
-		return tankFluid != null && tankFluid == fluid;
-	}
+        compositeTank.setCapacity(capacity);
+        return new FluidTankInfo[] { compositeTank.getInfo() };
+    }
 
-	public int getFluidLightLevel() {
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid == null ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
-	}
+    @Override
+    public boolean canFill(EnumFacing from, Fluid fluid) {
+        Fluid tankFluid = getBottomTank().tank.getFluidType();
+        return tankFluid == null || tankFluid == fluid;
+    }
 
-	public int calculateComparatorInputOverride() {
-		FluidTankInfo[] info = getTankInfo(ForgeDirection.UNKNOWN);
-		if (info.length > 0 && info[0] != null && info[0].fluid != null) {
-			return info[0].fluid.amount * 15 / info[0].capacity;
-		} else {
-			return 0;
-		}
-	}
+    @Override
+    public boolean canDrain(EnumFacing from, Fluid fluid) {
+        Fluid tankFluid = getBottomTank().tank.getFluidType();
+        return tankFluid != null && tankFluid == fluid;
+    }
 
-	public int getComparatorInputOverride() {
-		return cachedComparatorOverride;
-	}
+    public int getFluidLightLevel() {
+        FluidStack tankFluid = tank.getFluid();
+        return tankFluid == null ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
+    }
+
+    public int calculateComparatorInputOverride() {
+        FluidTankInfo[] info = getTankInfo(null);
+        if (info.length > 0 && info[0] != null && info[0].fluid != null) {
+            return info[0].fluid.amount * 15 / info[0].capacity;
+        } else {
+            return 0;
+        }
+    }
+
+    public int getComparatorInputOverride() {
+        return cachedComparatorOverride;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add(tank.getFluidAmount() + "/" + tank.getCapacity() + "mB");
+        left.add(tank.getFluid() == null ? "empty" : tank.getFluidType().getLocalizedName(tank.getFluid()));
+    }
 }

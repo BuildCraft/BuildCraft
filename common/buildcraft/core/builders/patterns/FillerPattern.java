@@ -1,184 +1,169 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.IIcon;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.blueprints.Template;
+import buildcraft.core.blueprints.*;
 import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 
-	public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
-	private final String tag;
-	private IIcon icon, blockIcon;
+    public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
+    public final EnumFillerPattern type;
+    private final String tag;
+    private final ResourceLocation location;
 
-	public FillerPattern(String tag) {
-		this.tag = tag;
-		patterns.put(getUniqueTag(), this);
-	}
+    @SideOnly(Side.CLIENT)
+    private TextureAtlasSprite sprite;
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("fillerpattern." + tag);
-	}
+    public FillerPattern(String tag, EnumFillerPattern type) {
+        this.tag = tag;
+        this.type = type;
+        patterns.put(getUniqueTag(), this);
+        location = new ResourceLocation("buildcraftcore:items/fillerPatterns/" + tag);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-	@Override
-	public IStatementParameter createParameter(int index) {
-		return null;
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("fillerpattern." + tag);
+    }
 
-	@Override
-	public IStatement rotateLeft() {
-		return this;
-	}
+    @Override
+    public IStatementParameter createParameter(int index) {
+        return null;
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:" + tag;
-	}
+    @Override
+    public IStatement rotateLeft() {
+        return this;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		if (!(iconRegister instanceof TextureMap) || ((TextureMap) iconRegister).getTextureType() == 1) {
-			icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
-		}
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:" + tag;
+    }
 
-		if (Loader.isModLoaded("BuildCraft|Builders")) {
-			if (!(iconRegister instanceof TextureMap) || ((TextureMap) iconRegister).getTextureType() == 0) {
-				blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
-			}
-		}
-	}
+    @Override
+    public int maxParameters() {
+        return 0;
+    }
 
-	@Override
-	public IIcon getIcon() {
-		return icon;
-	}
+    @Override
+    public int minParameters() {
+        return 0;
+    }
 
-	@Override
-	public IIcon getBlockOverlay() {
-		return blockIcon;
-	}
+    @Override
+    public String toString() {
+        return "Pattern: " + getUniqueTag();
+    }
 
-	@Override
-	public int maxParameters() {
-		return 0;
-	}
+    /** Generates a filling in a given area */
+    public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
 
-	@Override
-	public int minParameters() {
-		return 0;
-	}
+        for (int y = yMin; y <= yMax; ++y) {
+            for (int x = xMin; x <= xMax; ++x) {
+                for (int z = zMin; z <= zMax; ++z) {
+                    if (isValid(x, y, z, template)) {
+                        template.put(x, y, z, new SchematicMask(true));
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Pattern: " + getUniqueTag();
-	}
+    /** Generates an empty in a given area */
+    public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
+        for (int y = yMax; y >= yMin; y--) {
+            for (int x = xMin; x <= xMax; ++x) {
+                for (int z = zMin; z <= zMax; ++z) {
+                    if (isValid(x, y, z, template)) {
+                        template.put(x, y, z, null);
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Generates a filling in a given area
-	 */
-	public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax,
-							int zMax, Template template) {
+    /** Generates a flatten in a given area */
+    public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
+        for (int x = xMin; x <= xMax; ++x) {
+            for (int z = zMin; z <= zMax; ++z) {
+                for (int y = yMax; y >= yMin; --y) {
+                    if (isValid(x, y, z, template)) {
+                        template.put(x, y, z, new SchematicMask(true));
+                    }
+                }
+            }
+        }
+    }
 
-		for (int y = yMin; y <= yMax; ++y) {
-			for (int x = xMin; x <= xMax; ++x) {
-				for (int z = zMin; z <= zMax; ++z) {
-					if (isValid(x, y, z, template)) {
-						template.put(x, y, z, new SchematicMask(true));
-					}
-				}
-			}
-		}
-	}
+    public abstract Template getTemplate(Box box, World world, IStatementParameter[] parameters);
 
-	/**
-	 * Generates an empty in a given area
-	 */
-	public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		for (int y = yMax; y >= yMin; y--) {
-			for (int x = xMin; x <= xMax; ++x) {
-				for (int z = zMin; z <= zMax; ++z) {
-					if (isValid(x, y, z, template)) {
-						template.put(x, y, z, null);
-					}
-				}
-			}
-		}
-	}
+    public Blueprint getBlueprint(Box box, World world, IStatementParameter[] parameters, IBlockState state) {
+        Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
-	/**
-	 * Generates a flatten in a given area
-	 */
-	public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		for (int x = xMin; x <= xMax; ++x) {
-			for (int z = zMin; z <= zMax; ++z) {
-				for (int y = yMax; y >= yMin; --y) {
-					if (isValid(x, y, z, template)) {
-						template.put(x, y, z, new SchematicMask(true));
-					}
-				}
-			}
-		}
-	}
+        try {
+            Template tmpl = getTemplate(box, world, parameters);
 
-	public abstract Template getTemplate(Box box, World world, IStatementParameter[] parameters);
+            for (int x = 0; x < box.sizeX(); ++x) {
+                for (int y = 0; y < box.sizeY(); ++y) {
+                    for (int z = 0; z < box.sizeZ(); ++z) {
+                        if (tmpl.get(x, y, z) != null) {
+                            result.put(x, y, z, SchematicRegistry.INSTANCE.createSchematicBlock(state));
+                        }
 
-	public Blueprint getBlueprint(Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
-		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-		try {
-			Template tmpl = getTemplate(box, world, parameters);
+        return result;
+    }
 
-			for (int x = 0; x < box.sizeX(); ++x) {
-				for (int y = 0; y < box.sizeY(); ++y) {
-					for (int z = 0; z < box.sizeZ(); ++z) {
-						if (tmpl.get(x, y, z) != null) {
-							result.put(x, y, z, SchematicRegistry.INSTANCE
-									.createSchematicBlock(block, meta));
-						}
+    public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
+        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.xMin, box.yMin, box.zMin));
+    }
 
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+    private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
+        return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
+    }
 
-		return result;
-	}
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void stitchTextures(TextureStitchEvent.Pre event) {
+        sprite = event.map.registerSprite(location);
+    }
 
-	public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, box.yMin, box.zMin);
-	}
-
-	private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
-		return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getGuiSprite() {
+        return sprite;
+    }
 }

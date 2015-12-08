@@ -14,12 +14,12 @@ import net.minecraft.item.ItemStack;
 
 public class SlotValidated extends Slot {
 
-	public SlotValidated(IInventory inv, int id, int x, int y) {
-		super(inv, id, x, y);
-	}
+    public SlotValidated(IInventory inv, int id, int x, int y) {
+        super(inv, id, x, y);
+    }
 
-	@Override
-	public boolean isItemValid(ItemStack itemStack) {
-		return inventory.isItemValidForSlot(this.getSlotIndex(), itemStack);
-	}
+    @Override
+    public boolean isItemValid(ItemStack itemStack) {
+        return inventory.isItemValidForSlot(this.getSlotIndex(), itemStack);
+    }
 }

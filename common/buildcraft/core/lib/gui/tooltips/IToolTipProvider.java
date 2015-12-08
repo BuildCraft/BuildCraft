@@ -10,9 +10,9 @@ package buildcraft.core.lib.gui.tooltips;
 
 public interface IToolTipProvider {
 
-	ToolTip getToolTip();
+    ToolTip getToolTip();
 
-	boolean isToolTipVisible();
+    boolean isToolTipVisible();
 
-	boolean isMouseOver(int mouseX, int mouseY);
+    boolean isMouseOver(int mouseX, int mouseY);
 }

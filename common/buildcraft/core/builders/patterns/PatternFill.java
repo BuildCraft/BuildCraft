@@ -10,24 +10,25 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
 public final class PatternFill extends FillerPattern {
 
-	public static final PatternFill INSTANCE = new PatternFill();
+    public static final PatternFill INSTANCE = new PatternFill();
 
-	private PatternFill() {
-		super("fill");
-	}
+    private PatternFill() {
+        super("fill", EnumFillerPattern.FILL);
+    }
 
-	@Override
-	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-		Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
+    @Override
+    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
+        Template bpt = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		fill(0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);
+        fill(0, 0, 0, box.sizeX() - 1, box.sizeY() - 1, box.sizeZ() - 1, bpt);
 
-		return bpt;
-	}
+        return bpt;
+    }
 }

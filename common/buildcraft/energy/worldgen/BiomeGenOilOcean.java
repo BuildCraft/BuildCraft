@@ -15,20 +15,20 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public final class BiomeGenOilOcean extends BiomeGenOcean {
 
-	protected static final BiomeGenBase.Height height_OilOcean = new BiomeGenBase.Height(0.1F, 0.2F);
+    protected static final BiomeGenBase.Height height_OilOcean = new BiomeGenBase.Height(0.1F, 0.2F);
 
-	private BiomeGenOilOcean(int id) {
-		super(id);
-		setBiomeName("Ocean Oil Field");
-		setColor(112);
-		setHeight(height_Oceans);
-	}
+    private BiomeGenOilOcean(int id) {
+        super(id);
+        setBiomeName("Ocean Oil Field");
+        setColor(112);
+        setHeight(height_Oceans);
+    }
 
-	public static BiomeGenOilOcean makeBiome(int id) {
-		BiomeGenOilOcean biome = new BiomeGenOilOcean(id);
-		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.WATER);
-		OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
-		OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
-		return biome;
-	}
+    public static BiomeGenOilOcean makeBiome(int id) {
+        BiomeGenOilOcean biome = new BiomeGenOilOcean(id);
+        BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.WATER);
+        OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
+        OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+        return biome;
+    }
 }

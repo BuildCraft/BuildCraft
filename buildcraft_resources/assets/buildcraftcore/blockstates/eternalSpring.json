@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "type=water": { "model": "buildcraftcore:eternalSpring" },
+        "type=oil": { "model": "buildcraftcore:eternalSpring" }
+    }
+}

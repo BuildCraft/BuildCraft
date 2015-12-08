@@ -16,85 +16,85 @@ import buildcraft.api.recipes.IFlexibleCrafter;
 
 public class CrafterCopy implements IFlexibleCrafter {
 
-	private ItemStack[] items;
-	private FluidStack[] fluids;
+    private ItemStack[] items;
+    private FluidStack[] fluids;
 
-	public CrafterCopy(IFlexibleCrafter origin) {
-		items = new ItemStack[origin.getCraftingItemStackSize()];
+    public CrafterCopy(IFlexibleCrafter origin) {
+        items = new ItemStack[origin.getCraftingItemStackSize()];
 
-		for (int i = 0; i < items.length; ++i) {
-			ItemStack s = origin.getCraftingItemStack(i);
+        for (int i = 0; i < items.length; ++i) {
+            ItemStack s = origin.getCraftingItemStack(i);
 
-			if (s != null) {
-				items[i] = s.copy();
-			} else {
-				items[i] = null;
-			}
-		}
+            if (s != null) {
+                items[i] = s.copy();
+            } else {
+                items[i] = null;
+            }
+        }
 
-		fluids = new FluidStack[origin.getCraftingFluidStackSize()];
+        fluids = new FluidStack[origin.getCraftingFluidStackSize()];
 
-		for (int i = 0; i < fluids.length; ++i) {
-			FluidStack f = origin.getCraftingFluidStack(i);
+        for (int i = 0; i < fluids.length; ++i) {
+            FluidStack f = origin.getCraftingFluidStack(i);
 
-			if (f != null) {
-				fluids[i] = origin.getCraftingFluidStack(i).copy();
-			} else {
-				fluids[i] = null;
-			}
-		}
-	}
+            if (f != null) {
+                fluids[i] = origin.getCraftingFluidStack(i).copy();
+            } else {
+                fluids[i] = null;
+            }
+        }
+    }
 
-	@Override
-	public int getCraftingItemStackSize() {
-		return items.length;
-	}
+    @Override
+    public int getCraftingItemStackSize() {
+        return items.length;
+    }
 
-	@Override
-	public ItemStack getCraftingItemStack(int slotid) {
-		return items[slotid];
-	}
+    @Override
+    public ItemStack getCraftingItemStack(int slotid) {
+        return items[slotid];
+    }
 
-	@Override
-	public ItemStack decrCraftingItemStack(int slotid, int val) {
-		ItemStack result;
+    @Override
+    public ItemStack decrCraftingItemStack(int slotid, int val) {
+        ItemStack result;
 
-		if (val >= items[slotid].stackSize) {
-			result = items[slotid];
-			items[slotid] = null;
-		} else {
-			result = items[slotid].copy();
-			result.stackSize = val;
-			items[slotid].stackSize -= val;
-		}
+        if (val >= items[slotid].stackSize) {
+            result = items[slotid];
+            items[slotid] = null;
+        } else {
+            result = items[slotid].copy();
+            result.stackSize = val;
+            items[slotid].stackSize -= val;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public FluidStack getCraftingFluidStack(int tankid) {
-		return fluids[tankid];
-	}
+    @Override
+    public FluidStack getCraftingFluidStack(int tankid) {
+        return fluids[tankid];
+    }
 
-	@Override
-	public FluidStack decrCraftingFluidStack(int tankid, int val) {
-		FluidStack result;
+    @Override
+    public FluidStack decrCraftingFluidStack(int tankid, int val) {
+        FluidStack result;
 
-		if (val >= fluids[tankid].amount) {
-			result = fluids[tankid];
-			fluids[tankid] = null;
-		} else {
-			result = fluids[tankid].copy();
-			result.amount = val;
-			fluids[tankid].amount -= val;
-		}
+        if (val >= fluids[tankid].amount) {
+            result = fluids[tankid];
+            fluids[tankid] = null;
+        } else {
+            result = fluids[tankid].copy();
+            result.amount = val;
+            fluids[tankid].amount -= val;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public int getCraftingFluidStackSize() {
-		return fluids.length;
-	}
+    @Override
+    public int getCraftingFluidStackSize() {
+        return fluids.length;
+    }
 
 }

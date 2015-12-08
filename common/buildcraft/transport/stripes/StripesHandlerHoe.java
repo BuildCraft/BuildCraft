@@ -11,36 +11,34 @@ package buildcraft.transport.stripes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 
 public class StripesHandlerHoe implements IStripesHandler {
 
-	@Override
-	public StripesHandlerType getType() {
-		return StripesHandlerType.ITEM_USE;
-	}
+    @Override
+    public StripesHandlerType getType() {
+        return StripesHandlerType.ITEM_USE;
+    }
 
-	@Override
-	public boolean shouldHandle(ItemStack stack) {
-		return stack.getItem() instanceof ItemHoe;
-	}
+    @Override
+    public boolean shouldHandle(ItemStack stack) {
+        return stack.getItem() instanceof ItemHoe;
+    }
 
-	@Override
-	public boolean handle(World world, int x, int y, int z,
-						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
-						  IStripesActivator activator) {
-		if (!world.isAirBlock(x, y - 1, z) && stack.tryPlaceItemIntoWorld(player, world, x, y - 1, z, 1, 0.0f, 0.0f, 0.0f)) {
-			if (stack.stackSize > 0) {
-				activator.sendItem(stack, direction.getOpposite());
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        if (!world.isAirBlock(pos.down()) && stack.onItemUse(player, world, pos.down(), EnumFacing.DOWN, 0.0f, 0.0f, 0.0f)) {
+            if (stack.stackSize > 0) {
+                activator.sendItem(stack, direction.getOpposite());
+            }
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -1,0 +1,38 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"particle":"buildcraftbuilders:blocks/filler/top"
+		}
+	},
+    "variants": {
+        "facing": {
+        	"east":  { "model":"buildcraftbuilders:filler/main" },
+        	"south": { "model":"buildcraftbuilders:filler/main", "y": 90 },
+        	"west":  { "model":"buildcraftbuilders:filler/main", "y": 180 },
+        	"north": { "model":"buildcraftbuilders:filler/main", "y": 270 }
+        },
+        "led_done": {
+        	"true":  { "submodel":"buildcraftbuilders:filler/led_active_on" },
+        	"false": { "submodel":"buildcraftbuilders:filler/led_active_off" }
+        },
+        "led_power": {
+        	"0": { "submodel":"buildcraftbuilders:filler/led_power_0" },
+        	"1": { "submodel":"buildcraftbuilders:filler/led_power_1" },
+        	"2": { "submodel":"buildcraftbuilders:filler/led_power_2" },
+        	"3": { "submodel":"buildcraftbuilders:filler/led_power_3" }
+        },
+        "pattern": {
+        	"none":     { "submodel":"buildcraftbuilders:filler/pattern_none" },
+        	"box":      { "submodel":"buildcraftbuilders:filler/pattern_box" },
+        	"clear":    { "submodel":"buildcraftbuilders:filler/pattern_clear" },
+        	"cylinder": { "submodel":"buildcraftbuilders:filler/pattern_cylinder" },
+    		"fill":     { "submodel":"buildcraftbuilders:filler/pattern_fill" },
+    		"flatten":  { "submodel":"buildcraftbuilders:filler/pattern_flatten" },
+    		"frame":    { "submodel":"buildcraftbuilders:filler/pattern_frame" },
+    		"horizon":  { "submodel":"buildcraftbuilders:filler/pattern_horizon" },
+    		"pyramid":  { "submodel":"buildcraftbuilders:filler/pattern_pyramid" },
+    		"stairs":   { "submodel":"buildcraftbuilders:filler/pattern_stairs" }
+        }
+    }
+}

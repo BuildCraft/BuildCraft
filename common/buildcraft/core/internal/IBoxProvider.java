@@ -11,5 +11,5 @@ package buildcraft.core.internal;
 import buildcraft.core.Box;
 
 public interface IBoxProvider {
-	Box getBox();
+    Box getBox();
 }

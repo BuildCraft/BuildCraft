@@ -11,11 +11,11 @@ package buildcraft.core.blueprints;
 import buildcraft.api.core.BCLog;
 
 public class BptError extends Exception {
-	private static final long serialVersionUID = 3579188081467555542L;
+    private static final long serialVersionUID = 3579188081467555542L;
 
-	public BptError(String str) {
-		super(str);
+    public BptError(String str) {
+        super(str);
 
-		BCLog.logger.debug("BLUEPRINT ERROR:" + str);
-	}
+        BCLog.logger.debug("BLUEPRINT ERROR:" + str);
+    }
 }

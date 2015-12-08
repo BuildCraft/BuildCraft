@@ -15,37 +15,37 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotSearchAndGotoStation extends AIRobot {
 
-	private IStationFilter filter;
-	private IZone zone;
+    private IStationFilter filter;
+    private IZone zone;
 
-	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotSearchAndGotoStation(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IZone iZone) {
-		this(iRobot);
+    public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IZone iZone) {
+        this(iRobot);
 
-		filter = iFilter;
-		zone = iZone;
-	}
+        filter = iFilter;
+        zone = iZone;
+    }
 
-	@Override
-	public void start() {
-		startDelegateAI(new AIRobotSearchStation(robot, filter, zone));
-	}
+    @Override
+    public void start() {
+        startDelegateAI(new AIRobotSearchStation(robot, filter, zone));
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchStation) {
-			if (ai.success()) {
-				startDelegateAI(new AIRobotGotoStation(robot, ((AIRobotSearchStation) ai).targetStation));
-			} else {
-				setSuccess(false);
-				terminate();
-			}
-		} else if (ai instanceof AIRobotGotoStation) {
-			setSuccess(ai.success());
-			terminate();
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotSearchStation) {
+            if (ai.success()) {
+                startDelegateAI(new AIRobotGotoStation(robot, ((AIRobotSearchStation) ai).targetStation));
+            } else {
+                setSuccess(false);
+                terminate();
+            }
+        } else if (ai instanceof AIRobotGotoStation) {
+            setSuccess(ai.success());
+            terminate();
+        }
+    }
 }

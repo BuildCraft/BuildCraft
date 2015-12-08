@@ -11,5 +11,5 @@ package buildcraft.core.lib.network.command;
 import io.netty.buffer.ByteBuf;
 
 public abstract class CommandWriter {
-	public abstract void write(ByteBuf data);
+    public abstract void write(ByteBuf data);
 }

@@ -1,9 +1,13 @@
 package buildcraft.core.builders.patterns;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -12,74 +16,73 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class PatternParameterXZDir implements IStatementParameter {
-	private static final String[] names = {
-			"west", "east", "north", "south"
-	};
-	private static final int[] shiftLeft = {3, 2, 0, 1};
-	private static final int[] shiftRight = {2, 3, 1, 0};
-	private static IIcon[] icons;
-	private int direction;
+    private static final String[] names = { "west", "east", "north", "south" };
+    private static final int[] shiftLeft = { 3, 2, 0, 1 };
+    private static final int[] shiftRight = { 2, 3, 1, 0 };
 
-	public PatternParameterXZDir() {
-		super();
-	}
+    @SideOnly(Side.CLIENT)
+    private static TextureAtlasSprite[] sprites;
+    private int direction;
 
-	public PatternParameterXZDir(int direction) {
-		this();
-		this.direction = direction;
-	}
+    @SideOnly(Side.CLIENT)
+    public static void registerSprites(TextureMap map) {
+        sprites = new TextureAtlasSprite[4];
+        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_left"));
+        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_right"));
+        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_up"));
+        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_down"));
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:fillerParameterXZDir";
-	}
+    public PatternParameterXZDir() {
+        super();
+    }
 
-	@Override
-	public IIcon getIcon() {
-		return icons[direction & 3];
-	}
+    public PatternParameterXZDir(int direction) {
+        this();
+        this.direction = direction;
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return null;
-	}
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:fillerParameterXZDir";
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[]{
-				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_left"),
-				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_right"),
-				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up"),
-				iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down")
-		};
-	}
+    @Override
+    public TextureAtlasSprite getIcon() {
+        return sprites[direction & 3];
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("direction." + names[direction & 3]);
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return null;
+    }
 
-	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-		direction = shiftRight[direction & 3];
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("direction." + names[direction & 3]);
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		direction = compound.getByte("dir");
-	}
+    @Override
+    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        direction = shiftRight[direction & 3];
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound compound) {
-		compound.setByte("dir", (byte) direction);
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        direction = compound.getByte("dir");
+    }
 
-	@Override
-	public IStatementParameter rotateLeft() {
-		return new PatternParameterXZDir(shiftLeft[direction & 3]);
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        compound.setByte("dir", (byte) direction);
+    }
 
-	public int getDirection() {
-		return direction;
-	}
+    @Override
+    public IStatementParameter rotateLeft() {
+        return new PatternParameterXZDir(shiftLeft[direction & 3]);
+    }
+
+    public int getDirection() {
+        return direction;
+    }
 }

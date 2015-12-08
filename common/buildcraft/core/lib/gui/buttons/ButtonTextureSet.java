@@ -12,39 +12,39 @@ import net.minecraft.util.ResourceLocation;
 
 public class ButtonTextureSet implements IButtonTextureSet {
 	private final ResourceLocation texture;
-	private final int x, y, height, width;
+    private final int x, y, height, width;
 
-	public ButtonTextureSet(int x, int y, int height, int width) {
+    public ButtonTextureSet(int x, int y, int height, int width) {
 		this(x, y, height, width, StandardButtonTextureSets.BUTTON_TEXTURES);
 	}
 
 	public ButtonTextureSet(int x, int y, int height, int width, ResourceLocation texture) {
-		this.x = x;
-		this.y = y;
-		this.height = height;
-		this.width = width;
+        this.x = x;
+        this.y = y;
+        this.height = height;
+        this.width = width;
 		this.texture = texture;
-	}
+    }
 
-	@Override
-	public int getX() {
-		return x;
-	}
+    @Override
+    public int getX() {
+        return x;
+    }
 
-	@Override
-	public int getY() {
-		return y;
-	}
+    @Override
+    public int getY() {
+        return y;
+    }
 
-	@Override
-	public int getHeight() {
-		return height;
-	}
+    @Override
+    public int getHeight() {
+        return height;
+    }
 
-	@Override
-	public int getWidth() {
-		return width;
-	}
+    @Override
+    public int getWidth() {
+        return width;
+    }
 
 	@Override
 	public ResourceLocation getTexture() {

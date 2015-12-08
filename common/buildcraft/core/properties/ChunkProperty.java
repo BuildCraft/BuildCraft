@@ -14,24 +14,24 @@ import net.minecraft.world.IBlockAccess;
 
 public class ChunkProperty {
 
-	private BitSet property;
-	private int worldHeight;
-	private int xPosition, zPosition;
-	private IBlockAccess blockAccess;
+    private BitSet property;
+    private int worldHeight;
+    private int xPosition, zPosition;
+    private IBlockAccess blockAccess;
 
-	public ChunkProperty(IBlockAccess iBlockAccess, int iWorldHeight, int iXPosition, int iZPosition) {
-		worldHeight = iWorldHeight;
-		property = new BitSet(16 * 16 * worldHeight / 8);
-		xPosition = iXPosition;
-		zPosition = iZPosition;
-		blockAccess = iBlockAccess;
-	}
+    public ChunkProperty(IBlockAccess iBlockAccess, int iWorldHeight, int iXPosition, int iZPosition) {
+        worldHeight = iWorldHeight;
+        property = new BitSet(16 * 16 * worldHeight / 8);
+        xPosition = iXPosition;
+        zPosition = iZPosition;
+        blockAccess = iBlockAccess;
+    }
 
-	public boolean get(int xChunk, int y, int zChunk) {
-		return property.get(xChunk * worldHeight * 16 + y * 16 + zChunk);
-	}
+    public boolean get(int xChunk, int y, int zChunk) {
+        return property.get(xChunk * worldHeight * 16 + y * 16 + zChunk);
+    }
 
-	public void set(int xChunk, int y, int zChunk, boolean value) {
-		property.set(xChunk * worldHeight * 16 + y * 16 + zChunk, value);
-	}
+    public void set(int xChunk, int y, int zChunk, boolean value) {
+        property.set(xChunk * worldHeight * 16 + y * 16 + zChunk, value);
+    }
 }

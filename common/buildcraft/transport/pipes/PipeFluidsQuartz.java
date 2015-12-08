@@ -9,10 +9,10 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumFacing;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -22,20 +22,20 @@ import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 
-	public PipeFluidsQuartz(Item item) {
-		super(new PipeTransportFluids(), item);
+    public PipeFluidsQuartz(Item item) {
+        super(new PipeTransportFluids(), item);
 
-		transport.initFromPipe(getClass());
-	}
+        transport.initFromPipe(getClass());
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIconProvider getIconProvider() {
-		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIconProvider getIconProvider() {
+        return BuildCraftTransport.instance.pipeIconProvider;
+    }
 
-	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		return PipeIconProvider.TYPE.PipeFluidsQuartz.ordinal();
-	}
+    @Override
+    public int getIconIndex(EnumFacing direction) {
+        return PipeIconProvider.TYPE.PipeFluidsQuartz.ordinal();
+    }
 }

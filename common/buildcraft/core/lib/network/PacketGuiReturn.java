@@ -8,98 +8,107 @@
  */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.DimensionManager;
-
 import buildcraft.BuildCraftCore;
-import buildcraft.core.network.PacketIds;
+import buildcraft.core.lib.network.base.Packet;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 // TODO: Rename to PacketGuiUpdate
 public class PacketGuiReturn extends Packet {
-	private EntityPlayer sender;
-	private IGuiReturnHandler obj;
-	private byte[] extraData;
+    private IGuiReturnHandler obj;
+    private byte[] extraData;
 
-	public PacketGuiReturn() {
-	}
+    private boolean tileReturn;
+    private BlockPos pos;
+    private int entityId;
+    private ByteBuf heldData;
 
-	public PacketGuiReturn(EntityPlayer sender) {
-		this.sender = sender;
-	}
+    public PacketGuiReturn() {}
 
-	public PacketGuiReturn(IGuiReturnHandler obj) {
-		this.obj = obj;
-		this.extraData = null;
-	}
+    public PacketGuiReturn(IGuiReturnHandler obj) {
+        this.obj = obj;
+        this.extraData = null;
+        this.tempWorld = obj.getWorld();
+    }
 
-	public PacketGuiReturn(IGuiReturnHandler obj, byte[] extraData) {
-		this.obj = obj;
-		this.extraData = extraData;
-	}
+    public PacketGuiReturn(IGuiReturnHandler obj, byte[] extraData) {
+        this.obj = obj;
+        this.extraData = extraData;
+        this.tempWorld = obj.getWorld();
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeInt(obj.getWorld().provider.dimensionId);
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        if (obj instanceof TileEntity) {
+            TileEntity tile = (TileEntity) obj;
+            data.writeBoolean(true);
+            data.writeInt(tile.getPos().getX());
+            data.writeInt(tile.getPos().getY());
+            data.writeInt(tile.getPos().getZ());
+        } else if (obj instanceof Entity) {
+            Entity entity = (Entity) obj;
+            data.writeBoolean(false);
+            data.writeInt(entity.getEntityId());
+        } else {
+            return;
+        }
 
-		if (obj instanceof TileEntity) {
-			TileEntity tile = (TileEntity) obj;
-			data.writeBoolean(true);
-			data.writeInt(tile.xCoord);
-			data.writeInt(tile.yCoord);
-			data.writeInt(tile.zCoord);
-		} else if (obj instanceof Entity) {
-			Entity entity = (Entity) obj;
-			data.writeBoolean(false);
-			data.writeInt(entity.getEntityId());
-		} else {
-			return;
-		}
+        ByteBuf guiData = Unpooled.buffer();
 
-		obj.writeGuiData(data);
+        obj.writeGuiData(guiData);
 
-		if (extraData != null) {
-			data.writeBytes(extraData);
-		}
-	}
+        if (extraData != null) {
+            guiData.writeBytes(extraData);
+        }
 
-	@Override
-	public void readData(ByteBuf data) {
-		int dim = data.readInt();
-		World world = DimensionManager.getWorld(dim);
-		boolean tileReturn = data.readBoolean();
+        int length = guiData.readableBytes();
+        data.writeInt(length);
+        data.writeBytes(guiData);
+    }
 
-		if (tileReturn) {
-			int x = data.readInt();
-			int y = data.readInt();
-			int z = data.readInt();
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        tileReturn = data.readBoolean();
 
-			TileEntity t = world.getTileEntity(x, y, z);
+        if (tileReturn) {
+            pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
 
-			if (t instanceof IGuiReturnHandler) {
-				((IGuiReturnHandler) t).readGuiData(data, sender);
-			}
-		} else {
-			int entityId = data.readInt();
-			Entity entity = world.getEntityByID(entityId);
+            int length = data.readInt();
+            heldData = data.readBytes(length);
+        } else {
+            entityId = data.readInt();
+            int length = data.readInt();
+            heldData = data.readBytes(length);
+        }
+    }
 
-			if (entity instanceof IGuiReturnHandler) {
-				((IGuiReturnHandler) entity).readGuiData(data, sender);
-			}
-		}
-	}
+    public void sendPacket() {
+        BuildCraftCore.instance.sendToServer(this);
+    }
 
-	public void sendPacket() {
-		BuildCraftCore.instance.sendToServer(this);
-	}
-
-	@Override
-	public int getID() {
-		return PacketIds.GUI_RETURN;
-	}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (tileReturn) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof IGuiReturnHandler) {
+                IGuiReturnHandler handler = (IGuiReturnHandler) tile;
+                handler.readGuiData(heldData, null);
+            }
+        } else {
+            Entity ent = world.getEntityByID(entityId);
+            if (ent instanceof IGuiReturnHandler) {
+                IGuiReturnHandler handler = (IGuiReturnHandler) ent;
+                handler.readGuiData(heldData, null);
+            }
+        }
+    }
 }

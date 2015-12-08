@@ -10,152 +10,143 @@ package buildcraft.silicon;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
-import cpw.mods.fml.common.network.IGuiHandler;
-
-import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
-import buildcraft.silicon.gui.ContainerAssemblyTable;
-import buildcraft.silicon.gui.ContainerChargingTable;
-import buildcraft.silicon.gui.ContainerIntegrationTable;
-import buildcraft.silicon.gui.ContainerPackager;
-import buildcraft.silicon.gui.ContainerProgrammingTable;
-import buildcraft.silicon.gui.ContainerStampingTable;
-import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
-import buildcraft.silicon.gui.GuiAssemblyTable;
-import buildcraft.silicon.gui.GuiChargingTable;
-import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.gui.GuiPackager;
-import buildcraft.silicon.gui.GuiProgrammingTable;
-import buildcraft.silicon.gui.GuiStampingTable;
+import buildcraft.silicon.gui.*;
 
 public class SiliconGuiHandler implements IGuiHandler {
 
-	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
-			return null;
-		}
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+        if (!world.isBlockLoaded(pos)) {
+            return null;
+        }
 
-		switch (id) {
+        TileEntity tile = world.getTileEntity(pos);
 
-			case 0:
-				if (!(tile instanceof TileAssemblyTable)) {
-					return null;
-				} else {
-					return new GuiAssemblyTable(player.inventory, (TileAssemblyTable) tile);
-				}
+        switch (id) {
 
-			case 1:
-				if (!(tile instanceof TileAdvancedCraftingTable)) {
-					return null;
-				} else {
-					return new GuiAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
-				}
+            case 0:
+                if (!(tile instanceof TileAssemblyTable)) {
+                    return null;
+                } else {
+                    return new GuiAssemblyTable(player, (TileAssemblyTable) tile);
+                }
 
-			case 2:
-				if (!(tile instanceof TileIntegrationTable)) {
-					return null;
-				} else {
-					return new GuiIntegrationTable(player.inventory, (TileIntegrationTable) tile);
-				}
+            case 1:
+                if (!(tile instanceof TileAdvancedCraftingTable)) {
+                    return null;
+                } else {
+                    return new GuiAdvancedCraftingTable(player, (TileAdvancedCraftingTable) tile);
+                }
 
-			case 3:
-				if (!(tile instanceof TileChargingTable)) {
-					return null;
-				} else {
-					return new GuiChargingTable(player.inventory, (TileChargingTable) tile);
-				}
+            case 2:
+                if (!(tile instanceof TileIntegrationTable)) {
+                    return null;
+                } else {
+                    return new GuiIntegrationTable(player, (TileIntegrationTable) tile);
+                }
 
-			case 4:
-				if (!(tile instanceof TileProgrammingTable)) {
-					return null;
-				} else {
-					return new GuiProgrammingTable(player.inventory, (TileProgrammingTable) tile);
-				}
+            case 3:
+                if (!(tile instanceof TileChargingTable)) {
+                    return null;
+                } else {
+                    return new GuiChargingTable(player, (TileChargingTable) tile);
+                }
 
-			case 5:
-				if (!(tile instanceof TileStampingTable)) {
-					return null;
-				} else {
-					return new GuiStampingTable(player.inventory, (TileStampingTable) tile);
-				}
+            case 4:
+                if (!(tile instanceof TileProgrammingTable)) {
+                    return null;
+                } else {
+                    return new GuiProgrammingTable(player, (TileProgrammingTable) tile);
+                }
 
-			case 10:
-				if (!(tile instanceof TilePackager)) {
-					return null;
-				} else {
-					return new GuiPackager(player.inventory, (TilePackager) tile);
-				}
+            case 5:
+                if (!(tile instanceof TileStampingTable)) {
+                    return null;
+                } else {
+                    return new GuiStampingTable(player, (TileStampingTable) tile);
+                }
 
-			default:
-				return null;
-		}
-	}
+            case 10:
+                if (!(tile instanceof TilePackager)) {
+                    return null;
+                } else {
+                    return new GuiPackager(player, (TilePackager) tile);
+                }
 
-	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
-			return null;
-		}
+            default:
+                return null;
+        }
+    }
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
 
-		switch (id) {
+        if (!world.isBlockLoaded(pos)) {
+            return null;
+        }
 
-			case 0:
-				if (!(tile instanceof TileAssemblyTable)) {
-					return null;
-				} else {
-					return new ContainerAssemblyTable(player.inventory, (TileAssemblyTable) tile);
-				}
+        TileEntity tile = world.getTileEntity(pos);
 
-			case 1:
-				if (!(tile instanceof TileAdvancedCraftingTable)) {
-					return null;
-				} else {
-					return new ContainerAdvancedCraftingTable(player.inventory, (TileAdvancedCraftingTable) tile);
-				}
+        switch (id) {
 
-			case 2:
-				if (!(tile instanceof TileIntegrationTable)) {
-					return null;
-				} else {
-					return new ContainerIntegrationTable(player.inventory, (TileIntegrationTable) tile);
-				}
+            case 0:
+                if (!(tile instanceof TileAssemblyTable)) {
+                    return null;
+                } else {
+                    return new ContainerAssemblyTable(player, (TileAssemblyTable) tile);
+                }
 
-			case 3:
-				if (!(tile instanceof TileChargingTable)) {
-					return null;
-				} else {
-					return new ContainerChargingTable(player.inventory, (TileChargingTable) tile);
-				}
+            case 1:
+                if (!(tile instanceof TileAdvancedCraftingTable)) {
+                    return null;
+                } else {
+                    return new ContainerAdvancedCraftingTable(player, (TileAdvancedCraftingTable) tile);
+                }
 
-			case 4:
-				if (!(tile instanceof TileProgrammingTable)) {
-					return null;
-				} else {
-					return new ContainerProgrammingTable(player.inventory, (TileProgrammingTable) tile);
-				}
+            case 2:
+                if (!(tile instanceof TileIntegrationTable)) {
+                    return null;
+                } else {
+                    return new ContainerIntegrationTable(player, (TileIntegrationTable) tile);
+                }
 
-			case 5:
-				if (!(tile instanceof TileStampingTable)) {
-					return null;
-				} else {
-					return new ContainerStampingTable(player.inventory, (TileStampingTable) tile);
-				}
+            case 3:
+                if (!(tile instanceof TileChargingTable)) {
+                    return null;
+                } else {
+                    return new ContainerChargingTable(player, (TileChargingTable) tile);
+                }
 
-			case 10:
-				if (!(tile instanceof TilePackager)) {
-					return null;
-				} else {
-					return new ContainerPackager(player.inventory, (TilePackager) tile);
-				}
+            case 4:
+                if (!(tile instanceof TileProgrammingTable)) {
+                    return null;
+                } else {
+                    return new ContainerProgrammingTable(player, (TileProgrammingTable) tile);
+                }
 
-			default:
-				return null;
-		}
-	}
+            case 5:
+                if (!(tile instanceof TileStampingTable)) {
+                    return null;
+                } else {
+                    return new ContainerStampingTable(player, (TileStampingTable) tile);
+                }
+
+            case 10:
+                if (!(tile instanceof TilePackager)) {
+                    return null;
+                } else {
+                    return new ContainerPackager(player, (TilePackager) tile);
+                }
+
+            default:
+                return null;
+        }
+    }
 }

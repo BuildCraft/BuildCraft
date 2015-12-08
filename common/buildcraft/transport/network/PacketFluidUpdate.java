@@ -1,125 +1,158 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
 import java.util.BitSet;
 
-import io.netty.buffer.ByteBuf;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
 
+import io.netty.buffer.ByteBuf;
+
 public class PacketFluidUpdate extends PacketCoordinates {
-	public FluidRenderData renderCache = new FluidRenderData();
-	public BitSet delta;
-	private boolean largeFluidCapacity;
+    public FluidRenderData renderCache = new FluidRenderData();
+    public BitSet delta;
 
-	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
-		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
-	}
+    private short fluidID = 0;
+    private int color = 0;
+    private int[] amount = new int[7];
+    public byte[] flow = new byte[6];
 
-	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket, boolean largeFluidCapacity) {
-		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
-		this.isChunkDataPacket = chunkPacket;
-		this.largeFluidCapacity = largeFluidCapacity;
-	}
+    public PacketFluidUpdate(TileGenericPipe tileG) {
+        super(tileG);
+    }
 
-	public PacketFluidUpdate() {
-	}
+    public PacketFluidUpdate(TileGenericPipe tileGP, boolean chunkPacket) {
+        super(tileGP);
+        this.isChunkDataPacket = chunkPacket;
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		super.readData(data);
+    public PacketFluidUpdate() {}
 
-		World world = CoreProxy.proxy.getClientWorld();
-		if (!world.blockExists(posX, posY, posZ)) {
-			return;
-		}
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
 
-		TileEntity entity = world.getTileEntity(posX, posY, posZ);
-		if (!(entity instanceof IPipeTile)) {
-			return;
-		}
+        byte[] dBytes = new byte[1];
+        data.readBytes(dBytes);
+        delta = BitSetUtils.fromByteArray(dBytes);
 
-		IPipeTile pipeTile = (IPipeTile) entity;
-		if (!(pipeTile.getPipe() instanceof Pipe)) {
-			return;
-		}
+        if (delta.get(0)) {
+            fluidID = data.readShort();
+            if (fluidID != 0) {
+                color = data.readInt();
+            }
+        }
 
-		Pipe<?> pipe = (Pipe<?>) pipeTile.getPipe();
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                amount[dir] = data.readShort();
+            }
+            if (dir < 6) {
+                flow[dir] = data.readByte();
+            }
+        }
+    }
 
-		if (!(pipe.transport instanceof PipeTransportFluids)) {
-			return;
-		}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
 
-		PipeTransportFluids transLiq = (PipeTransportFluids) pipe.transport;
+        byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
+        data.writeBytes(dBytes);
 
-		this.largeFluidCapacity = transLiq.getCapacity() > 255;
-		renderCache = transLiq.renderCache;
+        if (delta.get(0)) {
+            data.writeShort(renderCache.fluidID);
+            if (renderCache.fluidID != 0) {
+                data.writeInt(renderCache.color);
+                data.writeByte(renderCache.flags);
+            }
+        }
 
-		byte[] dBytes = new byte[1];
-		data.readBytes(dBytes);
-		delta = BitSetUtils.fromByteArray(dBytes);
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                data.writeShort(renderCache.amount[dir]);
+            }
+            if (dir < 6) {
+                data.writeByte(flow[dir]);
+            }
+        }
+    }
 
-		if (delta.get(0)) {
-			renderCache.fluidID = data.readShort();
-			renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
-			renderCache.flags = renderCache.fluidID != 0 ? data.readUnsignedByte() : 0;
-		}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (world.isAirBlock(pos)) {
+            return;
+        }
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
-			if (delta.get(dir.ordinal() + 1)) {
-				renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(),
-						largeFluidCapacity ? data.readUnsignedShort() : data.readUnsignedByte());
-			}
-		}
-	}
+        TileEntity entity = world.getTileEntity(pos);
+        if (!(entity instanceof TileGenericPipe)) {
+            return;
+        }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		super.writeData(data);
+        TileGenericPipe pipe = (TileGenericPipe) entity;
+        if (pipe.pipe == null) {
+            return;
+        }
 
-		byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
-		data.writeBytes(dBytes);
+        if (!(pipe.pipe.transport instanceof PipeTransportFluids)) {
+            return;
+        }
 
-		if (delta.get(0)) {
-			data.writeShort(renderCache.fluidID);
-			if (renderCache.fluidID != 0) {
-				data.writeInt(renderCache.color);
-				data.writeByte(renderCache.flags);
-			}
-		}
+        PipeTransportFluids trans = (PipeTransportFluids) pipe.pipe.transport;
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
-			if (delta.get(dir.ordinal() + 1)) {
-				if (largeFluidCapacity) {
-					data.writeShort(renderCache.amount[dir.ordinal()]);
-				} else {
-					data.writeByte(renderCache.amount[dir.ordinal()]);
-				}
-			}
-		}
-	}
+        // boolean fluidBefore = false;
+        // boolean fluidAfter = false;
 
-	@Override
-	public int getID() {
-		return PacketIds.PIPE_LIQUID;
-	}
+        renderCache = trans.renderCache;
+
+        renderCache.flow = flow;
+
+        // System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
+
+        if (delta.get(0)) {
+            renderCache.fluidID = fluidID;
+            Fluid fluid = FluidRegistry.getFluid(fluidID);
+            if (fluid == null) {
+                trans.fluidType = null;
+            } else {
+                trans.fluidType = new FluidStack(fluid, 1);
+            }
+            renderCache.color = color;
+        }
+
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                // boolean before = renderCache.amount[dir] > 0;
+                renderCache.amount[dir] = amount[dir];
+                // boolean after = renderCache.amount[dir] > 0;
+                // fluidBefore |= before;
+                // fluidAfter |= after;
+            }
+            if (dir < 6) {
+                trans.clientDisplayFlowConnection[dir] = flow[dir];
+            }
+        }
+
+        // TODO Fluid shader rendering (unused for now)
+        // if (fluidBefore && !fluidAfter) {
+        // FluidShaderManager.INSTANCE.getRenderer(Minecraft.getMinecraft().theWorld).removeFluidTransport(trans);
+        // }
+        // if (!fluidBefore && fluidAfter) {
+        // FluidShaderManager.INSTANCE.getRenderer(Minecraft.getMinecraft().theWorld).addFluidTransport(trans);
+        // }
+    }
 }

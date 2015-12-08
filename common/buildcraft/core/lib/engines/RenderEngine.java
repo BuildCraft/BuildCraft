@@ -1,193 +1,172 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
+
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftCore.RenderMode;
-import buildcraft.core.lib.render.IInventoryRenderer;
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.render.RenderResizableCuboid;
+import buildcraft.core.lib.render.RenderResizableCuboid.EnumShadeArgument;
+import buildcraft.core.lib.render.RenderResizableCuboid.IBlockLocation;
+import buildcraft.core.lib.render.RenderResizableCuboid.IFacingLocation;
+import buildcraft.core.lib.render.RenderResizableCuboid.RotatedFacingLocation;
+import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
 
-public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 
-	private static final float[] angleMap = new float[6];
+    private static final float[] angleMap = new float[6];
 
-	static {
-		angleMap[ForgeDirection.EAST.ordinal()] = (float) -Math.PI / 2;
-		angleMap[ForgeDirection.WEST.ordinal()] = (float) Math.PI / 2;
-		angleMap[ForgeDirection.UP.ordinal()] = 0;
-		angleMap[ForgeDirection.DOWN.ordinal()] = (float) Math.PI;
-		angleMap[ForgeDirection.SOUTH.ordinal()] = (float) Math.PI / 2;
-		angleMap[ForgeDirection.NORTH.ordinal()] = (float) -Math.PI / 2;
-	}
+    /** The number of stages to go through. Increase this number to go through more stages (smoother), decrease this
+     * number to go through less stages (jumpier) */
+    static {
+        angleMap[EnumFacing.EAST.ordinal()] = (float) -Math.PI / 2;
+        angleMap[EnumFacing.WEST.ordinal()] = (float) Math.PI / 2;
+        angleMap[EnumFacing.UP.ordinal()] = 0;
+        angleMap[EnumFacing.DOWN.ordinal()] = (float) Math.PI;
+        angleMap[EnumFacing.SOUTH.ordinal()] = (float) Math.PI / 2;
+        angleMap[EnumFacing.NORTH.ordinal()] = (float) -Math.PI / 2;
+    }
 
-	private ModelBase model = new ModelBase() {
-	};
+    private TextureAtlasSprite spriteChamber;
+    private final Map<EnumEngineType, TextureAtlasSprite> spriteBoxSide = Maps.newEnumMap(EnumEngineType.class);
+    private final Map<EnumEngineType, TextureAtlasSprite> spriteBoxTop = Maps.newEnumMap(EnumEngineType.class);
 
-	private ModelRenderer box;
-	private ModelRenderer trunk;
-	private ModelRenderer movingBox;
-	private ModelRenderer chamber;
+    public RenderEngine() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-	private ResourceLocation baseTexture;
-	private ResourceLocation chamberTexture;
-	private ResourceLocation trunkTexture;
+    @SubscribeEvent
+    public void textureStitchPost(TextureStitchEvent.Post post) {
+        spriteChamber = post.map.getAtlasSprite("buildcraftcore:blocks/engine/inv/chamber_base");
+        for (EnumEngineType type : EnumEngineType.values()) {
+            spriteBoxSide.put(type, post.map.getAtlasSprite(type.resourceLocation + "side"));
+            spriteBoxTop.put(type, post.map.getAtlasSprite(type.resourceLocation + "back"));
+        }
+    }
 
-	public RenderEngine() {
-		box = new ModelRenderer(model, 0, 1);
-		box.addBox(-8F, -8F, -8F, 16, 4, 16);
-		box.rotationPointX = 8;
-		box.rotationPointY = 8;
-		box.rotationPointZ = 8;
+    @Override
+    public void renderTileEntityAt(TileEngineBase engine, double x, double y, double z, float f, int wtfIsThis) {
+        if (engine != null) {
+            World world = engine.getWorld();
+            BlockPos pos = engine.getPos();
+            IBlockState engineState = world.getBlockState(pos);
+            if (engineState.getBlock() instanceof BlockEngineBase) {
+                engineState = engineState.getBlock().getActualState(engineState, world, pos);
 
-		trunk = new ModelRenderer(model, 1, 1);
-		trunk.addBox(-4F, -4F, -4F, 8, 12, 8);
-		trunk.rotationPointX = 8F;
-		trunk.rotationPointY = 8F;
-		trunk.rotationPointZ = 8F;
+                if (BuildCraftProperties.MOVING.getValue(engineState)) {
+                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-		movingBox = new ModelRenderer(model, 0, 1);
-		movingBox.addBox(-8F, -4, -8F, 16, 4, 16);
-		movingBox.rotationPointX = 8F;
-		movingBox.rotationPointY = 8F;
-		movingBox.rotationPointZ = 8F;
+                    // int light = world.getCombinedLight(pos, 0);
+                    // int skyLight = light % (1 << 16);
+                    // int blockLight = light / (1 << 16);
+                    // OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight, blockLight);
+                    // RenderHelper.enableStandardItemLighting();
 
-		chamber = new ModelRenderer(model, 1, 1);
-		chamber.addBox(-5F, -4, -5F, 10, 2, 10);
-		chamber.rotationPointX = 8F;
-		chamber.rotationPointY = 8F;
-		chamber.rotationPointZ = 8F;
-	}
+                    GL11.glPushMatrix();
+                    GL11.glTranslated(x, y, z);
 
-	public RenderEngine(ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture) {
-		this();
-		this.baseTexture = baseTexture;
-		this.chamberTexture = chamberTexture;
-		this.trunkTexture = trunkTexture;
-		field_147501_a = TileEntityRendererDispatcher.instance;
-	}
+                    fireRenderer(engine.type, engine.orientation, engine.progress, pos);
+                    GL11.glPopMatrix();
+                }
+            }
+        }
+    }
 
-	public RenderEngine(TileEngineBase engine) {
-		this(engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(TileEngineBase.EnergyStage.BLUE));
-	}
+    private void fireRenderer(EnumEngineType type, final EnumFacing face, float progress, BlockPos pos) {
+        if (progress > 0.5) {
+            progress = 1 - progress;
+        }
+        progress *= 2;
+        // Display List
+        {
+            // listMap.get(type).renderStage(progress);
+        }
+        // Constant
+        {
+            final Vec3 coord = Utils.convert(pos);
+            IBlockLocation locationFormula = new IBlockLocation() {
+                @Override
+                public Vec3 transformToWorld(Vec3 vec) {
+                    return coord;
+                }
+            };
 
-	@Override
-	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(0.25F, ForgeDirection.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
-	}
+            IFacingLocation faceFormula = new RotatedFacingLocation(EnumFacing.UP, face);
 
-	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		TileEngineBase engine = (TileEngineBase) tileentity;
+            GL11.glPushMatrix();
 
-		if (engine != null) {
-			/* float progress = engine.progress + (engine.progressPart != 0 ? f * engine.getPistonSpeed() : 0);
-			if (progress > 1) {
-				progress = 0;
-			} -- uncomment out for smooth engine rendering */
+            RenderUtils.translate(Utils.VEC_HALF);
+            if (face == EnumFacing.DOWN) {
+                GL11.glRotated(180, 1, 0, 0);
+            } else if (face == EnumFacing.UP) {
+                // Up is already correct
+            } else {
+                GL11.glRotated(90, 1, 0, 0);
+                int angle = 0;
+                EnumFacing tempFace = face;
+                while (tempFace != EnumFacing.SOUTH) {
+                    angle += 90;
+                    tempFace = tempFace.rotateYCCW();
+                }
+                // rotate Z because we rotated the whole axis model to swap Y and Z (so we really rotate the Y axis)
+                GL11.glRotated(angle, 0, 0, 1);
+                // Rotate the X axis back (because we messed it up above). Which is now the Y axis because we just
+                // swapped X and Z with Y I think... or something... IT WORKS OK SHUT UP.
+                GL11.glRotated(-angle, 0, 1, 0);
+            }
+            RenderUtils.translate(Utils.vec3(-0.5));
 
-			render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine.getEnergyStage()), x, y, z);
-		}
-	}
+            EntityResizableCuboid chamberCuboid = new EntityResizableCuboid(getWorld());
+            chamberCuboid.texture = spriteChamber;
+            chamberCuboid.setTextureOffset(new Vec3(3, 0, 3));
 
-	private void render(float progress, ForgeDirection orientation, ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture, double x, double y, double z) {
-		if (BuildCraftCore.render == RenderMode.NoDynamic) {
-			return;
-		}
+            Vec3 chamberSize = Utils.divide(new Vec3(10, progress * 8, 10), 16);
+            chamberCuboid.setSize(chamberSize);
 
-		GL11.glPushMatrix();
-		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glColor3f(1, 1, 1);
+            Vec3 chamberOffset = Utils.divide(new Vec3(3, 4, 3), 16);
 
-		GL11.glTranslatef((float) x, (float) y, (float) z);
+            RenderUtils.translate(chamberOffset);
+            RenderResizableCuboid.INSTANCE.renderCube(chamberCuboid, EnumShadeArgument.FACE_LIGHT, locationFormula, faceFormula);
+            RenderUtils.translate(Utils.multiply(chamberOffset, -1));
 
-		float step;
+            EntityResizableCuboid boxCuboid = new EntityResizableCuboid(getWorld());
+            boxCuboid.texture = spriteBoxSide.get(type);
+            boxCuboid.makeClient();
+            boxCuboid.textures[EnumFacing.UP.ordinal()] = spriteBoxTop.get(type);
+            boxCuboid.textures[EnumFacing.DOWN.ordinal()] = spriteBoxTop.get(type);
+            Vec3 boxSize = Utils.divide(new Vec3(16, 4, 16), 16);
+            boxCuboid.setSize(boxSize);
 
-		if (progress > 0.5) {
-			step = 7.99F - (progress - 0.5F) * 2F * 7.99F;
-		} else {
-			step = progress * 2F * 7.99F;
-		}
+            Vec3 boxOffset = new Vec3(0, 4 / 16d + progress / 2, 0);
 
-		float translatefact = step / 16;
+            RenderUtils.translate(boxOffset);
+            RenderResizableCuboid.INSTANCE.renderCube(boxCuboid, EnumShadeArgument.FACE_LIGHT, locationFormula, faceFormula);
+            RenderUtils.translate(Utils.multiply(boxOffset, -1));
 
-		float[] angle = {0, 0, 0};
-		float[] translate = {orientation.offsetX, orientation.offsetY, orientation.offsetZ};
-
-		switch (orientation) {
-			case EAST:
-			case WEST:
-			case DOWN:
-				angle[2] = angleMap[orientation.ordinal()];
-				break;
-			case SOUTH:
-			case NORTH:
-			default:
-				angle[0] = angleMap[orientation.ordinal()];
-				break;
-		}
-
-		box.rotateAngleX = angle[0];
-		box.rotateAngleY = angle[1];
-		box.rotateAngleZ = angle[2];
-
-		trunk.rotateAngleX = angle[0];
-		trunk.rotateAngleY = angle[1];
-		trunk.rotateAngleZ = angle[2];
-
-		movingBox.rotateAngleX = angle[0];
-		movingBox.rotateAngleY = angle[1];
-		movingBox.rotateAngleZ = angle[2];
-
-		chamber.rotateAngleX = angle[0];
-		chamber.rotateAngleY = angle[1];
-		chamber.rotateAngleZ = angle[2];
-
-		float factor = (float) (1.0 / 16.0);
-
-		bindTexture(baseTexture);
-
-		box.render(factor);
-
-		GL11.glTranslatef(translate[0] * translatefact, translate[1] * translatefact, translate[2] * translatefact);
-		movingBox.render(factor);
-		GL11.glTranslatef(-translate[0] * translatefact, -translate[1] * translatefact, -translate[2] * translatefact);
-
-		bindTexture(chamberTexture);
-
-		float chamberf = 2F / 16F;
-		int chamberc = ((int) step + 4) / 2;
-
-		for (int i = 0; i <= step + 2; i += 2) {
-			chamber.render(factor);
-			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
-		}
-
-		GL11.glTranslatef(-translate[0] * chamberf * chamberc, -translate[1] * chamberf * chamberc, -translate[2] * chamberf * chamberc);
-
-		bindTexture(trunkTexture);
-
-		trunk.render(factor);
-
-		GL11.glPopAttrib();
-		GL11.glPopMatrix();
-	}
+            GL11.glPopMatrix();
+        }
+    }
 }

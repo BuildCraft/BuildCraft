@@ -10,17 +10,14 @@ package buildcraft.core.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ITileBufferHolder {
+    void blockRemoved(EnumFacing from);
 
-	void blockRemoved(ForgeDirection from);
+    void blockCreated(EnumFacing from, Block block, TileEntity tile);
 
-	void blockCreated(ForgeDirection from, Block block, TileEntity tile);
+    Block getBlock(EnumFacing to);
 
-	Block getBlock(ForgeDirection to);
-
-	TileEntity getTile(ForgeDirection to);
-
+    TileEntity getTile(EnumFacing to);
 }

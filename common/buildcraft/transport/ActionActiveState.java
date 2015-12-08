@@ -9,7 +9,7 @@
 package buildcraft.transport;
 
 public enum ActionActiveState {
-	Deactivated,
-	Partial,
-	Activated
+    Deactivated,
+    Partial,
+    Activated
 }

@@ -14,19 +14,16 @@ import net.minecraft.util.StatCollector;
 
 public final class StringUtils {
 
-	public static final Splitter newLineSplitter = Splitter.on("\\n");
+    public static final Splitter newLineSplitter = Splitter.on("\\n");
 
-	/**
-	 * Deactivate constructor
-	 */
-	private StringUtils() {
-	}
+    /** Deactivate constructor */
+    private StringUtils() {}
 
-	public static String localize(String key) {
-		return StatCollector.translateToLocal(key);
-	}
+    public static String localize(String key) {
+        return StatCollector.translateToLocal(key);
+    }
 
-	public static boolean canLocalize(String key) {
-		return StatCollector.canTranslate(key);
-	}
+    public static boolean canLocalize(String key) {
+        return StatCollector.canTranslate(key);
+    }
 }

@@ -16,48 +16,48 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
 public class ItemLaserTable extends ItemBlockBuildCraft {
 
-	public ItemLaserTable(Block block) {
-		super(block);
-		setMaxDamage(0);
-		setHasSubtypes(true);
-	}
+    public ItemLaserTable(Block block) {
+        super(block);
+        setMaxDamage(0);
+        setHasSubtypes(true);
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		switch (stack.getItemDamage()) {
-			case 0:
-				return "tile.assemblyTableBlock";
-			case 1:
-				return "tile.assemblyWorkbenchBlock";
-			case 2:
-				return "tile.integrationTableBlock";
-			case 3:
-				return "tile.chargingTableBlock";
-			case 4:
-				return "tile.programmingTableBlock";
-			case 5:
-				return "tile.stampingTableBlock";
-		}
-		return super.getUnlocalizedName();
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        switch (stack.getItemDamage()) {
+            case 0:
+                return "tile.assemblyTableBlock";
+            case 1:
+                return "tile.assemblyWorkbenchBlock";
+            case 2:
+                return "tile.integrationTableBlock";
+            case 3:
+                return "tile.chargingTableBlock";
+            case 4:
+                return "tile.programmingTableBlock";
+            case 5:
+                return "tile.stampingTableBlock";
+        }
+        return super.getUnlocalizedName();
+    }
 
-	@Override
+    @Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean adv) {
 		if (stack.getItemDamage() == 1) {
 			strings.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
 		}
 	}
 
 	@Override
-	public int getMetadata(int meta) {
-		return meta < BlockLaserTable.TABLE_MAX ? meta : 0;
-	}
+    public int getMetadata(int meta) {
+        return meta < BlockLaserTable.TABLE_MAX ? meta : 0;
+    }
 }

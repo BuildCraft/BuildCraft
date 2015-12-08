@@ -20,76 +20,74 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 
 public class Tank extends FluidTank {
-	public int colorRenderCache = 0xFFFFFF;
+    public int colorRenderCache = 0xFFFFFF;
 
-	protected final ToolTip toolTip = new ToolTip() {
-		@Override
-		public void refresh() {
-			refreshTooltip();
-		}
-	};
+    protected final ToolTip toolTip = new ToolTip() {
+        @Override
+        public void refresh() {
+            refreshTooltip();
+        }
+    };
 
-	private final String name;
+    private final String name;
 
-	public Tank(String name, int capacity, TileEntity tile) {
-		super(capacity);
-		this.name = name;
-		this.tile = tile;
-	}
+    public Tank(String name, int capacity, TileEntity tile) {
+        super(capacity);
+        this.name = name;
+        this.tile = tile;
+    }
 
-	public boolean isEmpty() {
-		return getFluid() == null || getFluid().amount <= 0;
-	}
+    public boolean isEmpty() {
+        return getFluid() == null || getFluid().amount <= 0;
+    }
 
-	public boolean isFull() {
-		return getFluid() != null && getFluid().amount >= getCapacity();
-	}
+    public boolean isFull() {
+        return getFluid() != null && getFluid().amount >= getCapacity();
+    }
 
-	public Fluid getFluidType() {
-		return getFluid() != null ? getFluid().getFluid() : null;
-	}
+    public Fluid getFluidType() {
+        return getFluid() != null ? getFluid().getFluid() : null;
+    }
 
-	@Override
-	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		NBTTagCompound tankData = new NBTTagCompound();
-		super.writeToNBT(tankData);
-		writeTankToNBT(tankData);
-		nbt.setTag(name, tankData);
-		return nbt;
-	}
+    @Override
+    public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        NBTTagCompound tankData = new NBTTagCompound();
+        super.writeToNBT(tankData);
+        writeTankToNBT(tankData);
+        nbt.setTag(name, tankData);
+        return nbt;
+    }
 
-	@Override
-	public final FluidTank readFromNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey(name)) {
-			// allow to read empty tanks
-			setFluid(null);
+    @Override
+    public final FluidTank readFromNBT(NBTTagCompound nbt) {
+        if (nbt.hasKey(name)) {
+            // allow to read empty tanks
+            setFluid(null);
 
-			NBTTagCompound tankData = nbt.getCompoundTag(name);
-			super.readFromNBT(tankData);
-			readTankFromNBT(tankData);
-		}
-		return this;
-	}
+            NBTTagCompound tankData = nbt.getCompoundTag(name);
+            super.readFromNBT(tankData);
+            readTankFromNBT(tankData);
+        }
+        return this;
+    }
 
-	public void writeTankToNBT(NBTTagCompound nbt) {
-	}
+    public void writeTankToNBT(NBTTagCompound nbt) {}
 
-	public void readTankFromNBT(NBTTagCompound nbt) {
-	}
+    public void readTankFromNBT(NBTTagCompound nbt) {}
 
-	public ToolTip getToolTip() {
-		return toolTip;
-	}
+    public ToolTip getToolTip() {
+        return toolTip;
+    }
 
-	protected void refreshTooltip() {
-		toolTip.clear();
-		int amount = 0;
-		if (getFluid() != null && getFluid().amount > 0) {
-			ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()));
-			fluidName.setSpacing(2);
-			toolTip.add(fluidName);
-			amount = getFluid().amount;
-		}
-		toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
-	}
+    protected void refreshTooltip() {
+        toolTip.clear();
+        int amount = 0;
+        if (getFluid() != null && getFluid().amount > 0) {
+            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()));
+            fluidName.setSpacing(2);
+            toolTip.add(fluidName);
+            amount = getFluid().amount;
+        }
+        toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
+    }
 }

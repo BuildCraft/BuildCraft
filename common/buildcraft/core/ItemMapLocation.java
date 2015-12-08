@@ -1,284 +1,278 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.ZonePlan;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
-	public ItemMapLocation() {
-		super(BCCreativeTab.get("main"));
-	}
+    public ItemMapLocation() {
+        super(BCCreativeTab.get("main"));
+        setHasSubtypes(true);
+    }
 
-	@Override
-	public int getItemStackLimit(ItemStack stack) {
-		return NBTUtils.getItemData(stack).hasKey("kind") ? 1 : 16;
-	}
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        return MapLocationType.getFromStack(stack) == MapLocationType.CLEAN ? 16 : 1;
+    }
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, @SuppressWarnings("rawtypes") List list, boolean advanced) {
+        @SuppressWarnings("unchecked")
+        List<String> strings = list;
+        NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
-		if (cpt.hasKey("name")) {
-			String name = cpt.getString("name");
-			if (name.length() > 0) {
-				list.add(name);
-			}
-		}
+        if (cpt.hasKey("name")) {
+            String name = cpt.getString("name");
+            if (name.length() > 0) {
+                strings.add(name);
+            }
+        }
 
-		if (cpt.hasKey("kind")) {
-			switch (cpt.getByte("kind")) {
-				case 0: {
-					int x = cpt.getInteger("x");
-					int y = cpt.getInteger("y");
-					int z = cpt.getInteger("z");
-					ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
+        MapLocationType type = MapLocationType.getFromStack(stack);
+        switch (type) {
+            case SPOT: {
+                int x = cpt.getInteger("x");
+                int y = cpt.getInteger("y");
+                int z = cpt.getInteger("z");
+                EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
-					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
-					break;
-				}
-				case 1: {
-					int x = cpt.getInteger("xMin");
-					int y = cpt.getInteger("yMin");
-					int z = cpt.getInteger("zMin");
-					int xLength = cpt.getInteger("xMax") - x + 1;
-					int yLength = cpt.getInteger("yMax") - y + 1;
-					int zLength = cpt.getInteger("zMax") - z + 1;
+                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                break;
+            }
+            case AREA: {
+                int x = cpt.getInteger("xMin");
+                int y = cpt.getInteger("yMin");
+                int z = cpt.getInteger("zMin");
+                int xLength = cpt.getInteger("xMax") - x + 1;
+                int yLength = cpt.getInteger("yMax") - y + 1;
+                int zLength = cpt.getInteger("zMax") - z + 1;
 
-					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
-					break;
-				}
-				case 2: {
-					NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-					BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
+                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                break;
+            }
+            case PATH: {
+                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+                BlockPos first = NBTUtils.readBlockPos(pathNBT);
 
-					int x = first.x;
-					int y = first.y;
-					int z = first.z;
+                int x = first.getX();
+                int y = first.getY();
+                int z = first.getZ();
 
-					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
-					break;
-				}
-				case 3: {
-					break;
-				}
-			}
-		}
-	}
+                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
 
-	@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+    @Override
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9,
+            float par10) {
+        if (world.isRemote) {
+            return false;
+        }
 
-		if (!cpt.hasKey("kind")) {
-			return icons[0];
-		} else {
-			return getIconFromDamage(cpt.getByte("kind") + 1);
-		}
-	}
+        TileEntity tile = world.getTileEntity(pos);
+        NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
-	@Override
-	public String[] getIconNames() {
-		return new String[]{"mapLocation/clean", "mapLocation/spot", "mapLocation/area", "mapLocation/path", "mapLocation/zone"};
-	}
+        if (tile instanceof IPathProvider) {
+            MapLocationType.PATH.setToStack(stack);
 
+            NBTTagList pathNBT = new NBTTagList();
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		super.registerIcons(par1IconRegister);
-	}
+            for (BlockPos index : ((IPathProvider) tile).getPath()) {
+                pathNBT.appendTag(NBTUtils.writeBlockPos(index));
+            }
 
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
-							 int y, int z, int side, float par8, float par9, float par10) {
-		TileEntity tile = world.getTileEntity(x, y, z);
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+            cpt.setTag("path", pathNBT);
+        } else if (tile instanceof IAreaProvider) {
+            MapLocationType.AREA.setToStack(stack);
 
-		if (tile instanceof IPathProvider) {
-			cpt.setByte("kind", (byte) 2);
+            IAreaProvider areaTile = (IAreaProvider) tile;
 
-			NBTTagList pathNBT = new NBTTagList();
+            cpt.setInteger("xMin", areaTile.xMin());
+            cpt.setInteger("yMin", areaTile.yMin());
+            cpt.setInteger("zMin", areaTile.zMin());
+            cpt.setInteger("xMax", areaTile.xMax());
+            cpt.setInteger("yMax", areaTile.yMax());
+            cpt.setInteger("zMax", areaTile.zMax());
 
-			for (BlockIndex index : ((IPathProvider) tile).getPath()) {
-				NBTTagCompound nbt = new NBTTagCompound();
-				index.writeTo(nbt);
-				pathNBT.appendTag(nbt);
-			}
+        } else {
+            MapLocationType.SPOT.setToStack(stack);
 
-			cpt.setTag("path", pathNBT);
-		} else if (tile instanceof IAreaProvider) {
-			cpt.setByte("kind", (byte) 1);
+            cpt.setByte("side", (byte) side.getIndex());
+            cpt.setInteger("x", pos.getX());
+            cpt.setInteger("y", pos.getY());
+            cpt.setInteger("z", pos.getZ());
+        }
 
-			IAreaProvider areaTile = (IAreaProvider) tile;
+        return true;
+    }
 
-			cpt.setInteger("xMin", areaTile.xMin());
-			cpt.setInteger("yMin", areaTile.yMin());
-			cpt.setInteger("zMin", areaTile.zMin());
-			cpt.setInteger("xMax", areaTile.xMax());
-			cpt.setInteger("yMax", areaTile.yMax());
-			cpt.setInteger("zMax", areaTile.zMax());
+    @Override
+    public IBox getBox(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
 
-		} else {
-			cpt.setByte("kind", (byte) 0);
+        switch (type) {
+            case AREA: {
+                int xMin = cpt.getInteger("xMin");
+                int yMin = cpt.getInteger("yMin");
+                int zMin = cpt.getInteger("zMin");
+                int xMax = cpt.getInteger("xMax");
+                int yMax = cpt.getInteger("yMax");
+                int zMax = cpt.getInteger("zMax");
 
-			cpt.setByte("side", (byte) side);
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
-		}
+                return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
+            }
+            case SPOT: {
+                return getPointBox(item);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 
-		return true;
-	}
+    public static IBox getPointBox(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
 
-	@Override
-	public IBox getBox(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
+        switch (type) {
+            case SPOT: {
+                int x = cpt.getInteger("x");
+                int y = cpt.getInteger("y");
+                int z = cpt.getInteger("z");
 
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
-			int xMin = cpt.getInteger("xMin");
-			int yMin = cpt.getInteger("yMin");
-			int zMin = cpt.getInteger("zMin");
-			int xMax = cpt.getInteger("xMax");
-			int yMax = cpt.getInteger("yMax");
-			int zMax = cpt.getInteger("zMax");
+                return new Box(x, y, z, x, y, z);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 
-			return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
-		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return getPointBox(item);
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public EnumFacing getPointSide(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
 
-	public static IBox getPointBox(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
+        if (type == MapLocationType.SPOT) {
+            return EnumFacing.values()[cpt.getByte("side")];
+        } else {
+            return null;
+        }
+    }
 
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			int x = cpt.getInteger("x");
-			int y = cpt.getInteger("y");
-			int z = cpt.getInteger("z");
+    @Override
+    public BlockPos getPoint(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
 
-			return new Box(x, y, z, x, y, z);
-		} else {
-			return null;
-		}
-	}
+        if (type == MapLocationType.SPOT) {
+            return new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public ForgeDirection getPointSide(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
+    @Override
+    public IZone getZone(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
+        switch (type) {
+            case ZONE: {
+                ZonePlan plan = new ZonePlan();
+                plan.readFromNBT(cpt);
+                return plan;
+            }
+            case AREA: {
+                return getBox(item);
+            }
+            case PATH: {
+                return getPointBox(item);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return ForgeDirection.values()[cpt.getByte("side")];
-		} else {
-			return ForgeDirection.UNKNOWN;
-		}
-	}
+    @Override
+    public List<BlockPos> getPath(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
+        switch (type) {
+            case PATH: {
+                List<BlockPos> indexList = new ArrayList<BlockPos>();
+                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+                for (int i = 0; i < pathNBT.tagCount(); i++) {
+                    indexList.add(NBTUtils.readBlockPos(pathNBT.getCompoundTagAt(i)));
+                }
+                return indexList;
+            }
+            case SPOT: {
+                List<BlockPos> indexList = new ArrayList<BlockPos>();
+                indexList.add(new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z")));
+                return indexList;
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 
-	@Override
-	public BlockIndex getPoint(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
+    public static void setZone(ItemStack item, ZonePlan plan) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType.ZONE.setToStack(item);
+        plan.writeToNBT(cpt);
+    }
 
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public String getName(ItemStack item) {
+        return NBTUtils.getItemData(item).getString("name");
+    }
 
-	@Override
-	public IZone getZone(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
+    @Override
+    public boolean setName(ItemStack item, String name) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        cpt.setString("name", name);
+        return true;
+    }
 
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 3) {
-			ZonePlan plan = new ZonePlan();
-			plan.readFromNBT(cpt);
-
-			return plan;
-		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
-			return getBox(item);
-		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return getPointBox(item);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public List<BlockIndex> getPath(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
-
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 2) {
-			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
-			NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-			for (int i = 0; i < pathNBT.tagCount(); i++) {
-				indexList.add(new BlockIndex(pathNBT.getCompoundTagAt(i)));
-			}
-			return indexList;
-		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
-			indexList.add(new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z")));
-			return indexList;
-		} else {
-			return null;
-		}
-	}
-
-	public static void setZone(ItemStack item, ZonePlan plan) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
-
-		cpt.setByte("kind", (byte) 3);
-		plan.writeToNBT(cpt);
-	}
-
-	@Override
-	public String getName(ItemStack item) {
-		return NBTUtils.getItemData(item).getString("name");
-	}
-
-	@Override
-	public boolean setName(ItemStack item, String name) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
-		cpt.setString("name", name);
-
-		return true;
-	}
-
-	@Override
-	public MapLocationType getType(ItemStack stack) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
-		return MapLocationType.values()[cpt.getByte("kind")];
-	}
+    @Override
+    public void registerModels() {
+        ModelHelper.registerItemModel(this, MapLocationType.CLEAN.meta, "/clean");
+        ModelHelper.registerItemModel(this, MapLocationType.SPOT.meta, "/spot");
+        ModelHelper.registerItemModel(this, MapLocationType.AREA.meta, "/area");
+        ModelHelper.registerItemModel(this, MapLocationType.PATH.meta, "/path");
+        ModelHelper.registerItemModel(this, MapLocationType.ZONE.meta, "/zone");
+    }
 }

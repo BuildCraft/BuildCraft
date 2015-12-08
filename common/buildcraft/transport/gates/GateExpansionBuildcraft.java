@@ -8,49 +8,50 @@
  */
 package buildcraft.transport.gates;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
-	private final String tag;
-	private IIcon iconBlock;
-	private IIcon iconItem;
+    private final String tag;
+    private TextureAtlasSprite iconBlock;
+    private TextureAtlasSprite iconItem;
 
-	public GateExpansionBuildcraft(String tag) {
-		this.tag = tag;
-	}
+    public GateExpansionBuildcraft(String tag) {
+        this.tag = tag;
+    }
 
-	@Override
-	public String getUniqueIdentifier() {
-		return "buildcraft:" + tag;
-	}
+    @Override
+    public String getUniqueIdentifier() {
+        return "buildcraft:" + tag;
+    }
 
-	@Override
-	public String getDisplayName() {
-		return StringUtils.localize("gate.expansion." + tag);
-	}
+    @Override
+    public String getDisplayName() {
+        return StringUtils.localize("gate.expansion." + tag);
+    }
 
-	@Override
-	public void registerBlockOverlay(IIconRegister iconRegister) {
-		iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
-	}
+    @Override
+    public void registerBlockOverlay(TextureMap iconRegister) {
+        iconBlock = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_expansion_" + tag));
+    }
 
-	@Override
-	public void registerItemOverlay(IIconRegister iconRegister) {
-		iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
-	}
+    @Override
+    public void registerItemOverlay(TextureMap iconRegister) {
+        iconItem = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_expansion_" + tag));
+    }
 
-	@Override
-	public IIcon getOverlayBlock() {
-		return iconBlock;
-	}
+    @Override
+    public TextureAtlasSprite getOverlayBlock() {
+        return iconBlock;
+    }
 
-	@Override
-	public IIcon getOverlayItem() {
-		return iconItem;
-	}
+    @Override
+    public TextureAtlasSprite getOverlayItem() {
+        return iconItem;
+    }
 }

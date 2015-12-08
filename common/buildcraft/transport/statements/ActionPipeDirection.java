@@ -10,9 +10,8 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.statements.IActionInternal;
@@ -23,32 +22,27 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionPipeDirection extends BCStatement implements IActionInternal {
 
-	public final ForgeDirection direction;
+    public final EnumFacing direction;
 
-	public ActionPipeDirection(ForgeDirection direction) {
-		super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
+    public ActionPipeDirection(EnumFacing direction) {
+        super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ROOT), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ROOT));
+		setBuildCraftLocation("core", "triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ROOT));
+        this.direction = direction;
+    }
 
-		this.direction = direction;
-	}
+    @Override
+    public String getDescription() {
+        return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ROOT) + " Pipe Direction";
+    }
 
-	@Override
-	public String getDescription() {
-		return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ENGLISH) + " Pipe Direction";
-	}
+    @Override
+    public IStatement rotateLeft() {
+        EnumFacing face = direction.getAxis() == Axis.Y ? direction : direction.rotateY();
+        return BuildCraftTransport.actionPipeDirection[face.ordinal()];
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
-	}
+    @Override
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
 
-	@Override
-	public IStatement rotateLeft() {
-		return BuildCraftTransport.actionPipeDirection[direction.getRotation(ForgeDirection.UP).ordinal()];
-	}
-
-	@Override
-	public void actionActivate(IStatementContainer source,
-							   IStatementParameter[] parameters) {
-
-	}
+    }
 }

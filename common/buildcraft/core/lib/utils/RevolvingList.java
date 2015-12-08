@@ -16,55 +16,54 @@ import com.google.common.collect.ForwardingCollection;
 
 public class RevolvingList<T> extends ForwardingCollection<T> {
 
-	private Deque<T> list = new LinkedList<T>();
+    private Deque<T> list = new LinkedList<T>();
 
-	public RevolvingList() {
-	}
+    public RevolvingList() {}
 
-	public RevolvingList(Collection<? extends T> collection) {
-		list.addAll(collection);
-	}
+    public RevolvingList(Collection<? extends T> collection) {
+        list.addAll(collection);
+    }
 
-	@Override
-	protected Collection<T> delegate() {
-		return list;
-	}
+    @Override
+    protected Collection<T> delegate() {
+        return list;
+    }
 
-	public void rotateLeft() {
-		if (list.isEmpty()) {
-			return;
-		} else {
-			list.addFirst(list.removeLast());
-		}
-	}
+    public void rotateLeft() {
+        if (list.isEmpty()) {
+            return;
+        } else {
+            list.addFirst(list.removeLast());
+        }
+    }
 
-	public void rotateRight() {
-		if (list.isEmpty()) {
-			return;
-		} else {
-			list.addLast(list.removeFirst());
-		}
-	}
+    public void rotateRight() {
+        if (list.isEmpty()) {
+            return;
+        } else {
+            list.addLast(list.removeFirst());
+        }
+    }
 
-	public T getCurrent() {
-		if (list.isEmpty()) {
-			return null;
-		} else {
-			return list.getFirst();
-		}
-	}
+    public T getCurrent() {
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.getFirst();
+        }
+    }
 
-	public void setCurrent(T e) {
-		if (!contains(e)) {
-			return;
-		} else if (e == null) {
-			while (getCurrent() != null) {
-				rotateRight();
-			}
-		} else {
-			while (getCurrent() == null || !getCurrent().equals(e)) {
-				rotateRight();
-			}
-		}
-	}
+    public void setCurrent(T e) {
+        if (!contains(e)) {
+            return;
+        } else if (e == null) {
+            while (getCurrent() != null) {
+                rotateRight();
+            }
+        } else {
+            while (getCurrent() == null || !getCurrent().equals(e)) {
+                rotateRight();
+            }
+        }
+    }
 }

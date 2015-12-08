@@ -13,61 +13,61 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.core.Position;
 
 public abstract class BuildingSlot {
 
-	public LinkedList<ItemStack> stackConsumed;
+    public LinkedList<ItemStack> stackConsumed;
 
-	public boolean reserved = false;
+    public boolean reserved = false;
 
-	public boolean built = false;
+    public boolean built = false;
 
 	public boolean writeToWorld(IBuilderContext context) {
 		return false;
-	}
+    }
 
-	public void writeCompleted(IBuilderContext context, double complete) {
+    public void writeCompleted(IBuilderContext context, double complete) {
 
-	}
+    }
 
-	public void postProcessing(IBuilderContext context) {
+    public void postProcessing(IBuilderContext context) {
 
-	}
+    }
 
-	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
-		return new LinkedList<ItemStack>();
-	}
+    public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
+        return new LinkedList<ItemStack>();
+    }
 
-	public abstract Position getDestination();
+    public abstract Vec3 getDestination();
 
-	public void addStackConsumed(ItemStack stack) {
-		if (stackConsumed == null) {
-			stackConsumed = new LinkedList<ItemStack>();
-		}
+    public void addStackConsumed(ItemStack stack) {
+        if (stackConsumed == null) {
+            stackConsumed = new LinkedList<ItemStack>();
+        }
 
-		stackConsumed.add(stack);
-	}
+        stackConsumed.add(stack);
+    }
 
 	public List<ItemStack> getStacksToDisplay() {
-		return getSchematic().getStacksToDisplay(stackConsumed);
-	}
+        return getSchematic().getStacksToDisplay(stackConsumed);
+    }
 
-	public abstract boolean isAlreadyBuilt(IBuilderContext context);
+    public abstract boolean isAlreadyBuilt(IBuilderContext context);
 
-	public abstract Schematic getSchematic();
+    public abstract Schematic getSchematic();
 
-	public abstract void writeToNBT(NBTTagCompound nbt, MappingRegistry registry);
+    public abstract void writeToNBT(NBTTagCompound nbt, MappingRegistry registry);
 
-	public abstract void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException;
+    public abstract void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException;
 
-	public abstract int getEnergyRequirement();
+    public abstract int getEnergyRequirement();
 
-	public abstract int buildTime();
+    public abstract int buildTime();
 
 }

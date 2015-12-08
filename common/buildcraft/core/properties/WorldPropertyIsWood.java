@@ -9,35 +9,38 @@
 package buildcraft.core.properties;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsWood extends WorldProperty {
 
-	private int woodId = 0;
+    private int woodId = 0;
 
-	public WorldPropertyIsWood() {
-		woodId = OreDictionary.getOreID("logWood");
-	}
+    public WorldPropertyIsWood() {
+        woodId = OreDictionary.getOreID("logWood");
+    }
 
-	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		if (block == null) {
-			return false;
-		} else {
-			ItemStack stack = new ItemStack(block);
+    @Override
+    public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+        Block block = state.getBlock();
+        if (block == null) {
+            return false;
+        } else {
+            ItemStack stack = new ItemStack(block);
 
-			if (stack.getItem() != null) {
-				for (int id : OreDictionary.getOreIDs(stack)) {
-					if (id == woodId) {
-						return true;
-					}
-				}
-			}
-		}
+            if (stack.getItem() != null) {
+                for (int id : OreDictionary.getOreIDs(stack)) {
+                    if (id == woodId) {
+                        return true;
+                    }
+                }
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

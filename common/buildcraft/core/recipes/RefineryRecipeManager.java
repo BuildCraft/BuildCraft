@@ -21,62 +21,58 @@ import buildcraft.api.recipes.IRefineryRecipeManager;
 
 public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
-	public static final RefineryRecipeManager INSTANCE = new RefineryRecipeManager();
-	private HashMap<String, IFlexibleRecipe<FluidStack>> recipes = new HashMap<String, IFlexibleRecipe<FluidStack>>();
+    public static final RefineryRecipeManager INSTANCE = new RefineryRecipeManager();
+    private HashMap<String, IFlexibleRecipe<FluidStack>> recipes = new HashMap<String, IFlexibleRecipe<FluidStack>>();
 	private ArrayList<FluidStack> validFluids1 = new ArrayList<FluidStack>();
 	private ArrayList<FluidStack> validFluids2 = new ArrayList<FluidStack>();
 
-	private RefineryRecipeManager() {
-	}
+    private RefineryRecipeManager() {}
 
-	@Override
-	public void addRecipe(String id, FluidStack ingredient, FluidStack result, int energy, int delay) {
-		FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient);
-		recipes.put(id, recipe);
-		validFluids1.add(ingredient);
-		validFluids2.add(ingredient);
-	}
+    @Override
+    public void addRecipe(String id, FluidStack ingredient, FluidStack result, int energy, int delay) {
+        FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient);
+        recipes.put(id, recipe);
+        validFluids1.add(ingredient);
+        validFluids2.add(ingredient);
+    }
 
-	@Override
-	public void addRecipe(String id, FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy,
-						  int delay) {
+    @Override
+    public void addRecipe(String id, FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy, int delay) {
+        if (ingredient1 == null || ingredient2 == null || result == null) {
+            BCLog.logger.warn("Rejected refinery recipe " + id + " due to a null FluidStack!");
+        }
 
-		if (ingredient1 == null || ingredient2 == null || result == null) {
-			BCLog.logger.warn("Rejected refinery recipe " + id + " due to a null FluidStack!");
-		}
+        FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient1, ingredient2);
+        recipes.put(id, recipe);
+        validFluids1.add(ingredient1);
+        validFluids2.add(ingredient2);
+    }
 
-		FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient1,
-				ingredient2);
-		recipes.put(id, recipe);
-		validFluids1.add(ingredient1);
-		validFluids2.add(ingredient2);
-	}
+    @Override
+    public Collection<IFlexibleRecipe<FluidStack>> getRecipes() {
+        return Collections.unmodifiableCollection(recipes.values());
+    }
 
-	@Override
-	public Collection<IFlexibleRecipe<FluidStack>> getRecipes() {
-		return Collections.unmodifiableCollection(recipes.values());
-	}
+    @Override
+    public IFlexibleRecipe<FluidStack> getRecipe(String id) {
+        return recipes.get(id);
+    }
 
-	@Override
-	public IFlexibleRecipe<FluidStack> getRecipe(String id) {
-		return recipes.get(id);
-	}
+    @Override
+    public void removeRecipe(IFlexibleRecipe<FluidStack> recipe) {
+        removeRecipe(recipe.getId());
+    }
 
-	@Override
-	public void removeRecipe(IFlexibleRecipe<FluidStack> recipe) {
-		removeRecipe(recipe.getId());
-	}
+    @Override
+    public void removeRecipe(String id) {
+        recipes.remove(id);
+    }
 
-	@Override
-	public void removeRecipe(String id) {
-		recipes.remove(id);
-	}
+    public ArrayList<FluidStack> getValidFluidStacks1() {
+        return validFluids1;
+    }
 
-	public ArrayList<FluidStack> getValidFluidStacks1() {
-		return validFluids1;
-	}
-
-	public ArrayList<FluidStack> getValidFluidStacks2() {
-		return validFluids2;
-	}
+    public ArrayList<FluidStack> getValidFluidStacks2() {
+        return validFluids2;
+    }
 }

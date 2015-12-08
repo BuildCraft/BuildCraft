@@ -9,5 +9,5 @@
 package buildcraft.core.builders;
 
 public interface IBuildingItem {
-	boolean isDone();
+    boolean isDone();
 }

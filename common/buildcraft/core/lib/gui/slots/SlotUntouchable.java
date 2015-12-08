@@ -11,39 +11,38 @@ package buildcraft.core.lib.gui.slots;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
-	public SlotUntouchable(IInventory contents, int id, int x, int y) {
-		super(contents, id, x, y);
-	}
+    public SlotUntouchable(IInventory contents, int id, int x, int y) {
+        super(contents, id, x, y);
+    }
 
-	@Override
-	public boolean isItemValid(ItemStack itemstack) {
-		return false;
-	}
+    @Override
+    public boolean isItemValid(ItemStack itemstack) {
+        return false;
+    }
 
-	@Override
-	public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
-		return false;
-	}
+    @Override
+    public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
+        return false;
+    }
 
-	@Override
-	public boolean canAdjust() {
-		return false;
-	}
+    @Override
+    public boolean canAdjust() {
+        return false;
+    }
 
-	@Override
-	public boolean canShift() {
-		return false;
-	}
+    @Override
+    public boolean canShift() {
+        return false;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean func_111238_b() {
-		return false;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean canBeHovered() {
+        return false;
+    }
 }

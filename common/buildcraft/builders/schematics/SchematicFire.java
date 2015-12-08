@@ -8,23 +8,24 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicFire extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Items.flint_and_steel));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+        requirements.add(new ItemStack(Items.flint_and_steel));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 }

@@ -1,235 +1,167 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BlockIndex;
-import buildcraft.core.CoreConstants;
-import buildcraft.core.internal.IFramePipeConnection;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.builders.schematics.SchematicFrame;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 
-public class BlockFrame extends Block implements IFramePipeConnection {
-	private static final ThreadLocal<Boolean> isRemovingFrames = new ThreadLocal<Boolean>();
+public class BlockFrame extends BlockBuildCraftBase {
+    private static final Map<EnumFacing[], EFrameConnection> connectionMap = Maps.newHashMap();
 
-	public BlockFrame() {
-		super(Material.glass);
-		setHardness(0.5F);
-	}
+    public enum EFrameConnection implements IStringSerializable {
+        UP_DOWN(EnumFacing.UP, EnumFacing.DOWN),
+        EAST_WEST(EnumFacing.EAST, EnumFacing.WEST),
+        NORTH_SOUTH(EnumFacing.NORTH, EnumFacing.SOUTH),
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		if (world.isRemote) {
-			return;
-		}
+        NORTH_EAST_UP(EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.UP),
+        NORTH_EAST_DOWN(EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.DOWN),
 
-		if (isRemovingFrames.get() == null) {
-			removeNeighboringFrames(world, x, y, z);
-		}
-	}
+        NORTH_WEST_UP(EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.UP),
+        NORTH_WEST_DOWN(EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.DOWN),
 
-	public void removeNeighboringFrames(World world, int x, int y, int z) {
-		isRemovingFrames.set(true);
+        SOUTH_EAST_UP(EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.UP),
+        SOUTH_EAST_DOWN(EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.DOWN),
 
-		Set<BlockIndex> frameCoords = new ConcurrentSkipListSet<BlockIndex>();
-		frameCoords.add(new BlockIndex(x, y, z));
+        SOUTH_WEST_UP(EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.UP),
+        SOUTH_WEST_DOWN(EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.DOWN);
 
-		while (frameCoords.size() > 0) {
-			Iterator<BlockIndex> frameCoordIterator = frameCoords.iterator();
-			while (frameCoordIterator.hasNext()) {
-				BlockIndex i = frameCoordIterator.next();
-				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-					Block nBlock = world.getBlock(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ);
-					if (nBlock == this) {
-						world.setBlockToAir(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ);
-						frameCoords.add(new BlockIndex(i.x + dir.offsetX, i.y + dir.offsetY, i.z + dir.offsetZ));
-					}
-				}
-				frameCoordIterator.remove();
-			}
-		}
+        final AxisAlignedBB boundingBox;
+        private final EnumFacing[] facings;
+        private EFrameConnection left;
+        private SchematicFrame schematic;
 
-		isRemovingFrames.remove();
-	}
+        EFrameConnection(EnumFacing... facings) {
+            this.facings = facings;
+            AxisAlignedBB bb = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+            for (EnumFacing face : facings) {
+                bb = bb.addCoord(face.getFrontOffsetX() * 0.25, face.getFrontOffsetY() * 0.25, face.getFrontOffsetZ() * 0.25);
+            }
+            boundingBox = bb;
+            connectionMap.put(facings, this);
+        }
 
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
+        @Override
+        public String getName() {
+            return name().toLowerCase(Locale.ROOT);
+        }
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+        public EFrameConnection rotateLeft() {
+            if (left != null) {
+                return left;
+            }
+            EnumFacing[] nArray = new EnumFacing[facings.length];
+            int i = 0;
+            for (EnumFacing face : facings) {
+                if (face.getAxis() != Axis.Y) {
+                    nArray[i] = face.rotateAround(Axis.Y);
+                } else {
+                    nArray[i] = face;
+                }
+                i++;
+            }
+            left = connectionMap.get(nArray);
+            return left;
+        }
 
-	@Override
-	public Item getItemDropped(int i, Random random, int j) {
-		return null;
-	}
+        public SchematicFrame getSchematic() {
+            if (schematic == null) {
+                schematic = new SchematicFrame(this);
+            }
+            return schematic;
+        }
+    }
 
-	@Override
-	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-		return new ArrayList<ItemStack>();
-	}
+    public static final BuildCraftProperty<EFrameConnection> CONNECTIONS = BuildCraftProperty.create("connections", EFrameConnection.class);
 
-	@Override
-	public int getRenderType() {
-		return BuilderProxy.frameRenderId;
-	}
+    public BlockFrame() {
+        super(Material.glass, CONNECTIONS);
+        setCreativeTab(null);
+        setHardness(0.5F);
+        setLightOpacity(0);
+    }
 
-	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        if (world.isRemote) {
+            return;
+        } else {
+            removeNeighboringFrames(world, pos);
+        }
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
-			xMin = 0.0F;
-		}
+    public void removeNeighboringFrames(World world, BlockPos pos) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
+            BlockPos nPos = pos.offset(dir);
+            Block nBlock = world.getBlockState(nPos).getBlock();
+            if (nBlock == this) {
+                world.setBlockToAir(nPos);
+            }
+        }
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
-			xMax = 1.0F;
-		}
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
-			yMin = 0.0F;
-		}
+    @Override
+    public boolean isFullCube() {
+        return false;
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
-			yMax = 1.0F;
-		}
+    @Override
+    public int getRenderType() {
+        return 3;
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
-			zMin = 0.0F;
-		}
+    @Override
+    public Item getItemDropped(IBlockState state, Random random, int fortune) {
+        return null;
+    }
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
-			zMax = 1.0F;
-		}
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        return Lists.newArrayList();
+    }
 
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
-	}
+    @Override
+    public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
+        return CONNECTIONS.getValue(state).boundingBox;
+    }
 
-	@Override
-	@SuppressWarnings({"all"})
-	// @Override (client only)
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
-		return getCollisionBoundingBoxFromPool(world, i, j, k);
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+        list.add(new ItemStack(this));
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
-		setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
-			setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
-			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
-			setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
-			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
-			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
-			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, 1.0F);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
-		}
-
-		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-	}
-
-	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
-		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
-			xMin = 0.0F;
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
-			xMax = 1.0F;
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
-			yMin = 0.0F;
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
-			yMax = 1.0F;
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
-			zMin = 0.0F;
-		}
-
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
-			zMax = 1.0F;
-		}
-
-		setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
-
-		MovingObjectPosition r = super.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
-
-		setBlockBounds(0, 0, 0, 1, 1, 1);
-
-		return r;
-	}
-
-	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
-		return blockAccess.getBlock(x2, y2, z2) == this;
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	@Override
-	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-		list.add(new ItemStack(this));
-	}
-
-	@Override
-	public void registerBlockIcons(IIconRegister register) {
-		blockIcon = register.registerIcon("buildcraftbuilders:frameBlock/default");
-	}
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
+    }
 }

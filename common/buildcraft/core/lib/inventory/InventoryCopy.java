@@ -11,109 +11,127 @@ package buildcraft.core.lib.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
-/**
- * Creates a deep copy of an existing IInventory.
+/** Creates a deep copy of an existing IInventory.
  *
- * Useful for performing inventory manipulations and then examining the results
- * without affecting the original inventory.
- */
+ * Useful for performing inventory manipulations and then examining the results without affecting the original
+ * inventory. */
 public class InventoryCopy implements IInventory {
 
-	private IInventory orignal;
-	private ItemStack[] contents;
+    private IInventory original;
+    private ItemStack[] contents;
 
-	public InventoryCopy(IInventory orignal) {
-		this.orignal = orignal;
-		contents = new ItemStack[orignal.getSizeInventory()];
-		for (int i = 0; i < contents.length; i++) {
-			ItemStack stack = orignal.getStackInSlot(i);
-			if (stack != null) {
-				contents[i] = stack.copy();
-			}
-		}
-	}
+    public InventoryCopy(IInventory orignal) {
+        this.original = orignal;
+        contents = new ItemStack[orignal.getSizeInventory()];
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack stack = orignal.getStackInSlot(i);
+            if (stack != null) {
+                contents[i] = stack.copy();
+            }
+        }
+    }
 
-	@Override
-	public int getSizeInventory() {
-		return contents.length;
-	}
+    @Override
+    public int getSizeInventory() {
+        return contents.length;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return contents[i];
-	}
+    @Override
+    public ItemStack getStackInSlot(int i) {
+        return contents[i];
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		if (contents[i] != null) {
-			if (contents[i].stackSize <= j) {
-				ItemStack itemstack = contents[i];
-				contents[i] = null;
-				return itemstack;
-			}
-			ItemStack itemstack1 = contents[i].splitStack(j);
-			if (contents[i].stackSize <= 0) {
-				contents[i] = null;
-			}
-			return itemstack1;
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public ItemStack decrStackSize(int i, int j) {
+        if (contents[i] != null) {
+            if (contents[i].stackSize <= j) {
+                ItemStack itemstack = contents[i];
+                contents[i] = null;
+                return itemstack;
+            }
+            ItemStack itemstack1 = contents[i].splitStack(j);
+            if (contents[i].stackSize <= 0) {
+                contents[i] = null;
+            }
+            return itemstack1;
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		contents[i] = itemstack;
-		if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
-			itemstack.stackSize = getInventoryStackLimit();
-		}
-	}
+    @Override
+    public void setInventorySlotContents(int i, ItemStack itemstack) {
+        contents[i] = itemstack;
+        if (itemstack != null && itemstack.stackSize > getInventoryStackLimit()) {
+            itemstack.stackSize = getInventoryStackLimit();
+        }
+    }
 
-	@Override
-	public String getInventoryName() {
-		return orignal.getInventoryName();
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return original.getInventoryStackLimit();
+    }
 
-	@Override
-	public int getInventoryStackLimit() {
-		return orignal.getInventoryStackLimit();
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+        return true;
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return true;
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
+        return original.removeStackFromSlot(slot);
+    }
 
-	@Override
-	public void openInventory() {
-	}
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        return original.isItemValidForSlot(slot, stack);
+    }
 
-	@Override
-	public void closeInventory() {
-	}
+    public ItemStack[] getItemStacks() {
+        return contents;
+    }
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return orignal.getStackInSlotOnClosing(slot);
-	}
+    @Override
+    public void markDirty() {
 
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return orignal.isItemValidForSlot(slot, stack);
-	}
+    }
 
-	public ItemStack[] getItemStacks() {
-		return contents;
-	}
+    @Override
+    public String getName() {
+        return original.getName();
+    }
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
 
-	@Override
-	public void markDirty() {
+    @Override
+    public IChatComponent getDisplayName() {
+        return original.getDisplayName();
+    }
 
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

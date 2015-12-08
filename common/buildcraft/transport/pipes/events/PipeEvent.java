@@ -11,9 +11,9 @@ package buildcraft.transport.pipes.events;
 import buildcraft.transport.Pipe;
 
 public abstract class PipeEvent {
-	public final Pipe<?> pipe;
+    public final Pipe<?> pipe;
 
-	public PipeEvent(Pipe<?> pipe) {
-		this.pipe = pipe;
-	}
+    public PipeEvent(Pipe<?> pipe) {
+        this.pipe = pipe;
+    }
 }

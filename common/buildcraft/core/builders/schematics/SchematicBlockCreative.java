@@ -13,9 +13,9 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicBlockCreative extends SchematicBlock {
 
-	@Override
-	public BuildingPermission getBuildingPermission() {
-		return BuildingPermission.CREATIVE_ONLY;
-	}
+    @Override
+    public BuildingPermission getBuildingPermission() {
+        return BuildingPermission.CREATIVE_ONLY;
+    }
 
 }

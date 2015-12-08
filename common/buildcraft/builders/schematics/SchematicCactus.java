@@ -8,33 +8,34 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
 public class SchematicCactus extends SchematicBlockFloored {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.cactus));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+        requirements.add(new ItemStack(Blocks.cactus));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, Blocks.cactus, 0, 3);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
+        context.world().setBlockState(pos, Blocks.cactus.getDefaultState(), 3);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return context.world().getBlock(x, y, z) == Blocks.cactus;
-	}
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        return context.world().getBlockState(pos).getBlock() == Blocks.cactus;
+    }
 }

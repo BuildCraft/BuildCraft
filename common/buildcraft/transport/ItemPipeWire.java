@@ -9,63 +9,47 @@
 package buildcraft.transport;
 
 import java.util.List;
+import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
-	private IIcon[] icons;
+    public ItemPipeWire() {
+        super();
+        setHasSubtypes(true);
+        setMaxDamage(0);
+        setPassSneakClick(true);
+        setUnlocalizedName("pipeWire");
+    }
 
-	public ItemPipeWire() {
-		super();
-		setHasSubtypes(true);
-		setMaxDamage(0);
-		setPassSneakClick(true);
-		setUnlocalizedName("pipeWire");
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        return "item." + PipeWire.fromOrdinal(stack.getItemDamage()).getTag();
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icons[damage];
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item item, CreativeTabs tab, List itemList) {
+        for (PipeWire pipeWire : PipeWire.VALUES) {
+            itemList.add(pipeWire.getStack());
+        }
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return "item." + PipeWire.fromOrdinal(stack.getItemDamage()).getTag();
-	}
-
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
-		for (PipeWire pipeWire : PipeWire.VALUES) {
-			itemList.add(pipeWire.getStack());
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		icons = new IIcon[PipeWire.VALUES.length];
-		for (PipeWire pipeWire : PipeWire.VALUES) {
-			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" + pipeWire.getColor().toLowerCase());
-		}
-	}
-
-	public void registerItemStacks() {
-		for (PipeWire pipeWire : PipeWire.VALUES) {
-			GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        for (PipeWire pipeWire : PipeWire.VALUES) {
+            ModelHelper.registerItemModel(this, pipeWire.ordinal(), "/" + pipeWire.name().toLowerCase(Locale.ROOT));
+        }
+    }
 }

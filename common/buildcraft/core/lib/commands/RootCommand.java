@@ -15,75 +15,76 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 public class RootCommand extends CommandBase implements IModCommand {
-	public final String name;
-	private final List<String> aliases = new ArrayList<String>();
-	private final SortedSet<SubCommand> children = new TreeSet<SubCommand>(new Comparator<SubCommand>() {
-		@Override
-		public int compare(SubCommand o1, SubCommand o2) {
-			return o1.compareTo(o2);
-		}
-	});
+    public final String name;
+    private final List<String> aliases = new ArrayList<String>();
+    private final SortedSet<SubCommand> children = new TreeSet<SubCommand>(new Comparator<SubCommand>() {
+        @Override
+        public int compare(SubCommand o1, SubCommand o2) {
+            return o1.compareTo(o2);
+        }
+    });
 
-	public RootCommand(String name) {
-		this.name = name;
-	}
+    public RootCommand(String name) {
+        this.name = name;
+    }
 
-	public void addChildCommand(SubCommand child) {
-		child.setParent(this);
-		children.add(child);
-	}
+    public void addChildCommand(SubCommand child) {
+        child.setParent(this);
+        children.add(child);
+    }
 
-	public void addAlias(String alias) {
-		aliases.add(alias);
-	}
+    public void addAlias(String alias) {
+        aliases.add(alias);
+    }
 
-	@Override
-	public SortedSet<SubCommand> getChildren() {
-		return children;
-	}
+    @Override
+    public SortedSet<SubCommand> getChildren() {
+        return children;
+    }
 
-	@Override
-	public String getCommandName() {
-		return name;
-	}
+    @Override
+    public String getCommandName() {
+        return name;
+    }
 
-	@Override
-	public int getRequiredPermissionLevel() {
-		return 0;
-	}
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
 
-	@Override
+    @Override
 	public int getMinimumPermissionLevel() {
 		return 0;
 	}
 
 	@Override
-	public List<String> getCommandAliases() {
-		return aliases;
-	}
+    public List<String> getCommandAliases() {
+        return aliases;
+    }
 
-	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return "/" + this.getCommandName() + " help";
-	}
+    @Override
+    public String getCommandUsage(ICommandSender sender) {
+        return "/" + this.getCommandName() + " help";
+    }
 
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) {
-		if (!CommandHelpers.processStandardCommands(sender, this, args)) {
-			CommandHelpers.throwWrongUsage(sender, this);
-		}
-	}
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+        if (!CommandHelpers.processStandardCommands(sender, this, args)) {
+            CommandHelpers.throwWrongUsage(sender, this);
+        }
+    }
 
-	@Override
-	public String getFullCommandString() {
-		return getCommandName();
-	}
+    @Override
+    public String getFullCommandString() {
+        return getCommandName();
+    }
 
-	@Override
-	public void printHelp(ICommandSender sender) {
-		CommandHelpers.printHelp(sender, this);
-	}
+    @Override
+    public void printHelp(ICommandSender sender) {
+        CommandHelpers.printHelp(sender, this);
+    }
 }

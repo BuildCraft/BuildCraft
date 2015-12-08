@@ -13,12 +13,12 @@ import net.minecraft.item.ItemBlock;
 
 public class ItemBlockBuildCraft extends ItemBlock {
 
-	public ItemBlockBuildCraft(Block b) {
-		super(b);
-	}
+    public ItemBlockBuildCraft(Block b) {
+        super(b);
+    }
 
-	@Override
-	public int getMetadata(int i) {
-		return i;
-	}
+    @Override
+    public int getMetadata(int i) {
+        return i;
+    }
 }

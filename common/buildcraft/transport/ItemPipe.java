@@ -13,18 +13,18 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -33,133 +33,111 @@ import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
-	@SideOnly(Side.CLIENT)
-	private IIconProvider iconProvider;
-	private int pipeIconIndex;
+    @SideOnly(Side.CLIENT)
+    private IIconProvider iconProvider;
+    private int pipeIconIndex;
 
-	protected ItemPipe(BCCreativeTab creativeTab) {
-		super(creativeTab);
-		this.setMaxDamage(0);
-		this.setHasSubtypes(true);
-	}
+    public ItemPipe(BCCreativeTab creativeTab) {
+        super(creativeTab);
+        this.setMaxDamage(0);
+        this.setHasSubtypes(true);
+    }
 
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z,
-							 int sideI, float par8, float par9, float par10) {
-		int side = sideI;
-		Block block = BuildCraftTransport.genericPipeBlock;
+    @Override
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float par8, float par9,
+            float par10) {
+        Block block = BuildCraftTransport.genericPipeBlock;
 
-		int i = x;
-		int j = y;
-		int k = z;
+        Block worldBlock = world.getBlockState(pos).getBlock();
 
-		Block worldBlock = world.getBlock(i, j, k);
+        if (worldBlock == Blocks.snow) {
+            side = EnumFacing.UP;
+        } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush && (worldBlock == null || !worldBlock
+                .isReplaceable(world, pos))) {
+            pos = pos.offset(side);
+        }
 
-		if (worldBlock == Blocks.snow) {
-			side = 1;
-		} else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
-				&& (worldBlock == null || !worldBlock.isReplaceable(world, i, j, k))) {
-			if (side == 0) {
-				j--;
-			}
-			if (side == 1) {
-				j++;
-			}
-			if (side == 2) {
-				k--;
-			}
-			if (side == 3) {
-				k++;
-			}
-			if (side == 4) {
-				i--;
-			}
-			if (side == 5) {
-				i++;
-			}
-		}
+        if (itemstack.stackSize == 0) {
+            return false;
+        }
 
-		if (itemstack.stackSize == 0) {
-			return false;
-		}
+        if (world.canBlockBePlaced(block, pos, false, side, entityplayer, itemstack)) {
+            Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
-		if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
-			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
+            if (pipe == null) {
+                BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0}", pos);
+                return true;
+            }
 
-			if (pipe == null) {
-				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
-				return false;
-			}
+            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), entityplayer, side)) {
+                block.onBlockPlacedBy(world, pos, block.getDefaultState(), entityplayer, itemstack);
 
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer, ForgeDirection.getOrientation(sideI))) {
-				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
+                if (!world.isRemote) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    ((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
+                }
 
-				if (!world.isRemote) {
-					TileEntity tile = world.getTileEntity(i, j, k);
-					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
-				}
+                world.playSoundEffect(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound
+                        .getVolume() + 1.0F) / 2.0F, block.stepSound.getFrequency() * 0.8F);
 
-				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-						block.stepSound.func_150496_b(),
-						(block.stepSound.getVolume() + 1.0F) / 2.0F,
-						block.stepSound.getPitch() * 0.8F);
+                itemstack.stackSize--;
 
-				itemstack.stackSize--;
-
-				return true;
-			} else {
-				return false;
-			}
+            return true;
+        } else {
+            return false;
+        }
 		} else {
 			return false;
 		}
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	public void setPipesIcons(IIconProvider iconProvider) {
-		this.iconProvider = iconProvider;
-	}
+    @SideOnly(Side.CLIENT)
+    public void setPipesIcons(IIconProvider iconProvider) {
+        this.iconProvider = iconProvider;
+    }
 
-	public void setPipeIconIndex(int index) {
-		this.pipeIconIndex = index;
-	}
+    public void setPipeIconIndex(int index) {
+        this.pipeIconIndex = index;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamage(int par1) {
-		if (iconProvider != null) { // invalid pipes won't have this set
-			return iconProvider.getIcon(pipeIconIndex);
-		} else {
-			return null;
-		}
-	}
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getSprite() {
+        if (iconProvider != null) { // invalid pipes won't have this set
+            return iconProvider.getIcon(pipeIconIndex);
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		// NOOP
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getSpriteNumber() {
-		return 0;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		super.addInformation(stack, player, list, advanced);
-		if (stack.getItemDamage() >= 1) {
-			int color = (stack.getItemDamage() - 1) & 15;
-			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
-		}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+        super.addInformation(stack, player, list, advanced);
+        if (stack.getItemDamage() >= 1) {
+            int color = (stack.getItemDamage() - 1) & 15;
+            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
+        }
 		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
-		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
-		list.addAll(toolTip);
-	}
+        List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
+        list.addAll(toolTip);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getColorFromItemStack(ItemStack stack, int renderPass) {
+        return renderPass;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        for (int i = 0; i < 17; i++) {
+            ModelHelper.registerItemModel(this, i, "_" + i);
+        }
+    }
 }

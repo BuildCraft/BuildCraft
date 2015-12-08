@@ -8,7 +8,6 @@
  */
 package buildcraft.robotics.boards;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -23,40 +22,40 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 
-	public BoardRobotFluidCarrier(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public BoardRobotFluidCarrier(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BCBoardNBT.REGISTRY.get("fluidCarrier");
-	}
+    @Override
+    public RedstoneBoardRobotNBT getNBTHandler() {
+        return BCBoardNBT.REGISTRY.get("fluidCarrier");
+    }
 
-	@Override
-	public void update() {
-		if (!robotHasFluid()) {
-			IFluidFilter filter = ActionRobotFilter.getGateFluidFilter(robot.getLinkedStation());
-			startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, filter));
-		} else {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));
-		}
-	}
+    @Override
+    public void update() {
+        if (!robotHasFluid()) {
+            IFluidFilter filter = ActionRobotFilter.getGateFluidFilter(robot.getLinkedStation());
+            startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, filter));
+        } else {
+            startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));
+        }
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationAndLoadFluids) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotGotoStationAndLoadFluids) {
+            if (!ai.success()) {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        } else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
+            if (!ai.success()) {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        }
+    }
 
-	private boolean robotHasFluid() {
-		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
-		return tank != null && tank.amount > 0;
-	}
+    private boolean robotHasFluid() {
+        FluidStack tank = robot.getTankInfo(null)[0].fluid;
+        return tank != null && tank.amount > 0;
+    }
 }

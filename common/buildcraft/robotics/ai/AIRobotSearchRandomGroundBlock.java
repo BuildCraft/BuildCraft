@@ -8,9 +8,9 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -18,71 +18,72 @@ import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
-	private static final int MAX_ATTEMPTS = 4096;
+    private static final int MAX_ATTEMPTS = 4096;
 
-	public BlockIndex blockFound;
+    public BlockPos blockFound;
 
-	private int range;
-	private IBlockFilter filter;
-	private IZone zone;
-	private int attempts = 0;
+    private int range;
+    private IBlockFilter filter;
+    private IZone zone;
+    private int attempts = 0;
 
-	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
-		this(iRobot);
+    public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
+        this(iRobot);
 
-		range = iRange;
-		filter = iFilter;
-		zone = iZone;
-	}
+        range = iRange;
+        filter = iFilter;
+        zone = iZone;
+    }
 
-	@Override
-	public void update() {
-		if (filter == null) {
-			terminate();
-		}
+    @Override
+    public void update() {
+        if (filter == null) {
+            terminate();
+        }
 
-		attempts++;
+        attempts++;
 
-		if (attempts > MAX_ATTEMPTS) {
-			terminate();
-		}
+        if (attempts > MAX_ATTEMPTS) {
+            terminate();
+        }
 
 		int x, z;
 
-		if (zone == null) {
-			double r = robot.worldObj.rand.nextFloat() * range;
-			float a = robot.worldObj.rand.nextFloat() * 2.0F * (float) Math.PI;
+        if (zone == null) {
+            double r = robot.worldObj.rand.nextFloat() * range;
+            float a = robot.worldObj.rand.nextFloat() * 2.0F * (float) Math.PI;
 
-			x = (int) (MathHelper.cos(a) * r + Math.floor(robot.posX));
-			z = (int) (MathHelper.sin(a) * r + Math.floor(robot.posZ));
-		} else {
-			BlockIndex b = zone.getRandomBlockIndex(robot.worldObj.rand);
-			x = b.x;
-			z = b.z;
-		}
+            x = (int) (MathHelper.cos(a) * r + Math.floor(robot.posX));
+            z = (int) (MathHelper.sin(a) * r + Math.floor(robot.posZ));
+        } else {
+            BlockPos b = zone.getRandomBlockPos(robot.worldObj.rand);
+            x = b.getX();
+            z = b.getZ();
+        }
 
-		for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
-			if (filter.matches(robot.worldObj, x, y, z)) {
-				blockFound = new BlockIndex(x, y, z);
-				terminate();
-				return;
-			} else if (!robot.worldObj.isAirBlock(x, y, z)) {
-				return;
-			}
-		}
-	}
+        BlockPos pos = new BlockPos(x, robot.worldObj.getHeight(), z);
+        for (; pos.getY() >= 0; pos = pos.down()) {
+            if (filter.matches(robot.worldObj, pos)) {
+                blockFound = new BlockPos(pos);
+                terminate();
+                return;
+            } else if (!robot.worldObj.isAirBlock(pos)) {
+                return;
+            }
+        }
+    }
 
-	@Override
-	public boolean success() {
-		return blockFound != null;
-	}
+    @Override
+    public boolean success() {
+        return blockFound != null;
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return 2;
-	}
+    @Override
+    public int getEnergyCost() {
+        return 2;
+    }
 }

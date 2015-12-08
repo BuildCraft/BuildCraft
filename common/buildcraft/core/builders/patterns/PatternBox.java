@@ -10,36 +10,36 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
-
 public class PatternBox extends FillerPattern {
 
-	public PatternBox() {
-		super("box");
-	}
+    public PatternBox() {
+        super("box", EnumFillerPattern.BOX);
+    }
 
-	@Override
-	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-		Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
+    @Override
+    public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
+        Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		int xMin = 0;
-		int yMin = 0;
-		int zMin = 0;
+        int xMin = 0;
+        int yMin = 0;
+        int zMin = 0;
 
-		int xMax = box.sizeX() - 1;
-		int yMax = box.sizeY() - 1;
-		int zMax = box.sizeZ() - 1;
+        int xMax = box.sizeX() - 1;
+        int yMax = box.sizeY() - 1;
+        int zMax = box.sizeZ() - 1;
 
-		fill(xMin, yMin, zMin, xMax, yMin, zMax, result);
-		fill(xMin, yMin, zMin, xMin, yMax, zMax, result);
-		fill(xMin, yMin, zMin, xMax, yMax, zMin, result);
-		fill(xMax, yMin, zMin, xMax, yMax, zMax, result);
-		fill(xMin, yMin, zMax, xMax, yMax, zMax, result);
-		fill(xMin, yMax, zMin, xMax, yMax, zMax, result);
+        fill(xMin, yMin, zMin, xMax, yMin, zMax, result);
+        fill(xMin, yMin, zMin, xMin, yMax, zMax, result);
+        fill(xMin, yMin, zMin, xMax, yMax, zMin, result);
+        fill(xMax, yMin, zMin, xMax, yMax, zMax, result);
+        fill(xMin, yMin, zMax, xMax, yMax, zMax, result);
+        fill(xMin, yMax, zMin, xMax, yMax, zMax, result);
 
-		return result;
-	}
+        return result;
+    }
 }

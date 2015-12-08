@@ -1,75 +1,60 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.blueprints;
 
 import java.io.File;
 
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.blueprints.BlueprintDeployer;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.builders.LibraryDatabase;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.BptBuilderBlueprint;
-import buildcraft.core.blueprints.BptContext;
-import buildcraft.core.blueprints.LibraryId;
+import buildcraft.core.blueprints.*;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {
+    public static final RealBlueprintDeployer realInstance = new RealBlueprintDeployer();
 
-	@Override
-	public void deployBlueprint(World world, int x, int y, int z,
-								ForgeDirection dir, File file) {
+    @Override
+    public void deployBlueprint(World world, BlockPos pos, EnumFacing dir, File file) {
+        deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
+    }
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
-	}
+    @Override
+    public void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data) {
+        deployBlueprint(world, pos, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
+    }
 
-	@Override
-	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
-											  ForgeDirection dir, byte[] data) {
+    public void deployBlueprint(World world, BlockPos pos, EnumFacing dir, Blueprint bpt) {
+        bpt.id = new LibraryId();
+        bpt.id.extension = "bpt";
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
-	}
+        BptContext context = bpt.getContext(world, bpt.getBoxForPos(pos));
 
-	private void deployBlueprint(World world, int x, int y, int z, ForgeDirection dir, Blueprint bpt) {
-		bpt.id = new LibraryId();
-		bpt.id.extension = "bpt";
+        if (bpt.rotate) {
+            if (dir == EnumFacing.EAST) {
+                // Do nothing
+            } else if (dir == EnumFacing.SOUTH) {
+                bpt.rotateLeft(context);
+            } else if (dir == EnumFacing.WEST) {
+                bpt.rotateLeft(context);
+                bpt.rotateLeft(context);
+            } else if (dir == EnumFacing.NORTH) {
+                bpt.rotateLeft(context);
+                bpt.rotateLeft(context);
+                bpt.rotateLeft(context);
+            }
+        }
 
-		BptContext context = bpt.getContext(world, bpt.getBoxForPos(x, y, z));
+        Vec3 transform = Utils.convert(pos).subtract(bpt.anchorX, bpt.anchorY, bpt.anchorZ);
 
-		if (bpt.rotate) {
-			if (dir == ForgeDirection.EAST) {
-				// Do nothing
-			} else if (dir == ForgeDirection.SOUTH) {
-				bpt.rotateLeft(context);
-			} else if (dir == ForgeDirection.WEST) {
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-			} else if (dir == ForgeDirection.NORTH) {
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-				bpt.rotateLeft(context);
-			}
-		}
+        bpt.translateToWorld(transform);
 
-		Translation transform = new Translation();
-
-		transform.x = x - bpt.anchorX;
-		transform.y = y - bpt.anchorY;
-		transform.z = z - bpt.anchorZ;
-
-		bpt.translateToWorld(transform);
-
-		new BptBuilderBlueprint(bpt, world, x, y, z).deploy();
-	}
+        new BptBuilderBlueprint(bpt, world, pos).deploy();
+    }
 }
-

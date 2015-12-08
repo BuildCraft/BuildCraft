@@ -1,0 +1,42 @@
+{
+	"forge_marker":1,
+	"defaults": {
+		"textures": {
+			"particle":"buildcraftbuilders:blocks/builder/top"
+		}
+	},
+    "variants": {
+		"facing": {
+			"east": {
+				"model":"buildcraftbuilders:builder/main"
+			},
+			"south": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":90
+			},
+			"west": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":180
+			},
+			"north": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":270
+			}
+		},
+		"led_power": {
+		    "0": {},
+		    "1": {},
+		    "2": {},
+		    "3": {}
+		},
+		"led_done": {
+		    "false": {},
+		    "true":  {}
+		},
+		"blueprint_type": {
+		    "none":      { "submodel":"buildcraftbuilders:builder/slot_empty" },
+		    "blueprint": { "submodel":"buildcraftbuilders:builder/slot_blueprint" },
+		    "template":  { "submodel":"buildcraftbuilders:builder/slot_template" }
+		}
+    }
+}

@@ -18,63 +18,62 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager;
 
 public final class FuelManager implements IFuelManager {
-	public static final FuelManager INSTANCE = new FuelManager();
+    public static final FuelManager INSTANCE = new FuelManager();
 
-	private final List<IFuel> fuels = new LinkedList<IFuel>();
+    private final List<IFuel> fuels = new LinkedList<IFuel>();
 
-	private FuelManager() {
-	}
+    private FuelManager() {}
 
-	@Override
-	public IFuel addFuel(IFuel fuel) {
-		fuels.add(fuel);
-		return fuel;
-	}
+    @Override
+    public IFuel addFuel(IFuel fuel) {
+        fuels.add(fuel);
+        return fuel;
+    }
 
-	@Override
-	public IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
-		return addFuel(new BCFuel(fluid, powerPerCycle, totalBurningTime));
-	}
+    @Override
+    public IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
+        return addFuel(new BCFuel(fluid, powerPerCycle, totalBurningTime));
+    }
 
-	@Override
-	public Collection<IFuel> getFuels() {
-		return fuels;
-	}
+    @Override
+    public Collection<IFuel> getFuels() {
+        return fuels;
+    }
 
-	@Override
-	public IFuel getFuel(Fluid fluid) {
-		for (IFuel fuel : fuels) {
-			if (fuel.getFluid() == fluid) {
-				return fuel;
-			}
-		}
-		return null;
-	}
+    @Override
+    public IFuel getFuel(Fluid fluid) {
+        for (IFuel fuel : fuels) {
+            if (fuel.getFluid() == fluid) {
+                return fuel;
+            }
+        }
+        return null;
+    }
 
-	private static final class BCFuel implements IFuel {
-		private final Fluid fluid;
-		private final int powerPerCycle;
-		private final int totalBurningTime;
+    private static final class BCFuel implements IFuel {
+        private final Fluid fluid;
+        private final int powerPerCycle;
+        private final int totalBurningTime;
 
-		public BCFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
-			this.fluid = fluid;
-			this.powerPerCycle = powerPerCycle;
-			this.totalBurningTime = totalBurningTime;
-		}
+        public BCFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
+            this.fluid = fluid;
+            this.powerPerCycle = powerPerCycle;
+            this.totalBurningTime = totalBurningTime;
+        }
 
-		@Override
-		public Fluid getFluid() {
-			return fluid;
-		}
+        @Override
+        public Fluid getFluid() {
+            return fluid;
+        }
 
-		@Override
-		public int getTotalBurningTime() {
-			return totalBurningTime;
-		}
+        @Override
+        public int getTotalBurningTime() {
+            return totalBurningTime;
+        }
 
-		@Override
-		public int getPowerPerCycle() {
-			return powerPerCycle;
-		}
-	}
+        @Override
+        public int getPowerPerCycle() {
+            return powerPerCycle;
+        }
+    }
 }

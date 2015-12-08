@@ -8,44 +8,52 @@
  */
 package buildcraft.core.lib.network;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+
+import buildcraft.core.lib.network.base.Packet;
+
 import io.netty.buffer.ByteBuf;
 
 public abstract class PacketCoordinates extends Packet {
 
-	public int posX;
-	public int posY;
-	public int posZ;
+    public BlockPos pos;
 
-	private int id;
+    public transient final TileEntity tile;
 
-	public PacketCoordinates() {
-	}
+    public PacketCoordinates() {
+        tile = null;
+    }
 
-	public PacketCoordinates(int id, int x, int y, int z) {
-		this.id = id;
-		this.posX = x;
-		this.posY = y;
-		this.posZ = z;
-	}
+    public PacketCoordinates(TileEntity tile) {
+        this.tile = tile;
+        this.tempWorld = tile.getWorld();
+        this.dimensionId = tempWorld.provider.getDimensionId();
+        this.pos = tile.getPos();
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeByte(id);
-		data.writeInt(posX);
-		data.writeShort(posY);
-		data.writeInt(posZ);
-	}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        data.writeInt(pos.getX());
+        data.writeInt(pos.getY());
+        data.writeInt(pos.getZ());
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		id = data.readByte();
-		posX = data.readInt();
-		posY = data.readShort();
-		posZ = data.readInt();
-	}
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
+    }
 
-	@Override
-	public int getID() {
-		return id;
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("PacketCoordinates [pos=");
+        builder.append(pos);
+        builder.append(", super=");
+        builder.append(super.toString());
+        builder.append("]");
+        return builder.toString();
+    }
 }

@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "normal": { "model": "buildcraftbuilders:marker_construction" },
+        "inventory": { "model": "buildcraftbuilders:marker_construction" },
+        "facing=up":  { "model": "buildcraftbuilders:marker_construction" },
+        "facing=down":  { "model": "buildcraftbuilders:marker_construction", "x": 180 },
+        "facing=east":  { "model": "buildcraftbuilders:marker_construction", "y": 90, "x": 90 },
+        "facing=south":  { "model": "buildcraftbuilders:marker_construction", "y": 180, "x": 90 },
+        "facing=west":  { "model": "buildcraftbuilders:marker_construction", "y": 270, "x": 90 },
+        "facing=north":  { "model": "buildcraftbuilders:marker_construction", "x": 90 }
+    }
+}

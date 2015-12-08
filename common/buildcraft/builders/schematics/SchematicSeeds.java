@@ -8,38 +8,39 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
 public class SchematicSeeds extends SchematicBlockFloored {
-	public Item seeds;
+    public Item seeds;
 
-	public SchematicSeeds(Item seeds) {
-		this.seeds = seeds;
-	}
+    public SchematicSeeds(Item seeds) {
+        this.seeds = seeds;
+    }
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(seeds));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+        requirements.add(new ItemStack(seeds));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
-	}
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, 0, 3);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
+        context.world().setBlockState(pos, state, 3);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return context.world().getBlock(x, y, z) == block;
-	}
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        return context.world().getBlockState(pos).getBlock() == state.getBlock();
+    }
 }

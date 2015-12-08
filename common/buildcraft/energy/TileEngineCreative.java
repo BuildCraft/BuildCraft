@@ -1,123 +1,125 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.StringUtils;
 
+import io.netty.buffer.ByteBuf;
+
 public class TileEngineCreative extends TileEngineBase {
-	private PowerMode powerMode = PowerMode.M2;
+    private PowerMode powerMode = PowerMode.M2;
 
-	@Override
-	protected EnergyStage computeEnergyStage() {
-		return EnergyStage.BLUE;
-	}
+    @Override
+    protected EnumEnergyStage computeEnergyStage() {
+        return EnumEnergyStage.BLACK;
+    }
 
-	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
-		if (!getWorldObj().isRemote) {
-			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+    @Override
+    public EnumEngineType getEngineType() {
+        return EnumEngineType.CREATIVE;
+    }
 
-			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
-				powerMode = powerMode.getNext();
-				energy = 0;
+    @Override
+    public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
+        if (!getWorld().isRemote) {
+            Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 
-				if (!(player instanceof FakePlayer)) {
-					if (BuildCraftCore.hidePowerNumbers) {
-						player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless",
-								StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower)));
-					} else {
-						player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode",
-								powerMode.maxPower));
-					}
-				}
+            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, pos)) {
+                powerMode = powerMode.getNext();
+                energy = 0;
 
-				sendNetworkUpdate();
+                if (!(player instanceof FakePlayer)) {
+                    if (BuildCraftCore.hidePowerNumbers) {
+                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", StringUtils.localize(
+                                "chat.pipe.power.iron.level." + powerMode.maxPower)));
+                    } else {
+                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode", powerMode.maxPower));
+                    }
+                }
 
-				((IToolWrench) equipped).wrenchUsed(player, xCoord, yCoord, zCoord);
-				return true;
-			}
-		}
+                sendNetworkUpdate();
 
-		return !player.isSneaking();
-	}
+                ((IToolWrench) equipped).wrenchUsed(player, pos);
+                return true;
+            }
+        }
 
-	@Override
-	public void readFromNBT(NBTTagCompound data) {
-		super.readFromNBT(data);
+        return !player.isSneaking();
+    }
 
-		powerMode = PowerMode.fromId(data.getByte("mode"));
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
 
-	@Override
-	public void writeToNBT(NBTTagCompound data) {
-		super.writeToNBT(data);
+        powerMode = PowerMode.fromId(data.getByte("mode"));
+    }
 
-		data.setByte("mode", (byte) powerMode.ordinal());
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
 
-	@Override
-	public void readData(ByteBuf stream) {
-		super.readData(stream);
-		powerMode = PowerMode.fromId(stream.readUnsignedByte());
-	}
+        data.setByte("mode", (byte) powerMode.ordinal());
+    }
 
-	@Override
-	public void writeData(ByteBuf stream) {
-		super.writeData(stream);
-		stream.writeByte(powerMode.ordinal());
-	}
+    @Override
+    public void readData(ByteBuf stream) {
+        super.readData(stream);
+        powerMode = PowerMode.fromId(stream.readUnsignedByte());
+    }
 
-	@Override
-	public void updateHeat() {
+    @Override
+    public void writeData(ByteBuf stream) {
+        super.writeData(stream);
+        stream.writeByte(powerMode.ordinal());
+    }
 
-	}
+    @Override
+    public void updateHeat() {
 
-	@Override
-	public float getPistonSpeed() {
-		return 0.02F * (powerMode.ordinal() + 1);
-	}
+    }
 
-	@Override
-	public void engineUpdate() {
-		super.engineUpdate();
+    @Override
+    public float getPistonSpeed() {
+        return 0.02F * (powerMode.ordinal() + 1);
+    }
 
-		if (isRedstonePowered) {
-			addEnergy(getIdealOutput());
-		}
-	}
+    @Override
+    public void engineUpdate() {
+        super.engineUpdate();
 
-	@Override
-	public boolean isBurning() {
-		return isRedstonePowered;
-	}
+        if (isRedstonePowered) {
+            addEnergy(getIdealOutput());
+        }
+    }
 
-	@Override
-	public int getMaxEnergy() {
-		return getIdealOutput();
-	}
+    @Override
+    public boolean isBurning() {
+        return isRedstonePowered;
+    }
 
-	@Override
-	public int getIdealOutput() {
-		return powerMode.maxPower;
-	}
+    @Override
+    public int getMaxEnergy() {
+        return getIdealOutput();
+    }
+
+    @Override
+    public int getIdealOutput() {
+        return powerMode.maxPower;
+    }
 }

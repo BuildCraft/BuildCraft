@@ -12,5 +12,5 @@ import buildcraft.api.robots.DockingStation;
 
 public interface IStationFilter {
 
-	boolean matches(DockingStation station);
+    boolean matches(DockingStation station);
 }

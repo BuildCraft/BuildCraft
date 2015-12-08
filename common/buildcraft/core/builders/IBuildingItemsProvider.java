@@ -12,7 +12,7 @@ import java.util.Collection;
 
 public interface IBuildingItemsProvider {
 
-	Collection<BuildingItem> getBuilders();
+    Collection<BuildingItem> getBuilders();
 
-	void addAndLaunchBuildingItem(BuildingItem item);
+    void addAndLaunchBuildingItem(BuildingItem item);
 }

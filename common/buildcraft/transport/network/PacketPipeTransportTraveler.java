@@ -1,130 +1,149 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+
+import buildcraft.api.core.EnumColor;
+import buildcraft.core.lib.network.base.Packet;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.TravelingItem;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.util.MathHelper;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.core.EnumColor;
-import buildcraft.core.lib.network.Packet;
-import buildcraft.core.network.PacketIds;
-import buildcraft.transport.TravelingItem;
-
 public class PacketPipeTransportTraveler extends Packet {
 
-	public int posX;
-	public int posY;
-	public int posZ;
+    public BlockPos pos;
 
-	private TravelingItem item;
-	private boolean forceStackRefresh;
-	private int entityId;
-	private ForgeDirection input;
-	private ForgeDirection output;
-	private EnumColor color;
-	private float itemX;
-	private float itemY;
-	private float itemZ;
-	private float speed;
+    private TravelingItem item;
+    private boolean forceStackRefresh;
+    private int entityId;
+    private EnumFacing input;
+    private EnumFacing output;
+    private EnumColor color;
+    private Vec3 itemPos;
+    private float speed;
 
-	public PacketPipeTransportTraveler() {
-	}
+    public PacketPipeTransportTraveler() {}
 
-	public PacketPipeTransportTraveler(TravelingItem item, boolean forceStackRefresh) {
-		this.item = item;
-		this.forceStackRefresh = forceStackRefresh;
-	}
+    public PacketPipeTransportTraveler(TileEntity tile, TravelingItem item, boolean forceStackRefresh) {
+        this.tempWorld = tile.getWorld();
+        this.item = item;
+        this.forceStackRefresh = forceStackRefresh;
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeFloat((float) item.xCoord);
-		data.writeFloat((float) item.yCoord);
-		data.writeFloat((float) item.zCoord);
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        data.writeFloat((float) item.pos.xCoord);
+        data.writeFloat((float) item.pos.yCoord);
+        data.writeFloat((float) item.pos.zCoord);
 
-		data.writeShort(item.id);
+        data.writeShort(item.id);
 
-		byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
-		data.writeByte(flags);
+        int out = item.output == null ? 6 : item.output.ordinal();
+        int in = item.input == null ? 6 : item.input.ordinal();
 
-		data.writeByte(item.color != null ? item.color.ordinal() : -1);
+        byte flags = (byte) ((out & 7) | ((in & 7) << 3) | (forceStackRefresh ? 64 : 0));
+        data.writeByte(flags);
 
-		data.writeFloat(item.getSpeed());
-	}
+        data.writeByte(item.color != null ? item.color.ordinal() : -1);
 
-	@Override
-	public void readData(ByteBuf data) {
-		this.itemX = data.readFloat();
-		this.itemY = data.readFloat();
-		this.itemZ = data.readFloat();
+        data.writeFloat(item.getSpeed());
+    }
 
-		posX = MathHelper.floor_float(itemX);
-		posY = MathHelper.floor_float(itemY);
-		posZ = MathHelper.floor_float(itemZ);
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        itemPos = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
 
-		this.entityId = data.readShort();
+        pos = Utils.convertFloor(itemPos);
 
-		int flags = data.readUnsignedByte();
+        this.entityId = data.readShort();
 
-		this.input = ForgeDirection.getOrientation((flags >> 3) & 7);
-		this.output = ForgeDirection.getOrientation(flags & 7);
+        int flags = data.readUnsignedByte();
 
-		byte c = data.readByte();
-		if (c != -1) {
-			this.color = EnumColor.fromId(c);
-		}
+        int in = (flags >> 3) & 7;
+        if (in == 6) {
+            this.input = null;
+        } else {
+            this.input = EnumFacing.getFront(in);
+        }
 
-		this.speed = data.readFloat();
+        int out = flags & 7;
+        if (out == 6) {
+            this.output = null;
+        } else {
+            this.output = EnumFacing.getFront(out);
+        }
 
-		this.forceStackRefresh = (flags & 0x40) > 0;
-	}
+        byte c = data.readByte();
+        if (c != -1) {
+            this.color = EnumColor.fromId(c);
+        }
 
-	public int getTravelingEntityId() {
-		return entityId;
-	}
+        this.speed = data.readFloat();
 
-	public ForgeDirection getInputOrientation() {
-		return input;
-	}
+        this.forceStackRefresh = (flags & 0x40) > 0;
+    }
 
-	public ForgeDirection getOutputOrientation() {
-		return output;
-	}
+    public int getTravelingEntityId() {
+        return entityId;
+    }
 
-	public EnumColor getColor() {
-		return color;
-	}
+    public EnumFacing getInputOrientation() {
+        return input;
+    }
 
-	public double getItemX() {
-		return itemX;
-	}
+    public EnumFacing getOutputOrientation() {
+        return output;
+    }
 
-	public double getItemY() {
-		return itemY;
-	}
+    public EnumColor getColor() {
+        return color;
+    }
 
-	public double getItemZ() {
-		return itemZ;
-	}
+    public Vec3 getItemPos() {
+        return itemPos;
+    }
 
-	public float getSpeed() {
-		return speed;
-	}
+    public float getSpeed() {
+        return speed;
+    }
 
-	public boolean forceStackRefresh() {
-		return forceStackRefresh;
-	}
+    public boolean forceStackRefresh() {
+        return forceStackRefresh;
+    }
 
-	@Override
-	public int getID() {
-		return PacketIds.PIPE_TRAVELER;
-	}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (world.isAirBlock(pos)) {
+            return;
+        }
+
+        TileEntity entity = world.getTileEntity(pos);
+        if (!(entity instanceof TileGenericPipe)) {
+            return;
+        }
+
+        TileGenericPipe pipe = (TileGenericPipe) entity;
+        if (pipe.pipe == null) {
+            return;
+        }
+
+        if (!(pipe.pipe.transport instanceof PipeTransportItems)) {
+            return;
+        }
+
+        ((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(this);
+    }
 }

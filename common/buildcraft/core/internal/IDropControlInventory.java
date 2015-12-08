@@ -9,5 +9,5 @@
 package buildcraft.core.internal;
 
 public interface IDropControlInventory {
-	boolean doDrop();
+    boolean doDrop();
 }

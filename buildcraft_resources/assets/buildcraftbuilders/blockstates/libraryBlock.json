@@ -1,0 +1,11 @@
+{
+	"forge_marker":1,
+    "variants": {
+		"facing": {    	
+        	"east":  { "model":"buildcraftbuilders:blueprintLibrary" },
+        	"south":  { "model":"buildcraftbuilders:blueprintLibrary", "y": 90 },
+        	"west":  { "model":"buildcraftbuilders:blueprintLibrary", "y": 180 },
+        	"north":  { "model":"buildcraftbuilders:blueprintLibrary", "y": 270 }
+    	}
+    }
+}

@@ -9,20 +9,17 @@
 package buildcraft.transport.schematics;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingNotFoundException;
-import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
@@ -33,235 +30,242 @@ import buildcraft.transport.TileGenericPipe.SideProperties;
 
 public class SchematicPipe extends SchematicTile {
 
-	private BuildingPermission permission = BuildingPermission.ALL;
+    private BuildingPermission permission = BuildingPermission.ALL;
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
-		if (BlockGenericPipe.isValid(pipe)) {
-			return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
-		} else {
-			return false;
-		}
-	}
+        if (BlockGenericPipe.isValid(pipe)) {
+            return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		SideProperties props = new SideProperties();
+    @Override
+    public void rotateLeft(IBuilderContext context) {
+        SideProperties props = new SideProperties();
 
-		props.readFromNBT(tileNBT);
-		props.rotateLeft();
-		props.writeToNBT(tileNBT);
+        props.readFromNBT(tileNBT);
+        props.rotateLeft();
+        props.writeToNBT(tileNBT);
 
-		Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
+        Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
-		if (BptPipeExtension.contains(pipeItem)) {
-			BptPipeExtension.get(pipeItem).rotateLeft(this, context);
-		}
+        if (BptPipeExtension.contains(pipeItem)) {
+            BptPipeExtension.get(pipeItem).rotateLeft(this, context);
+        }
 
-		if (tileNBT.hasKey("Gate")) {
-			// This code is handling specifically BuildCraft 6.0 gates. Sided
-			// gates starting BuildCraft 6.1 work differently.
+        if (tileNBT.hasKey("Gate")) {
+            // This code is handling specifically BuildCraft 6.0 gates. Sided
+            // gates starting BuildCraft 6.1 work differently.
 
-			NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
-			rotateGateLeft(gateNBT);
-		} else {
-			// Post 6.1 treatment
+            NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
+            rotateGateLeft(gateNBT);
+        } else {
+            // Post 6.1 treatment
 
-			NBTTagCompound[] gatesNBT = new NBTTagCompound[6];
+            NBTTagCompound[] gatesNBT = new NBTTagCompound[6];
 
-			for (int i = 0; i < 6; ++i) {
-				if (tileNBT.hasKey("Gate[" + i + "]")) {
-					gatesNBT[i] = tileNBT.getCompoundTag("Gate[" + i + "]");
-				}
-			}
+            for (int i = 0; i < 6; ++i) {
+                if (tileNBT.hasKey("Gate[" + i + "]")) {
+                    gatesNBT[i] = tileNBT.getCompoundTag("Gate[" + i + "]");
+                }
+            }
 
-			for (int i = 0; i < 6; ++i) {
-				int newI = ForgeDirection.values()[i].getRotation(ForgeDirection.UP).ordinal();
+            for (int i = 0; i < 6; ++i) {
+                EnumFacing face = EnumFacing.VALUES[i];
+                if (face.getAxis() != Axis.Y) {
+                    face = face.rotateY();
+                }
 
-				if (gatesNBT[i] != null) {
-					rotateGateLeft(gatesNBT[i]);
-					tileNBT.setTag("Gate[" + newI + "]", gatesNBT[i]);
-				} else {
-					tileNBT.removeTag("Gate[" + newI + "]");
-				}
-			}
-		}
-	}
+                int newI = face.ordinal();
 
-	private void rotateGateLeft(NBTTagCompound gateNBT) {
-		for (int i = 0; i < Gate.MAX_STATEMENTS; ++i) {
-			if (gateNBT.hasKey("trigger[" + i + "]")) {
-				IStatement t = StatementManager.statements.get(gateNBT.getString("trigger[" + i + "]"));
-				t = t.rotateLeft();
-				gateNBT.setString("trigger[" + i + "]", t.getUniqueTag());
-			}
+                if (gatesNBT[i] != null) {
+                    rotateGateLeft(gatesNBT[i]);
+                    tileNBT.setTag("Gate[" + newI + "]", gatesNBT[i]);
+                } else {
+                    tileNBT.removeTag("Gate[" + newI + "]");
+                }
+            }
+        }
+    }
 
-			if (gateNBT.hasKey("action[" + i + "]")) {
-				IStatement a = StatementManager.statements.get(gateNBT.getString("action[" + i + "]"));
-				a = a.rotateLeft();
-				gateNBT.setString("action[" + i + "]", a.getUniqueTag());
-			}
+    private void rotateGateLeft(NBTTagCompound gateNBT) {
+        for (int i = 0; i < Gate.MAX_STATEMENTS; ++i) {
+            if (gateNBT.hasKey("trigger[" + i + "]")) {
+                IStatement t = StatementManager.statements.get(gateNBT.getString("trigger[" + i + "]"));
+                t = t.rotateLeft();
+                gateNBT.setString("trigger[" + i + "]", t.getUniqueTag());
+            }
 
-			for (int j = 0; j < Gate.MAX_PARAMETERS; ++j) {
-				if (gateNBT.hasKey("triggerParameters[" + i + "][" + j + "]")) {
-					NBTTagCompound cpt = gateNBT.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
-					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
-					parameter.readFromNBT(cpt);
+            if (gateNBT.hasKey("action[" + i + "]")) {
+                IStatement a = StatementManager.statements.get(gateNBT.getString("action[" + i + "]"));
+                a = a.rotateLeft();
+                gateNBT.setString("action[" + i + "]", a.getUniqueTag());
+            }
 
-					parameter = parameter.rotateLeft();
+            for (int j = 0; j < Gate.MAX_PARAMETERS; ++j) {
+                if (gateNBT.hasKey("triggerParameters[" + i + "][" + j + "]")) {
+                    NBTTagCompound cpt = gateNBT.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
+                    IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
+                    parameter.readFromNBT(cpt);
 
-					parameter.writeToNBT(cpt);
-					gateNBT.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
-				}
+                    parameter = parameter.rotateLeft();
 
-				if (gateNBT.hasKey("actionParameters[" + i + "][" + j + "]")) {
-					NBTTagCompound cpt = gateNBT.getCompoundTag("actionParameters[" + i + "][" + j + "]");
-					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
-					parameter.readFromNBT(cpt);
+                    parameter.writeToNBT(cpt);
+                    gateNBT.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
+                }
 
-					parameter = parameter.rotateLeft();
+                if (gateNBT.hasKey("actionParameters[" + i + "][" + j + "]")) {
+                    NBTTagCompound cpt = gateNBT.getCompoundTag("actionParameters[" + i + "][" + j + "]");
+                    IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
+                    parameter.readFromNBT(cpt);
 
-					parameter.writeToNBT(cpt);
-					gateNBT.setTag("actionParameters[" + i + "][" + j + "]", cpt);
-				}
-			}
-		}
+                    parameter = parameter.rotateLeft();
 
-		if (gateNBT.hasKey("direction")) {
-			gateNBT.setInteger("direction",
-					ForgeDirection.values()[gateNBT.getInteger("direction")].
-							getRotation(ForgeDirection.UP).ordinal());
-		}
-	}
+                    parameter.writeToNBT(cpt);
+                    gateNBT.setTag("actionParameters[" + i + "][" + j + "]", cpt);
+                }
+            }
+        }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		tileNBT.setInteger("x", x);
-		tileNBT.setInteger("y", y);
-		tileNBT.setInteger("z", z);
+        if (gateNBT.hasKey("direction")) {
+            EnumFacing face = EnumFacing.VALUES[gateNBT.getInteger("direction")];
+            if (face.getAxis() != Axis.Y) {
+                face = face.rotateY();
+            }
 
-		context.world().setBlock(x, y, z, block, meta, 3);
+            gateNBT.setInteger("direction", face.ordinal());
+        }
+    }
 
-		TileEntity tile = context.world().getTileEntity(x, y, z);
-		tile.readFromNBT(tileNBT);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
+        tileNBT.setInteger("x", pos.getX());
+        tileNBT.setInteger("y", pos.getY());
+        tileNBT.setInteger("z", pos.getZ());
 
-	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		TileEntity tile = context.world().getTileEntity(x, y, z);
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+        context.world().setBlockState(pos, state, 3);
 
-		if (BlockGenericPipe.isValid(pipe)) {
-			tile.writeToNBT(tileNBT);
+        TileEntity tile = context.world().getTileEntity(pos);
+        tile.readFromNBT(tileNBT);
+    }
 
-			// remove all pipe contents
+    @Override
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+        TileEntity tile = context.world().getTileEntity(pos);
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
-			tileNBT.removeTag("travelingEntities");
+        if (BlockGenericPipe.isValid(pipe)) {
+            tile.writeToNBT(tileNBT);
 
-			for (ForgeDirection direction : ForgeDirection.values()) {
-				tileNBT.removeTag("tank[" + direction.ordinal() + "]");
-				tileNBT.removeTag("transferState[" + direction.ordinal() + "]");
-			}
+            // remove all pipe contents
 
-			for (int i = 0; i < 6; ++i) {
-				tileNBT.removeTag("powerQuery[" + i + "]");
-				tileNBT.removeTag("nextPowerQuery[" + i + "]");
-				tileNBT.removeTag("internalPower[" + i + "]");
-				tileNBT.removeTag("internalNextPower[" + i + "]");
-			}
-		}
-	}
+            tileNBT.removeTag("travelingEntities");
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+            for (EnumFacing direction : EnumFacing.values()) {
+                tileNBT.removeTag("tank[" + direction.ordinal() + "]");
+                tileNBT.removeTag("transferState[" + direction.ordinal() + "]");
+            }
 
-		if (BlockGenericPipe.isValid(pipe)) {
-			ArrayList<ItemStack> items = pipe.computeItemDrop();
-			storedRequirements = new ItemStack[items.size() + 1];
-			items.toArray(storedRequirements);
-			storedRequirements[storedRequirements.length - 1] = new ItemStack(
-					pipe.item, 1, pipe.container.getItemMetadata());
-		}
-	}
+            for (int i = 0; i < 6; ++i) {
+                tileNBT.removeTag("powerQuery[" + i + "]");
+                tileNBT.removeTag("nextPowerQuery[" + i + "]");
+                tileNBT.removeTag("internalPower[" + i + "]");
+                tileNBT.removeTag("internalNextPower[" + i + "]");
+            }
+        }
+    }
 
-	@Override
-	public void postProcessing(IBuilderContext context, int x, int y, int z) {
-		Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
-		if (BptPipeExtension.contains(pipeItem)) {
-			BptPipeExtension.get(pipeItem).postProcessing(this, context);
-		}
-	}
+        if (BlockGenericPipe.isValid(pipe)) {
+            ArrayList<ItemStack> items = pipe.computeItemDrop();
+            storedRequirements = new ItemStack[items.size() + 1];
+            items.toArray(storedRequirements);
+            storedRequirements[storedRequirements.length - 1] = new ItemStack(pipe.item, 1, pipe.container.getItemMetadata());
+        }
+    }
 
-	@Override
-	public BuildingStage getBuildStage() {
-		return BuildingStage.STANDALONE;
-	}
+    @Override
+    public void postProcessing(IBuilderContext context, BlockPos pos) {
+        Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
-	@Override
-	public void idsToBlueprint(MappingRegistry registry) {
-		super.idsToBlueprint(registry);
+        if (BptPipeExtension.contains(pipeItem)) {
+            BptPipeExtension.get(pipeItem).postProcessing(this, context);
+        }
+    }
 
-		if (tileNBT.hasKey("pipeId")) {
-			Item item = Item.getItemById(tileNBT.getInteger("pipeId"));
+    @Override
+    public BuildingStage getBuildStage() {
+        return BuildingStage.STANDALONE;
+    }
 
-			tileNBT.setInteger("pipeId", registry.getIdForItem(item));
-		}
-	}
+    @Override
+    public void idsToBlueprint(MappingRegistry registry) {
+        super.idsToBlueprint(registry);
 
-	@Override
-	public void idsToWorld(MappingRegistry registry) {
-		super.idsToWorld(registry);
+        if (tileNBT.hasKey("pipeId")) {
+            Item item = Item.getItemById(tileNBT.getInteger("pipeId"));
 
-		if (tileNBT.hasKey("pipeId")) {
-			try {
-				Item item = registry.getItemForId(tileNBT.getInteger("pipeId"));
+            tileNBT.setInteger("pipeId", registry.getIdForItem(item));
+        }
+    }
 
-				tileNBT.setInteger("pipeId", Item.getIdFromItem(item));
-			} catch (MappingNotFoundException e) {
-				tileNBT.removeTag("pipeId");
-			}
-		}
-	}
+    @Override
+    public void idsToWorld(MappingRegistry registry) {
+        super.idsToWorld(registry);
 
-	@Override
-	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.writeSchematicToNBT(nbt, registry);
-		nbt.setInteger("version", 2);
-	}
+        if (tileNBT.hasKey("pipeId")) {
+            try {
+                Item item = registry.getItemForId(tileNBT.getInteger("pipeId"));
 
-	@Override
-	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		super.readSchematicFromNBT(nbt, registry);
+                tileNBT.setInteger("pipeId", Item.getIdFromItem(item));
+            } catch (MappingNotFoundException e) {
+                tileNBT.removeTag("pipeId");
+            }
+        }
+    }
 
-		if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
-			// Schematics previous to the fixes in version 2 had item id
-			// translation badly broken. We need to flush out information that
-			// would be otherwise corrupted - that is the inventory (with the
-			// old formalism "items") and gate parameters.
-			tileNBT.removeTag("items");
+    @Override
+    public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
+        super.writeSchematicToNBT(nbt, registry);
+        nbt.setInteger("version", 2);
+    }
 
-			if (tileNBT.hasKey("Gate")) {
-				NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
+    @Override
+    public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
+        super.readSchematicFromNBT(nbt, registry);
 
-				for (int i = 0; i < 8; ++i) {
-					if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
-						NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+        if (!nbt.hasKey("version") || nbt.getInteger("version") < 2) {
+            // Schematics previous to the fixes in version 2 had item id
+            // translation badly broken. We need to flush out information that
+            // would be otherwise corrupted - that is the inventory (with the
+            // old formalism "items") and gate parameters.
+            tileNBT.removeTag("items");
 
-						if (parameterNBT.hasKey("stack")) {
-							parameterNBT.removeTag("stack");
-						}
-					}
-				}
-			}
-		}
-	}
+            if (tileNBT.hasKey("Gate")) {
+                NBTTagCompound gateNBT = tileNBT.getCompoundTag("Gate");
 
-	@Override
-	public BuildingPermission getBuildingPermission() {
-		return permission;
-	}
+                for (int i = 0; i < 8; ++i) {
+                    if (gateNBT.hasKey("triggerParameters[" + i + "]")) {
+                        NBTTagCompound parameterNBT = gateNBT.getCompoundTag("triggerParameters[" + i + "]");
+
+                        if (parameterNBT.hasKey("stack")) {
+                            parameterNBT.removeTag("stack");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public BuildingPermission getBuildingPermission() {
+        return permission;
+    }
 }

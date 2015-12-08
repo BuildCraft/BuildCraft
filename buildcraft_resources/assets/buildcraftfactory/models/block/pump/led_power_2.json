@@ -1,0 +1,6 @@
+{
+	"parent":"buildcraftcore:block/led_power",
+	"textures": {
+		"led":"buildcraftcore:blocks/led_red_2_3"
+	}
+}

@@ -14,86 +14,81 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.silicon.render.PackageFontRenderer;
 
 public class ItemPackage extends ItemBuildCraft {
-	public static final class DispenseBehaviour extends BehaviorDefaultDispenseItem {
-		@Override
-		public ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
-			if (stack != null && stack.getItem() instanceof ItemPackage) {
-				World world = source.getWorld();
-				EnumFacing enumfacing = BlockDispenser.func_149937_b(source.getBlockMetadata());
+    public static final class DispenseBehaviour extends BehaviorDefaultDispenseItem {
+        @Override
+        public ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
+            if (stack != null && stack.getItem() instanceof ItemPackage) {
+                World world = source.getWorld();
+                EnumFacing enumfacing = BlockDispenser.getFacing(source.getBlockMetadata());
 
-				EntityPackage entityPackage = new EntityPackage(source.getWorld(),
-						source.getX() + enumfacing.getFrontOffsetX(),
-						source.getY() + enumfacing.getFrontOffsetY(),
-						source.getZ() + enumfacing.getFrontOffsetZ(), stack.copy());
-				entityPackage.setThrowableHeading(enumfacing.getFrontOffsetX(), enumfacing.getFrontOffsetY() + 0.1F, enumfacing.getFrontOffsetZ(), 1.1F, 6.0F);
-				world.spawnEntityInWorld(entityPackage);
-				stack.splitStack(1);
-			}
-			return stack;
-		}
-	}
+                EntityPackage entityPackage = new EntityPackage(source.getWorld(), source.getX() + enumfacing.getFrontOffsetX(), source.getY()
+                    + enumfacing.getFrontOffsetY(), source.getZ() + enumfacing.getFrontOffsetZ(), stack.copy());
+                entityPackage.setThrowableHeading(enumfacing.getFrontOffsetX(), enumfacing.getFrontOffsetY() + 0.1F, enumfacing.getFrontOffsetZ(),
+                        1.1F, 6.0F);
+                world.spawnEntityInWorld(entityPackage);
+                stack.splitStack(1);
+            }
+            return stack;
+        }
+    }
 
-	public ItemPackage() {
-		super();
-		setMaxStackSize(1);
-	}
+    public ItemPackage() {
+        super();
+        setMaxStackSize(1);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {}
 
-	}
+    public static void update(ItemStack stack) {}
 
-	public static void update(ItemStack stack) {
+    public static ItemStack getStack(ItemStack stack, int slot) {
+        NBTTagCompound tag = NBTUtils.getItemData(stack);
+        if (tag.hasKey("item" + slot)) {
+            return ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item" + slot));
+        } else {
+            return null;
+        }
+    }
 
-	}
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        world.playSoundAtEntity(player, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
 
-	public static ItemStack getStack(ItemStack stack, int slot) {
-		NBTTagCompound tag = NBTUtils.getItemData(stack);
-		if (tag.hasKey("item" + slot)) {
-			return ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item" + slot));
-		} else {
-			return null;
-		}
-	}
+        if (!world.isRemote) {
+            world.spawnEntityInWorld(new EntityPackage(world, player, stack.copy()));
+        }
 
-	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		world.playSoundAtEntity(player, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+        if (!player.capabilities.isCreativeMode) {
+            stack.stackSize--;
+        }
 
-		if (!world.isRemote) {
-			world.spawnEntityInWorld(new EntityPackage(world, player, stack.copy()));
-		}
+        return stack;
+    }
 
-		if (!player.capabilities.isCreativeMode) {
-			stack.stackSize--;
-		}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public FontRenderer getFontRenderer(ItemStack stack) {
+        return new PackageFontRenderer(stack);
+    }
 
-		return stack;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public FontRenderer getFontRenderer(ItemStack stack) {
-		return new PackageFontRenderer(stack);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
-		NBTTagCompound tag = NBTUtils.getItemData(stack);
-		if (!tag.hasNoTags()) {
-			strings.add("SPECIAL:0");
-			strings.add("SPECIAL:1");
-			strings.add("SPECIAL:2");
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean adv) {
+        NBTTagCompound tag = NBTUtils.getItemData(stack);
+        if (!tag.hasNoTags()) {
+            strings.add("SPECIAL:0");
+            strings.add("SPECIAL:1");
+            strings.add("SPECIAL:2");
+        }
+    }
 }

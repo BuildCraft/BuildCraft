@@ -1,0 +1,50 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"particle":"buildcraftbuilders:blocks/quarry/top"
+		}
+	},
+    "variants": {
+        "facing": {
+        	"east":  { "submodel":"buildcraftbuilders:quarry/main" },
+        	"south": { "submodel":"buildcraftbuilders:quarry/main", "y": 90 },
+        	"west":  { "submodel":"buildcraftbuilders:quarry/main", "y": 180 },
+        	"north": { "submodel":"buildcraftbuilders:quarry/main", "y": 270 }
+        },
+        "led_done": {
+        	"true":  { "submodel":"buildcraftbuilders:quarry/led_active_on" },
+        	"false": { "submodel":"buildcraftbuilders:quarry/led_active_off" }
+        },
+        "led_power": {
+        	"0": { "submodel":"buildcraftbuilders:quarry/led_power_0" },
+        	"1": { "submodel":"buildcraftbuilders:quarry/led_power_1" },
+        	"2": { "submodel":"buildcraftbuilders:quarry/led_power_2" },
+        	"3": { "submodel":"buildcraftbuilders:quarry/led_power_3" }
+        },
+        "connected_up": {
+        	"true":  {},
+        	"false": {}
+        },
+        "connected_down": {
+        	"true":  {},
+        	"false": {}
+        },
+        "connected_east": {
+        	"true":  {},
+        	"false": {}
+        },
+        "connected_west": {
+        	"true":  {},
+        	"false": {}
+        },
+        "connected_north": {
+        	"true":  {},
+        	"false": {}
+        },
+        "connected_south": {
+        	"true":  {},
+        	"false": {}
+        }
+    }
+}

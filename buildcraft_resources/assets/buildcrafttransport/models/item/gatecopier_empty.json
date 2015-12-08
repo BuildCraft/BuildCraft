@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftcore:item/buildcraft_base_tool",
+    "textures": {
+        "layer0": "buildcrafttransport:items/gatecopier/empty"
+    }
+}

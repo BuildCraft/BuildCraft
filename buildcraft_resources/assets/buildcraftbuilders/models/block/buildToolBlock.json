@@ -1,0 +1,6 @@
+{
+	 "parent": "buildcraftcore:block/default_cube_all",
+    "textures": {
+    	"all": "buildcraftbuilders:blocks/builder/blockRemover"
+    }
+}

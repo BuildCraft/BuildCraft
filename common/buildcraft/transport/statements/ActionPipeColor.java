@@ -10,8 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -21,27 +19,21 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionPipeColor extends BCStatement implements IActionInternal {
 
-	public final EnumColor color;
+    public final EnumColor color;
 
-	public ActionPipeColor(EnumColor color) {
-		super("buildcraft:pipe.color." + color.getTag(), "buildcraft.pipe." + color.getTag());
+    public ActionPipeColor(EnumColor color) {
+        super("buildcraft:pipe.color." + color.getTag(), "buildcraft.pipe." + color.getTag());
+		setBuildCraftLocation("core", "items/paintbrush/" + color.name().toLowerCase(Locale.ROOT));
+        this.color = color;
+    }
 
-		this.color = color;
-	}
+    @Override
+    public String getDescription() {
+        return String.format(StringUtils.localize("gate.action.pipe.item.color"), color.getLocalizedName());
+    }
 
-	@Override
-	public String getDescription() {
-		return String.format(StringUtils.localize("gate.action.pipe.item.color"), color.getLocalizedName());
-	}
+    @Override
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:paintbrush/" + color.name().toLowerCase(Locale.ENGLISH));
-	}
-
-	@Override
-	public void actionActivate(IStatementContainer source,
-							   IStatementParameter[] parameters) {
-
-	}
+    }
 }

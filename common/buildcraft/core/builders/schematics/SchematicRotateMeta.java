@@ -8,9 +8,15 @@
  */
 package buildcraft.core.builders.schematics;
 
+import net.minecraft.util.BlockPos;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
+/**
+ * Use EnumFacing properties instead
+ */
+@Deprecated
 public class SchematicRotateMeta extends SchematicTile {
 
 	int[] rot;
@@ -32,41 +38,42 @@ public class SchematicRotateMeta extends SchematicTile {
 		}
 
 		this.rotateForward = rotateForward;
+        throw new IllegalStateException("DEPRECATED DUMBASS");
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state == context.world().getBlockState(pos);
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int pos = meta & infoMask;
-		int others = meta - pos;
-
-		if (rotateForward) {
-			if (pos == rot[0]) {
-				pos = rot[1];
-			} else if (pos == rot[1]) {
-				pos = rot[2];
-			} else if (pos == rot[2]) {
-				pos = rot[3];
-			} else if (pos == rot[3]) {
-				pos = rot[0];
-			}
-		} else {
-			if (pos == rot[0]) {
-				pos = rot[3];
-			} else if (pos == rot[1]) {
-				pos = rot[2];
-			} else if (pos == rot[2]) {
-				pos = rot[0];
-			} else if (pos == rot[3]) {
-				pos = rot[1];
-			}
-		}
-
-		meta = pos + others;
+//		int pos = meta & infoMask;
+//		int others = meta - pos;
+//
+//		if (rotateForward) {
+//			if (pos == rot[0]) {
+//				pos = rot[1];
+//			} else if (pos == rot[1]) {
+//				pos = rot[2];
+//			} else if (pos == rot[2]) {
+//				pos = rot[3];
+//			} else if (pos == rot[3]) {
+//				pos = rot[0];
+//			}
+//		} else {
+//			if (pos == rot[0]) {
+//				pos = rot[3];
+//			} else if (pos == rot[1]) {
+//				pos = rot[2];
+//			} else if (pos == rot[2]) {
+//				pos = rot[0];
+//			} else if (pos == rot[3]) {
+//				pos = rot[1];
+//			}
+//		}
+//
+//		meta = pos + others;
 	}
 
 }

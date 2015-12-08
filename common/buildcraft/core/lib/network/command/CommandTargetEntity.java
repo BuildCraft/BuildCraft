@@ -8,31 +8,36 @@
  */
 package buildcraft.core.lib.network.command;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import io.netty.buffer.ByteBuf;
+
 public class CommandTargetEntity extends CommandTarget {
-	@Override
+    @Override
 	public Class<?> getHandledClass() {
-		return Entity.class;
-	}
+        return Entity.class;
+    }
 
-	@Override
-	public void write(ByteBuf data, Object target) {
-		Entity entity = (Entity) target;
-		data.writeInt(entity.getEntityId());
-	}
+    @Override
+    public void write(ByteBuf data, Object target) {
+        Entity entity = (Entity) target;
+        data.writeInt(entity.getEntityId());
+    }
 
-	@Override
-	public ICommandReceiver handle(EntityPlayer player, ByteBuf data, World world) {
-		int id = data.readInt();
-		Entity entity = world.getEntityByID(id);
-		if (entity != null && entity instanceof ICommandReceiver) {
-			return (ICommandReceiver) entity;
-		}
-		return null;
-	}
+    @Override
+    public ICommandReceiver handle(EntityPlayer player, ByteBuf data, World world) {
+        int id = data.readInt();
+        Entity entity = world.getEntityByID(id);
+        if (entity != null && entity instanceof ICommandReceiver) {
+            return (ICommandReceiver) entity;
+        }
+        return null;
+    }
+
+    @Override
+    public World getWorld(Object target) {
+        return ((Entity) target).worldObj;
+    }
 }

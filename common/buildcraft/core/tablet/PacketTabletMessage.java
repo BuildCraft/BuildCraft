@@ -1,61 +1,69 @@
 package buildcraft.core.tablet;
 
-import java.io.IOException;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+
+import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.network.base.Packet;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.tablet.manager.TabletManagerClient;
+import buildcraft.core.tablet.manager.TabletManagerServer;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
-import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.network.Packet;
-import buildcraft.core.network.PacketIds;
-
 public class PacketTabletMessage extends Packet {
-	private NBTTagCompound tag;
+    private NBTTagCompound tag;
+    private int playerId;
 
-	public PacketTabletMessage() {
-		tag = new NBTTagCompound();
-	}
+    public PacketTabletMessage() {
+        tag = new NBTTagCompound();
+    }
 
-	public PacketTabletMessage(NBTTagCompound tag) {
-		this.tag = tag;
-	}
+    public PacketTabletMessage(NBTTagCompound tag, EntityPlayer player) {
+        this.tag = tag;
+        this.playerId = player.getEntityId();
+    }
 
-	@Override
-	public int getID() {
-		return PacketIds.TABLET_MESSAGE;
-	}
+    public NBTTagCompound getTag() {
+        return tag;
+    }
 
-	public NBTTagCompound getTag() {
-		return tag;
-	}
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        playerId = data.readInt();
 
-	@Override
-	public void readData(ByteBuf data) {
-		int length = data.readUnsignedShort();
-		byte[] compressed = new byte[length];
-		data.readBytes(compressed);
+        int length = data.readUnsignedShort();
+        byte[] compressed = new byte[length];
+        data.readBytes(compressed);
+        this.tag = NetworkUtils.readNBT(data);;
+    }
 
-		try {
-			this.tag = CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        data.writeInt(playerId);
+        int index = data.writerIndex();
+        NetworkUtils.writeNBT(data, tag);
+        index = data.writerIndex() - index;
+        if (index > 65535) {
+            BCLog.logger.error("NBT data is too large (" + index + " > 65,535)! Please report!");
+        }
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		try {
-			byte[] compressed = CompressedStreamTools.compress(tag);
-			if (compressed.length > 65535) {
-				BCLog.logger.error("NBT data is too large (" + compressed.length + " > 65535)! Please report!");
-			}
-			data.writeShort(compressed.length);
-			data.writeBytes(compressed);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (world.isRemote) {
+            TabletBase tablet = TabletManagerClient.INSTANCE.get().getTablet();
+            tablet.receiveMessage(getTag());
+        } else {
+            Entity playerById = world.getEntityByID(playerId);
+            if (playerById instanceof EntityPlayer) {
+                TabletBase tablet = TabletManagerServer.INSTANCE.get((EntityPlayer) playerById);
+                tablet.receiveMessage(getTag());
+            }
+        }
+    }
 }

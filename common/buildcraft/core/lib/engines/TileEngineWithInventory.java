@@ -13,104 +13,115 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class TileEngineWithInventory extends TileEngineBase implements IInventory, ISidedInventory {
 
-	private final SimpleInventory inv;
-	private final int[] defaultSlotArray;
+    private final SimpleInventory inv;
+    private final int[] defaultSlotArray;
 
-	public TileEngineWithInventory(int invSize) {
-		inv = new SimpleInventory(invSize, "Engine", 64);
-		defaultSlotArray = Utils.createSlotArray(0, invSize);
-	}
+    public TileEngineWithInventory(int invSize) {
+        inv = new SimpleInventory(invSize, "Engine", 64);
+        defaultSlotArray = Utils.createSlotArray(0, invSize);
+    }
 
-	/* IINVENTORY IMPLEMENTATION */
-	@Override
-	public int getSizeInventory() {
-		return inv.getSizeInventory();
-	}
+    /* IINVENTORY IMPLEMENTATION */
+    @Override
+    public int getSizeInventory() {
+        return inv.getSizeInventory();
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv.getStackInSlot(slot);
-	}
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return inv.getStackInSlot(slot);
+    }
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inv.decrStackSize(slot, amount);
-	}
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        return inv.decrStackSize(slot, amount);
+    }
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inv.getStackInSlotOnClosing(slot);
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slot) {
+        return inv.removeStackFromSlot(slot);
+    }
 
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemstack) {
-		inv.setInventorySlotContents(slot, itemstack);
-	}
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack itemstack) {
+        inv.setInventorySlotContents(slot, itemstack);
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return true;
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return true;
+    }
 
-	@Override
-	public String getInventoryName() {
-		return "Engine";
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
 
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+        return worldObj.getTileEntity(pos) == this;
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        inv.readFromNBT(data);
+    }
 
-	@Override
-	public void openInventory() {
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        inv.writeToNBT(data);
+    }
 
-	@Override
-	public void closeInventory() {
-	}
+    // ISidedInventory
 
-	@Override
-	public void readFromNBT(NBTTagCompound data) {
-		super.readFromNBT(data);
-		inv.readFromNBT(data);
-	}
+    @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        if (side == orientation) {
+            return new int[0];
+        } else {
+            return defaultSlotArray;
+        }
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound data) {
-		super.writeToNBT(data);
-		inv.writeToNBT(data);
-	}
+    @Override
+    public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
+    }
 
-	// ISidedInventory
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
+    }
 
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		if (side == orientation.ordinal()) {
-			return new int[0];
-		} else {
-			return defaultSlotArray;
-		}
-	}
+    @Override
+    public String getName() {
+        return "Engine";
+    }
 
-	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return side != orientation.ordinal();
-	}
+    @Override
+    public boolean hasCustomName() {
+        return true;
+    }
 
-	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		return side != orientation.ordinal();
-	}
+    @Override
+    public IChatComponent getDisplayName() {
+        return new ChatComponentText("Engine");
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
 }

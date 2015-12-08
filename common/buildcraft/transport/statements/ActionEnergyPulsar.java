@@ -8,8 +8,6 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -18,23 +16,18 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 
-	public ActionEnergyPulsar() {
-		super("buildcraft:pulsar.constant", "buildcraft.pulser.constant");
-	}
+    public ActionEnergyPulsar() {
+        super("buildcraft:pulsar.constant", "buildcraft.pulser.constant");
+		setBuildCraftLocation("transport", "triggers/action_pulsar");
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("gate.action.pulsar.constant");
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("gate.action.pulsar.constant");
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_pulsar");
-	}
+    @Override
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
 
-	@Override
-	public void actionActivate(IStatementContainer source,
-							   IStatementParameter[] parameters) {
-
-	}
+    }
 }

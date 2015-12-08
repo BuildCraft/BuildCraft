@@ -10,12 +10,10 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementContainer;
@@ -29,87 +27,86 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
-	public enum State {
+    public enum State {
 
-		Empty, Contains, Space, Full
-	}
+        Empty,
+        Contains,
+        Space,
+        Full
+    }
 
-	public State state;
+    public State state;
 
-	public TriggerInventory(State state) {
-		super("buildcraft:inventory." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+    public TriggerInventory(State state) {
+        super("buildcraft:inventory." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+        setBuildCraftLocation("core", "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT));
+        this.state = state;
+    }
 
-		this.state = state;
-	}
+    @Override
+    public int maxParameters() {
+        return state == State.Contains || state == State.Space ? 1 : 0;
+    }
 
-	@Override
-	public int maxParameters() {
-		return state == State.Contains || state == State.Space ? 1 : 0;
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
-	}
+    @Override
+    public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
+        ItemStack searchedStack = null;
 
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
-		ItemStack searchedStack = null;
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
+            searchedStack = parameters[0].getItemStack();
+        }
 
-		if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
-			searchedStack = parameters[0].getItemStack();
-		}
+        if (tile instanceof IInventory) {
+            boolean hasSlots = false;
+            boolean foundItems = false;
+            boolean foundSpace = false;
 
-		if (tile instanceof IInventory) {
-			boolean hasSlots = false;
-			boolean foundItems = false;
-			boolean foundSpace = false;
+            for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {
+                hasSlots = true;
+                ItemStack stack = slot.getStackInSlot();
 
-			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {
-				hasSlots = true;
-				ItemStack stack = slot.getStackInSlot();
+                foundItems |= stack != null && (searchedStack == null || StackHelper.canStacksOrListsMerge(stack, searchedStack));
 
-				foundItems |= stack != null
-						&& (searchedStack == null || StackHelper.canStacksOrListsMerge(stack, searchedStack));
+                foundSpace |= (stack == null || (StackHelper.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
+                        .getMaxStackSize())) && (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot.canPutStackInSlot(
+                                searchedStack));
+                // On the test above, we deactivate item list as inventories
+                // typically don't check for lists possibility. This is a
+                // heuristic which is more desirable than expensive computation
+                // of list components or possibility of extension
+            }
 
-				foundSpace |= (stack == null
-						|| (StackHelper.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
-						.getMaxStackSize()))
-						&& (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot
-						.canPutStackInSlot(searchedStack));
-				// On the test above, we deactivate item list as inventories
-				// typically don't check for lists possibility. This is a
-				// heuristic which is more desirable than expensive computation
-				// of list components or possibility of extension
-			}
+            if (!hasSlots) {
+                return false;
+            }
 
-			if (!hasSlots) {
-				return false;
-			}
+            switch (state) {
+                case Empty:
+                    return !foundItems;
+                case Contains:
+                    return foundItems;
+                case Space:
+                    return foundSpace;
+                default:
+                    return !foundSpace;
+            }
+        }
 
-			switch (state) {
-				case Empty:
-					return !foundItems;
-				case Contains:
-					return foundItems;
-				case Space:
-					return foundSpace;
-				default:
-					return !foundSpace;
-			}
-		}
+        return false;
+    }
 
-		return false;
-	}
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister register) {
+    // icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + state.name().toLowerCase());
+    // }
 
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + state.name().toLowerCase());
-	}
-
-	@Override
-	public IStatementParameter createParameter(int index) {
-		return new StatementParameterItemStack();
-	}
+    @Override
+    public IStatementParameter createParameter(int index) {
+        return new StatementParameterItemStack();
+    }
 }

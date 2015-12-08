@@ -10,11 +10,9 @@ package buildcraft.core.lib.inventory.filters;
 
 import net.minecraft.item.ItemStack;
 
-/**
- * This interface provides a convenient means of dealing with entire classes of
- * items without having to specify each item individually.
- */
+/** This interface provides a convenient means of dealing with entire classes of items without having to specify each
+ * item individually. */
 public interface IStackFilter {
 
-	boolean matches(ItemStack stack);
+    boolean matches(ItemStack stack);
 }

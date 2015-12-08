@@ -1,80 +1,86 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 
 public class SpringPopulate {
 
-	@SubscribeEvent
-	public void populate(PopulateChunkEvent.Post event) {
-		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
+    @SubscribeEvent
+    public void populate(PopulateChunkEvent.Post event) {
 
-		if (!doGen || !BlockSpring.EnumSpring.WATER.canGen) {
-			event.setResult(Result.ALLOW);
-			return;
-		}
+        boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
+                PopulateChunkEvent.Populate.EventType.CUSTOM);
 
-		// shift to world coordinates
-		int worldX = event.chunkX << 4;
-		int worldZ = event.chunkZ << 4;
+        if (!doGen || !EnumSpring.WATER.canGen) {
+            event.setResult(Result.ALLOW);
+            return;
+        }
 
-		doPopulate(event.world, event.rand, worldX, worldZ);
-	}
+        // shift to world coordinates
+        int worldX = event.chunkX << 4;
+        int worldZ = event.chunkZ << 4;
 
-	private void doPopulate(World world, Random random, int x, int z) {
-		int dimId = world.provider.dimensionId;
-		// No water springs will generate in the Nether or End.
-		if (dimId == -1 || dimId == 1) {
-			return;
-		}
+        doPopulate(event.world, event.rand, worldX, worldZ);
+    }
 
-		// A spring will be generated every 40th chunk.
-		if (random.nextFloat() > 0.025f) {
-			return;
-		}
+    private void doPopulate(World world, Random random, int x, int z) {
+        int dimId = world.provider.getDimensionId();
+        // No water springs will generate in the Nether or End.
+        if (dimId == -1 || dimId == 1) {
+            return;
+        }
 
-		int posX = x + random.nextInt(16);
-		int posZ = z + random.nextInt(16);
+        // A spring will be generated every 40th chunk.
+        if (random.nextFloat() > 0.025f) {
+            return;
+        }
 
-		for (int i = 0; i < 5; i++) {
-			Block candidate = world.getBlock(posX, i, posZ);
+        int posX = x + random.nextInt(16);
+        int posZ = z + random.nextInt(16);
 
-			if (candidate != Blocks.bedrock) {
-				continue;
-			}
+        for (int i = 0; i < 5; i++) {
+            BlockPos pos = new BlockPos(posX, i, posZ);
+            Block candidate = world.getBlockState(pos).getBlock();
 
-			// Handle flat bedrock maps
-			int y = i > 0 ? i : i - 1;
+            if (candidate != Blocks.bedrock) {
+                continue;
+            }
 
-			world.setBlock(posX, y + 1, posZ, BuildCraftCore.springBlock);
+            // Handle flat bedrock maps
+            int y = i > 0 ? i : i - 1;
 
-			for (int j = y + 2; j < world.getActualHeight(); j++) {
-				if (world.isAirBlock(posX, j, posZ)) {
-					break;
-				} else {
-					world.setBlock(posX, j, posZ, Blocks.water);
-				}
-			}
+            IBlockState springState = BuildCraftCore.springBlock.getDefaultState();
+            springState = springState.withProperty(BlockBuildCraftBase.SPRING_TYPE, EnumSpring.WATER);
 
-			break;
-		}
-	}
+            world.setBlockState(new BlockPos(posX, y, posZ), springState);
+
+            for (int j = y + 2; j < world.getActualHeight(); j++) {
+                if (world.isAirBlock(new BlockPos(posX, j, posZ))) {
+                    break;
+                } else {
+                    world.setBlockState(new BlockPos(posX, j, posZ), Blocks.water.getDefaultState());
+                }
+            }
+
+            break;
+        }
+    }
 }

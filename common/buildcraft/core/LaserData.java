@@ -8,90 +8,82 @@
  */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.Position;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class LaserData implements ISerializable {
-	public Position head = new Position(0, 0, 0);
-	public Position tail = new Position(0, 0, 0);
-	public boolean isVisible = true;
-	public boolean isGlowing = false;
+    public Vec3 head = new Vec3(0, 0, 0);
+    public Vec3 tail = new Vec3(0, 0, 0);
+    public boolean isVisible = true;
+    public boolean isGlowing = false;
 
-	public double renderSize = 1.0 / 16.0;
-	public double angleY = 0;
-	public double angleZ = 0;
+    public double renderSize = 1.0 / 16.0;
+    public double angleY = 0;
+    public double angleZ = 0;
 
-	public double wavePosition = 0;
-	public int laserTexAnimation = 0;
+    public double wavePosition = 0;
+    public int laserTexAnimation = 0;
 
-	// Size of the wave, from 0 to 1
-	public float waveSize = 1F;
+    // Size of the wave, from 0 to 1
+    public float waveSize = 1F;
 
-	public LaserData() {
+    public LaserData() {
 
-	}
+    }
 
-	public LaserData(Position tail, Position head) {
-		this.tail.x = tail.x;
-		this.tail.y = tail.y;
-		this.tail.z = tail.z;
+    public LaserData(Vec3 tail, Vec3 head) {
+        this.tail = tail;
+        this.head = head;
+    }
 
-		this.head.x = head.x;
-		this.head.y = head.y;
-		this.head.z = head.z;
-	}
+    public void update() {
+        Vec3 delta = head.subtract(tail);
+        double dx = delta.xCoord;
+        double dy = delta.yCoord;
+        double dz = delta.zCoord;
 
-	public void update() {
-		double dx = head.x - tail.x;
-		double dy = head.y - tail.y;
-		double dz = head.z - tail.z;
+        renderSize = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        angleZ = 360 - (Math.atan2(dz, dx) * 180.0 / Math.PI + 180.0);
+        dx = Math.sqrt(renderSize * renderSize - dy * dy);
+        angleY = -Math.atan2(dy, dx) * 180.0 / Math.PI;
+    }
 
-		renderSize = Math.sqrt(dx * dx + dy * dy + dz * dz);
-		angleZ = 360 - (Math.atan2(dz, dx) * 180.0 / Math.PI + 180.0);
-		dx = Math.sqrt(renderSize * renderSize - dy * dy);
-		angleY = -Math.atan2(dy, dx) * 180.0 / Math.PI;
-	}
+    public void iterateTexture() {
+        laserTexAnimation = (laserTexAnimation + 1) % 40;
+    }
 
-	public void iterateTexture() {
-		laserTexAnimation = (laserTexAnimation + 1) % 40;
-	}
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setTag("head", NBTUtils.writeVec3(head));
+        nbt.setTag("tail", NBTUtils.writeVec3(tail));
+        nbt.setBoolean("isVisible", isVisible);
+    }
 
-	public void writeToNBT(NBTTagCompound nbt) {
-		NBTTagCompound headNbt = new NBTTagCompound();
-		head.writeToNBT(headNbt);
-		nbt.setTag("head", headNbt);
+    public void readFromNBT(NBTTagCompound nbt) {
+        head = NBTUtils.readVec3(nbt, "head");
+        tail = NBTUtils.readVec3(nbt, "tail");
+        isVisible = nbt.getBoolean("isVisible");
+    }
 
-		NBTTagCompound tailNbt = new NBTTagCompound();
-		tail.writeToNBT(tailNbt);
-		nbt.setTag("tail", tailNbt);
+    @Override
+    public void readData(ByteBuf stream) {
+        head = NetworkUtils.readVec3(stream);
+        tail = NetworkUtils.readVec3(stream);
+        int flags = stream.readUnsignedByte();
+        isVisible = (flags & 1) != 0;
+        isGlowing = (flags & 2) != 0;
+    }
 
-		nbt.setBoolean("isVisible", isVisible);
-	}
-
-	public void readFromNBT(NBTTagCompound nbt) {
-		head.readFromNBT(nbt.getCompoundTag("head"));
-		tail.readFromNBT(nbt.getCompoundTag("tail"));
-		isVisible = nbt.getBoolean("isVisible");
-	}
-
-	@Override
-	public void readData(ByteBuf stream) {
-		head.readData(stream);
-		tail.readData(stream);
-		int flags = stream.readUnsignedByte();
-		isVisible = (flags & 1) != 0;
-		isGlowing = (flags & 2) != 0;
-	}
-
-	@Override
-	public void writeData(ByteBuf stream) {
-		head.writeData(stream);
-		tail.writeData(stream);
-		int flags = (isVisible ? 1 : 0) | (isGlowing ? 2 : 0);
-		stream.writeByte(flags);
-	}
+    @Override
+    public void writeData(ByteBuf stream) {
+        NetworkUtils.writeVec3(stream, head);
+        NetworkUtils.writeVec3(stream, tail);
+        int flags = (isVisible ? 1 : 0) | (isGlowing ? 2 : 0);
+        stream.writeByte(flags);
+    }
 }

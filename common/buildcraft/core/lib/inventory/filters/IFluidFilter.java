@@ -12,5 +12,5 @@ import net.minecraftforge.fluids.Fluid;
 
 public interface IFluidFilter {
 
-	boolean matches(Fluid fluid);
+    boolean matches(Fluid fluid);
 }

@@ -8,27 +8,17 @@
  */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
-import io.netty.buffer.ByteBuf;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
@@ -36,299 +26,300 @@ import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 
+import io.netty.buffer.ByteBuf;
+
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
-	public static final int[] REBUILD_DELAY = new int[8];
-	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
-	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
-	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
-	private final Tank tank = new Tank("tank", MAX_LIQUID, this);
-	private int rebuildDelay;
-	private int tick = Utils.RANDOM.nextInt();
-	private boolean powered = false;
-	private boolean[] blockedSides = new boolean[6];
+    public static final int[] REBUILD_DELAY = new int[8];
+    public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
+    private final TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
+    private final Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
+    private Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
+    private final Tank tank = new Tank("tank", MAX_LIQUID, this);
+    private int rebuildDelay;
+    private int tick = Utils.RANDOM.nextInt();
+    private boolean powered = false;
+    private EnumMap<EnumFacing, Boolean> blockedSides = Maps.newEnumMap(EnumFacing.class);
 
-	static {
-		REBUILD_DELAY[0] = 128;
-		REBUILD_DELAY[1] = 256;
-		REBUILD_DELAY[2] = 512;
-		REBUILD_DELAY[3] = 1024;
-		REBUILD_DELAY[4] = 2048;
-		REBUILD_DELAY[5] = 4096;
-		REBUILD_DELAY[6] = 8192;
-		REBUILD_DELAY[7] = 16384;
-	}
+    static {
+        REBUILD_DELAY[0] = 128;
+        REBUILD_DELAY[1] = 256;
+        REBUILD_DELAY[2] = 512;
+        REBUILD_DELAY[3] = 1024;
+        REBUILD_DELAY[4] = 2048;
+        REBUILD_DELAY[5] = 4096;
+        REBUILD_DELAY[6] = 8192;
+        REBUILD_DELAY[7] = 16384;
+    }
 
-	public TileFloodGate() {
-	}
+    public TileFloodGate() {}
 
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+    @Override
+    public void update() {
+        super.update();
 
-		if (worldObj.isRemote) {
-			return;
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
-		if (powered) {
-			return;
-		}
+        if (powered) {
+            return;
+        }
 
-		tick++;
-		if (tick % 16 == 0) {
-			FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
-			if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME) {
-				Fluid fluid = fluidtoFill.getFluid();
-				if (fluid == null || !fluid.canBePlacedInWorld()) {
-					return;
-				}
+        tick++;
+        if (tick % 16 == 0) {
+            FluidStack fluidtoFill = tank.drain(FluidContainerRegistry.BUCKET_VOLUME, false);
+            if (fluidtoFill != null && fluidtoFill.amount == FluidContainerRegistry.BUCKET_VOLUME) {
+                Fluid fluid = fluidtoFill.getFluid();
+                if (fluid == null || !fluid.canBePlacedInWorld()) {
+                    return;
+                }
 
-				if (fluid == FluidRegistry.WATER && worldObj.provider.dimensionId == -1) {
-					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
-					return;
-				}
+                if (fluid == FluidRegistry.WATER && worldObj.provider.getDimensionId() == -1) {
+                    tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+                    return;
+                }
 
-				if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
-					rebuildDelay++;
-					if (rebuildDelay >= REBUILD_DELAY.length) {
-						rebuildDelay = REBUILD_DELAY.length - 1;
-					}
-					rebuildQueue();
-				}
-				BlockIndex index = getNextIndexToFill(true);
+                if (tick % REBUILD_DELAY[rebuildDelay] == 0) {
+                    rebuildDelay++;
+                    if (rebuildDelay >= REBUILD_DELAY.length) {
+                        rebuildDelay = REBUILD_DELAY.length - 1;
+                    }
+                    rebuildQueue();
+                }
+                BlockPos index = getNextIndexToFill(true);
 
-				if (index != null && placeFluid(index.x, index.y, index.z, fluid)) {
-					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
-					rebuildDelay = 0;
-				}
-			}
-		}
-	}
+                if (index != null && placeFluid(index, fluid)) {
+                    tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
+                    rebuildDelay = 0;
+                }
+            }
+        }
+    }
 
-	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
-		Block block = BlockUtils.getBlock(worldObj, x, y, z);
+    private boolean placeFluid(BlockPos pos, Fluid fluid) {
+        Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
 
-		if (canPlaceFluidAt(block, x, y, z)) {
-			boolean placed;
-			Block b = TankUtils.getFluidBlock(fluid, true);
+        if (canPlaceFluidAt(block, pos)) {
+            boolean placed;
+            Block b = TankUtils.getFluidBlock(fluid, true);
 
-			if (b instanceof BlockFluidBase) {
-				BlockFluidBase blockFluid = (BlockFluidBase) b;
-				placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
-			} else {
-				placed = worldObj.setBlock(x, y, z, b);
-			}
+            if (b instanceof BlockFluidBase) {
+                BlockFluidBase blockFluid = (BlockFluidBase) b;
+                placed = worldObj.setBlockState(pos, blockFluid.getDefaultState(), 3);
+            } else {
+                placed = worldObj.setBlockState(pos, b.getDefaultState());
+            }
 
-			if (placed) {
-				queueAdjacent(x, y, z);
-				expandQueue();
-			}
+            if (placed) {
+                queueAdjacent(pos);
+                expandQueue();
+            }
 
-			return placed;
-		}
+            return placed;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private BlockIndex getNextIndexToFill(boolean remove) {
-		if (pumpLayerQueues.isEmpty()) {
-			return null;
-		}
+    private BlockPos getNextIndexToFill(boolean remove) {
+        if (pumpLayerQueues.isEmpty()) {
+            return null;
+        }
 
-		Deque<BlockIndex> bottomLayer = pumpLayerQueues.firstEntry().getValue();
+        Deque<BlockPos> bottomLayer = pumpLayerQueues.firstEntry().getValue();
 
-		if (bottomLayer != null) {
-			if (bottomLayer.isEmpty()) {
-				pumpLayerQueues.pollFirstEntry();
-			}
-			if (remove) {
-				BlockIndex index = bottomLayer.pollFirst();
-				return index;
-			}
-			return bottomLayer.peekFirst();
-		}
+        if (bottomLayer != null) {
+            if (bottomLayer.isEmpty()) {
+                pumpLayerQueues.pollFirstEntry();
+            }
+            if (remove) {
+                BlockPos index = bottomLayer.pollFirst();
+                return index;
+            }
+            return bottomLayer.peekFirst();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private Deque<BlockIndex> getLayerQueue(int layer) {
-		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
-		if (pumpQueue == null) {
-			pumpQueue = new LinkedList<BlockIndex>();
-			pumpLayerQueues.put(layer, pumpQueue);
-		}
-		return pumpQueue;
-	}
+    private Deque<BlockPos> getLayerQueue(int layer) {
+        Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
+        if (pumpQueue == null) {
+            pumpQueue = new LinkedList<BlockPos>();
+            pumpLayerQueues.put(layer, pumpQueue);
+        }
+        return pumpQueue;
+    }
 
-	/**
-	 * Nasty expensive function, don't call if you don't have to.
-	 */
-	void rebuildQueue() {
-		pumpLayerQueues.clear();
-		visitedBlocks.clear();
-		fluidsFound.clear();
+    /** Nasty expensive function, don't call if you don't have to. */
+    public void rebuildQueue() {
+        pumpLayerQueues.clear();
+        visitedBlocks.clear();
+        fluidsFound.clear();
 
-		queueAdjacent(xCoord, yCoord, zCoord);
+        queueAdjacent(pos);
 
-		expandQueue();
-	}
+        expandQueue();
+    }
 
-	private void expandQueue() {
-		if (tank.getFluidType() == null) {
-			return;
-		}
-		while (!fluidsFound.isEmpty()) {
-			Deque<BlockIndex> fluidsToExpand = fluidsFound;
-			fluidsFound = new LinkedList<BlockIndex>();
+    private void expandQueue() {
+        if (tank.getFluidType() == null) {
+            return;
+        }
+        while (!fluidsFound.isEmpty()) {
+            Deque<BlockPos> fluidsToExpand = fluidsFound;
+            fluidsFound = new LinkedList<BlockPos>();
 
-			for (BlockIndex index : fluidsToExpand) {
-				queueAdjacent(index.x, index.y, index.z);
-			}
-		}
-	}
+            for (BlockPos index : fluidsToExpand) {
+                queueAdjacent(index);
+            }
+        }
+    }
 
-	public void queueAdjacent(int x, int y, int z) {
-		if (tank.getFluidType() == null) {
-			return;
-		}
-		for (int i = 0; i < 6; i++) {
-			if (i != 1 && !blockedSides[i]) {
-				ForgeDirection dir = ForgeDirection.getOrientation(i);
-				queueForFilling(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-			}
-		}
-	}
+    public void queueAdjacent(BlockPos pos) {
+        if (tank.getFluidType() == null) {
+            return;
+        }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (face != EnumFacing.UP && !blockedSides.get(face)) {
+                queueForFilling(pos.offset(face));
+            }
+        }
+    }
 
-	public void queueForFilling(int x, int y, int z) {
-		if (y < 0 || y > 255) {
-			return;
-		}
-		BlockIndex index = new BlockIndex(x, y, z);
-		if (visitedBlocks.add(index)) {
-			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
-				return;
-			}
+    public void queueForFilling(BlockPos pos) {
+        if (pos.getY() < 0 || pos.getY() > 255) {
+            return;
+        }
+        if (visitedBlocks.add(pos)) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
+                * 64) {
+                return;
+            }
 
-			Block block = BlockUtils.getBlock(worldObj, x, y, z);
-			if (BlockUtils.getFluid(block) == tank.getFluidType()) {
-				fluidsFound.add(index);
-			}
-			if (canPlaceFluidAt(block, x, y, z)) {
-				getLayerQueue(y).addLast(index);
-			}
-		}
-	}
+            Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
+            if (BlockUtils.getFluid(block) == tank.getFluidType()) {
+                fluidsFound.add(pos);
+            }
+            if (canPlaceFluidAt(block, pos)) {
+                getLayerQueue(pos.getY()).addLast(pos);
+            }
+        }
+    }
 
-	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-		return BuildCraftAPI.isSoftBlock(worldObj, x, y, z) && !BlockUtils.isFullFluidBlock(block, worldObj, x, y, z);
-	}
+    private boolean canPlaceFluidAt(Block block, BlockPos pos) {
+        return BuildCraftAPI.isSoftBlock(worldObj, pos) && !BlockUtils.isFullFluidBlock(worldObj, pos);
+    }
 
-	public void onNeighborBlockChange(Block block) {
-		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-		if (powered != p) {
-			powered = p;
-			if (!p) {
-				rebuildQueue();
-			}
-		}
-	}
+    public void onNeighborBlockChange(Block block) {
+        boolean p = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
+        if (powered != p) {
+            powered = p;
+            if (!p) {
+                rebuildQueue();
+            }
+        }
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound data) {
-		super.readFromNBT(data);
-		tank.readFromNBT(data);
-		rebuildDelay = data.getByte("rebuildDelay");
-		powered = data.getBoolean("powered");
-		for (int i = 0; i < 6; i++) {
-			blockedSides[i] = data.getBoolean("blocked[" + i + "]");
-		}
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        tank.readFromNBT(data);
+        rebuildDelay = data.getByte("rebuildDelay");
+        powered = data.getBoolean("powered");
+        for (int i = 0; i < 6; i++) {
+            blockedSides.put(EnumFacing.VALUES[i], data.getBoolean("blocked[" + i + "]"));
+        }
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound data) {
-		super.writeToNBT(data);
-		tank.writeToNBT(data);
-		data.setByte("rebuildDelay", (byte) rebuildDelay);
-		data.setBoolean("powered", powered);
-		for (int i = 0; i < 6; i++) {
-			if (blockedSides[i]) {
-				data.setBoolean("blocked[" + i + "]", true);
-			}
-		}
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        tank.writeToNBT(data);
+        data.setByte("rebuildDelay", (byte) rebuildDelay);
+        data.setBoolean("powered", powered);
+        for (int i = 0; i < 6; i++) {
+            if (blockedSides.get(EnumFacing.VALUES[i])) {
+                data.setBoolean("blocked[" + i + "]", true);
+            }
+        }
+    }
 
-	@Override
-	public void readData(ByteBuf stream) {
-		byte flags = stream.readByte();
-		for (int i = 0; i < 6; i++) {
-			blockedSides[i] = (flags & (1 << i)) != 0;
-		}
-	}
+    @Override
+    public void readData(ByteBuf stream) {
+        byte data = stream.readByte();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            int offset = face.ordinal();
+            int isBlocked = (data >> offset) % 2;
+            blockedSides.put(face, isBlocked == 0 ? false : true);
+        }
+    }
 
-	@Override
-	public void writeData(ByteBuf stream) {
-		byte flags = 0;
-		for (int i = 0; i < 6; i++) {
-			if (blockedSides[i]) {
-				flags |= 1 << i;
-			}
-		}
-		stream.writeByte(flags);
-	}
+    @Override
+    public void writeData(ByteBuf stream) {
+        int offset = 0;
+        byte data = 0;
+        for (EnumFacing face : EnumFacing.VALUES) {
+            int isBlocked = blockedSides.get(face) ? 1 : 0;
+            data &= isBlocked << offset;
+            offset++;
+        }
+        stream.writeByte(data);
+    }
 
-	public void switchSide(ForgeDirection side) {
-		if (side.ordinal() != 1) {
-			blockedSides[side.ordinal()] = !blockedSides[side.ordinal()];
+    public void switchSide(EnumFacing side) {
+        if (side != EnumFacing.UP) {
+            blockedSides.put(side, !blockedSides.get(side));
 
-			rebuildQueue();
-			sendNetworkUpdate();
-			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-		}
-	}
+            rebuildQueue();
+            sendNetworkUpdate();
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        }
+    }
 
-	@Override
-	public void invalidate() {
-		super.invalidate();
-		destroy();
-	}
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        destroy();
+    }
 
-	@Override
-	public void destroy() {
-		pumpLayerQueues.clear();
-	}
+    @Override
+    public void destroy() {
+        pumpLayerQueues.clear();
+    }
 
-	// IFluidHandler implementation.
-	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		return tank.fill(resource, doFill);
-	}
+    // IFluidHandler implementation.
+    @Override
+    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+        return tank.fill(resource, doFill);
+    }
 
-	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		return null;
-	}
+    @Override
+    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+        return null;
+    }
 
-	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		return null;
-	}
+    @Override
+    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+        return null;
+    }
 
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return true;
-	}
+    @Override
+    public boolean canFill(EnumFacing from, Fluid fluid) {
+        return true;
+    }
 
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return false;
-	}
+    @Override
+    public boolean canDrain(EnumFacing from, Fluid fluid) {
+        return false;
+    }
 
-	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		return new FluidTankInfo[]{tank.getInfo()};
-	}
+    @Override
+    public FluidTankInfo[] getTankInfo(EnumFacing from) {
+        return new FluidTankInfo[] { tank.getInfo() };
+    }
 
-	public boolean isSideBlocked(int side) {
-		return blockedSides[side];
-	}
+    public boolean isSideBlocked(EnumFacing face) {
+        return blockedSides.get(face);
+    }
 }

@@ -10,31 +10,31 @@ package buildcraft.core.lib.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.lib.utils.Utils;
 
 public class InventoryWrapperSimple extends InventoryWrapper {
 
-	private final int[] slots;
+    private final int[] slots;
 
-	public InventoryWrapperSimple(IInventory inventory) {
-		super(inventory);
-		slots = Utils.createSlotArray(0, inventory.getSizeInventory());
-	}
+    public InventoryWrapperSimple(IInventory inventory) {
+        super(inventory);
+        slots = Utils.createSlotArray(0, inventory.getSizeInventory());
+    }
 
-	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
-		return slots;
-	}
+    @Override
+    public int[] getSlotsForFace(EnumFacing var1) {
+        return slots;
+    }
 
-	@Override
-	public boolean canInsertItem(int slotIndex, ItemStack itemstack, int side) {
-		return isItemValidForSlot(slotIndex, itemstack);
-	}
+    @Override
+    public boolean canInsertItem(int slotIndex, ItemStack itemstack, EnumFacing side) {
+        return isItemValidForSlot(slotIndex, itemstack);
+    }
 
-	@Override
-	public boolean canExtractItem(int slotIndex, ItemStack itemstack, int side) {
-		return true;
-	}
-
+    @Override
+    public boolean canExtractItem(int slotIndex, ItemStack itemstack, EnumFacing side) {
+        return true;
+    }
 }

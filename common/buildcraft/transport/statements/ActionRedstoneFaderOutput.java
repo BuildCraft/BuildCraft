@@ -8,45 +8,27 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.ActionRedstoneOutput;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
 
-	public final int level;
+    public final int level;
 
-	public ActionRedstoneFaderOutput(int level) {
-		super(String.format("buildcraft:redstone.output.%02d", level));
+    public ActionRedstoneFaderOutput(int level) {
+        super(String.format("buildcraft:redstone.output.%02d", level));
+        setBuildCraftLocation("transport", String.format("triggers/redstone_%02d", level));
+        this.level = level;
+    }
 
-		this.level = level;
-	}
+    @Override
+    public String getDescription() {
+        return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
+    }
 
-	@Override
-	public String getDescription() {
-		return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon(String.format("buildcrafttransport:triggers/redstone_%02d", level));
-	}
-
-	@Override
-	protected int getSignalLevel() {
-		return level;
-	}
+    @Override
+    protected int getSignalLevel() {
+        return level;
+    }
 }

@@ -9,28 +9,30 @@
 package buildcraft.core.builders.schematics;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicFree extends SchematicBlock {
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
 
-	}
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
 	@Override
 	public LinkedList<ItemStack> getStacksToDisplay(
 			LinkedList<ItemStack> stackConsumed) {
 		LinkedList<ItemStack> displayStacks = new LinkedList<ItemStack>();
-		displayStacks.add(new ItemStack(block, 1, meta));
+		displayStacks.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
 		return displayStacks;
 	}
 }

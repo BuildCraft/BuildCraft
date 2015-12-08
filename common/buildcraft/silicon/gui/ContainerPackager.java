@@ -19,63 +19,63 @@ import buildcraft.core.lib.gui.slots.SlotValidated;
 import buildcraft.silicon.TilePackager;
 
 public class ContainerPackager extends BuildCraftContainer {
-	private final TilePackager tile;
+    private final TilePackager tile;
 
-	public ContainerPackager(InventoryPlayer inventoryplayer, TilePackager t) {
-		super(t.getSizeInventory());
+    public ContainerPackager(EntityPlayer player, TilePackager t) {
+        super(player, t.getSizeInventory());
 
-		this.tile = t;
+        this.tile = t;
 
-		// sort in order of shift-click!
+        // sort in order of shift-click!
 
-		addSlotToContainer(new SlotValidated(tile, 9, 124, 7));
+        addSlotToContainer(new SlotValidated(tile, 9, 124, 7));
 
-		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(tile, x, 8 + x * 18, 84));
-		}
+        for (int x = 0; x < 9; x++) {
+            addSlotToContainer(new Slot(tile, x, 8 + x * 18, 84));
+        }
 
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
 				addSlotToContainer(new SlotPackager(tile.inventoryPattern, x + y * 3, 30 + x * 18, 17 + y * 18));
-			}
-		}
+            }
+        }
 
 		// addSlotToContainer(new Slot(tile, 10, 108, 31));
-		addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
+        addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
 
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new Slot(inventoryplayer, x + y * 9 + 9, 8 + x * 18, 115 + y * 18));
-			}
-		}
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 9; x++) {
+                addSlotToContainer(new Slot(player.inventory, x + y * 9 + 9, 8 + x * 18, 115 + y * 18));
+            }
+        }
 
-		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(inventoryplayer, x, 8 + x * 18, 173));
-		}
+        for (int x = 0; x < 9; x++) {
+            addSlotToContainer(new Slot(player.inventory, x, 8 + x * 18, 173));
+        }
 
-		onCraftMatrixChanged(tile);
-	}
+        onCraftMatrixChanged(tile);
+    }
 
-	@Override
-	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
-		Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
+    @Override
+    public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
+        Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
 		ItemStack out = super.slotClick(slotNum, mouseButton, slot instanceof SlotPackager ? 0 : modifier, player);
 
-		if (slot instanceof SlotPackager) {
+        if (slot instanceof SlotPackager) {
 			int idx = slot.getSlotIndex();
-			ItemStack stack = player != null && player.inventory != null ? player.inventory.getItemStack() : null;
-			if (stack == null) {
-				tile.setPatternSlot(idx, !tile.isPatternSlotSet(idx));
-			} else {
-				tile.setPatternSlot(idx, true);
-			}
-			tile.sendNetworkUpdate();
-		}
-		return out;
-	}
+            ItemStack stack = player != null && player.inventory != null ? player.inventory.getItemStack() : null;
+            if (stack == null) {
+                tile.setPatternSlot(idx, !tile.isPatternSlotSet(idx));
+            } else {
+                tile.setPatternSlot(idx, true);
+            }
+            tile.sendNetworkUpdate();
+        }
+        return out;
+    }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return tile.isUseableByPlayer(entityplayer);
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return tile.isUseableByPlayer(entityplayer);
+    }
 }

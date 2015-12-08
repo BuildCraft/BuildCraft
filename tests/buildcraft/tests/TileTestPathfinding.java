@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BlockPos;
 import buildcraft.core.utils.PathFinding;
 
 public class TileTestPathfinding extends TileEntity {
@@ -26,14 +26,14 @@ public class TileTestPathfinding extends TileEntity {
 			if (firstEntity == null) {
 				firstEntity = this;
 			} else {
-				PathFinding p = new PathFinding(worldObj, new BlockIndex(xCoord, yCoord, zCoord), new BlockIndex(
+				PathFinding p = new PathFinding(worldObj, new BlockPos(xCoord, yCoord, zCoord), new BlockPos(
 						firstEntity.xCoord, firstEntity.yCoord, firstEntity.zCoord));
 
 				p.iterate(10000);
 
-				LinkedList<BlockIndex> r = p.getResult();
+				LinkedList<BlockPos> r = p.getResult();
 
-				for (BlockIndex b : r) {
+				for (BlockPos b : r) {
 					worldObj.setBlock(b.x, b.y, b.z, Blocks.sponge);
 				}
 

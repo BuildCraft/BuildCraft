@@ -8,53 +8,50 @@
  */
 package buildcraft.core.lib.render;
 
-import net.minecraft.util.IIcon;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.render.ITextureStateManager;
 
-/*
- * This class moves texture management from PipeRenderState 
- * to be filled while rendering as efficient as possible
- */
+/* This class moves texture management from PipeRenderState to be filled while rendering as efficient as possible */
 
 @SideOnly(Side.CLIENT)
 public final class TextureStateManager implements ITextureStateManager {
 
-	private IIcon currentTexture;
-	private IIcon[] textureArray;
-	private IIcon[] textureArrayCache;
+    private TextureAtlasSprite currentTexture;
+    private TextureAtlasSprite[] textureArray;
+    private TextureAtlasSprite[] textureArrayCache;
 
-	public TextureStateManager(IIcon placeholder) {
-		currentTexture = placeholder;
-		textureArrayCache = new IIcon[6];
-	}
+    public TextureStateManager(TextureAtlasSprite placeholder) {
+        currentTexture = placeholder;
+        textureArrayCache = new TextureAtlasSprite[6];
+    }
 
-	public IIcon[] popArray() {
-		textureArray = textureArrayCache;
-		return textureArrayCache; //Thread safety. Seriously.
-	}
+    public TextureAtlasSprite[] popArray() {
+        textureArray = textureArrayCache;
+        return textureArrayCache; // Thread safety. Seriously.
+    }
 
-	public void pushArray() {
-		textureArray = null;
-	}
+    public void pushArray() {
+        textureArray = null;
+    }
 
+    public TextureAtlasSprite getTexture() {
+        return currentTexture;
+    }
 
-	public IIcon getTexture() {
-		return currentTexture;
-	}
+    public TextureAtlasSprite[] getTextureArray() {
+        return textureArray;
+    }
 
-	public IIcon[] getTextureArray() {
-		return textureArray;
-	}
+    public boolean isSided() {
+        return textureArray != null;
+    }
 
-	public boolean isSided() {
-		return textureArray != null;
-	}
-
-	public void set(IIcon icon) {
-		currentTexture = icon;
-	}
+    @Override
+    public void set(TextureAtlasSprite icon) {
+        currentTexture = icon;
+    }
 }

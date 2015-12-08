@@ -1,17 +1,16 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftRobotics;
@@ -20,33 +19,31 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.block.IComparatorInventory;
 
 public class BlockRequester extends BlockBuildCraft implements IComparatorInventory {
-	public BlockRequester() {
-		super(Material.iron);
-		setRotatable(true);
-	}
+    public BlockRequester() {
+        super(Material.iron, FACING_PROP);
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		return new TileRequester();
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        return new TileRequester();
+    }
 
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
-									float par8, float par9) {
-		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
-			return true;
-		}
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ)) {
+            return true;
+        }
 
-		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftRobotics.instance, GuiIds.REQUESTER,
-					world, i, j, k);
-		}
+        if (!world.isRemote) {
+            entityplayer.openGui(BuildCraftRobotics.instance, GuiIds.REQUESTER, world, pos.getX(), pos.getY(), pos.getZ());
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean doesSlotCountComparator(TileEntity tile, int slot, ItemStack stack) {
-		return ((TileRequester) tile).getRequestTemplate(slot) != null;
-	}
+    @Override
+    public boolean doesSlotCountComparator(TileEntity tile, int slot, ItemStack stack) {
+        return ((TileRequester) tile).getRequestTemplate(slot) != null;
+    }
 }

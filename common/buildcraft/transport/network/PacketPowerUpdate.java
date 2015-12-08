@@ -8,39 +8,71 @@
  */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import buildcraft.core.lib.network.PacketCoordinates;
-import buildcraft.core.network.PacketIds;
+import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TileGenericPipe;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 
-	public boolean overload;
-	public short[] displayPower;
+    public boolean overload;
+    public short[] displayPower;
+    public short[] displayFlow;
 
-	public PacketPowerUpdate() {
-	}
+    public PacketPowerUpdate() {}
 
-	public PacketPowerUpdate(int x, int y, int z) {
-		super(PacketIds.PIPE_POWER, x, y, z);
-	}
+    public PacketPowerUpdate(TileEntity tile) {
+        super(tile);
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		super.readData(data);
-		displayPower = new short[]{0, 0, 0, 0, 0, 0};
-		overload = data.readBoolean();
-		for (int i = 0; i < displayPower.length; i++) {
-			displayPower[i] = data.readShort();
-		}
-	}
+    @Override
+    public void readData(ByteBuf data) {
+        super.readData(data);
+        displayPower = new short[6];
+        displayFlow = new short[6];
+        overload = data.readBoolean();
+        for (int i = 0; i < displayPower.length; i++) {
+            displayPower[i] = data.readUnsignedByte();
+            displayFlow[i] = data.readByte();
+        }
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		super.writeData(data);
-		data.writeBoolean(overload);
-		for (short element : displayPower) {
-			data.writeShort(element);
-		}
-	}
+    @Override
+    public void writeData(ByteBuf data) {
+        super.writeData(data);
+        data.writeBoolean(overload);
+        for (int i = 0; i < displayPower.length; i++) {
+            data.writeByte(displayPower[i]);
+            data.writeByte(displayFlow[i]);
+        }
+    }
+
+    @Override
+    public void applyData(World world, EntityPlayer player) {
+        if (world.isAirBlock(pos)) {
+            return;
+        }
+
+        TileEntity entity = world.getTileEntity(pos);
+        if (!(entity instanceof TileGenericPipe)) {
+            return;
+        }
+
+        TileGenericPipe pipe = (TileGenericPipe) entity;
+        if (pipe.pipe == null) {
+            return;
+        }
+
+        if (!(pipe.pipe.transport instanceof PipeTransportPower)) {
+            return;
+        }
+
+        ((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(this);
+
+    }
 }

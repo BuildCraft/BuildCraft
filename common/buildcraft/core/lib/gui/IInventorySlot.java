@@ -11,23 +11,20 @@ package buildcraft.core.lib.gui;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-/**
- * More dynamic slot displaying an inventory fluid at specified position in
- * the passed IInventory
- */
+/** More dynamic slot displaying an inventory fluid at specified position in the passed IInventory */
 public class IInventorySlot extends AdvancedSlot {
 
-	private IInventory tile;
-	private int slot;
+    private IInventory tile;
+    private int slot;
 
-	public IInventorySlot(GuiAdvancedInterface gui, int x, int y, IInventory tile, int slot) {
-		super(gui, x, y);
-		this.tile = tile;
-		this.slot = slot;
-	}
+    public IInventorySlot(GuiAdvancedInterface gui, int x, int y, IInventory tile, int slot) {
+        super(gui, x, y);
+        this.tile = tile;
+        this.slot = slot;
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return tile.getStackInSlot(slot);
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return tile.getStackInSlot(slot);
+    }
 }

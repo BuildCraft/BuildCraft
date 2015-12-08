@@ -10,8 +10,10 @@ package buildcraft.api.events;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
+
 import buildcraft.api.robots.EntityRobotBase;
 
 public abstract class RobotEvent extends Event {

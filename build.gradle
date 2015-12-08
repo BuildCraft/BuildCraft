@@ -12,32 +12,46 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        // 1.8.8
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        // 1.8
+        // classpath "gradle.plugin.net.minecraftforge.gradle:ForgeGradle:2.0.2"
     }
 }
 
-apply plugin: 'forge' // adds the forge dependency
+apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
-apply plugin: 'checkstyle'
+//apply plugin: 'checkstyle'
 
-version = "7.1.14"
+version = "7.2.0-alpha"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
 ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
 ext.priv = parseConfig(file('private.properties'))
 
+dependencies {
+    testCompile "junit:junit:4.12"
+}
 
 minecraft {
-    version = "1.7.10-10.13.4.1490-1.7.10" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
+    //1.8.8
+    mappings = "snapshot_20151204"
+    version = "1.8.8-11.15.0.1609-1.8.8"
+    // 1.8
+    // mappings = "stable_16"
+    // version = "1.8-11.14.4.1577"
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
     // replacing stuff in the source
-    replace '@VERSION@', project.version
-    replace '@MC_VERSION@', version
+    replace "@VERSION@", project.version
+    replace "@MC_VERSION@", version
 }
 
 // configure  the source folders
@@ -53,7 +67,7 @@ sourceSets {
             def l10n = file('../BuildCraft-Localization')
             if(l10n.exists())
                 srcDir l10n
-            exclude '**/.md' // exclude readme from localization repo
+            exclude "**/.md" // exclude readme from localization repo
             // exclude 'some exclusion'
             // include 'some inclusion'
         }
@@ -79,7 +93,7 @@ processResources
                 
         // replace version and mcversion
         // ${version}   and    ${mcversion}    are the exact strings being replaced
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand "version":project.version, "mcversion":project.minecraft.version
     }
         
     // copy everything else, that's not the mcmod.info
@@ -101,7 +115,10 @@ def createMCModInfo(def id, def taskName)
     if (temp.exists())
         temp.delete()
     temp.createNewFile()
-    temp.write(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    String prettyPrinted = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    prettyPrinted = prettyPrinted.replace("\${version}", project.version)
+    prettyPrinted = prettyPrinted.replace("\${mcversion}", project.minecraft.version)
+    temp.write(prettyPrinted)
     temp.deleteOnExit()
     return temp
 }
@@ -117,11 +134,11 @@ def parseConfig(File config) {
 }
 
 // add a source jar
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    from sourceSets.api.allSource
-    classifier = 'sources'
-}
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allSource
+//    from sourceSets.api.allSource
+//    classifier = 'sources'
+//}
 
 // add api classes to javadoc
 javadoc {
@@ -146,7 +163,7 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
-task coreJar(type: Jar, dependsOn: reobf) {
+task coreJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'core'
@@ -159,7 +176,7 @@ task coreJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task buildersJar(type: Jar, dependsOn: reobf) {
+task buildersJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'builders'
@@ -172,7 +189,7 @@ task buildersJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task energyJar(type: Jar, dependsOn: reobf) {
+task energyJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'energy'
@@ -185,7 +202,7 @@ task energyJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task factoryJar(type: Jar, dependsOn: reobf) {
+task factoryJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'factory'
@@ -198,7 +215,7 @@ task factoryJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task siliconJar(type: Jar, dependsOn: reobf) {
+task siliconJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'silicon'
@@ -211,7 +228,7 @@ task siliconJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task transportJar(type: Jar, dependsOn: reobf) {
+task transportJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'transport'
@@ -224,7 +241,7 @@ task transportJar(type: Jar, dependsOn: reobf) {
     }
 }
 
-task roboticsJar(type: Jar, dependsOn: reobf) {
+task roboticsJar(type: Jar, dependsOn: reobfJar) {
 
     destinationDir = file("modules")
     classifier = 'robotics'
@@ -243,14 +260,14 @@ jar {
 	from sourceSets.api.output
 }
 
-checkstyle {
-	configFile = file('guidelines/buildcraft.checkstyle')
-}
+//checkstyle {
+//	configFile = file('guidelines/buildcraft.checkstyle')
+//}
 
-checkstyleApi.exclude 'cofh/**'
+//checkstyleApi.exclude "cofh/**"
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
+build.dependsOn sourceJar,/* javadocJar,*/ deobfJar, apiJar
 
 // --------------------
 // maven section
@@ -265,7 +282,7 @@ configurations {
 dependencies {
     // dependency in deployerJars, for maven deployment. see definition in mavenDeployer{} below
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
-    sshAntTask 'org.apache.ant:ant-jsch:1.9.6', 'com.jcraft:jsch:0.1.53'
+    sshAntTask "org.apache.ant:ant-jsch:1.9.6", "com.jcraft:jsch:0.1.53"
 }
 
 clean{
@@ -276,7 +293,7 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-    archives javadocJar
+//    archives javadocJar
     archives deobfJar
     archives apiJar
 
@@ -407,3 +424,4 @@ uploadArchives {
         }
     }
 }
+

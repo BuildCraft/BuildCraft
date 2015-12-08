@@ -8,28 +8,29 @@
  */
 package buildcraft.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicCustomStack extends SchematicBlock {
 
-	final ItemStack customStack;
+    final ItemStack customStack;
 
-	public SchematicCustomStack(ItemStack customStack) {
-		this.customStack = customStack;
-	}
+    public SchematicCustomStack(ItemStack customStack) {
+        this.customStack = customStack;
+    }
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(customStack.copy());
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+        requirements.add(customStack.copy());
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 }

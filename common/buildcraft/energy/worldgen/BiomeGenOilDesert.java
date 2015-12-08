@@ -15,22 +15,22 @@ import net.minecraftforge.common.BiomeDictionary;
 
 public final class BiomeGenOilDesert extends BiomeGenDesert {
 
-	protected static final BiomeGenBase.Height height_OilDesert = new BiomeGenBase.Height(0.1F, 0.2F);
+    protected static final BiomeGenBase.Height height_OilDesert = new BiomeGenBase.Height(0.1F, 0.2F);
 
-	private BiomeGenOilDesert(int id) {
-		super(id);
-		setColor(16421912);
-		setBiomeName("Desert Oil Field");
-		setDisableRain();
-		setTemperatureRainfall(2.0F, 0.0F);
-		setHeight(height_OilDesert);
-	}
+    private BiomeGenOilDesert(int id) {
+        super(id);
+        setColor(16421912);
+        setBiomeName("Desert Oil Field");
+        setDisableRain();
+        setTemperatureRainfall(2.0F, 0.0F);
+        setHeight(height_OilDesert);
+    }
 
-	public static BiomeGenOilDesert makeBiome(int id) {
-		BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
-		BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.SANDY);
-		OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
-		OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
-		return biome;
-	}
+    public static BiomeGenOilDesert makeBiome(int id) {
+        BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
+        BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.SANDY);
+        OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
+        OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+        return biome;
+    }
 }

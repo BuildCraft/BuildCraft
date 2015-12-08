@@ -10,5 +10,5 @@
 package buildcraft.core.lib.gui.buttons;
 
 public interface IButtonClickEventListener {
-	void handleButtonClick(IButtonClickEventTrigger button, int buttonId);
+    void handleButtonClick(IButtonClickEventTrigger button, int buttonId);
 }

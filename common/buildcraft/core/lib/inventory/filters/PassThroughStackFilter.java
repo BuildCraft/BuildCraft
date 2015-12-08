@@ -10,14 +10,12 @@ package buildcraft.core.lib.inventory.filters;
 
 import net.minecraft.item.ItemStack;
 
-/**
- * Returns true if the stack matches any one one of the filter stacks.
- */
+/** Returns true if the stack matches any one one of the filter stacks. */
 public class PassThroughStackFilter implements IStackFilter {
 
-	@Override
-	public boolean matches(ItemStack stack) {
-		return stack != null && stack.stackSize > 0;
-	}
+    @Override
+    public boolean matches(ItemStack stack) {
+        return stack != null && stack.stackSize > 0;
+    }
 
 }

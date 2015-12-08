@@ -9,29 +9,28 @@
 package buildcraft.transport;
 
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipeTile;
 
 public class PipeTransportStructure extends PipeTransport {
-	@Override
-	public IPipeTile.PipeType getPipeType() {
-		return IPipeTile.PipeType.STRUCTURE;
-	}
+    @Override
+    public IPipeTile.PipeType getPipeType() {
+        return IPipeTile.PipeType.STRUCTURE;
+    }
 
-	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof IPipeTile) {
-			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
+    @Override
+    public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
+        if (tile instanceof IPipeTile) {
+            Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 
-			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportStructure)) {
-				return false;
-			}
+            if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportStructure)) {
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

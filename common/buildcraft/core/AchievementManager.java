@@ -2,33 +2,32 @@ package buildcraft.core;
 
 import net.minecraft.item.Item;
 import net.minecraft.stats.Achievement;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.common.AchievementPage;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 public class AchievementManager {
 	public final AchievementPage page;
 
-	public AchievementManager(String name) {
-		page = new AchievementPage(name);
-		AchievementPage.registerAchievementPage(page);
-	}
+    public AchievementManager(String name) {
+        page = new AchievementPage(name);
+        AchievementPage.registerAchievementPage(page);
+    }
 
-	public Achievement registerAchievement(Achievement a) {
-		page.getAchievements().add(a.registerStat());
-		return a;
-	}
+    public Achievement registerAchievement(Achievement a) {
+        page.getAchievements().add(a);
+        return a;
+    }
 
-	@SubscribeEvent
-	public void onCrafting(PlayerEvent.ItemCraftedEvent event) {
-		Item item = event.crafting.getItem();
-		int damage = event.crafting.getItemDamage();
+    @SubscribeEvent
+    public void onCrafting(PlayerEvent.ItemCraftedEvent event) {
+        Item item = event.crafting.getItem();
+        int damage = event.crafting.getItemDamage();
 
-		for (Achievement a : page.getAchievements()) {
-			if (item.equals(a.theItemStack.getItem()) && damage == a.theItemStack.getItemDamage()) {
-				event.player.addStat(a, 1);
-			}
-		}
-	}
+        for (Achievement a : page.getAchievements()) {
+            if (item.equals(a.theItemStack.getItem()) && damage == a.theItemStack.getItemDamage()) {
+                event.player.addStat(a, 1);
+            }
+        }
+    }
 }

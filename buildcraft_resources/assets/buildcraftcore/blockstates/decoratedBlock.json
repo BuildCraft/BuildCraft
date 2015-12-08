@@ -1,0 +1,15 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model":"buildcraftcore:default_cube_all"
+	},
+	"variants": {
+		"decoration_type": {
+			"destroy":   { "textures": { "all":"buildcraftcore:blocks/misc/texture_red_dark" } },
+			"blueprint": { "textures": { "all":"buildcraftcore:blocks/blueprint/blue" } },
+			"template":  { "textures": { "all":"buildcraftcore:blocks/blueprint/black" } },
+			"paper":     { "textures": { "all":"buildcraftcore:blocks/misc/paper" } },
+			"leather":   { "textures": { "all":"buildcraftcore:blocks/misc/leather" } }
+		}
+	}
+}

@@ -9,5 +9,7 @@
 package buildcraft.core;
 
 public enum LaserKind {
-	Red, Blue, Stripes
+    Red,
+    Blue,
+    Stripes
 }

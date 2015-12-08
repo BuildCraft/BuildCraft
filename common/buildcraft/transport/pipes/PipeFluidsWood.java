@@ -1,210 +1,218 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable {
-	public int liquidToExtract;
+import io.netty.buffer.ByteBuf;
 
-	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
-	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable, IDebuggable {
+    private static final int ENERGY_MULTIPLIER = 50;
 
-	private PipeLogicWood logic = new PipeLogicWood(this) {
-		@Override
-		protected boolean isValidConnectingTile(TileEntity tile) {
-			if (tile instanceof IPipeTile) {
-				return false;
-			}
-			if (!(tile instanceof IFluidHandler)) {
-				return false;
-			}
+    public int fluidToExtract;
 
-			return true;
-		}
-	};
+    protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
+    protected int solidIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Solid.ordinal();
 
-	public PipeFluidsWood(Item item) {
-		super(new PipeTransportFluids(), item);
+    private PipeLogicWood logic = new PipeLogicWood(this) {
+        @Override
+        protected boolean isValidConnectingTile(TileEntity tile) {
+            if (tile instanceof IPipeTile) {
+                return false;
+            }
+            if (!(tile instanceof IFluidHandler)) {
+                return false;
+            }
 
-		transport.initFromPipe(getClass());
-	}
+            return true;
+        }
+    };
 
-	@Override
-	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
-		return logic.blockActivated(entityplayer, side);
-	}
+    public PipeFluidsWood(Item item) {
+        super(new PipeTransportFluids(), item);
 
-	@Override
-	public void onNeighborBlockChange(int blockId) {
-		logic.onNeighborBlockChange();
-		super.onNeighborBlockChange(blockId);
-	}
+        transport.initFromPipe(getClass());
+    }
 
-	@Override
-	public void initialize() {
-		logic.initialize();
-		super.initialize();
-	}
+    @Override
+    public boolean blockActivated(EntityPlayer entityplayer, EnumFacing side) {
+        return logic.blockActivated(entityplayer, EnumPipePart.fromFacing(side));
+    }
 
-	private TileEntity getConnectingTile() {
-		int meta = container.getBlockMetadata();
-		return meta >= 6 ? null : container.getTile(ForgeDirection.getOrientation(meta));
-	}
+    @Override
+    public void onNeighborBlockChange(int blockId) {
+        logic.onNeighborBlockChange();
+        super.onNeighborBlockChange(blockId);
+    }
 
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+    @Override
+    public void initialize() {
+        logic.initialize();
+        super.initialize();
+    }
 
-		if (liquidToExtract <= 0) {
-			return;
-		}
+    private TileEntity getConnectingTile() {
+        int meta = container.getBlockMetadata();
+        return meta >= 6 ? null : container.getTile(EnumFacing.getFront(meta));
+    }
 
-		TileEntity tile = getConnectingTile();
+    @Override
+    public void updateEntity() {
+        super.updateEntity();
 
-		if (tile == null || !(tile instanceof IFluidHandler)) {
-			liquidToExtract = 0;
-		} else {
-			extractFluid((IFluidHandler) tile, ForgeDirection.getOrientation(container.getBlockMetadata()));
+        if (fluidToExtract <= 0) {
+            return;
+        }
 
-			// We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
-			liquidToExtract -= transport.getFlowRate();
+        TileEntity tile = getConnectingTile();
 
-			if (liquidToExtract < 0) {
-				liquidToExtract = 0;
-			}
-		}
-	}
+        if (tile == null || !(tile instanceof IFluidHandler)) {
+            fluidToExtract = 0;
+        } else {
+            extractFluid((IFluidHandler) tile, EnumFacing.getFront(container.getBlockMetadata()));
 
-	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
-		int amount = liquidToExtract > transport.getFlowRate() ? transport.getFlowRate() : liquidToExtract;
-		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
-		FluidStack extracted;
+            // We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
+            fluidToExtract -= transport.getFlowRate();
 
-		if (tankInfo.fluid != null) {
-			extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid, amount), false);
-		} else {
-			extracted = fluidHandler.drain(side.getOpposite(), amount, false);
-		}
+            if (fluidToExtract < 0) {
+                fluidToExtract = 0;
+            }
+        }
+    }
 
-		int inserted = 0;
+    public int extractFluid(IFluidHandler fluidHandler, EnumFacing side) {
+        int amount = fluidToExtract > transport.getFlowRate() ? transport.getFlowRate() : fluidToExtract;
+        FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
+        FluidStack extracted;
 
-		if (extracted != null) {
-			inserted = transport.fill(side, extracted, true);
-			if (inserted > 0) {
-				extracted.amount = inserted;
-				fluidHandler.drain(side.getOpposite(), extracted, true);
-			}
-		}
+        if (tankInfo.fluid != null) {
+            extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid, amount), false);
+        } else {
+            extracted = fluidHandler.drain(side.getOpposite(), amount, false);
+        }
 
-		return inserted;
-	}
+        int inserted = 0;
 
-	protected int getEnergyMultiplier() {
-		return 5 * BuildCraftTransport.pipeFluidsBaseFlowRate;
-	}
+        if (extracted != null) {
+            inserted = transport.fill(side, extracted, true);
+            if (inserted > 0) {
+                extracted.amount = inserted;
+                fluidHandler.drain(side.getOpposite(), extracted, true);
+            }
+        }
 
-	protected int getMaxExtractionFluid() {
-		return 100 * BuildCraftTransport.pipeFluidsBaseFlowRate;
-	}
+        return inserted;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIconProvider getIconProvider() {
-		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+    protected int getEnergyMultiplier() {
+        return 5 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+    }
 
-	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
-			return standardIconIndex;
-		} else {
-			int metadata = container.getBlockMetadata();
+    protected int getMaxExtractionFluid() {
+        return 100 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+    }
 
-			if (metadata == direction.ordinal()) {
-				return solidIconIndex;
-			} else {
-				return standardIconIndex;
-			}
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIconProvider getIconProvider() {
+        return BuildCraftTransport.instance.pipeIconProvider;
+    }
 
-	@Override
-	public boolean outputOpen(ForgeDirection to) {
-		int meta = container.getBlockMetadata();
-		return super.outputOpen(to) && meta != to.ordinal();
-	}
+    @Override
+    public int getIconIndex(EnumFacing direction) {
+        if (direction == null) {
+            return standardIconIndex;
+        } else {
+            int metadata = container.getBlockMetadata();
 
-	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
-		return true;
-	}
+            if (metadata == direction.ordinal()) {
+                return solidIconIndex;
+            } else {
+                return standardIconIndex;
+            }
+        }
+    }
 
-	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
-							 boolean simulate) {
-		TileEntity tile = getConnectingTile();
-		if (tile == null || !(tile instanceof IFluidHandler)) {
-			return 0;
-		}
+    @Override
+    public boolean outputOpen(EnumFacing to) {
+        int meta = container.getBlockMetadata();
+        return super.outputOpen(to) && meta != to.ordinal();
+    }
 
-		int maxToReceive = (getMaxExtractionFluid() - liquidToExtract) / getEnergyMultiplier();
-		int received = Math.min(maxReceive, maxToReceive);
-		if (!simulate) {
-			liquidToExtract += getEnergyMultiplier() * received;
-		}
-		return received;
-	}
+    @Override
+    public boolean canConnectEnergy(EnumFacing from) {
+        return true;
+    }
 
-	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
-							 boolean simulate) {
-		return 0;
-	}
+    @Override
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+        TileEntity tile = getConnectingTile();
+        if (tile == null || !(tile instanceof IFluidHandler)) {
+            return 0;
+        }
 
-	@Override
-	public int getEnergyStored(ForgeDirection from) {
-		return 0;
-	}
+        int maxToReceive = (getMaxExtractionFluid() - fluidToExtract) / getEnergyMultiplier();
+        int received = Math.min(maxReceive, maxToReceive);
+        if (!simulate) {
+            fluidToExtract += getEnergyMultiplier() * received;
+        }
+        return received;
+    }
 
-	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
-		return 1000 / getEnergyMultiplier();
-	}
+    @Override
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return 0;
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeShort(liquidToExtract);
-	}
+    @Override
+    public int getEnergyStored(EnumFacing from) {
+        return 0;
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		liquidToExtract = data.readShort();
-	}
+    @Override
+    public int getMaxEnergyStored(EnumFacing from) {
+        return 1000 / getEnergyMultiplier();
+    }
+
+    @Override
+    public void writeData(ByteBuf data) {
+        data.writeShort(fluidToExtract);
+    }
+
+    @Override
+    public void readData(ByteBuf data) {
+        fluidToExtract = data.readShort();
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("PipeFluidsWood");
+        left.add(" Fluid Extraction Potential = " + fluidToExtract + "mB");
+    }
 }

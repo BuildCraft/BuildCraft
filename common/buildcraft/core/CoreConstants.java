@@ -10,13 +10,10 @@ package buildcraft.core;
 
 public final class CoreConstants {
 
-	public static final float PIPE_MIN_POS = 0.25F;
-	public static final float PIPE_MAX_POS = 0.75F;
+    public static final float PIPE_MIN_POS = 0.25F;
+    public static final float PIPE_MAX_POS = 0.75F;
 
-	/**
-	 * Deactivate constructor
-	 */
-	private CoreConstants() {
-	}
+    /** Deactivate constructor */
+    private CoreConstants() {}
 
 }

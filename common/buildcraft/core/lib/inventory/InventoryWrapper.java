@@ -12,89 +12,114 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 public abstract class InventoryWrapper implements ISidedInventory {
 
-	IInventory inventory;
+    IInventory inventory;
 
-	public InventoryWrapper(IInventory inventory) {
-		this.inventory = inventory;
-	}
+    public InventoryWrapper(IInventory inventory) {
+        this.inventory = inventory;
+    }
 
-	/* DIRECT MAPPING */
-	@Override
-	public int getSizeInventory() {
-		return inventory.getSizeInventory();
-	}
+    /* DIRECT MAPPING */
+    @Override
+    public int getSizeInventory() {
+        return inventory.getSizeInventory();
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int slotIndex) {
-		return inventory.getStackInSlot(slotIndex);
-	}
+    @Override
+    public ItemStack getStackInSlot(int slotIndex) {
+        return inventory.getStackInSlot(slotIndex);
+    }
 
-	@Override
-	public ItemStack decrStackSize(int slotIndex, int amount) {
-		return inventory.decrStackSize(slotIndex, amount);
-	}
+    @Override
+    public ItemStack decrStackSize(int slotIndex, int amount) {
+        return inventory.decrStackSize(slotIndex, amount);
+    }
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slotIndex) {
-		return inventory.getStackInSlotOnClosing(slotIndex);
-	}
+    @Override
+    public ItemStack removeStackFromSlot(int slotIndex) {
+        return inventory.removeStackFromSlot(slotIndex);
+    }
 
-	@Override
-	public void setInventorySlotContents(int slotIndex, ItemStack itemstack) {
-		inventory.setInventorySlotContents(slotIndex, itemstack);
-	}
-
-	@Override
-	public String getInventoryName() {
-		return inventory.getInventoryName();
-	}
+    @Override
+    public void setInventorySlotContents(int slotIndex, ItemStack itemstack) {
+        inventory.setInventorySlotContents(slotIndex, itemstack);
+    }
 
 	@Override
-	public int getInventoryStackLimit() {
-		return inventory.getInventoryStackLimit();
-	}
+    public int getInventoryStackLimit() {
+        return inventory.getInventoryStackLimit();
+    }
 
-	@Override
-	public void markDirty() {
-		inventory.markDirty();
-	}
+    @Override
+    public void markDirty() {
+        inventory.markDirty();
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return inventory.isUseableByPlayer(entityplayer);
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+        return inventory.isUseableByPlayer(entityplayer);
+    }
 
-	@Override
-	public void openInventory() {
-		inventory.openInventory();
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+        inventory.openInventory(player);
+    }
 
-	@Override
-	public void closeInventory() {
-		inventory.closeInventory();
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+        inventory.closeInventory(player);
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) {
-		return inventory.isItemValidForSlot(slotIndex, itemstack);
-	}
+    @Override
+    public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) {
+        return inventory.isItemValidForSlot(slotIndex, itemstack);
+    }
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return inventory.hasCustomInventoryName();
-	}
+    public boolean hasCustomName() {
+        return inventory.hasCustomName();
+    }
 
-	/* STATIC HELPER */
-	public static ISidedInventory getWrappedInventory(Object inventory) {
-		if (inventory instanceof ISidedInventory) {
-			return (ISidedInventory) inventory;
-		} else if (inventory instanceof IInventory) {
-			return new InventoryWrapperSimple(InvUtils.getInventory((IInventory) inventory));
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public int getField(int id) {
+        return inventory.getField(id);
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        inventory.setField(id, value);
+    }
+
+    @Override
+    public int getFieldCount() {
+        return inventory.getFieldCount();
+    }
+
+    @Override
+    public void clear() {
+        inventory.clear();
+    }
+
+    @Override
+    public String getName() {
+        return inventory.getName();
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return inventory.getDisplayName();
+    }
+
+    /* STATIC HELPER */
+    public static ISidedInventory getWrappedInventory(Object inventory) {
+        if (inventory instanceof ISidedInventory) {
+            return (ISidedInventory) inventory;
+        } else if (inventory instanceof IInventory) {
+            return new InventoryWrapperSimple(InvUtils.getInventory((IInventory) inventory));
+        } else {
+            return null;
+        }
+    }
 }

@@ -10,8 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -21,27 +19,22 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionExtractionPreset extends BCStatement implements IActionInternal {
 
-	public final EnumColor color;
+    public final EnumColor color;
 
-	public ActionExtractionPreset(EnumColor color) {
-		super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+    public ActionExtractionPreset(EnumColor color) {
+        super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+		setBuildCraftLocation("transport", "triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
 
-		this.color = color;
-	}
+        this.color = color;
+    }
 
-	@Override
-	public String getDescription() {
-		return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
-	}
+    @Override
+    public String getDescription() {
+        return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
-	}
+    @Override
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
 
-	@Override
-	public void actionActivate(IStatementContainer source,
-							   IStatementParameter[] parameters) {
-
-	}
+    }
 }

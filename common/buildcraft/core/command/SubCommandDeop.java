@@ -15,7 +15,7 @@ public class SubCommandDeop extends SubCommand {
 
 	@Override
 	public void processSubCommand(ICommandSender sender, String[] args) {
-		MinecraftServer.getServer().getConfigurationManager().func_152610_b(BuildCraftCore.gameProfile);
+		MinecraftServer.getServer().getConfigurationManager().removeOp(BuildCraftCore.gameProfile);
 		CommandHelpers.sendLocalizedChatMessage(sender, "commands.deop.success", "[BuildCraft]");
 	}
 }

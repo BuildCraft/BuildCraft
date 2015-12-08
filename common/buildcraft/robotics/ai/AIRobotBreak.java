@@ -1,174 +1,171 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
-	private BlockIndex blockToBreak;
-	private float blockDamage = 0;
+    private BlockPos blockToBreak;
+    private float blockDamage = 0;
 
-	private Block block;
-	private int meta;
-	private float hardness;
-	private float speed;
+    private IBlockState state;
+    private float hardness;
+    private float speed;
 
-	public AIRobotBreak(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotBreak(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotBreak(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
-		this(iRobot);
+    public AIRobotBreak(EntityRobotBase iRobot, BlockPos iBlockToBreak) {
+        this(iRobot);
 
-		blockToBreak = iBlockToBreak;
-	}
+        blockToBreak = iBlockToBreak;
+    }
 
-	@Override
-	public void start() {
-		robot.aimItemAt(blockToBreak.x, blockToBreak.y, blockToBreak.z);
+    @Override
+    public void start() {
+        robot.aimItemAt(blockToBreak);
 
-		robot.setItemActive(true);
-		block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-		meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-		hardness = BlockUtils.getBlockHardnessMining(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, block, robot.getHeldItem());
-		speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
-	}
+        robot.setItemActive(true);
+        state = robot.worldObj.getBlockState(blockToBreak);
+        hardness = state.getBlock().getBlockHardness(robot.worldObj, blockToBreak);
+        speed = getBreakSpeed(robot, robot.getHeldItem(), state, blockToBreak);
+    }
 
-	@Override
-	public void update() {
-		if (block == null) {
-			block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-			if (block == null) {
-				setSuccess(false);
-				terminate();
-				return;
-			}
-			meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
-			hardness = BlockUtils.getBlockHardnessMining(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, block, robot.getHeldItem());
-			speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
-		}
+    @Override
+    public void update() {
+        if (state == null) {
+            state = robot.worldObj.getBlockState(blockToBreak);
+            if (state.getBlock().isAir(robot.worldObj, blockToBreak)) {
+                setSuccess(false);
+                terminate();
+                return;
+            }
+            state = robot.worldObj.getBlockState(blockToBreak);
+            hardness = state.getBlock().getBlockHardness(robot.worldObj, blockToBreak);
+            speed = getBreakSpeed(robot, robot.getHeldItem(), state, blockToBreak);
+        }
 
-		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z) || hardness < 0) {
-			setSuccess(false);
-			terminate();
-			return;
-		}
+        if (state.getBlock().isAir(robot.worldObj, blockToBreak) || hardness < 0) {
+            setSuccess(false);
+            terminate();
+            return;
+        }
 
-		if (hardness != 0) {
-			blockDamage += speed / hardness / 30F;
-		} else {
-			// Instantly break the block
-			blockDamage = 1.1F;
-		}
+        if (hardness != 0) {
+            blockDamage += speed / hardness / 30F;
+        } else {
+            // Instantly break the block
+            blockDamage = 1.1F;
+        }
 
-		if (blockDamage > 1.0F) {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, -1);
-			blockDamage = 0;
+        if (blockDamage > 1.0F) {
+            robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, -1);
+            blockDamage = 0;
 
-			if (BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, robot.getHeldItem())) {
-				robot.worldObj.playAuxSFXAtEntity(null, 2001,
-						blockToBreak.x, blockToBreak.y, blockToBreak.z,
-						Block.getIdFromBlock(block) + (meta << 12));
+            boolean continueBreaking = true;
 
-				if (robot.getHeldItem() != null) {
-					robot.getHeldItem().getItem()
-							.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
-									blockToBreak.y, blockToBreak.z, robot);
+            if (robot.getHeldItem() != null) {
+                if (robot.getHeldItem().getItem().onBlockStartBreak(robot.getHeldItem(), blockToBreak, CoreProxy.proxy.getBuildCraftPlayer(
+                        (WorldServer) robot.worldObj).get())) {
+                    continueBreaking = false;
+                }
+            }
 
-					if (robot.getHeldItem().stackSize == 0) {
-						robot.setItemInUse(null);
-					}
-				}
-			} else {
-				setSuccess(false);
-			}
+            if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem())) {
+                robot.worldObj.playAuxSFXAtEntity(null, 2001, blockToBreak, Block.getStateId(state));
 
-			terminate();
-		} else {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
-		}
-	}
+                if (robot.getHeldItem() != null) {
+                    robot.getHeldItem().getItem().onBlockDestroyed(robot.getHeldItem(), robot.worldObj, state.getBlock(), blockToBreak, robot);
 
-	@Override
-	public void end() {
-		robot.setItemActive(false);
-		robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-				blockToBreak.y, blockToBreak.z, -1);
-	}
+                    if (robot.getHeldItem().stackSize == 0) {
+                        robot.setItemInUse(null);
+                    }
+                }
+            } else {
+                setSuccess(false);
+            }
 
-	private float getBreakSpeed(EntityRobotBase robot, ItemStack usingItem, Block block, int meta) {
-		ItemStack stack = usingItem;
-		float f = stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, block, meta);
+            terminate();
+        } else {
+            robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, (int) (blockDamage * 10.0F) - 1);
+        }
+    }
 
-		if (f > 1.0F) {
-			int i = EnchantmentHelper.getEfficiencyModifier(robot);
+    @Override
+    public void end() {
+        robot.setItemActive(false);
+        robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, -1);
+    }
 
-			if (i > 0) {
-				float f1 = i * i + 1;
+    private float getBreakSpeed(EntityRobotBase robot, ItemStack usingItem, IBlockState state, BlockPos pos) {
+        ItemStack stack = usingItem;
+        float f = stack == null ? 1.0F : stack.getItem().getDigSpeed(stack, state);
 
-				boolean canHarvest = ForgeHooks.canToolHarvestBlock(block, meta, usingItem);
+        if (f > 1.0F) {
+            int i = EnchantmentHelper.getEfficiencyModifier(robot);
 
-				if (!canHarvest && f <= 1.0F) {
-					f += f1 * 0.08F;
-				} else {
-					f += f1;
-				}
-			}
-		}
+            if (i > 0) {
+                float f1 = i * i + 1;
 
-		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, robot.getHeldItem()),
-				block, meta, f, blockToBreak.x, blockToBreak.y, blockToBreak.z);
+                boolean canHarvest = ForgeHooks.canToolHarvestBlock(robot.worldObj, pos, usingItem);
+
+                if (!canHarvest && f <= 1.0F) {
+                    f += f1 * 0.08F;
+                } else {
+                    f += f1;
+                }
+            }
+        }
+
+		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()),
+				state, f, blockToBreak);
 		return f < 0 ? 0 : f;
-	}
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return (int) Math.ceil((float) BuilderAPI.BREAK_ENERGY * 2 / 30.0F);
-	}
+    @Override
+    public int getEnergyCost() {
+        return (int) Math.ceil((float) BuilderAPI.BREAK_ENERGY * 2 / 30.0F);
+    }
 
-	@Override
-	public boolean canLoadFromNBT() {
-		return true;
-	}
+    @Override
+    public boolean canLoadFromNBT() {
+        return true;
+    }
 
-	@Override
-	public void writeSelfToNBT(NBTTagCompound nbt) {
-		super.writeSelfToNBT(nbt);
+    @Override
+    public void writeSelfToNBT(NBTTagCompound nbt) {
+        super.writeSelfToNBT(nbt);
 
-		if (blockToBreak != null) {
-			NBTTagCompound sub = new NBTTagCompound();
-			blockToBreak.writeTo(sub);
-			nbt.setTag("blockToBreak", sub);
-		}
-	}
+        if (blockToBreak != null) {
+            nbt.setTag("blockToBreak", NBTUtils.writeBlockPos(blockToBreak));
+        }
+    }
 
-	@Override
-	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		super.loadSelfFromNBT(nbt);
+    @Override
+    public void loadSelfFromNBT(NBTTagCompound nbt) {
+        super.loadSelfFromNBT(nbt);
 
-		if (nbt.hasKey("blockToBreak")) {
-			blockToBreak = new BlockIndex(nbt.getCompoundTag("blockToBreak"));
-		}
-	}
+        if (nbt.hasKey("blockToBreak")) {
+            blockToBreak = NBTUtils.readBlockPos(nbt.getTag("blockToBreak"));
+        }
+    }
 }

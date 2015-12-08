@@ -1,139 +1,229 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
+import buildcraft.core.lib.EntityResizableCuboid;
 
 public final class FluidRenderer {
 
-	public static final int DISPLAY_STAGES = 100;
-	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
-	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
-	private static final RenderInfo liquidBlock = new RenderInfo();
+    public enum FluidType {
+        FLOWING,
+        STILL,
+        FROZEN
+    }
 
-	/**
-	 * Deactivate default constructor
-	 */
-	private FluidRenderer() {
+    public static final int DISPLAY_STAGES = 100;
+    public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
 
-	}
+    private static Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
+    private static Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
 
-	public static void onTextureReload() {
-		for (int[] ia : flowingRenderCache.values()) {
-			for (int i : ia) {
-				GL11.glDeleteLists(i, 1);
-			}
-		}
-		flowingRenderCache.clear();
+    private static Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
 
-		for (int[] ia : stillRenderCache.values()) {
-			for (int i : ia) {
-				GL11.glDeleteLists(i, 1);
-			}
-		}
-		stillRenderCache.clear();
-	}
+    private static TextureAtlasSprite missingIcon = null;
 
-	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
-		if (fluidStack == null) {
-			return null;
-		}
-		return getFluidTexture(fluidStack.getFluid(), flowing);
-	}
+    /** Deactivate default constructor */
+    private FluidRenderer() {
 
-	public static IIcon getFluidTexture(Fluid fluid, boolean flowing) {
-		if (fluid == null) {
-			return null;
-		}
-		IIcon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
-		if (icon == null) {
-			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
-		}
-		return icon;
-	}
+    }
 
-	public static void setColorForFluidStack(FluidStack fluidstack) {
-		if (fluidstack == null) {
-			return;
-		}
+    public static void initFluidTextures(TextureMap map) {
+        missingIcon = map.getMissingSprite();
 
-		int color = fluidstack.getFluid().getColor(fluidstack);
-		RenderUtils.setGLColorFromInt(color);
-	}
+        textureMap.clear();
 
-	public static int[] getFluidDisplayLists(FluidStack fluidStack, World world, boolean flowing) {
-		if (fluidStack == null) {
-			return null;
-		}
-		Fluid fluid = fluidStack.getFluid();
-		if (fluid == null) {
-			return null;
-		}
-		Map<Fluid, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
-		int[] diplayLists = cache.get(fluid);
-		if (diplayLists != null) {
-			return diplayLists;
-		}
+        for (FluidType type : FluidType.values()) {
+            textureMap.put(type, new HashMap<Fluid, TextureAtlasSprite>());
+        }
 
-		diplayLists = new int[DISPLAY_STAGES];
+        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+            // TextureAtlasSprite toUse = null;
 
-		if (fluid.getBlock() != null) {
-			liquidBlock.baseBlock = fluid.getBlock();
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
-		} else {
-			liquidBlock.baseBlock = Blocks.water;
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
-		}
+            if (fluid.getFlowing() != null) {
+                String flow = fluid.getFlowing().toString();
+                TextureAtlasSprite sprite;
+                if (map.getTextureExtry(flow) != null) {
+                    sprite = map.getTextureExtry(flow);
+                } else {
+                    sprite = map.registerSprite(fluid.getStill());
+                }
+                // toUse = sprite;
+                textureMap.get(FluidType.FLOWING).put(fluid, sprite);
+            }
 
-		cache.put(fluid, diplayLists);
+            if (fluid.getStill() != null) {
+                String still = fluid.getStill().toString();
+                TextureAtlasSprite sprite;
+                if (map.getTextureExtry(still) != null) {
+                    sprite = map.getTextureExtry(still);
+                } else {
+                    sprite = map.registerSprite(fluid.getStill());
+                }
+                // toUse = sprite;
+                textureMap.get(FluidType.STILL).put(fluid, sprite);
+            }
+            // if (toUse != null) {
+            // textureMap.get(FluidType.FROZEN).put(fluid, toUse);
+            // }
+        }
+    }
 
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_CULL_FACE);
+    public static TextureAtlasSprite getFluidTexture(FluidStack stack, FluidType type) {
+        if (stack == null) {
+            return missingIcon;
+        }
+        return getFluidTexture(stack.getFluid(), type);
+    }
 
-		for (int s = 0; s < DISPLAY_STAGES; ++s) {
-			diplayLists[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(diplayLists[s], 4864 /*GL_COMPILE*/);
+    /** This will always return a texture object, but it will be the missing icon texture if the fluid is null or a
+     * texture does not exist. */
+    public static TextureAtlasSprite getFluidTexture(Fluid fluid, FluidType type) {
+        if (fluid == null || type == null) {
+            return missingIcon;
+        }
+        Map<Fluid, TextureAtlasSprite> map = textureMap.get(type);
+        return map.containsKey(fluid) ? map.get(fluid) : missingIcon;
+    }
 
-			liquidBlock.minX = 0.01f;
-			liquidBlock.minY = 0;
-			liquidBlock.minZ = 0.01f;
+    @Deprecated
+    public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
+        if (fluidStack == null) return null;
+        return getFluidTexture(fluidStack.getFluid(), flowing);
+    }
 
-			liquidBlock.maxX = 0.99f;
-			liquidBlock.maxY = Math.max(s, 1) / (float) DISPLAY_STAGES;
-			liquidBlock.maxZ = 0.99f;
+    @Deprecated
+    public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
+        return getFluidTexture(fluid, flowing ? FluidType.FLOWING : FluidType.STILL);
+    }
 
-			RenderEntityBlock.INSTANCE.renderBlock(liquidBlock);
+    public static void setColorForFluidStack(FluidStack fluidstack) {
+        if (fluidstack == null) {
+            return;
+        }
 
-			GL11.glEndList();
-		}
+        int color = fluidstack.getFluid().getColor(fluidstack);
+        RenderUtils.setGLColorFromInt(color);
+    }
 
-		GL11.glColor4f(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glEnable(GL11.GL_LIGHTING);
+    /** @deprecated Use {@link #getFluidDisplayLists(FluidStack,boolean,double,double,double)} instead */
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing) {
+        return getFluidDisplayLists(fluidStack, flowing, BLOCK_SIZE);
+    }
 
-		return diplayLists;
-	}
+    /** Note that this does NOT implement caching. */
+    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, boolean flowing, Vec3 size, EnumFacing side) {
+        if (fluidStack == null) {
+            return null;
+        }
+        Fluid fluid = fluidStack.getFluid();
+        if (fluid == null) {
+            return null;
+        }
+
+        int[] lists = new int[DISPLAY_STAGES];
+
+        GlStateManager.disableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.disableCull();
+
+        for (int s = 0; s < DISPLAY_STAGES; ++s) {
+            lists[s] = GLAllocation.generateDisplayLists(1);
+            GL11.glNewList(lists[s], GL11.GL_COMPILE);
+
+            EntityResizableCuboid ent = new EntityResizableCuboid(null);
+            ent.xSize = size.xCoord;
+            ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.zSize = size.zCoord;
+            ent.texture = getFluidTexture(fluidStack, flowing);
+            ent.makeClient();
+            Arrays.fill(ent.textures, null);
+            ent.textures[side.ordinal()] = ent.texture;
+
+            RenderResizableCuboid.INSTANCE.renderCube(ent);
+
+            GL11.glEndList();
+        }
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.enableCull();
+
+        return lists;
+    }
+
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing, Vec3 size) {
+        if (fluidStack == null) {
+            return null;
+        }
+        Fluid fluid = fluidStack.getFluid();
+        if (fluid == null) {
+            return null;
+        }
+        Map<Fluid, Map<Vec3, int[]>> cache = flowing ? flowingRenderCache : stillRenderCache;
+        Map<Vec3, int[]> displayLists = cache.get(fluid);
+        int[] displayList;
+        if (displayLists != null) {
+            displayList = displayLists.get(size);
+            if (displayList != null) {
+                return displayList;
+            }
+        } else {
+            displayLists = Maps.newHashMap();
+            cache.put(fluid, displayLists);
+        }
+
+        displayList = new int[DISPLAY_STAGES];
+
+        cache.put(fluid, displayLists);
+
+        GlStateManager.disableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.disableCull();
+
+        for (int s = 0; s < DISPLAY_STAGES; ++s) {
+            displayList[s] = GLAllocation.generateDisplayLists(1);
+            GL11.glNewList(displayList[s], GL11.GL_COMPILE);
+
+            EntityResizableCuboid ent = new EntityResizableCuboid(null);
+            ent.xSize = size.xCoord;
+            ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.zSize = size.zCoord;
+            ent.texture = getFluidTexture(fluidStack, flowing);
+
+            RenderResizableCuboid.INSTANCE.renderCube(ent);
+
+            GL11.glEndList();
+        }
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.enableCull();
+
+        displayLists.put(size, displayList);
+
+        return displayList;
+    }
 }
