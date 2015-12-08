@@ -8,7 +8,7 @@ import com.google.common.base.Predicates;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-public class BuildCraftExtendedProperty<T extends Comparable<T>> extends BuildCraftProperty<T>implements IUnlistedProperty<T> {
+public class BuildCraftExtendedProperty<T extends Comparable<T>> extends BuildCraftProperty<T> implements IUnlistedProperty<T> {
     private final Predicate<T> function;
 
     public BuildCraftExtendedProperty(String name, Class<T> clazz, Predicate<T> allowingFunction) {
@@ -32,9 +32,8 @@ public class BuildCraftExtendedProperty<T extends Comparable<T>> extends BuildCr
 
     /** This is useful if you want to use a particular class for this property, but don't care what the class contains
      * (it will never contain an incorrect value) */
-    @SuppressWarnings("unchecked")
     public static <T extends Comparable<T>> BuildCraftExtendedProperty<T> createExtended(String name, Class<T> clazz) {
-        return new BuildCraftExtendedProperty<T>(name, clazz, (Predicate<T>) Predicates.alwaysTrue());
+        return new BuildCraftExtendedProperty<T>(name, clazz, Predicates.<T> alwaysTrue());
     }
 
     @Override

@@ -16,11 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -29,13 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.enums.EnumBlueprintType;
-import buildcraft.api.enums.EnumDecoratedBlock;
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.enums.EnumFillerPattern;
-import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.enums.*;
 import buildcraft.api.properties.BuildCraftExtendedProperty;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
@@ -150,7 +140,7 @@ public abstract class BlockBuildCraftBase extends Block {
         boolean canRotate = false;
         boolean canSixRotate = false;
 
-        for (BuildCraftProperty prop : properties) {
+        for (BuildCraftProperty<?> prop : properties) {
             if (prop == null) {
                 continue;
             }
@@ -168,16 +158,16 @@ public abstract class BlockBuildCraftBase extends Block {
             }
 
             List<? extends Comparable> allowedValues = prop.getAllowedValues();
-            defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
+            defaultState = withProperty(defaultState, prop, allowedValues.iterator().next());
 
             Map<IBlockState, Integer> newValidStates = Maps.newHashMap();
             int mul = metas.contains(prop) ? allowedValues.size() : 1;
             for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
                 int index = 0;
                 Collections.sort(allowedValues);
-                for (Object comp : allowedValues) {
+                for (Comparable<?> comp : allowedValues) {
                     int pos = entry.getValue() * mul + index;
-                    newValidStates.put(entry.getKey().withProperty(prop, (Comparable<?>) comp), pos);
+                    newValidStates.put(withProperty(entry.getKey(), prop, comp), pos);
                     if (mul > 1) {
                         index++;
                     }
@@ -202,6 +192,16 @@ public abstract class BlockBuildCraftBase extends Block {
         allProperties.addAll(metas);
         allProperties.addAll(nonMetas);
         propertyList = Collections.unmodifiableList(allProperties);
+    }
+
+    // Generic helper methods, these stop generics from being strange
+    @SuppressWarnings("unchecked")
+    private IBlockState withProperty(IBlockState state, BuildCraftProperty prop, Comparable value) {
+        return withProperty0(state, prop, value);
+    }
+
+    private <V extends Comparable<V>, T extends V> IBlockState withProperty0(IBlockState state, BuildCraftProperty<V> prop, T value) {
+        return state.withProperty(prop, value);
     }
 
     @Override

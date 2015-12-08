@@ -20,8 +20,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.BuildCraftCore;
-
 public class EntityUrbanist extends EntityLivingBase {
 
     private static FloatBuffer modelviewF = GLAllocation.createDirectFloatBuffer(16);
@@ -114,7 +112,8 @@ public class EntityUrbanist extends EntityLivingBase {
         Vec3 localPos = getPositionVector();
         Vec3 look = this.getLook(1.0F).normalize();
 
-        localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY, BuildCraftCore.diffZ);
+        // FIXME: If you want to use this code, look at the 1.7.10 7.1.x branch for what this used to do
+        // localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY, BuildCraftCore.diffZ);
 
         Vec3 vec32 = localPos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
@@ -135,7 +134,7 @@ public class EntityUrbanist extends EntityLivingBase {
 
             localPos = this.getPositionVector();
 
-            localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY + 0.5, BuildCraftCore.diffZ);
+            // localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY + 0.5, BuildCraftCore.diffZ);
 
             look = this.getLook(1.0F).normalize();
 

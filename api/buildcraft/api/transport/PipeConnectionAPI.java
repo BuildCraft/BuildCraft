@@ -30,6 +30,10 @@ public final class PipeConnectionAPI {
         connections.put(block, connection);
     }
 
+    public static void registerConnectionAsNothing(Block block) {
+        connections.put(block, NOTHING);
+    }
+
     /** Gets the current custom connection that the block uses. Will be null if nothing has been set. */
     public static ICustomPipeConnection getCustomConnection(Block block) {
         if (block instanceof ICustomPipeConnection) {
@@ -39,6 +43,6 @@ public final class PipeConnectionAPI {
         if (connection != null) {
             return connection;
         }
-        return NOTHING;
+        return null;
     }
 }

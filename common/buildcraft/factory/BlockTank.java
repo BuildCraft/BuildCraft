@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -21,11 +22,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.inventory.InvUtils;
 
-public class BlockTank extends BlockBuildCraft {
+public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection {
     private static final boolean DEBUG_MODE = false;
 
     public BlockTank() {
@@ -75,6 +77,11 @@ public class BlockTank extends BlockBuildCraft {
 
     @Override
     public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
         return false;
     }
 
@@ -238,5 +245,10 @@ public class BlockTank extends BlockBuildCraft {
     @Override
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         return new AxisAlignedBB(2 / 16f, 0F, 2 / 16f, 14 / 16f, 1F, 14 / 16f);
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        return face.getAxis() != Axis.Y ? 2 / 16f : 0;
     }
 }

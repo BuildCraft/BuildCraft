@@ -1,6 +1,7 @@
 #eclipse
 .project
 .classpath
+.settings/
 .metadata
 *.launch
 org.*
