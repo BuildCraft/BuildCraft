@@ -27,10 +27,10 @@ public class PatternParameterXZDir implements IStatementParameter {
     @SideOnly(Side.CLIENT)
     public static void registerSprites(TextureMap map) {
         sprites = new TextureAtlasSprite[4];
-        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_left"));
-        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_right"));
-        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_up"));
-        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:fillerParameters/arrow_down"));
+        sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:filler_parameters/arrow_left"));
+        sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:filler_parameters/arrow_right"));
+        sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:filler_parameters/arrow_up"));
+        sprites[3] = map.registerSprite(new ResourceLocation("buildcraftcore:filler_parameters/arrow_down"));
     }
 
     public PatternParameterXZDir() {
