@@ -30,11 +30,7 @@ import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipePluggableState;
-import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.*;
 import buildcraft.transport.TileGenericPipe.CoreState;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
@@ -62,7 +58,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
     }
 
     public static ISmartBlockModel handle(IExtendedBlockState state) {
-		CoreState core = BlockGenericPipe.PIPE_CORE_STATE.getUnlistedValue(state);// Not required... :P
+        CoreState core = BlockGenericPipe.PIPE_CORE_STATE.getUnlistedValue(state);// Not required... :P
         PipeRenderState render = BlockGenericPipe.PIPE_RENDER_STATE.getUnlistedValue(state);
         PipePluggableState pluggable = BlockGenericPipe.PIPE_PLUGGABLE_STATE.getUnlistedValue(state);
         Pipe<?> pipe = BlockGenericPipe.PIPE_PIPE.getUnlistedValue(state);

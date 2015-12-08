@@ -44,15 +44,17 @@ public class SchematicMask extends SchematicBlockBase {
                 context.world().setBlockToAir(pos);
 
                 // Find nearest solid surface to place on
+                EnumFacing solidFace = null;
                 for (EnumFacing face : EnumFacing.values()) {
                     BlockPos offset = pos.offset(face);
                     if (!BuildCraftAPI.isSoftBlock(context.world(), offset)) {
-                        ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                        IBlockState state = itemBlock.block.onBlockPlaced(context.world(), pos, face, 0, 0, 0, stack.getMetadata(), player);
-                        itemBlock.placeBlockAt(stack, player, context.world(), offset, face, 0, 0, 0, state);
-                        continue;
+                        solidFace = face;
+                        break;
                     }
                 }
+                ItemBlock itemBlock = (ItemBlock) stack.getItem();
+                IBlockState state = itemBlock.block.onBlockPlaced(context.world(), pos, solidFace, 0, 0, 0, stack.getMetadata(), player);
+                itemBlock.placeBlockAt(stack, player, context.world(), pos, solidFace, 0, 0, 0, state);
 
             }
         } else {

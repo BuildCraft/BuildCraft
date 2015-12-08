@@ -164,7 +164,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     private void build() {
         if (slotToBuild != null) {
-            BlockPos dest = new BlockPos(destination);
+            BlockPos dest = Utils.convertFloor(destination);
 
             IBlockState state = context.world().getBlockState(dest);
 
