@@ -13,6 +13,7 @@ public final class DefaultProps {
     public static final String MOD = "BuildCraft";
 
     public static final String VERSION = "@VERSION@";
+    // TODO: Change this to point to the official BC repo in BuildCraftVersions.json whenever 7.2.0 is made the master branch
     public static final String UPDATE_JSON = "https://raw.githubusercontent.com/AlexIIL/BCVersion/master/BuildCraftCore.json";
 
     public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + VERSION;
