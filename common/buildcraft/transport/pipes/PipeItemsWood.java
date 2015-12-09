@@ -26,11 +26,7 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TransportConstants;
-import buildcraft.transport.TravelingItem;
+import buildcraft.transport.*;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
@@ -186,7 +182,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
                 TravelingItem entity = makeItem(entPos, stack);
                 entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
-                transport.injectItem(entity, side);
+                transport.injectItem(entity, side.getOpposite());
             }
         }
     }
