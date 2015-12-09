@@ -28,9 +28,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
             return;
         }
 
-        if (pipe.pipe == null) {
-            return;
-        }
+        if (pipe.pipe == null) return;
+
+        if (pipe.pipe.container == null) return;
 
         renderPluggables(pipe, x, y, z);
 
