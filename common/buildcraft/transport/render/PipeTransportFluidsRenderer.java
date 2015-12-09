@@ -183,6 +183,8 @@ public class PipeTransportFluidsRenderer extends PipeTransportRenderer<PipeTrans
 		if (!needsRender) {
 			return;
 		}
+        
+        if(pipe.container == null) return;
 
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
