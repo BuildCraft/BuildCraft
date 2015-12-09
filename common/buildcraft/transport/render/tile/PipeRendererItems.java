@@ -12,13 +12,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -82,14 +82,13 @@ public class PipeRendererItems {
         GL11.glPushMatrix();
         GL11.glTranslatef((float) x, (float) y + 0.05f, (float) z);
         GL11.glPushMatrix();
+        GlStateManager.color(1, 1, 1, 1);
 
-        if (travellingItem.hasDisplayList) {
-            GL11.glCallList(travellingItem.displayList);
-        } else {
+        if (!travellingItem.hasDisplayList) {
             travellingItem.displayList = GLAllocation.generateDisplayLists(1);
             travellingItem.hasDisplayList = true;
 
-            GL11.glNewList(travellingItem.displayList, GL11.GL_COMPILE_AND_EXECUTE);
+            GL11.glNewList(travellingItem.displayList, GL11.GL_COMPILE);
             if (itemstack.getItem() instanceof IItemCustomPipeRender) {
                 IItemCustomPipeRender render = (IItemCustomPipeRender) itemstack.getItem();
                 float itemScale = render.getPipeRenderScale(itemstack);
@@ -109,6 +108,13 @@ public class PipeRendererItems {
             }
             GL11.glEndList();
         }
+
+        GL11.glCallList(travellingItem.displayList);
+        // Some items don't reset their colour properly, so lets just kick both the state manager AND OpenGL to the same
+        // state
+        GL11.glColor4f(1, 1, 1, 1);
+        GlStateManager.color(1, 1, 1, 1);
+
         GL11.glPopMatrix();
         if (color != null) {// The box around an item that decides what colour lenses it can go through
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -132,5 +138,6 @@ public class PipeRendererItems {
             GL11.glPopMatrix();
         }
         GL11.glPopMatrix();
+
     }
 }
