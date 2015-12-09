@@ -1,15 +1,13 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -23,6 +21,9 @@ public final class ColorUtils {
 
     private static final String[] OREDICT_DYE_NAMES = new String[] { "dyeWhite", "dyeOrange", "dyeMagenta", "dyeLightBlue", "dyeYellow", "dyeLime",
         "dyePink", "dyeGray", "dyeLightGray", "dyeCyan", "dyePurple", "dyeBlue", "dyeBrown", "dyeGreen", "dyeRed", "dyeBlack" };
+
+    private static final int[] LIGHT_HEX = { 0x181414, 0xBE2B27, 0x007F0E, 0x89502D, 0x253193, 0x7e34bf, 0x299799, 0xa0a7a7, 0x7A7A7A, 0xD97199,
+        0x39D52E, 0xFFD91C, 0x66AAFF, 0xD943C6, 0xEA7835, 0xe4e4e4 };
 
     private static final int[] OREDICT_DYE_IDS = new int[16];
 
@@ -38,29 +39,26 @@ public final class ColorUtils {
         }
     }
 
-    public static int getColorIDFromDye(ItemStack stack) {
-        if (stack == null || stack.getItem() == null) {
-            return -1;
-        }
-
+    public static EnumDyeColor getColorFromDye(ItemStack stack) {
+        if (stack == null || stack.getItem() == null) return null;
         if (stack.getItem() == Items.dye) {
-            return 15 - stack.getItemDamage();
+            return EnumDyeColor.byDyeDamage(stack.getItemDamage());
         }
 
         int[] itemOreIDs = OreDictionary.getOreIDs(stack);
-        for (int i = 0; i < 16; i++) {
+        for (int damage = 0; damage < 16; damage++) {
             for (int id : itemOreIDs) {
-                if (i == id) {
-                    return i;
+                if (OREDICT_DYE_IDS[damage] == id) {
+                    return EnumDyeColor.byDyeDamage(damage);
                 }
             }
         }
 
-        return -1;
+        return null;
     }
 
     public static boolean isDye(ItemStack stack) {
-        return getColorIDFromDye(stack) >= 0;
+        return getColorFromDye(stack) != null;
     }
 
     public static int getRGBColor(int wool) {
@@ -83,4 +81,21 @@ public final class ColorUtils {
         return "\u00a7" + (WOOL_TO_CHAT[wool & 15] == '0' ? '8' : WOOL_TO_CHAT[wool & 15]);
     }
 
+    public static int getLightHex(EnumDyeColor color) {
+        return LIGHT_HEX[color.getDyeDamage()];
+    }
+
+    public static EnumDyeColor next(EnumDyeColor color) {
+        int meta = color.getMetadata() + 1;
+        return EnumDyeColor.byMetadata(meta & 15);
+    }
+
+    public static EnumDyeColor previous(EnumDyeColor color) {
+        int meta = color.getMetadata() + 15;
+        return EnumDyeColor.byMetadata(meta & 15);
+    }
+
+    public static String localize(EnumDyeColor color) {
+        return StatCollector.translateToLocal(color.getUnlocalizedName());
+    }
 }

@@ -34,7 +34,10 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.*;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
@@ -617,7 +620,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from, EnumColor color) {
+    public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from, EnumDyeColor color) {
         if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from) && pipe.inputOpen(from)) {
 
             if (doAdd) {
@@ -638,34 +641,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from) {
-        return injectItem(payload, doAdd, from, null);
-    }
-
-    @Override
     public PipeType getPipeType() {
         if (BlockGenericPipe.isValid(pipe)) {
             return pipe.transport.getPipeType();
         }
         return null;
-    }
-
-    @Override
-    @Deprecated
-    public int x() {
-        return getPos().getX();
-    }
-
-    @Override
-    @Deprecated
-    public int y() {
-        return getPos().getY();
-    }
-
-    @Override
-    @Deprecated
-    public int z() {
-        return getPos().getZ();
     }
 
     /* SMP */

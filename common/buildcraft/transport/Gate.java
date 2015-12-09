@@ -308,8 +308,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     // GUI
     public void openGui(EntityPlayer player) {
         if (!player.worldObj.isRemote) {
-            player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.x(), pipe.container.y(),
-                    pipe.container.z());
+            player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.getPos().getX(), pipe.container.getPos().getY(),
+                    pipe.container.getPos().getZ());
             ((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
         }
     }

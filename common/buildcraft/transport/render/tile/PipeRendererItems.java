@@ -8,16 +8,17 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -62,15 +63,15 @@ public class PipeRendererItems {
             EnumFacing face = item.toCenter ? item.input : item.output;
             Vec3 motion = Utils.convert(face, item.getSpeed() * f);
 
-            doRenderItem(item, x + item.pos.xCoord - pipe.container.x() + motion.xCoord, y + item.pos.yCoord - pipe.container.y() + motion.yCoord, z
-                + item.pos.zCoord - pipe.container.z() + motion.zCoord, light, item.color);
+            doRenderItem(item, x + item.pos.xCoord - pipe.container.getPos().getX() + motion.xCoord, y + item.pos.yCoord - pipe.container.getPos().getY() + motion.yCoord, z
+                + item.pos.zCoord - pipe.container.getPos().getZ() + motion.zCoord, light, item.color);
             count++;
         }
 
         GL11.glPopMatrix();
     }
 
-    public static void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
+    public static void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumDyeColor color) {
 
         if (travellingItem == null || travellingItem.getItemStack() == null) {
             return;
@@ -131,7 +132,7 @@ public class PipeRendererItems {
             GL11.glScalef(renderScale, renderScale, renderScale);
             GL11.glTranslatef(-0.5f, -0.5f, -0.5f);
 
-            RenderUtils.setGLColorFromInt(color.getLightHex());
+            RenderUtils.setGLColorFromInt(ColorUtils.getLightHex(color));
             RenderResizableCuboid.INSTANCE.renderCube(erc);
             GlStateManager.color(1, 1, 1, 1);
 

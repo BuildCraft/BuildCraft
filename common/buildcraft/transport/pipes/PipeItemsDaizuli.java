@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -68,11 +69,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
         transport.allowBouncing = true;
     }
 
-    public EnumColor getColor() {
-        return EnumColor.fromId(color);
+    public EnumDyeColor getColor() {
+        return EnumDyeColor.byMetadata(color);
     }
 
-    public void setColor(EnumColor c) {
+    public void setColor(EnumDyeColor c) {
         if (color != c.ordinal()) {
             this.color = c.ordinal();
             container.scheduleRenderUpdate();
@@ -84,15 +85,15 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
         if (player.isSneaking()) {
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
             if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
-                setColor(getColor().getNext());
+                setColor(ColorUtils.next(getColor()));
                 ((IToolWrench) equipped).wrenchUsed(player, container.getPos());
                 return true;
             }
         }
 
-        int newColor = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
-        if (newColor >= 0 && newColor < 16) {
-            setColor(EnumColor.fromId(15 - newColor));
+        EnumDyeColor color = ColorUtils.getColorFromDye(player.getCurrentEquippedItem());
+        if (color != null) {
+            setColor(color);
             return true;
         }
 

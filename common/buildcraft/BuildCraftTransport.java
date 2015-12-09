@@ -12,10 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemMinecart;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -335,7 +332,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                 actionRedstoneLevel[level] = new ActionRedstoneFaderOutput(level + 1);
             }
 
-            for (EnumColor color : EnumColor.VALUES) {
+            for (EnumDyeColor color : EnumDyeColor.values()) {
                 actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
             }
 

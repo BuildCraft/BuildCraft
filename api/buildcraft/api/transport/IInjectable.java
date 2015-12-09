@@ -1,9 +1,8 @@
 package buildcraft.api.transport;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.core.EnumColor;
 
 public interface IInjectable {
     boolean canInjectItems(EnumFacing from);
@@ -15,5 +14,5 @@ public interface IInjectable {
      * @param from Orientation the ItemStack is offered from.
      * @param color The color of the item to be added to the pipe, or null for no color.
      * @return Amount of items used from the passed stack. */
-    int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color);
+    int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor color);
 }

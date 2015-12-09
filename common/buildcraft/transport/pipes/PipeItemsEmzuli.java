@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,8 +72,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
         }
 
         if (!container.getWorld().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.x(), container.y(),
-                    container.z());
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(),
+                    container.getPos().getZ());
         }
 
         return true;
@@ -83,7 +84,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
         TravelingItem item = super.makeItem(pos, stack);
         int color = slotColors[currentFilter % filterCount];
         if (color > 0) {
-            item.color = EnumColor.fromId(color - 1);
+            item.color = EnumDyeColor.byMetadata(color - 1);
         }
         return item;
     }

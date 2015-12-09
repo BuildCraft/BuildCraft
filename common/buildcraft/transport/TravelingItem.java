@@ -11,6 +11,7 @@ import com.google.common.collect.MapMaker;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,7 +22,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -38,7 +38,7 @@ public class TravelingItem {
     public Vec3 pos;
     public final int id;
     public boolean toCenter = true;
-    public EnumColor color;
+    public EnumDyeColor color;
     public EnumFacing input = null;
     public EnumFacing output = null;
 
@@ -157,7 +157,7 @@ public class TravelingItem {
 
         byte c = data.getByte("color");
         if (c != -1) {
-            color = EnumColor.fromId(c);
+            color = EnumDyeColor.byMetadata(c);
         }
 
         if (data.hasKey("extraData")) {
@@ -178,7 +178,7 @@ public class TravelingItem {
         data.setTag("input", NBTUtils.writeEnum(input));
         data.setTag("output", NBTUtils.writeEnum(output));
 
-        data.setByte("color", color != null ? (byte) color.ordinal() : -1);
+        data.setByte("color", color != null ? (byte) color.getMetadata() : -1);
 
         if (extraData != null) {
             data.setTag("extraData", extraData);

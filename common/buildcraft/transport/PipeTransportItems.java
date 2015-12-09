@@ -83,7 +83,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         Vec3 newPos = Utils.clamp(item.pos, middle.subtract(littleBitBelow0Point5), middle.add(littleBitBelow0Point5));
 
         if (item.input.getAxis() != Axis.Y) {
-            newPos = new Vec3(newPos.xCoord, container.y() + TransportUtils.getPipeFloorOf(item.getItemStack()), newPos.zCoord);
+            newPos = new Vec3(newPos.xCoord, container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack()), newPos.zCoord);
         }
 
         item.pos = newPos;
@@ -292,8 +292,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 if (item.output == null) {
                     // TODO: Figure out why this is actually happening.
                     items.scheduleRemoval(item);
-                    BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.x() + ", " + container.y() + ", "
-                        + container.z() + "!");
+                    BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.getPos().getX() + ", " + container.getPos().getY() + ", "
+                        + container.getPos().getZ() + "!");
                     continue;
                 }
 

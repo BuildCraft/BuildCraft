@@ -3,13 +3,13 @@ package buildcraft.transport.pluggable;
 import java.util.List;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
@@ -23,6 +23,7 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import io.netty.buffer.ByteBuf;
 
 public class LensPluggable extends PipePluggable {
+    @Deprecated
     public int color;
     public boolean isFilter;
     protected IPipeTile container;
@@ -140,7 +141,7 @@ public class LensPluggable extends PipePluggable {
             if (color == -1) {
                 item.color = null;
             } else {
-                item.color = EnumColor.fromId(color);
+                item.color = EnumDyeColor.byDyeDamage(color);
             }
         }
     }

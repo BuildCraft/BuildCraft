@@ -5,6 +5,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.lib.utils.ColorUtils;
@@ -51,7 +52,7 @@ public class PipeColoringRecipe implements IRecipe {
         } else if (pipeStack != null && (isBleach || (dye != null && pipeStack.stackSize == 8)) && !hasDifferentPipes) {
             ItemStack result = pipeStack;
             if (dye != null) {
-                result.setItemDamage(ColorUtils.getColorIDFromDye(dye) + 1);
+                result.setItemDamage(ColorUtils.getColorFromDye(dye).getDyeDamage() + 1);
             }
             return result;
         }

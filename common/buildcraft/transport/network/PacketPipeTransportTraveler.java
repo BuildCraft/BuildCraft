@@ -5,6 +5,7 @@
 package buildcraft.transport.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,7 +30,7 @@ public class PacketPipeTransportTraveler extends Packet {
     private int entityId;
     private EnumFacing input;
     private EnumFacing output;
-    private EnumColor color;
+    private EnumDyeColor color;
     private Vec3 itemPos;
     private float speed;
 
@@ -88,7 +89,7 @@ public class PacketPipeTransportTraveler extends Packet {
 
         byte c = data.readByte();
         if (c != -1) {
-            this.color = EnumColor.fromId(c);
+            this.color = EnumDyeColor.byMetadata(c);
         }
 
         this.speed = data.readFloat();
@@ -108,7 +109,7 @@ public class PacketPipeTransportTraveler extends Packet {
         return output;
     }
 
-    public EnumColor getColor() {
+    public EnumDyeColor getColor() {
         return color;
     }
 
