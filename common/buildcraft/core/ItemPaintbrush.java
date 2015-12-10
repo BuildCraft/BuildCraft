@@ -155,10 +155,8 @@ public class ItemPaintbrush extends ItemBuildCraft {
     @Override
     public void registerModels() {
         ModelHelper.registerItemModel(this, 0, "/clean");
-        int i = 1;
         for (EnumDyeColor colour : EnumDyeColor.values()) {
-            ModelHelper.registerItemModel(this, i, "/" + colour.getName());
-            i++;
+            ModelHelper.registerItemModel(this, colour.getDyeDamage() + 1, "/" + colour.getName());
         }
     }
 }

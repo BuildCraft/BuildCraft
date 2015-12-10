@@ -307,6 +307,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
         paintbrushItem = new ItemPaintbrush();
         paintbrushItem.setUnlocalizedName("paintbrush");
+        BCRegistry.INSTANCE.registerItem(paintbrushItem, false);
 
         if (DEVELOPER_MODE) {
             tabletItem = new ItemTablet();
