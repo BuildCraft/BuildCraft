@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import java.util.ArrayList;
@@ -24,7 +20,6 @@ public final class CraftingUtils {
     /** Deactivate constructor */
     private CraftingUtils() {}
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World) {
         // Begin repair recipe handler
         int itemNum = 0;
@@ -60,28 +55,27 @@ public final class CraftingUtils {
                 newDamage = 0;
             }
 
-            ArrayList ingredients = new ArrayList<ItemStack>(2);
+            List<ItemStack> ingredients = new ArrayList<ItemStack>(2);
             ingredients.add(item1);
             ingredients.add(item2);
 
             return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), ingredients);
-		} else if (itemNum > 0) {
+        } else if (itemNum > 0) {
             // End repair recipe handler
 
-            List recipes = CraftingManager.getInstance().getRecipeList();
-			for (Object recipe : recipes) {
-				IRecipe currentRecipe = (IRecipe) recipe;
+            List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+            for (IRecipe recipe : recipes) {
 
-                if (currentRecipe.matches(par1InventoryCrafting, par2World)) {
-                    return currentRecipe;
+                if (recipe.matches(par1InventoryCrafting, par2World)) {
+                    return recipe;
                 }
             }
 
             return null;
-		} else {
-			// No items - no recipe!
+        } else {
+            // No items - no recipe!
 
-			return null;
+            return null;
         }
     }
 

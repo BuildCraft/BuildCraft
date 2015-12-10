@@ -20,6 +20,9 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -66,9 +69,15 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     }
 
     public enum EnumShadeType {
-        FACE,
-        LIGHT,
-        AMBIENT_OCCLUSION
+        FACE(DefaultVertexFormats.COLOR_4UB),
+        LIGHT(DefaultVertexFormats.TEX_2S),
+        AMBIENT_OCCLUSION(DefaultVertexFormats.COLOR_4UB);
+
+        private final VertexFormatElement element;
+
+        private EnumShadeType(VertexFormatElement element) {
+            this.element = element;
+        }
     }
 
     public enum EnumShadeArgument {
@@ -82,8 +91,15 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         OCCLUDE(EnumShadeType.AMBIENT_OCCLUSION);
 
         public final ImmutableSet<EnumShadeType> types;
+        final VertexFormat vertexFormat;
 
         EnumShadeArgument(EnumShadeType... types) {
+            this.vertexFormat = new VertexFormat();
+            vertexFormat.addElement(DefaultVertexFormats.POSITION_3F);
+            vertexFormat.addElement(DefaultVertexFormats.TEX_2F);
+            for (EnumShadeType type : types) {
+                if (!vertexFormat.getElements().contains(type.element)) vertexFormat.addElement(type.element);
+            }
             this.types = ImmutableSet.copyOf(types);
         }
 
@@ -139,7 +155,6 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
             }
         };
         renderCube((EntityResizableCuboid) entity, EnumShadeArgument.FACE_LIGHT, formula, null);
-        GL11.glTranslated(-x, -y, -z);
         GL11.glPopMatrix();
     }
 
@@ -187,7 +202,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.disableLighting();
 
-        wr.begin(GL11.GL_QUADS, wr.getVertexFormat());
+        wr.begin(GL11.GL_QUADS, shadeTypes.vertexFormat);
 
         for (EnumFacing face : EnumFacing.values()) {
             renderCuboidFace(wr, face, sprites, flips, textureStart, textureSize, size, textureOffset, shadeTypes, formula, faceFormula,
@@ -245,6 +260,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
         vertex = Utils.withValue(vertex, face.getAxis(), other);
 
+        wr.pos(vertex.xCoord, vertex.yCoord, vertex.zCoord);
         wr.tex(ri.uv[U_ARRAY], ri.uv[V_ARRAY]);
 
         if (shadeTypes.isEnabled(EnumShadeType.FACE)) {
@@ -261,7 +277,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
             wr.lightmap(combindedLight >> 16 & 65535, combindedLight & 65535);
         }
 
-        RenderUtils.addWorldRendererVertex(wr, vertex);
+        wr.endVertex();
     }
 
     private void applyLocalAO(WorldRenderer wr, EnumFacing face, IBlockLocation locationFormula, IBlockAccess access, EnumShadeArgument shadeTypes,

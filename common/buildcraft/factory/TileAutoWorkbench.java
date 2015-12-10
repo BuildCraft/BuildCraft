@@ -121,9 +121,14 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
         public void rebuildCache() {
             currentRecipe = findRecipe();
-            hasWork = currentRecipe != null && currentRecipe.getRecipeOutput() != null;
 
-            ItemStack result = getRecipeOutput();
+            if (currentRecipe == null) {
+                hasWork = false;
+                return;
+            }
+
+            ItemStack result = currentRecipe.getCraftingResult(craftMatrix);
+            hasWork = result != null;
             ItemStack resultInto = resultInv.getStackInSlot(0);
 
             if (resultInto != null && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto
