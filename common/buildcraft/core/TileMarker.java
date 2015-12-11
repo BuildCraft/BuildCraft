@@ -124,6 +124,14 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             yMax = stream.readShort();
             zMax = stream.readInt();
         }
+
+        public BlockPos min() {
+            return new BlockPos(xMin, yMin, zMin);
+        }
+
+        public BlockPos max() {
+            return new BlockPos(xMax, yMax, zMax);
+        }
     }
 
     public Origin origin = new Origin();
@@ -322,62 +330,14 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 
     @Override
     public BlockPos min() {
-        // TODO Auto-generated method stub
-        return new BlockPos(xMin(), yMin(), zMin());
+        if (origin.isSet()) return origin.min();
+        return pos;
     }
 
     @Override
     public BlockPos max() {
-        // TODO Auto-generated method stub
-        return new BlockPos(xMax(), yMax(), zMax());
-    }
-
-    @Override
-    public int xMin() {
-        if (origin.isSet()) {
-            return origin.xMin;
-        }
-        return pos.getX();
-    }
-
-    @Override
-    public int yMin() {
-        if (origin.isSet()) {
-            return origin.yMin;
-        }
-        return pos.getY();
-    }
-
-    @Override
-    public int zMin() {
-        if (origin.isSet()) {
-            return origin.zMin;
-        }
-        return pos.getZ();
-    }
-
-    @Override
-    public int xMax() {
-        if (origin.isSet()) {
-            return origin.xMax;
-        }
-        return pos.getX();
-    }
-
-    @Override
-    public int yMax() {
-        if (origin.isSet()) {
-            return origin.yMax;
-        }
-        return pos.getY();
-    }
-
-    @Override
-    public int zMax() {
-        if (origin.isSet()) {
-            return origin.zMax;
-        }
-        return pos.getZ();
+        if (origin.isSet()) return origin.max();
+        return pos;
     }
 
     @Override
@@ -550,28 +510,9 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             return false;
         }
 
-        if (pos.getX() < (xMin() - 1) || pos.getX() > (xMax() + 1) || pos.getY() < (yMin() - 1) || pos.getY() > (yMax() + 1) || pos.getZ() < (zMin()
-            - 1) || pos.getZ() > (zMax() + 1)) {
-            return false;
-        }
+        Box box = new Box(min(), max());
 
-        if (pos.getX() >= xMin() && pos.getX() <= xMax() && pos.getY() >= yMin() && pos.getY() <= yMax() && pos.getZ() >= zMin() && pos
-                .getZ() <= zMax()) {
-            return false;
-        }
-
-        if (xMin() - pos.getX() == 1 || pos.getX() - xMax() == 1) {
-            touching++;
-        }
-
-        if (yMin() - pos.getY() == 1 || pos.getY() - yMax() == 1) {
-            touching++;
-        }
-
-        if (zMin() - pos.getZ() == 1 || pos.getZ() - zMax() == 1) {
-            touching++;
-        }
-
-        return touching == 1;
+        if (box.contains(pos)) return false;
+        return box.distanceToSquared(pos) == 1;
     }
 }

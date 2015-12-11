@@ -20,6 +20,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.ChunkCoordIntPair;
 
 import net.minecraftforge.common.ForgeChunkManager;
@@ -71,8 +72,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public EntityPlayer placedBy;
 
     protected Box box = new Box();
-    private int targetX, targetY, targetZ;
-    private double headPosX, headPosY, headPosZ;
+    private BlockPos target;
+    private Vec3 headPos;
     private double speed = 0.03;
     private Stage stage = Stage.BUILDING;
     private boolean movingHorizontally;
@@ -120,8 +121,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             }
 
             if (findTarget(false)) {
-                if ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)) {
-                    setHead(box.xMin + 1, getPos().getY() + 2, box.zMin + 1);
+                if (!box.contains(headPos)) {
+                    setHead(box.min().getX() + 1, getPos().getY() + 2, box.min().getZ() + 1);
                 }
             }
         } else {
@@ -130,9 +131,13 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     private void createArm() {
-        worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, pos.getY() + box.sizeY() - 1
-            + CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, box.sizeX() - 2 + CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
-                + CoreConstants.PIPE_MIN_POS * 2, this));
+        Vec3 vec = Utils.convert(box.min()).add(Utils.vec3(CoreConstants.PIPE_MAX_POS));
+        vec = vec.add(Utils.convert(EnumFacing.UP, box.size().getY() - 1));
+
+        double width = box.size().getX() - 2 + CoreConstants.PIPE_MIN_POS * 2;
+        double height = box.size().getZ() - 2 + CoreConstants.PIPE_MIN_POS * 2;
+
+        worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, vec, width, height, this));
     }
 
     // Callback from the arm once it's created
@@ -146,7 +151,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             return true;
         }
 
-        return Utils.checkChunksExist(worldObj, box.xMin, box.yMin, box.zMin, box.xMax, box.yMax, box.zMax);
+        return Utils.checkChunksExist(worldObj, box.min(), box.max());
     }
 
     @Override
@@ -201,10 +206,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
                 // If it's raining or snowing above the head, slow down.
                 if (worldObj.isRaining()) {
-                    int headBPX = (int) headPosX;
-                    int headBPY = (int) headPosY;
-                    int headBPZ = (int) headPosZ;
-                    if (worldObj.getHeight(new BlockPos(headBPX, headBPY, headBPZ)).getY() < headBPY) {
+                    if (worldObj.getHeight(Utils.convertFloor(headPos)).getY() < headPos.yCoord) {
                         speed *= 0.7;
                     }
                 }
@@ -280,7 +282,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (!findTarget(true)) {
             // I believe the issue is box going null becuase of bad chunkloader positioning
             if (arm != null && box != null) {
-                setTarget(new BlockPos(box.xMin + 1, pos.getY() + 2, box.zMin + 1));
+                setTarget(new BlockPos(box.min().getX() + 1, pos.getY() + 2, box.min().getZ() + 1));
             }
 
             setStage(Stage.DONE);
@@ -344,17 +346,17 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     /** Make the column visit list: called once per layer */
     private void createColumnVisitList() {
         visitList.clear();
-        boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
+        boolean[][] blockedColumns = new boolean[builder.blueprint.size.getX() - 2][builder.blueprint.size.getZ() - 2];
 
         for (int searchY = pos.getY() + 3; searchY >= 1; --searchY) {
             int startX, endX, incX;
 
             if (searchY % 2 == 0) {
                 startX = 0;
-                endX = builder.blueprint.sizeX - 2;
+                endX = builder.blueprint.size.getX() - 2;
                 incX = 1;
             } else {
-                startX = builder.blueprint.sizeX - 3;
+                startX = builder.blueprint.size.getX() - 3;
                 endX = -1;
                 incX = -1;
             }
@@ -364,17 +366,17 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
                 if (searchX % 2 == searchY % 2) {
                     startZ = 0;
-                    endZ = builder.blueprint.sizeZ - 2;
+                    endZ = builder.blueprint.size.getZ() - 2;
                     incZ = 1;
                 } else {
-                    startZ = builder.blueprint.sizeZ - 3;
+                    startZ = builder.blueprint.size.getZ() - 3;
                     endZ = -1;
                     incZ = -1;
                 }
 
                 for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
                     if (!blockedColumns[searchX][searchZ]) {
-                        int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
+                        int bx = box.min().getX() + searchX + 1, by = searchY, bz = box.min().getZ() + searchZ + 1;
 
                         BlockPos pos = new BlockPos(bx, by, bz);
                         IBlockState state = worldObj.getBlockState(pos);
@@ -388,7 +390,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
                         // Stop at two planes - generally any obstructions will have been found and will force a
                         // recompute prior to this
-                        if (visitList.size() > builder.blueprint.sizeZ * builder.blueprint.sizeX * 2) {
+                        if (visitList.size() > builder.blueprint.size.getZ() * builder.blueprint.size.getX() * 2) {
                             return;
                         }
                     }
@@ -416,7 +418,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             int ySize = nbttagcompound.getInteger("ySize");
             int zSize = nbttagcompound.getInteger("zSize");
 
-            box.initialize(xMin, pos.getY(), zMin, xMin + xSize - 1, pos.getY() + ySize - 1, zMin + zSize - 1);
+            box.reset();
+            box.setMin(new BlockPos(xMin, pos.getY(), zMin));
+            box.setMax(new BlockPos(xMin + xSize - 1, pos.getY() + ySize - 1, zMin + zSize - 1));
 
             loadDefaultBoundaries = false;
         } else {
@@ -425,12 +429,15 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             loadDefaultBoundaries = true;
         }
 
-        targetX = nbttagcompound.getInteger("targetX");
-        targetY = nbttagcompound.getInteger("targetY");
-        targetZ = nbttagcompound.getInteger("targetZ");
-        headPosX = nbttagcompound.getDouble("headPosX");
-        headPosY = nbttagcompound.getDouble("headPosY");
-        headPosZ = nbttagcompound.getDouble("headPosZ");
+        int targetX = nbttagcompound.getInteger("targetX");
+        int targetY = nbttagcompound.getInteger("targetY");
+        int targetZ = nbttagcompound.getInteger("targetZ");
+        target = new BlockPos(targetX, targetY, targetZ);
+
+        double headPosX = nbttagcompound.getDouble("headPosX");
+        double headPosY = nbttagcompound.getDouble("headPosY");
+        double headPosZ = nbttagcompound.getDouble("headPosZ");
+        headPos = new Vec3(headPosX, headPosY, headPosZ);
 
         // The rest of load has to be done upon initialize.
         initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bpt").copy();
@@ -440,12 +447,12 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public void writeToNBT(NBTTagCompound nbttagcompound) {
         super.writeToNBT(nbttagcompound);
 
-        nbttagcompound.setInteger("targetX", targetX);
-        nbttagcompound.setInteger("targetY", targetY);
-        nbttagcompound.setInteger("targetZ", targetZ);
-        nbttagcompound.setDouble("headPosX", headPosX);
-        nbttagcompound.setDouble("headPosY", headPosY);
-        nbttagcompound.setDouble("headPosZ", headPosZ);
+        nbttagcompound.setInteger("targetX", target.getX());
+        nbttagcompound.setInteger("targetY", target.getY());
+        nbttagcompound.setInteger("targetZ", target.getZ());
+        nbttagcompound.setDouble("headPosX", headPos.xCoord);
+        nbttagcompound.setDouble("headPosY", headPos.yCoord);
+        nbttagcompound.setDouble("headPosZ", headPos.zCoord);
 
         NBTTagCompound boxTag = new NBTTagCompound();
         box.writeToNBT(boxTag);
@@ -467,7 +474,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             return;
         }
 
-        BlockPos pos = new BlockPos(targetX, targetY - 1, targetZ);
+        BlockPos pos = target.down();
         if (isQuarriableBlock(pos)) {
             miner = new BlockMiner(worldObj, this, pos);
             setStage(Stage.DIGGING);
@@ -553,13 +560,13 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (a == null) {
-            a = new DefaultAreaProvider(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10);
+            a = new DefaultAreaProvider(pos, pos.add(new BlockPos(10, 4, 10)));
 
             useDefault = true;
         }
 
-        int xSize = a.xMax() - a.xMin() + 1;
-        int zSize = a.zMax() - a.zMin() + 1;
+        int xSize = a.max().getX() - a.min().getX() + 1;
+        int zSize = a.max().getZ() - a.min().getZ() + 1;
 
         if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
             if (placedBy != null) {
@@ -567,19 +574,19 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                     ? chunkTicket.getMaxChunkListDepth() : 0));
             }
 
-            a = new DefaultAreaProvider(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10);
+            a = new DefaultAreaProvider(pos, pos.add(new BlockPos(10, 4, 10)));
             useDefault = true;
         }
 
-        xSize = a.xMax() - a.xMin() + 1;
-        int ySize = a.yMax() - a.yMin() + 1;
-        zSize = a.zMax() - a.zMin() + 1;
+        xSize = a.max().getX() - a.min().getX() + 1;
+        int ySize = a.max().getY() - a.min().getY() + 1;
+        zSize = a.max().getZ() - a.min().getZ() + 1;
 
         box.initialize(a);
 
         if (ySize < 5) {
             ySize = 5;
-            box.yMax = box.yMin + ySize - 1;
+            box.setMax(Utils.withValue(box.max(), Axis.Y, box.min().getY() + ySize - 1));
         }
 
         if (useDefault) {
@@ -608,7 +615,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                     break;
             }
 
-            box.initialize(xMin, pos.getY(), zMin, xMin + xSize - 1, pos.getY() + ySize - 1, zMin + zSize - 1);
+            box.reset();
+            box.setMin(new BlockPos(xMin, pos.getY(), zMin));
+            box.setMax(new BlockPos(xMin + xSize - 1, pos.getY() + ySize - 1, zMin + zSize - 1));
         }
 
         a.removeFromWorld();
@@ -623,7 +632,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         PatternQuarryFrame pqf = PatternQuarryFrame.INSTANCE;
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
-        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, getPos().getY(), box.zMin));
+        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.min().getX(), getPos().getY(), box.min().getZ()));
         speed = 0;
         stage = Stage.BUILDING;
         sendNetworkUpdate();
@@ -633,12 +642,12 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public void writeData(ByteBuf stream) {
         super.writeData(stream);
         box.writeData(stream);
-        stream.writeInt(targetX);
-        stream.writeShort(targetY);
-        stream.writeInt(targetZ);
-        stream.writeDouble(headPosX);
-        stream.writeDouble(headPosY);
-        stream.writeDouble(headPosZ);
+        stream.writeInt(target.getX());
+        stream.writeShort(target.getY());
+        stream.writeInt(target.getZ());
+        stream.writeDouble(headPos.xCoord);
+        stream.writeDouble(headPos.yCoord);
+        stream.writeDouble(headPos.zCoord);
         stream.writeFloat((float) speed);
         stream.writeFloat(headTrajectory);
         int flags = stage.ordinal();
@@ -653,12 +662,16 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public void readData(ByteBuf stream) {
         super.readData(stream);
         box.readData(stream);
-        targetX = stream.readInt();
-        targetY = stream.readUnsignedShort();
-        targetZ = stream.readInt();
-        headPosX = stream.readDouble();
-        headPosY = stream.readDouble();
-        headPosZ = stream.readDouble();
+        int targetX = stream.readInt();
+        int targetY = stream.readUnsignedShort();
+        int targetZ = stream.readInt();
+        target = new BlockPos(targetX, targetY, targetZ);
+
+        double headPosX = stream.readDouble();
+        double headPosY = stream.readDouble();
+        double headPosZ = stream.readDouble();
+        headPos = new Vec3(headPosX, headPosY, headPosZ);
+
         speed = stream.readFloat();
         headTrajectory = stream.readFloat();
         int flags = stream.readUnsignedByte();
@@ -674,7 +687,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         createUtilsIfNeeded();
 
         if (arm != null) {
-            arm.setHead(headPosX, headPosY, headPosZ);
+            arm.setHead(headPos);
             arm.updatePosition();
         }
     }
@@ -683,7 +696,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public void initialize() {
         super.initialize();
 
-        if (!this.getWorld().isRemote && !box.initialized) {
+        if (!this.getWorld().isRemote && !box.isInitialized()) {
             setBoundaries(false);
         }
 
@@ -811,29 +824,25 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     private void updatePosition() {
         if (arm != null && worldObj.isRemote) {
-            arm.setHead(headPosX, headPosY, headPosZ);
+            arm.setHead(headPos);
             arm.updatePosition();
         }
     }
 
     private void setHead(double x, double y, double z) {
-        this.headPosX = x;
-        this.headPosY = y;
-        this.headPosZ = z;
+        headPos = new Vec3(x, y, z);
     }
 
     private double[] getHead() {
-        return new double[] { headPosX, headPosY, headPosZ };
+        return new double[] { headPos.xCoord, headPos.yCoord, headPos.zCoord };
     }
 
     private int[] getTarget() {
-        return new int[] { targetX, targetY, targetZ };
+        return new int[] { target.getX(), target.getY(), target.getZ() };
     }
 
     private void setTarget(BlockPos pos) {
-        this.targetX = pos.getX();
-        this.targetY = pos.getY();
-        this.targetZ = pos.getZ();
+        target = pos;
     }
 
     public void forceChunkLoading(Ticket ticket) {
@@ -846,8 +855,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         chunks.add(quarryChunk);
         ForgeChunkManager.forceChunk(ticket, quarryChunk);
 
-        for (int chunkX = box.xMin >> 4; chunkX <= box.xMax >> 4; chunkX++) {
-            for (int chunkZ = box.zMin >> 4; chunkZ <= box.zMax >> 4; chunkZ++) {
+        for (int chunkX = box.min().getX() >> 4; chunkX <= box.max().getX() >> 4; chunkX++) {
+            for (int chunkZ = box.min().getZ() >> 4; chunkZ <= box.max().getZ() >> 4; chunkZ++) {
                 ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
                 ForgeChunkManager.forceChunk(ticket, chunk);
                 chunks.add(chunk);

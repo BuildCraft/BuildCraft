@@ -117,12 +117,12 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
             IAreaProvider areaTile = (IAreaProvider) tile;
 
-            cpt.setInteger("xMin", areaTile.xMin());
-            cpt.setInteger("yMin", areaTile.yMin());
-            cpt.setInteger("zMin", areaTile.zMin());
-            cpt.setInteger("xMax", areaTile.xMax());
-            cpt.setInteger("yMax", areaTile.yMax());
-            cpt.setInteger("zMax", areaTile.zMax());
+            cpt.setInteger("xMin", areaTile.min().getX());
+            cpt.setInteger("yMin", areaTile.min().getY());
+            cpt.setInteger("zMin", areaTile.min().getZ());
+            cpt.setInteger("xMax", areaTile.max().getX());
+            cpt.setInteger("yMax", areaTile.max().getY());
+            cpt.setInteger("zMax", areaTile.max().getZ());
 
         } else {
             MapLocationType.SPOT.setToStack(stack);
@@ -146,11 +146,14 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 int xMin = cpt.getInteger("xMin");
                 int yMin = cpt.getInteger("yMin");
                 int zMin = cpt.getInteger("zMin");
+                BlockPos min = new BlockPos(xMin, yMin, zMin);
+
                 int xMax = cpt.getInteger("xMax");
                 int yMax = cpt.getInteger("yMax");
                 int zMax = cpt.getInteger("zMax");
+                BlockPos max = new BlockPos(xMax, yMax, zMax);
 
-                return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
+                return new Box(min, max);
             }
             case SPOT: {
                 return getPointBox(item);
@@ -171,7 +174,9 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 int y = cpt.getInteger("y");
                 int z = cpt.getInteger("z");
 
-                return new Box(x, y, z, x, y, z);
+                BlockPos pos = new BlockPos(x, y, z);
+
+                return new Box(pos, pos);
             }
             default: {
                 return null;

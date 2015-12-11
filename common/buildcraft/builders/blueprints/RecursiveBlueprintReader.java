@@ -48,9 +48,9 @@ public class RecursiveBlueprintReader {
             blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
 
             if (stack.getItem() instanceof ItemBlueprintStandard) {
-                writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
+                writingBlueprint = new Blueprint(architect.box.size());
             } else if (stack.getItem() instanceof ItemBlueprintTemplate) {
-                writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
+                writingBlueprint = new Template(architect.box.size());
             }
 
             writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
@@ -58,9 +58,7 @@ public class RecursiveBlueprintReader {
 
             writingBlueprint.id.name = architect.name;
             writingBlueprint.author = architect.currentAuthorName;
-            writingBlueprint.anchorX = architect.getPos().getX() - architect.box.xMin;
-            writingBlueprint.anchorY = architect.getPos().getY() - architect.box.yMin;
-            writingBlueprint.anchorZ = architect.getPos().getZ() - architect.box.zMin;
+            writingBlueprint.anchor = architect.getPos().subtract(architect.box.min());
         } else {
             done = true;
         }
@@ -74,9 +72,9 @@ public class RecursiveBlueprintReader {
             blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
 
             if (parentBlueprint instanceof Blueprint) {
-                writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
+                writingBlueprint = new Blueprint(architect.box.size());
             } else if (parentBlueprint instanceof Template) {
-                writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
+                writingBlueprint = new Template(architect.box.size());
             }
 
             writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
@@ -84,9 +82,7 @@ public class RecursiveBlueprintReader {
 
             writingBlueprint.id.name = architect.name;
             writingBlueprint.author = architect.currentAuthorName;
-            writingBlueprint.anchorX = architect.getPos().getX() - architect.box.xMin;
-            writingBlueprint.anchorY = architect.getPos().getY() - architect.box.yMin;
-            writingBlueprint.anchorZ = architect.getPos().getZ() - architect.box.zMin;
+            writingBlueprint.anchor = architect.getPos().subtract(architect.box.min());
         }
     }
 
@@ -116,7 +112,7 @@ public class RecursiveBlueprintReader {
                 }
 
                 if (blueprint != null) {
-                    BlockPos nPos = subTile.getPos().subtract(Utils.convertFloor(architect.getBox().min()));
+                    BlockPos nPos = subTile.getPos().subtract(architect.getBox().min());
                     writingBlueprint.addSubBlueprint(blueprint, nPos, orientation);
                 }
 
@@ -131,7 +127,7 @@ public class RecursiveBlueprintReader {
 
             EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos()));
 
-            BlockPos pos = currentSubReader.architect.getPos().subtract(Utils.convertFloor(architect.getBox().min()));
+            BlockPos pos = currentSubReader.architect.getPos().subtract(architect.getBox().min());
 
             if (currentSubReader.isDone()) {
                 writingBlueprint.addSubBlueprint(currentSubReader.getBlueprint(), pos, facing);
@@ -149,7 +145,7 @@ public class RecursiveBlueprintReader {
             if (blockScanner.blocksLeft() == 0) {
                 writingBlueprint.readEntitiesFromWorld(writingContext, architect);
 
-                Vec3 transform = new Vec3(0, 0, 0).subtract(writingContext.surroundingBox().min());
+                Vec3 transform = Utils.VEC_ZERO.subtract(Utils.convert(writingContext.surroundingBox().min()));
 
                 writingBlueprint.translateToBlueprint(transform);
 

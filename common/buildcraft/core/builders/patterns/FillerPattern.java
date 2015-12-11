@@ -88,7 +88,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.set(new BlockPos(x,y,z), new SchematicMask(true));
+                        template.set(new BlockPos(x, y, z), new SchematicMask(true));
                     }
                 }
             }
@@ -101,7 +101,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.set(new BlockPos(x,y,z), null);
+                        template.set(new BlockPos(x, y, z), null);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int z = zMin; z <= zMax; ++z) {
                 for (int y = yMax; y >= yMin; --y) {
                     if (isValid(x, y, z, template)) {
-                        template.set(new BlockPos(x,y,z), new SchematicMask(true));
+                        template.set(new BlockPos(x, y, z), new SchematicMask(true));
                     }
                 }
             }
@@ -124,19 +124,14 @@ public abstract class FillerPattern implements IFillerPattern {
     public abstract Template getTemplate(Box box, World world, IStatementParameter[] parameters);
 
     public Blueprint getBlueprint(Box box, World world, IStatementParameter[] parameters, IBlockState state) {
-        Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
+        Blueprint result = new Blueprint(box.size());
 
         try {
             Template tmpl = getTemplate(box, world, parameters);
 
-            for (int x = 0; x < box.sizeX(); ++x) {
-                for (int y = 0; y < box.sizeY(); ++y) {
-                    for (int z = 0; z < box.sizeZ(); ++z) {
-                        if (tmpl.get(new BlockPos(x, y, z)) != null) {
-                            result.set(new BlockPos(x,y,z), SchematicRegistry.INSTANCE.createSchematicBlock(state));
-                        }
-
-                    }
+            for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, box.size())) {
+                if (tmpl.get(pos) != null) {
+                    result.set(pos, SchematicRegistry.INSTANCE.createSchematicBlock(state));
                 }
             }
         } catch (Exception e) {
@@ -148,11 +143,11 @@ public abstract class FillerPattern implements IFillerPattern {
     }
 
     public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.xMin, box.yMin, box.zMin));
+        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.min());
     }
 
     private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
-        return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
+        return x >= 0 && y >= 0 && z >= 0 && x < bpt.size.getX() && y < bpt.size.getY() && z < bpt.size.getZ();
     }
 
     @SubscribeEvent

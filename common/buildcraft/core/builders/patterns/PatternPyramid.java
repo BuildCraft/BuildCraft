@@ -37,15 +37,15 @@ public class PatternPyramid extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.min().xCoord;
-        int yMin = (int) box.min().yCoord;
-        int zMin = (int) box.min().zCoord;
+        int xMin = box.min().getX();
+        int yMin = box.min().getY();
+        int zMin = box.min().getZ();
 
-        int xMax = (int) box.max().xCoord;
-        int yMax = (int) box.max().yCoord;
-        int zMax = (int) box.max().zCoord;
+        int xMax = box.max().getX();
+        int yMax = box.max().getY();
+        int zMax = box.max().getZ();
 
-        Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
+        Template bpt = new Template(box.size());
 
         int[] modifiers = new int[4];
         int height;
@@ -81,7 +81,7 @@ public class PatternPyramid extends FillerPattern {
         while (height >= yMin && height <= yMax) {
             for (int x = x1; x <= x2; ++x) {
                 for (int z = z1; z <= z2; ++z) {
-                    bpt.set(new BlockPos(x - xMin,height - yMin,z - zMin), new SchematicMask(true));
+                    bpt.set(new BlockPos(x - xMin, height - yMin, z - zMin), new SchematicMask(true));
                 }
             }
 

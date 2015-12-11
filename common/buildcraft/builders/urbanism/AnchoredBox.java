@@ -5,18 +5,22 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.Box;
 
 import io.netty.buffer.ByteBuf;
 
+/** @deprecated because this doesn't use BlockPos */
 public class AnchoredBox implements ISerializable {
     public Box box = new Box();
     public int x1, y1, z1;
 
     public void setP2(int x2, int y2, int z2) {
-        box.initialize(x1, y1, z1, x2, y2, z2);
+        box.reset();
+        box.setMin(new BlockPos(x1, y1, z1));
+        box.setMax(new BlockPos(x2, y2, z2));
     }
 
     public void writeToNBT(NBTTagCompound nbt) {

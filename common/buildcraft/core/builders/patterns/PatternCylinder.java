@@ -34,16 +34,16 @@ public class PatternCylinder extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
+        Template result = new Template(box.size());
         boolean filled = parameters.length > 0 && ((PatternParameterHollow) parameters[0]).filled;
 
         int xMin = 0;
         int yMin = 0;
         int zMin = 0;
 
-        int xMax = box.sizeX() - 1;
-        int yMax = box.sizeY() - 1;
-        int zMax = box.sizeZ() - 1;
+        int xMax = box.size().getX() - 1;
+        int yMax = box.size().getY() - 1;
+        int zMax = box.size().getZ() - 1;
 
         int xFix = (xMax - xMin) % 2;
         int zFix = (zMax - zMin) % 2;

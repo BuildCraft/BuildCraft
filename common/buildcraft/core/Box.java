@@ -81,10 +81,12 @@ public class Box implements IBox, ISerializable {
     }
 
     public void initialize(Box box) {
+        reset();
         extendToEncompassBoth(box.min(), box.max());
     }
 
     public void initialize(IAreaProvider a) {
+        reset();
         extendToEncompassBoth(a.min(), a.max());
     }
 
@@ -157,6 +159,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public BlockPos size() {
+        if (!isInitialized()) return BlockPos.ORIGIN;
         return max.subtract(min);
     }
 
@@ -226,7 +229,11 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public double distanceToSquared(BlockPos index) {
-        return centerExact().squareDistanceTo(Utils.convert(index));
+        return closestInsideTo(index).distanceSq(index);
+    }
+
+    public BlockPos closestInsideTo(BlockPos toTest) {
+        return Utils.max(min(), Utils.min(max(), toTest));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumFillerPattern;
@@ -17,6 +18,6 @@ public class PatternNone extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        return new Template(0, 0, 0);
+        return new Template(BlockPos.ORIGIN);
     }
 }

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.util.BlockPos;
@@ -26,20 +22,20 @@ public class PatternFlatten extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.min().xCoord;
-        int yMin = box.min().yCoord > 0 ? (int) box.min().yCoord - 1 : 0;
-        int zMin = (int) box.min().zCoord;
+        int xMin = box.min().getX();
+        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
+        int zMin = box.min().getZ();
 
-        int xMax = (int) box.max().xCoord;
-        int yMax = (int) box.max().yCoord;
-        int zMax = (int) box.max().zCoord;
+        int xMax = box.max().getX();
+        int yMax = box.max().getY();
+        int zMax = box.max().getZ();
 
-        Template bpt = new Template(box.sizeX(), yMax - yMin + 1, box.sizeZ());
+        Template bpt = new Template(new BlockPos(box.size().getX(), yMax - yMin + 1, box.size().getZ()));
 
-        if (box.min().yCoord > 0) {
+        if (box.min().getY() > 0) {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
-					bpt.set(new BlockPos(x - xMin,0,z - zMin), new SchematicMask(true));
+                    bpt.set(new BlockPos(x - xMin, 0, z - zMin), new SchematicMask(true));
                 }
             }
         }
@@ -49,8 +45,8 @@ public class PatternFlatten extends FillerPattern {
 
     @Override
     public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-        int yMin = box.min().yCoord > 0 ? (int) box.min().yCoord - 1 : 0;
+        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
 
-        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.xMin, yMin, box.zMin));
+        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.min().getX(), yMin, box.min().getZ()));
     }
 }

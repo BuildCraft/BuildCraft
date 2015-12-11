@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -18,12 +19,9 @@ public class EntityMechanicalArm extends Entity {
 
     private double armSizeX;
     private double armSizeZ;
-    private double xRoot;
-    private double yRoot;
-    private double zRoot;
+    private Vec3 root, head;
 
-    private int headX, headY, headZ;
-    private EntityResizableCuboid xArm, yArm, zArm, head;
+    private EntityResizableCuboid xArm, yArm, zArm, headEntity;
 
     public EntityMechanicalArm(World world) {
         super(world);
@@ -31,26 +29,22 @@ public class EntityMechanicalArm extends Entity {
         noClip = true;
     }
 
-    public EntityMechanicalArm(World world, double x, double y, double z, double width, double height, TileQuarry parent) {
+    public EntityMechanicalArm(World world, Vec3 root, double width, double height, TileQuarry parent) {
         this(world);
         setPositionAndRotation(parent.getPos().getX(), parent.getPos().getY(), parent.getPos().getZ(), 0, 0);
-        this.xRoot = x;
-        this.yRoot = y;
-        this.zRoot = z;
+        this.root = root;
         this.motionX = 0.0;
         this.motionY = 0.0;
         this.motionZ = 0.0;
         setArmSize(width, height);
-        setHead(x, y - 2, z);
+        setHead(root.addVector(0, -2, 0));
         this.parent = parent;
         parent.setArm(this);
         updatePosition();
     }
 
-    public void setHead(double x, double y, double z) {
-        this.headX = (int) (x * 32D);
-        this.headY = (int) (y * 32D);
-        this.headZ = (int) (z * 32D);
+    public void setHead(Vec3 vec) {
+        this.head = vec;
     }
 
     private void setArmSize(double x, double z) {
@@ -66,13 +60,13 @@ public class EntityMechanicalArm extends Entity {
         yArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 1, 0.5);
         zArm = BuilderProxy.proxy.newDrill(world, 0, 0, 0, 0.5, 0.5, 1);
 
-        head = BuilderProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
-        head.shadowSize = 1.0F;
+        headEntity = BuilderProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
+        headEntity.shadowSize = 1.0F;
 
         world.spawnEntityInWorld(xArm);
         world.spawnEntityInWorld(yArm);
         world.spawnEntityInWorld(zArm);
-        world.spawnEntityInWorld(head);
+        world.spawnEntityInWorld(headEntity);
     }
 
     @Override
@@ -80,9 +74,10 @@ public class EntityMechanicalArm extends Entity {
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-        xRoot = nbttagcompound.getDouble("xRoot");
-        yRoot = nbttagcompound.getDouble("yRoot");
-        zRoot = nbttagcompound.getDouble("zRoot");
+        double xRoot = nbttagcompound.getDouble("xRoot");
+        double yRoot = nbttagcompound.getDouble("yRoot");
+        double zRoot = nbttagcompound.getDouble("zRoot");
+        root = new Vec3(xRoot, yRoot, zRoot);
         armSizeX = nbttagcompound.getDouble("armSizeX");
         armSizeZ = nbttagcompound.getDouble("armSizeZ");
         setArmSize(armSizeX, armSizeZ);
@@ -101,9 +96,9 @@ public class EntityMechanicalArm extends Entity {
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setDouble("xRoot", xRoot);
-        nbttagcompound.setDouble("yRoot", yRoot);
-        nbttagcompound.setDouble("zRoot", zRoot);
+        nbttagcompound.setDouble("xRoot", root.xCoord);
+        nbttagcompound.setDouble("yRoot", root.yCoord);
+        nbttagcompound.setDouble("zRoot", root.zCoord);
         nbttagcompound.setDouble("armSizeX", armSizeX);
         nbttagcompound.setDouble("armSizeZ", armSizeZ);
     }
@@ -124,11 +119,11 @@ public class EntityMechanicalArm extends Entity {
 
     public void updatePosition() {
         double[] headT = getHead();
-        this.xArm.setPosition(xRoot, yRoot, headT[2] + 0.25);
-        this.yArm.ySize = yRoot - headT[1] - 1;
+        this.xArm.setPosition(root.xCoord, root.yCoord, headT[2] + 0.25);
+        this.yArm.ySize = root.yCoord - headT[1] - 1;
         this.yArm.setPosition(headT[0] + 0.25, headT[1] + 1, headT[2] + 0.25);
-        this.zArm.setPosition(headT[0] + 0.25, yRoot, zRoot);
-        this.head.setPosition(headT[0] + 0.4, headT[1] - 0.01, headT[2] + 0.4);
+        this.zArm.setPosition(headT[0] + 0.25, root.yCoord, root.zCoord);
+        this.headEntity.setPosition(headT[0] + 0.4, headT[1] - 0.01, headT[2] + 0.4);
     }
 
     @Override
@@ -137,12 +132,12 @@ public class EntityMechanicalArm extends Entity {
             xArm.setDead();
             yArm.setDead();
             zArm.setDead();
-            head.setDead();
+            headEntity.setDead();
         }
         super.setDead();
     }
 
     private double[] getHead() {
-        return new double[] { this.headX / 32D, this.headY / 32D, this.headZ / 32D };
+        return new double[] { head.xCoord, head.yCoord, head.zCoord };
     }
 }

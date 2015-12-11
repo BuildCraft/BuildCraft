@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.BuilderAPI;
@@ -21,6 +22,7 @@ import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -34,64 +36,48 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
     @Override
     protected void internalInit() {
+        BlockPos worldOffset = pos.subtract(blueprint.anchor);
+        BlockPos bptMin = BlockPos.ORIGIN;
+        if (worldOffset.getY() < 0) bptMin = Utils.withValue(bptMin, Axis.Y, -worldOffset.getY());
+
+        BlockPos bptMax = blueprint.size.subtract(Utils.POS_ONE);
+        if (worldOffset.add(bptMax).getY() >= context.world().getHeight()) {
+            bptMax = Utils.withValue(bptMax, Axis.Y, context.world().getHeight() - worldOffset.getY());
+        }
         if (blueprint.excavate) {
-            for (int j = blueprint.sizeY - 1; j >= 0; --j) {
-                int yCoord = j + pos.getY() - blueprint.anchorY;
 
-                if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-                    continue;
-                }
+            for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
+                BlockPos pointWorldOffset = worldOffset.add(bptOffset);
 
-                for (int i = 0; i < blueprint.sizeX; ++i) {
-                    int xCoord = i + pos.getX() - blueprint.anchorX;
+                SchematicBlockBase slot = blueprint.get(bptOffset);
 
-                    for (int k = 0; k < blueprint.sizeZ; ++k) {
-                        int zCoord = k + pos.getZ() - blueprint.anchorZ;
+                if (slot == null && !isLocationUsed(pointWorldOffset)) {
+                    BuildingSlotBlock b = new BuildingSlotBlock();
 
-                        SchematicBlockBase slot = blueprint.get(new BlockPos(i, j, k));
+                    b.schematic = null;
+                    b.pos = pointWorldOffset;
+                    b.mode = Mode.ClearIfInvalid;
+                    b.buildStage = 0;
 
-                        if (slot == null && !isLocationUsed(xCoord, yCoord, zCoord)) {
-                            BuildingSlotBlock b = new BuildingSlotBlock();
-
-                            b.schematic = null;
-                            b.pos = new BlockPos(xCoord, yCoord, zCoord);
-                            b.mode = Mode.ClearIfInvalid;
-                            b.buildStage = 0;
-
-                            clearList.add(b);
-                        }
-                    }
+                    clearList.add(b);
                 }
             }
         }
+        for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
+            BlockPos pointWorldOffset = worldOffset.add(bptOffset);
 
-        for (int j = 0; j < blueprint.sizeY; ++j) {
-            int yCoord = j + pos.getY() - blueprint.anchorY;
+            SchematicBlockBase slot = blueprint.get(bptOffset);
 
-            if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-                continue;
-            }
+            if (slot != null && !isLocationUsed(pointWorldOffset)) {
+                BuildingSlotBlock b = new BuildingSlotBlock();
 
-            for (int i = 0; i < blueprint.sizeX; ++i) {
-                int xCoord = i + pos.getX() - blueprint.anchorX;
+                b.schematic = slot;
+                b.pos = pointWorldOffset;
 
-                for (int k = 0; k < blueprint.sizeZ; ++k) {
-                    int zCoord = k + pos.getZ() - blueprint.anchorZ;
+                b.mode = Mode.Build;
+                b.buildStage = 1;
 
-                    SchematicBlockBase slot = blueprint.get(new BlockPos(i, j, k));
-
-                    if (slot != null && !isLocationUsed(xCoord, yCoord, zCoord)) {
-                        BuildingSlotBlock b = new BuildingSlotBlock();
-
-                        b.schematic = slot;
-                        b.pos = new BlockPos(xCoord, yCoord, zCoord);
-
-                        b.mode = Mode.Build;
-                        b.buildStage = 1;
-
-                        buildList.add(b);
-                    }
-                }
+                buildList.add(b);
             }
         }
 

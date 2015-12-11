@@ -37,10 +37,7 @@ import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.LaserData;
-import buildcraft.core.LaserKind;
+import buildcraft.core.*;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -390,6 +387,10 @@ public final class Utils {
         }
     }
 
+    public static boolean checkChunksExist(World world, BlockPos min, BlockPos max) {
+        return checkChunksExist(world, min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+    }
+
     // Vector utils
 
     /** Factory that returns a new Vec3 with the same argument for x, y and z. */
@@ -531,27 +532,31 @@ public final class Utils {
     }
 
     public static Vec3 withValue(Vec3 vector, Axis axis, double value) {
-        if (axis == Axis.X) {
-            return new Vec3(value, vector.yCoord, vector.zCoord);
-        } else if (axis == Axis.Y) {
-            return new Vec3(vector.xCoord, value, vector.zCoord);
-        } else if (axis == Axis.Z) {
-            return new Vec3(vector.xCoord, vector.yCoord, value);
-        } else {
-            return vector;
-        }
+        if (axis == Axis.X) return new Vec3(value, vector.yCoord, vector.zCoord);
+        else if (axis == Axis.Y) return new Vec3(vector.xCoord, value, vector.zCoord);
+        else if (axis == Axis.Z) return new Vec3(vector.xCoord, vector.yCoord, value);
+        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
     }
 
     public static double getValue(Vec3 vector, Axis axis) {
-        if (axis == Axis.X) {
-            return vector.xCoord;
-        } else if (axis == Axis.Y) {
-            return vector.yCoord;
-        } else if (axis == Axis.Z) {
-            return vector.zCoord;
-        } else {
-            throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-        }
+        if (axis == Axis.X) return vector.xCoord;
+        else if (axis == Axis.Y) return vector.yCoord;
+        else if (axis == Axis.Z) return vector.zCoord;
+        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
+    }
+
+    public static BlockPos withValue(BlockPos vector, Axis axis, int value) {
+        if (axis == Axis.X) return new BlockPos(value, vector.getY(), vector.getZ());
+        else if (axis == Axis.Y) return new BlockPos(vector.getX(), value, vector.getZ());
+        else if (axis == Axis.Z) return new BlockPos(vector.getX(), vector.getY(), value);
+        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
+    }
+
+    public static int getValue(BlockPos vector, Axis axis) {
+        if (axis == Axis.X) return vector.getX();
+        else if (axis == Axis.Y) return vector.getY();
+        else if (axis == Axis.Z) return vector.getZ();
+        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
     }
 
     public static Vec3 getVec(Entity entity) {
@@ -651,6 +656,10 @@ public final class Utils {
         BlockPos maxMin = max(from, min);
         BlockPos minMax = min(maxMin, max);
         return minMax;
+    }
+
+    public static BlockPos getClosestInside(Box box, BlockPos from) {
+        return min(max(from, box.min()), box.max());
     }
 
     public static AxisAlignedBB boundingBox(Vec3 pointA, Vec3 pointB) {

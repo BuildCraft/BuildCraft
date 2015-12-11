@@ -10,62 +10,29 @@ import buildcraft.api.core.IAreaProvider;
 
 public class DefaultAreaProvider implements IAreaProvider {
 
-    int xMin, yMin, zMin, xMax, yMax, zMax;
+    // Should this just have an internal immutable box?
+    BlockPos min, max;
 
+    @Deprecated
     public DefaultAreaProvider(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
+        this(new BlockPos(xMin, yMin, zMin), new BlockPos(xMax, yMax, zMax));
+    }
 
-        this.xMin = xMin;
-        this.xMax = xMax;
-        this.yMin = yMin;
-        this.yMax = yMax;
-        this.zMin = zMin;
-        this.zMax = zMax;
+    public DefaultAreaProvider(BlockPos min, BlockPos max) {
+        this.min = min;
+        this.max = max;
     }
 
     @Override
     public BlockPos min() {
-        // TODO Auto-generated method stub
-        return new BlockPos(xMin, yMin, zMin);
+        return min;
     }
 
     @Override
     public BlockPos max() {
-        // TODO Auto-generated method stub
-        return new BlockPos(xMax, yMax, zMax);
+        return max;
     }
 
     @Override
-    public int xMin() {
-        return xMin;
-    }
-
-    @Override
-    public int yMin() {
-        return yMin;
-    }
-
-    @Override
-    public int zMin() {
-        return zMin;
-    }
-
-    @Override
-    public int xMax() {
-        return xMax;
-    }
-
-    @Override
-    public int yMax() {
-        return yMax;
-    }
-
-    @Override
-    public int zMax() {
-        return zMax;
-    }
-
-    @Override
-    public void removeFromWorld() {
-
-    }
+    public void removeFromWorld() {}
 }

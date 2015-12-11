@@ -67,23 +67,17 @@ public abstract class BptBuilderBase implements IAreaProvider {
         return isLocationUsed(new BlockPos(x, y, z));
     }
 
-    protected boolean isLocationUsed(BlockPos toTest) {
-        int xCoord = toTest.getX() - pos.getX() + blueprint.anchorX;
-        int yCoord = toTest.getY() - pos.getY() + blueprint.anchorY;
-        int zCoord = toTest.getZ() - pos.getZ() + blueprint.anchorZ;
-        return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
+    private int locationIndex(BlockPos worldCoord) {
+        BlockPos coord = worldCoord.subtract(pos).add(blueprint.anchor);
+        return (coord.getZ() * blueprint.size.getY() + coord.getY()) * blueprint.size.getX() + coord.getZ();
     }
 
-    @Deprecated
-    protected void markLocationUsed(int x, int y, int z) {
-        markLocationUsed(new BlockPos(x, y, z));
+    protected boolean isLocationUsed(BlockPos toTest) {
+        return usedLocations.get(locationIndex(toTest));
     }
 
     protected void markLocationUsed(BlockPos toMark) {
-        int xCoord = toMark.getX() - pos.getX() + blueprint.anchorX;
-        int yCoord = toMark.getY() - pos.getY() + blueprint.anchorY;
-        int zCoord = toMark.getZ() - pos.getZ() + blueprint.anchorZ;
-        usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
+        usedLocations.set(locationIndex(toMark), true);
     }
 
     public void initialize() {
@@ -146,36 +140,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     @Override
-    public int xMin() {
-        return pos.getX() - blueprint.anchorX;
-    }
-
-    @Override
-    public int yMin() {
-        return pos.getY() - blueprint.anchorY;
-    }
-
-    @Override
-    public int zMin() {
-        return pos.getZ() - blueprint.anchorZ;
-    }
-
-    @Override
-    public int xMax() {
-        return pos.getX() + blueprint.sizeX - blueprint.anchorX - 1;
-    }
-
-    @Override
-    public int yMax() {
-        return pos.getY() + blueprint.sizeY - blueprint.anchorY - 1;
-    }
-
-    @Override
-    public int zMax() {
-        return pos.getZ() + blueprint.sizeZ - blueprint.anchorZ - 1;
-    }
-
-    @Override
     public BlockPos min() {
         return pos.subtract(blueprint.anchor);
     }
@@ -186,17 +150,13 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     @Override
-    public void removeFromWorld() {
-
-    }
+    public void removeFromWorld() {}
 
     public AxisAlignedBB getBoundingBox() {
-        return new AxisAlignedBB(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+        return new AxisAlignedBB(min(), max());
     }
 
-    public void postProcessing(World world) {
-
-    }
+    public void postProcessing(World world) {}
 
     public BptContext getContext() {
         return context;
@@ -271,7 +231,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
             for (int i = 0; i < clearList.tagCount(); ++i) {
                 NBTBase cpt = clearList.get(i);
                 BlockPos o = NBTUtils.readBlockPos(cpt);
-                markLocationUsed(o.getX(), o.getY(), o.getZ());
+                markLocationUsed(o);
             }
         }
 
@@ -281,7 +241,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
             for (int i = 0; i < builtList.tagCount(); ++i) {
                 NBTBase cpt = builtList.get(i);
                 BlockPos o = NBTUtils.readBlockPos(cpt);
-                markLocationUsed(o.getX(), o.getY(), o.getZ());
+                markLocationUsed(o);
             }
         }
     }

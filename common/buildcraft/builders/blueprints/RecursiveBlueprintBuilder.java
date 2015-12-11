@@ -73,9 +73,9 @@ public class RecursiveBlueprintBuilder {
         NBTTagCompound nbt = subBlueprints.get(nextSubBlueprint);
         BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt.getCompoundTag("bpt"));
 
-        int nx = box.xMin + nbt.getInteger("x");
-        int ny = box.yMin + nbt.getInteger("y");
-        int nz = box.zMin + nbt.getInteger("z");
+        int nx = box.min().getX() + nbt.getInteger("x");
+        int ny = box.min().getY() + nbt.getInteger("y");
+        int nz = box.min().getZ() + nbt.getInteger("z");
 
         EnumFacing nbtDir = EnumFacing.values()[nbt.getByte("dir")];
 

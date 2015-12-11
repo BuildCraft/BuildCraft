@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -89,7 +90,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     private void initTemplate() {
-        if (currentPattern != null && box.isInitialized() && box.sizeX() > 0 && box.sizeY() > 0 && box.sizeZ() > 0) {
+        if (currentPattern != null && box.size().distanceSq(BlockPos.ORIGIN) > 0) {
             currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
             currentTemplate.blueprint.excavate = excavate;
         }
