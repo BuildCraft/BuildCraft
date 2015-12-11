@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import java.io.ByteArrayInputStream;
@@ -92,10 +88,12 @@ public final class NBTUtils {
     }
 
     public static NBTBase writeBlockPos(BlockPos pos) {
+        if (pos == null) return null;
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
     public static BlockPos readBlockPos(NBTBase base) {
+        if (base == null) return null;
         switch (base.getId()) {
             case INT_ARRAY: {
                 int[] array = ((NBTTagIntArray) base).getIntArray();

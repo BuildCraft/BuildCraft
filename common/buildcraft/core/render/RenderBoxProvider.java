@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
@@ -46,7 +42,7 @@ public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRe
         } else if (tileentity instanceof IBoxProvider) {
             Box b = ((IBoxProvider) tileentity).getBox();
 
-            if (b.isVisible) {
+            if (b.isVisible && b.isInitialized()) {
                 RenderBox.doRender(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, getTexture(b.kind), b);
             }
         }

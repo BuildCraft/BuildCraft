@@ -72,8 +72,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public EntityPlayer placedBy;
 
     protected Box box = new Box();
-    private BlockPos target;
-    private Vec3 headPos;
+    private BlockPos target = BlockPos.ORIGIN;
+    private Vec3 headPos = Utils.VEC_ZERO;
     private double speed = 0.03;
     private Stage stage = Stage.BUILDING;
     private boolean movingHorizontally;
@@ -855,11 +855,13 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         chunks.add(quarryChunk);
         ForgeChunkManager.forceChunk(ticket, quarryChunk);
 
-        for (int chunkX = box.min().getX() >> 4; chunkX <= box.max().getX() >> 4; chunkX++) {
-            for (int chunkZ = box.min().getZ() >> 4; chunkZ <= box.max().getZ() >> 4; chunkZ++) {
-                ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
-                ForgeChunkManager.forceChunk(ticket, chunk);
-                chunks.add(chunk);
+        if (box.isInitialized()) {
+            for (int chunkX = box.min().getX() >> 4; chunkX <= box.max().getX() >> 4; chunkX++) {
+                for (int chunkZ = box.min().getZ() >> 4; chunkZ <= box.max().getZ() >> 4; chunkZ++) {
+                    ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
+                    ForgeChunkManager.forceChunk(ticket, chunk);
+                    chunks.add(chunk);
+                }
             }
         }
 
@@ -875,6 +877,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
+        if (getPos() == null) return null;
         return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
     }
 

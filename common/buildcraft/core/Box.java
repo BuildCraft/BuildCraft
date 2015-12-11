@@ -41,7 +41,6 @@ public class Box implements IBox, ISerializable {
     public LaserData[] lasersData;
 
     private BlockPos min, max;
-    private boolean initialized;
 
     public Box() {
         reset();
@@ -49,7 +48,8 @@ public class Box implements IBox, ISerializable {
 
     public Box(BlockPos min, BlockPos max) {
         this();
-        extendToEncompassBoth(min, max);
+        this.min = Utils.min(min, max);
+        this.max = Utils.max(min, max);
     }
 
     public Box(TileEntity e) {
@@ -71,11 +71,13 @@ public class Box implements IBox, ISerializable {
     }
 
     public void setMin(BlockPos min) {
+        if (min == null) return;
         this.min = min;
         this.max = Utils.max(min, max);
     }
 
     public void setMax(BlockPos max) {
+        if (max == null) return;
         this.min = Utils.min(min, max);
         this.max = max;
     }
@@ -128,6 +130,7 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public Box expand(int amount) {
+        if (!isInitialized()) return this;
         Vec3i am = Utils.vec3i(amount);
         setMin(min().subtract(am));
         setMax(max().add(am));
@@ -160,7 +163,7 @@ public class Box implements IBox, ISerializable {
 
     public BlockPos size() {
         if (!isInitialized()) return BlockPos.ORIGIN;
-        return max.subtract(min);
+        return max.subtract(min).add(Utils.POS_ONE);
     }
 
     public BlockPos center() {
@@ -244,18 +247,21 @@ public class Box implements IBox, ISerializable {
     @Override
     public void readData(ByteBuf stream) {
         byte flags = stream.readByte();
-        min = NetworkUtils.readBlockPos(stream);
-        max = NetworkUtils.readBlockPos(stream);
-
         kind = Kind.values()[flags & 31];
-        initialized = (flags & 64) != 0;
+        boolean initialized = (flags & 64) != 0;
         isVisible = (flags & 32) != 0;
+        if (initialized) {
+            min = NetworkUtils.readBlockPos(stream);
+            max = NetworkUtils.readBlockPos(stream);
+        }
     }
 
     @Override
     public void writeData(ByteBuf stream) {
-        stream.writeByte((initialized ? 64 : 0) | (isVisible ? 32 : 0) | kind.ordinal());
-        NetworkUtils.writeBlockPos(stream, min);
-        NetworkUtils.writeBlockPos(stream, max);
+        stream.writeByte((isInitialized() ? 64 : 0) | (isVisible ? 32 : 0) | kind.ordinal());
+        if (isInitialized()) {
+            NetworkUtils.writeBlockPos(stream, min);
+            NetworkUtils.writeBlockPos(stream, max);
+        }
     }
 }

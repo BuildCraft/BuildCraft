@@ -603,12 +603,10 @@ public final class Utils {
     }
 
     /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but doesn't require unsafe casting. */
-    @SuppressWarnings("unchecked")
     public static Iterable<BlockPos> allInBoxIncludingCorners(BlockPos pos1, BlockPos pos2) {
         BlockPos min = min(pos1, pos2);
         BlockPos max = max(pos1, pos2);
-        Iterable<?> iterator = BlockPos.getAllInBox(min, max);
-        return (Iterable<BlockPos>) iterator;
+        return  BlockPos.getAllInBox(min, max);
     }
 
     public static Vec3 getMinForFace(EnumFacing face, Vec3 min, Vec3 max) {

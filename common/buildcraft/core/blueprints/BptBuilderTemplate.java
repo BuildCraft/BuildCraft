@@ -44,40 +44,43 @@ public class BptBuilderTemplate extends BptBuilderBase {
         if (worldOffset.add(bptMax).getY() >= context.world().getHeight()) {
             bptMax = Utils.withValue(bptMax, Axis.Y, context.world().getHeight() - worldOffset.getY());
         }
-        if (blueprint.excavate) {
+        /* Check to make sure the max is bigger than the min- if its not it means that the size was 0 for one of the
+         * axis */
+        if (Utils.min(bptMin, bptMax).equals(bptMin) && Utils.max(bptMin, bptMax).equals(bptMax)) {
+            if (blueprint.excavate) {
+                for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
+                    BlockPos pointWorldOffset = worldOffset.add(bptOffset);
 
+                    SchematicBlockBase slot = blueprint.get(bptOffset);
+
+                    if (slot == null && !isLocationUsed(pointWorldOffset)) {
+                        BuildingSlotBlock b = new BuildingSlotBlock();
+
+                        b.schematic = null;
+                        b.pos = pointWorldOffset;
+                        b.mode = Mode.ClearIfInvalid;
+                        b.buildStage = 0;
+
+                        clearList.add(b);
+                    }
+                }
+            }
             for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
                 BlockPos pointWorldOffset = worldOffset.add(bptOffset);
 
                 SchematicBlockBase slot = blueprint.get(bptOffset);
 
-                if (slot == null && !isLocationUsed(pointWorldOffset)) {
+                if (slot != null && !isLocationUsed(pointWorldOffset)) {
                     BuildingSlotBlock b = new BuildingSlotBlock();
 
-                    b.schematic = null;
+                    b.schematic = slot;
                     b.pos = pointWorldOffset;
-                    b.mode = Mode.ClearIfInvalid;
-                    b.buildStage = 0;
 
-                    clearList.add(b);
+                    b.mode = Mode.Build;
+                    b.buildStage = 1;
+
+                    buildList.add(b);
                 }
-            }
-        }
-        for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
-            BlockPos pointWorldOffset = worldOffset.add(bptOffset);
-
-            SchematicBlockBase slot = blueprint.get(bptOffset);
-
-            if (slot != null && !isLocationUsed(pointWorldOffset)) {
-                BuildingSlotBlock b = new BuildingSlotBlock();
-
-                b.schematic = slot;
-                b.pos = pointWorldOffset;
-
-                b.mode = Mode.Build;
-                b.buildStage = 1;
-
-                buildList.add(b);
             }
         }
 

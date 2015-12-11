@@ -61,22 +61,50 @@ public class BptBuilderBlueprint extends BptBuilderBase {
         if (worldOffset.getY() < 0) bptMin = Utils.withValue(bptMin, Axis.Y, -worldOffset.getY());
 
         BlockPos bptMax = blueprint.size.subtract(Utils.POS_ONE);
-        if (worldOffset.add(bptMax).getY() >= context.world().getHeight()) {
+        if (worldOffset.add(bptMax).getY() > context.world().getHeight()) {
             bptMax = Utils.withValue(bptMax, Axis.Y, context.world().getHeight() - worldOffset.getY());
         }
 
-        for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
-            BlockPos pointWorldOffset = worldOffset.add(bptOffset);
-            if (!isLocationUsed(pointWorldOffset)) {
+        /* Check to make sure the max is bigger than the min- if its not it means that the size was 0 for one of the
+         * axis */
+        if (Utils.min(bptMin, bptMax).equals(bptMin) && Utils.max(bptMin, bptMax).equals(bptMax)) {
+            for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
+                BlockPos pointWorldOffset = worldOffset.add(bptOffset);
+                if (!isLocationUsed(pointWorldOffset)) {
+                    SchematicBlock slot = (SchematicBlock) blueprint.get(bptOffset);
+
+                    if (slot == null && !blueprint.excavate) {
+                        continue;
+                    }
+
+                    if (slot == null) {
+                        slot = new SchematicBlock();
+                        slot.state = Blocks.air.getDefaultState();
+                    }
+
+                    if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {
+                        continue;
+                    }
+
+                    BuildingSlotBlock b = new BuildingSlotBlock();
+                    b.schematic = slot;
+                    b.pos = pointWorldOffset;
+                    b.mode = Mode.ClearIfInvalid;
+                    b.buildStage = 0;
+
+                    addToBuildList(b);
+                }
+            }
+
+            LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
+            LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
+
+            for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
+                BlockPos pointWorldOffset = worldOffset.add(bptOffset);
                 SchematicBlock slot = (SchematicBlock) blueprint.get(bptOffset);
 
-                if (slot == null && !blueprint.excavate) {
-                    continue;
-                }
-
                 if (slot == null) {
-                    slot = new SchematicBlock();
-                    slot.state = Blocks.air.getDefaultState();
+                    continue;
                 }
 
                 if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {
@@ -86,54 +114,30 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 BuildingSlotBlock b = new BuildingSlotBlock();
                 b.schematic = slot;
                 b.pos = pointWorldOffset;
-                b.mode = Mode.ClearIfInvalid;
-                b.buildStage = 0;
+                b.mode = Mode.Build;
 
+                if (!isLocationUsed(pointWorldOffset)) {
+                    switch (slot.getBuildStage()) {
+                        case STANDALONE:
+                            tmpStandalone.add(b);
+                            b.buildStage = 1;
+                            break;
+                        case EXPANDING:
+                            tmpExpanding.add(b);
+                            b.buildStage = 2;
+                            break;
+                    }
+                } else {
+                    postProcessing.add(b);
+                }
+            }
+
+            for (BuildingSlotBlock b : tmpStandalone) {
                 addToBuildList(b);
             }
-        }
-
-        LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-        LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
-
-        for (BlockPos bptOffset : BlockPos.getAllInBox(bptMin, bptMax)) {
-            BlockPos pointWorldOffset = worldOffset.add(bptOffset);
-            SchematicBlock slot = (SchematicBlock) blueprint.get(bptOffset);
-
-            if (slot == null) {
-                continue;
+            for (BuildingSlotBlock b : tmpExpanding) {
+                addToBuildList(b);
             }
-
-            if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {
-                continue;
-            }
-
-            BuildingSlotBlock b = new BuildingSlotBlock();
-            b.schematic = slot;
-            b.pos = pointWorldOffset;
-            b.mode = Mode.Build;
-
-            if (!isLocationUsed(pointWorldOffset)) {
-                switch (slot.getBuildStage()) {
-                    case STANDALONE:
-                        tmpStandalone.add(b);
-                        b.buildStage = 1;
-                        break;
-                    case EXPANDING:
-                        tmpExpanding.add(b);
-                        b.buildStage = 2;
-                        break;
-                }
-            } else {
-                postProcessing.add(b);
-            }
-        }
-
-        for (BuildingSlotBlock b : tmpStandalone) {
-            addToBuildList(b);
-        }
-        for (BuildingSlotBlock b : tmpExpanding) {
-            addToBuildList(b);
         }
 
         int seqId = 0;
