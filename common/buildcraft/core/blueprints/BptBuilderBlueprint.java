@@ -86,7 +86,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					BlockPos coord = new BlockPos(xCoord, yCoord, zCoord);
 
                     if (!isLocationUsed(coord)) {
-						SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
+						SchematicBlock slot = (SchematicBlock) blueprint.get(new BlockPos(i, j, k));
 
                         if (slot == null && !blueprint.excavate) {
                             continue;
@@ -129,7 +129,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				for (int k = 0; k < blueprint.sizeZ; ++k) {
 					int zCoord = k + pos.getZ() - blueprint.anchorZ;
 
-					SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
+					SchematicBlock slot = (SchematicBlock) blueprint.get(new BlockPos(i, j, k));
 
 					if (slot == null) {
                         continue;

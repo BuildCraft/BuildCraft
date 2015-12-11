@@ -180,7 +180,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         createUtilsIfNeeded();
         if (getStage() == Stage.BUILDING) {
             if (builder != null && !builder.isDone(this)) {
-                builder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
+                builder.buildNextSlot(worldObj, this);
             } else {
                 setStage(Stage.IDLE);
             }

@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import io.netty.buffer.ByteBuf;
@@ -127,6 +128,16 @@ public final class NetworkUtils {
         double y = stream.readDouble();
         double z = stream.readDouble();
         return new Vec3(x, y, z);
+    }
+
+    public static void writeBlockPos(ByteBuf stream, BlockPos pos) {
+        stream.writeInt(pos.getX());
+        stream.writeInt(pos.getY());
+        stream.writeInt(pos.getZ());
+    }
+
+    public static BlockPos readBlockPos(ByteBuf stream) {
+        return new BlockPos(stream.readInt(), stream.readInt(), stream.readInt());
     }
 
     public static <E extends Enum<E>> void writeEnum(ByteBuf stream, E value) {

@@ -37,13 +37,13 @@ public class Template extends BlueprintBase {
 
     @Override
     public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
-        Vec3 nPos = Utils.convert(pos).subtract(context.surroundingBox().pMin());
+        Vec3 nPos = Utils.convert(pos).subtract(context.surroundingBox().min());
         int posX = (int) nPos.xCoord;
         int posY = (int) nPos.yCoord;
         int posZ = (int) nPos.zCoord;
 
         if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
-			put(posX, posY, posZ, new SchematicMask(true));
+			set(new BlockPos(posX,posY,posZ), new SchematicMask(true));
         }
     }
 
@@ -59,7 +59,7 @@ public class Template extends BlueprintBase {
         for (int x = 0; x < sizeX; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
-					data[ind] = (byte) ((get(x, y, z) == null) ? 0 : 1);
+					data[ind] = (byte) ((get(new BlockPos(x, y, z)) == null) ? 0 : 1);
                     ind++;
                 }
             }
@@ -77,7 +77,7 @@ public class Template extends BlueprintBase {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
                     if (data[ind] == 1) {
-						put(x, y, z, new SchematicMask(true));
+						set(new BlockPos(x,y,z), new SchematicMask(true));
                     }
 
                     ind++;

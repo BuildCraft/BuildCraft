@@ -88,7 +88,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.put(x, y, z, new SchematicMask(true));
+                        template.set(new BlockPos(x,y,z), new SchematicMask(true));
                     }
                 }
             }
@@ -101,7 +101,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = xMin; x <= xMax; ++x) {
                 for (int z = zMin; z <= zMax; ++z) {
                     if (isValid(x, y, z, template)) {
-                        template.put(x, y, z, null);
+                        template.set(new BlockPos(x,y,z), null);
                     }
                 }
             }
@@ -114,7 +114,7 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int z = zMin; z <= zMax; ++z) {
                 for (int y = yMax; y >= yMin; --y) {
                     if (isValid(x, y, z, template)) {
-                        template.put(x, y, z, new SchematicMask(true));
+                        template.set(new BlockPos(x,y,z), new SchematicMask(true));
                     }
                 }
             }
@@ -132,8 +132,8 @@ public abstract class FillerPattern implements IFillerPattern {
             for (int x = 0; x < box.sizeX(); ++x) {
                 for (int y = 0; y < box.sizeY(); ++y) {
                     for (int z = 0; z < box.sizeZ(); ++z) {
-                        if (tmpl.get(x, y, z) != null) {
-                            result.put(x, y, z, SchematicRegistry.INSTANCE.createSchematicBlock(state));
+                        if (tmpl.get(new BlockPos(x, y, z)) != null) {
+                            result.set(new BlockPos(x,y,z), SchematicRegistry.INSTANCE.createSchematicBlock(state));
                         }
 
                     }

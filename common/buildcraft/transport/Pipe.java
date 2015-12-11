@@ -37,7 +37,7 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
-public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe, Comparable<Pipe<T>> {
+public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe, Comparable<Pipe<?>> {
     // TODO: Change this to EventBusProviderASM!
     private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus.Provider.INSTANCE;
 
@@ -537,7 +537,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         scheduleWireUpdate = true;
     }
 
-    public int compareTo(Pipe<T> pipe) {
+    @Override
+    public int compareTo(Pipe<?> pipe) {
+        // TO keep BuildCraftExtendedProperty happy
         return 0;
     }
 }

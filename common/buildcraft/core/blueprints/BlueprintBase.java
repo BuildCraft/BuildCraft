@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
@@ -27,17 +23,18 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.core.BCLog;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.lib.utils.Matrix4i;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlueprintBase {
 
     public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
 
-    public int anchorX, anchorY, anchorZ;
-    public int sizeX, sizeY, sizeZ;
+    public BlockPos anchor = Utils.POS_ZERO;
+    public BlockPos size = Utils.POS_ONE;
     public LibraryId id = new LibraryId();
     public String author;
     public boolean rotate = true;
@@ -46,110 +43,81 @@ public abstract class BlueprintBase {
     public boolean isComplete = true;
 
     protected MappingRegistry mapping = new MappingRegistry();
-	protected SchematicBlockBase[] contents;
+    private SchematicBlockBase[][][] contents;
 
     private NBTTagCompound nbt;
     private EnumFacing mainDir = EnumFacing.EAST;
 
     public BlueprintBase() {}
 
+    @Deprecated
     public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
-
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.sizeZ = sizeZ;
-
-        anchorX = 0;
-        anchorY = 0;
-        anchorZ = 0;
+        this(new BlockPos(sizeX, sizeY, sizeZ));
     }
 
-	private int toArrayPos(int x, int y, int z) {
-		return (y * sizeZ + z) * sizeX + x;
-                    }
-
-	public SchematicBlockBase get(int x, int y, int z) {
-		return contents[(y * sizeZ + z) * sizeX + x];
-                }
-
-	public void put(int x, int y, int z, SchematicBlockBase s) {
-		contents[(y * sizeZ + z) * sizeX + x] = s;
-	}
-
-	public void translateToBlueprint(Vec3 transform) {
-		for (SchematicBlockBase content : contents) {
-			if (content != null) {
-				content.translateToBlueprint(transform);
-            }
-        }
+    public BlueprintBase(BlockPos size) {
+        contents = new SchematicBlockBase[size.getX()][size.getY()][size.getZ()];
+        this.size = size;
+        this.anchor = Utils.POS_ZERO;
     }
 
-	public void translateToWorld(Vec3 transform) {
-		for (SchematicBlockBase content : contents) {
-			if (content != null) {
-				content.translateToWorld(transform);
-            }
-        }
+    public SchematicBlockBase get(BlockPos pos) {
+        return contents[pos.getX()][pos.getY()][pos.getZ()];
+    }
+
+    public void set(BlockPos pos, SchematicBlockBase schematic) {
+        contents[pos.getX()][pos.getY()][pos.getZ()] = schematic;
+    }
+
+    public void translateToBlueprint(Vec3 transform) {
+        for (SchematicBlockBase[][] arr2 : contents)
+            for (SchematicBlockBase[] arr1 : arr2)
+                for (SchematicBlockBase content : arr1)
+                    if (content != null) content.translateToBlueprint(transform);
+    }
+
+    public void translateToWorld(Vec3 transform) {
+        for (SchematicBlockBase[][] arr2 : contents)
+            for (SchematicBlockBase[] arr1 : arr2)
+                for (SchematicBlockBase content : arr1)
+                    if (content != null) content.translateToWorld(transform);
     }
 
     public void rotateLeft(BptContext context) {
-		SchematicBlockBase[] newContents = new SchematicBlockBase[sizeZ * sizeY * sizeX];
+        SchematicBlockBase[][][] newContents = new SchematicBlockBase[size.getZ()][size.getY()][size.getX()];
 
-        for (int x = 0; x < sizeZ; ++x) {
-            for (int y = 0; y < sizeY; ++y) {
-                for (int z = 0; z < sizeX; ++z) {
-					int pos = (y * sizeX + z) * sizeZ + x;
-					newContents[pos] = contents[toArrayPos(z, y, (sizeZ - 1) - x)];
+        Matrix4i leftRot = Matrix4i.makeRotLeftTranslatePositive(size.getX() - 1);
 
-					if (newContents[pos] != null) {
-                        try {
-							newContents[pos].rotateLeft(context);
-                        } catch (Throwable t) {
-                            // Defensive code against errors in implementers
-                            t.printStackTrace();
-                            BCLog.logger.throwing(t);
-                        }
-                    }
-                }
-            }
+        for (BlockPos internal : BlockPos.getAllInBox(Utils.POS_ZERO, size)) {
+            BlockPos rotated = leftRot.multiplyPosition(internal);
+
+            SchematicBlockBase oldContents = contents[internal.getX()][internal.getY()][internal.getZ()];
+            oldContents.rotateLeft(context);
+            newContents[rotated.getX()][rotated.getY()][rotated.getZ()] = oldContents;
         }
 
-        int newAnchorX, newAnchorY, newAnchorZ;
+        contents = newContents;
 
-        newAnchorX = (sizeZ - 1) - anchorZ;
-        newAnchorY = anchorY;
-        newAnchorZ = anchorX;
+        BlockPos newAnchor = leftRot.multiplyPosition(anchor);
 
         for (NBTTagCompound sub : subBlueprintsNBT) {
             EnumFacing dir = EnumFacing.values()[sub.getByte("dir")];
 
-            if (dir.getAxis() != Axis.Y) {
-                dir = dir.rotateY();
-            }
+            if (dir.getAxis() != Axis.Y) dir = dir.rotateY();
 
             Vec3 pos = new Vec3(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
-            Vec3 np = context.rotatePositionLeft(pos);
+            Vec3 rotated = context.rotatePositionLeft(pos);
 
-            sub.setInteger("x", (int) np.xCoord);
-            sub.setInteger("z", (int) np.zCoord);
+            sub.setInteger("x", (int) rotated.xCoord);
+            sub.setInteger("z", (int) rotated.zCoord);
             sub.setByte("dir", (byte) dir.ordinal());
         }
 
         context.rotateLeft();
 
-        anchorX = newAnchorX;
-        anchorY = newAnchorY;
-        anchorZ = newAnchorZ;
+        anchor = newAnchor;
 
-        contents = newContents;
-        int tmp = sizeX;
-        sizeX = sizeZ;
-        sizeZ = tmp;
-
-        if (mainDir.getAxis() != Axis.Y) {
-            mainDir = mainDir.rotateY();
-        }
+        if (mainDir.getAxis() != Axis.Y) mainDir = mainDir.rotateY();
     }
 
     private void writeToNBTInternal(NBTTagCompound nbt) {
@@ -161,14 +129,11 @@ public abstract class BlueprintBase {
             nbt.setString("kind", "blueprint");
         }
 
-        nbt.setInteger("sizeX", sizeX);
-        nbt.setInteger("sizeY", sizeY);
-        nbt.setInteger("sizeZ", sizeZ);
-        nbt.setInteger("anchorX", anchorX);
-        nbt.setInteger("anchorY", anchorY);
-        nbt.setInteger("anchorZ", anchorZ);
         nbt.setBoolean("rotate", rotate);
         nbt.setBoolean("excavate", excavate);
+
+        nbt.setTag("size", NBTUtils.writeBlockPos(size));
+        nbt.setTag("anchor", NBTUtils.writeBlockPos(anchor));
 
         if (author != null) {
             nbt.setString("author", author);
@@ -202,12 +167,14 @@ public abstract class BlueprintBase {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        sizeX = nbt.getInteger("sizeX");
-        sizeY = nbt.getInteger("sizeY");
-        sizeZ = nbt.getInteger("sizeZ");
-        anchorX = nbt.getInteger("anchorX");
-        anchorY = nbt.getInteger("anchorY");
-        anchorZ = nbt.getInteger("anchorZ");
+        BlockPos size;
+        if (nbt.hasKey("sizeX")) {
+            size = new BlockPos(nbt.getInteger("sizeX"), nbt.getInteger("sizeY"), nbt.getInteger("sizeZ"));
+        } else size = NBTUtils.readBlockPos(nbt.getTag("size"));
+
+        if (nbt.hasKey("anchorX")) {
+            anchor = new BlockPos(nbt.getInteger("anchorX"), nbt.getInteger("anchorY"), nbt.getInteger("anchorZ"));
+        } else anchor = NBTUtils.readBlockPos(nbt.getTag("anchor"));
 
         author = nbt.getString("author");
 
@@ -223,7 +190,7 @@ public abstract class BlueprintBase {
             excavate = true;
         }
 
-		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
+        contents = new SchematicBlockBase[size.getX()][size.getY()][size.getZ()];
 
         try {
             loadContents(nbt);
@@ -241,42 +208,33 @@ public abstract class BlueprintBase {
     }
 
     public Box getBoxForPos(BlockPos pos) {
-        int xMin = pos.getX() - anchorX;
-        int yMin = pos.getY() - anchorY;
-        int zMin = pos.getZ() - anchorZ;
-        int xMax = pos.getX() + sizeX - anchorX - 1;
-        int yMax = pos.getY() + sizeY - anchorY - 1;
-        int zMax = pos.getZ() + sizeZ - anchorZ - 1;
-
-        Box res = new Box();
-        res.initialize(xMin, yMin, zMin, xMax, yMax, zMax);
-        res.reorder();
-
-        return res;
+        BlockPos min = pos.add(anchor);
+        BlockPos max = min.add(size).subtract(Utils.POS_ONE);
+        return new Box(min, max);
     }
 
     public BptContext getContext(World world, Box box) {
         return new BptContext(world, box, mapping);
     }
-    
+
     public void addSubBlueprint(BlueprintBase subBpt, BlockPos pos, EnumFacing dir) {
         NBTTagCompound subNBT = new NBTTagCompound();
-        
+
         subNBT.setInteger("x", pos.getX());
         subNBT.setInteger("y", pos.getY());
         subNBT.setInteger("z", pos.getZ());
         subNBT.setByte("dir", (byte) dir.ordinal());
         subNBT.setTag("bpt", subBpt.getNBT());
-        
+
         subBlueprintsNBT.add(subNBT);
     }
 
-	public NBTTagCompound getNBT() {
-		if (nbt == null) {
-			nbt = new NBTTagCompound();
-			writeToNBTInternal(nbt);
+    public NBTTagCompound getNBT() {
+        if (nbt == null) {
+            nbt = new NBTTagCompound();
+            writeToNBTInternal(nbt);
         }
-		return nbt;
+        return nbt;
     }
 
     public BlueprintBase adjustToWorld(World world, BlockPos pos, EnumFacing o) {
@@ -302,7 +260,7 @@ public abstract class BlueprintBase {
             }
         }
 
-        Vec3 transform = Utils.convert(pos).subtract(new Vec3(anchorX, anchorY, anchorZ));
+        Vec3 transform = Utils.convert(pos).subtract(new Vec3(anchor));
 
         translateToWorld(transform);
 

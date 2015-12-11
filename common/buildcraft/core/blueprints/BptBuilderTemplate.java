@@ -48,7 +48,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
                     for (int k = 0; k < blueprint.sizeZ; ++k) {
                         int zCoord = k + pos.getZ() - blueprint.anchorZ;
 
-                        SchematicBlockBase slot = blueprint.get(i, j, k);
+                        SchematicBlockBase slot = blueprint.get(new BlockPos(i, j, k));
 
                         if (slot == null && !isLocationUsed(xCoord, yCoord, zCoord)) {
                             BuildingSlotBlock b = new BuildingSlotBlock();
@@ -78,7 +78,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
                 for (int k = 0; k < blueprint.sizeZ; ++k) {
                     int zCoord = k + pos.getZ() - blueprint.anchorZ;
 
-                    SchematicBlockBase slot = blueprint.get(i, j, k);
+                    SchematicBlockBase slot = blueprint.get(new BlockPos(i, j, k));
 
                     if (slot != null && !isLocationUsed(xCoord, yCoord, zCoord)) {
                         BuildingSlotBlock b = new BuildingSlotBlock();

@@ -10,7 +10,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 public interface IZone {
-
     double distanceTo(BlockPos index);
 
     double distanceToSquared(BlockPos index);
@@ -18,5 +17,4 @@ public interface IZone {
     boolean contains(Vec3 point);
 
     BlockPos getRandomBlockPos(Random rand);
-
 }

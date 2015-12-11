@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 import java.util.ArrayList;
@@ -16,17 +12,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3i;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
+import buildcraft.core.lib.utils.Matrix4i;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
 import io.netty.buffer.ByteBuf;
 
-// TODO (PASS 2): Convert fields to BlockPos
+/** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox, ISerializable {
     public enum Kind {
         LASER_RED,
@@ -38,100 +37,84 @@ public class Box implements IBox, ISerializable {
     }
 
     public Kind kind = Kind.LASER_RED;
-    public int xMin, yMin, zMin, xMax, yMax, zMax;
-    public boolean initialized;
     public boolean isVisible = true;
-
     public LaserData[] lasersData;
+
+    private BlockPos min, max;
+    private boolean initialized;
 
     public Box() {
         reset();
     }
 
-    public Box(TileEntity e) {
-        initialize(e.getPos().getX(), e.getPos().getY(), e.getPos().getZ(), e.getPos().getX() + 1, e.getPos().getY() + 1, e.getPos().getZ() + 1);
-    }
-
     public Box(BlockPos min, BlockPos max) {
-        this(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+        this();
+        extendToEncompassBoth(min, max);
     }
 
-    public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-        this();
-        initialize(xMin, yMin, zMin, xMax, yMax, zMax);
+    public Box(TileEntity e) {
+        this(e.getPos(), e.getPos().add(Utils.POS_ONE));
     }
 
     public void reset() {
-        initialized = false;
-        xMin = Integer.MAX_VALUE;
-        yMin = Integer.MAX_VALUE;
-        zMin = Integer.MAX_VALUE;
-        xMax = Integer.MAX_VALUE;
-        yMax = Integer.MAX_VALUE;
-        zMax = Integer.MAX_VALUE;
+        min = null;
+        max = null;
     }
 
-    public boolean isInitialized() {
-        return initialized;
+    public void extendToEncompassBoth(BlockPos min, BlockPos max) {
+        this.min = Utils.min(this.min, Utils.min(min, max));
+        this.max = Utils.max(this.max, Utils.max(min, max));
     }
 
-    public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
-        if (xMin < xMax) {
-            this.xMin = xMin;
-            this.xMax = xMax;
-        } else {
-            this.xMin = xMax;
-            this.xMax = xMin;
-        }
+    public void setMin(BlockPos min) {
+        this.min = min;
+        this.max = Utils.max(min, max);
+    }
 
-        if (yMin < yMax) {
-            this.yMin = yMin;
-            this.yMax = yMax;
-        } else {
-            this.yMin = yMax;
-            this.yMax = yMin;
-        }
-
-        if (zMin < zMax) {
-            this.zMin = zMin;
-            this.zMax = zMax;
-        } else {
-            this.zMin = zMax;
-            this.zMax = zMin;
-        }
-
-        initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE
-            || yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE);
+    public void setMax(BlockPos max) {
+        this.min = Utils.min(min, max);
+        this.max = max;
     }
 
     public void initialize(Box box) {
-        initialize(box.xMin, box.yMin, box.zMin, box.xMax, box.yMax, box.zMax);
+        extendToEncompassBoth(box.min(), box.max());
     }
 
     public void initialize(IAreaProvider a) {
-        initialize(a.xMin(), a.yMin(), a.zMin(), a.xMax(), a.yMax(), a.zMax());
+        extendToEncompassBoth(a.min(), a.max());
     }
 
-    public void initialize(NBTTagCompound nbttagcompound) {
-        kind = Kind.values()[nbttagcompound.getShort("kind")];
+    public void initialize(NBTTagCompound nbt) {
+        kind = Kind.values()[nbt.getShort("kind")];
 
-        initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger(
-                "xMax"), nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
+        BlockPos min;
+        BlockPos max;
+        if (nbt.hasKey("xMin")) {
+            min = new BlockPos(nbt.getInteger("xMin"), nbt.getInteger("yMin"), nbt.getInteger("zMin"));
+            max = new BlockPos(nbt.getInteger("xMax"), nbt.getInteger("yMax"), nbt.getInteger("zMax"));
+        } else {
+            min = NBTUtils.readBlockPos(nbt.getTag("min"));
+            max = NBTUtils.readBlockPos(nbt.getTag("max"));
+        }
+        extendToEncompassBoth(min, max);
     }
 
-    public void initialize(int centerX, int centerY, int centerZ, int size) {
-        initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
+    public void initializeCenter(BlockPos center, int size) {
+        initializeCenter(center, Utils.vec3i(size));
+    }
+
+    public void initializeCenter(BlockPos center, Vec3i size) {
+        extendToEncompassBoth(center.subtract(size), center.add(size));
     }
 
     public List<BlockPos> getBlocksInArea() {
         List<BlockPos> blocks = new ArrayList<BlockPos>();
 
-        for (float x = xMin; x <= xMax; x++) {
-            for (float y = yMin; y <= yMax; y++) {
-                for (float z = zMin; z <= zMax; z++) {
-                    blocks.add(new BlockPos((int) x, (int) y, (int) z));
-                }
-            }
+        // Add {1,1,1} to make this return all values inside the box
+
+        // TODO: THE ABOVE MIGHT BE WRONG!
+        for (BlockPos pos : BlockPos.getAllInBox(min, max.add(Utils.POS_ONE))) {
+            blocks.add(pos);
         }
 
         return blocks;
@@ -139,13 +122,9 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public Box expand(int amount) {
-        xMin -= amount;
-        yMin -= amount;
-        zMin -= amount;
-        xMax += amount;
-        yMax += amount;
-        zMax += amount;
-
+        Vec3i am = Utils.vec3i(amount);
+        setMin(min().subtract(am));
+        setMax(max().add(am));
         return this;
     }
 
@@ -154,205 +133,85 @@ public class Box implements IBox, ISerializable {
         return expand(-amount);
     }
 
-    public boolean contains(double x, double y, double z) {
-		return contains(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
-	}
-
-	public boolean contains(int x, int y, int z) {
-        return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
-    }
-
     @Override
     public boolean contains(Vec3 p) {
-        return contains((int) p.xCoord, (int) p.yCoord, (int) p.zCoord);
+        return getBoundingBox().isVecInside(p);
     }
 
     public boolean contains(BlockPos i) {
-        return contains(i.getX(), i.getY(), i.getZ());
+        return contains(Utils.convert(i));
     }
 
     @Override
-    public Vec3 pMin() {
-        return new Vec3(xMin, yMin, zMin);
+    public BlockPos min() {
+        return min;
     }
 
     @Override
-    public Vec3 pMax() {
-        return new Vec3(xMax, yMax, zMax);
+    public BlockPos max() {
+        return max;
     }
 
-    public int sizeX() {
-        return xMax - xMin + 1;
+    public BlockPos size() {
+        return max.subtract(min);
     }
 
-    public int sizeY() {
-        return yMax - yMin + 1;
+    public BlockPos center() {
+        return Utils.convertFloor(centerExact());
     }
 
-    public int sizeZ() {
-        return zMax - zMin + 1;
-    }
-
-    public double centerX() {
-        return xMin + sizeX() / 2.0;
-    }
-
-    public double centerY() {
-        return yMin + sizeY() / 2.0;
-    }
-
-    public double centerZ() {
-        return zMin + sizeZ() / 2.0;
+    public Vec3 centerExact() {
+        return Utils.convert(min()).add(Utils.multiply(Utils.convert(size()), 0.5));
     }
 
     public Box rotateLeft() {
-        Box nBox = new Box();
-        nBox.xMin = (sizeZ() - 1) - zMin;
-        nBox.yMin = yMin;
-        nBox.zMin = xMin;
-
-        nBox.xMax = (sizeZ() - 1) - zMax;
-        nBox.yMax = yMax;
-        nBox.zMax = xMax;
-
-        nBox.reorder();
-
-        return nBox;
-    }
-
-    public void reorder() {
-        int tmp;
-
-        if (xMin > xMax) {
-            tmp = xMin;
-            xMin = xMax;
-            xMax = tmp;
-        }
-
-        if (yMin > yMax) {
-            tmp = yMin;
-            yMin = yMax;
-            yMax = tmp;
-        }
-
-        if (zMin > zMax) {
-            tmp = zMin;
-            zMin = zMax;
-            zMax = tmp;
-        }
+        Matrix4i mat = Matrix4i.makeRotLeftTranslatePositive(size().getX() - 1);
+        BlockPos newMin = mat.multiplyPosition(min);
+        BlockPos newMax = mat.multiplyPosition(max);
+        return new Box(newMin, newMax);
     }
 
     @Override
     public void createLaserData() {
-		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
+        lasersData = Utils.createLaserDataBox(Utils.convert(min()), Utils.convert(max()));
     }
 
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setByte("kind", (byte) kind.ordinal());
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setByte("kind", (byte) kind.ordinal());
 
-        nbttagcompound.setInteger("xMin", xMin);
-        nbttagcompound.setInteger("yMin", yMin);
-        nbttagcompound.setInteger("zMin", zMin);
-
-        nbttagcompound.setInteger("xMax", xMax);
-        nbttagcompound.setInteger("yMax", yMax);
-        nbttagcompound.setInteger("zMax", zMax);
+        nbt.setTag("min", NBTUtils.writeBlockPos(min));
+        nbt.setTag("max", NBTUtils.writeBlockPos(max));
     }
 
     @Override
     public String toString() {
-        return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
+        return "Box[min = " + min + ", max = " + max + "]";
     }
 
-    public Box extendToEncompass(Box toBeContained) {
-        if (toBeContained == null || !toBeContained.initialized) {
+    public Box extendToEncompass(IBox toBeContained) {
+        if (toBeContained == null) {
             return this;
         }
 
-        if (toBeContained.xMin < xMin) {
-            xMin = toBeContained.xMin;
-        }
-
-        if (toBeContained.yMin < yMin) {
-            yMin = toBeContained.yMin;
-        }
-
-        if (toBeContained.zMin < zMin) {
-            zMin = toBeContained.zMin;
-        }
-
-        if (toBeContained.xMax > xMax) {
-            xMax = toBeContained.xMax;
-        }
-
-        if (toBeContained.yMax > yMax) {
-            yMax = toBeContained.yMax;
-        }
-
-        if (toBeContained.zMax > zMax) {
-            zMax = toBeContained.zMax;
-        }
+        setMin(toBeContained.min());
+        setMax(toBeContained.max());
 
         return this;
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
+        return new AxisAlignedBB(min, max);
     }
 
     public Box extendToEncompass(Vec3 toBeContained) {
-        if (toBeContained.xCoord < xMin) {
-            xMin = (int) toBeContained.xCoord - 1;
-        }
-
-        if (toBeContained.yCoord < yMin) {
-            yMin = (int) toBeContained.yCoord - 1;
-        }
-
-        if (toBeContained.zCoord < zMin) {
-            zMin = (int) toBeContained.zCoord - 1;
-        }
-
-        if (toBeContained.xCoord > xMax) {
-            xMax = (int) toBeContained.xCoord + 1;
-        }
-
-        if (toBeContained.yCoord > yMax) {
-            yMax = (int) toBeContained.yCoord + 1;
-        }
-
-        if (toBeContained.zCoord > zMax) {
-            zMax = (int) toBeContained.zCoord + 1;
-        }
-
+        setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
+        setMin(Utils.min(min, Utils.convertCeiling(toBeContained)));
         return this;
     }
 
     public Box extendToEncompass(BlockPos toBeContained) {
-        if (toBeContained.getX() < xMin) {
-            xMin = toBeContained.getX() - 1;
-        }
-
-        if (toBeContained.getY() < yMin) {
-            yMin = toBeContained.getY() - 1;
-        }
-
-        if (toBeContained.getZ() < zMin) {
-            zMin = toBeContained.getZ() - 1;
-        }
-
-        if (toBeContained.getX() > xMax) {
-            xMax = toBeContained.getX() + 1;
-        }
-
-        if (toBeContained.getY() > yMax) {
-            yMax = toBeContained.getY() + 1;
-        }
-
-        if (toBeContained.getZ() > zMax) {
-            zMax = toBeContained.getZ() + 1;
-        }
-
+        setMin(Utils.min(min, toBeContained));
+        setMin(Utils.min(min, toBeContained));
         return this;
     }
 
@@ -363,32 +222,19 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public double distanceToSquared(BlockPos index) {
-        int dx = index.getX() - (xMin + (xMax - xMin + 1));
-        int dy = index.getY() - (yMin + (yMax - yMin + 1));
-        int dz = index.getZ() - (zMin + (zMax - zMin + 1));
-
-        return dx * dx + dy * dy + dz * dz;
+        return centerExact().squareDistanceTo(Utils.convert(index));
     }
 
     @Override
     public BlockPos getRandomBlockPos(Random rand) {
-        int x = (xMax > xMin) ? xMin + rand.nextInt(xMax - xMin + 1) : xMin;
-        int y = (yMax > yMin) ? yMin + rand.nextInt(yMax - yMin + 1) : yMin;
-        int z = (zMax > zMin) ? zMin + rand.nextInt(zMax - zMin + 1) : zMin;
-
-        return new BlockPos(x, y, z);
-
+        return min().add(Utils.randomBlockPos(rand, size().add(Utils.POS_ONE)));
     }
 
     @Override
     public void readData(ByteBuf stream) {
         byte flags = stream.readByte();
-        xMin = stream.readInt();
-        yMin = stream.readShort();
-        zMin = stream.readInt();
-        xMax = stream.readInt();
-        yMax = stream.readShort();
-        zMax = stream.readInt();
+        min = NetworkUtils.readBlockPos(stream);
+        max = NetworkUtils.readBlockPos(stream);
 
         kind = Kind.values()[flags & 31];
         initialized = (flags & 64) != 0;
@@ -398,12 +244,7 @@ public class Box implements IBox, ISerializable {
     @Override
     public void writeData(ByteBuf stream) {
         stream.writeByte((initialized ? 64 : 0) | (isVisible ? 32 : 0) | kind.ordinal());
-        stream.writeInt(xMin);
-        stream.writeShort(yMin);
-        stream.writeInt(zMin);
-        stream.writeInt(xMax);
-        stream.writeShort(yMax);
-        stream.writeInt(zMax);
+        NetworkUtils.writeBlockPos(stream, min);
+        NetworkUtils.writeBlockPos(stream, max);
     }
-
 }

@@ -4,18 +4,16 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.core;
 
-import net.minecraft.util.Vec3;
+import net.minecraft.util.BlockPos;
 
 public interface IBox extends IZone {
-
     IBox expand(int amount);
 
     IBox contract(int amount);
 
-    Vec3 pMin();
+    BlockPos min();
 
-    Vec3 pMax();
+    BlockPos max();
 
     void createLaserData();
-
 }

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
 import java.util.BitSet;
@@ -32,22 +28,15 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingNotFoundException;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
-import buildcraft.core.builders.BuildingItem;
-import buildcraft.core.builders.BuildingSlot;
-import buildcraft.core.builders.BuildingSlotBlock;
-import buildcraft.core.builders.IBuildingItemsProvider;
-import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.builders.*;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBuilderBase implements IAreaProvider {
@@ -110,7 +99,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
     protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
-    public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
+    public boolean buildNextSlot(World world, TileAbstractBuilder builder) {
+        return buildNextSlot(world, builder, Utils.convert(builder.getPos()).add(Utils.VEC_HALF));
+    }
+
+    public boolean buildNextSlot(World world, TileAbstractBuilder builder, Vec3 origin) {
         initialize();
 
         if (world.getTotalWorldTime() < nextBuildDate) {
@@ -119,7 +112,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
         BuildingSlot slot = getNextBlock(world, builder);
 
-        if (buildSlot(world, builder, slot, x + 0.5F, y + 0.5F, z + 0.5F)) {
+        if (buildSlot(world, builder, slot, origin)) {
             nextBuildDate = world.getTotalWorldTime() + slot.buildTime();
             return true;
         } else {
@@ -127,13 +120,13 @@ public abstract class BptBuilderBase implements IAreaProvider {
         }
     }
 
-    public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y, double z) {
+    public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, Vec3 from) {
         initialize();
 
         if (slot != null) {
             slot.built = true;
             BuildingItem i = new BuildingItem();
-            i.origin = new Vec3(x, y, z);
+            i.origin = from;
             i.destination = slot.getDestination();
             i.slotToBuild = slot;
             i.context = getContext();
@@ -183,6 +176,16 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     @Override
+    public BlockPos min() {
+        return pos.subtract(blueprint.anchor);
+    }
+
+    @Override
+    public BlockPos max() {
+        return pos.add(blueprint.size).subtract(blueprint.anchor).subtract(Utils.POS_ONE);
+    }
+
+    @Override
     public void removeFromWorld() {
 
     }
@@ -216,7 +219,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     public void createDestroyItems(BuildingSlotBlock slot) {
-		int hardness = (int) Math.ceil((double) getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
+        int hardness = (int) Math.ceil((double) getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
 
         for (int i = 0; i < hardness; ++i) {
             slot.addStackConsumed(new ItemStack(BuildCraftCore.decoratedBlock));
@@ -303,6 +306,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
         MinecraftForge.EVENT_BUS.post(placeEvent);
         return placeEvent.isCanceled();
     }
+
     @Override
     public String toString() {
         return "BptBuilderBase [blueprint=" + blueprint + ", context=" + context + ", usedLocations=" + usedLocations + ", done=" + done + ", pos="

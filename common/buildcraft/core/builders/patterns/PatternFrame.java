@@ -8,6 +8,7 @@
  */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
@@ -32,21 +33,21 @@ public class PatternFrame extends FillerPattern {
         for (int it = 0; it < 2; it++) {
 			int y = it * (box.sizeY() - 1);
             for (int i = 0; i < template.sizeX; ++i) {
-				template.put(i, y, 0, new SchematicMask(true));
-				template.put(i, y, zMax, new SchematicMask(true));
+				template.set(new BlockPos(i,y,0), new SchematicMask(true));
+				template.set(new BlockPos(i,y,zMax), new SchematicMask(true));
 			}
 
 			for (int k = 0; k < template.sizeZ; ++k) {
-				template.put(0, y, k, new SchematicMask(true));
-				template.put(xMax, y, k, new SchematicMask(true));
+				template.set(new BlockPos(0,y,k), new SchematicMask(true));
+				template.set(new BlockPos(xMax,y,k), new SchematicMask(true));
             }
         }
 
         for (int h = 1; h < box.sizeY(); ++h) {
-			template.put(0, h, 0, new SchematicMask(true));
-			template.put(0, h, zMax, new SchematicMask(true));
-			template.put(xMax, h, 0, new SchematicMask(true));
-			template.put(xMax, h, zMax, new SchematicMask(true));
+			template.set(new BlockPos(0,h,0), new SchematicMask(true));
+			template.set(new BlockPos(0,h,zMax), new SchematicMask(true));
+			template.set(new BlockPos(xMax,h,0), new SchematicMask(true));
+			template.set(new BlockPos(xMax,h,zMax), new SchematicMask(true));
         }
 
         return template;

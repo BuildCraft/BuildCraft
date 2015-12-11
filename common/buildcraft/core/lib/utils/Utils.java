@@ -1,19 +1,10 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
@@ -30,24 +21,19 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.power.IEngine;
-import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -60,7 +46,6 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.network.Packet;
 
 public final class Utils {
     // Commonly used vectors
@@ -98,21 +83,19 @@ public final class Utils {
         }
     }
 
-	public static boolean isRegistered(Block block) {
-		return block != null && Block.getIdFromBlock(block) >= 0;
-	}
+    public static boolean isRegistered(Block block) {
+        return block != null && Block.getIdFromBlock(block) >= 0;
+    }
 
-	public static boolean isRegistered(Item item) {
-		return item != null && Item.getIdFromItem(item) >= 0;
-	}
+    public static boolean isRegistered(Item item) {
+        return item != null && Item.getIdFromItem(item) >= 0;
+    }
 
-	public static boolean isRegistered(ItemStack stack) {
-		return stack != null && isRegistered(stack.getItem());
-	}
+    public static boolean isRegistered(ItemStack stack) {
+        return stack != null && isRegistered(stack.getItem());
+    }
 
-	/**
-	 * Tries to add the passed stack to any valid inventories around the given
-	 * coordinates.
+    /** Tries to add the passed stack to any valid inventories around the given coordinates.
      *
      * @param stack
      * @param world
@@ -245,17 +228,21 @@ public final class Utils {
     }
 
     public static LaserData[] createLaserDataBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
+        return createLaserDataBox(new Vec3(xMin, yMin, zMin), new Vec3(xMax, yMax, zMax));
+    }
+
+    public static LaserData[] createLaserDataBox(Vec3 min, Vec3 max) {
         LaserData[] lasers = new LaserData[12];
         Vec3[] p = new Vec3[8];
 
-        p[0] = new Vec3(xMin, yMin, zMin);
-        p[1] = new Vec3(xMax, yMin, zMin);
-        p[2] = new Vec3(xMin, yMax, zMin);
-        p[3] = new Vec3(xMax, yMax, zMin);
-        p[4] = new Vec3(xMin, yMin, zMax);
-        p[5] = new Vec3(xMax, yMin, zMax);
-        p[6] = new Vec3(xMin, yMax, zMax);
-        p[7] = new Vec3(xMax, yMax, zMax);
+        p[0] = min;// ___
+        p[1] = new Vec3(max.xCoord, min.yCoord, min.zCoord);
+        p[2] = new Vec3(min.xCoord, max.yCoord, min.zCoord);
+        p[3] = new Vec3(max.xCoord, max.yCoord, min.zCoord);
+        p[4] = new Vec3(min.xCoord, min.yCoord, max.zCoord);
+        p[5] = new Vec3(max.xCoord, min.yCoord, max.zCoord);
+        p[6] = new Vec3(min.xCoord, max.yCoord, max.zCoord);
+        p[7] = max;
 
         lasers[0] = new LaserData(p[0], p[1]);
         lasers[1] = new LaserData(p[0], p[2]);
@@ -468,6 +455,10 @@ public final class Utils {
         return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
+    public static BlockPos convertCeiling(Vec3 vec) {
+        return new BlockPos(Math.ceil(vec.xCoord), Math.ceil(vec.yCoord), Math.ceil(vec.zCoord));
+    }
+
     public static BlockPos convertFloor(EnumFacing face) {
         return convertFloor(convert(face));
     }
@@ -477,6 +468,8 @@ public final class Utils {
     }
 
     public static BlockPos min(BlockPos one, BlockPos two) {
+        if (one == null) return two;
+        if (two == null) return one;
         int x = Math.min(one.getX(), two.getX());
         int y = Math.min(one.getY(), two.getY());
         int z = Math.min(one.getZ(), two.getZ());
@@ -484,6 +477,8 @@ public final class Utils {
     }
 
     public static BlockPos max(BlockPos one, BlockPos two) {
+        if (one == null) return two;
+        if (two == null) return one;
         int x = Math.max(one.getX(), two.getX());
         int y = Math.max(one.getY(), two.getY());
         int z = Math.max(one.getZ(), two.getZ());
@@ -684,5 +679,10 @@ public final class Utils {
             }
         }
         return faces;
+    }
+
+    /** Like {@link Random#nextInt(int)} the size is taken as exclusive */
+    public static BlockPos randomBlockPos(Random rand, BlockPos size) {
+        return new BlockPos(rand.nextInt(size.getX()), rand.nextInt(size.getY()), rand.nextInt(size.getZ()));
     }
 }

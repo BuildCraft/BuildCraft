@@ -19,13 +19,13 @@ public class PatternClear extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.pMin().xCoord;
-        int yMin = (int) box.pMin().yCoord;
-        int zMin = (int) box.pMin().zCoord;
+        int xMin = (int) box.min().xCoord;
+        int yMin = (int) box.min().yCoord;
+        int zMin = (int) box.min().zCoord;
 
-        int xMax = (int) box.pMax().xCoord;
-        int yMax = (int) box.pMax().yCoord;
-        int zMax = (int) box.pMax().zCoord;
+        int xMax = (int) box.max().xCoord;
+        int yMax = (int) box.max().yCoord;
+        int zMax = (int) box.max().zCoord;
 
         Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 

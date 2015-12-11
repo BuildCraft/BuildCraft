@@ -130,7 +130,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
 
         if (currentTemplate != null) {
-            currentTemplate.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
+            currentTemplate.buildNextSlot(worldObj, this);
 
             if (currentTemplate.isDone(this)) {
                 setDone(true);

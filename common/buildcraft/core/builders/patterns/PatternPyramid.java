@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
@@ -36,13 +37,13 @@ public class PatternPyramid extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.pMin().xCoord;
-        int yMin = (int) box.pMin().yCoord;
-        int zMin = (int) box.pMin().zCoord;
+        int xMin = (int) box.min().xCoord;
+        int yMin = (int) box.min().yCoord;
+        int zMin = (int) box.min().zCoord;
 
-        int xMax = (int) box.pMax().xCoord;
-        int yMax = (int) box.pMax().yCoord;
-        int zMax = (int) box.pMax().zCoord;
+        int xMax = (int) box.max().xCoord;
+        int yMax = (int) box.max().yCoord;
+        int zMax = (int) box.max().zCoord;
 
         Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 
@@ -80,7 +81,7 @@ public class PatternPyramid extends FillerPattern {
         while (height >= yMin && height <= yMax) {
             for (int x = x1; x <= x2; ++x) {
                 for (int z = z1; z <= z2; ++z) {
-                    bpt.put(x - xMin, height - yMin, z - zMin, new SchematicMask(true));
+                    bpt.set(new BlockPos(x - xMin,height - yMin,z - zMin), new SchematicMask(true));
                 }
             }
 

@@ -32,9 +32,9 @@ public class FakeWorld extends World {
 
     public FakeWorld(final Blueprint blueprint) {
         this(EnumDecoratedBlock.TEMPLATE);
-        BlockPos start = new BlockPos(-blueprint.sizeX / 2, 1, -blueprint.sizeZ / 2);
+        BlockPos start = blueprint.getBoxForPos(BlockPos.ORIGIN).center();
 
-        final BlockPos deployPos = start.add(blueprint.anchorX, blueprint.anchorY, blueprint.anchorZ);
+        final BlockPos deployPos = start.add(blueprint.anchor);
         final FakeWorld thisWorld = this;
         new Thread("blueprint-deployer") {
             @Override
@@ -70,7 +70,7 @@ public class FakeWorld extends World {
 
         for (BlockPos pos : Utils.allInBoxIncludingCorners(start, end)) {
             BlockPos array = pos.subtract(start);
-            SchematicBlockBase block = template.get(array.getX(), array.getY(), array.getZ());
+            SchematicBlockBase block = template.get(array);
 
             if (block != null) {
                 setBlockState(pos, filledBlock);

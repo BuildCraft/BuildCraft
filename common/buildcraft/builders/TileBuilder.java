@@ -701,7 +701,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
     public void build() {
         if (currentBuilder != null) {
-            if (currentBuilder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ())) {
+            if (currentBuilder.buildNextSlot(worldObj, this)) {
                 scheduleRequirementUpdate();
             }
         }

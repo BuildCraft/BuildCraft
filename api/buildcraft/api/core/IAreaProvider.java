@@ -4,20 +4,14 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.core;
 
+import net.minecraft.util.BlockPos;
+
 /** To be implemented by TileEntities able to provide a square area on the world, typically BuildCraft markers. */
 // TODO (PASS 2): Convert these to BlockPos args
 public interface IAreaProvider {
-    int xMin();
+    BlockPos min();
 
-    int yMin();
-
-    int zMin();
-
-    int xMax();
-
-    int yMax();
-
-    int zMax();
+    BlockPos max();
 
     /** Remove from the world all objects used to define the area. */
     void removeFromWorld();

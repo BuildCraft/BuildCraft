@@ -321,6 +321,18 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     }
 
     @Override
+    public BlockPos min() {
+        // TODO Auto-generated method stub
+        return new BlockPos(xMin(), yMin(), zMin());
+    }
+
+    @Override
+    public BlockPos max() {
+        // TODO Auto-generated method stub
+        return new BlockPos(xMax(), yMax(), zMax());
+    }
+
+    @Override
     public int xMin() {
         if (origin.isSet()) {
             return origin.xMin;

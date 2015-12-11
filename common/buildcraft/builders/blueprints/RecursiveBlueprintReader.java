@@ -116,7 +116,7 @@ public class RecursiveBlueprintReader {
                 }
 
                 if (blueprint != null) {
-                    BlockPos nPos = subTile.getPos().subtract(Utils.convertFloor(architect.getBox().pMin()));
+                    BlockPos nPos = subTile.getPos().subtract(Utils.convertFloor(architect.getBox().min()));
                     writingBlueprint.addSubBlueprint(blueprint, nPos, orientation);
                 }
 
@@ -131,7 +131,7 @@ public class RecursiveBlueprintReader {
 
             EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos()));
 
-            BlockPos pos = currentSubReader.architect.getPos().subtract(Utils.convertFloor(architect.getBox().pMin()));
+            BlockPos pos = currentSubReader.architect.getPos().subtract(Utils.convertFloor(architect.getBox().min()));
 
             if (currentSubReader.isDone()) {
                 writingBlueprint.addSubBlueprint(currentSubReader.getBlueprint(), pos, facing);
@@ -149,7 +149,7 @@ public class RecursiveBlueprintReader {
             if (blockScanner.blocksLeft() == 0) {
                 writingBlueprint.readEntitiesFromWorld(writingContext, architect);
 
-                Vec3 transform = new Vec3(0, 0, 0).subtract(writingContext.surroundingBox().pMin());
+                Vec3 transform = new Vec3(0, 0, 0).subtract(writingContext.surroundingBox().min());
 
                 writingBlueprint.translateToBlueprint(transform);
 
