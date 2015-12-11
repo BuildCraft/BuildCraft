@@ -51,7 +51,7 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
             }
         }
 
-        Vec3 transform = Utils.convert(pos).subtract(bpt.anchorX, bpt.anchorY, bpt.anchorZ);
+        Vec3 transform = Utils.convert(pos).subtract(Utils.convert(bpt.anchor));
 
         bpt.translateToWorld(transform);
 

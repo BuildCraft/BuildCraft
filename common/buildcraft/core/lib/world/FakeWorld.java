@@ -34,7 +34,7 @@ public class FakeWorld extends World {
         this(EnumDecoratedBlock.TEMPLATE);
         BlockPos start = blueprint.getBoxForPos(BlockPos.ORIGIN).center();
 
-        final BlockPos deployPos = start.add(blueprint.anchor);
+        final BlockPos deployPos = start.add(blueprint.size).subtract(Utils.POS_ONE);
         final FakeWorld thisWorld = this;
         new Thread("blueprint-deployer") {
             @Override
@@ -45,7 +45,7 @@ public class FakeWorld extends World {
         }.start();
 
         start = start.down();
-        BlockPos end = start.add(blueprint.sizeX - 1, 0, blueprint.sizeZ - 1);
+        BlockPos end = start.add(blueprint.size.getX() - 1, 0, blueprint.size.getZ() - 1);
 
         IBlockState state = BuildCraftCore.decoratedBlock.getDefaultState();
         state = state.withProperty(BuildCraftProperties.DECORATED_BLOCK, EnumDecoratedBlock.BLUEPRINT);
@@ -60,8 +60,8 @@ public class FakeWorld extends World {
 
     public FakeWorld(Template template, IBlockState filledBlock) {
         this(EnumDecoratedBlock.BLUEPRINT);
-        BlockPos start = new BlockPos(-template.sizeX / 2, 1, -template.sizeZ / 2);
-        BlockPos end = start.add(template.sizeX - 1, template.sizeY - 1, template.sizeZ - 1);
+        BlockPos start = template.getBoxForPos(BlockPos.ORIGIN).center();
+        BlockPos end = start.add(template.size).subtract(Utils.POS_ONE);
 
         IBlockState state = BuildCraftCore.decoratedBlock.getDefaultState();
         state = state.withProperty(BuildCraftProperties.DECORATED_BLOCK, EnumDecoratedBlock.TEMPLATE);

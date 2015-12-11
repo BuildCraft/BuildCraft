@@ -61,6 +61,10 @@ public class Box implements IBox, ISerializable {
         max = null;
     }
 
+    public boolean isInitialized() {
+        return min != null && max != null;
+    }
+
     public void extendToEncompassBoth(BlockPos min, BlockPos max) {
         this.min = Utils.min(this.min, Utils.min(min, max));
         this.max = Utils.max(this.max, Utils.max(min, max));

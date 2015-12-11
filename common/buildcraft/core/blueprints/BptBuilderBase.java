@@ -53,7 +53,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
         this.blueprint = bluePrint;
         this.pos = pos;
-        this.usedLocations = new BitSet(bluePrint.sizeX * bluePrint.sizeY * bluePrint.sizeZ);
+        this.usedLocations = new BitSet(bluePrint.size.getX() * bluePrint.size.getY() * bluePrint.size.getZ());
         done = false;
 
         Box box = new Box();

@@ -7,7 +7,6 @@ package buildcraft.api.core;
 import net.minecraft.util.BlockPos;
 
 /** To be implemented by TileEntities able to provide a square area on the world, typically BuildCraft markers. */
-// TODO (PASS 2): Convert these to BlockPos args
 public interface IAreaProvider {
     BlockPos min();
 

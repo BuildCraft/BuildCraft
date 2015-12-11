@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import java.util.Iterator;
@@ -31,7 +27,7 @@ public class BlockScanner implements Iterable<BlockPos> {
 
         @Override
         public boolean hasNext() {
-            return pos.getZ() <= box.zMax && it <= iterationsPerCycle;
+            return pos.getZ() <= box.max().getZ() && it <= iterationsPerCycle;
         }
 
         @Override
@@ -40,15 +36,15 @@ public class BlockScanner implements Iterable<BlockPos> {
             it++;
             blocksDone++;
 
-            if (pos.getX() < box.xMax) {
+            if (pos.getX() < box.max().getX()) {
                 pos = pos.east();
             } else {
-                pos = new BlockPos(box.xMin, pos.getY(), pos.getZ());
+                pos = new BlockPos(box.min().getX(), pos.getY(), pos.getZ());
 
-                if (pos.getY() < box.yMax) {
+                if (pos.getY() < box.max().getY()) {
                     pos = pos.up();
                 } else {
-                    pos = new BlockPos(pos.getX(), box.yMin, pos.getZ() + 1);
+                    pos = new BlockPos(pos.getX(), box.min().getY(), pos.getZ() + 1);
                 }
             }
 
@@ -65,7 +61,7 @@ public class BlockScanner implements Iterable<BlockPos> {
         this.box = box;
         this.world = world;
         this.iterationsPerCycle = iterationsPreCycle;
-        pos = new BlockPos(box.xMin, box.yMin, box.zMin);
+        pos = box.min();
     }
 
     public BlockScanner() {}
@@ -76,7 +72,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     }
 
     public int totalBlocks() {
-        return box.sizeX() * box.sizeY() * box.sizeZ();
+        return box.size().getX() * box.size().getY() * box.size().getZ();
     }
 
     public int blocksLeft() {

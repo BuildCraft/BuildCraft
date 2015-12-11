@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
 import net.minecraft.item.Item;
@@ -29,21 +25,17 @@ public class Template extends BlueprintBase {
         id.extension = "tpl";
     }
 
-    public Template(int sizeX, int sizeY, int sizeZ) {
-        super(sizeX, sizeY, sizeZ);
-
+    public Template(BlockPos size) {
+        super(size);
         id.extension = "tpl";
     }
 
     @Override
     public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
-        Vec3 nPos = Utils.convert(pos).subtract(context.surroundingBox().min());
-        int posX = (int) nPos.xCoord;
-        int posY = (int) nPos.yCoord;
-        int posZ = (int) nPos.zCoord;
+        Vec3 nPos = Utils.convert(pos).subtract(Utils.convert(context.surroundingBox().min()));
 
         if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
-			set(new BlockPos(posX,posY,posZ), new SchematicMask(true));
+            set(Utils.convertFloor(nPos), new SchematicMask(true));
         }
     }
 
@@ -53,13 +45,13 @@ public class Template extends BlueprintBase {
         // per mask entry, not a byte. However, this is fine, as compression
         // will fix it.
 
-        byte[] data = new byte[sizeX * sizeY * sizeZ];
+        byte[] data = new byte[size.getX() * size.getY() * size.getZ()];
         int ind = 0;
 
-        for (int x = 0; x < sizeX; ++x) {
-            for (int y = 0; y < sizeY; ++y) {
-                for (int z = 0; z < sizeZ; ++z) {
-					data[ind] = (byte) ((get(new BlockPos(x, y, z)) == null) ? 0 : 1);
+        for (int x = 0; x < size.getX(); ++x) {
+            for (int y = 0; y < size.getY(); ++y) {
+                for (int z = 0; z < size.getZ(); ++z) {
+                    data[ind] = (byte) ((get(new BlockPos(x, y, z)) == null) ? 0 : 1);
                     ind++;
                 }
             }
@@ -73,13 +65,12 @@ public class Template extends BlueprintBase {
         byte[] data = nbt.getByteArray("mask");
         int ind = 0;
 
-        for (int x = 0; x < sizeX; ++x) {
-            for (int y = 0; y < sizeY; ++y) {
-                for (int z = 0; z < sizeZ; ++z) {
+        for (int x = 0; x < size.getX(); ++x) {
+            for (int y = 0; y < size.getY(); ++y) {
+                for (int z = 0; z < size.getZ(); ++z) {
                     if (data[ind] == 1) {
-						set(new BlockPos(x,y,z), new SchematicMask(true));
+                        set(new BlockPos(x, y, z), new SchematicMask(true));
                     }
-
                     ind++;
                 }
             }
