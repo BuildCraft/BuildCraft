@@ -9,6 +9,7 @@ import java.util.*;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
 
+import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -599,14 +600,7 @@ public final class Utils {
     }
 
     public static Iterable<BlockPos> allInChunk(ChunkCoordIntPair ccip) {
-        return allInBoxIncludingCorners(ccip.getBlock(0, 0, 0), ccip.getBlock(15, 255, 15));
-    }
-
-    /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but doesn't require unsafe casting. */
-    public static Iterable<BlockPos> allInBoxIncludingCorners(BlockPos pos1, BlockPos pos2) {
-        BlockPos min = min(pos1, pos2);
-        BlockPos max = max(pos1, pos2);
-        return BlockPos.getAllInBox(min, max);
+        return BlockPos.getAllInBox(ccip.getBlock(0, 0, 0), ccip.getBlock(15, 255, 15));
     }
 
     public static Vec3 getMinForFace(EnumFacing face, Vec3 min, Vec3 max) {
@@ -695,5 +689,69 @@ public final class Utils {
 
     public static BlockPos invert(BlockPos pos) {
         return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
+    }
+
+    public enum EnumAxisOrder {
+        XYZ(0, 1, 2),
+        XZY(0, 2, 1),
+        YXZ(1, 0, 2),
+        YZX(1, 2, 0),
+        ZXY(2, 0, 1),
+        ZYX(2, 1, 0);
+
+        public final Axis first, second, third;
+
+        private EnumAxisOrder(int a, int b, int c) {
+            this.first = Axis.values()[a];
+            this.second = Axis.values()[b];
+            this.third = Axis.values()[c];
+        }
+    }
+
+    /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but can iterate in orders other than XYZ */
+    public static Iterable<BlockPos> getAllInBox(BlockPos a, BlockPos b, final EnumAxisOrder order) {
+        final BlockPos min = min(a, b);
+        final BlockPos max = max(a, b);
+        return new Iterable<BlockPos>() {
+            public Iterator<BlockPos> iterator() {
+                return new AbstractIterator<BlockPos>() {
+                    private BlockPos lastReturned = null;
+
+                    protected BlockPos computeNext() {
+                        if (lastReturned == null) {
+                            lastReturned = min;
+                            return lastReturned;
+                        } else if (lastReturned.equals(max)) return endOfData();
+                        else {
+                            BlockPos nValue = lastReturned;
+
+                            if (lessThan(lastReturned, max, order.first)) {
+                                nValue = increment(nValue, order.first);
+                            } else if (lessThan(lastReturned, max, order.second)) {
+                                nValue = Utils.withValue(nValue, order.first, Utils.getValue(min, order.first));
+                                nValue = increment(nValue, order.second);
+                            } else if (lessThan(lastReturned, max, order.third)) {
+                                nValue = Utils.withValue(nValue, order.first, Utils.getValue(min, order.first));
+                                nValue = Utils.withValue(nValue, order.second, Utils.getValue(min, order.second));
+                                nValue = increment(nValue, order.third);
+                            }
+
+                            lastReturned = nValue;
+                            return lastReturned;
+                        }
+                    }
+
+                    private BlockPos increment(BlockPos pos, Axis axis) {
+                        return Utils.withValue(pos, axis, Utils.getValue(pos, axis) + 1);
+                    }
+
+                    private boolean lessThan(BlockPos smaller, BlockPos bigger, Axis axis) {
+                        int sm = Utils.getValue(smaller, axis);
+                        int bg = Utils.getValue(bigger, axis);
+                        return sm < bg;
+                    }
+                };
+            }
+        };
     }
 }

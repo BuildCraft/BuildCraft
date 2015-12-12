@@ -52,7 +52,7 @@ public class FakeWorld extends World {
 
         IBlockState roofState = Blocks.dirt.getDefaultState();
 
-        for (BlockPos pos : Utils.allInBoxIncludingCorners(start, end)) {
+        for (BlockPos pos : BlockPos.getAllInBox(start, end)) {
             setBlockState(pos, state);
             setBlockState(pos.up(255), roofState);
         }
@@ -68,7 +68,7 @@ public class FakeWorld extends World {
 
         IBlockState roofState = Blocks.dirt.getDefaultState();
 
-        for (BlockPos pos : Utils.allInBoxIncludingCorners(start, end)) {
+        for (BlockPos pos : BlockPos.getAllInBox(start, end)) {
             BlockPos array = pos.subtract(start);
             SchematicBlockBase block = template.get(array);
 

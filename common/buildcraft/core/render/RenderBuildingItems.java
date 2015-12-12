@@ -58,9 +58,9 @@ public class RenderBuildingItems {
                 GL11.glTranslatef(0, 0.25F, 0);
                 GL11.glScalef(renderScale, renderScale, renderScale);
                 if (s.stack != null) {
-                    IBakedModel model = renderItem.getItemModelMesher().getItemModel(s.stack);
+                    IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(s.stack);
                     if (model != null) {
-                        renderItem.renderItem(s.stack, renderItem.getItemModelMesher().getItemModel(s.stack));
+                        Minecraft.getMinecraft().getRenderItem().renderItem(s.stack, model);
                     } else {
                         BCLog.logger.warn("Model was null for " + s.stack);
                     }

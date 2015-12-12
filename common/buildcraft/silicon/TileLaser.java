@@ -165,7 +165,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         }
 
         List<ILaserTarget> targets = new LinkedList<ILaserTarget>();
-        for (BlockPos pos : Utils.allInBoxIncludingCorners(min, max)) {
+        for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
             if (BlockUtils.getBlockState(worldObj, pos).getBlock() instanceof ILaserTargetBlock) {
                 TileEntity tile = worldObj.getTileEntity(pos);
                 if (tile instanceof ILaserTarget) {

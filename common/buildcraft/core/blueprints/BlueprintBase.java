@@ -23,7 +23,6 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.core.BCLog;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Matrix4i;
@@ -63,7 +62,13 @@ public abstract class BlueprintBase {
     }
 
     public SchematicBlockBase get(BlockPos pos) {
-        return contents[pos.getX()][pos.getY()][pos.getZ()];
+        String error = "Tried to access the " + pos + " when the maximum ";
+        if (contents.length <= pos.getX()) throw new ArrayIndexOutOfBoundsException(error + "X coord was " + (contents.length - 1));
+        SchematicBlockBase[][] arr2 = contents[pos.getX()];
+        if (arr2.length <= pos.getY()) throw new ArrayIndexOutOfBoundsException(error + "Y coord was " + (arr2.length - 1));
+        SchematicBlockBase[] arr1 = arr2[pos.getY()];
+        if (arr1.length <= pos.getZ()) throw new ArrayIndexOutOfBoundsException(error + "Z coord was " + (arr1.length - 1));
+        return arr1[pos.getZ()];
     }
 
     public void set(BlockPos pos, SchematicBlockBase schematic) {
@@ -100,6 +105,7 @@ public abstract class BlueprintBase {
         }
 
         contents = newContents;
+        size = new BlockPos(size.getZ(), size.getY(), size.getX());
 
         BlockPos newAnchor = leftRot.multiplyPosition(anchor);
 
@@ -251,12 +257,12 @@ public abstract class BlueprintBase {
 
         if (rotate) {
             if (o == EnumFacing.EAST) {
-                // Do nothing
+                rotateLeft(context);
+                rotateLeft(context);
             } else if (o == EnumFacing.SOUTH) {
                 rotateLeft(context);
             } else if (o == EnumFacing.WEST) {
-                rotateLeft(context);
-                rotateLeft(context);
+                // Do nothing
             } else if (o == EnumFacing.NORTH) {
                 rotateLeft(context);
                 rotateLeft(context);
