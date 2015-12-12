@@ -32,7 +32,7 @@ public class PatternHorizon extends FillerPattern {
         int yMax = world.getActualHeight();
         int zMax = (int) box.max().getZ();
 
-        Template bpt = new Template(Utils.withValue(box.size(), Axis.Y, yMax - yMin + 1));
+        Template bpt = new Template(Utils.withValue(box.size(), Axis.Y, yMax - yMin));
 
         if (box.size().getY() > 0) {
             for (int x = xMin; x <= xMax; ++x) {

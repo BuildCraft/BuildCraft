@@ -144,6 +144,7 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public boolean contains(Vec3 p) {
+        // CHANGE THIS TO GR_THAN_OR_EQUAL_TO
         return getBoundingBox().isVecInside(p);
     }
 

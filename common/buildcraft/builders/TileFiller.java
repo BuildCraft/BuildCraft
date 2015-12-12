@@ -275,13 +275,14 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     private void writeParametersToNBT(NBTTagCompound nbt) {
+        IStatementParameter[] patternParameters = this.patternParameters;
         nbt.setByte("length", (byte) (patternParameters != null ? patternParameters.length : 0));
         if (patternParameters != null) {
             for (int i = 0; i < patternParameters.length; i++) {
                 if (patternParameters[i] != null) {
                     NBTTagCompound patternData = new NBTTagCompound();
                     patternData.setString("kind", patternParameters[i].getUniqueTag());
-                    patternParameters[i].writeToNBT(patternData);
+                    patternParameters[i].writeToNBT(patternData);// ArrayIndexOutOfBounds
                     nbt.setTag("p" + i, patternData);
                 }
             }
@@ -289,7 +290,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     private void readParametersFromNBT(NBTTagCompound nbt) {
-        patternParameters = new IStatementParameter[nbt.getByte("length")];
+        IStatementParameter[] patternParameters = new IStatementParameter[nbt.getByte("length")];
         for (int i = 0; i < patternParameters.length; i++) {
             if (nbt.hasKey("p" + i)) {
                 NBTTagCompound patternData = nbt.getCompoundTag("p" + i);
@@ -297,6 +298,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
                 patternParameters[i].readFromNBT(patternData);
             }
         }
+        this.patternParameters = patternParameters;
     }
 
     @Override

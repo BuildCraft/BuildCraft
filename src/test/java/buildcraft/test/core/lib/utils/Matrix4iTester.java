@@ -2,6 +2,7 @@ package buildcraft.test.core.lib.utils;
 
 import static org.junit.Assert.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -9,8 +10,10 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3i;
 
+import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Matrix4i;
 
 @RunWith(Theories.class)
@@ -61,6 +64,17 @@ public class Matrix4iTester {
         assertEquals(expected.getX(), result.getX());
         assertEquals(expected.getY(), result.getY());
         assertEquals(expected.getZ(), result.getZ());
+    }
+
+    @Test
+    public void testLeftRotTranslate() {
+        Box box = new Box(BlockPos.ORIGIN, new BlockPos(10, 9, 4));
+        Box leftRotated = new Box(BlockPos.ORIGIN, new BlockPos(4, 9, 10));
+        Matrix4i lRot = Matrix4i.makeRotLeftTranslatePositive(box.size().getX());
+        for (BlockPos pos : BlockPos.getAllInBox(box.min(), box.max())) {
+            BlockPos rotated = lRot.multiplyPosition(pos);
+            if (!leftRotated.contains(rotated)) Assert.fail(rotated + " was not inside the box!");
+        }
     }
 
     @Test
