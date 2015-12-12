@@ -3,6 +3,8 @@ package buildcraft.core.lib.utils;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3i;
 
+import buildcraft.core.Box;
+
 public class Matrix4i {
     public static final Matrix4i IDENTITY = makeScale(Utils.POS_ONE);
 
@@ -39,34 +41,47 @@ public class Matrix4i {
         if (ang == 90) {
             // @formatter:off
             return new Matrix4i(
-                    0, 0, -1, 0,
-                    0, 1,  0, 0,
-                    1, 0,  0, 0,
-                    0, 0,  0, 1);
+                    0, 0, 1, 0,
+                    0, 1, 0, 0,
+                   -1, 0, 0, 0,
+                    0, 0, 0, 1);
             // @formatter:on
         } else if (ang == 180) {
             // @formatter:off
             return new Matrix4i(
-                    -1, 0,  0, 0,
-                     0, 1,  0, 0,
-                     0, 0, -1, 0,
-                     0, 0,  0, 1);
+                   -1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0,-1, 0,
+                    0, 0, 0, 1);
             // @formatter:on
         } else if (ang == 270) {
             // @formatter:off
             return new Matrix4i(
-                     0, 0, 1, 0,
-                     0, 1, 0, 0,
-                    -1, 0, 0, 0,
-                     0, 0, 0, 1);
+                    0, 0,-1, 0,
+                    0, 1, 0, 0,
+                    1, 0, 0, 0,
+                    0, 0, 0, 1);
             // @formatter:on
         } else return IDENTITY;
     }
 
     /** @return A matrix that will apply a left rotation to points and then translate backwards, effectively applying a
-     *         left rotation in-place to a box going from (0,0,0) to (sizeX, ?, ?) */
-    public static Matrix4i makeRotLeftTranslatePositive(int sizeX) {
-        return makeRotY(90).addTranslation(new Vec3i(sizeX, 0, 0));
+     *         left rotation in-place to the given box around its center point. */
+    public static Matrix4i makeRotLeftTranslatePositive(Box box) {
+        BlockPos translation = box.min();
+        Matrix4i translateBack = makeTranslation(Utils.invert(translation));
+        Matrix4i rotY = makeRotY(90);
+        Matrix4i translateForth = makeTranslation(translation.add(new Vec3i(0, 0, box.size().getX() - 1)));
+        // Matrix4i correctRotation = makeTranslation(new Vec3i(0, 0, box.size().getX() - 1));
+
+        System.out.println("translateBack\n" + translateBack);
+        System.out.println("rotY\n" + rotY);
+        System.out.println("translateForth\n" + translateForth);
+        // System.out.println("correctRotation\n" + correctRotation);
+
+        Matrix4i total = /* correctRotation.multiply */(translateForth).multiply(rotY).multiply(translateBack);
+        System.out.println("RotLeftTranslatePos (min = " + box.min() + ", size = " + box.size() + ")  = \n" + total);
+        return total;
     }
 
     public static Matrix4i multiply(Matrix4i m1, Matrix4i m2) {
@@ -122,7 +137,9 @@ public class Matrix4i {
         int x = pos.getX() * m00 + pos.getY() * m01 + pos.getZ() * m02 + m03;
         int y = pos.getX() * m10 + pos.getY() * m11 + pos.getZ() * m12 + m13;
         int z = pos.getX() * m20 + pos.getY() * m21 + pos.getZ() * m22 + m23;
-        return new BlockPos(x, y, z);
+        BlockPos end = new BlockPos(x, y, z);
+        System.out.println(pos + " -> " + end);
+        return end;
     }
 
     public Matrix4i addTranslation(Vec3i trans) {

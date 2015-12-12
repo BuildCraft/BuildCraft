@@ -86,7 +86,7 @@ public abstract class BlueprintBase {
     public void rotateLeft(BptContext context) {
         SchematicBlockBase[][][] newContents = new SchematicBlockBase[size.getZ()][size.getY()][size.getX()];
 
-        Matrix4i leftRot = Matrix4i.makeRotLeftTranslatePositive(size.getX());
+        Matrix4i leftRot = Matrix4i.makeRotLeftTranslatePositive(new Box(BlockPos.ORIGIN, size.subtract(Utils.POS_ONE)));
 
         for (BlockPos internal : BlockPos.getAllInBox(Utils.POS_ZERO, size.subtract(Utils.POS_ONE))) {
             BlockPos rotated = leftRot.multiplyPosition(internal);

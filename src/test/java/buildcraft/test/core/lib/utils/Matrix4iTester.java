@@ -23,7 +23,7 @@ public class Matrix4iTester {
     public static final int[] testVectorIndicies = { 0, 1, 2 };
 
     private static final Vec3i[] testVectorInputs = { new Vec3i(0, 0, 0), new Vec3i(1, 1, 0), new Vec3i(7, 67, 20) };
-    private static final Vec3i[] testVectorResults = { new Vec3i(0, 0, 0), new Vec3i(0, 1, 1), new Vec3i(-20, 67, 7) };
+    private static final Vec3i[] testVectorResults = { new Vec3i(0, 0, 0), new Vec3i(0, 1, -1), new Vec3i(20, 67, -7) };
 
     @Test
     public void testMakeTranslation() {
@@ -68,9 +68,9 @@ public class Matrix4iTester {
 
     @Test
     public void testLeftRotTranslate() {
-        Box box = new Box(BlockPos.ORIGIN, new BlockPos(10, 9, 4));
-        Box leftRotated = new Box(BlockPos.ORIGIN, new BlockPos(4, 9, 10));
-        Matrix4i lRot = Matrix4i.makeRotLeftTranslatePositive(box.size().getX());
+        Box box = new Box(BlockPos.ORIGIN, new BlockPos(1, 1, 1));
+        Box leftRotated = new Box(BlockPos.ORIGIN, new BlockPos(1, 1, 1));
+        Matrix4i lRot = Matrix4i.makeRotLeftTranslatePositive(box);
         for (BlockPos pos : BlockPos.getAllInBox(box.min(), box.max())) {
             BlockPos rotated = lRot.multiplyPosition(pos);
             if (!leftRotated.contains(rotated)) Assert.fail(rotated + " was not inside the box!");

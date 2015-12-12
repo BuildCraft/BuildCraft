@@ -144,8 +144,11 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public boolean contains(Vec3 p) {
-        // CHANGE THIS TO GR_THAN_OR_EQUAL_TO
-        return getBoundingBox().isVecInside(p);
+        AxisAlignedBB bb = getBoundingBox();
+        if (p.xCoord < bb.minX || p.xCoord >= bb.maxX) return false;
+        if (p.yCoord < bb.minY || p.yCoord >= bb.maxY) return false;
+        if (p.zCoord < bb.minZ || p.zCoord >= bb.maxZ) return false;
+        return true;
     }
 
     public boolean contains(BlockPos i) {
@@ -176,7 +179,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public Box rotateLeft() {
-        Matrix4i mat = Matrix4i.makeRotLeftTranslatePositive(size().getX() - 1);
+        Matrix4i mat = Matrix4i.makeRotLeftTranslatePositive(this);
         BlockPos newMin = mat.multiplyPosition(min);
         BlockPos newMax = mat.multiplyPosition(max);
         return new Box(newMin, newMax);
@@ -210,8 +213,10 @@ public class Box implements IBox, ISerializable {
         return this;
     }
 
+    /** IMPORTANT: Use {@link #contains(Vec3)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3)} as the
+     * logic is different! */
     public AxisAlignedBB getBoundingBox() {
-        return new AxisAlignedBB(min, max);
+        return new AxisAlignedBB(min, max.add(Utils.POS_ONE));
     }
 
     public Box extendToEncompass(Vec3 toBeContained) {

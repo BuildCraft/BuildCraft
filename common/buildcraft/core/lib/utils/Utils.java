@@ -606,7 +606,7 @@ public final class Utils {
     public static Iterable<BlockPos> allInBoxIncludingCorners(BlockPos pos1, BlockPos pos2) {
         BlockPos min = min(pos1, pos2);
         BlockPos max = max(pos1, pos2);
-        return  BlockPos.getAllInBox(min, max);
+        return BlockPos.getAllInBox(min, max);
     }
 
     public static Vec3 getMinForFace(EnumFacing face, Vec3 min, Vec3 max) {
@@ -691,5 +691,9 @@ public final class Utils {
     /** Like {@link Random#nextInt(int)} the size is taken as exclusive */
     public static BlockPos randomBlockPos(Random rand, BlockPos size) {
         return new BlockPos(rand.nextInt(size.getX()), rand.nextInt(size.getY()), rand.nextInt(size.getZ()));
+    }
+
+    public static BlockPos invert(BlockPos pos) {
+        return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
     }
 }
