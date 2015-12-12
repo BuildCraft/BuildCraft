@@ -36,7 +36,6 @@ public class Matrix4i {
     public static Matrix4i makeRotY(int ang) {
         if (ang % 90 != 0) throw new IllegalArgumentException("You can only have angles in increments of 90 degrees!");
         ang %= 360;
-        System.out.println(ang);
 
         if (ang == 90) {
             // @formatter:off
@@ -72,15 +71,8 @@ public class Matrix4i {
         Matrix4i translateBack = makeTranslation(Utils.invert(translation));
         Matrix4i rotY = makeRotY(90);
         Matrix4i translateForth = makeTranslation(translation.add(new Vec3i(0, 0, box.size().getX() - 1)));
-        // Matrix4i correctRotation = makeTranslation(new Vec3i(0, 0, box.size().getX() - 1));
 
-        System.out.println("translateBack\n" + translateBack);
-        System.out.println("rotY\n" + rotY);
-        System.out.println("translateForth\n" + translateForth);
-        // System.out.println("correctRotation\n" + correctRotation);
-
-        Matrix4i total = /* correctRotation.multiply */(translateForth).multiply(rotY).multiply(translateBack);
-        System.out.println("RotLeftTranslatePos (min = " + box.min() + ", size = " + box.size() + ")  = \n" + total);
+        Matrix4i total = translateForth.multiply(rotY).multiply(translateBack);
         return total;
     }
 

@@ -68,8 +68,8 @@ public class Matrix4iTester {
 
     @Test
     public void testLeftRotTranslate() {
-        Box box = new Box(BlockPos.ORIGIN, new BlockPos(1, 1, 1));
-        Box leftRotated = new Box(BlockPos.ORIGIN, new BlockPos(1, 1, 1));
+        Box box = new Box(BlockPos.ORIGIN, new BlockPos(20, 3, 5));
+        Box leftRotated = new Box(BlockPos.ORIGIN, new BlockPos(5, 3, 20));
         Matrix4i lRot = Matrix4i.makeRotLeftTranslatePositive(box);
         for (BlockPos pos : BlockPos.getAllInBox(box.min(), box.max())) {
             BlockPos rotated = lRot.multiplyPosition(pos);
