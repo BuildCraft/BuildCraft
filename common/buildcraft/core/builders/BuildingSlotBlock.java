@@ -80,7 +80,7 @@ public class BuildingSlotBlock extends BuildingSlot {
                 if (!getSchematic().isAlreadyBuilt(context, pos)) {
                     if (context.world().isAirBlock(pos)) {
                         return false;
-                    } else if (!(getSchematic() instanceof SchematicBlock) || context.world().getBlockState(pos).getBlock().isAssociatedBlock(
+                    } else if (!(getSchematic() instanceof SchematicBlock) || !context.world().getBlockState(pos).getBlock().isAssociatedBlock(
                             ((SchematicBlock) getSchematic()).state.getBlock())) {
                         BCLog.logger.warn(
                                 "Placed block does not match expectations! Most likely a bug in BuildCraft or a supported mod. Removed mismatched block.");
@@ -88,9 +88,9 @@ public class BuildingSlotBlock extends BuildingSlot {
                         BCLog.logger.warn("Location: " + pos + " - Block: " + Block.blockRegistry.getNameForObject(state.getBlock()) + "@" + state);
                         context.world().removeTileEntity(pos);
                         context.world().setBlockToAir(pos);
-                        return true;
-                    } else {
                         return false;
+                    } else {
+                        return true;
                     }
                 }
 

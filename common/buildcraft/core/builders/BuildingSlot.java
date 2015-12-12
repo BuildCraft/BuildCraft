@@ -24,6 +24,8 @@ public abstract class BuildingSlot {
 
     public boolean built = false;
 
+    /** @return True if this slot was successfully placed into the world, false if it was not (And any item contents
+     *         should be dropped) */
     public boolean writeToWorld(IBuilderContext context) {
         return false;
     }

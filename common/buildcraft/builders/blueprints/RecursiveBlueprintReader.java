@@ -125,7 +125,7 @@ public class RecursiveBlueprintReader {
 
             World world = currentSubReader.architect.getWorld();
 
-            EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos()));
+            EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos())).getOpposite();
 
             BlockPos pos = currentSubReader.architect.getPos().subtract(architect.getBox().min());
 
@@ -149,7 +149,7 @@ public class RecursiveBlueprintReader {
 
                 writingBlueprint.translateToBlueprint(transform);
 
-                EnumFacing o = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(architect.getPos()));
+                EnumFacing o = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(architect.getPos())).getOpposite();
 
                 writingBlueprint.rotate = architect.readConfiguration.rotate;
                 writingBlueprint.excavate = architect.readConfiguration.excavate;

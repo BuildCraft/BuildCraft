@@ -44,7 +44,12 @@ public class SchematicBlock extends SchematicBlockBase {
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-        return state == context.world().getBlockState(pos);
+        IBlockState placed = context.world().getBlockState(pos);
+        if (state == placed) return true;
+        if (state.getBlock() != placed.getBlock()) return false;
+        // This fixes bugs with blocks like stairs that return extra properties that were not visible from the meta.
+        if (state.getBlock().getMetaFromState(state) == placed.getBlock().getMetaFromState(placed)) return true;
+        return false;
     }
 
     @Override
