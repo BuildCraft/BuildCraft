@@ -130,6 +130,8 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
         NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
         BlueprintBase base;
+        
+        
         if (((IBlueprintItem) stack.getItem()).getType(stack) == EnumBlueprintType.TEMPLATE) {
             base = new Template();
         } else {

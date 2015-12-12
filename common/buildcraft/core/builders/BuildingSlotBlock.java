@@ -62,8 +62,10 @@ public class BuildingSlotBlock extends BuildingSlot {
 
         if (mode == Mode.ClearIfInvalid) {
             if (!getSchematic().isAlreadyBuilt(context, pos)) {
+                context.world().sendBlockBreakProgress(pos.hashCode(), pos, -1);
                 if (BuildCraftBuilders.dropBrokenBlocks) {
                     BlockUtils.breakBlock((WorldServer) context.world(), pos);
+                    return false;
                 } else {
                     context.world().setBlockToAir(pos);
                     return true;
@@ -174,7 +176,10 @@ public class BuildingSlotBlock extends BuildingSlot {
     public void writeCompleted(IBuilderContext context, double complete) {
         // TODO (TEST) Make sure that you can use pos.hashCode() to use the position properly!
         if (mode == Mode.ClearIfInvalid) {
-            context.world().sendBlockBreakProgress(pos.hashCode(), pos, (int) (complete * 10.0F) - 1);
+            int progress;
+            if (context.world().isAirBlock(pos)) progress = -1;
+            else progress = (int) (complete * 10.0F) - 1;
+            context.world().sendBlockBreakProgress(pos.hashCode(), pos, progress);
         }
     }
 

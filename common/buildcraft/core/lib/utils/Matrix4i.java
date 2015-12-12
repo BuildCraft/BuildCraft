@@ -130,7 +130,6 @@ public class Matrix4i {
         int y = pos.getX() * m10 + pos.getY() * m11 + pos.getZ() * m12 + m13;
         int z = pos.getX() * m20 + pos.getY() * m21 + pos.getZ() * m22 + m23;
         BlockPos end = new BlockPos(x, y, z);
-        System.out.println(pos + " -> " + end);
         return end;
     }
 

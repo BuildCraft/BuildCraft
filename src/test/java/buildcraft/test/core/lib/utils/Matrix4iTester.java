@@ -57,10 +57,6 @@ public class Matrix4iTester {
 
         Vec3i result = mat.multiplyPosition(in);
 
-        System.out.println("in = " + in);
-        System.out.println("exp= " + expected);
-        System.out.println("res= " + result);
-
         assertEquals(expected.getX(), result.getX());
         assertEquals(expected.getY(), result.getY());
         assertEquals(expected.getZ(), result.getZ());

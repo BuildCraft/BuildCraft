@@ -14,6 +14,7 @@ import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -64,6 +65,8 @@ public class Template extends BlueprintBase {
     public void loadContents(NBTTagCompound nbt) throws BptError {
         byte[] data = nbt.getByteArray("mask");
         int ind = 0;
+
+        BCLog.logger.info("size = " + size);
 
         for (int x = 0; x < size.getX(); ++x) {
             for (int y = 0; y < size.getY(); ++y) {

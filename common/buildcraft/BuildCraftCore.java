@@ -412,16 +412,14 @@ public class BuildCraftCore extends BuildCraftMod {
             FillerManager.registry = new FillerRegistry();
 
             // INIT FILLER PATTERNS
-            FillerManager.registry.addPattern(PatternFill.INSTANCE);
-            FillerManager.registry.addPattern(PatternNone.INSTANCE);
-            FillerManager.registry.addPattern(new PatternFlatten());
-            FillerManager.registry.addPattern(new PatternHorizon());
-            FillerManager.registry.addPattern(new PatternClear());
-            FillerManager.registry.addPattern(new PatternBox());
-            FillerManager.registry.addPattern(new PatternPyramid());
-            FillerManager.registry.addPattern(new PatternStairs());
-            FillerManager.registry.addPattern(new PatternCylinder());
-            FillerManager.registry.addPattern(new PatternFrame());
+            IFillerPattern[] patterns = { PatternFill.INSTANCE, PatternNone.INSTANCE, new PatternFlatten(), new PatternHorizon(), new PatternClear(),
+                new PatternBox(), new PatternPyramid(), new PatternStairs(), new PatternCylinder(), new PatternFrame() };
+
+            for (IFillerPattern pattern : patterns) {
+                FillerManager.registry.addPattern(pattern);
+                StatementManager.registerStatement(pattern);
+            }
+
         } catch (Error error) {
             BCLog.logErrorAPI(error, IFillerPattern.class);
             throw error;

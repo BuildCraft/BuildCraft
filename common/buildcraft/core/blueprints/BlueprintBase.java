@@ -23,6 +23,7 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.core.BCLog;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Matrix4i;
@@ -163,13 +164,14 @@ public abstract class BlueprintBase {
             bpt = new Blueprint();
         }
 
+        System.out.println(kind + " -> " + bpt.getClass());
+
         bpt.readFromNBT(nbt);
 
         return bpt;
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        BlockPos size;
         if (nbt.hasKey("sizeX")) {
             size = new BlockPos(nbt.getInteger("sizeX"), nbt.getInteger("sizeY"), nbt.getInteger("sizeZ"));
         } else size = NBTUtils.readBlockPos(nbt.getTag("size"));

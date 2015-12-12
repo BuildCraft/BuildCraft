@@ -23,8 +23,8 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
@@ -160,7 +160,7 @@ public class Blueprint extends BlueprintBase {
     public void saveContents(NBTTagCompound nbt) {
         NBTTagCompound nbtContents = new NBTTagCompound();
 
-        for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size)) {
+        for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size.subtract(Utils.POS_ONE))) {
             SchematicBlockBase schematic = get(pos);
             NBTTagCompound cpt = new NBTTagCompound();
 
@@ -245,7 +245,7 @@ public class Blueprint extends BlueprintBase {
         NBTBase base = nbt.getTag("contents");
         if (base instanceof NBTTagCompound) {
             NBTTagCompound contents = (NBTTagCompound) base;
-            for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size)) {
+            for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size.subtract(Utils.POS_ONE))) {
                 NBTTagCompound single = contents.getCompoundTag(BCStringUtils.blockPosToShortString(pos));
                 loadSingleSchematicFromNBT(pos, single);
             }
