@@ -14,7 +14,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionExtractionPreset extends BCStatement implements IActionInternal {
@@ -30,7 +30,7 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
+        return String.format(BCStringUtils.localize("gate.action.extraction"), color.getName());
     }
 
     @Override

@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.silicon.TilePackager;
 
 public class GuiPackager extends GuiBuildCraft {
@@ -31,7 +31,7 @@ public class GuiPackager extends GuiBuildCraft {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
     }
 
     @Override

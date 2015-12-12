@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 
 import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     @Override
@@ -55,7 +55,7 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
 
     @Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.chargingTableBlock.name");
+        return BCStringUtils.localize("tile.chargingTableBlock.name");
     }
 
     @Override

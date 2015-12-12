@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class Blueprint extends BlueprintBase {
@@ -169,7 +169,7 @@ public class Blueprint extends BlueprintBase {
                 schematic.writeSchematicToNBT(cpt, mapping);
                 /* We don't use the index of the current for loop because we shouldn't rely on the behaviour of
                  * BlockPos.getAllInBox */
-                nbtContents.setTag(StringUtils.blockPosToShortString(pos), cpt);
+                nbtContents.setTag(BCStringUtils.blockPosToShortString(pos), cpt);
             }
         }
 
@@ -246,7 +246,7 @@ public class Blueprint extends BlueprintBase {
         if (base instanceof NBTTagCompound) {
             NBTTagCompound contents = (NBTTagCompound) base;
             for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size)) {
-                NBTTagCompound single = contents.getCompoundTag(StringUtils.blockPosToShortString(pos));
+                NBTTagCompound single = contents.getCompoundTag(BCStringUtils.blockPosToShortString(pos));
                 loadSingleSchematicFromNBT(pos, single);
             }
         } else {// 1.7.10 back-compat

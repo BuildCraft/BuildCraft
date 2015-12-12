@@ -32,12 +32,12 @@ public class EntityMechanicalArm extends Entity {
     public EntityMechanicalArm(World world, Vec3 root, double width, double height, TileQuarry parent) {
         this(world);
         setPositionAndRotation(parent.getPos().getX(), parent.getPos().getY(), parent.getPos().getZ(), 0, 0);
-        this.root = root;
         this.motionX = 0.0;
         this.motionY = 0.0;
         this.motionZ = 0.0;
-        setArmSize(width, height);
+        this.root = root;
         setHead(root.addVector(0, -2, 0));
+        setArmSize(width, height);
         this.parent = parent;
         parent.setArm(this);
         updatePosition();
@@ -118,12 +118,12 @@ public class EntityMechanicalArm extends Entity {
     }
 
     public void updatePosition() {
-        double[] headT = getHead();
-        this.xArm.setPosition(root.xCoord, root.yCoord, headT[2] + 0.25);
-        this.yArm.ySize = root.yCoord - headT[1] - 1;
-        this.yArm.setPosition(headT[0] + 0.25, headT[1] + 1, headT[2] + 0.25);
-        this.zArm.setPosition(headT[0] + 0.25, root.yCoord, root.zCoord);
-        this.headEntity.setPosition(headT[0] + 0.4, headT[1] - 0.01, headT[2] + 0.4);
+        // HEAD MAY BE NULL!
+        this.xArm.setPosition(root.xCoord, root.yCoord, head.zCoord + 0.25);
+        this.yArm.ySize = root.yCoord - head.yCoord - 1;
+        this.yArm.setPosition(head.xCoord + 0.25, head.yCoord + 1, head.zCoord + 0.25);
+        this.zArm.setPosition(head.xCoord + 0.25, root.yCoord, root.zCoord);
+        this.headEntity.setPosition(head.xCoord + 0.4, head.yCoord - 0.01, head.zCoord + 0.4);
     }
 
     @Override
@@ -135,9 +135,5 @@ public class EntityMechanicalArm extends Entity {
             headEntity.setDead();
         }
         super.setDead();
-    }
-
-    private double[] getHead() {
-        return new double[] { head.xCoord, head.yCoord, head.zCoord };
     }
 }

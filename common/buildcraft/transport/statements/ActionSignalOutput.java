@@ -14,7 +14,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.Gate;
 
@@ -32,7 +32,7 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(
+        return String.format(BCStringUtils.localize("gate.action.pipe.wire"), BCStringUtils.localize("color." + color.name().toLowerCase(
                 Locale.ENGLISH)));
     }
 

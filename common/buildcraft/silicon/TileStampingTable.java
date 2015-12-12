@@ -20,7 +20,7 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -208,7 +208,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
     @Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.stampingTableBlock.name");
+        return BCStringUtils.localize("tile.stampingTableBlock.name");
     }
 
     @Override

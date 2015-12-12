@@ -9,7 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 @Deprecated
 public class ItemDebugger extends ItemBuildCraft {
@@ -42,6 +42,6 @@ public class ItemDebugger extends ItemBuildCraft {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
-        list.add(StringUtils.localize("item.debugger.warning"));
+        list.add(BCStringUtils.localize("item.debugger.warning"));
     }
 }

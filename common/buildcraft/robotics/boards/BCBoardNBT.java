@@ -17,7 +17,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class BCBoardNBT extends RedstoneBoardRobotNBT {
     public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<String, BCBoardNBT>();
@@ -54,7 +54,7 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-        list.add(StringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
+        list.add(BCStringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
     }
 
     @Override
@@ -79,6 +79,6 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public String getDisplayName() {
-        return StringUtils.localize("buildcraft.boardRobot" + upperName);
+        return BCStringUtils.localize("buildcraft.boardRobot" + upperName);
     }
 }

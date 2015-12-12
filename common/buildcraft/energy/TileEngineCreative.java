@@ -18,7 +18,7 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 import io.netty.buffer.ByteBuf;
 
@@ -46,7 +46,7 @@ public class TileEngineCreative extends TileEngineBase {
 
                 if (!(player instanceof FakePlayer)) {
                     if (BuildCraftCore.hidePowerNumbers) {
-                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", StringUtils.localize(
+                        player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless", BCStringUtils.localize(
                                 "chat.pipe.power.iron.level." + powerMode.maxPower)));
                     } else {
                         player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode", powerMode.maxPower));

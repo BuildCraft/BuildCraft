@@ -28,7 +28,7 @@ import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
 import buildcraft.core.lib.gui.StatementSlot;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -214,7 +214,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         String name = container.getGateName();
 
         fontRendererObj.drawString(name, getCenteredOffset(name), 10, 0x404040);
-        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 
         if (index == -1) drawTooltipForSlotAt(mouseX, mouseY);
         if (tooltip != null) drawTooltip(tooltip, mouseX, mouseY);

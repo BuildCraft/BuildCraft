@@ -12,7 +12,7 @@ import net.minecraft.util.StatCollector;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionPipeColor extends BCStatement implements IActionInternal {
@@ -27,7 +27,7 @@ public class ActionPipeColor extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.action.pipe.item.color"), StatCollector.translateToLocal(color.getUnlocalizedName()));
+        return String.format(BCStringUtils.localize("gate.action.pipe.item.color"), StatCollector.translateToLocal(color.getUnlocalizedName()));
     }
 
     @Override

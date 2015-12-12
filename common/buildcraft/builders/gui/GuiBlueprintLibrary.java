@@ -17,7 +17,7 @@ import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
@@ -37,7 +37,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
     public void initGui() {
         super.initGui();
 
-        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, StringUtils.localize("gui.del"));
+        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, BCStringUtils.localize("gui.del"));
         buttonList.add(deleteButton);
 
         library.refresh();
@@ -51,7 +51,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = StringUtils.localize("tile.libraryBlock.name");
+        String title = BCStringUtils.localize("tile.libraryBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
         int off = getLibraryContainer().scrollbarWidget.getPosition();

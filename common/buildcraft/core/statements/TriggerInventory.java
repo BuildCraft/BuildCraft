@@ -23,7 +23,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
@@ -50,7 +50,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
+        return BCStringUtils.localize("gate.trigger.inventory." + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

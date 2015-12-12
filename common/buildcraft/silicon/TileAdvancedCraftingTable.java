@@ -44,7 +44,7 @@ import buildcraft.core.lib.inventory.filters.CraftingFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.CraftingUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -197,7 +197,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
     @Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.assemblyWorkbenchBlock.name");
+        return BCStringUtils.localize("tile.assemblyWorkbenchBlock.name");
     }
 
     @Override

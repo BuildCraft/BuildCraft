@@ -10,7 +10,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
@@ -24,7 +24,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.action.station." + (invert ? "force" : "forbid") + "_robot");
+        return BCStringUtils.localize("gate.action.station." + (invert ? "force" : "forbid") + "_robot");
     }
 
     @Override

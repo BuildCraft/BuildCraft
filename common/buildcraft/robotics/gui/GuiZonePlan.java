@@ -32,7 +32,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.ZonePlan;
 
@@ -139,10 +139,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         super.initGui();
 
         tool = new GuiBetterButton(0, guiLeft + 27, guiTop + 111, 15, StandardButtonTextureSets.SMALL_BUTTON, "+");
-        tool.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.add"))));
+        tool.setToolTip(new ToolTip(new ToolTipLine(BCStringUtils.localize("tip.tool.add"))));
         buttonList.add(tool);
         fsButton = new GuiBetterButton(1, guiLeft + 44, guiTop + 111, 20, StandardButtonTextureSets.SMALL_BUTTON, "FS");
-        fsButton.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.fullscreen"))));
+        fsButton.setToolTip(new ToolTip(new ToolTipLine(BCStringUtils.localize("tip.tool.fullscreen"))));
         buttonList.add(fsButton);
 
         savedButtonList = buttonList;
@@ -460,11 +460,11 @@ public class GuiZonePlan extends GuiAdvancedInterface {
             if (tool.displayString.equals("+")) {
                 tool.displayString = "-";
                 tool.getToolTip().remove(0);
-                tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.remove")));
+                tool.getToolTip().add(new ToolTipLine(BCStringUtils.localize("tip.tool.remove")));
             } else {
                 tool.displayString = "+";
                 tool.getToolTip().remove(0);
-                tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.add")));
+                tool.getToolTip().add(new ToolTipLine(BCStringUtils.localize("tip.tool.add")));
             }
         } else if (button == fsButton) {
             toFullscreen();

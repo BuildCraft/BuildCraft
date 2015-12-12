@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {
@@ -44,10 +44,10 @@ public final class PipeToolTipManager {
     private PipeToolTipManager() {}
 
     private static void addTipToList(String tipTag, List<String> tips) {
-        if (StringUtils.canLocalize(tipTag)) {
-            String localized = StringUtils.localize(tipTag);
+        if (BCStringUtils.canLocalize(tipTag)) {
+            String localized = BCStringUtils.localize(tipTag);
             if (localized != null) {
-                List<String> lines = StringUtils.newLineSplitter.splitToList(localized);
+                List<String> lines = BCStringUtils.newLineSplitter.splitToList(localized);
                 tips.addAll(lines);
             }
         }

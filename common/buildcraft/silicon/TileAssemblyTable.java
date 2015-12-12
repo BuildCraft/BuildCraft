@@ -28,7 +28,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 
 import io.netty.buffer.ByteBuf;
@@ -111,7 +111,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
     @Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.assemblyTableBlock.name");
+        return BCStringUtils.localize("tile.assemblyTableBlock.name");
     }
 
     @Override

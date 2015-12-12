@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
@@ -32,7 +32,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
     @Override
     public String getDisplayName() {
-        return StringUtils.localize("gate.expansion." + tag);
+        return BCStringUtils.localize("gate.expansion." + tag);
     }
 
     @Override

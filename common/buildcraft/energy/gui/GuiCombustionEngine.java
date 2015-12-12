@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.energy.TileEngineIron;
 
 public class GuiCombustionEngine extends GuiEngine {
@@ -26,9 +26,9 @@ public class GuiCombustionEngine extends GuiEngine {
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
-        String title = StringUtils.localize("tile.engineIron.name");
+        String title = BCStringUtils.localize("tile.engineIron.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
         TileEngineIron engine = (TileEngineIron) tile;
         FluidStack stack = null;

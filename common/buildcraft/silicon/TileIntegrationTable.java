@@ -17,7 +17,7 @@ import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -206,7 +206,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.integrationTableBlock.name");
+        return BCStringUtils.localize("tile.integrationTableBlock.name");
     }
 
     @Override

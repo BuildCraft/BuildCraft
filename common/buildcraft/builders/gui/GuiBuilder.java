@@ -24,7 +24,7 @@ import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 import io.netty.buffer.ByteBuf;
 
@@ -57,12 +57,12 @@ public class GuiBuilder extends GuiAdvancedInterface {
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         super.drawGuiContainerForegroundLayer(par1, par2);
 
-        drawCenteredString(StringUtils.localize("tile.builderBlock.name"), 178 / 2, 16, 0x404040);
+        drawCenteredString(BCStringUtils.localize("tile.builderBlock.name"), 178 / 2, 16, 0x404040);
         if (builder.getStackInSlot(0) != null) {
-            fontRendererObj.drawString(StringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
-            fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-            fontRendererObj.drawString(StringUtils.localize("gui.needed"), 178, 7, 0x404040);
-            fontRendererObj.drawString(StringUtils.localize("gui.building.fluids"), 178, 133, 0x404040);
+            fontRendererObj.drawString(BCStringUtils.localize("gui.building.resources"), 8, 60, 0x404040);
+            fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+            fontRendererObj.drawString(BCStringUtils.localize("gui.needed"), 178, 7, 0x404040);
+            fontRendererObj.drawString(BCStringUtils.localize("gui.building.fluids"), 178, 133, 0x404040);
         }
 
         drawTooltips(par1, par2);

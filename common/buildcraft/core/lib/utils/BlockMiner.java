@@ -73,20 +73,18 @@ public class BlockMiner {
     }
 
     public int acceptEnergy(int offeredAmount) {
-		if (BlockUtils.isUnbreakableBlock(world, pos)) {
-			hasFailed = true;
-			return 0;
-		}
+        if (BlockUtils.isUnbreakableBlock(world, pos)) {
+            hasFailed = true;
+            return 0;
+        }
 
-		energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
+        energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
 
         int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
         energyAccepted += usedAmount;
 
         if (energyAccepted >= energyRequired) {
             world.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-
-            hasMined = true;
 
             IBlockState state = world.getBlockState(pos);
 
@@ -107,7 +105,8 @@ public class BlockMiner {
 
                 world.playAuxSFXAtEntity(null, 2001, pos, Block.getStateId(state));
 
-				world.setBlockToAir(pos);
+                world.setBlockToAir(pos);
+                hasMined = true;
             } else {
                 hasFailed = true;
             }

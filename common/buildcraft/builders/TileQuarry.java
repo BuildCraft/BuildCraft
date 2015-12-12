@@ -37,6 +37,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
@@ -50,6 +51,7 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -57,8 +59,8 @@ import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
 
-// TODO (PASS 2) Convert all int, int, int variables to BlockPos and double, double, double to Vec3
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable,
+        IDebuggable {
 
     private static enum Stage {
         BUILDING,
@@ -71,7 +73,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public EntityMechanicalArm arm;
     public EntityPlayer placedBy;
 
+    /** The box for the setup */
     protected Box box = new Box();
+    /** The box of what will be mined. Goes from y=0 to the very top layer of the mining box */
+    private Box miningBox = new Box();
     private BlockPos target = BlockPos.ORIGIN;
     private Vec3 headPos = Utils.VEC_ZERO;
     private double speed = 0.03;
@@ -95,6 +100,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     private BlockMiner miner;
     private int ledState;
+
+    // TMP
+    private int buildCallsS = 0, buildCallsF = 0;
 
     public TileQuarry() {
         box.kind = Kind.STRIPES;
@@ -120,9 +128,19 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 createArm();
             }
 
+            if (miningBox == null || !miningBox.isInitialized()) {
+                miningBox = new Box(box.min(), box.max());
+                miningBox.contract(1);
+                miningBox.setMin(Utils.withValue(miningBox.min(), Axis.Y, 0));
+                miningBox.setMax(miningBox.max().add(0, 1, 0));
+            }
+
             if (findTarget(false)) {
-                if (!box.contains(headPos)) {
-                    setHead(box.min().getX() + 1, getPos().getY() + 2, box.min().getZ() + 1);
+                AxisAlignedBB union = miningBox.getBoundingBox().union(box.getBoundingBox());
+                if (!union.isVecInside(headPos)) {
+                    headPos = Utils.withValue(headPos, Axis.Y, miningBox.max().getY() - 2);
+                    BlockPos nearestPos = miningBox.closestInsideTo(Utils.convertFloor(headPos));
+                    headPos = Utils.convert(nearestPos);
                 }
             }
         } else {
@@ -132,7 +150,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     private void createArm() {
         Vec3 vec = Utils.convert(box.min()).add(Utils.vec3(CoreConstants.PIPE_MAX_POS));
-        vec = vec.add(Utils.convert(EnumFacing.UP, box.size().getY() - 1));
+        vec = vec.add(Utils.convert(EnumFacing.UP, box.size().getY() - 1.5));
 
         double width = box.size().getX() - 2 + CoreConstants.PIPE_MIN_POS * 2;
         double height = box.size().getZ() - 2 + CoreConstants.PIPE_MIN_POS * 2;
@@ -185,7 +203,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         createUtilsIfNeeded();
         if (getStage() == Stage.BUILDING) {
             if (builder != null && !builder.isDone(this)) {
-                builder.buildNextSlot(worldObj, this);
+                if (builder.buildNextSlot(worldObj, this)) buildCallsS++;
+                else buildCallsF++;
             } else {
                 setStage(Stage.IDLE);
             }
@@ -253,16 +272,17 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 CoreProxy.proxy.removeEntity(entity);
                 miner.mineStack(mineable);
             }
+            setStage(Stage.IDLE);
+            miner = null;
+            return;
         }
-
-        setStage(Stage.IDLE);
-        miner = null;
 
         if (!findFrame()) {
             initializeBlueprintBuilder();
             stage = Stage.BUILDING;
-        } else {
-            stage = Stage.IDLE;
+        } else if (miner.hasFailed()) {
+            setStage(Stage.IDLE);
+            miner = null;
         }
     }
 
@@ -376,7 +396,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
                 for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
                     if (!blockedColumns[searchX][searchZ]) {
-                        int bx = box.min().getX() + searchX + 1, by = searchY, bz = box.min().getZ() + searchZ + 1;
+                        int bx = box.min().getX() + searchX + 1;
+                        int by = searchY;
+                        int bz = box.min().getZ() + searchZ + 1;
 
                         BlockPos pos = new BlockPos(bx, by, bz);
                         IBlockState state = worldObj.getBlockState(pos);
@@ -917,5 +939,41 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
         return false;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        TileQuarry server = CoreProxy.proxy.getServerTile(this);
+
+        left.add("");
+        left.add("  - IsServer = " + (server != this));
+        left.add("  - Stage = " + server.getStage());
+        left.add("  - Mode = " + server.mode);
+        if (server.builder == null) {
+            left.add("  - Builder = null");
+        } else {
+            left.add("  - Builder");
+            left.add("    - IsDone = " + (server.builder.isDone(server)));
+            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.builder.min()));
+            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.builder.max()));
+            left.add("    - Successes = " + server.buildCallsS);
+            left.add("    - Failures = " + server.buildCallsF);
+        }
+        if (server.box == null || !server.box.isInitialized()) {
+            left.add("  - BuildingBox = null");
+        } else {
+            left.add("  - BuildingBox");
+            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.box.min()));
+            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.box.max()));
+        }
+        if (server.miningBox == null || !server.miningBox.isInitialized()) {
+            left.add("  - MiningBox = null");
+        } else {
+            left.add("  - MiningBox");
+            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.miningBox.min()));
+            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.miningBox.max()));
+        }
+        left.add("  - Head = " + BCStringUtils.vec3ToDispString(server.headPos));
+        left.add("  - Target = " + BCStringUtils.vec3ToDispString(server.target));
     }
 }

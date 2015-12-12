@@ -34,7 +34,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -120,7 +120,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         super.addInformation(stack, player, list, advanced);
         if (stack.getItemDamage() >= 1) {
             int color = (stack.getItemDamage() - 1) & 15;
-            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
+            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + BCStringUtils.localize("color." + ColorUtils.getName(color)));
         }
 		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
         List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);

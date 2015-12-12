@@ -10,7 +10,7 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.RobotUtils;
@@ -24,7 +24,7 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.trigger.robot.sleep");
+        return BCStringUtils.localize("gate.trigger.robot.sleep");
     }
 
     @Override

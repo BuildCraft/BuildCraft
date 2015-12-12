@@ -9,7 +9,7 @@
 package buildcraft.transport.statements;
 
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.ActionRedstoneOutput;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
@@ -24,7 +24,7 @@ public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements I
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
+        return String.format(BCStringUtils.localize("gate.trigger.redstone.input.level"), level);
     }
 
     @Override

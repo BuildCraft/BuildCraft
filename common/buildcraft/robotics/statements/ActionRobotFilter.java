@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.*;
 import buildcraft.core.lib.inventory.filters.*;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionRobotFilter extends BCStatement implements IActionInternal {
@@ -27,7 +27,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.action.robot.filter");
+        return BCStringUtils.localize("gate.action.robot.filter");
     }
 
     @Override

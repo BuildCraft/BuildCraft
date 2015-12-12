@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.transport.IDiamondPipe;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
@@ -42,7 +42,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String string = filterInventory.getDisplayName().getFormattedText();
         fontRendererObj.drawString(string, getCenteredOffset(string), 6, 0x404040);
-        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
     }
 
     @Override

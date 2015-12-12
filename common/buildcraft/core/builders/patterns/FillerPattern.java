@@ -26,7 +26,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.*;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 
@@ -48,7 +48,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("fillerpattern." + tag);
+        return BCStringUtils.localize("fillerpattern." + tag);
     }
 
     @Override

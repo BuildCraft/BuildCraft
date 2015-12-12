@@ -12,7 +12,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.transport.TileGenericPipe;
@@ -29,7 +29,7 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.trigger.redstone.input.level"), level);
+        return String.format(BCStringUtils.localize("gate.trigger.redstone.input.level"), level);
     }
 
     @Override

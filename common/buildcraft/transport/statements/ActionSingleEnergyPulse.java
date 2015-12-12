@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionSingleEnergyPulse extends BCStatement implements IActionInternal {
@@ -25,7 +25,7 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
 
     @Override
     public String getDescription() {
-        return StringUtils.localize("gate.action.pulsar.single");
+        return BCStringUtils.localize("gate.action.pulsar.single");
     }
 
     @Override

@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.lib.gui.FluidSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {
@@ -45,11 +45,11 @@ public class GuiRefinery extends GuiAdvancedInterface {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = StringUtils.localize("tile.refineryBlock.name");
+        String title = BCStringUtils.localize("tile.refineryBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
         fontRendererObj.drawString("->", 63, 59, 0x404040);
         fontRendererObj.drawString("<-", 106, 59, 0x404040);
-        fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
 
         drawTooltipForSlotAt(par1, par2);
     }

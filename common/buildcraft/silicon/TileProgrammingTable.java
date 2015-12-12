@@ -27,7 +27,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 public class TileProgrammingTable extends TileLaserTableBase implements IInventory, ISidedInventory, ICommandReceiver {
     public static final int WIDTH = 6;
@@ -95,7 +95,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
 	@Override
     public String getInventoryName() {
-        return StringUtils.localize("tile.programmingTableBlock.name");
+        return BCStringUtils.localize("tile.programmingTableBlock.name");
     }
 
     @Override

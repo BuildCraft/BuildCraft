@@ -26,7 +26,7 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.robotics.ZonePlan;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
@@ -61,7 +61,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 int z = cpt.getInteger("z");
                 EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
-                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 break;
             }
             case AREA: {
@@ -72,7 +72,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 int yLength = cpt.getInteger("yMax") - y + 1;
                 int zLength = cpt.getInteger("zMax") - z + 1;
 
-                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 break;
             }
             case PATH: {
@@ -83,7 +83,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 int y = first.getY();
                 int z = first.getZ();
 
-                strings.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
                 break;
             }
             default: {
