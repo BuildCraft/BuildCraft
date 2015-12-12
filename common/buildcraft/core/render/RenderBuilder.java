@@ -7,6 +7,8 @@ package buildcraft.core.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 
 import buildcraft.core.EntityLaser;
@@ -22,10 +24,10 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
 
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableCull();
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GL11.glTranslated(x, y, z);
         GL11.glTranslated(-builder.getPos().getX(), -builder.getPos().getY(), -builder.getPos().getZ());
@@ -39,6 +41,7 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
                     GL11.glPopMatrix();
                 }
             }
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         }
 
         // GL11.glEnable(GL11.GL_LIGHTING);

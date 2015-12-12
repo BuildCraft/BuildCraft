@@ -52,25 +52,23 @@ public class RenderBuildingItems {
 
         for (StackAtPosition s : i.getStacks()) {
             if (s.display) {
-                float renderScale = 0.7f;
-                GL11.glPushMatrix();
-                GL11.glTranslatef((float) s.pos.xCoord, (float) s.pos.yCoord, (float) s.pos.zCoord);
-                GL11.glTranslatef(0, 0.25F, 0);
-                GL11.glScalef(renderScale, renderScale, renderScale);
                 if (s.stack != null) {
-                    IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(s.stack);
+                    IBakedModel model = renderItem.getItemModelMesher().getItemModel(s.stack);
                     if (model != null) {
-                        Minecraft.getMinecraft().getRenderItem().renderItem(s.stack, model);
+                        float renderScale = 0.7f;
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef((float) s.pos.xCoord, (float) s.pos.yCoord, (float) s.pos.zCoord);
+                        GL11.glTranslatef(0, 0.25F, 0);
+                        GL11.glScalef(renderScale, renderScale, renderScale);
+                        renderItem.renderItem(s.stack, model);
+                        GL11.glPopMatrix();
                     } else {
                         BCLog.logger.warn("Model was null for " + s.stack);
                     }
                 } else {
                     BCLog.logger.warn("ItemStack was null for " + s + ", " + i);
                 }
-
-                GL11.glPopMatrix();
             }
         }
     }
-
 }
