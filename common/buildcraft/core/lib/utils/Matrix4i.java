@@ -69,8 +69,8 @@ public class Matrix4i {
     public static Matrix4i makeRotLeftTranslatePositive(Box box) {
         BlockPos translation = box.min();
         Matrix4i translateBack = makeTranslation(Utils.invert(translation));
-        Matrix4i rotY = makeRotY(90);
-        Matrix4i translateForth = makeTranslation(translation.add(new Vec3i(0, 0, box.size().getX() - 1)));
+        Matrix4i rotY = makeRotY(270);
+        Matrix4i translateForth = makeTranslation(translation.add(new Vec3i(box.size().getZ() - 1, 0, 0)));
 
         Matrix4i total = translateForth.multiply(rotY).multiply(translateBack);
         return total;

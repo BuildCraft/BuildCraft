@@ -257,12 +257,12 @@ public abstract class BlueprintBase {
 
         if (rotate) {
             if (o == EnumFacing.EAST) {
-                rotateLeft(context);
-                rotateLeft(context);
+                // Do nothing
             } else if (o == EnumFacing.SOUTH) {
                 rotateLeft(context);
             } else if (o == EnumFacing.WEST) {
-                // Do nothing
+                rotateLeft(context);
+                rotateLeft(context);
             } else if (o == EnumFacing.NORTH) {
                 rotateLeft(context);
                 rotateLeft(context);
