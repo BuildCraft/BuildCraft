@@ -371,7 +371,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
                     if (bpt != null) {
                         EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
-                        recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, face);
+                        recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, face.getOpposite());
 
                         currentBuilder = recursiveBuilder.nextBuilder();
 
