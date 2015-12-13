@@ -14,11 +14,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidEvent;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
@@ -250,12 +246,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             short newTimeSlot = (short) (container.getWorld().getTotalWorldTime() % travelDelay);
             int outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 
-            moveFromPipe(outputCount);
-            moveFromCenter();
-            moveToCenter();
-        } else {
-            computeTTLs();
-        }
+            if (fluidType != null) {
+                moveFromPipe(outputCount);
+                moveFromCenter();
+                moveToCenter();
+            } else computeTTLs();
+        } else computeTTLs();
     }
 
     private void moveFromPipe(int outputCount) {

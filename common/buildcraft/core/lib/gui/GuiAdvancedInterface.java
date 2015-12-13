@@ -1,23 +1,19 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -54,45 +50,45 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
         }
     }
 
-	private boolean isMouseOverSlot(AdvancedSlot slot, int mouseX, int mouseY) {
-		int realMouseX = mouseX - this.guiLeft;
-		int realMouseY = mouseY - this.guiTop;
-		return realMouseX >= slot.x - 1 && realMouseX < slot.x + 16 + 1 && realMouseY >= slot.y - 1 && realMouseY < slot.y + 16 + 1;
-	}
+    private boolean isMouseOverSlot(AdvancedSlot slot, int mouseX, int mouseY) {
+        int realMouseX = mouseX - this.guiLeft;
+        int realMouseY = mouseY - this.guiTop;
+        return realMouseX >= slot.x - 1 && realMouseX < slot.x + 16 + 1 && realMouseY >= slot.y - 1 && realMouseY < slot.y + 16 + 1;
+    }
 
-	protected void drawSlotHighlight(AdvancedSlot slot, int mouseX, int mouseY) {
-		if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.shouldDrawHighlight()) {
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
-			GL11.glColorMask(true, true, true, false);
-			this.drawGradientRect(guiLeft + slot.x, guiTop + slot.y, guiLeft + slot.x + 16, guiTop + slot.y + 16, -2130706433, -2130706433);
-			GL11.glColorMask(true, true, true, true);
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-		}
-	}
+    protected void drawSlotHighlight(AdvancedSlot slot, int mouseX, int mouseY) {
+        if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.shouldDrawHighlight()) {
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            GlStateManager.enableAlpha();
+            GlStateManager.colorMask(true, true, true, false);
+            this.drawGradientRect(guiLeft + slot.x, guiTop + slot.y, guiLeft + slot.x + 16, guiTop + slot.y + 16, -2130706433, -2130706433);
+            GlStateManager.colorMask(true, true, true, true);
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+        }
+    }
 
-	protected void drawBackgroundSlots(int mouseX, int mouseY) {
-        RenderHelper.enableGUIStandardItemLighting();
+    protected void drawBackgroundSlots(int mouseX, int mouseY) {
         GL11.glPushMatrix();
-		GL11.glPushAttrib(GL11.GL_TRANSFORM_BIT);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glPushAttrib(GL11.GL_TRANSFORM_BIT);
+        GlStateManager.enableRescaleNormal();
         int i1 = 240;
         int k1 = 240;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, i1 / 1.0F, k1 / 1.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (slots != null) {
             for (AdvancedSlot slot : slots) {
                 if (slot != null) {
                     slot.drawSprite(guiLeft, guiTop);
-					drawSlotHighlight(slot, mouseX, mouseY);
+                    drawSlotHighlight(slot, mouseX, mouseY);
                 }
             }
         }
+        GlStateManager.color(1f, 1f, 1f, 1f);
 
-		GL11.glPopAttrib();
+        GlStateManager.disableRescaleNormal();
+        GL11.glPopAttrib();
         GL11.glPopMatrix();
     }
 
@@ -101,7 +97,6 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
         if (slot != null) {
             slot.drawTooltip(this, mouseX, mouseY);
-			RenderHelper.enableGUIStandardItemLighting();
         }
     }
 
@@ -110,11 +105,10 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
             int i2 = mouseX - guiLeft;
             int k2 = mouseY - guiTop;
             drawCreativeTabHoveringText(caption, i2, k2);
-            RenderHelper.enableGUIStandardItemLighting();
         }
     }
 
-	public RenderItem getItemRenderer() {
+    public RenderItem getItemRenderer() {
         return itemRender;
     }
 
@@ -135,13 +129,13 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
         Minecraft mc = Minecraft.getMinecraft();
 
         if (item != null) {
-            GL11.glEnable(GL11.GL_LIGHTING);
+            GlStateManager.enableLighting();
             float prevZ = getItemRenderer().zLevel;
             getItemRenderer().zLevel = 200F;
             getItemRenderer().renderItemAndEffectIntoGUI(item, x, y);
             getItemRenderer().renderItemOverlayIntoGUI(mc.fontRendererObj, item, x, y, null);
             getItemRenderer().zLevel = prevZ;
-            GL11.glDisable(GL11.GL_LIGHTING);
+            GlStateManager.disableLighting();
         }
     }
 

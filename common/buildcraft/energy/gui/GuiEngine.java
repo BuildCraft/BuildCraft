@@ -45,7 +45,6 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
             // Draw icon
             Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES);
-            // TODO (PASS 1): Fix GUI icons using random textures
             drawIcon(CoreIconProvider.ENERGY.getSprite(), x + 3, y + 4);
 
             if (!isFullyOpened()) {

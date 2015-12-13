@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
 import java.io.IOException;
@@ -18,11 +14,13 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -77,25 +75,25 @@ public abstract class GuiBuildCraft extends GuiContainer {
         int left = this.guiLeft;
         int top = this.guiTop;
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GlStateManager.disableDepth();
         GL11.glPushMatrix();
         GL11.glTranslatef(left, top, 0.0F);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         RenderHelper.disableStandardItemLighting();
 
         InventoryPlayer playerInv = this.mc.thePlayer.inventory;
 
         if (playerInv.getItemStack() == null) {
-			drawToolTips(container.getWidgets(), mouseX - left, mouseY - top, left, top);
-			drawToolTips(buttonList, mouseX, mouseY, 0, 0);
-			drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY, 0, 0);
+            drawToolTips(container.getWidgets(), mouseX - left, mouseY - top, left, top);
+            drawToolTips(buttonList, mouseX, mouseY, 0, 0);
+            drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY, 0, 0);
         }
 
         GL11.glPopMatrix();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
     }
 
-	private void drawToolTips(Collection<?> objects, int mouseX, int mouseY, int offsetX, int offsetY) {
+    private void drawToolTips(Collection<?> objects, int mouseX, int mouseY, int offsetX, int offsetY) {
         for (Object obj : objects) {
             if (!(obj instanceof IToolTipProvider)) {
                 continue;
@@ -112,7 +110,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
             tips.onTick(mouseOver);
             if (mouseOver && tips.isReady()) {
                 tips.refresh();
-				drawToolTips(tips, mouseX + offsetX, mouseY + offsetY);
+                drawToolTips(tips, mouseX + offsetX, mouseY + offsetY);
             }
         }
     }
@@ -122,7 +120,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
             return;
         }
 
-        TextureAtlasSprite icon = FluidRenderer.getFluidTexture(fluid.getFluid(), FluidType.STILL);
+        TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(fluid.getFluid(), FluidType.STILL);
 
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
@@ -136,26 +134,27 @@ public abstract class GuiBuildCraft extends GuiContainer {
         for (int i = 0; i < fullX; i++) {
             for (int j = 0; j < fullY; j++) {
                 if (j >= fullLvl) {
-                    drawCutIcon(icon, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
+                    drawCutIcon(sprite, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
                 }
             }
         }
         for (int i = 0; i < fullX; i++) {
-            drawCutIcon(icon, x + i * 16, y + fullY * 16, 16, lastY, fullLvl == fullY ? lastLvl : 0);
+            drawCutIcon(sprite, x + i * 16, y + fullY * 16, 16, lastY, fullLvl == fullY ? lastLvl : 0);
         }
         for (int i = 0; i < fullY; i++) {
             if (i >= fullLvl) {
-                drawCutIcon(icon, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
+                drawCutIcon(sprite, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
             }
         }
-        drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);
+        drawCutIcon(sprite, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     // The magic is here
     private void drawCutIcon(TextureAtlasSprite icon, int x, int y, int width, int height, int cut) {
         Tessellator tess = Tessellator.getInstance();
         WorldRenderer wr = tess.getWorldRenderer();
-        wr.begin(GL11.GL_QUADS, wr.getVertexFormat());
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         vertexUV(wr, x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
         vertexUV(wr, x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
         vertexUV(wr, x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
@@ -164,24 +163,22 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     private void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
-        wr.pos(x, y, z);
-        wr.tex(u, v);
-        wr.endVertex();
+        wr.pos(x, y, z).tex(u, v).endVertex();;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture(texture);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int mX = mouseX - guiLeft;
         int mY = mouseY - guiTop;
 
-		drawWidgets(mX, mY);
-	}
+        drawWidgets(mX, mY);
+    }
 
-	protected void drawWidgets(int mX, int mY) {
+    protected void drawWidgets(int mX, int mY) {
         for (Widget widget : container.getWidgets()) {
             if (widget.hidden) {
                 continue;
@@ -203,6 +200,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
     public void drawCenteredString(String string, int xCenter, int yCenter, int textColor) {
         fontRendererObj.drawString(string, xCenter - fontRendererObj.getStringWidth(string) / 2, yCenter - fontRendererObj.FONT_HEIGHT / 2,
                 textColor);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     protected int getCenteredOffset(String string) {
@@ -376,7 +374,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
             int xShift = ((gui.width - gui.xSize) / 2) + gui.xSize;
             int yShift = ((gui.height - gui.ySize) / 2) + 8;
 
-			for (Ledger ledger : ledgers) {
+            for (Ledger ledger : ledgers) {
                 if (!ledger.isVisible()) {
                     continue;
                 }
@@ -394,7 +392,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
 
         protected void drawLedgers(int mouseX, int mouseY) {
-			int yPos = 8;
+            int yPos = 8;
             for (Ledger ledger : ledgers) {
 
                 ledger.update();
@@ -402,8 +400,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
                     continue;
                 }
 
-				ledger.draw(xSize, yPos);
-				yPos += ledger.getHeight();
+                ledger.draw(xSize, yPos);
+                yPos += ledger.getHeight();
             }
 
             Ledger ledger = getAtPosition(mouseX, mouseY);
@@ -534,7 +532,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
 
         protected void drawBackground(int x, int y) {
-
             RenderUtils.setGLColorFromInt(overlayColor);
 
             mc.renderEngine.bindTexture(LEDGER_TEXTURE);
@@ -545,13 +542,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
             drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4, currentHeight - 4);
 
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
+            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0F);
         }
 
         protected void drawIcon(TextureAtlasSprite icon, int x, int y) {
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_ALPHA_TEST);
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
             drawTexturedModalRect(x, y, icon, 16, 16);
         }
     }

@@ -4,10 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.statements;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -17,11 +23,26 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionFiller extends BCStatement implements IActionExternal {
 
+    private static final Map<FillerPattern, ActionFiller> actions = Maps.newHashMap();
+
+    public static void resetMap() {
+        actions.clear();
+        for (IFillerPattern pattern : FillerManager.registry.getPatterns()) {
+            FillerPattern fil = (FillerPattern) pattern;
+            actions.put(fil, new ActionFiller(fil));
+        }
+    }
+
+    public static ActionFiller getForPattern(FillerPattern pattern) {
+        return actions.get(pattern);
+    }
+
     public final FillerPattern pattern;
 
-    public ActionFiller(FillerPattern pattern) {
+    private ActionFiller(FillerPattern pattern) {
         super("filler:" + pattern.getUniqueTag());
         this.pattern = pattern;
+        setBuildCraftLocation("core", "filler/patterns/" + pattern.type.getName());
     }
 
     @Override

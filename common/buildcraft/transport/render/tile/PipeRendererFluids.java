@@ -15,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -123,6 +124,7 @@ public class PipeRendererFluids {
                 float amount = renderData.amount[connection.ordinal()] / (float) trans.getCapacity();
                 if (amount > 0) {
                     int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                    if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
                     GL11.glPushMatrix();
                     GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
                     GL11.glPopMatrix();
@@ -150,24 +152,24 @@ public class PipeRendererFluids {
             }
             if (above) {
                 float amount = renderData.amount[6] / (float) trans.getCapacity();
-                int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                if (stage >= DISPLAY_STAGES) {
-                    stage = DISPLAY_STAGES - 1;
+                if (amount > 0) {
+                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                    if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
+                    GL11.glPushMatrix();
+                    GL11.glCallList(dfl.centerFacesVertical[stage]);
+                    GL11.glPopMatrix();
                 }
-                GL11.glPushMatrix();
-                GL11.glCallList(dfl.centerFacesVertical[stage]);
-                GL11.glPopMatrix();
             }
 
             if (sides) {
                 float amount = renderData.amount[6] / (float) trans.getCapacity();
-                int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                if (stage >= DISPLAY_STAGES) {
-                    stage = DISPLAY_STAGES - 1;
+                if (amount > 0) {
+                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
+                    if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
+                    GL11.glPushMatrix();
+                    GL11.glCallList(dfl.centerFaces[stage]);
+                    GL11.glPopMatrix();
                 }
-                GL11.glPushMatrix();
-                GL11.glCallList(dfl.centerFaces[stage]);
-                GL11.glPopMatrix();
             }
         }
 

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import java.util.ArrayList;
@@ -24,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
@@ -58,7 +55,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
     public ArrayList<StatementSlot> activeActions = new ArrayList<StatementSlot>();
 
-	public byte broadcastSignal, prevBroadcastSignal;
+    public byte broadcastSignal, prevBroadcastSignal;
     public int redstoneOutput = 0;
     public int redstoneOutputSide = 0;
 
@@ -68,7 +65,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     private EnumFacing direction;
 
     private HashMultiset<IStatement> statementCounts = HashMultiset.create();
-	private int[] actionGroups = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
+    private int[] actionGroups = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
 
     // / CONSTRUCTOR
     public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, EnumFacing direction) {
@@ -200,7 +197,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
         writeStatementsToNBT(data);
 
-		data.setByte("wireState", broadcastSignal);
+        data.setByte("wireState", broadcastSignal);
 
         data.setByte("redstoneOutput", (byte) redstoneOutput);
     }
@@ -292,14 +289,14 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     public void readFromNBT(NBTTagCompound data) {
         readStatementsFromNBT(data);
 
-		if (data.hasKey("wireState[0]")) {
-        for (PipeWire wire : PipeWire.VALUES) {
-				if (data.getBoolean("wireState[" + wire.ordinal() + "]")) {
-					broadcastSignal |= 1 << wire.ordinal();
-				}
-			}
-		} else {
-			broadcastSignal = data.getByte("wireState");
+        if (data.hasKey("wireState[0]")) {
+            for (PipeWire wire : PipeWire.VALUES) {
+                if (data.getBoolean("wireState[" + wire.ordinal() + "]")) {
+                    broadcastSignal |= 1 << wire.ordinal();
+                }
+            }
+        } else {
+            broadcastSignal = data.getByte("wireState");
         }
 
         redstoneOutput = data.getByte("redstoneOutput");
@@ -308,8 +305,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     // GUI
     public void openGui(EntityPlayer player) {
         if (!player.worldObj.isRemote) {
-            player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.getPos().getX(), pipe.container.getPos().getY(),
-                    pipe.container.getPos().getZ());
+            player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.getPos().getX(), pipe.container
+                    .getPos().getY(), pipe.container.getPos().getZ());
             ((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
         }
     }
@@ -382,7 +379,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         boolean wasActive = activeActions.size() > 0;
 
         prevBroadcastSignal = broadcastSignal;
-		broadcastSignal = 0;
+        broadcastSignal = 0;
 
         // Tell the gate to prepare for resolving actions. (Disable pulser)
         startResolution();
@@ -485,8 +482,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
             pipe.updateNeighbors(true);
         }
 
-		if (prevBroadcastSignal != broadcastSignal) {
-			pipe.scheduleWireUpdate();
+        if (prevBroadcastSignal != broadcastSignal) {
+            pipe.scheduleWireUpdate();
         }
 
         boolean isActive = activeActions.size() > 0;
@@ -629,7 +626,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public void broadcastSignal(PipeWire color) {
-		broadcastSignal |= 1 << color.ordinal();
+        broadcastSignal |= 1 << color.ordinal();
     }
 
     public IPipe getPipe() {

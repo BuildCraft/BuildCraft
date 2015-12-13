@@ -42,7 +42,7 @@ public abstract class FillerPattern implements IFillerPattern {
         this.tag = tag;
         this.type = type;
         patterns.put(getUniqueTag(), this);
-        location = new ResourceLocation("buildcraftcore:items/fillerPatterns/" + tag);
+        location = new ResourceLocation("buildcraftcore:filler/patterns/" + tag);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

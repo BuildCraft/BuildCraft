@@ -34,8 +34,9 @@ public class BuildersActionProvider implements IActionProvider {
         if (tile instanceof TileFiller) {
             for (IFillerPattern p : FillerManager.registry.getPatterns()) {
                 if (p instanceof FillerPattern) {
+                    FillerPattern pattern = (FillerPattern) p;
                     if (!actionMap.containsKey(p.getUniqueTag())) {
-                        actionMap.put(p.getUniqueTag(), new ActionFiller((FillerPattern) p));
+                        actionMap.put(p.getUniqueTag(), ActionFiller.getForPattern(pattern));
                     }
                     actions.add(actionMap.get(p.getUniqueTag()));
                 }

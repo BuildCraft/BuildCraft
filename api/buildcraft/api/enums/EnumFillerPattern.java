@@ -1,5 +1,7 @@
 package buildcraft.api.enums;
 
+import java.util.Locale;
+
 import net.minecraft.util.IStringSerializable;
 
 public enum EnumFillerPattern implements IStringSerializable {
@@ -21,6 +23,6 @@ public enum EnumFillerPattern implements IStringSerializable {
 
     @Override
     public String getName() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ROOT);
     }
 }

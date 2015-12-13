@@ -7,6 +7,8 @@ package buildcraft.core.lib.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -83,17 +85,20 @@ public abstract class AdvancedSlot {
         }
 
         if (getItemStack() != null) {
+            GlStateManager.color(1, 1, 1, 1);
             drawStack(getItemStack());
+            GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
+            GlStateManager.disableLighting();
+            GlStateManager.enableAlpha();
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         } else if (getIcon() != null) {
             mc.renderEngine.bindTexture(getTexture());
             // System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getIcon().getIconName(),
             // getIcon().getOriginX(),getIcon().getOriginY(),cornerX + x, cornerY + y);
 
             GL11.glPushAttrib(GL11.GL_LIGHTING_BIT | GL11.GL_COLOR_BUFFER_BIT);
-
-            GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
-            GL11.glEnable(GL11.GL_ALPHA_TEST);
-            GL11.glEnable(GL11.GL_BLEND);
 
             gui.drawTexturedModalRect(cornerX + x, cornerY + y, getIcon(), 16, 16);
 
@@ -106,8 +111,11 @@ public abstract class AdvancedSlot {
         int cornerX = (gui.width - gui.getXSize()) / 2;
         int cornerY = (gui.height - gui.getYSize()) / 2;
 
+        RenderHelper.enableGUIStandardItemLighting();
+
         gui.drawStack(item, cornerX + x, cornerY + y);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1, 1, 1, 1);
+        System.out.println("hi");
     }
 
     public boolean shouldDrawHighlight() {

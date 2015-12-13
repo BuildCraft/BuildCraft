@@ -27,7 +27,7 @@ public class PatternParameterCenter implements IStatementParameter {
     public static void registerSprites(TextureMap map) {
         sprites = new TextureAtlasSprite[9];
         for (int i = 0; i < 9; i++) {
-            sprites[i] = map.registerSprite(new ResourceLocation("buildcraftcore:filler_parameters/center_" + i));
+            sprites[i] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/center_" + i));
         }
     }
 

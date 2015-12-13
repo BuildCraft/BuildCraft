@@ -65,6 +65,7 @@ import buildcraft.api.statements.*;
 import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.*;
 import buildcraft.core.blueprints.BuildingSlotMapIterator;
 import buildcraft.core.blueprints.SchematicHelper;
@@ -417,8 +418,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
             for (IFillerPattern pattern : patterns) {
                 FillerManager.registry.addPattern(pattern);
-                StatementManager.registerStatement(pattern);
             }
+            ActionFiller.resetMap();
 
         } catch (Error error) {
             BCLog.logErrorAPI(error, IFillerPattern.class);

@@ -7,10 +7,9 @@ package buildcraft.builders.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -66,6 +65,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
         }
 
         drawTooltips(par1, par2);
+        GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
     private void drawTooltips(int par1, int par2) {
@@ -95,7 +95,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         // We cannot do super here due to some crazy shenanigans with a dynamically
         // resized GUI.
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1f, 1f, 1f, 1f);
         boolean isBlueprint = builder.getStackInSlot(0) != null;
 
         mc.renderEngine.bindTexture(REGULAR_TEXTURE);
@@ -142,9 +142,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
         if (isBlueprint) {
             drawBackgroundSlots(x, y);
-        }
-
-        if (isBlueprint) {
+            
             for (int i = 0; i < builder.fluidTanks.length; i++) {
                 Tank tank = builder.fluidTanks[i];
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {
@@ -161,6 +159,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
                 }
             }
         }
+        GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
     @Override
