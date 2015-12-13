@@ -56,6 +56,7 @@ public final class Utils {
 
     public static final boolean CAULDRON_DETECTED;
     public static final XorShift128Random RANDOM = new XorShift128Random();
+    public static final Random ACTUAL_RANDOM = new Random();
 
     private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALUES));
     private static final Map<Axis, Map<Axis, Axis>> axisOtherMap;
@@ -707,6 +708,34 @@ public final class Utils {
         }
     }
 
+    /** Finds the closest block position in a set to the given position. Will return a random block position if server
+     * are found within a similar distance */
+    public static BlockPos findClosestTo(Set<BlockPos> set, BlockPos hint) {
+        return findClosestTo(set, hint, ACTUAL_RANDOM);
+    }
+
+    /** Finds the closest block position in a set to the given position. Will return a random block position if server
+     * are found within a similar distance */
+    public static BlockPos findClosestTo(Set<BlockPos> set, BlockPos hint, Random rand) {
+        if (set.isEmpty()) return null;
+        if (hint == null) return set.iterator().next();
+        double closestDist = Double.MAX_VALUE;
+        List<BlockPos> closest = Lists.newArrayList();
+        for (BlockPos pos : set) {
+            double dist = pos.distanceSq(hint);
+            if (dist - 1 > closestDist) continue;
+            if (dist + 1 < closestDist) {
+                closest.clear();
+                closest.add(pos);
+                closestDist = dist;
+            } else {
+                closest.add(pos);
+            }
+        }
+        if (closest.isEmpty()) return null;
+        return closest.get(rand.nextInt(closest.size()));
+    }
+
     public enum EnumAxisOrder {
         XYZ(0, 1, 2),
         XZY(0, 2, 1),
@@ -745,75 +774,96 @@ public final class Utils {
         }
     }
 
+    public static class BoxIterable implements Iterable<BlockPos> {
+        private final BlockPos min, max;
+        private final AxisOrder order;
+
+        public BoxIterable(BlockPos min, BlockPos max, AxisOrder order) {
+            this.min = min;
+            this.max = max;
+            this.order = order;
+        }
+
+        @Override
+        public BoxIterator iterator() {
+            return new BoxIterator(min, max, order);
+        }
+    }
+
+    public static class BoxIterator extends AbstractIterator<BlockPos> {
+        private final BlockPos min, max;
+        private final AxisOrder order;
+        private BlockPos lastReturned;
+
+        public BoxIterator(BlockPos min, BlockPos max, AxisOrder order) {
+            this.min = min;
+            this.max = max;
+            this.order = order;
+        }
+
+        /** Skips directly to this position. This can skip backwards or forwards, it doesn't matter. Skipping to null
+         * will reset this iterator if it has not finished. */
+        public void skipTo(BlockPos pos) {
+            lastReturned = pos;
+        }
+
+        @Override
+        protected BlockPos computeNext() {
+            if (lastReturned == null) {
+                lastReturned = getStart();
+                return lastReturned;
+            } else {
+                BlockPos nValue = lastReturned;
+
+                if (shouldIncrement(lastReturned, order.first)) {
+                    nValue = increment(nValue, order.first);
+                } else if (shouldIncrement(lastReturned, order.second)) {
+                    nValue = replace(nValue, order.first);
+                    nValue = increment(nValue, order.second);
+                } else if (shouldIncrement(lastReturned, order.third)) {
+                    nValue = replace(nValue, order.first);
+                    nValue = replace(nValue, order.second);
+                    nValue = increment(nValue, order.third);
+                } else {
+                    return endOfData();
+                }
+
+                lastReturned = nValue;
+                return lastReturned;
+            }
+        }
+
+        private BlockPos getStart() {
+            BlockPos pos = BlockPos.ORIGIN;
+            pos = replace(pos, order.first);
+            pos = replace(pos, order.second);
+            return replace(pos, order.third);
+        }
+
+        private BlockPos replace(BlockPos toReplace, EnumFacing facing) {
+            BlockPos with = facing.getAxisDirection() == AxisDirection.POSITIVE ? min : max;
+            return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
+        }
+
+        private BlockPos increment(BlockPos pos, EnumFacing facing) {
+            int diff = facing.getAxisDirection().getOffset();
+            int value = Utils.getValue(pos, facing.getAxis()) + diff;
+            return Utils.withValue(pos, facing.getAxis(), value);
+        }
+
+        private boolean shouldIncrement(BlockPos lastReturned, EnumFacing facing) {
+            int lstReturned = Utils.getValue(lastReturned, facing.getAxis());
+            BlockPos goingTo = facing.getAxisDirection() == AxisDirection.POSITIVE ? max : min;
+            int to = Utils.getValue(goingTo, facing.getAxis());
+            if (facing.getAxisDirection() == AxisDirection.POSITIVE) return lstReturned < to;
+            return lstReturned > to;
+        }
+    }
+
     /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but can iterate in orders other than XYZ */
-    public static Iterable<BlockPos> getAllInBox(BlockPos a, BlockPos b, final AxisOrder order) {
+    public static BoxIterable getAllInBox(BlockPos a, BlockPos b, final AxisOrder order) {
         final BlockPos min = min(a, b);
         final BlockPos max = max(a, b);
-        return new Iterable<BlockPos>() {
-            public Iterator<BlockPos> iterator() {
-                return new AbstractIterator<BlockPos>() {
-                    private BlockPos lastReturned = null;
-
-                    protected BlockPos computeNext() {
-                        if (lastReturned == null) {
-                            lastReturned = getStart();
-                            return lastReturned;
-                            // } else if (lastReturned.equals(end)) return endOfData();
-                        } else {
-                            BlockPos nValue = lastReturned;
-
-                            if (shouldIncrement(lastReturned, order.first)) {
-                                nValue = increment(nValue, order.first);
-                            } else if (shouldIncrement(lastReturned, order.second)) {
-                                nValue = replace(nValue, order.first);
-                                nValue = increment(nValue, order.second);
-                            } else if (shouldIncrement(lastReturned, order.third)) {
-                                nValue = replace(nValue, order.first);
-                                nValue = replace(nValue, order.second);
-                                nValue = increment(nValue, order.third);
-                            } else {
-                                return endOfData();
-                            }
-
-                            lastReturned = nValue;
-                            return lastReturned;
-                        }
-                    }
-
-                    private BlockPos getStart() {
-                        BlockPos pos = BlockPos.ORIGIN;
-                        pos = replace(pos, order.first);
-                        pos = replace(pos, order.second);
-                        return replace(pos, order.third);
-                    }
-
-                    // private BlockPos getEnd() {
-                    // BlockPos pos = BlockPos.ORIGIN;
-                    // pos = replace(pos, order.first.getOpposite());
-                    // pos = replace(pos, order.second.getOpposite());
-                    // return replace(pos, order.third.getOpposite());
-                    // }
-
-                    private BlockPos replace(BlockPos toReplace, EnumFacing facing) {
-                        BlockPos with = facing.getAxisDirection() == AxisDirection.POSITIVE ? min : max;
-                        return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
-                    }
-
-                    private BlockPos increment(BlockPos pos, EnumFacing facing) {
-                        int diff = facing.getAxisDirection().getOffset();
-                        int value = Utils.getValue(pos, facing.getAxis()) + diff;
-                        return Utils.withValue(pos, facing.getAxis(), value);
-                    }
-
-                    private boolean shouldIncrement(BlockPos lastReturned, EnumFacing facing) {
-                        int lstReturned = Utils.getValue(lastReturned, facing.getAxis());
-                        BlockPos goingTo = facing.getAxisDirection() == AxisDirection.POSITIVE ? max : min;
-                        int to = Utils.getValue(goingTo, facing.getAxis());
-                        if (facing.getAxisDirection() == AxisDirection.POSITIVE) return lstReturned < to;
-                        return lstReturned > to;
-                    }
-                };
-            }
-        };
+        return new BoxIterable(min, max, order);
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
@@ -78,6 +79,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
         GL11.glTranslatef((float) x, (float) y, (float) z);
         GL11.glTranslatef(0, 0.25F, 0);
         GL11.glScalef(renderScale, renderScale, renderScale);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(stack);
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
 
