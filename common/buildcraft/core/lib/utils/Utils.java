@@ -691,6 +691,22 @@ public final class Utils {
         return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
     }
 
+    public static EnumFacing getFacing(Axis axis, AxisDirection direction) {
+        if (axis == Axis.X) {
+            if (direction == AxisDirection.POSITIVE) {
+                return EnumFacing.EAST;
+            } else return EnumFacing.WEST;
+        } else if (axis == Axis.Z) {
+            if (direction == AxisDirection.POSITIVE) {
+                return EnumFacing.SOUTH;
+            } else return EnumFacing.NORTH;
+        } else {
+            if (direction == AxisDirection.POSITIVE) {
+                return EnumFacing.UP;
+            } else return EnumFacing.DOWN;
+        }
+    }
+
     public enum EnumAxisOrder {
         XYZ(0, 1, 2),
         XZY(0, 2, 1),
@@ -701,15 +717,36 @@ public final class Utils {
 
         public final Axis first, second, third;
 
+        public final AxisOrder defaultOrder;
+
         private EnumAxisOrder(int a, int b, int c) {
             this.first = Axis.values()[a];
             this.second = Axis.values()[b];
             this.third = Axis.values()[c];
+            this.defaultOrder = new AxisOrder(this, true, true, true);
+        }
+    }
+
+    public static class AxisOrder {
+        public final EnumFacing first, second, third;
+
+        /** Creates an axis order that will scan axis in the order given, going in the directions specified by
+         * positiveFirst, positiveSecond and positiveThird. If all are true then it will start at the smallest one and
+         * end up at the biggest one. */
+        public AxisOrder(EnumAxisOrder order, boolean positiveFirst, boolean positiveSecond, boolean positiveThird) {
+            this.first = getFacing(order.first, positiveFirst ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
+            this.second = getFacing(order.second, positiveSecond ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
+            this.third = getFacing(order.third, positiveThird ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
+        }
+
+        @Override
+        public String toString() {
+            return first + ", " + second + ", " + third;
         }
     }
 
     /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but can iterate in orders other than XYZ */
-    public static Iterable<BlockPos> getAllInBox(BlockPos a, BlockPos b, final EnumAxisOrder order) {
+    public static Iterable<BlockPos> getAllInBox(BlockPos a, BlockPos b, final AxisOrder order) {
         final BlockPos min = min(a, b);
         final BlockPos max = max(a, b);
         return new Iterable<BlockPos>() {
@@ -719,21 +756,23 @@ public final class Utils {
 
                     protected BlockPos computeNext() {
                         if (lastReturned == null) {
-                            lastReturned = min;
+                            lastReturned = getStart();
                             return lastReturned;
-                        } else if (lastReturned.equals(max)) return endOfData();
-                        else {
+                            // } else if (lastReturned.equals(end)) return endOfData();
+                        } else {
                             BlockPos nValue = lastReturned;
 
-                            if (lessThan(lastReturned, max, order.first)) {
+                            if (shouldIncrement(lastReturned, order.first)) {
                                 nValue = increment(nValue, order.first);
-                            } else if (lessThan(lastReturned, max, order.second)) {
-                                nValue = Utils.withValue(nValue, order.first, Utils.getValue(min, order.first));
+                            } else if (shouldIncrement(lastReturned, order.second)) {
+                                nValue = replace(nValue, order.first);
                                 nValue = increment(nValue, order.second);
-                            } else if (lessThan(lastReturned, max, order.third)) {
-                                nValue = Utils.withValue(nValue, order.first, Utils.getValue(min, order.first));
-                                nValue = Utils.withValue(nValue, order.second, Utils.getValue(min, order.second));
+                            } else if (shouldIncrement(lastReturned, order.third)) {
+                                nValue = replace(nValue, order.first);
+                                nValue = replace(nValue, order.second);
                                 nValue = increment(nValue, order.third);
+                            } else {
+                                return endOfData();
                             }
 
                             lastReturned = nValue;
@@ -741,14 +780,37 @@ public final class Utils {
                         }
                     }
 
-                    private BlockPos increment(BlockPos pos, Axis axis) {
-                        return Utils.withValue(pos, axis, Utils.getValue(pos, axis) + 1);
+                    private BlockPos getStart() {
+                        BlockPos pos = BlockPos.ORIGIN;
+                        pos = replace(pos, order.first);
+                        pos = replace(pos, order.second);
+                        return replace(pos, order.third);
                     }
 
-                    private boolean lessThan(BlockPos smaller, BlockPos bigger, Axis axis) {
-                        int sm = Utils.getValue(smaller, axis);
-                        int bg = Utils.getValue(bigger, axis);
-                        return sm < bg;
+                    // private BlockPos getEnd() {
+                    // BlockPos pos = BlockPos.ORIGIN;
+                    // pos = replace(pos, order.first.getOpposite());
+                    // pos = replace(pos, order.second.getOpposite());
+                    // return replace(pos, order.third.getOpposite());
+                    // }
+
+                    private BlockPos replace(BlockPos toReplace, EnumFacing facing) {
+                        BlockPos with = facing.getAxisDirection() == AxisDirection.POSITIVE ? min : max;
+                        return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
+                    }
+
+                    private BlockPos increment(BlockPos pos, EnumFacing facing) {
+                        int diff = facing.getAxisDirection().getOffset();
+                        int value = Utils.getValue(pos, facing.getAxis()) + diff;
+                        return Utils.withValue(pos, facing.getAxis(), value);
+                    }
+
+                    private boolean shouldIncrement(BlockPos lastReturned, EnumFacing facing) {
+                        int lstReturned = Utils.getValue(lastReturned, facing.getAxis());
+                        BlockPos goingTo = facing.getAxisDirection() == AxisDirection.POSITIVE ? max : min;
+                        int to = Utils.getValue(goingTo, facing.getAxis());
+                        if (facing.getAxisDirection() == AxisDirection.POSITIVE) return lstReturned < to;
+                        return lstReturned > to;
                     }
                 };
             }

@@ -69,7 +69,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
          * axis */
         if (Utils.min(bptMin, bptMax).equals(bptMin) && Utils.max(bptMin, bptMax).equals(bptMax)) {
             try {
-                for (BlockPos bptOffset : Utils.getAllInBox(bptMin, bptMax, Utils.EnumAxisOrder.XZY)) {
+                for (BlockPos bptOffset : Utils.getAllInBox(bptMin, bptMax, getOrder())) {
                     BlockPos pointWorldOffset = worldOffset.add(bptOffset);
                     if (!isLocationUsed(pointWorldOffset)) {
                         SchematicBlock slot = (SchematicBlock) blueprint.get(bptOffset);
@@ -105,7 +105,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
             LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
-            for (BlockPos bptOffset : Utils.getAllInBox(bptMin, bptMax, Utils.EnumAxisOrder.XZY)) {
+            for (BlockPos bptOffset : Utils.getAllInBox(bptMin, bptMax, getOrder())) {
                 BlockPos pointWorldOffset = worldOffset.add(bptOffset);
                 SchematicBlock slot = (SchematicBlock) blueprint.get(bptOffset);
 

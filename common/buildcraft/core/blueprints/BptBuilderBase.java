@@ -50,6 +50,8 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
     private long nextBuildDate = 0;
 
+    private Utils.AxisOrder order = Utils.EnumAxisOrder.XZY.defaultOrder;
+
     public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
         this.blueprint = bluePrint;
         this.pos = pos;
@@ -60,6 +62,14 @@ public abstract class BptBuilderBase implements IAreaProvider {
         box.initialize(this);
 
         context = bluePrint.getContext(world, box);
+    }
+
+    public void setOrder(Utils.AxisOrder order) {
+        if (order != null) this.order = order;
+    }
+
+    public Utils.AxisOrder getOrder() {
+        return order;
     }
 
     @Deprecated

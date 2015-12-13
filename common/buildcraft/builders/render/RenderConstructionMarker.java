@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
@@ -40,10 +41,10 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
         if (marker != null) {
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.enableCull();
+            GlStateManager.enableLighting();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslated(x, y, z);
             GL11.glTranslated(-marker.getPos().getX(), -marker.getPos().getY(), -marker.getPos().getZ());
@@ -59,7 +60,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
                 doRenderItem(marker.itemBlueprint, marker.getPos().getX() + 0.5F, marker.getPos().getY() + 0.2F, marker.getPos().getZ() + 0.5F);
             }
 
-            // GL11.glEnable(GL11.GL_LIGHTING);
+            GlStateManager.disableBlend();
             GL11.glPopAttrib();
             GL11.glPopMatrix();
 

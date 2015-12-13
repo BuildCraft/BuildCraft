@@ -55,6 +55,7 @@ import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
@@ -655,6 +656,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
         builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.min().getX(), getPos().getY(), box.min().getZ()));
+        builder.setOrder(new Utils.AxisOrder(EnumAxisOrder.XZY, true, true, false));
         speed = 0;
         stage = Stage.BUILDING;
         sendNetworkUpdate();
