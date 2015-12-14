@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import buildcraft.api.blueprints.Schematic;
 
 public abstract class BuildingSlot {
 
-    public LinkedList<ItemStack> stackConsumed;
+    public List<ItemStack> stackConsumed;
 
     public boolean reserved = false;
 
@@ -34,8 +35,8 @@ public abstract class BuildingSlot {
 
     public void postProcessing(IBuilderContext context) {}
 
-    public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
-        return new LinkedList<ItemStack>();
+    public List<ItemStack> getRequirements(IBuilderContext context) {
+        return new ArrayList<ItemStack>();
     }
 
     public abstract Vec3 getDestination();

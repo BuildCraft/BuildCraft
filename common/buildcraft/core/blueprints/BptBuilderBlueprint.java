@@ -626,7 +626,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
     protected void onRemoveBuildingSlotBlock(BuildingSlotBlock slot) {
         buildStageOccurences[slot.buildStage]--;
-        LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+        List<ItemStack> stacks = new ArrayList<ItemStack>();
 
         try {
             stacks = slot.getRequirements(context);
@@ -706,7 +706,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                     continue;
                 }
 
-                LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+                List<ItemStack> stacks = new ArrayList<ItemStack>();
 
                 try {
                     stacks = slot.getRequirements(context);

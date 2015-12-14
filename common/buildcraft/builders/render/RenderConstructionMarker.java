@@ -44,6 +44,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
             GlStateManager.enableCull();
             GlStateManager.enableLighting();
+            GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 

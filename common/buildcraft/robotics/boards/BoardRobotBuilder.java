@@ -5,6 +5,7 @@
 package buildcraft.robotics.boards;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +29,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
     private TileConstructionMarker markerToBuild;
     private BuildingSlot currentBuildingSlot;
-    private LinkedList<ItemStack> requirementsToLookFor;
+    private List<ItemStack> requirementsToLookFor;
     private int launchingDelay = 0;
 
     public BoardRobotBuilder(EntityRobotBase iRobot) {
@@ -102,8 +103,8 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
         }
 
         if (requirementsToLookFor.size() > 0) {
-            startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()), requirementsToLookFor
-                    .getFirst().stackSize));
+            startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(requirementsToLookFor.get(0)), requirementsToLookFor.get(
+                    0).stackSize));
             return;
         }
 
@@ -128,7 +129,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
     public void delegateAIEnded(AIRobot ai) {
         if (ai instanceof AIRobotGotoStationAndLoad) {
             if (ai.success()) {
-                requirementsToLookFor.removeFirst();
+                requirementsToLookFor.remove(0);
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }

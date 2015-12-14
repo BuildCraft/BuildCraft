@@ -161,25 +161,31 @@ public class BptBuilderOrdered implements IBptBuilder {
     }
 
     @Override
-    public void reserveSlot(BlockPos toReserve) {
-        BlockPos blueprintPos = toReserve.subtract(worldOffset);
-        if (reservedRequirements.containsKey(toReserve)) return;
-        BuildRequirement req = clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()];
-        if (req == null) return;
-        clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] = null;
-        reservedRequirements.put(toReserve, req);
+    public void reserveSlot(BuildingSlot toReserve) {
+        // TODO!
+        {
+            // BlockPos blueprintPos = toReserve.subtract(worldOffset);
+            // if (reservedRequirements.containsKey(toReserve)) return;
+            // BuildRequirement req = clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()];
+            // if (req == null) return;
+            // clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] = null;
+            // reservedRequirements.put(toReserve, req);
+        }
     }
 
     @Override
-    public void unreserveSlot(BlockPos used) {
-        BlockPos blueprintPos = used.subtract(worldOffset);
-        if (clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] != null) return;
-        BuildRequirement req = reservedRequirements.get(used);
-        if (req == null) return;
-        reservedRequirements.remove(used);
-        clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] = req;
-        // Reset the iterator so we redo the block that was unreserved
-        iterator.skipTo(blueprintPos);
+    public void unreserveSlot(BuildingSlot used) {
+        // TODO!
+        {
+            // BlockPos blueprintPos = used.subtract(worldOffset);
+            // if (clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] != null) return;
+            // BuildRequirement req = reservedRequirements.get(used);
+            // if (req == null) return;
+            // reservedRequirements.remove(used);
+            // clearRequirements[blueprintPos.getX()][blueprintPos.getY()][blueprintPos.getZ()] = req;
+            // // Reset the iterator so we redo the block that was unreserved
+            // iterator.skipTo(blueprintPos);
+        }
     }
 
     @Override

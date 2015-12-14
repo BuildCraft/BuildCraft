@@ -7,6 +7,7 @@ package buildcraft.silicon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -14,6 +15,11 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.silicon.render.RenderLaserTile;
 
 public class SiliconProxyClient extends SiliconProxy {
+    @Override
+    public void preInit() {
+        OBJLoader.instance.addDomain("buildcraftsilicon");
+    }
+
     @Override
     public void registerRenderers() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserTile());

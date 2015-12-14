@@ -4,8 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -155,11 +155,11 @@ public class BuildingSlotBlock extends BuildingSlot {
     }
 
     @Override
-    public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
+    public List<ItemStack> getRequirements(IBuilderContext context) {
         if (mode == Mode.ClearIfInvalid) {
-            return new LinkedList<ItemStack>();
+            return new ArrayList<ItemStack>();
         } else {
-            LinkedList<ItemStack> req = new LinkedList<ItemStack>();
+            List<ItemStack> req = new ArrayList<ItemStack>();
 
             getSchematic().getRequirementsForPlacement(context, req);
 
@@ -221,7 +221,7 @@ public class BuildingSlotBlock extends BuildingSlot {
             schematic = (SchematicBlockBase) SchematicFactory.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
         }
 
-        stackConsumed = new LinkedList<ItemStack>();
+        stackConsumed = new ArrayList<ItemStack>();
 
         NBTTagList nbtStacks = nbt.getTagList("stackConsumed", Constants.NBT.TAG_COMPOUND);
 

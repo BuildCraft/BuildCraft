@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
 import java.util.List;
@@ -20,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -49,6 +46,11 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
     @Override
     public boolean isFullCube() {
         return false;
+    }
+
+    @Override
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     @Override
@@ -111,15 +113,6 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 
     @Override
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
-        return new AxisAlignedBB(0, 0, 0, 1, 0.5, 1);
+        return new AxisAlignedBB(0, 0, 0, 1, 9 / 16d, 1);
     }
-
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public String[] getIconBlockNames() {
-    // return new String[] { "BuildCraft|Silicon:assemblyTable", "BuildCraft|Silicon:advancedCraftingTable",
-    // "BuildCraft|Silicon:integrationTable",
-    // "BuildCraft|Silicon:chargingTable", "BuildCraft|Silicon:programmingTable", "BuildCraft|Silicon:stampingTable" };
-    // }
-    // TODO (PASS 0): Give the laser table a block model
 }

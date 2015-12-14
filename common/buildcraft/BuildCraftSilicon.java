@@ -96,6 +96,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
         }
 
         EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
+
+        SiliconProxy.proxy.preInit();
     }
 
     @Mod.EventHandler

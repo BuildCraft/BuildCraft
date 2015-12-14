@@ -1,14 +1,10 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.schematics;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -28,11 +24,10 @@ public class SchematicFree extends SchematicBlock {
         // cancel requirements reading
     }
 
-	@Override
-	public LinkedList<ItemStack> getStacksToDisplay(
-			LinkedList<ItemStack> stackConsumed) {
-		LinkedList<ItemStack> displayStacks = new LinkedList<ItemStack>();
-		displayStacks.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
-		return displayStacks;
-	}
+    @Override
+    public List<ItemStack> getStacksToDisplay(List<ItemStack> stackConsumed) {
+        List<ItemStack> displayStacks = new ArrayList<ItemStack>();
+        displayStacks.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
+        return displayStacks;
+    }
 }
