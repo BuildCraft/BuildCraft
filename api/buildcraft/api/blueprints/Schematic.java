@@ -4,7 +4,6 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -127,7 +126,7 @@ public abstract class Schematic {
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {}
 
     /** Returns the amount of energy required to build this slot, depends on the stacks selected for the build. */
-    public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+    public int getEnergyRequirement(List<ItemStack> stacksUsed) {
         int result = 0;
 
         if (stacksUsed != null) {
@@ -140,8 +139,7 @@ public abstract class Schematic {
     }
 
     /** Returns the flying stacks to display in the builder animation. */
-    public LinkedList<ItemStack> getStacksToDisplay(LinkedList<ItemStack> stackConsumed) {
-
+    public List<ItemStack> getStacksToDisplay(List<ItemStack> stackConsumed) {
         return stackConsumed;
     }
 
@@ -181,19 +179,13 @@ public abstract class Schematic {
 
     /** Called on a block when the blueprint has finished to place all the blocks. This may be useful to adjust variable
      * depending on surrounding blocks that may not be there already at initial building. */
-    public void postProcessing(IBuilderContext context, BlockPos pos) {
-
-    }
+    public void postProcessing(IBuilderContext context, BlockPos pos) {}
 
     /** Saves this schematic to the blueprint NBT. */
-    public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-
-    }
+    public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {}
 
     /** Loads this schematic from the blueprint NBT. */
-    public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
-
-    }
+    public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {}
 
     /** Returns the number of cycles to wait after building this schematic. Tiles and entities typically require more
      * wait, around 5 cycles. */

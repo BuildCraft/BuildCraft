@@ -38,17 +38,20 @@ public interface IBptBuilder extends INBTLoadable_BC8<IBptBuilder> {
     void tick();
 
     /** Gets the next buildable slot. The slot may be null if it has not finished initialising yet (For example
-     * everything in-world correlates to what it is meant to be) or if {@link #hasFinishedBuilding()} returns true.
+     * everything in-world correlates to what it is meant to be) or if {@link #hasFinishedBuilding()} returns true. You
+     * MUST reserve the slot even if only a single builder actually builds the slot so that it is protected from a
+     * requirements change. If the returned slot is a {@link BuildingSlotPostProcess} (which has no requirements) you
+     * can immediately dismiss it.
      * 
      * @param closestToHint The block that (Ideally) would be returned by this method, however the closer the block that
      *            needs to built is the higher a chance it has of getting called. */
     BuildingSlot getNextSlot(BlockPos closestToHint);
 
     /** Reserves a particular slot, indicating that it should not be returned by {@link #getNextSlot(BlockPos)}. */
-    void reserveSlot(BlockPos toReserve);
+    void reserveSlot(BuildingSlot slot);
 
     /** Stops reserving a particular slot. The */
-    void unreserveSlot(BlockPos used);
+    void unreserveSlot(BuildingSlot slot);
 
     /** @return The number of slots that have been reserved, but not built. */
     int reservedSlotCount();

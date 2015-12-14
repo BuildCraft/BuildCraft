@@ -1,8 +1,14 @@
 package buildcraft.core.blueprints.iterator;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +19,7 @@ import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.builders.BuildingSlot;
+import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.BuildingSlotEntity;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.Utils.BoxIterator;
@@ -32,15 +39,14 @@ public class BptBuilderRandomAccess implements IBptBuilder {
     private BoxIterator iterator;
 
     // Building fields
-    /** A map of positions to requirements. This contains all unreserved unbuilt unseen requirements. The key is bound
-     * to the blueprint (SO this will be values from (0,0,0) to the blueprints size) */
-    private Map<BlockPos, BuildRequirement> cleanChanges;
-    /** A map of all positions that have been returned by {@link #getNextSlot(BlockPos)}. */
-    private Map<BlockPos, BuildRequirement> returnedChanges;
-
+    /** A map of positions to requirements. This contains all unreserved unbuilt requirements. */
+    private Map<BlockPos, BuildRequirement> neededRequirements = Maps.newHashMap();
     /** A map of all positions that have been reserved by {@link #reserveSlot(BuildingSlot)} */
-    private Map<BlockPos, BuildRequirement> reservedRequirements;
-    private Multimap<BlockPos, BuildingSlotEntity> entities;
+    private Map<BlockPos, BuildRequirement> reservedRequirements = Maps.newHashMap();
+    /** A map of all the positions that require post-processing. This map is built up as reservedRequirements is
+     * cleared. */
+    private Map<BlockPos, BuildingSlotPostProcess> postProcessing = Maps.newHashMap();
+    private Multimap<BlockPos, BuildingSlotEntity> entities = HashMultimap.create();
 
     /** @param blueprint The blueprint to build.
      * @param world The world to build it in
@@ -73,10 +79,18 @@ public class BptBuilderRandomAccess implements IBptBuilder {
     public void recheckBlock(BlockPos pos) {
         if (!worldOperatingBox.contains(pos)) return;
         BlockPos blueprintPos = pos.subtract(worldOffset);
-        SchematicBlockBase block = blueprint.get(blueprintPos);
-        if (block != null) {
-            if (block.isAlreadyBuilt(context, blueprintPos)) return;
-            if (changesNeeded.containsKey(pos)) return;
+        SchematicBlockBase schematic = blueprint.get(blueprintPos);
+        if (schematic != null) {
+            if (schematic.isAlreadyBuilt(context, blueprintPos)) return;
+            if (reservedRequirements.containsKey(pos)) return;
+            if (neededRequirements.containsKey(pos)) {
+                BuildRequirement req = neededRequirements.get(pos);
+                req.updateFor(schematic, context, pos);
+            } else {
+                BuildRequirement req = new BuildRequirement();
+                req.updateFor(schematic, context, pos);
+                neededRequirements.put(pos, req);
+            }
         }
     }
 
@@ -91,15 +105,16 @@ public class BptBuilderRandomAccess implements IBptBuilder {
             }
         } else if (!hasInitEntities) {
             // TODO
+            hasInitEntities = true;// TEMP!
         }
     }
 
     @Override
     public double iterateInit(long us) {
-        if (hasInitBlocks && hasInitEntities) return -1;
+        if (hasInit()) return -1;
         if (initPos == null || iterator == null) {
             initPos = worldOffset;
-            iterator = new BoxIterator(worldOffset, blueprint.size.subtract(Utils.POS_ONE), EnumAxisOrder.XZY.defaultOrder);
+            iterator = new BoxIterator(worldOffset, worldOffset.add(blueprint.size.subtract(Utils.POS_ONE)), EnumAxisOrder.XZY.defaultOrder);
         }
         long start = System.nanoTime() / 1000;
         do {
@@ -119,35 +134,71 @@ public class BptBuilderRandomAccess implements IBptBuilder {
 
     @Override
     public void tick() {
-        // TODO Auto-generated method stub
+        Set<BlockPos> finished = Sets.newHashSet();
+        for (Entry<BlockPos, BuildRequirement> entry : reservedRequirements.entrySet()) {
+            BuildRequirement req = entry.getValue();
+            req.tick();
+            if (req.hasBuilt()) {
+                finished.add(entry.getKey());
+            }
+        }
+        for (BlockPos pos : finished) {
+            BuildRequirement req = reservedRequirements.remove(pos);
+            postProcessing.put(pos, req.forPostProcess());
+        }
     }
 
     @Override
     public BuildingSlot getNextSlot(BlockPos closestToHint) {
-        // TODO Auto-generated method stub
+        if (!neededRequirements.isEmpty()) {
+            BlockPos closest = Utils.findClosestTo(neededRequirements.keySet(), closestToHint);
+            BuildRequirement req = neededRequirements.get(closest);
+            return req.getSlot();
+        }
+        if (reservedRequirements.isEmpty()) {
+            if (!postProcessing.isEmpty()) {
+                BlockPos closest = Utils.findClosestTo(postProcessing.keySet(), closestToHint);
+                BuildingSlotPostProcess post = postProcessing.remove(closest);
+                post.writeToWorld(context);
+                return post;
+            } else {
+                BlockPos closest = Utils.findClosestTo(entities.keySet(), closestToHint);
+                Collection<BuildingSlotEntity> lst = entities.get(closest);
+                if (lst.size() != 0) return lst.iterator().next();
+            }
+        }
         return null;
     }
 
     @Override
-    public void reserveSlot(BlockPos pos) {
-        // TODO Auto-generated method stub
+    public void reserveSlot(BuildingSlot slot) {
+        if (slot instanceof BuildingSlotBlock) {
+            BlockPos pos = ((BuildingSlotBlock) slot).pos;
+            if (reservedRequirements.containsValue(pos)) return;
+            if (!neededRequirements.containsKey(pos)) return;
+            BuildRequirement req = neededRequirements.remove(pos);
+            reservedRequirements.put(pos, req);
+        } else {/* TODO: Entities! */}
     }
 
     @Override
-    public void unreserveSlot(BlockPos used) {
-        // TODO Auto-generated method stub
-
+    public void unreserveSlot(BuildingSlot slot) {
+        if (slot instanceof BuildingSlotBlock) {
+            BlockPos used = ((BuildingSlotBlock) slot).pos;
+            if (neededRequirements.containsKey(used)) return;
+            if (!reservedRequirements.containsKey(used)) return;
+            BuildRequirement req = reservedRequirements.remove(used);
+            neededRequirements.put(used, req);
+        }
     }
 
     @Override
     public int reservedSlotCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return reservedRequirements.size();
     }
 
     @Override
     public boolean hasFinishedBuilding() {
-        // TODO Auto-generated method stub
-        return false;
+        return hasInit() && neededRequirements.isEmpty() && reservedRequirements.isEmpty() && postProcessing.isEmpty() && entities.isEmpty();
     }
 }

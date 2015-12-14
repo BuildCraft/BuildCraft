@@ -719,17 +719,26 @@ public final class Utils {
     public static BlockPos findClosestTo(Set<BlockPos> set, BlockPos hint, Random rand) {
         if (set.isEmpty()) return null;
         if (hint == null) return set.iterator().next();
+        int lowestY = Integer.MAX_VALUE;
         double closestDist = Double.MAX_VALUE;
         List<BlockPos> closest = Lists.newArrayList();
         for (BlockPos pos : set) {
-            double dist = pos.distanceSq(hint);
-            if (dist - 1 > closestDist) continue;
-            if (dist + 1 < closestDist) {
+            // The lower the Y value, the better
+            if (pos.getY() < lowestY) {
                 closest.clear();
                 closest.add(pos);
-                closestDist = dist;
+                closestDist = pos.distanceSq(hint);
+                lowestY = pos.getY();
             } else {
-                closest.add(pos);
+                double dist = pos.distanceSq(hint);
+                if (dist - 1 > closestDist) continue;
+                if (dist + 1 < closestDist) {
+                    closest.clear();
+                    closest.add(pos);
+                    closestDist = dist;
+                } else {
+                    closest.add(pos);
+                }
             }
         }
         if (closest.isEmpty()) return null;

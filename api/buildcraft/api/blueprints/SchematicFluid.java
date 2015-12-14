@@ -4,7 +4,7 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.BlockLiquid;
@@ -67,14 +67,14 @@ public class SchematicFluid extends SchematicBlock {
     }
 
     @Override
-    public LinkedList<ItemStack> getStacksToDisplay(LinkedList<ItemStack> stackConsumed) {
-        LinkedList<ItemStack> result = new LinkedList<ItemStack>();
+    public List<ItemStack> getStacksToDisplay(List<ItemStack> stackConsumed) {
+        List<ItemStack> result = new ArrayList<ItemStack>();
         result.add(fluidItem);
         return result;
     }
 
     @Override
-    public int getEnergyRequirement(LinkedList<ItemStack> stacksUsed) {
+    public int getEnergyRequirement(List<ItemStack> stacksUsed) {
         return 1 * BuilderAPI.BUILD_ENERGY;
     }
 
