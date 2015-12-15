@@ -34,11 +34,11 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
     private GatePluggableRenderer() {}
 
     private IModel modelMain() {
-        return getModel(mainLoc);
+        return getModelOBJ(mainLoc);
     }
 
     private IModel modelMaterial() {
-        return getModel(materialLoc);
+        return getModelOBJ(materialLoc);
     }
 
     @Override

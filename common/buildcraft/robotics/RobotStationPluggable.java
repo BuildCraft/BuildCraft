@@ -1,6 +1,7 @@
 package buildcraft.robotics;
 
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +22,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.robotics.render.RobotStationRenderer;
 
 import io.netty.buffer.ByteBuf;
 
@@ -29,7 +31,11 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
         None,
         Available,
         Reserved,
-        Linked
+        Linked;
+
+        public String getTextureSuffix() {
+            return name().toLowerCase(Locale.ROOT);
+        }
     }
 
     private EnumRobotStationState renderState;
@@ -119,7 +125,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public IPipePluggableStaticRenderer getRenderer() {
-        return null;// TODO! This!
+        return RobotStationRenderer.INSTANCE;
     }
 
     @Override

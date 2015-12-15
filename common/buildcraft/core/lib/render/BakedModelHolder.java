@@ -1,14 +1,17 @@
 package buildcraft.core.lib.render;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,7 +32,7 @@ public abstract class BakedModelHolder extends BuildCraftBakedModel {
         }
     }
 
-    protected IModel getModel(ResourceLocation loc) {
+    protected IModel getModelOBJ(ResourceLocation loc) {
         IModel model = models.get(loc);
         if (model == null) {
             try {

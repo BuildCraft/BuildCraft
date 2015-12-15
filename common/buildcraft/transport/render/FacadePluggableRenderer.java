@@ -36,11 +36,11 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
     }
 
     private IModel modelHollow() {
-        return getModel(hollowLoc);
+        return getModelOBJ(hollowLoc);
     }
 
     private IModel modelFilled() {
-        return getModel(filledLoc);
+        return getModelOBJ(filledLoc);
     }
 
     @Override

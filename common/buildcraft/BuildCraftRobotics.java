@@ -263,7 +263,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
         RobotManager.registerDockingStation(DockingStationPipe.class, "dockingStationPipe");
 
-        RoboticsProxy.proxy.registerRenderers();
+        RoboticsProxy.proxy.init();
 
         ListRegistry.itemClassAsType.add(ItemRobot.class);
     }
@@ -325,7 +325,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
         BoardRobotPicker.onServerStart();
 
-        MinecraftForge.EVENT_BUS.register(manager);
         MinecraftForge.EVENT_BUS.register(manager);
     }
 

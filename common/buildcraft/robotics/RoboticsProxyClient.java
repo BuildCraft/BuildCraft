@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import net.minecraft.client.Minecraft;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
@@ -14,13 +15,16 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
 import buildcraft.robotics.render.RenderRobot;
 import buildcraft.robotics.render.RenderZonePlan;
+import buildcraft.robotics.render.RobotStationRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {
-    public void registerRenderers() {
+    public void init() {
         RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BuildCraftRobotics.redstoneBoard, new RedstoneBoardMeshDefinition());
         // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
         ClientRegistry.bindTileEntitySpecialRenderer(TileZonePlan.class, new RenderZonePlan());
+
+        MinecraftForge.EVENT_BUS.register(RobotStationRenderer.INSTANCE);
 
         // TODO: Move robot station textures locally
         if (Loader.isModLoaded("BuildCraft|Transport")) {

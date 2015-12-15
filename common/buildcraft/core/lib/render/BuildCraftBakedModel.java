@@ -1,33 +1,38 @@
 package buildcraft.core.lib.render;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import javax.vecmath.*;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.model.IColoredBakedQuad;
 import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
-public abstract class BuildCraftBakedModel extends BakedModel {
+public class BuildCraftBakedModel extends BakedModel {
     public static final int U_MIN = 0;
     public static final int U_MAX = 1;
     public static final int V_MIN = 2;
@@ -45,6 +50,7 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     // Size of each array
     public static final int ARRAY_SIZE = 7;
 
+    /** Rotation map for gates */
     private static final Map<EnumFacing, Matrix4f> rotationMap;
 
     static {
@@ -249,6 +255,8 @@ public abstract class BuildCraftBakedModel extends BakedModel {
 
     public static BakedQuad transform(BakedQuad quad, Matrix4f matrix4f) {
         int[] data = quad.getVertexData();
+        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
+        data = Arrays.copyOf(data, 28);
         boolean colour = quad instanceof IColoredBakedQuad;
         for (int i = 0; i < 4; i++) {
             Point3f vec = new Point3f();
@@ -267,15 +275,24 @@ public abstract class BuildCraftBakedModel extends BakedModel {
 
     public static BakedQuad replaceShade(BakedQuad quad, int shade) {
         int[] data = quad.getVertexData();
+        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
+        data = Arrays.copyOf(data, 28);
         boolean colour = quad instanceof IColoredBakedQuad;
         for (int i = 0; i < 4; i++) {
-            data[i * 7 + SHADE] = shade;
+            data[i * ARRAY_SIZE + SHADE] = shade;
         }
         return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
     }
 
+    public static BakedQuad replaceTint(BakedQuad quad, int tint) {
+        boolean colour = quad instanceof IColoredBakedQuad;
+        return colour ? new ColoredBakedQuad(quad.getVertexData(), tint, quad.getFace()) : new BakedQuad(quad.getVertexData(), tint, quad.getFace());
+    }
+
     public static Vector3f normal(BakedQuad quad) {
         int[] data = quad.getVertexData();
+        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
+        data = Arrays.copyOf(data, 28);
         Point3f[] positions = new Point3f[3];
         for (int i = 0; i < 3; i++) {
             Point3f vec = new Point3f();
@@ -323,5 +340,43 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         int diffuseI = (int) (diffuse * 0xFF);
         int shade = 0xFF000000 + diffuseI * 0x010101;
         return replaceShade(quad, shade);
+    }
+
+    public static IBakedModel createModelItemLayer(TextureAtlasSprite sprite) {
+        return createModelItemLayer(Lists.newArrayList(sprite));
+    }
+
+    public static IBakedModel createModelItemLayer(final List<TextureAtlasSprite> sprites) {
+        ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
+        for (int i = 0; i < sprites.size(); i++) {
+            builder.add(new ResourceLocation("buildcraftbakedmodel:spriteindex" + i));
+        }
+
+        final ImmutableList<ResourceLocation> locations = builder.build();
+
+        ItemLayerModel model = new ItemLayerModel(locations);
+        IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, new Function<ResourceLocation, TextureAtlasSprite>() {
+            @Override
+            public TextureAtlasSprite apply(ResourceLocation input) {
+                return sprites.get(locations.indexOf(input));
+            }
+        });
+
+        Matrix4f itemToEdge = new Matrix4f();
+        itemToEdge.setIdentity();
+        itemToEdge.setRotation(new AxisAngle4f(0, 1, 0, (float) (Math.PI / 2)));
+
+        Matrix4f translation = new Matrix4f();
+        translation.setIdentity();
+        translation.setTranslation(new Vector3f(-15 / 32f, 0, 1));
+        translation.mul(itemToEdge);
+
+        List<BakedQuad> quads = Lists.newArrayList();
+        for (BakedQuad quad : baked.getGeneralQuads()) {
+            quad = transform(quad, translation);
+            quads.add(quad);
+        }
+
+        return new BuildCraftBakedModel(ImmutableList.copyOf(quads), sprites.get(0), DefaultVertexFormats.BLOCK);
     }
 }
