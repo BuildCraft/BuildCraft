@@ -31,6 +31,7 @@ import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
 
@@ -92,7 +93,7 @@ public class RobotStationRenderer extends BakedModelHolder implements IPipePlugg
 
         List<BakedQuad> quads = Lists.newArrayList();
         if (base != null) {
-            Matrix4f matrix = rotateTowardsFace(face);
+            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
             IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
                     new Function<ResourceLocation, TextureAtlasSprite>() {

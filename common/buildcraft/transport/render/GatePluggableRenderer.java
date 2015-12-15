@@ -24,6 +24,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GatePluggable;
 
 public final class GatePluggableRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer, IPipePluggableDynamicRenderer {
@@ -59,7 +60,7 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
 
         List<BakedQuad> quads = Lists.newArrayList();
         if (main != null && material != null) {
-            Matrix4f matrix = rotateTowardsFace(face);
+            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
             IFlexibleBakedModel baked = main.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
                     new Function<ResourceLocation, TextureAtlasSprite>() {

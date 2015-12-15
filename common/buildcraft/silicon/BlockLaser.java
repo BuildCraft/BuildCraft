@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
 import java.util.EnumMap;
@@ -15,44 +11,29 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.MatrixUtils;
 
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     private static final EnumMap<EnumFacing, AxisAlignedBB[]> boxesMap = Maps.newEnumMap(EnumFacing.class);
 
     static {
-        // FIXME: THIS IS WRONG FOR ALL NEGATIVE DIRECTIONS
         for (EnumFacing face : EnumFacing.values()) {
             AxisAlignedBB[] array = new AxisAlignedBB[2];
-            Vec3 min = Utils.VEC_ZERO;
-            Vec3 max = Utils.VEC_ONE;
-            if (face.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE) {
-                max = max.add(Utils.convert(face, -0.75));
-            } else {
-                min = min.add(Utils.convert(face, 0.75));
-            }
-            array[0] = new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
-
-            min = Utils.convertExcept(face, 5 / 16d).add(Utils.convert(face, 3 / 16d));
-            max = Utils.convertExcept(face, 11 / 16d).add(Utils.convert(face, 13 / 16d));
-
-            array[1] = new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
+            array[0] = new AxisAlignedBB(0, 0, 0, 1, 0.25, 1);
+            array[1] = new AxisAlignedBB(5 / 16.0, 4 / 16.0, 5 / 16.0, 11 / 16.0, 13 / 16.0, 11 / 16.0);
+            array = MatrixUtils.multiplyAll(array, MatrixUtils.rotateTowardsFace(EnumFacing.UP, face));
             boxesMap.put(face, array);
         }
     }

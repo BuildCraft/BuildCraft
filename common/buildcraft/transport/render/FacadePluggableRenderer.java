@@ -25,6 +25,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.utils.MatrixUtils;
 
 public final class FacadePluggableRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
@@ -69,7 +70,7 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
                             return sprite;
                         }
                     });
-            Matrix4f matrix = rotateTowardsFace(face);
+            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
             for (BakedQuad quad : baked.getGeneralQuads()) {
                 quad = transform(quad, matrix);
                 quad = replaceShade(quad, 0xFFFFFFFF);

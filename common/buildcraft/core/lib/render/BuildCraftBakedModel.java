@@ -2,7 +2,6 @@ package buildcraft.core.lib.render;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.vecmath.*;
 
@@ -21,7 +20,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
 
@@ -31,6 +29,8 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
+
+import buildcraft.core.lib.utils.MatrixUtils;
 
 public class BuildCraftBakedModel extends BakedModel {
     public static final int U_MIN = 0;
@@ -49,53 +49,6 @@ public class BuildCraftBakedModel extends BakedModel {
 
     // Size of each array
     public static final int ARRAY_SIZE = 7;
-
-    /** Rotation map for gates */
-    private static final Map<EnumFacing, Matrix4f> rotationMap;
-
-    static {
-        ImmutableMap.Builder<EnumFacing, Matrix4f> builder = ImmutableMap.builder();
-        for (EnumFacing face : EnumFacing.values()) {
-            Matrix4f mat = new Matrix4f();
-            mat.setIdentity();
-
-            if (face == EnumFacing.WEST) {
-                builder.put(face, mat);
-                continue;
-            }
-            mat.setTranslation(new Vector3f(0.5f, 0.5f, 0.5f));
-            Matrix4f m2 = new Matrix4f();
-            m2.setIdentity();
-
-            if (face.getAxis() == Axis.Y) {
-                AxisAngle4f axisAngle = new AxisAngle4f(0, 0, 1, (float) Math.PI * 0.5f * -face.getFrontOffsetY());
-                m2.setRotation(axisAngle);
-                mat.mul(m2);
-
-                m2.setIdentity();
-                m2.setRotation(new AxisAngle4f(1, 0, 0, (float) Math.PI * (1 + face.getFrontOffsetY() * 0.5f)));
-                mat.mul(m2);
-            } else {
-                int ang;
-                if (face == EnumFacing.EAST) ang = 2;
-                else if (face == EnumFacing.NORTH) ang = 3;
-                else ang = 1;
-                AxisAngle4f axisAngle = new AxisAngle4f(0, 1, 0, (float) Math.PI * 0.5f * ang);
-                m2.setRotation(axisAngle);
-                mat.mul(m2);
-            }
-
-            m2.setIdentity();
-            m2.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
-            mat.mul(m2);
-            builder.put(face, mat);
-        }
-        rotationMap = builder.build();
-    }
-
-    public static Matrix4f rotateTowardsFace(EnumFacing face) {
-        return new Matrix4f(rotationMap.get(face));
-    }
 
     @SuppressWarnings("deprecation")
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format,
