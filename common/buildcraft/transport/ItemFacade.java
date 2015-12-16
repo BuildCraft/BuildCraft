@@ -1,17 +1,15 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Strings;
+
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -131,7 +129,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         public static FacadeState[] readArray(NBTTagList list) {
             if (list == null) {
-                return null;
+                return new FacadeState[0];
             }
             final int length = list.tagCount();
             FacadeState[] states = new FacadeState[length];
@@ -139,6 +137,26 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 states[i] = new FacadeState(list.getCompoundTagAt(i));
             }
             return states;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder().append(hollow).append(transparent).append(state).append(wire).build();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            FacadeState other = (FacadeState) obj;
+            if (hollow != other.hollow) return false;
+            if (state == null) {
+                if (other.state != null) return false;
+            } else if (!state.equals(other.state)) return false;
+            if (transparent != other.transparent) return false;
+            if (wire != other.wire) return false;
+            return true;
         }
     }
 
@@ -150,13 +168,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     private static final Block NULL_BLOCK = null;
     private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
-	private static final Block[] PREVIEW_FACADES = new Block[]{
-			Blocks.planks, Blocks.stonebrick, Blocks.glass
-	};
-	private static int RANDOM_FACADE_ID = -1;
+    private static final Block[] PREVIEW_FACADES = new Block[] { Blocks.planks, Blocks.stonebrick, Blocks.glass };
+    private static int RANDOM_FACADE_ID = -1;
 
     public ItemFacade() {
-		super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
+        super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
 
         setHasSubtypes(true);
         setMaxDamage(0);
@@ -166,9 +182,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     public String getItemStackDisplayName(ItemStack itemstack) {
         switch (getFacadeType(itemstack)) {
             case Basic:
-				FacadeState[] states = getFacadeStates(itemstack);
-				String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
-				return super.getItemStackDisplayName(itemstack) + ": " + displayName;
+                FacadeState[] states = getFacadeStates(itemstack);
+                String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
+                return super.getItemStackDisplayName(itemstack) + ": " + displayName;
             case Phased:
                 return BCStringUtils.localize("item.FacadePhased.name");
             default:
@@ -227,30 +243,30 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		if (BuildCraftTransport.showAllFacadesCreative) {
-        for (ItemStack stack : allFacades) {
-            itemList.add(stack);
+        if (BuildCraftTransport.showAllFacadesCreative) {
+            for (ItemStack stack : allFacades) {
+                itemList.add(stack);
+            }
+            for (ItemStack stack : allHollowFacades) {
+                itemList.add(stack);
+            }
+        } else {
+            List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
+            for (Block b : PREVIEW_FACADES) {
+                if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
+                    ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));
+                    itemList.add(facade);
+                    FacadeState state = getFacadeStates(facade)[0];
+                    hollowFacades.add(getFacade(new FacadeState(state.state, state.wire, true)));
+                }
+            }
+            if (RANDOM_FACADE_ID < 0) {
+                RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
+            }
+            itemList.add(allFacades.get(RANDOM_FACADE_ID));
+            itemList.addAll(hollowFacades);
+            itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
         }
-        for (ItemStack stack : allHollowFacades) {
-            itemList.add(stack);
-        }
-		} else {
-			List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
-			for (Block b : PREVIEW_FACADES) {
-				if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
-					ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));
-					itemList.add(facade);
-					FacadeState state = getFacadeStates(facade)[0];
-					hollowFacades.add(getFacade(new FacadeState(state.state, state.wire, true)));
-				}
-			}
-			if (RANDOM_FACADE_ID < 0) {
-				RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
-			}
-			itemList.add(allFacades.get(RANDOM_FACADE_ID));
-			itemList.addAll(hollowFacades);
-			itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
-		}
     }
 
     public void initialize() {

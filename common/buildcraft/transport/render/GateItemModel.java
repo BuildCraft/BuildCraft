@@ -46,14 +46,26 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
         if (!map.containsKey(state)) {
             List<BakedQuad> quads = Lists.newArrayList();
             List<BakedQuad> bakedQuads = GatePluggableRenderer.INSTANCE.renderGate(state, DefaultVertexFormats.BLOCK);
-            Matrix4f matrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
+            Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
+
             Matrix4f matScale = new Matrix4f();
             matScale.setIdentity();
             matScale.setScale(2);
             matScale.setTranslation(new Vector3f(-0.5f, -0.5f, -0.5f));
-            matrix.mul(matScale);
+
+            Matrix4f translateToItem = new Matrix4f();
+            translateToItem.setIdentity();
+            translateToItem.setTranslation(new Vector3f(0, 0, -0.4f));
+
+            Matrix4f totalMatrix = new Matrix4f();
+            totalMatrix.setIdentity();
+
+            totalMatrix.mul(translateToItem);
+            totalMatrix.mul(matScale);
+            totalMatrix.mul(rotation);
+
             for (BakedQuad quad : bakedQuads) {
-                quad = transform(quad, matrix);
+                quad = transform(quad, totalMatrix);
                 quad = replaceShade(quad, 0xFFFFFFFF);
                 quads.add(quad);
             }

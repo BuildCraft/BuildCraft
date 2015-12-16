@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import java.util.List;
@@ -32,9 +28,9 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.BCStringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
@@ -87,13 +83,13 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
                 itemstack.stackSize--;
 
-            return true;
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
-		} else {
-			return false;
-		}
     }
 
     @SideOnly(Side.CLIENT)
@@ -116,13 +112,14 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
         super.addInformation(stack, player, list, advanced);
         if (stack.getItemDamage() >= 1) {
             int color = (stack.getItemDamage() - 1) & 15;
-            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + BCStringUtils.localize("color." + ColorUtils.getName(color)));
+            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + BCStringUtils.localize("color." + ColorUtils.getName(
+                    color)));
         }
-		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
+        Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
         List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
         list.addAll(toolTip);
     }
@@ -130,7 +127,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int renderPass) {
-        return renderPass;
+        return 0xFFFFFFFF;
     }
 
     @Override

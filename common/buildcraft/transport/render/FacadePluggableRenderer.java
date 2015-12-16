@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
@@ -19,28 +18,24 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IFacadePluggable;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
-import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.utils.MatrixUtils;
 
 public final class FacadePluggableRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
     private static final ResourceLocation filledLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_filled.obj");
-    public static final IPipePluggableStaticRenderer INSTANCE = new FacadePluggableRenderer();
+    public static final FacadePluggableRenderer INSTANCE = new FacadePluggableRenderer();
 
     private FacadePluggableRenderer() {
         // We only extend BuildCraftBakedModel to get the model functions
     }
 
-    private IModel modelHollow() {
+    public IModel modelHollow() {
         return getModelOBJ(hollowLoc);
     }
 
-    private IModel modelFilled() {
+    public IModel modelFilled() {
         return getModelOBJ(filledLoc);
     }
 
@@ -52,6 +47,8 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
 
         // Use the particle texture for the block. Not ideal, but we have NO way of getting the actual
         // texture of the block without hackery...
+        // TODO: use a model squisher to squash a baked model down. Maybe just remove facades? :P
+
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(facade
                 .getCurrentState());
 
@@ -63,13 +60,7 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
         }
 
         if (model != null) {
-            IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
-                    new Function<ResourceLocation, TextureAtlasSprite>() {
-                        @Override
-                        public TextureAtlasSprite apply(ResourceLocation input) {
-                            return sprite;
-                        }
-                    });
+            IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, singleTextureFunction(sprite));
             Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
             for (BakedQuad quad : baked.getGeneralQuads()) {
                 quad = transform(quad, matrix);
@@ -78,7 +69,6 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
                 quads.add(quad);
             }
         }
-
         return quads;
     }
 }

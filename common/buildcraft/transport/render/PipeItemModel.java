@@ -24,6 +24,11 @@ public class PipeItemModel extends BuildCraftBakedModel {
         super(quads, particle, DefaultVertexFormats.ITEM, getBlockTransforms());
     }
 
+    @Override
+    public boolean isGui3d() {
+        return true;
+    }
+
     public static PipeItemModel create(ItemPipe item, int colorIndex) {
         List<BakedQuad> quads = Lists.newArrayList();
 
@@ -43,6 +48,12 @@ public class PipeItemModel extends BuildCraftBakedModel {
 
         RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
 
+        for (int i = 0; i < quads.size(); i++) {
+            BakedQuad quad = quads.get(i);
+            quad = replaceTint(quad, 0xFFFFFFFF);
+            quads.set(i, quad);
+        }
+
         // Set up the colour
         if (colorIndex != 0) {
             radius = new Vec3(0.249, 0.499, 0.249);
@@ -56,7 +67,7 @@ public class PipeItemModel extends BuildCraftBakedModel {
             // Render it into a different list
             RenderResizableCuboid.INSTANCE.renderCubeStatic(coloredQuads, cuboid);
 
-            int quadColor = ColorUtils.getRGBColor(colorIndex - 1);
+            int quadColor = 0xFF000000 + ColorUtils.getRGBColor(colorIndex - 1);
             // Add all of the quads we just rendered to the main list
             for (BakedQuad coloredQuad : coloredQuads) {
                 // Change the colour to "quadColor"

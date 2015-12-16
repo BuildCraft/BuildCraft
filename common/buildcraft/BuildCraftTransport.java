@@ -67,6 +67,7 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.network.*;
 import buildcraft.transport.pipes.*;
 import buildcraft.transport.pluggable.*;
+import buildcraft.transport.render.FacadeItemModel;
 import buildcraft.transport.render.GateItemModel;
 import buildcraft.transport.render.PipeBlockModel;
 import buildcraft.transport.render.PipeItemModel;
@@ -730,5 +731,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         mrl = ModelHelper.getItemResourceLocation(pipeGate, "");
         event.modelRegistry.putObject(mrl, new GateItemModel());
+
+        mrl = ModelHelper.getItemResourceLocation(facadeItem, "");
+        event.modelRegistry.putObject(mrl, new FacadeItemModel());
     }
 }

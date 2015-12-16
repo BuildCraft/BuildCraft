@@ -69,12 +69,21 @@ public class BuildCraftBakedModel extends BakedModel {
         builder.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16),
                 TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)), new Vector3f(0.375f, 0.375f, 0.375f), null)));
 
-        // builder.put(TransformType.GUI, null);
+        // Gui
+        {
+            Matrix4f rotationMatrix = new Matrix4f();
+            rotationMatrix.setIdentity();
+            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
 
-        // translation = new Vector3f(1, 1, 0);
-        // trsr = new TRSRTransformation(translation, new Quat4f(0, 0, 0, 1), new Vector3f(1, 1, 1), new Quat4f(0, -90,
-        // 90, 1));
-        // builder.put(TransformType.GUI, trsr);
+            Matrix4f result = new Matrix4f();
+            result.setIdentity();
+            // Multiply by the last matrix transformation FIRST
+            result.mul(rotationMatrix);
+
+            TRSRTransformation trsr = new TRSRTransformation(result);
+
+            builder.put(TransformType.GUI, trsr);
+        }
 
         return builder.build();
     }
@@ -113,18 +122,18 @@ public class BuildCraftBakedModel extends BakedModel {
             Matrix4f result = new Matrix4f();
             result.setIdentity();
 
-            Matrix4f translationMatrix = new Matrix4f();
-            translationMatrix.setIdentity();
-            translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
+            // Matrix4f translationMatrix = new Matrix4f();
+            // translationMatrix.setIdentity();
+            // translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
 
             Matrix4f rotationMatrix = new Matrix4f();
             rotationMatrix.setIdentity();
-            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.UP);
+            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.NORTH);
 
             // Multiply by the last matrix transformation FIRST
             result.mul(trsrMatrix);
             result.mul(rotationMatrix);
-            result.mul(translationMatrix);
+            // result.mul(translationMatrix);
 
             trsr = new TRSRTransformation(result);
 
@@ -132,19 +141,19 @@ public class BuildCraftBakedModel extends BakedModel {
         }
         // First person
         {
-            Matrix4f translationMatrix = new Matrix4f();
-            translationMatrix.setIdentity();
-            translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
+            // Matrix4f translationMatrix = new Matrix4f();
+            // translationMatrix.setIdentity();
+            // translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
 
             Matrix4f rotationMatrix = new Matrix4f();
             rotationMatrix.setIdentity();
-            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.UP);
+            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
 
             Matrix4f result = new Matrix4f();
             result.setIdentity();
             // Multiply by the last matrix transformation FIRST
             result.mul(rotationMatrix);
-            result.mul(translationMatrix);
+            // result.mul(translationMatrix);
 
             TRSRTransformation trsr = new TRSRTransformation(result);
 

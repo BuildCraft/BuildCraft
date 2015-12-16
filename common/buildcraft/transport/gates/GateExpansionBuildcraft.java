@@ -67,6 +67,12 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
         return renderState;
     }
 
+    /** How far away from the model the expansion item layer model should render. Default value is half a pixel
+     * (0.5f) */
+    public float getPixelExtrusion() {
+        return 0.5f;
+    }
+
     @SideOnly(Side.CLIENT)
     private class RenderState extends BakedModelHolder implements IGateStaticRenderState {
         private final ResourceLocation identifier = new ResourceLocation("buildcrafttransport:gate/expansion/identifier");
@@ -80,7 +86,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
                 List<BakedQuad> transformedQuads = Lists.newArrayList();
                 Matrix4f translation = new Matrix4f();
                 translation.setIdentity();
-                translation.setTranslation(new Vector3f(1.5f / 16f, 0, 0));
+                translation.setTranslation(new Vector3f((2 - getPixelExtrusion()) / 16f, 0, 0));
 
                 for (BakedQuad quad : quads) {
                     quad = transform(quad, translation);
