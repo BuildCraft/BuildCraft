@@ -44,6 +44,7 @@ import buildcraft.core.network.EntityIds;
 import buildcraft.robotics.*;
 import buildcraft.robotics.ai.*;
 import buildcraft.robotics.boards.*;
+import buildcraft.robotics.item.ItemRobotGoggles;
 import buildcraft.robotics.map.MapManager;
 import buildcraft.robotics.render.RobotItemModel;
 import buildcraft.robotics.statements.*;
@@ -62,6 +63,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
     public static ItemRedstoneBoard redstoneBoard;
     public static Item robotItem;
     public static Item robotStationItem;
+    public static ItemRobotGoggles robotGoggles;
 
     public static ITriggerInternal triggerRobotSleep = new TriggerRobotSleep();
     public static ITriggerInternal triggerRobotInStation = new TriggerRobotInStation();
@@ -106,6 +108,10 @@ public class BuildCraftRobotics extends BuildCraftMod {
         redstoneBoard = new ItemRedstoneBoard();
         redstoneBoard.setUnlocalizedName("redstone_board");
         BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
+
+        robotGoggles = new ItemRobotGoggles();
+        robotGoggles.setUnlocalizedName("robot_goggles");
+        BCRegistry.INSTANCE.registerItem(robotGoggles, false);
 
         zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
         zonePlanBlock.setUnlocalizedName("zonePlan");

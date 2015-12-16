@@ -81,7 +81,7 @@ import buildcraft.transport.stripes.*;
 @Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
     /** Neptune pipes! */
-    public static final boolean NEPTUNE_TESTING = false;
+    public static final boolean NEPTUNE_TESTING = DefaultProps.VERSION.contains("@");
 
     @Mod.Instance("BuildCraft|Transport")
     public static BuildCraftTransport instance;
