@@ -1,15 +1,22 @@
 package buildcraft.transport.render;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.vecmath.Matrix4f;
 
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -17,14 +24,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
-import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GatePluggable;
 
 public final class GatePluggableRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer, IPipePluggableDynamicRenderer {
@@ -34,11 +40,11 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
 
     private GatePluggableRenderer() {}
 
-    private IModel modelMain() {
+    public IModel modelMain() {
         return getModelOBJ(mainLoc);
     }
 
-    private IModel modelMaterial() {
+    public IModel modelMaterial() {
         return getModelOBJ(materialLoc);
     }
 
@@ -52,46 +58,87 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
             EnumFacing face) {
         GatePluggable gate = (GatePluggable) pluggable;
 
-        final TextureAtlasSprite gateSprite = gate.isLit ? gate.logic.getIconLit() : gate.logic.getIconDark();
-        final TextureAtlasSprite matSprite = gate.material.getIconBlock();
+        GateState state = new GateState(gate.getMaterial(), gate.getLogic(), gate.isLit, getExtensions(gate));
+
+        List<BakedQuad> quads = Lists.newArrayList();
+        List<BakedQuad> bakedQuads = renderGate(state, DefaultVertexFormats.BLOCK);
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        for (BakedQuad quad : bakedQuads) {
+            quad = transform(quad, matrix);
+            quad = replaceShade(quad, 0xFFFFFFFF);
+            quad = applyDiffuse(quad);
+            quads.add(quad);
+        }
+
+        return quads;
+    }
+
+    private Collection<IGateStaticRenderState> getExtensions(GatePluggable pluggable) {
+        IGateExpansion[] expansions = pluggable.expansions;
+        Set<IGateStaticRenderState> states = Sets.newHashSet();
+        for (IGateExpansion exp : expansions)
+            states.add(exp.getRenderState());
+        return states;
+    }
+
+    public List<BakedQuad> renderGate(GateState gate, VertexFormat format) {
+        TextureAtlasSprite logicSprite = gate.on ? gate.logic.getIconLit() : gate.logic.getIconDark();
+        TextureAtlasSprite materialSprite = gate.material.getIconBlock();
 
         IModel main = modelMain();
         IModel material = modelMaterial();
 
         List<BakedQuad> quads = Lists.newArrayList();
-        if (main != null && material != null) {
-            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        IFlexibleBakedModel baked = main.bake(ModelRotation.X0_Y0, format, singleTextureFunction(logicSprite));
+        for (BakedQuad quad : baked.getGeneralQuads()) {
+            quad = replaceShade(quad, 0xFFFFFFFF);
+            quads.add(quad);
+        }
 
-            IFlexibleBakedModel baked = main.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
-                    new Function<ResourceLocation, TextureAtlasSprite>() {
-                        @Override
-                        public TextureAtlasSprite apply(ResourceLocation input) {
-                            return gateSprite;
-                        }
-                    });
+        if (materialSprite != null) {// Its null for redstone (As we don't render any material for redstoen gates)
+            baked = material.bake(ModelRotation.X0_Y0, format, singleTextureFunction(materialSprite));
             for (BakedQuad quad : baked.getGeneralQuads()) {
-                quad = transform(quad, matrix);
                 quad = replaceShade(quad, 0xFFFFFFFF);
-                quad = applyDiffuse(quad);
                 quads.add(quad);
             }
-
-            if (matSprite != null) {
-                baked = material.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, new Function<ResourceLocation, TextureAtlasSprite>() {
-                    @Override
-                    public TextureAtlasSprite apply(ResourceLocation input) {
-                        return matSprite;
-                    }
-                });
-                for (BakedQuad quad : baked.getGeneralQuads()) {
-                    quad = transform(quad, matrix);
-                    quad = replaceShade(quad, 0xFFFFFFFF);
-                    quad = applyDiffuse(quad);
-                    quads.add(quad);
-                }
-            }
+        }
+        for (IGateStaticRenderState ext : gate.extensionStates) {
+            quads.addAll(ext.bake(format));
         }
 
         return quads;
+    }
+
+    public static class GateState {
+        public final GateMaterial material;
+        public final GateLogic logic;
+        public final boolean on;
+        public final ImmutableSet<IGateStaticRenderState> extensionStates;
+
+        public GateState(GateMaterial material, GateLogic logic, boolean on, Collection<IGateStaticRenderState> extensionStates) {
+            this.material = material;
+            this.logic = logic;
+            this.on = on;
+            this.extensionStates = ImmutableSet.copyOf(extensionStates);
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder().append(material).append(logic).append(on).append(extensionStates).build();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            GateState other = (GateState) obj;
+            return new EqualsBuilder().append(material, other.material).append(logic, other.logic).append(on, other.on).append(extensionStates,
+                    other.extensionStates).build();
+        }
+    }
+
+    public interface IGateStaticRenderState {
+        List<BakedQuad> bake(VertexFormat format);
     }
 }

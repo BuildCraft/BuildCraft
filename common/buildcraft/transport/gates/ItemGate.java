@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
 import java.util.ArrayList;
@@ -22,10 +18,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
@@ -35,7 +33,6 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -204,7 +201,7 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean adv) {
         super.addInformation(stack, player, list, adv);
 
         list.add(BCStringUtils.localize("tip.gate.wires"));
@@ -219,29 +216,6 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
             }
         }
     }
-
-    // @Override
-    // public TextureAtlasSprite getIconIndex(ItemStack stack) {
-    // return getLogic(stack).getIconItem();
-    // }
-
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public void registerIcons(TextureMap iconRegister) {
-    // for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
-    // material.registerItemIcon(iconRegister);
-    // }
-    //
-    // for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
-    // logic.registerItemIcon(iconRegister);
-    // }
-    //
-    // for (IGateExpansion expansion : GateExpansions.getExpansions()) {
-    // expansion.registerItemOverlay(iconRegister);
-    // }
-    //
-    // StatementManager.registerIcons(iconRegister);
-    // }
 
     @Override
     public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {

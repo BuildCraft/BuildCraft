@@ -67,6 +67,7 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.network.*;
 import buildcraft.transport.pipes.*;
 import buildcraft.transport.pluggable.*;
+import buildcraft.transport.render.GateItemModel;
 import buildcraft.transport.render.PipeBlockModel;
 import buildcraft.transport.render.PipeItemModel;
 import buildcraft.transport.schematics.BptPipeFiltered;
@@ -98,7 +99,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static BlockPipe pipeBlock;
 
     public static Item pipeWaterproof;
-    public static Item pipeGate;
+    public static ItemGate pipeGate;
     public static Item pipeWire;
     public static Item plugItem;
     public static Item lensItem;
@@ -548,7 +549,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         for (IGateExpansion expansion : GateExpansions.getExpansions()) {
-            expansion.registerBlockOverlay(event.map);
+            expansion.textureStitch(event.map);
         }
 
         TriggerParameterSignal.registerIcons(event);
@@ -726,5 +727,8 @@ public class BuildCraftTransport extends BuildCraftMod {
                 event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe, i));
             }
         }
+
+        mrl = ModelHelper.getItemResourceLocation(pipeGate, "");
+        event.modelRegistry.putObject(mrl, new GateItemModel());
     }
 }

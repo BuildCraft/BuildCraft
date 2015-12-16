@@ -96,6 +96,63 @@ public class BuildCraftBakedModel extends BakedModel {
         return builder.build();
     }
 
+    @SuppressWarnings("deprecation")
+    /** Get the default transformations for models designed to be displayed on the SOUTH side of a pipe. */
+    protected static ImmutableMap<TransformType, TRSRTransformation> getPluggableTransforms() {
+        ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+        // Third person
+        {
+            // Magic Quat4f from ForgeBlockModelV1
+            Quat4f rotation = TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170));
+            TRSRTransformation trsr = new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16), rotation, new Vector3f(0.375f, 0.375f, 0.375f),
+                    null);
+            trsr = TRSRTransformation.blockCenterToCorner(trsr);
+
+            Matrix4f trsrMatrix = trsr.getMatrix();
+
+            Matrix4f result = new Matrix4f();
+            result.setIdentity();
+
+            Matrix4f translationMatrix = new Matrix4f();
+            translationMatrix.setIdentity();
+            translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
+
+            Matrix4f rotationMatrix = new Matrix4f();
+            rotationMatrix.setIdentity();
+            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.UP);
+
+            // Multiply by the last matrix transformation FIRST
+            result.mul(trsrMatrix);
+            result.mul(rotationMatrix);
+            result.mul(translationMatrix);
+
+            trsr = new TRSRTransformation(result);
+
+            builder.put(TransformType.THIRD_PERSON, trsr);
+        }
+        // First person
+        {
+            Matrix4f translationMatrix = new Matrix4f();
+            translationMatrix.setIdentity();
+            translationMatrix.setTranslation(new Vector3f(0, 0, -0.2f));
+
+            Matrix4f rotationMatrix = new Matrix4f();
+            rotationMatrix.setIdentity();
+            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.UP);
+
+            Matrix4f result = new Matrix4f();
+            result.setIdentity();
+            // Multiply by the last matrix transformation FIRST
+            result.mul(rotationMatrix);
+            result.mul(translationMatrix);
+
+            TRSRTransformation trsr = new TRSRTransformation(result);
+
+            builder.put(TransformType.FIRST_PERSON, trsr);
+        }
+        return builder.build();
+    }
+
     /** Returns an array of suitable arrays for baked quads of two sides. Use
      * {@link #bakeQuads(List, int[][], EnumFacing[])} to add them to the array. */
     public static int[][] getDoubleFrom(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float[] uvs) {
@@ -331,5 +388,14 @@ public class BuildCraftBakedModel extends BakedModel {
         }
 
         return new BuildCraftBakedModel(ImmutableList.copyOf(quads), sprites.get(0), DefaultVertexFormats.BLOCK);
+    }
+
+    public static Function<ResourceLocation, TextureAtlasSprite> singleTextureFunction(final TextureAtlasSprite sprite) {
+        return new Function<ResourceLocation, TextureAtlasSprite>() {
+            @Override
+            public TextureAtlasSprite apply(ResourceLocation input) {
+                return sprite;
+            }
+        };
     }
 }
