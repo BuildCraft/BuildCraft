@@ -80,6 +80,9 @@ import buildcraft.transport.stripes.*;
 
 @Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
+    /** Neptune pipes! */
+    public static final boolean NEPTUNE_TESTING = false;
+
     @Mod.Instance("BuildCraft|Transport")
     public static BuildCraftTransport instance;
 
@@ -186,7 +189,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         // TODO Fluid shader rendering
         // FluidShaderManager.INSTANCE.getRenderer(null);
         new BCCreativeTab("pipes");
-        new BCCreativeTab("neptune");
+        if (NEPTUNE_TESTING) new BCCreativeTab("neptune");
         if (Loader.isModLoaded("BuildCraft|Silicon")) {
             new BCCreativeTab("gates");
         }
@@ -355,8 +358,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         InterModComms.registerHandler(new IMCHandlerTransport());
-
-        TransportPipes_BC8.preInit();
+        if (NEPTUNE_TESTING) TransportPipes_BC8.preInit();
     }
 
     @Mod.EventHandler
@@ -398,7 +400,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         PipeEventBus.registerGlobalHandler(new LensFilterHandler());
 
         BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
-        BCCreativeTab.get("neptune").setIcon(new ItemStack(Items.cake));
+        if (NEPTUNE_TESTING) BCCreativeTab.get("neptune").setIcon(new ItemStack(Items.cake));
         if (showAllFacadesCreative) {
             BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block.getDefaultState()));
         }
@@ -464,7 +466,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         PipeConnectionAPI.registerConnection(Blocks.trapped_chest, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.hopper, smallerBlockConnection);
 
-        TransportPipes_BC8.init();
+        if (NEPTUNE_TESTING) TransportPipes_BC8.init();
     }
 
     @Mod.EventHandler
@@ -486,7 +488,7 @@ public class BuildCraftTransport extends BuildCraftMod {
             }
         }
 
-        TransportPipes_BC8.postInit();
+        if (NEPTUNE_TESTING) TransportPipes_BC8.postInit();
         ListRegistry.itemClassAsType.add(ItemPipe.class);
         ListRegistry.itemClassAsType.add(ItemGate.class);
         ListRegistry.itemClassAsType.add(ItemFacade.class);
