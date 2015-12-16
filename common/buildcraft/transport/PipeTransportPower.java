@@ -30,15 +30,7 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
-import buildcraft.transport.pipes.PipePowerCobblestone;
-import buildcraft.transport.pipes.PipePowerDiamond;
-import buildcraft.transport.pipes.PipePowerEmerald;
-import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerIron;
-import buildcraft.transport.pipes.PipePowerQuartz;
-import buildcraft.transport.pipes.PipePowerSandstone;
-import buildcraft.transport.pipes.PipePowerStone;
-import buildcraft.transport.pipes.PipePowerWood;
+import buildcraft.transport.pipes.*;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -237,6 +229,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
                                 powerAverage[j].push((int) Math.ceil(watts));
                                 powerAverage[i].push((int) Math.ceil(watts));
+
+                                displayFlow[i] = 1;
+                                displayFlow[j] = -1;
                             } else {
                                 int iWatts = (int) watts;
                                 if (ep instanceof IEnergyHandler) {
@@ -256,7 +251,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
                                 powerAverage[j].push(iWatts);
                                 powerAverage[i].push(iWatts);
+
+                                displayFlow[i] = 1;
+                                displayFlow[j] = -1;
                             }
+
                         }
                     }
                 }

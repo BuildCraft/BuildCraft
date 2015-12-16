@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemSkull;
@@ -85,10 +84,10 @@ public class RenderRobot extends Render<EntityRobot> {
         EntityRobot robot = (EntityRobot) entity;
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
-        
+
         float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, f1);
-        // GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
-        
+        GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
+
         if (robot.getStackInSlot(0) != null) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.125F, 0, -0.125F);
@@ -96,7 +95,7 @@ public class RenderRobot extends Render<EntityRobot> {
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
-        
+
         if (robot.getStackInSlot(1) != null) {
             GL11.glPushMatrix();
             GL11.glTranslatef(+0.125F, 0, -0.125F);
@@ -104,7 +103,7 @@ public class RenderRobot extends Render<EntityRobot> {
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
-        
+
         if (robot.getStackInSlot(2) != null) {
             GL11.glPushMatrix();
             GL11.glTranslatef(+0.125F, 0, +0.125F);
@@ -112,7 +111,7 @@ public class RenderRobot extends Render<EntityRobot> {
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
-        
+
         if (robot.getStackInSlot(3) != null) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-0.125F, 0, +0.125F);
@@ -120,25 +119,25 @@ public class RenderRobot extends Render<EntityRobot> {
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
-        
+
         if (robot.itemInUse != null) {
             GL11.glPushMatrix();
-        
+
             GL11.glRotatef(robot.itemAimPitch, 0, 0, 1);
-        
+
             if (robot.itemActive) {
                 long newDate = new Date().getTime();
                 robot.itemActiveStage = (robot.itemActiveStage + (newDate - robot.lastUpdateTime) / 10) % 45;
                 GL11.glRotatef(robot.itemActiveStage, 0, 0, 1);
                 robot.lastUpdateTime = newDate;
             }
-        
+
             GL11.glTranslatef(-0.4F, 0, 0);
             GL11.glRotatef(-45F + 180F, 0, 1, 0);
             GL11.glScalef(0.8F, 0.8F, 0.8F);
-        
+
             ItemStack itemstack1 = robot.itemInUse;
-        
+
             // if (itemstack1.getItem().requiresMultipleRenderPasses()) {
             // for (int k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k) {
             // RenderUtils.setGLColorFromInt(itemstack1.getItem().getColorFromItemStack(itemstack1, k));
@@ -149,17 +148,17 @@ public class RenderRobot extends Render<EntityRobot> {
             // this.renderManager.itemRenderer.renderItem(robot, itemstack1, 0);
             Minecraft.getMinecraft().getItemRenderer().renderItem(robot, itemstack1, TransformType.THIRD_PERSON);
             // }
-        
+
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
-        
+
         if (robot.laser.isVisible) {
             robot.laser.head = Utils.getVec(robot);
-        
+
             RenderLaser.doRenderLaser(robot.worldObj, renderManager.renderEngine, robot.laser, EntityLaser.LASER_YELLOW);
         }
-        
+
         if (robot.getTexture() != null) {
             renderManager.renderEngine.bindTexture(robot.getTexture());
             float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
@@ -169,11 +168,11 @@ public class RenderRobot extends Render<EntityRobot> {
             }
             doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isActive());
         }
-        
+
         for (ItemStack s : robot.getWearables()) {
             doRenderWearable(robot, renderManager.renderEngine, s);
         }
-        
+
         GL11.glPopMatrix();
     }
 
@@ -361,11 +360,11 @@ public class RenderRobot extends Render<EntityRobot> {
         if (wearable.hasTagCompound()) {
             NBTTagCompound nbt = wearable.getTagCompound();
             if (nbt.hasKey("Name")) {// FIXME: Come back to this!
-//                gameProfile = gameProfileCache.get(nbt.getString("Name"));
+                // gameProfile = gameProfileCache.get(nbt.getString("Name"));
             } else if (nbt.hasKey("SkullOwner", NBT.TAG_COMPOUND)) {
                 gameProfile = NBTUtil.readGameProfileFromNBT(nbt.getCompoundTag("SkullOwner"));
                 nbt.setString("Name", gameProfile.getName());
-//                gameProfileCache.put(gameProfile.getName(), gameProfile);
+                // gameProfileCache.put(gameProfile.getName(), gameProfile);
             }
         }
 
