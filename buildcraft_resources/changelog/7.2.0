@@ -1,5 +1,6 @@
 Improvements:
 
+* Ported to minecraft 1.8.8!
 * Core:
   * Blueprints and templates can be viewed with a right click!
     * Just never use a large blueprint! (Its very slow)
