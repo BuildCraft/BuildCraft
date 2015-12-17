@@ -21,7 +21,7 @@ public interface IPipeTile extends IInjectable {
 
     PipeType getPipeType();
 
-    World getWorld();
+    World getPipeWorld();
 
     /** True if the pipe is connected to the block/pipe in the specific direction
      * 

@@ -27,12 +27,11 @@ import net.minecraftforge.client.model.IColoredBakedQuad;
 import net.minecraftforge.client.model.IColoredBakedQuad.ColoredBakedQuad;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public class BuildCraftBakedModel extends BakedModel {
+public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int U_MIN = 0;
     public static final int U_MAX = 1;
     public static final int V_MIN = 2;
@@ -53,7 +52,7 @@ public class BuildCraftBakedModel extends BakedModel {
     @SuppressWarnings("deprecation")
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format,
             ImmutableMap<TransformType, TRSRTransformation> transforms) {
-        super(quads, particle, format, transforms);
+        super(format, quads, particle, transforms);
     }
 
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {

@@ -41,8 +41,8 @@ dependencies {
 
 minecraft {
     //1.8.8
-    mappings = "snapshot_20151213"
-    version = "1.8.8-11.15.0.1625-1.8.8"
+    mappings = "snapshot_20151217"
+    version = "1.8.8-11.15.0.1635-1.8.8"
     // 1.8
     // mappings = "stable_16"
     // version = "1.8-11.14.4.1577"

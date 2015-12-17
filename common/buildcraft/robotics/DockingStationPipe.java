@@ -61,7 +61,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
     public DockingStationPipe(IPipeTile iPipe, EnumFacing side) {
         super(((TileEntity) iPipe).getPos(), side);
         pipe = iPipe;
-        world = iPipe.getWorld();
+        world = iPipe.getPipeWorld();
     }
 
     public IPipeTile getPipe() {
@@ -113,7 +113,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
         int meta = ((TileEntity) getPipe()).getBlockMetadata();
         EnumFacing dir = EnumFacing.getFront(meta);
 
-        TileEntity connectedTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
+        TileEntity connectedTile = getPipe().getPipeWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
         if (connectedTile instanceof IInventory) {
             return InventoryWrapper.getWrappedInventory(connectedTile);
         }
@@ -148,7 +148,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
         int meta = ((TileEntity) getPipe()).getBlockMetadata();
         EnumFacing dir = EnumFacing.getFront(meta);
 
-        TileEntity connectedTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
+        TileEntity connectedTile = getPipe().getPipeWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
         if (connectedTile instanceof IFluidHandler) {
             return (IFluidHandler) connectedTile;
         }
@@ -192,7 +192,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
     @Override
     public IRequestProvider getRequestProvider() {
         for (EnumFacing dir : EnumFacing.VALUES) {
-            TileEntity nearbyTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
+            TileEntity nearbyTile = getPipe().getPipeWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
             if (nearbyTile instanceof IRequestProvider) {
                 return (IRequestProvider) nearbyTile;
             }

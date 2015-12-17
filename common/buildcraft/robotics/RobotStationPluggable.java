@@ -73,7 +73,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public void invalidate() {
-        if (station != null && station.getPipe() != null && !station.getPipe().getWorld().isRemote) {
+        if (station != null && station.getPipe() != null && !station.getPipe().getPipeWorld().isRemote) {
             RobotManager.registryProvider.getRegistry(station.world).removeStation(station);
             isValid = false;
         }
@@ -81,13 +81,13 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public void validate(IPipeTile pipe, EnumFacing direction) {
-        if (!isValid && !pipe.getWorld().isRemote) {
-            station = (DockingStationPipe) RobotManager.registryProvider.getRegistry(pipe.getWorld()).getStation(((TileEntity) pipe).getPos(),
+        if (!isValid && !pipe.getPipeWorld().isRemote) {
+            station = (DockingStationPipe) RobotManager.registryProvider.getRegistry(pipe.getPipeWorld()).getStation(((TileEntity) pipe).getPos(),
                     direction);
 
             if (station == null) {
                 station = new DockingStationPipe(pipe, direction);
-                RobotManager.registryProvider.getRegistry(pipe.getWorld()).registerStation(station);
+                RobotManager.registryProvider.getRegistry(pipe.getPipeWorld()).registerStation(station);
             }
 
             isValid = true;

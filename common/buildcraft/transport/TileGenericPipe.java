@@ -1281,4 +1281,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
         return ConnectOverride.DEFAULT;
     }
+
+    @Override
+    public World getPipeWorld() {
+        return getWorld();
+    }
 }
