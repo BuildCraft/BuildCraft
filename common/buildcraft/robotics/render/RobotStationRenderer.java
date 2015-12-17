@@ -82,7 +82,7 @@ public class RobotStationRenderer extends BakedModelHolder implements IPipePlugg
     }
 
     @Override
-    public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
         RobotStationPluggable station = (RobotStationPluggable) pluggable;
 

@@ -25,7 +25,7 @@ public class PlugPluggable extends PipePluggable {
         private float zFightOffset = 1 / 4096.0F;
 
         @Override
-        public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+        public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
                 EnumFacing face) {
             // TODO Auto-generated method stub
             return null;

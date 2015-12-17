@@ -38,7 +38,7 @@ public class LensPluggable extends PipePluggable {
         }
 
         @Override
-        public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+        public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
                 EnumFacing face) {
             return null;
         }

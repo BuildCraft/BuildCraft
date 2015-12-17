@@ -54,7 +54,7 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
     }
 
     @Override
-    public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
         GatePluggable gate = (GatePluggable) pluggable;
 

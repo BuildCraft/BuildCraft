@@ -127,7 +127,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int renderPass) {
-        return 0xFFFFFFFF;
+        return renderPass;
     }
 
     @Override

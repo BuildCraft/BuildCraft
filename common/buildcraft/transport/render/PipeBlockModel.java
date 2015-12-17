@@ -23,6 +23,7 @@ import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer.Translucent;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -178,7 +179,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             if (plug != null) {
                 IPipePluggableStaticRenderer plugRender = plug.getRenderer();
                 if (plugRender != null) {
-                    List<BakedQuad> list = plugRender.renderStaticPluggable(render, pluggable, pipe, plug, face);
+                    List<BakedQuad> list = plugRender.bakeCutout(render, pluggable, pipe, plug, face);
                     if (list != null) {
                         quads.addAll(list);
                     }
@@ -208,6 +209,21 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 BakedQuad shapeQuad = quads.get(i);
                 BakedQuad colouredQuad = new BakedQuad(shapeQuad.getVertexData(), colour, shapeQuad.getFace());
                 quads.set(i, colouredQuad);
+            }
+        }
+
+        // Pluggables
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable plug = pluggable.getPluggables()[face.ordinal()];
+            if (plug != null) {
+                IPipePluggableStaticRenderer plugRender = plug.getRenderer();
+                if (plugRender instanceof IPipePluggableStaticRenderer.Translucent) {
+                    Translucent baker = (Translucent) plugRender;
+                    List<BakedQuad> list = baker.bakeTranslucent(render, pluggable, pipe, plug, face);
+                    if (list != null) {
+                        quads.addAll(list);
+                    }
+                }
             }
         }
     }

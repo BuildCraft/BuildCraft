@@ -40,7 +40,7 @@ public final class FacadePluggableRenderer extends BakedModelHolder implements I
     }
 
     @Override
-    public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
         List<BakedQuad> quads = Lists.newArrayList();
         IFacadePluggable facade = (IFacadePluggable) pluggable;

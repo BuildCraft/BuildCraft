@@ -21,7 +21,7 @@ import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {
-        super(quads, particle, DefaultVertexFormats.ITEM, getBlockTransforms());
+        super(quads, particle, DefaultVertexFormats.BLOCK, getBlockTransforms());
     }
 
     @Override
@@ -30,8 +30,6 @@ public class PipeItemModel extends BuildCraftBakedModel {
     }
 
     public static PipeItemModel create(ItemPipe item, int colorIndex) {
-        List<BakedQuad> quads = Lists.newArrayList();
-
         TextureAtlasSprite sprite = item.getSprite();
         if (sprite == null) {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
@@ -46,13 +44,18 @@ public class PipeItemModel extends BuildCraftBakedModel {
         cuboid.setPosition(center.subtract(radius));
         cuboid.setSize(Utils.multiply(radius, 2));
 
-        RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
+        List<BakedQuad> unprocessed = Lists.newArrayList();
+        List<BakedQuad> quads = Lists.newArrayList();
 
-        for (int i = 0; i < quads.size(); i++) {
-            BakedQuad quad = quads.get(i);
-            quad = replaceTint(quad, 0xFFFFFFFF);
-            quads.set(i, quad);
+        RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
+
+        for (BakedQuad quad : unprocessed) {
+            quad = replaceShade(quad, 0xFFFFFF);
+            quad = replaceTint(quad, 0xFFFFFF);// For some reason all pipes are dark. Hmmm.
+            quads.add(quad);
         }
+
+        unprocessed.clear();
 
         // Set up the colour
         if (colorIndex != 0) {
@@ -63,16 +66,17 @@ public class PipeItemModel extends BuildCraftBakedModel {
             cuboid.setPosition(center.subtract(radius));
             cuboid.setSize(Utils.multiply(radius, 2));
 
-            List<BakedQuad> coloredQuads = Lists.newArrayList();
             // Render it into a different list
-            RenderResizableCuboid.INSTANCE.renderCubeStatic(coloredQuads, cuboid);
+            RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
 
-            int quadColor = 0xFF000000 + ColorUtils.getRGBColor(colorIndex - 1);
+            int quadColor = ColorUtils.getRGBColor(colorIndex - 1);
             // Add all of the quads we just rendered to the main list
-            for (BakedQuad coloredQuad : coloredQuads) {
-                // Change the colour to "quadColor"
-                quads.add(new BakedQuad(coloredQuad.getVertexData(), quadColor, coloredQuad.getFace()));
+            for (BakedQuad quad : unprocessed) {
+                quad = replaceShade(quad, 0xFFFFFF);
+                quad = replaceTint(quad, quadColor);
+                quads.add(quad);
             }
+            unprocessed.clear();
         }
 
         return new PipeItemModel(ImmutableList.copyOf(quads), sprite);

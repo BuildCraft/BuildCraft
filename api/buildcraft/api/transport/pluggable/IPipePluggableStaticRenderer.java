@@ -8,6 +8,12 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.IPipe;
 
 public interface IPipePluggableStaticRenderer {
-    List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face);
+    List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable, EnumFacing face);
+
+    /** Use this if you need to render in the translucent pass. */
+    public interface Translucent extends IPipePluggableStaticRenderer {
+        /** For performance return a list that is as small as possible */
+        List<BakedQuad> bakeTranslucent(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+                EnumFacing face);
+    }
 }
