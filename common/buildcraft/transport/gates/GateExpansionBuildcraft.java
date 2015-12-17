@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.transport.render.GatePluggableRenderer.IGateStaticRenderState;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 

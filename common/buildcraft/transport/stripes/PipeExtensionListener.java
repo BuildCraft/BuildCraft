@@ -126,7 +126,7 @@ public class PipeExtensionListener {
                 }
 
                 if (!retract && !failedPlacement) {
-                    TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.pos);
+                    TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(targetPos);
                     newPipeTile.update();
                     pipeTile.scheduleNeighborChange();
                     if (pipeTile.getPipe() != null) {

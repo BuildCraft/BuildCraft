@@ -25,6 +25,7 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.render.BakedModelHolder;
@@ -136,9 +137,5 @@ public final class GatePluggableRenderer extends BakedModelHolder implements IPi
             return new EqualsBuilder().append(material, other.material).append(logic, other.logic).append(on, other.on).append(extensionStates,
                     other.extensionStates).build();
         }
-    }
-
-    public interface IGateStaticRenderState {
-        List<BakedQuad> bake(VertexFormat format);
     }
 }

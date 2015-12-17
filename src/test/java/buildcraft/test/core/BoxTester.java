@@ -29,52 +29,52 @@ public class BoxTester {
     private static final BlockPos ROTATED_MIN = new BlockPos(1, 2, 3);
     private static final BlockPos ROTATED_MAX = new BlockPos(4, 5, 6);
 
-    @Test
+//    @Test
     public void testExtendToEncompassBoth() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testSetMin() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testSetMax() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testInitializeBox() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testInitializeNBTTagCompound() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testInitializeCenterBlockPosInt() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testInitializeCenterBlockPosVec3i() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testGetBlocksInArea() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testExpand() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testContract() {
         fail("Not yet implemented");
     }
@@ -103,8 +103,8 @@ public class BoxTester {
 
     public static final BlockPos[] containsBlockPosTests = {};
 
-    @Test
-    @Theory
+//    @Test
+//    @Theory
     public void testContainsBlockPos() {
         fail("Not yet implemented");
     }
@@ -149,42 +149,42 @@ public class BoxTester {
         assertEquals(ROTATED_MAX, rotMax);
     }
 
-    @Test
+//    @Test
     public void testExtendToEncompassIBox() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testGetBoundingBox() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testExtendToEncompassVec3() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testExtendToEncompassBlockPos() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testDistanceTo() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testDistanceToSquared() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testClosestInsideTo() {
         fail("Not yet implemented");
     }
 
-    @Test
+//    @Test
     public void testGetRandomBlockPos() {
         fail("Not yet implemented");
     }

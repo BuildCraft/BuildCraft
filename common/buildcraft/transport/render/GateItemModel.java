@@ -22,13 +22,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.ISmartItemModel;
 
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.render.GatePluggableRenderer.GateState;
-import buildcraft.transport.render.GatePluggableRenderer.IGateStaticRenderState;
 
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
     private static Map<GateState, GateItemModel> map = Maps.newHashMap();

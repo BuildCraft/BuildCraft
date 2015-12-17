@@ -4,13 +4,15 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.gates;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.transport.render.GatePluggableRenderer.IGateStaticRenderState;
 
 public interface IGateExpansion {
 
@@ -25,4 +27,8 @@ public interface IGateExpansion {
 
     @SideOnly(Side.CLIENT)
     IGateStaticRenderState getRenderState();
+
+    public interface IGateStaticRenderState {
+        List<BakedQuad> bake(VertexFormat format);
+    }
 }

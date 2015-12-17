@@ -24,10 +24,10 @@ public class PipeItemModel extends BuildCraftBakedModel {
         super(quads, particle, DefaultVertexFormats.BLOCK, getBlockTransforms());
     }
 
-    @Override
-    public boolean isGui3d() {
-        return true;
-    }
+//    @Override
+//    public boolean isGui3d() {
+//        return true;
+//    }
 
     public static PipeItemModel create(ItemPipe item, int colorIndex) {
         TextureAtlasSprite sprite = item.getSprite();
