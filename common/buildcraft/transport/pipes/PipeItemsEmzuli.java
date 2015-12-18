@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
@@ -72,8 +73,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
         }
 
         if (!container.getWorld().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(),
-                    container.getPos().getZ());
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.getPos().getX(), container
+                    .getPos().getY(), container.getPos().getZ());
         }
 
         return true;
@@ -237,5 +238,10 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
     private ItemStack getCurrentFilter() {
         return filters.getStackInSlot(currentFilter % filterCount);
+    }
+
+    @Override
+    public World getWorldBC() {
+        return getWorld();
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
@@ -86,7 +87,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
         }
 
         if (!container.getWorld().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.getPos().getX(), container
+                    .getPos().getY(), container.getPos().getZ());
         }
 
         return true;
@@ -268,5 +270,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     @Override
     public void readGuiData(ByteBuf data, EntityPlayer sender) {
         settings.setFilterMode(FilterMode.values()[data.readByte()]);
+    }
+
+    @Override
+    public World getWorldBC() {
+        return getWorld();
     }
 }

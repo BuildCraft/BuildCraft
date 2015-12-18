@@ -1112,7 +1112,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public PipePluggable getPipePluggable(EnumFacing side) {
-        if (side == null || side == null) {
+        if (side == null) {
             return null;
         }
 
@@ -1121,7 +1121,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public boolean hasPipePluggable(EnumFacing side) {
-        if (side == null || side == null) {
+        if (side == null) {
             return false;
         }
 
@@ -1130,11 +1130,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     public Block getBlock() {
         return getBlockType();
-    }
-
-    @Override
-    public World getWorld() {
-        return worldObj;
     }
 
     public boolean isUseableByPlayer(EntityPlayer player) {
@@ -1283,7 +1278,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public World getPipeWorld() {
+    public World getWorldBC() {
         return getWorld();
     }
 }

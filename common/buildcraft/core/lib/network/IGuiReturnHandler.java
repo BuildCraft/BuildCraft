@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import io.netty.buffer.ByteBuf;
 
 public interface IGuiReturnHandler {
-    World getWorld();
+    World getWorldBC();
 
     void writeGuiData(ByteBuf data);
 

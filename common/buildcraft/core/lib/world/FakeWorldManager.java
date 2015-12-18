@@ -10,12 +10,7 @@ import org.lwjgl.util.glu.Project;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -185,7 +180,6 @@ public class FakeWorldManager {
 
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
 
-        @SuppressWarnings("deprecation")
         IBakedModel model = dispatcher.getBlockModelShapes().getModelForState(actualState);
 
         if (model == null) {

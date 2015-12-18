@@ -163,13 +163,13 @@ public class PipeRendererFluids {
 
             if (sides) {
                 float amount = renderData.amount[6] / (float) trans.getCapacity();
-                if (amount > 0) {
-                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
-                    if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
-                    GL11.glPushMatrix();
-                    GL11.glCallList(dfl.centerFaces[stage]);
-                    GL11.glPopMatrix();
-                }
+//                if (amount > 0) {
+//                    int stage = (int) (amount * (DISPLAY_STAGES - 1));
+//                    if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
+//                    GL11.glPushMatrix();
+//                    GL11.glCallList(dfl.centerFaces[stage]);
+//                    GL11.glPopMatrix();
+//                }
             }
         }
 

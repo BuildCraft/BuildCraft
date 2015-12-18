@@ -707,7 +707,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public void renderOverlay(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (!mc.gameSettings.showDebugInfo) return;
-        if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo) {
+        if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.thePlayer.capabilities.isCreativeMode) {
             return;
         }
         MovingObjectPosition object = mc.objectMouseOver;

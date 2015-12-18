@@ -1,8 +1,5 @@
 package buildcraft.transport.pluggable;
 
-import java.util.List;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,11 +7,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.TravelingItem;
@@ -28,21 +22,6 @@ public class LensPluggable extends PipePluggable {
     public boolean isFilter;
     protected IPipeTile container;
     private EnumFacing side;
-
-    private static final class LensPluggableRenderer implements IPipePluggableStaticRenderer {
-        public static final IPipePluggableStaticRenderer INSTANCE = new LensPluggableRenderer();
-        private static final float zFightOffset = 1 / 4096.0F;
-
-        private LensPluggableRenderer() {
-
-        }
-
-        @Override
-        public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-                EnumFacing face) {
-            return null;
-        }
-    }
 
     public LensPluggable() {
 
@@ -103,7 +82,7 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public IPipePluggableStaticRenderer getRenderer() {
-        return LensPluggableRenderer.INSTANCE;
+        return LensPluggableModel.INSTANCE;
     }
 
     @Override
@@ -156,5 +135,9 @@ public class LensPluggable extends PipePluggable {
         if (!isFilter) {
             color(event.item);
         }
+    }
+
+    public EnumDyeColor getColour() {
+        return EnumDyeColor.byDyeDamage(color);
     }
 }
