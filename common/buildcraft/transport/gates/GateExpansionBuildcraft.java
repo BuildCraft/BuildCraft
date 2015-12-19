@@ -66,10 +66,9 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
         return renderState;
     }
 
-    /** How far away from the model the expansion item layer model should render. Default value is half a pixel
-     * (0.5f) */
+    /** How far away from the model the expansion item layer model should render. Default value is 0.02f */
     public float getPixelExtrusion() {
-        return 0.5f;
+        return 0.03f;
     }
 
     @SideOnly(Side.CLIENT)

@@ -29,7 +29,7 @@ public final class GateExpansionLightSensor extends GateExpansionBuildcraft impl
     @Override
     public float getPixelExtrusion() {
         /* Otherwise this conflicts with the redstone fader and autarchic pulsar */
-        return 0.25f;
+        return 0.02f;
     }
 
     private class GateExpansionControllerLightSensor extends GateExpansionController {
