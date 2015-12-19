@@ -233,18 +233,14 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
         box.kind = Kind.STRIPES;
 
-        for (int x = pos.getX() - 1; x <= pos.getX() + 1; ++x) {
-            for (int y = pos.getY() - 1; y <= pos.getY() + 1; ++y) {
-                for (int z = pos.getZ() - 1; z <= pos.getZ() + 1; ++z) {
-                    TileEntity tile = worldObj.getTileEntity(pos);
+        for (EnumFacing face : EnumFacing.values()) {
+            TileEntity tile = worldObj.getTileEntity(pos.offset(face));
 
-                    if (tile instanceof IPathProvider) {
-                        path = ((IPathProvider) tile).getPath();
-                        ((IPathProvider) tile).removeFromWorld();
+            if (tile instanceof IPathProvider) {
+                path = ((IPathProvider) tile).getPath();
+                ((IPathProvider) tile).removeFromWorld();
 
-                        break;
-                    }
-                }
+                break;
             }
         }
 
