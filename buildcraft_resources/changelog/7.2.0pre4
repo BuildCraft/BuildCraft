@@ -1,0 +1,6 @@
+Bugfixes:
+
+* Transport:
+  * Fix fluid pipes not rendering properly
+* Energy:
+  * Fix unlocalised engine names

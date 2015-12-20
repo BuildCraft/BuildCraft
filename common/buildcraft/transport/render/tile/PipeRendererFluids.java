@@ -125,9 +125,10 @@ public class PipeRendererFluids {
                 if (amount > 0) {
                     int stage = (int) (amount * (DISPLAY_STAGES - 1));
                     if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
-                    GL11.glPushMatrix();
-                    GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
-                    GL11.glPopMatrix();
+                    sides = true;
+                     GL11.glPushMatrix();
+                     GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
+                     GL11.glPopMatrix();
                 }
                 //
                 // boolean connected = renderData.amount[connection.ordinal()] > 0;
@@ -270,7 +271,7 @@ public class PipeRendererFluids {
             vertical[i] = GLAllocation.generateDisplayLists(1);
             GL11.glNewList(vertical[i], GL11.GL_COMPILE);
 
-            double width = 0.5 * ((i + 1) / (float) (DISPLAY_STAGES));
+            double width = ((i + 1) / (float) (DISPLAY_STAGES));
 
             GL11.glPushMatrix();
             GL11.glTranslated(0.5, 0.5, 0.5);

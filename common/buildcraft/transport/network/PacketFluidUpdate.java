@@ -54,6 +54,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
             fluidID = data.readShort();
             if (fluidID != 0) {
                 color = data.readInt();
+                byte flags = data.readByte();
+                // what?
             }
         }
 
