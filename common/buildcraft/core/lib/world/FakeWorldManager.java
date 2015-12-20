@@ -187,6 +187,10 @@ public class FakeWorldManager {
         }
 
         boolean checkSides = pos.getY() > 0;
-        dispatcher.getBlockModelRenderer().renderModelStandard(world, model, block, pos, renderer, checkSides);
+        try {
+            dispatcher.getBlockModelRenderer().renderModelStandard(world, model, block, pos, renderer, checkSides);
+        } catch (Throwable t) {
+            throw new IllegalArgumentException("The model from the block " + block + " was invalid for layer " + layer, t);
+        }
     }
 }

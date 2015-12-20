@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import buildcraft.transport.render.shader.FluidShaderManager;
+import buildcraft.transport.pluggable.LensPluggableModel;
 import buildcraft.transport.render.tile.PipeRendererTESR;
 
 public class TransportProxyClient extends TransportProxy {
@@ -32,7 +32,8 @@ public class TransportProxyClient extends TransportProxy {
 
     @Override
     public void registerRenderers() {
-        MinecraftForge.EVENT_BUS.register(FluidShaderManager.INSTANCE);
+        // MinecraftForge.EVENT_BUS.register(FluidShaderManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(LensPluggableModel.INSTANCE);
     }
 
     @Override

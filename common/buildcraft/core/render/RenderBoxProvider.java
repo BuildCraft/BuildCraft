@@ -22,6 +22,12 @@ public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRe
     public RenderBoxProvider() {}
 
     @Override
+    public boolean func_181055_a() {
+        // Should be called "Ignore chunk checks" or something like that
+        return true;
+    }
+
+    @Override
     public void renderTileEntityAt(T tileentity, double x, double y, double z, float f, int anArgument) {
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);

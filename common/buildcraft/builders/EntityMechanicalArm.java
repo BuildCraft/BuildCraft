@@ -21,7 +21,8 @@ public class EntityMechanicalArm extends Entity {
     private double armSizeZ;
     private Vec3 root, head;
 
-    private EntityResizableCuboid xArm, yArm, zArm, headEntity;
+    /** Public for the renderer */
+    public EntityResizableCuboid xArm, yArm, zArm, headEntity;
 
     public EntityMechanicalArm(World world) {
         super(world);
@@ -63,10 +64,10 @@ public class EntityMechanicalArm extends Entity {
         headEntity = BuilderProxy.proxy.newDrillHead(world, 0, 0, 0, 0.2, 1, 0.2);
         headEntity.shadowSize = 1.0F;
 
-        world.spawnEntityInWorld(xArm);
-        world.spawnEntityInWorld(yArm);
-        world.spawnEntityInWorld(zArm);
-        world.spawnEntityInWorld(headEntity);
+        // world.spawnEntityInWorld(xArm);
+        // world.spawnEntityInWorld(yArm);
+        // world.spawnEntityInWorld(zArm);
+        // world.spawnEntityInWorld(headEntity);
     }
 
     @Override
@@ -115,6 +116,10 @@ public class EntityMechanicalArm extends Entity {
             setDead();
             return;
         }
+        xArm.onUpdate();
+        yArm.onUpdate();
+        zArm.onUpdate();
+        headEntity.onUpdate();
     }
 
     public void updatePosition() {

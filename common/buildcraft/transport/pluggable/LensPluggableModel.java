@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -36,15 +35,11 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
 
     private static final ResourceLocation cutoutLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_cutout.obj");
     private static final ResourceLocation translucentLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_translucent.obj");
-    private static final ResourceLocation cutoutSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens_overlay");
-    private static final ResourceLocation translucentSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens");
+    private static final ResourceLocation cutoutSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens");
+    private static final ResourceLocation translucentSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/overlay_lens");
     private static TextureAtlasSprite spriteCutout, spriteTranslucent;
 
     private LensPluggableModel() {}
-
-    public LensPluggableModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
-        super(quads, particle, format, getPluggableTransforms());
-    }
 
     public IModel modelCutout() {
         return getModelOBJ(cutoutLoc);

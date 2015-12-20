@@ -1,0 +1,10 @@
+Bugfixes:
+
+* Builders:
+  * Make builders, quarrys and construction markers render at any distance.
+  * Make the quarry arms render at any distance
+
+Improvements:
+
+* Builders:
+  * Make the enclosing laser box render at all distances

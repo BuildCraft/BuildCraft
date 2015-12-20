@@ -1,1 +1,11 @@
-// TODO: Fill this in WHENEVER BC 7.2.0 is made the main branch
+{
+    "homepage": "http://www.mod-buildcraft.com/forums/showthread.php?tid=1853",
+    "promos": {
+        "1.8.8-latest": "7.2.0pre3",
+        "1.8.8-recommended": "7.2.0pre3"
+    },
+    "1.8.8": {
+        "7.2.0pre2":"      Add this versioning scheme",
+        "7.2.0pre3":"      Make builders, quarrys and construction markers render at any distance.\n      Fix aliasing issues with lasers at long distances"
+    }
+}

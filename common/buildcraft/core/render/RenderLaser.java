@@ -165,6 +165,16 @@ public class RenderLaser extends Render<EntityLaser> {
         doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
 
         GL11.glPopMatrix();
+
+        // Render a constant width line to stop "aliasing" with lasers that are very far away
+        // Deprecated GL but its only a single line per laser so it shouldn't be too bad
+        GL11.glLineWidth(2);
+        GL11.glBegin(GL11.GL_LINES);
+        // The texture point at (1, 1) is always the light (not black) colour that we want.
+        GL11.glTexCoord2d(0.9999d, 0.9999d);
+        GL11.glVertex3d(laser.head.xCoord, laser.head.yCoord, laser.head.zCoord);
+        GL11.glVertex3d(laser.tail.xCoord, laser.tail.yCoord, laser.tail.zCoord);
+        GL11.glEnd();
     }
 
     private static void doRenderLaserLine(double len, int texId) {

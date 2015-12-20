@@ -14,6 +14,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
+import buildcraft.builders.render.RenderQuarry;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderVoid;
@@ -38,7 +39,7 @@ public class BuilderProxyClient extends BuilderProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder<TileFiller>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
         ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder<TileQuarry>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid<EntityMechanicalArm>());
     }

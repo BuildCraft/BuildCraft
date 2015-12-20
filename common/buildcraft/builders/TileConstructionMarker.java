@@ -226,6 +226,11 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     }
 
     @Override
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
+    }
+
+    @Override
     public void writeData(ByteBuf stream) {
         box.writeData(stream);
         stream.writeByte((laser != null ? 1 : 0) | (itemBlueprint != null ? 2 : 0));

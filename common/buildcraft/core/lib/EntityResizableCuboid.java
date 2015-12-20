@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-// TODO (PASS 0): Rewrite to allow for specifying texture for each side + dimensions, to + from etc...
 public class EntityResizableCuboid extends Entity {
 
     public float shadowSize = 0;
@@ -72,7 +71,7 @@ public class EntityResizableCuboid extends Entity {
     }
 
     public EntityResizableCuboid(World world, double xPos, double yPos, double zPos) {
-        super(world);
+        this(world);
         setPositionAndRotation(xPos, yPos, zPos, 0, 0);
     }
 

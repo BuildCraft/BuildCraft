@@ -901,6 +901,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
+        // return Utils.boundingBox(Utils.vec3(-100000d), Utils.vec3(100000d));
         if (getPos() == null) return null;
         return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
     }
