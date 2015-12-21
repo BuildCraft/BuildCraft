@@ -43,7 +43,7 @@ public class BlockSpring extends BlockBuildCraftBase {
 
     @Override
     public int damageDropped(IBlockState state) {
-        return SPRING_TYPE.getValue(state).ordinal();
+        return state.getValue(SPRING_TYPE).ordinal();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class BlockSpring extends BlockBuildCraftBase {
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
         super.onBlockAdded(world, pos, state);
-        world.scheduleUpdate(pos, this, SPRING_TYPE.getValue(state).tickRate);
+        world.scheduleUpdate(pos, this, state.getValue(SPRING_TYPE).tickRate);
     }
 
     private void assertSpring(World world, BlockPos pos, IBlockState state) {

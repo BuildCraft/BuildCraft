@@ -329,7 +329,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                     Iterator<BlockPos> it = path.iterator();
                     BlockPos start = it.next();
 
-                    EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
+                    EnumFacing face = worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING);
                     currentPathIterator = new PathIterator(start, it, face);
                 }
 
@@ -366,7 +366,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                     BlueprintBase bpt = instanciateBlueprint();
 
                     if (bpt != null) {
-                        EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
+                        EnumFacing face = worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING);
                         recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, face.getOpposite());
 
                         currentBuilder = recursiveBuilder.nextBuilder();

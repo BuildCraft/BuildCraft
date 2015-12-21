@@ -29,7 +29,7 @@ public class SchematicRefinery extends SchematicTile {
 
     @Override
     public void rotateLeft(IBuilderContext context) {
-        EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(state).rotateY();
+        EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING).rotateY();
         state = state.withProperty(BuildCraftProperties.BLOCK_FACING, face);
     }
 

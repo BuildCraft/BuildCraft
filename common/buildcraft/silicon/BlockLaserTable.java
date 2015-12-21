@@ -66,7 +66,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
         }
 
         if (!world.isRemote) {
-            int ord = LASER_TABLE_TYPE.getValue(state).ordinal();
+            int ord = state.getValue(LASER_TABLE_TYPE).ordinal();
             entityplayer.openGui(BuildCraftSilicon.instance, ord, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
@@ -74,7 +74,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        EnumLaserTableType tableType = LASER_TABLE_TYPE.getValue(state);
+        EnumLaserTableType tableType = state.getValue(LASER_TABLE_TYPE);
         switch (tableType) {
             case ASSEMBLY_TABLE:
                 return new TileAssemblyTable();
@@ -99,7 +99,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 
     @Override
     public int damageDropped(IBlockState state) {
-        return LASER_TABLE_TYPE.getValue(state).ordinal();
+        return state.getValue(LASER_TABLE_TYPE).ordinal();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

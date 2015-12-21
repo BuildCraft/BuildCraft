@@ -85,7 +85,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             anim = tile.getAnimationStage();
 
             IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-            EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(state);
+            EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING);
 
             while (face != EnumFacing.EAST) {
                 face = face.rotateY();

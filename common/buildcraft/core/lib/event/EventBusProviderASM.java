@@ -55,8 +55,14 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
                 continue;
             }
             Class<?> par = parameters[0];
+            // Disallow listening to classes directly, instead every event is an interface
+            if (!par.isInterface()) {
+                BCLog.logger.warn("Found a method " + meth.getName() + " in the class " + clazz.getName() + " that listened to a class directly!");
+                continue;
+            }
+
             if (!eventBaseClass.isAssignableFrom(par)) {
-                BCLog.logger.warn("Found a method " + meth.getName() + "in the class " + clazz.getName() + ", annoted with @" + annotationClass
+                BCLog.logger.warn("Found a method " + meth.getName() + " in the class " + clazz.getName() + ", annoted with @" + annotationClass
                         .getSimpleName() + ", that has an argument that does not extend " + eventBaseClass.getName() + " (Was " + par.getName()
                     + "!");
                 continue;

@@ -17,7 +17,7 @@ public class SchematicFrame extends SchematicBlock {
 
     @Override
     public void rotateLeft(IBuilderContext context) {
-        state = state.withProperty(BlockFrame.CONNECTIONS, BlockFrame.CONNECTIONS.getValue(state).rotateLeft());
+        state = state.withProperty(BlockFrame.CONNECTIONS, state.getValue(BlockFrame.CONNECTIONS).rotateLeft());
     }
 
     @Override

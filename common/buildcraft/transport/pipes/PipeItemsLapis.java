@@ -78,7 +78,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
     public void setColor(EnumDyeColor color) {
         IBlockState state = container.getWorld().getBlockState(container.getPos());
-        if (color.ordinal() != BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state).intValue()) {
+        if (color.ordinal() != state.getValue(BuildCraftProperties.GENERIC_PIPE_DATA).intValue()) {
             container.getWorld().setBlockState(container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, color.ordinal()));
             container.scheduleRenderUpdate();
         }

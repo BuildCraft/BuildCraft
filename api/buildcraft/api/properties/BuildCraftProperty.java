@@ -1,18 +1,16 @@
 package buildcraft.api.properties;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.properties.PropertyHelper;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MathHelper;
 
 /** This class exists primarily to allow for a property to be used as either a normal IProperty, or an
  * IUnlistedProperty. It also exists to give IProperty's generic types. */
-public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T> {
+public class BuildCraftProperty<T extends Comparable<T>> extends PropertyHelper<T> {
     private final String name;
     private final Class<T> clazz;
     protected final List<T> values;
@@ -22,6 +20,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T>
     }
 
     public BuildCraftProperty(String name, Class<T> clazz, List<T> values) {
+        super(name, clazz);
         this.name = name;
         this.clazz = clazz;
         this.values = values;
@@ -29,6 +28,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T>
 
     /** Used for BuildCraftInifiniteProperty */
     protected BuildCraftProperty(String name, Class<T> clazz) {
+        super(name, clazz);
         this.name = name;
         this.clazz = clazz;
         this.values = Collections.emptyList();
@@ -114,10 +114,6 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T>
         }
     }
 
-    public T getValue(IBlockState state) {
-        return state.getValue(this);
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -129,10 +125,5 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty<T>
         builder.append(values);
         builder.append("]");
         return builder.toString();
-    }
-
-    // Helper methods for arguments
-    public IProperty<T> asMetaProperty() {
-        return this;
     }
 }

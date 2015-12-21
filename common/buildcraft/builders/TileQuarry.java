@@ -557,7 +557,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         IBlockState state = worldObj.getBlockState(pos);
         if (stage == Stage.DONE) {
             worldObj.setBlockState(pos, state.withProperty(BuildCraftProperties.LED_DONE, true));
-        } else if (BuildCraftProperties.LED_DONE.getValue(state) == true) {
+        } else if (state.getValue(BuildCraftProperties.LED_DONE) == true) {
             worldObj.setBlockState(pos, state.withProperty(BuildCraftProperties.LED_DONE, false));
         }
     }
@@ -615,7 +615,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (useDefault) {
             int xMin, zMin;
 
-            EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos)).getOpposite();
+            EnumFacing face = worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
             switch (face) {
                 case EAST:
@@ -923,7 +923,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     @Override
     public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
-        if (with == BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos))) {
+        if (with == worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING)) {
             return ConnectOverride.DISCONNECT;
         }
         return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;

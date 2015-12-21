@@ -108,7 +108,7 @@ public class RecursiveBlueprintReader {
                 } else if (subTile instanceof TileBuilder) {
                     TileBuilder builder = (TileBuilder) subTile;
                     blueprint = ItemBlueprint.loadBlueprint(builder.getStackInSlot(0));
-                    orientation = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(subBlock)).getOpposite();
+                    orientation = architect.getWorld().getBlockState(subBlock).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
                 }
 
                 if (blueprint != null) {
@@ -125,7 +125,7 @@ public class RecursiveBlueprintReader {
 
             World world = currentSubReader.architect.getWorld();
 
-            EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos())).getOpposite();
+            EnumFacing facing = world.getBlockState(currentSubReader.architect.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
             BlockPos pos = currentSubReader.architect.getPos().subtract(architect.getBox().min());
 
@@ -149,7 +149,7 @@ public class RecursiveBlueprintReader {
 
                 writingBlueprint.translateToBlueprint(transform);
 
-                EnumFacing o = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(architect.getPos())).getOpposite();
+                EnumFacing o = architect.getWorld().getBlockState(architect.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
                 writingBlueprint.rotate = architect.readConfiguration.rotate;
                 writingBlueprint.excavate = architect.readConfiguration.excavate;

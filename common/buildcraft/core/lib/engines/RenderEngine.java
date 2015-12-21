@@ -76,7 +76,7 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
             if (engineState.getBlock() instanceof BlockEngineBase) {
                 engineState = engineState.getBlock().getActualState(engineState, world, pos);
 
-                if (BuildCraftProperties.MOVING.getValue(engineState)) {
+                if (engineState.getValue(BuildCraftProperties.MOVING)) {
                     Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
                     // int light = world.getCombinedLight(pos, 0);

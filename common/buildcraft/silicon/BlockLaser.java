@@ -47,7 +47,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
     @Override
     public AxisAlignedBB[] getBoxes(IBlockAccess access, BlockPos pos, IBlockState state) {
-        return boxesMap.get(FACING_6_PROP.getValue(state));
+        return boxesMap.get(state.getValue(FACING_6_PROP));
     }
 
     @Override

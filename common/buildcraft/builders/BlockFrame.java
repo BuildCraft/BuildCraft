@@ -151,7 +151,7 @@ public class BlockFrame extends BlockBuildCraftBase {
 
     @Override
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
-        return CONNECTIONS.getValue(state).boundingBox;
+        return state.getValue(CONNECTIONS).boundingBox;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

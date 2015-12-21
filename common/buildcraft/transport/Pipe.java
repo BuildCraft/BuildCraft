@@ -262,6 +262,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
                 }
             }
         }
+        container.scheduleRenderUpdate();
     }
 
     protected void propagateSignalState(PipeWire c, int s) {

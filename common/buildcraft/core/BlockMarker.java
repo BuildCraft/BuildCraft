@@ -46,7 +46,7 @@ public class BlockMarker extends BlockBuildCraft {
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         double w = 0.15;
         double h = 0.65;
-        EnumFacing dir = FACING_6_PROP.getValue(state);
+        EnumFacing dir = state.getValue(FACING_6_PROP);
         switch (dir) {
             case DOWN:
                 return new AxisAlignedBB(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
@@ -127,7 +127,7 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
-        EnumFacing side = FACING_6_PROP.getValue(state);
+        EnumFacing side = state.getValue(FACING_6_PROP);
         if (!canPlaceBlockOnSide(world, pos, side)) {
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);

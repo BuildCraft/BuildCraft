@@ -13,16 +13,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
-import buildcraft.api.transport.pipe_bc8.IPipeHolder_BC8;
-import buildcraft.api.transport.pipe_bc8.IPipeListener;
-import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider;
+import buildcraft.api.transport.pipe_bc8.*;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
-import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeBehaviour_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
@@ -41,6 +33,7 @@ public class Pipe_BC8 implements IPipe_BC8 {
     private final IPipePropertyProviderEditable propProvider = new PipePropertyProviderEditable(this);
     private final IEventBus<IPipeEvent_BC8> bus = eventBusProvider.newBus();
     private final BiMap<Integer, IPipeListener> listenerMap = HashBiMap.create();
+    // ID 0 is the behaviour
     private int nextListenerId = 1;
 
     private final Map<EnumFacing, PipeConnection> connectionMap = Maps.newHashMap();

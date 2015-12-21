@@ -83,7 +83,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
     public void setMode(PowerMode mode) {
         IBlockState state = container.getWorld().getBlockState(container.getPos());
-        if (mode.ordinal() != BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state).intValue()) {
+        if (mode.ordinal() != state.getValue(BuildCraftProperties.GENERIC_PIPE_DATA).intValue()) {
             container.getWorld().setBlockState(container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, mode.ordinal()));
             container.scheduleRenderUpdate();
         }

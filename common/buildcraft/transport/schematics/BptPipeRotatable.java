@@ -20,7 +20,7 @@ public class BptPipeRotatable extends BptPipeExtension {
 
     @Override
     public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-        int meta = BuildCraftProperties.GENERIC_PIPE_DATA.getValue(slot.state);
+        int meta = slot.state.getValue(BuildCraftProperties.GENERIC_PIPE_DATA);
         int orientation = meta & 7;
         int others = meta - orientation;
 

@@ -29,14 +29,14 @@ public class BlockDecoration extends BlockBuildCraftBase {
 
     @Override
     public int damageDropped(IBlockState state) {
-        return DECORATED_TYPE.getValue(state).ordinal();
+        return state.getValue(DECORATED_TYPE).ordinal();
     }
 
     @Override
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == this) {
-            EnumDecoratedBlock type = DECORATED_TYPE.getValue(state);
+            EnumDecoratedBlock type = state.getValue(DECORATED_TYPE);
             return type.lightValue;
         }
         return super.getLightValue(world, pos);

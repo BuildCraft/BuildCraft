@@ -541,9 +541,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         boolean changed = renderState.isDirty();
         // TODO (Pass 1): If the pluggable state has changed, also update it!
 
-        if (renderState.isDirty())
-
-        {
+        if (renderState.isDirty()) {
             renderState.clean();
         }
 

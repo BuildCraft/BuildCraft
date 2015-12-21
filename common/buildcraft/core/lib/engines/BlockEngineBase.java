@@ -143,7 +143,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
     @Override
     public int damageDropped(IBlockState state) {
-        return ENGINE_TYPE.getValue(state).ordinal();
+        return state.getValue(ENGINE_TYPE).ordinal();
     }
 
     @SuppressWarnings({ "all" })

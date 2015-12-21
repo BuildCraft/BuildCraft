@@ -86,7 +86,7 @@ public abstract class PipeLogicIron {
     public boolean setFacing(EnumFacing facing) {
         IBlockState state = pipe.container.getWorld().getBlockState(pipe.container.getPos());
         int ordinal = facing == null ? 6 : facing.ordinal();
-        int oldOrdinal = BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state);
+        int oldOrdinal = state.getValue(BuildCraftProperties.GENERIC_PIPE_DATA);
 
         if (ordinal != oldOrdinal && isValidFacing(facing)) {
             pipe.container.getWorld().setBlockState(pipe.container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, ordinal));
