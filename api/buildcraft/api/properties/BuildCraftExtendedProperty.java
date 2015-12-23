@@ -22,7 +22,7 @@ public class BuildCraftExtendedProperty<T extends Comparable<T>> extends BuildCr
     }
 
     public static BuildCraftExtendedProperty<Double> create(String name, final double min, final double max) {
-        return new BuildCraftExtendedProperty<Double>(name, Double.class, new Predicate<Double>() {
+        return new BuildCraftExtendedProperty<>(name, Double.class, new Predicate<Double>() {
             @Override
             public boolean apply(Double input) {
                 return input >= min && input <= max;
@@ -32,7 +32,7 @@ public class BuildCraftExtendedProperty<T extends Comparable<T>> extends BuildCr
 
     /** This is useful if you want to use a particular class for this property, but don't care what the class contains
      * (it will never contain an incorrect value) */
-    public static <T extends Comparable<T>> BuildCraftExtendedProperty<T> createExtended(String name, Class<T> clazz) {
+    public static <T extends Comparable<T>> BuildCraftExtendedProperty<T> createExtended(String name, Class clazz) {
         return new BuildCraftExtendedProperty<T>(name, clazz, Predicates.<T> alwaysTrue());
     }
 

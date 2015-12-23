@@ -17,10 +17,7 @@ buildscript {
         }
     }
     dependencies {
-        // 1.8.8
         classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
-        // 1.8
-        // classpath "gradle.plugin.net.minecraftforge.gradle:ForgeGradle:2.0.2"
     }
 }
 
@@ -35,17 +32,16 @@ archivesBaseName = "buildcraft" // the name that all artifacts will use as a bas
 ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
 ext.priv = parseConfig(file('private.properties'))
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 dependencies {
     testCompile "junit:junit:4.12"
 }
 
 minecraft {
-    //1.8.8
     mappings = "snapshot_20151217"
     version = "1.8.8-11.15.0.1635-1.8.8"
-    // 1.8
-    // mappings = "stable_16"
-    // version = "1.8-11.14.4.1577"
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
