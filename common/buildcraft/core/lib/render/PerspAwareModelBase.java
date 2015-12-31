@@ -23,6 +23,8 @@ import net.minecraftforge.client.model.TRSRTransformation;
 
 public class PerspAwareModelBase implements IPerspectiveAwareModel, IFlexibleBakedModel {
     private final VertexFormat format;
+    // TODO: BakedQuad -> UnpackedBakedQuad
+    // (mc -> forge)
     private final ImmutableList<BakedQuad> quads;
     private final TextureAtlasSprite particle;
     private final ImmutableMap<TransformType, TRSRTransformation> transforms;

@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 
@@ -42,6 +44,6 @@ public class StackAtPosition implements ISerializable {
 
     @Override
     public int hashCode() {
-        return stack.hashCode() * 17 + pos.hashCode();
+        return new HashCodeBuilder().append(stack).append(pos).append(display).build();
     }
 }
