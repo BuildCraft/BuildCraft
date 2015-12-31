@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.item.ItemStack;
@@ -35,15 +36,14 @@ public class StackAtPosition implements ISerializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || !(o instanceof StackAtPosition)) {
-            return false;
-        }
+        if (o == null) return false;
+        if (o.getClass() != getClass()) return false;
         StackAtPosition other = (StackAtPosition) o;
-        return other.stack.equals(stack) && other.pos.equals(pos) && other.display == display;
+        return new EqualsBuilder().append(stack, other.stack).append(pos, other.pos).append(display, other.display).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(stack).append(pos).append(display).build();
+        return new HashCodeBuilder().append(stack).append(pos).append(display).toHashCode();
     }
 }

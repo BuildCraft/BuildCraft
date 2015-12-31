@@ -273,31 +273,31 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
 
     public static BakedQuad transform(BakedQuad quad, Matrix4f matrix4f) {
         int[] data = quad.getVertexData();
-        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
-        data = Arrays.copyOf(data, 28);
+        data = Arrays.copyOf(data, data.length);
         boolean colour = quad instanceof IColoredBakedQuad;
+        int step = data.length / 4;
         for (int i = 0; i < 4; i++) {
             Point3f vec = new Point3f();
-            vec.x = Float.intBitsToFloat(data[i * 7 + X]);
-            vec.y = Float.intBitsToFloat(data[i * 7 + Y]);
-            vec.z = Float.intBitsToFloat(data[i * 7 + Z]);
+            vec.x = Float.intBitsToFloat(data[i * step + X]);
+            vec.y = Float.intBitsToFloat(data[i * step + Y]);
+            vec.z = Float.intBitsToFloat(data[i * step + Z]);
 
             matrix4f.transform(vec);
 
-            data[i * 7 + X] = Float.floatToRawIntBits(vec.x);
-            data[i * 7 + Y] = Float.floatToRawIntBits(vec.y);
-            data[i * 7 + Z] = Float.floatToRawIntBits(vec.z);
+            data[i * step + X] = Float.floatToRawIntBits(vec.x);
+            data[i * step + Y] = Float.floatToRawIntBits(vec.y);
+            data[i * step + Z] = Float.floatToRawIntBits(vec.z);
         }
         return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
     }
 
     public static BakedQuad replaceShade(BakedQuad quad, int shade) {
         int[] data = quad.getVertexData();
-        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
-        data = Arrays.copyOf(data, 28);
+        int step = data.length / 4;
+        data = Arrays.copyOf(data, data.length);
         boolean colour = quad instanceof IColoredBakedQuad;
         for (int i = 0; i < 4; i++) {
-            data[i * ARRAY_SIZE + SHADE] = shade;
+            data[i * step + SHADE] = shade;
         }
         return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
     }
@@ -309,14 +309,14 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
 
     public static Vector3f normal(BakedQuad quad) {
         int[] data = quad.getVertexData();
-        if (data.length != 28) throw new IllegalArgumentException("Wanted 28 data points, but found " + data.length + "!");
-        data = Arrays.copyOf(data, 28);
+        int step = data.length / 4;
+        data = Arrays.copyOf(data, data.length);
         Point3f[] positions = new Point3f[3];
         for (int i = 0; i < 3; i++) {
             Point3f vec = new Point3f();
-            vec.x = Float.intBitsToFloat(data[i * 7 + X]);
-            vec.y = Float.intBitsToFloat(data[i * 7 + Y]);
-            vec.z = Float.intBitsToFloat(data[i * 7 + Z]);
+            vec.x = Float.intBitsToFloat(data[i * step + X]);
+            vec.y = Float.intBitsToFloat(data[i * step + Y]);
+            vec.z = Float.intBitsToFloat(data[i * step + Z]);
             positions[i] = vec;
         }
 

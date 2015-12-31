@@ -159,9 +159,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), "ODO", "ORO", "OGO", 'O', Blocks.obsidian, 'R', "dustRedstone",
                 'D', "gemDiamond", 'G', "gearDiamond");
 
-        /* BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), "OWO", "OCO", "ORO", 'O',
-         * Blocks.obsidian, 'W', Blocks.crafting_table, 'C', Blocks.chest, 'R', new ItemStack(redstoneChipset, 1,
-         * 0)); */
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), "OWO", "OCO", "ORO", 'O', Blocks.obsidian, 'W',
+                Blocks.crafting_table, 'C', Blocks.chest, 'R', new ItemStack(redstoneChipset, 1, 0));
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 2), "OIO", "OCO", "OGO", 'O', Blocks.obsidian, 'I', "ingotGold",
                 'C', new ItemStack(redstoneChipset, 1, 0), 'G', "gearDiamond");
