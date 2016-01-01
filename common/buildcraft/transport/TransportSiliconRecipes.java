@@ -45,10 +45,10 @@ public final class TransportSiliconRecipes {
                     + 16), ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
             }
 
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:16", 10000, new ItemStack(BuildCraftTransport.lensItem, 2, 32),
-					"blockGlass");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:16", 10000, new ItemStack(BuildCraftTransport.lensItem, 2, 33),
-					"blockGlass", Blocks.iron_bars);
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:16", 10000, new ItemStack(BuildCraftTransport.lensItem, 2, 32),
+                    "blockGlass");
+            BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:16", 10000, new ItemStack(BuildCraftTransport.lensItem, 2, 33),
+                    "blockGlass", Blocks.iron_bars);
         }
 
         // PIPE WIRE

@@ -49,7 +49,7 @@ public enum FluidShaderManager {
         // }
     }
 
-//    @SubscribeEvent
+    // @SubscribeEvent
     public void clientTick(ClientTickEvent event) {
         if (event.phase == Phase.END) {
             if (Minecraft.getMinecraft().theWorld != null) {
@@ -58,7 +58,7 @@ public enum FluidShaderManager {
         }
     }
 
-//    @SubscribeEvent
+    // @SubscribeEvent
     public void renderWorld(RenderWorldLastEvent event) {
         if (Minecraft.getMinecraft().theWorld != null) {
             getRenderer(Minecraft.getMinecraft().theWorld).renderAll(event.partialTicks);

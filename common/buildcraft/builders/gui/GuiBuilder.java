@@ -142,7 +142,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
         if (isBlueprint) {
             drawBackgroundSlots(x, y);
-            
+
             for (int i = 0; i < builder.fluidTanks.length; i++) {
                 Tank tank = builder.fluidTanks[i];
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {

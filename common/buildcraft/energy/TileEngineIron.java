@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,27 +109,27 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         }
     }
 
-	public boolean hasFuelBelowThreshold(float threshold) {
-		FluidStack fuel = tankFuel.getFluid();
+    public boolean hasFuelBelowThreshold(float threshold) {
+        FluidStack fuel = tankFuel.getFluid();
 
-		if (fuel == null) {
-			return true;
-		}
+        if (fuel == null) {
+            return true;
+        }
 
-		float percentage = (float) fuel.amount / (float) MAX_LIQUID;
-		return percentage < threshold;
-	}
+        float percentage = (float) fuel.amount / (float) MAX_LIQUID;
+        return percentage < threshold;
+    }
 
-	public boolean hasCoolantBelowThreshold(float threshold) {
-		FluidStack coolant = tankCoolant.getFluid();
+    public boolean hasCoolantBelowThreshold(float threshold) {
+        FluidStack coolant = tankCoolant.getFluid();
 
-		if (coolant == null) {
-			return true;
-		}
+        if (coolant == null) {
+            return true;
+        }
 
-		float percentage = (float) coolant.amount / (float) MAX_LIQUID;
-		return percentage < threshold;
-	}
+        float percentage = (float) coolant.amount / (float) MAX_LIQUID;
+        return percentage < threshold;
+    }
 
     private float getBiomeTempScalar() {
         if (biomeCache == null) {
@@ -320,16 +316,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         switch (id) {
             // Fluid Fuel ID
             case 15:
-				if (FluidRegistry.getFluid(value) != null) {
-					tankFuel.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankFuelAmountCache));
+                if (FluidRegistry.getFluid(value) != null) {
+                    tankFuel.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankFuelAmountCache));
                 } else {
                     tankFuel.setFluid(null);
                 }
                 break;
             // Fluid Coolant ID
             case 16:
-				if (FluidRegistry.getFluid(value) != null) {
-					tankCoolant.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankCoolantAmountCache));
+                if (FluidRegistry.getFluid(value) != null) {
+                    tankCoolant.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankCoolantAmountCache));
                 } else {
                     tankCoolant.setFluid(null);
                 }
@@ -404,15 +400,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (resource == null || resource.getFluid() == null) {
-			return 0;
-		}
+        if (resource == null || resource.getFluid() == null) {
+            return 0;
+        }
 
         if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
             return tankCoolant.fill(resource, doFill);
         } else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
             int filled = tankFuel.fill(resource, doFill);
-			if (filled > 0 && tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null && (currentFuel == null || tankFuel.getFluid().getFluid() != currentFuel.getFluid())) {
+            if (filled > 0 && tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null && (currentFuel == null || tankFuel.getFluid()
+                    .getFluid() != currentFuel.getFluid())) {
                 currentFuel = BuildcraftFuelRegistry.fuel.getFuel(tankFuel.getFluid().getFluid());
             }
             return filled;
@@ -422,10 +419,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return from != orientation && fluid != null &&
-				(BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
-						BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
+    public boolean canFill(EnumFacing from, Fluid fluid) {
+        return from != orientation && fluid != null && (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null || BuildcraftFuelRegistry.fuel
+                .getFuel(fluid) != null);
     }
 
     @Override
@@ -459,7 +455,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-	public int getIdealOutput() {
+    public int getIdealOutput() {
         if (currentFuel == null) {
             return 0;
         } else {
@@ -472,13 +468,13 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         return false;
     }
 
-	@Override
-	public boolean blockInventoryTriggers(EnumFacing side) {
-		return false;
-	}
+    @Override
+    public boolean blockInventoryTriggers(EnumFacing side) {
+        return false;
+    }
 
-	@Override
-	public boolean blockFluidHandlerTriggers(EnumFacing side) {
-		return true;
-	}
+    @Override
+    public boolean blockFluidHandlerTriggers(EnumFacing side) {
+        return true;
+    }
 }

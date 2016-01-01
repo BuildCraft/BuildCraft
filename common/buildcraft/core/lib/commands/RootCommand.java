@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
 import java.util.ArrayList;
@@ -57,11 +53,11 @@ public class RootCommand extends CommandBase implements IModCommand {
     }
 
     @Override
-	public int getMinimumPermissionLevel() {
-		return 0;
-	}
+    public int getMinimumPermissionLevel() {
+        return 0;
+    }
 
-	@Override
+    @Override
     public List<String> getCommandAliases() {
         return aliases;
     }

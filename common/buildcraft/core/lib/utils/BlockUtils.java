@@ -163,8 +163,7 @@ public final class BlockUtils {
 
         if (block == Blocks.lava || block == Blocks.flowing_lava) {
             return false;
-        }
-        else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null) {
+        } else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null) {
             Fluid f = ((IFluidBlock) block).getFluid();
             if (f.getDensity(world, pos) >= 3000) {
                 return false;
@@ -214,8 +213,7 @@ public final class BlockUtils {
                 return true;
             }
             return false;
-        }
-        else if (block instanceof BlockLiquid) {
+        } else if (block instanceof BlockLiquid) {
             int level = (Integer) state.getValue(BlockLiquid.LEVEL);
             return level == 0;
         }
@@ -241,8 +239,7 @@ public final class BlockUtils {
                     return null;
                 }
                 return fluidBlock.drain(world, pos, doDrain);
-            }
-            else {
+            } else {
                 int level = (Integer) state.getValue(BlockLiquid.LEVEL);
                 if (level != 0) {
                     return null;
@@ -254,8 +251,7 @@ public final class BlockUtils {
 
                 return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -304,8 +300,7 @@ public final class BlockUtils {
             }
             Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) : null;
-        }
-        else {
+        } else {
             return world.getTileEntity(pos);
         }
     }
@@ -321,8 +316,7 @@ public final class BlockUtils {
             }
             Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getBlockState(pos) : Blocks.air.getDefaultState();
-        }
-        else {
+        } else {
             if (pos.getY() < 0 || pos.getY() > 255) {
                 return Blocks.air.getDefaultState();
             }

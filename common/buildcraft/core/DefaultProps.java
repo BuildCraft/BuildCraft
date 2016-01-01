@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 public final class DefaultProps {
@@ -13,7 +9,8 @@ public final class DefaultProps {
     public static final String MOD = "BuildCraft";
 
     public static final String VERSION = "@VERSION@";
-    // TODO: Change this to point to the official BC repo in BuildCraftVersions.json whenever 7.2.0 is made the master branch
+    // TODO: Change this to point to the official BC repo in BuildCraftVersions.json whenever 7.2.0 is made the master
+    // branch
     public static final String UPDATE_JSON = "https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/BuildCraftVersions.json";
 
     public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + VERSION;

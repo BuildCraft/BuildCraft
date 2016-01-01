@@ -122,6 +122,6 @@ public class CoreProxy implements ICoreProxy {
     }
 
     public void postRegisterBlock(Block block) {}
-    
+
     public void postRegisterItem(Item item) {}
 }

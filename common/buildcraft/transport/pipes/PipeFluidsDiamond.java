@@ -103,7 +103,8 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         }
 
         if (!container.getWorld().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.getPos().getX(), container
+                    .getPos().getY(), container.getPos().getZ());
         }
 
         return true;

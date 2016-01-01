@@ -35,8 +35,8 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
 
     public void registerTile(Class<? extends TileEngineBase> engineTile, int meta, String name) {
         if (BCRegistry.INSTANCE.isEnabled("engines", name)) {
-            engineTiles[meta]= engineTile;
-            names[meta]= name;
+            engineTiles[meta] = engineTile;
+            names[meta] = name;
         }
     }
 

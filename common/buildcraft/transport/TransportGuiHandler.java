@@ -88,13 +88,13 @@ public class TransportGuiHandler implements IGuiHandler {
                 return new GuiFilteredBuffer(player, filteredBuffer);
             }
 
-			if (!(tile instanceof IPipeTile)) {
+            if (!(tile instanceof IPipeTile)) {
                 return null;
             }
 
-			IPipeTile pipe = (IPipeTile) tile;
+            IPipeTile pipe = (IPipeTile) tile;
 
-			if (pipe.getPipe() == null) {
+            if (pipe.getPipe() == null) {
                 return null;
             }
 

@@ -25,14 +25,14 @@ public final class FluidUtils {
                 return FluidContainerRegistry.getFluidForFilledItem(stack);
             } else if (stack.getItem() instanceof ItemBlock) {
                 Block b = Block.getBlockFromItem(stack.getItem());
-				if (b != null) {
-					if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
-                    return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
-					} else if (b == Blocks.lava) {
-						return new FluidStack(FluidRegistry.getFluid("lava"), 1000);
-					} else if (b == Blocks.water) {
-						return new FluidStack(FluidRegistry.getFluid("water"), 1000);
-					}
+                if (b != null) {
+                    if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
+                        return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
+                    } else if (b == Blocks.lava) {
+                        return new FluidStack(FluidRegistry.getFluid("lava"), 1000);
+                    } else if (b == Blocks.water) {
+                        return new FluidStack(FluidRegistry.getFluid("water"), 1000);
+                    }
                 }
             }
         }

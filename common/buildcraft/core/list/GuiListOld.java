@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.list;
 
 import java.io.IOException;
@@ -38,9 +34,9 @@ public class GuiListOld extends GuiAdvancedInterface {
 
         @Override
         public ItemStack getItemStack() {
-			ContainerListOld container = (ContainerListOld) gui.getContainer();
+            ContainerListOld container = (ContainerListOld) gui.getContainer();
 
-                return container.lines[lineIndex].getStack(0);
+            return container.lines[lineIndex].getStack(0);
         }
     }
 
@@ -57,13 +53,13 @@ public class GuiListOld extends GuiAdvancedInterface {
 
         @Override
         public ItemStack getItemStack() {
-			ContainerListOld container = (ContainerListOld) gui.getContainer();
+            ContainerListOld container = (ContainerListOld) gui.getContainer();
 
             if (slotIndex == 6 && container.lines[lineIndex].getStack(7) != null) {
                 return null;
             }
 
-                return container.lines[lineIndex].getStack(slotIndex);
+            return container.lines[lineIndex].getStack(slotIndex);
         }
     }
 
@@ -87,16 +83,16 @@ public class GuiListOld extends GuiAdvancedInterface {
         }
     }
 
-	public GuiListOld(EntityPlayer iPlayer) {
-		super(new ContainerListOld(iPlayer), iPlayer.inventory, TEXTURE_BASE);
+    public GuiListOld(EntityPlayer iPlayer) {
+        super(new ContainerListOld(iPlayer), iPlayer.inventory, TEXTURE_BASE);
 
         xSize = 176;
         ySize = 241;
 
-		for (int sy = 0; sy < 6; sy++) {
+        for (int sy = 0; sy < 6; sy++) {
             slots.add(new MainSlot(this, 44, 31 + sy * 18, sy));
 
-			for (int sx = 1; sx < 7; sx++) {
+            for (int sx = 1; sx < 7; sx++) {
                 slots.add(new SecondarySlot(this, 44 + sx * 18, 31 + sy * 18, sy, sx));
             }
 
@@ -121,7 +117,7 @@ public class GuiListOld extends GuiAdvancedInterface {
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		ContainerListOld container = (ContainerListOld) getContainer();
+        ContainerListOld container = (ContainerListOld) getContainer();
 
         bindTexture(TEXTURE_BASE);
 
@@ -147,7 +143,7 @@ public class GuiListOld extends GuiAdvancedInterface {
             }
         }
 
-		drawBackgroundSlots(x, y);
+        drawBackgroundSlots(x, y);
 
         bindTexture(TEXTURE_BASE);
 
@@ -185,7 +181,7 @@ public class GuiListOld extends GuiAdvancedInterface {
         }
 
         AdvancedSlot slot = getSlotAtLocation(x, y);
-		ContainerListOld container = (ContainerListOld) getContainer();
+        ContainerListOld container = (ContainerListOld) getContainer();
 
         if (slot instanceof MainSlot) {
             container.setStack(((MainSlot) slot).lineIndex, 0, mc.thePlayer.inventory.getItemStack());
@@ -207,7 +203,7 @@ public class GuiListOld extends GuiAdvancedInterface {
                 textField.setFocused(false);
             } else {
                 textField.textboxKeyTyped(c, i);
-				((ContainerListOld) container).setLabel(textField.getText());
+                ((ContainerListOld) container).setLabel(textField.getText());
             }
         } else {
             super.keyTyped(c, i);

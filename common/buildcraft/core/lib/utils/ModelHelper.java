@@ -20,7 +20,7 @@ public enum ModelHelper {
     }
 
     public static void registerItemModel(Item item, int metadata, String name, String suffix) {
-        String type = name  + suffix;
+        String type = name + suffix;
         type = type.toLowerCase(Locale.ROOT);
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata, new ModelResourceLocation(type, "inventory"));
         ModelBakery.addVariantName(item, type);

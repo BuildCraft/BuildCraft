@@ -12,7 +12,7 @@ public enum PowerMode {
     public static final PowerMode[] VALUES = values();
     public final int maxPower;
 
-	PowerMode(int max) {
+    PowerMode(int max) {
         this.maxPower = max;
     }
 

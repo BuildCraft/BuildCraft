@@ -8,8 +8,8 @@ public class PipePowerEmerald extends PipePowerWood {
     public PipePowerEmerald(Item item) {
         super(item);
 
-		standardIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Standard.ordinal();
-		solidIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Solid.ordinal();
+        standardIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Standard.ordinal();
+        solidIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Solid.ordinal();
 
         transport.initFromPipe(this.getClass());
     }

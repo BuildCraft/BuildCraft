@@ -292,8 +292,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 if (item.output == null) {
                     // TODO: Figure out why this is actually happening.
                     items.scheduleRemoval(item);
-                    BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.getPos().getX() + ", " + container.getPos().getY() + ", "
-                        + container.getPos().getZ() + "!");
+                    BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.getPos().getX() + ", " + container
+                            .getPos().getY() + ", " + container.getPos().getZ() + "!");
                     continue;
                 }
 

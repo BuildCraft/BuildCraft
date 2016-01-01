@@ -43,7 +43,7 @@ public class PipeColoringRecipe implements IRecipe {
         for (int i = 0; i < items.length; ++i) {
             ItemStack itemstack = inv.getStackInSlot(i);
             if (itemstack == null) continue;
-            /*if (itemstack.stackSize == 1) */items[i] = ForgeHooks.getContainerItem(itemstack);
+            /* if (itemstack.stackSize == 1) */items[i] = ForgeHooks.getContainerItem(itemstack);
         }
 
         return items;

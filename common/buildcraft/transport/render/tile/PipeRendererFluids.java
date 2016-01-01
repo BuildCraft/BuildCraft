@@ -126,9 +126,9 @@ public class PipeRendererFluids {
                     int stage = (int) (amount * (DISPLAY_STAGES - 1));
                     if (stage >= DISPLAY_STAGES) stage = DISPLAY_STAGES - 1;
                     sides = true;
-                     GL11.glPushMatrix();
-                     GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
-                     GL11.glPopMatrix();
+                    GL11.glPushMatrix();
+                    GL11.glCallList(dfl.sideFaces[stage][connection.ordinal()]);
+                    GL11.glPopMatrix();
                 }
                 //
                 // boolean connected = renderData.amount[connection.ordinal()] > 0;

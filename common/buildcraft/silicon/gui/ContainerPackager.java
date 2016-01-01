@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,11 +32,11 @@ public class ContainerPackager extends BuildCraftContainer {
 
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-				addSlotToContainer(new SlotPackager(tile.inventoryPattern, x + y * 3, 30 + x * 18, 17 + y * 18));
+                addSlotToContainer(new SlotPackager(tile.inventoryPattern, x + y * 3, 30 + x * 18, 17 + y * 18));
             }
         }
 
-		// addSlotToContainer(new Slot(tile, 10, 108, 31));
+        // addSlotToContainer(new Slot(tile, 10, 108, 31));
         addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
 
         for (int y = 0; y < 3; y++) {
@@ -59,10 +55,10 @@ public class ContainerPackager extends BuildCraftContainer {
     @Override
     public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
         Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
-		ItemStack out = super.slotClick(slotNum, mouseButton, slot instanceof SlotPackager ? 0 : modifier, player);
+        ItemStack out = super.slotClick(slotNum, mouseButton, slot instanceof SlotPackager ? 0 : modifier, player);
 
         if (slot instanceof SlotPackager) {
-			int idx = slot.getSlotIndex();
+            int idx = slot.getSlotIndex();
             ItemStack stack = player != null && player.inventory != null ? player.inventory.getItemStack() : null;
             if (stack == null) {
                 tile.setPatternSlot(idx, !tile.isPatternSlotSet(idx));

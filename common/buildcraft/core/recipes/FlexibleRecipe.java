@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.recipes;
 
 import java.util.ArrayList;
@@ -187,7 +183,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
                 FluidStack fluid = crafter.getCraftingFluidStack(tankid);
 
                 if (fluid != null && fluid.isFluidEqual(requirement)) {
-					int amountUsed;
+                    int amountUsed;
 
                     if (fluid.amount > amount) {
                         amountUsed = amount;
@@ -239,7 +235,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
             ItemStack stack = crafter.getCraftingItemStack(slotid);
 
             if (stack != null && filter.matches(stack)) {
-				ItemStack removed;
+                ItemStack removed;
 
                 if (stack.stackSize >= expected) {
                     removed = crafter.decrCraftingItemStack(slotid, expected);

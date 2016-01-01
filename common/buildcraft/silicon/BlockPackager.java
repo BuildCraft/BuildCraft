@@ -21,7 +21,8 @@ public class BlockPackager extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY,
+            float hitZ) {
         if (super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ)) {
             return true;
         }

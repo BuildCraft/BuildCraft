@@ -8,14 +8,14 @@ import buildcraft.core.lib.commands.CommandHelpers;
 import buildcraft.core.lib.commands.SubCommand;
 
 public class SubCommandDeop extends SubCommand {
-	public SubCommandDeop() {
-		super("deop");
-		setPermLevel(PermLevel.SERVER_ADMIN);
-	}
+    public SubCommandDeop() {
+        super("deop");
+        setPermLevel(PermLevel.SERVER_ADMIN);
+    }
 
-	@Override
-	public void processSubCommand(ICommandSender sender, String[] args) {
-		MinecraftServer.getServer().getConfigurationManager().removeOp(BuildCraftCore.gameProfile);
-		CommandHelpers.sendLocalizedChatMessage(sender, "commands.deop.success", "[BuildCraft]");
-	}
+    @Override
+    public void processSubCommand(ICommandSender sender, String[] args) {
+        MinecraftServer.getServer().getConfigurationManager().removeOp(BuildCraftCore.gameProfile);
+        CommandHelpers.sendLocalizedChatMessage(sender, "commands.deop.success", "[BuildCraft]");
+    }
 }

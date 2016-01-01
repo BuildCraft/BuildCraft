@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.gui;
 
 import java.io.IOException;
@@ -61,7 +57,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         updateSlots();
-		drawBackgroundSlots(x, y);
+        drawBackgroundSlots(x, y);
     }
 
     @Override
@@ -87,9 +83,9 @@ public class GuiRefinery extends GuiAdvancedInterface {
                 }
             } else {
                 if (position == 0) {
-					container.setFilter(position, container.refinery.tanks[0].getFluidType());
+                    container.setFilter(position, container.refinery.tanks[0].getFluidType());
                 } else if (position == 1) {
-					container.setFilter(position, container.refinery.tanks[1].getFluidType());
+                    container.setFilter(position, container.refinery.tanks[1].getFluidType());
                 }
             }
         }

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
 import java.util.LinkedList;
@@ -104,17 +100,17 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
             return;
         }
 
-		// We have a laser
-		if (laser != null) {
-        // We have a table and can work, so we create a laser if
-        // necessary.
-        laser.isVisible = true;
+        // We have a laser
+        if (laser != null) {
+            // We have a table and can work, so we create a laser if
+            // necessary.
+            laser.isVisible = true;
 
-			// We may update laser
-			if (canUpdateLaser()) {
-            updateLaser();
+            // We may update laser
+            if (canUpdateLaser()) {
+                updateLaser();
+            }
         }
-		}
 
         // Consume power and transfer it to the table.
         int localPower = getBattery().useEnergy(0, getMaxPowerSent(), false);

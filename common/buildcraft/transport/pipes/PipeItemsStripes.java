@@ -84,9 +84,9 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
                     ItemStack stack = new ItemStack(block, 1, block.getMetaFromState(state));
                     EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), veci).get();
 
-					if (battery.useEnergy(10, 10, false) != 10) {
-						return;
-					}
+                    if (battery.useEnergy(10, 10, false) != 10) {
+                        return;
+                    }
 
                     for (IStripesHandler handler : PipeManager.stripesHandlers) {
                         if (handler.getType() == StripesHandlerType.BLOCK_BREAK && handler.shouldHandle(stack)) {

@@ -97,7 +97,7 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
 
         for (Method m : handler.getClass().getDeclaredMethods()) {
             if ("eventHandler".equals(m.getName())) {
-				Class<?>[] parameters = m.getParameterTypes();
+                Class<?>[] parameters = m.getParameterTypes();
                 if (parameters.length == 1 && PipeEvent.class.isAssignableFrom(parameters[0])) {
                     Class<? extends PipeEvent> eventType = (Class<? extends PipeEvent>) parameters[0];
                     List<EventHandler> eventHandlerList = getHandlerList(eventType);
@@ -105,8 +105,8 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
                     updateEventHandlers(eventHandlerList);
                     methods.put(m, eventType);
 
-//                    BCPipeEventHandler annotation = m.getAnnotation(BCPipeEventHandler.class);
-//                    if (annotation == null) BCLog.logger.warn("Need to add @BCPipeEventHandler to the method " + m);
+                    // BCPipeEventHandler annotation = m.getAnnotation(BCPipeEventHandler.class);
+                    // if (annotation == null) BCLog.logger.warn("Need to add @BCPipeEventHandler to the method " + m);
                 }
             }
         }

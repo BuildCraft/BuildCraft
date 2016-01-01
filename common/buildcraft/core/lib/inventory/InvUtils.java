@@ -165,8 +165,7 @@ public final class InvUtils {
                 NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
 
                 stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
-            }
-            else {
+            } else {
                 stacks[i] = null;
             }
         }
@@ -191,12 +190,10 @@ public final class InvUtils {
         if (stack.stackSize == 1) {
             if (stack.getItem().hasContainerItem(stack)) {
                 return stack.getItem().getContainerItem(stack);
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        else {
+        } else {
             stack.splitStack(1);
 
             return stack;

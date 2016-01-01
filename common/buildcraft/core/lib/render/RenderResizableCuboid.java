@@ -142,7 +142,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     public boolean shouldRender(EntityResizableCuboid entity, ICamera camera, double camX, double camY, double camZ) {
         return true;
     }
-    
+
     @Override
     public void doRender(EntityResizableCuboid entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GL11.glPushMatrix();

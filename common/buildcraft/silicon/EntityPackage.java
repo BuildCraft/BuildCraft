@@ -25,10 +25,10 @@ public class EntityPackage extends EntityThrowable {
         this.pkg = stack;
     }
 
-	public EntityPackage(World world, double x, double y, double z, ItemStack stack) {
-		super(world, x, y, z);
-		this.pkg = stack;
-	}
+    public EntityPackage(World world, double x, double y, double z, ItemStack stack) {
+        super(world, x, y, z);
+        this.pkg = stack;
+    }
 
     @Override
     public void writeToNBT(NBTTagCompound compound) {

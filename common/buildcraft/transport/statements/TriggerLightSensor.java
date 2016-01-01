@@ -16,7 +16,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
 
     public TriggerLightSensor(boolean bright) {
         super("buildcraft:light_" + (bright ? "bright" : "dark"));
-		setBuildCraftLocation("transport", "triggers/trigger_light_" + (bright ? "bright" : "dark"));
+        setBuildCraftLocation("transport", "triggers/trigger_light_" + (bright ? "bright" : "dark"));
         this.bright = bright;
     }
 

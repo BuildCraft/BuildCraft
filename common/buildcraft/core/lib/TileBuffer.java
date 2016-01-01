@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib;
 
 import net.minecraft.block.state.IBlockState;
@@ -39,15 +35,15 @@ public final class TileBuffer {
         tile = null;
         state = null;
 
-//        if (!loadUnloaded && world.isAirBlock(pos)) {
-//            return;
-//        }
+        // if (!loadUnloaded && world.isAirBlock(pos)) {
+        // return;
+        // }
 
         state = world.getBlockState(pos);
 
-//        if (state != null && state.getBlock().hasTileEntity(state)) {
-            tile = world.getTileEntity(pos);
-//        }
+        // if (state != null && state.getBlock().hasTileEntity(state)) {
+        tile = world.getTileEntity(pos);
+        // }
     }
 
     public void set(IBlockState state, TileEntity tile) {
@@ -57,9 +53,10 @@ public final class TileBuffer {
     }
 
     private void tryRefresh() {
-//        if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
-            refresh();
-//        }
+        // if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null &&
+        // tracker.markTimeIfDelay(world))) {
+        refresh();
+        // }
     }
 
     public IBlockState getBlockState() {
@@ -71,27 +68,29 @@ public final class TileBuffer {
     public TileEntity getTile() {
         return getTile(false);
     }
-//This is severely broken :( FIXME
+
+    // This is severely broken :( FIXME
     public TileEntity getTile(boolean forceUpdate) {
-//        if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
-//            return tile;
-//        }
+        // if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
+        // return tile;
+        // }
 
-//        if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
-            refresh();
+        // if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) ||
+        // tracker.markTimeIfDelay(world)) {
+        refresh();
 
-//            if (tile != null && !tile.isInvalid()) {
-                return tile;
-//            }
-//        }
+        // if (tile != null && !tile.isInvalid()) {
+        return tile;
+        // }
+        // }
 
-//        return null;
+        // return null;
     }
 
     public boolean exists() {
-//        if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
-//            return true;
-//        }
+        // if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
+        // return true;
+        // }
 
         return !world.isAirBlock(pos);
     }

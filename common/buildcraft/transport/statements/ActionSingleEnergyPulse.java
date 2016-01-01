@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +16,7 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
 
     public ActionSingleEnergyPulse() {
         super("buildcraft:pulsar.single", "buildcraft.pulser.single");
-		setBuildCraftLocation("transport", "triggers/action_single_pulsar");
+        setBuildCraftLocation("transport", "triggers/action_single_pulsar");
     }
 
     @Override

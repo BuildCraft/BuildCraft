@@ -65,8 +65,8 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
         }
     }
 
-	// Slot 10 is currently missing. Left in for backwards compat.
-	private static final int[] SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11};
+    // Slot 10 is currently missing. Left in for backwards compat.
+    private static final int[] SLOTS = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11 };
 
     public SimpleInventory inventoryPublic = new SimpleInventory(12, "Packager", 64);
     public SimpleInventory inventoryPattern = new SimpleInventory(9, "Packager", 64);
@@ -89,7 +89,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
     @Override
     public void update() {
-		super.update();
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -245,7 +245,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
                     break;
                 }
                 IInventory inv = invs.get(dir);
-				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
+                Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
                 for (IInvSlot slot : iterator) {
                     if (filteredReqsToFulfill == 0) {
                         break;
@@ -307,7 +307,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
                     break;
                 }
                 IInventory inv = invs.get(dir);
-				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
+                Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
                 for (IInvSlot slot : iterator) {
                     if (foundMissing) {
                         break;
@@ -349,8 +349,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
         for (int i = 0; i < 9; i++) {
             if (isPatternSlotSet(i)) {
                 if (requirements[i] == null) {
-                    BCLog.logger.error("(Recipe Packager) At " + getPos().toString() + " requirement " + i
-                        + " was null! THIS SHOULD NOT HAPPEN!");
+                    BCLog.logger.error("(Recipe Packager) At " + getPos().toString() + " requirement " + i + " was null! THIS SHOULD NOT HAPPEN!");
                     broken = true;
                     continue;
                 }
@@ -409,17 +408,17 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
     @Override
     public int getSizeInventory() {
-		return inventoryPublic.getSizeInventory();
+        return inventoryPublic.getSizeInventory();
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-		return inventoryPublic.getStackInSlot(slot);
+        return inventoryPublic.getStackInSlot(slot);
     }
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-		return inventoryPublic.decrStackSize(slot, amount);
+        return inventoryPublic.decrStackSize(slot, amount);
     }
 
     @Override
@@ -429,7 +428,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
-		inventoryPublic.setInventorySlotContents(slot, stack);
+        inventoryPublic.setInventorySlotContents(slot, stack);
     }
 
     @Override
@@ -444,25 +443,25 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-		return inventoryPublic.isUseableByPlayer(player);
+        return inventoryPublic.isUseableByPlayer(player);
     }
 
-	@Override
-	public void openInventory(EntityPlayer player) {
-	    inventoryPublic.openInventory(player);
-	}
+    @Override
+    public void openInventory(EntityPlayer player) {
+        inventoryPublic.openInventory(player);
+    }
 
-	@Override
-	public void closeInventory(EntityPlayer player) {
-	    inventoryPublic.closeInventory(player);
-	}
+    @Override
+    public void closeInventory(EntityPlayer player) {
+        inventoryPublic.closeInventory(player);
+    }
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         if (slot == 9) {
             return stack == null || stack.getItem() == Items.paper || stack.getItem() instanceof ItemPackage;
         }
-		return inventoryPublic.isItemValidForSlot(slot, stack);
+        return inventoryPublic.isItemValidForSlot(slot, stack);
     }
 
     @Override

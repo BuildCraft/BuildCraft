@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
 import java.util.List;
@@ -32,20 +28,20 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
     public final boolean[] powerSources = new boolean[6];
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
     protected int solidIconIndex = PipeIconProvider.TYPE.PipePowerWood_Solid.ordinal();
     protected RFBattery battery;
 
-	private int requestedEnergy, lastRequestedEnergy, sources;
+    private int requestedEnergy, lastRequestedEnergy, sources;
     private boolean allowExtraction = false;
 
     public PipePowerWood(Item item) {
         super(new PipeTransportPower(), item);
 
-		battery = new RFBattery(40960, 40960, 0);
+        battery = new RFBattery(40960, 40960, 0);
         transport.initFromPipe(getClass());
     }
 
@@ -103,7 +99,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
         if (allowExtraction) {
             allowExtraction = false;
 
-			int energyMaxExtract = Math.min(transport.maxPower, battery.getMaxEnergyStored() - battery.getEnergyStored());
+            int energyMaxExtract = Math.min(transport.maxPower, battery.getMaxEnergyStored() - battery.getEnergyStored());
             energyMaxExtract /= sources;
 
             for (EnumFacing o : EnumFacing.VALUES) {
@@ -193,7 +189,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
             return maxReceive;
         }
         if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
-			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : Math.min(maxReceive, battery.getMaxEnergyStored() - battery.getEnergyStored()), simulate);
+            return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : Math.min(maxReceive, battery.getMaxEnergyStored()
+                - battery.getEnergyStored()), simulate);
         } else {
             return 0;
         }

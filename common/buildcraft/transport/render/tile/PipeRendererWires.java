@@ -85,7 +85,7 @@ public class PipeRendererWires {
             Axis axis = face.getAxis();
             AxisDirection wireCenter = directions[axis.ordinal()];
             if (renderState.wireMatrix.isWireConnected(wire, face)) {
-                if (wireCenter == face.getAxisDirection()){
+                if (wireCenter == face.getAxisDirection()) {
                     numFaces++;
                 }
                 numFaces++;

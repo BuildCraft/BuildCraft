@@ -10,7 +10,7 @@ import buildcraft.transport.Pipe;
 public abstract class PipeEventFluid extends PipeEvent {
     public final FluidStack fluidStack;
 
-	public PipeEventFluid(Pipe<?> pipe, FluidStack fluidStack) {
+    public PipeEventFluid(Pipe<?> pipe, FluidStack fluidStack) {
         super(pipe);
         this.fluidStack = fluidStack;
     }

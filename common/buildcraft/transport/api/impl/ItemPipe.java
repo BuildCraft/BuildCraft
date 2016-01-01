@@ -46,7 +46,8 @@ public class ItemPipe extends Item implements IItemPipe, IModelRegister {
         super.addInformation(stack, player, list, advanced);
         if (stack.getItemDamage() >= 1) {
             int color = (stack.getItemDamage() - 1) & 15;
-            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + BCStringUtils.localize("color." + ColorUtils.getName(color)));
+            list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + BCStringUtils.localize("color." + ColorUtils.getName(
+                    color)));
         }
         // Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
         // List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);

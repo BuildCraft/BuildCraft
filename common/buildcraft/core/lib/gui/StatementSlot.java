@@ -49,8 +49,8 @@ public abstract class StatementSlot extends AdvancedSlot {
 
     public abstract IStatement getStatement();
 
-	@Override
-	public boolean shouldDrawHighlight() {
-		return false;
-	}
+    @Override
+    public boolean shouldDrawHighlight() {
+        return false;
+    }
 }

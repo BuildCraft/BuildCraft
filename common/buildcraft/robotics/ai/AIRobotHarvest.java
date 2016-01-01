@@ -57,11 +57,11 @@ public class AIRobotHarvest extends AIRobot {
     }
 
     @Override
-	public boolean canLoadFromNBT() {
-		return true;
-	}
+    public boolean canLoadFromNBT() {
+        return true;
+    }
 
-	@Override
+    @Override
     public void writeSelfToNBT(NBTTagCompound nbt) {
         super.writeSelfToNBT(nbt);
 

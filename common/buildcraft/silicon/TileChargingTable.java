@@ -11,9 +11,9 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     public void update() {
         super.update();
 
-		if (worldObj.isRemote) {
-			return;
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
         if (getEnergy() > 0) {
             if (getRequiredEnergy() > 0) {

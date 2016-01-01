@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
 import net.minecraft.command.CommandException;
@@ -97,8 +93,8 @@ public final class CommandHelpers {
             sendLocalizedChatMessage(sender, body, "command.buildcraft.aliases", command.getCommandAliases().toString().replace("[", "").replace("]",
                     ""));
         }
-		if (command.getMinimumPermissionLevel() > 0) {
-			sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getMinimumPermissionLevel());
+        if (command.getMinimumPermissionLevel() > 0) {
+            sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getMinimumPermissionLevel());
         }
         sendLocalizedChatMessage(sender, body, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".help");
         if (!command.getChildren().isEmpty()) {
@@ -113,14 +109,14 @@ public final class CommandHelpers {
     public static boolean processStandardCommands(ICommandSender sender, IModCommand command, String[] args) throws CommandException {
         if (args.length >= 1) {
             if ("help".equals(args[0])) {
-				if (args.length >= 2) {
-					for (SubCommand child : command.getChildren()) {
-						if (matches(args[1], child)) {
-							child.printHelp(sender);
-							return true;
-						}
-					}
-				}
+                if (args.length >= 2) {
+                    for (SubCommand child : command.getChildren()) {
+                        if (matches(args[1], child)) {
+                            child.printHelp(sender);
+                            return true;
+                        }
+                    }
+                }
                 command.printHelp(sender);
                 return true;
             }

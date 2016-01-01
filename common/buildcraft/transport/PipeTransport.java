@@ -1,7 +1,7 @@
 /** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
-        * <p/>
-        * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the
-        * contents of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
+ * <p/>
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import java.util.ArrayList;
@@ -39,8 +39,8 @@ public abstract class PipeTransport {
 
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("inputOpen") && nbt.hasKey("outputOpen")) {
-			BitSet inputBuf = BitSetUtils.fromByteArray(new byte[]{nbt.getByte("inputOpen")});
-			BitSet outputBuf = BitSetUtils.fromByteArray(new byte[]{nbt.getByte("outputOpen")});
+            BitSet inputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("inputOpen") });
+            BitSet outputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("outputOpen") });
 
             for (int b = 0; b < EnumFacing.VALUES.length; b++) {
                 inputsOpen[b] = inputBuf.get(b);

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
@@ -20,8 +16,7 @@ public class StackHelper {
 
     /* STACK MERGING */
 
-	/**
-	 * Checks if two ItemStacks are identical enough to be merged
+    /** Checks if two ItemStacks are identical enough to be merged
      *
      * @param stack1 - The first stack
      * @param stack2 - The second stack
@@ -84,9 +79,7 @@ public class StackHelper {
     }
 
     /* ITEM COMPARISONS */
-	/**
-	 * Determines whether the given ItemStack should be considered equivalent
-	 * for crafting purposes.
+    /** Determines whether the given ItemStack should be considered equivalent for crafting purposes.
      *
      * @param base The stack to compare to.
      * @param comparison The stack to compare.
@@ -129,7 +122,7 @@ public class StackHelper {
         return false;
     }
 
-	public static boolean isMatchingItemOrList(final ItemStack a, final ItemStack b) {
+    public static boolean isMatchingItemOrList(final ItemStack a, final ItemStack b) {
         if (a == null || b == null) {
             return false;
         }
@@ -150,26 +143,22 @@ public class StackHelper {
      *
      * @param base The stack to compare to.
      * @param comparison The stack to compare.
-	 * @return true if id, damage and NBT match.
-	 */
-	public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison) {
-		return isMatchingItem(base, comparison, true, true);
-	}
+     * @return true if id, damage and NBT match. */
+    public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison) {
+        return isMatchingItem(base, comparison, true, true);
+    }
 
-	/**
-	 * This variant also checks damage for damaged items.
-	 */
-	public static boolean isEqualItem(final ItemStack a, final ItemStack b) {
-		if (isMatchingItem(a, b, false, true)) {
-			return isWildcard(a) || isWildcard(b) || a.getItemDamage() == b.getItemDamage();
-		} else {
-			return false;
-		}
-	}
+    /** This variant also checks damage for damaged items. */
+    public static boolean isEqualItem(final ItemStack a, final ItemStack b) {
+        if (isMatchingItem(a, b, false, true)) {
+            return isWildcard(a) || isWildcard(b) || a.getItemDamage() == b.getItemDamage();
+        } else {
+            return false;
+        }
+    }
 
-	/**
-	 * Compares item id, and optionally damage and NBT. Accepts wildcard damage.
-	 * Ignores damage entirely if the item doesn't have subtypes.
+    /** Compares item id, and optionally damage and NBT. Accepts wildcard damage. Ignores damage entirely if the item
+     * doesn't have subtypes.
      *
      * @param a ItemStack
      * @param b ItemStack

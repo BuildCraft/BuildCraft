@@ -136,9 +136,9 @@ public class AIRobotBreak extends AIRobot {
             }
         }
 
-		f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()),
-				state, f, blockToBreak);
-		return f < 0 ? 0 : f;
+        f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()), state,
+                f, blockToBreak);
+        return f < 0 ? 0 : f;
     }
 
     @Override

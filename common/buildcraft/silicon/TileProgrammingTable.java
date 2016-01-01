@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
 import java.util.List;
@@ -47,9 +43,9 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     public void update() {
         super.update();
 
-		if (worldObj.isRemote) {
-			return;
-		}
+        if (worldObj.isRemote) {
+            return;
+        }
 
         if (queuedNetworkUpdate) {
             sendNetworkUpdate();
@@ -65,13 +61,13 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
             return;
         }
 
-		if (optionId >= 0 && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
+        if (optionId >= 0 && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
             if (currentRecipe.canCraft(this.getStackInSlot(0))) {
                 ItemStack remaining = currentRecipe.craft(this.getStackInSlot(0), options.get(optionId));
                 if (remaining != null && remaining.stackSize > 0) {
                     setEnergy(0);
-					decrStackSize(0, remaining.stackSize);
-					outputStack(remaining, this, 1, false);
+                    decrStackSize(0, remaining.stackSize);
+                    outputStack(remaining, this, 1, false);
                 }
             }
             findRecipe();
@@ -93,7 +89,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
         }
     }
 
-	@Override
+    @Override
     public String getInventoryName() {
         return BCStringUtils.localize("tile.programmingTableBlock.name");
     }
@@ -102,7 +98,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     public void readData(ByteBuf stream) {
         super.readData(stream);
         currentRecipeId = NetworkUtils.readUTF(stream);
-		optionId = stream.readByte();
+        optionId = stream.readByte();
         updateRecipe();
     }
 
@@ -158,9 +154,8 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
             }
         }
 
-		if ((oldId != null && currentRecipeId != null && !oldId.equals(currentRecipeId))
-				|| (oldId == null && currentRecipeId != null)
-				|| (oldId != null && currentRecipeId == null)) {
+        if ((oldId != null && currentRecipeId != null && !oldId.equals(currentRecipeId)) || (oldId == null && currentRecipeId != null)
+            || (oldId != null && currentRecipeId == null)) {
             optionId = -1;
             updateRecipe();
             queueNetworkUpdate();
@@ -187,11 +182,11 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     @Override
     public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
         if (side.isServer() && "select".equals(command)) {
-			optionId = stream.readByte();
+            optionId = stream.readByte();
             if (optionId >= options.size()) {
-				optionId = -1;
-			} else if (optionId < -1) {
-				optionId = -1;
+                optionId = -1;
+            } else if (optionId < -1) {
+                optionId = -1;
             }
 
             queueNetworkUpdate();

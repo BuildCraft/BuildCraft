@@ -37,13 +37,13 @@ public class EnergyStatementProvider implements ITriggerProvider {
             triggers.add(BuildCraftEnergy.triggerEngineOverheat);
         }
 
-		if (tile instanceof TileEngineIron) {
-			triggers.add(BuildCraftEnergy.triggerCoolantBelow25);
-			triggers.add(BuildCraftEnergy.triggerCoolantBelow50);
+        if (tile instanceof TileEngineIron) {
+            triggers.add(BuildCraftEnergy.triggerCoolantBelow25);
+            triggers.add(BuildCraftEnergy.triggerCoolantBelow50);
 
-			triggers.add(BuildCraftEnergy.triggerFuelBelow25);
-			triggers.add(BuildCraftEnergy.triggerFuelBelow50);
-		}
+            triggers.add(BuildCraftEnergy.triggerFuelBelow25);
+            triggers.add(BuildCraftEnergy.triggerFuelBelow50);
+        }
 
         return triggers;
     }
