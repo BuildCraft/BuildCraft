@@ -48,12 +48,12 @@ public abstract class RobotManager {
             BCLog.logger.info("Overriding " + aiRobotsByNames.get(name).getName() + " with " + aiRobot.getName());
         }
 
-		// Check if NBT-load constructor is present
-		try {
-			aiRobot.getConstructor(EntityRobotBase.class);
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("AI class " + aiRobot.getName() + " lacks NBT load construtor! This is a bug!");
-		}
+        // Check if NBT-load constructor is present
+        try {
+            aiRobot.getConstructor(EntityRobotBase.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("AI class " + aiRobot.getName() + " lacks NBT load construtor! This is a bug!");
+        }
 
         aiRobots.add(aiRobot);
         aiRobotsByNames.put(name, aiRobot);

@@ -14,14 +14,14 @@ public final class BCLog {
     /** Deactivate constructor */
     private BCLog() {}
 
-	@Deprecated
-	public static void logErrorAPI(String mod, Throwable error, Class<?> classFile) {
-		logErrorAPI(error, classFile);
+    @Deprecated
+    public static void logErrorAPI(String mod, Throwable error, Class<?> classFile) {
+        logErrorAPI(error, classFile);
     }
 
-	public static void logErrorAPI(Throwable error, Class<?> classFile) {
-		StringBuilder msg = new StringBuilder("API error! Please update your mods. Error: ");
-		msg.append(error);
+    public static void logErrorAPI(Throwable error, Class<?> classFile) {
+        StringBuilder msg = new StringBuilder("API error! Please update your mods. Error: ");
+        msg.append(error);
         StackTraceElement[] stackTrace = error.getStackTrace();
         if (stackTrace.length > 0) {
             msg.append(", ").append(stackTrace[0]);
@@ -30,13 +30,14 @@ public final class BCLog {
         logger.log(Level.ERROR, msg.toString());
 
         if (classFile != null) {
-			msg.append("API error: ").append(classFile.getSimpleName()).append(" is loaded from ").append(classFile.getProtectionDomain().getCodeSource().getLocation());
+            msg.append("API error: ").append(classFile.getSimpleName()).append(" is loaded from ").append(classFile.getProtectionDomain()
+                    .getCodeSource().getLocation());
             logger.log(Level.ERROR, msg.toString());
         }
     }
 
-	@Deprecated
+    @Deprecated
     public static String getVersion() {
-		return BuildCraftAPI.getVersion();
+        return BuildCraftAPI.getVersion();
     }
 }

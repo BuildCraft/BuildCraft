@@ -18,12 +18,31 @@ public interface IPropertyRegistry {
     enum Void implements IPropertyRegistry {
         INSTANCE;
 
-        //@formatter:off
-        @Override public<T>IPipePropertyValue<T>getValueProperty(String a,String b){return null;}
-        @Override public<T>IPipePropertyValue<T>registerValueProperty(String a,Class<T> b){return null;}
-        @Override public<T>IPipePropertyImplicit<T>getImplicitProperty(String a,String b){return null;}
-        @Override public<T>IPipePropertyImplicit<T>registerSimpleImplicitProperty(String a,Class<T>b){return null;}
-        @Override public<T>IPipePropertyImplicit<T>registerCutomImplicitProperty(String a,IPipePropertyImplicit<T>p){return p;}
-        //@formatter:on
+        // @formatter:off
+        @Override
+        public <T> IPipePropertyValue<T> getValueProperty(String a, String b) {
+            return null;
+        }
+
+        @Override
+        public <T> IPipePropertyValue<T> registerValueProperty(String a, Class<T> b) {
+            return null;
+        }
+
+        @Override
+        public <T> IPipePropertyImplicit<T> getImplicitProperty(String a, String b) {
+            return null;
+        }
+
+        @Override
+        public <T> IPipePropertyImplicit<T> registerSimpleImplicitProperty(String a, Class<T> b) {
+            return null;
+        }
+
+        @Override
+        public <T> IPipePropertyImplicit<T> registerCutomImplicitProperty(String a, IPipePropertyImplicit<T> p) {
+            return p;
+        }
+        // @formatter:on
     }
 }

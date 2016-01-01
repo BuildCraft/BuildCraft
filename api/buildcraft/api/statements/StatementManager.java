@@ -87,8 +87,8 @@ public final class StatementManager {
             }
         }
 
-		result = new LinkedList<IActionExternal>();
-		
+        result = new LinkedList<IActionExternal>();
+
         for (IActionProvider provider : actionProviders) {
             Collection<IActionExternal> toAdd = provider.getExternalActions(side, entity);
 
@@ -151,9 +151,9 @@ public final class StatementManager {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-		} catch (Error error) {
-			BCLog.logErrorAPI(error, IStatementParameter.class);
-			throw error;
+        } catch (Error error) {
+            BCLog.logErrorAPI(error, IStatementParameter.class);
+            throw error;
         }
 
         return null;

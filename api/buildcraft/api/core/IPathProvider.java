@@ -8,8 +8,6 @@ import net.minecraft.util.BlockPos;
 public interface IPathProvider {
     List<BlockPos> getPath();
 
-	/**
-	 * Remove from the world all objects used to define the path.
-	 */
-	void removeFromWorld();
+    /** Remove from the world all objects used to define the path. */
+    void removeFromWorld();
 }

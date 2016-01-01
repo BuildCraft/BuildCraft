@@ -7,20 +7,20 @@ import java.util.List;
 import net.minecraft.item.Item;
 
 public final class ListRegistry {
-	public static final List<Class<? extends Item>> itemClassAsType = new ArrayList<Class<? extends Item>>();
-	private static final List<ListMatchHandler> handlers = new ArrayList<ListMatchHandler>();
+    public static final List<Class<? extends Item>> itemClassAsType = new ArrayList<Class<? extends Item>>();
+    private static final List<ListMatchHandler> handlers = new ArrayList<ListMatchHandler>();
 
-	private ListRegistry() {
+    private ListRegistry() {
 
-	}
+    }
 
-	public static void registerHandler(ListMatchHandler h) {
-		if (h != null) {
-			handlers.add(h);
-		}
-	}
+    public static void registerHandler(ListMatchHandler h) {
+        if (h != null) {
+            handlers.add(h);
+        }
+    }
 
-	public static List getHandlers() {
-		return Collections.unmodifiableList(handlers);
-	}
+    public static List getHandlers() {
+        return Collections.unmodifiableList(handlers);
+    }
 }
