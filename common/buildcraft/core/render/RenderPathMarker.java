@@ -44,4 +44,9 @@ public class RenderPathMarker extends TileEntitySpecialRenderer<TilePathMarker> 
             GL11.glPopMatrix();
         }
     }
+
+    @Override
+    public boolean func_181055_a() {
+        return true;
+    }
 }
