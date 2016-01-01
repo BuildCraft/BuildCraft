@@ -8,13 +8,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationProvideItems;
 

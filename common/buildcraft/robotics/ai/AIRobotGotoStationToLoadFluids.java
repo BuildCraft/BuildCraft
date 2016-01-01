@@ -8,10 +8,10 @@
  */
 package buildcraft.robotics.ai;
 
+import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.filters.IFluidFilter;
 import buildcraft.robotics.IStationFilter;
 
 public class AIRobotGotoStationToLoadFluids extends AIRobot {

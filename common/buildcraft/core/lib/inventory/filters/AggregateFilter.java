@@ -10,6 +10,8 @@ package buildcraft.core.lib.inventory.filters;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.IStackFilter;
+
 /** Returns true if the stack matches all of the stack filters. */
 public class AggregateFilter implements IStackFilter {
 

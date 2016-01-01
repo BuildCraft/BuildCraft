@@ -32,6 +32,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryCopy;
@@ -41,7 +42,6 @@ import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.CraftingFilter;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.BCStringUtils;

@@ -9,10 +9,11 @@ import buildcraft.api.transport.pipe_bc8.IPipeListenerFactory;
 import buildcraft.api.transport.pipe_bc8.IPipeType;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
+import buildcraft.transport.pipes.bc8.PipeTransportPower_BC8;
 
 public enum EnumPipeType implements IPipeType {
     ITEM(PipeTransportItem_BC8.Factory.INSTANCE),
-    POWER(null),
+    POWER(PipeTransportPower_BC8.Factory.INSTANCE),
     FLUID(null),
     STRUCTURE(null);
 

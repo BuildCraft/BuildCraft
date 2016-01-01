@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.pipe_bc8.EnumItemJourneyPart;
+import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -15,15 +15,15 @@ import io.netty.buffer.ByteBuf;
 public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     private final IPipePropertyProviderEditable propertyProvider;
     private ItemStack stack;
-    private EnumItemJourneyPart journeyPart;
+    private EnumContentsJourneyPart journeyPart;
     private EnumFacing direction;
     private double speed;
 
-    public PipeContentsEditableItem(ItemStack stack, EnumItemJourneyPart journeyPart, EnumFacing direction) {
+    public PipeContentsEditableItem(ItemStack stack, EnumContentsJourneyPart journeyPart, EnumFacing direction) {
         this(new PipePropertyProviderEditable(), stack, journeyPart, direction, 0.05);
     }
 
-    public PipeContentsEditableItem(IPipePropertyProviderEditable propertyProvider, ItemStack stack, EnumItemJourneyPart journeyPart,
+    public PipeContentsEditableItem(IPipePropertyProviderEditable propertyProvider, ItemStack stack, EnumContentsJourneyPart journeyPart,
             EnumFacing direction, double speed) {
         this.propertyProvider = propertyProvider;
         this.stack = stack;
@@ -43,12 +43,12 @@ public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     }
 
     @Override
-    public EnumItemJourneyPart getJourneyPart() {
+    public EnumContentsJourneyPart getJourneyPart() {
         return journeyPart;
     }
 
     @Override
-    public void setJourneyPart(EnumItemJourneyPart direction) {
+    public void setJourneyPart(EnumContentsJourneyPart direction) {
         if (direction == null) throw new NullPointerException("direction");
         this.journeyPart = direction;
     }
@@ -100,7 +100,7 @@ public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     public IPipeContentsEditableItem readFromNBT(NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
         ItemStack stack = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("stack"));
-        EnumItemJourneyPart journeyPart = NBTUtils.readEnum(tag.getTag("journeyPart"), EnumItemJourneyPart.class);
+        EnumContentsJourneyPart journeyPart = NBTUtils.readEnum(tag.getTag("journeyPart"), EnumContentsJourneyPart.class);
         EnumFacing direction = NBTUtils.readEnum(tag.getTag("direction"), EnumFacing.class);
         double speed = tag.getDouble("speed");
         IPipePropertyProviderEditable provider = propertyProvider.readFromNBT(tag.getTag("properties"));

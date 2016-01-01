@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.entity.item.EntityItem;
@@ -23,7 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public final class InvUtils {
@@ -169,7 +165,8 @@ public final class InvUtils {
                 NBTTagCompound nbttagcompound2 = nbttaglist.getCompoundTagAt(i);
 
                 stacks[i] = ItemStack.loadItemStackFromNBT(nbttagcompound2);
-            } else {
+            }
+            else {
                 stacks[i] = null;
             }
         }
@@ -194,10 +191,12 @@ public final class InvUtils {
         if (stack.stackSize == 1) {
             if (stack.getItem().hasContainerItem(stack)) {
                 return stack.getItem().getContainerItem(stack);
-            } else {
+            }
+            else {
                 return null;
             }
-        } else {
+        }
+        else {
             stack.splitStack(1);
 
             return stack;
@@ -210,9 +209,9 @@ public final class InvUtils {
      * @return Modified inventory if double chest, unmodified otherwise. */
     public static IInventory getInventory(IInventory inv) {
         if (inv instanceof TileEntityChest) {
-			TileEntityChest adjacent = BlockUtils.getOtherDoubleChest((TileEntityChest) inv);
+            TileEntityChest adjacent = BlockUtils.getOtherDoubleChest((TileEntityChest) inv);
             if (adjacent != null) {
-                return new InventoryLargeChest("", adjacent, adjacent);
+                return new InventoryLargeChest("", (TileEntityChest) inv, adjacent);
             }
             return inv;
         }

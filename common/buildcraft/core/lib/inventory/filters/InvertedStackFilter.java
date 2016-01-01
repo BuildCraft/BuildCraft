@@ -10,6 +10,8 @@ package buildcraft.core.lib.inventory.filters;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.IStackFilter;
+
 public class InvertedStackFilter implements IStackFilter {
 
     private final IStackFilter filter;

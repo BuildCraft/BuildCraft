@@ -11,6 +11,8 @@ package buildcraft.core.lib.inventory.filters;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.IFluidFilter;
+
 public class SimpleFluidFilter implements IFluidFilter {
 
     private Fluid fluidChecked;

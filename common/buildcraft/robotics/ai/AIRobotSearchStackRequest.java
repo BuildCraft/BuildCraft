@@ -10,12 +10,12 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.StackRequest;
 

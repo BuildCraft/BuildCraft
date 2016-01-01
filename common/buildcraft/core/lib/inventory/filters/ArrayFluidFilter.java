@@ -14,6 +14,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.IFluidFilter;
+
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
 

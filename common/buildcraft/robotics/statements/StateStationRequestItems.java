@@ -8,8 +8,8 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.statements.ActionState;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public class StateStationRequestItems extends ActionState {
 

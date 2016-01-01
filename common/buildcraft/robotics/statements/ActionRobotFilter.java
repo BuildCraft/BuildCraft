@@ -12,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.*;
 import buildcraft.core.lib.inventory.filters.*;

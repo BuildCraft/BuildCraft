@@ -2,33 +2,21 @@ package buildcraft.transport.pipes.bc8.behaviour;
 
 import com.google.common.eventbus.Subscribe;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
-import buildcraft.api.transport.pipe_bc8.IContentsFilter;
+import buildcraft.api.transport.pipe_bc8.*;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
 import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
-import buildcraft.api.transport.pipe_bc8.IPipeContents;
-import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableFluid;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
-import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditablePower;
-import buildcraft.api.transport.pipe_bc8.IPipeHelper.EnumCombiningOp;
-import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeBehaviour_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.AttemptCreate;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventInteract_BC8;
@@ -36,7 +24,6 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.transport.pipes.bc8.filter.MaximumContentsFilter;
 
 import io.netty.buffer.ByteBuf;
 
@@ -123,59 +110,43 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
     }
 
     /** @param items The number of items you can extract
-     * @return The number of items extracted */
+     * @return The amount of power used */
     private int extract(int availableEnergy) {
         IConnection_BC8 connection = pipe.getConnections().get(extractionFace.face);
         if (connection == null) return 0;
         IExtractable_BC8 extractable = pipe.getConnections().get(extractionFace).getExtractor();
         IInsertable_BC8 insertable = PipeAPI_BC8.INSERTION_MANAGER.getInsertableFor(pipe);
 
-        IContentsFilter insertableFilter = insertable.getFilterForType(getType());
-        IContentsFilter maxEnergyFilter = getFilter(availableEnergy);
-        IContentsFilter filter = PipeAPI_BC8.PIPE_HELPER.combineFilters(insertableFilter, maxEnergyFilter, EnumCombiningOp.AND);
-
-        IPipeContentsEditable contents = extractable.tryExtract(filter, pipe, extractionFace.face.getOpposite());
+        IPipeContentsEditable contents = extractType(availableEnergy, insertable, extractable);
+        if (contents == null) return 0;
 
         int energyRequired = getEnergyCost(contents);
 
-        boolean inserted = insertable.tryInsert(contents, pipe, extractionFace.face.getOpposite());
+        boolean inserted = insertable.tryInsert(contents, pipe, extractionFace.face.getOpposite(), false);
         if (!inserted) throw new IllegalStateException("Cannot NOT insert!");
         return energyRequired;
     }
 
-    private IPipeContents getType() {
-        if (definition.type == PipeAPI_BC8.PIPE_TYPE_ITEM) {
-            return PipeAPI_BC8.PIPE_HELPER.getContentsForItem(new ItemStack(Items.apple));
-        } else if (definition.type == PipeAPI_BC8.PIPE_TYPE_FLUID) {
-            return PipeAPI_BC8.PIPE_HELPER.getContentsForFluid(new FluidStack(FluidRegistry.WATER, 1));
-        } else {
-            return PipeAPI_BC8.PIPE_HELPER.getContentsForPower(1);
-        }
+    /** Extracts the correct type based on the definition's type.
+     * 
+     * @param availableEnergy The maximum energy that can be used.
+     * @param pipeInsertable The insertable that will accept whatever you extract (Don't insert it here, but test to see
+     *            if your contents can be inserted and extract whatever CAN be inserted)
+     * @param extractable The extractable to extract from
+     * @return The contents you took away from the extractable, or null if you could not extract anything */
+    protected IPipeContentsEditable extractType(int availableEnergy, IInsertable_BC8 pipeInsertable, IExtractable_BC8 extractable) {
+        return null;
     }
 
-    private int getEnergyCost(IPipeContentsEditable contents) {
+    protected int getEnergyCost(IPipeContentsEditable contents) {
         if (contents instanceof IPipeContentsEditableItem) {
             ItemStack stack = ((IPipeContentsEditableItem) contents).cloneItemStack();
             return ENERGY_EXTRACT_SINGLE * stack.stackSize;
         } else if (contents instanceof IPipeContentsEditableFluid) {
             FluidStack stack = ((IPipeContentsEditableFluid) contents).cloneFluidStack();
             return ENERGY_EXTRACT_SINGLE * stack.amount / FLUID_MULTIPLIER;
-        } else if (contents instanceof IPipeContentsEditablePower) {
-            int energy = ((IPipeContentsEditablePower) contents).powerHeld();
-            return ENERGY_EXTRACT_SINGLE * energy / POWER_MULTIPLIER;
         } else {
             throw new IllegalStateException("Was not an expected type! (" + contents.getClass() + ")");
-        }
-    }
-
-    /** Gets a contents filter for the maximum energy available. */
-    protected IContentsFilter getFilter(int energy) {
-        if (definition.type == PipeAPI_BC8.PIPE_TYPE_ITEM) {
-            return new MaximumContentsFilter.Item(energy / ENERGY_EXTRACT_SINGLE);
-        } else if (definition.type == PipeAPI_BC8.PIPE_TYPE_FLUID) {
-            return new MaximumContentsFilter.Fluid(energy * FLUID_MULTIPLIER / ENERGY_EXTRACT_SINGLE);
-        } else {
-            return new MaximumContentsFilter.Power(energy * POWER_MULTIPLIER / ENERGY_EXTRACT_SINGLE);
         }
     }
 
@@ -225,7 +196,7 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
     protected boolean isValidExtraction(IConnection_BC8 connection) {
         if (connection == null) return false;
         IExtractable_BC8 extractable = connection.getExtractor();
-        return extractable.givesType(getType());
+        return definition.type == PipeAPI_BC8.PIPE_TYPE_ITEM ? extractable.givesItems() : extractable.givesFluids();
     }
 
     // IEnergyReciever

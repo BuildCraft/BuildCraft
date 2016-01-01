@@ -2,6 +2,11 @@ package buildcraft.api.transport.pipe_bc8;
 
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableFluid;
+import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
+
 public interface IInsertionManager {
     /** Gets an {@link IInsertable_BC8} interface for a given tile or movable entity. */
     IInsertable_BC8 getInsertableFor(Object obj);
@@ -15,20 +20,25 @@ public interface IInsertionManager {
     }
 
     public interface IInsertable_BC8 {
-        /** @param contents The contents to try and insert
-         * @param insertor The object that is doing the insertion.
-         * @param direction The direction the contents is going.
-         * @return True if the contents was inserted (And you should discard any contents that went in to it), false if
-         *         it was not allowed in. */
-        boolean tryInsert(IPipeContentsEditable contents, Object insertor, EnumFacing direction);
+        boolean tryInsertItems(IPipeContentsEditableItem contents, Object extractor, EnumFacing direction, boolean simulate);
 
-        /** @return A filter that will limit what can be inserted to just what is in the filter. This filter *may* be
-         *         over-extensive in what it can accept though. */
-        IContentsFilter getFilter();
+        boolean tryInsertFluid(IPipeContentsEditableFluid fluid, Object extractor, EnumFacing direction, boolean simulate);
 
-        /** @param theoreticalContents The type that is to be tested.
-         * @return true if {@link #tryInsert(IPipeContentsEditable, Object, EnumFacing)} MIGHT allow the type (Class
-         *         type) to be inserted. */
-        IContentsFilter getFilterForType(IPipeContents theoreticalContents);
+        default boolean tryInsert(IPipeContentsEditable contents, Object extractor, EnumFacing direction, boolean simulate) {
+            if (contents instanceof IPipeContentsEditableItem) {
+                return tryInsertItems((IPipeContentsEditableItem) contents, extractor, direction, simulate);
+            } else if (contents instanceof IPipeContentsEditableFluid) {
+                return tryInsertFluid((IPipeContentsEditableFluid) contents, extractor, direction, simulate);
+            }
+            return false;
+        }
+
+        /** @return True if {@link #tryExtractItems(IStackFilter, Object, EnumFacing, boolean)} can return a non-null
+         *         value at any future point in time. */
+        boolean acceptsItems();
+
+        /** @return True if {@link #tryExtractFluid(IFluidFilter, Object, EnumFacing, boolean)} can return a non-null
+         *         value at any future point in time. */
+        boolean acceptsFluids();
     }
 }

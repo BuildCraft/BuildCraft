@@ -1,18 +1,9 @@
 package buildcraft.transport.pipes.bc8;
 
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.EnumItemJourneyPart;
-import buildcraft.api.transport.pipe_bc8.IPipeContents;
-import buildcraft.api.transport.pipe_bc8.IPipeContents.IPipeContentsItem;
+import buildcraft.api.transport.pipe_bc8.*;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
-import buildcraft.api.transport.pipe_bc8.IPipeListener;
-import buildcraft.api.transport.pipe_bc8.IPipeListenerFactory;
-import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.transport.PipeTransportItems;
@@ -43,10 +34,9 @@ public class PipeTransportItem_BC8 implements IPipeListener {
 
     @BCPipeEventHandler
     public void attemptConnection(IPipeEventConnection_BC8.AttemptCreate event) {
-        IPipeContentsItem item = PipeAPI_BC8.PIPE_HELPER.getContentsForItem(new ItemStack(Items.apple));
-        if (event.getConnection().getInserter().getFilterForType(item).matches(item)) {
+        if (event.getConnection().getInserter().acceptsItems()) {
             event.couldAccept();
-        } else if (event.getConnection().getExtractor().givesType(item)) {
+        } else if (event.getConnection().getExtractor().givesItems()) {
             event.couldAccept();
         }
     }
@@ -63,7 +53,7 @@ public class PipeTransportItem_BC8 implements IPipeListener {
 
         // Setup the item to make it tick immediately
         IPipeContentsEditableItem item = (IPipeContentsEditableItem) enter.getContents();
-        item.setJourneyPart(EnumItemJourneyPart.JUST_ENTERED);
+        item.setJourneyPart(EnumContentsJourneyPart.JUST_ENTERED);
         item.setDirection(enter.getFrom().getOpposite());
         long now = pipe.getWorld().getTotalWorldTime();
 

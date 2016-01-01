@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 
 import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.EnumItemJourneyPart;
+import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
 import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipeContents.IPipeContentsItem;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
@@ -146,8 +146,8 @@ public class TravellingItem_BC8 implements IPipeListener {
 
         if (tick instanceof IPipeEvent_BC8.Tick.Client) return;
 
-        EnumItemJourneyPart direction = item.getJourneyPart();
-        if (direction == EnumItemJourneyPart.JUST_ENTERED) {
+        EnumContentsJourneyPart direction = item.getJourneyPart();
+        if (direction == EnumContentsJourneyPart.JUST_ENTERED) {
             // Setup ourselves NOW, but tick the rest later
             double normalizedSpeed = item.getSpeed() * PipeTransportItem_BC8.SPEED_NORMALIZER;
             IPipeEventContents_BC8.ChangeSpeed changeSpeed = null
@@ -172,7 +172,7 @@ public class TravellingItem_BC8 implements IPipeListener {
 
         if (tick.getCurrentTick() < tickFinished) return;
 
-        if (direction == EnumItemJourneyPart.TO_CENTER) {
+        if (direction == EnumContentsJourneyPart.TO_CENTER) {
             // We need to find out where we are going, and the new speed of ourselves
 
         } else {

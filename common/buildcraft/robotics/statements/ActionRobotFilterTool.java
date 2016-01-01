@@ -9,10 +9,10 @@ import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.*;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;

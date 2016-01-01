@@ -11,10 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.StackRequest;
 import buildcraft.robotics.ai.*;
 import buildcraft.robotics.statements.ActionRobotFilter;

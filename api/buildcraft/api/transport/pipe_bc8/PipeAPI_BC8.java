@@ -4,6 +4,7 @@ import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.api.APIHelper;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
+import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyImplicit;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyValue;
 
@@ -11,8 +12,8 @@ public enum PipeAPI_BC8 {
     INSTANCE;
 
     public static final IPropertyRegistry PROPERTY_REGISTRY;
-    /** An insertion manager- used to get an instance of {@link IExtractable_BC8} for a given tile entity or movable
-     * entity. Can also be used to register custom {@link IExtractable_BC8} for custom tiles. */
+    /** An insertion manager- used to get an instance of {@link IInsertable_BC8} for a given tile entity or movable
+     * entity. Can also be used to register custom {@link IInsertable_BC8} for custom tiles. */
     public static final IInsertionManager INSERTION_MANAGER;
     /** An extraction manager- used to get an instance of {@link IExtractable_BC8} for a given tile entity or movable
      * entity. Can also be used to register custom {@link IExtractable_BC8} for custom entities. */

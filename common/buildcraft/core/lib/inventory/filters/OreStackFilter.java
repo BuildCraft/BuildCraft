@@ -12,6 +12,8 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.api.core.IStackFilter;
+
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class OreStackFilter implements IStackFilter {
 

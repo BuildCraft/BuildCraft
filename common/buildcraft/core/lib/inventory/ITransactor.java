@@ -7,7 +7,7 @@ package buildcraft.core.lib.inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.core.lib.inventory.filters.IStackFilter;
+import buildcraft.api.core.IStackFilter;
 
 public interface ITransactor {
 
