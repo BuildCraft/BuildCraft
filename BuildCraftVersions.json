@@ -1,13 +1,12 @@
 {
     "homepage": "http://www.mod-buildcraft.com/forums/showthread.php?tid=1853",
     "promos": {
-        "1.8.8-latest": "7.2.0pre5",
-        "1.8.8-recommended": "7.2.0pre5"
+        "1.8.8-latest": "7.2.0pre4",
+        "1.8.8-recommended": "7.2.0pre4"
     },
     "1.8.8": {
         "7.2.0pre2":"      Add this versioning scheme",
         "7.2.0pre3":"      Make builders, quarrys and construction markers render at any distance\n      Fix aliasing issues with lasers at long distances",
-        "7.2.0pre4":"      Fix fluid pipes not rendering properly",
-        "7.2.0pre5":"      Fix double chests not being correctly viewed by pipes"
+        "7.2.0pre4":"      Fix fluid pipes not rendering properly"
     }
 }
