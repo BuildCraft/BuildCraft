@@ -6,8 +6,12 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
+import com.google.gson.GsonBuilder;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 
@@ -161,15 +166,30 @@ public class Blueprint extends BlueprintBase {
         NBTTagCompound nbtContents = new NBTTagCompound();
 
         for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size.subtract(Utils.POS_ONE))) {
-            SchematicBlockBase schematic = get(pos);
+            SchematicBlockBase schematic = null;
             NBTTagCompound cpt = new NBTTagCompound();
+            try {
+                schematic = get(pos);
 
-            if (schematic != null) {
-                schematic.idsToBlueprint(mapping);
-                schematic.writeSchematicToNBT(cpt, mapping);
-                /* We don't use the index of the current for loop because we shouldn't rely on the behaviour of
-                 * BlockPos.getAllInBox */
-                nbtContents.setTag(BCStringUtils.blockPosToShortString(pos), cpt);
+                if (schematic != null) {
+                    schematic.idsToBlueprint(mapping);
+                    schematic.writeSchematicToNBT(cpt, mapping);
+                    /* We don't use the index of the current for loop because we shouldn't rely on the behaviour of
+                     * BlockPos.getAllInBox */
+                    nbtContents.setTag(BCStringUtils.blockPosToShortString(pos), cpt);
+                }
+            } catch (Throwable t) {
+                CrashReport crash;
+                if (t instanceof ReportedException) {
+                    crash = ((ReportedException) t).getCrashReport();
+                } else {
+                    crash = new CrashReport("Failed to save the contents of a blueprint!", t);
+                }
+                CrashReportCategory cat = crash.makeCategory("Block Being Saved");
+                cat.addCrashSection("Block Position (In schematic)", pos);
+                cat.addCrashSection("Schematic type", schematic == null ? "~~UNKNOWN~~" : schematic.getClass());
+                mapping.addToCrashReport(crash.makeCategory("Mapping Registry"));
+                throw new ReportedException(crash);
             }
         }
 

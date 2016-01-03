@@ -23,9 +23,7 @@ public class SchematicTile extends SchematicBlock {
     public NBTTagCompound tileNBT = new NBTTagCompound();
 
     @Override
-    public void idsToBlueprint(MappingRegistry registry) {
-        registry.scanAndTranslateStacksToRegistry(tileNBT);
-    }
+    public void idsToBlueprint(MappingRegistry registry) {}
 
     @Override
     public void idsToWorld(MappingRegistry registry) {

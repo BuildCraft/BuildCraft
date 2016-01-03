@@ -6,7 +6,9 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -14,9 +16,13 @@ import com.google.common.collect.ListMultimap;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.Constants;
@@ -40,6 +46,7 @@ public class MappingRegistry {
     public ArrayList<Class<? extends Entity>> idToEntity = new ArrayList<Class<? extends Entity>>();
 
     private void registerItem(Item item) {
+        if (item == null) throw new IllegalArgumentException("Cannot register a null item!");
         if (!itemToId.containsKey(item)) {
             idToItem.add(item);
             itemToId.put(item, idToItem.size() - 1);
@@ -47,6 +54,7 @@ public class MappingRegistry {
     }
 
     private void registerBlock(Block block) {
+        if (block == null) throw new IllegalArgumentException("Cannot register a null block!");
         if (!blockToId.containsKey(block)) {
             idToBlock.add(block);
             blockToId.put(block, idToBlock.size() - 1);
@@ -54,6 +62,7 @@ public class MappingRegistry {
     }
 
     private void registerEntity(Class<? extends Entity> entityClass) {
+        if (entityClass == null) throw new IllegalArgumentException("Cannot register a null entityClass!");
         if (!entityToId.containsKey(entityClass)) {
             idToEntity.add(entityClass);
             entityToId.put(entityClass, idToEntity.size() - 1);
@@ -75,6 +84,7 @@ public class MappingRegistry {
     }
 
     public int getIdForItem(Item item) {
+        if (item == null) throw new NullPointerException("item");
         if (!itemToId.containsKey(item)) {
             registerItem(item);
         }
@@ -88,10 +98,10 @@ public class MappingRegistry {
         return getIdForItem(item);
     }
 
-    public int itemIdToWorld(int id) throws MappingNotFoundException {
+    public ResourceLocation itemIdToWorld(int id) throws MappingNotFoundException {
         Item item = getItemForId(id);
 
-        return Item.getIdFromItem(item);
+        return Item.itemRegistry.getNameForObject(item);
     }
 
     public Block getBlockForId(int id) throws MappingNotFoundException {
@@ -122,10 +132,10 @@ public class MappingRegistry {
         return getIdForBlock(block);
     }
 
-    public int blockIdToWorld(int id) throws MappingNotFoundException {
+    public ResourceLocation blockIdToWorld(int id) throws MappingNotFoundException {
         Block block = getBlockForId(id);
 
-        return Block.getIdFromBlock(block);
+        return Block.blockRegistry.getNameForObject(block);
     }
 
     public Class<? extends Entity> getEntityForId(int id) throws MappingNotFoundException {
@@ -150,55 +160,26 @@ public class MappingRegistry {
         return entityToId.get(entity);
     }
 
-    /** Relocates a stack nbt from the world referential to the registry referential. */
-    public void stackToRegistry(NBTTagCompound nbt) {
-        Item item = Item.getItemById(nbt.getShort("id"));
-        nbt.setShort("id", (short) getIdForItem(item));
-    }
-
     /** Relocates a stack nbt from the registry referential to the world referential. */
     public void stackToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
-        Item item = getItemForId(nbt.getShort("id"));
-        nbt.setShort("id", (short) Item.getIdFromItem(item));
+        // 1.7.10 back-compat
+        if (nbt.hasKey("id", Constants.NBT.TAG_SHORT)) {
+            Item item = getItemForId(nbt.getShort("id"));
+            nbt.setString("id", (Item.itemRegistry.getNameForObject(item).toString()));
+        }
     }
 
-    private boolean isStackLayout(NBTTagCompound nbt) {
+    // versions before 1.8 saved stacks with an Item ID as a short
+    private boolean isOldStackLayout(NBTTagCompound nbt) {
         return nbt.hasKey("id") && nbt.hasKey("Count") && nbt.hasKey("Damage") && nbt.getTag("id") instanceof NBTTagShort && nbt.getTag(
                 "Count") instanceof NBTTagByte && nbt.getTag("Damage") instanceof NBTTagShort;
     }
 
-    public void scanAndTranslateStacksToRegistry(NBTTagCompound nbt) {
-        // First, check if this nbt is itself a stack
-
-        if (isStackLayout(nbt)) {
-            stackToRegistry(nbt);
-        }
-
-        // Then, look at the nbt compound contained in this nbt (even if it's a
-        // stack) and checks for stacks in it.
-        for (Object keyO : nbt.getKeySet()) {
-            String key = (String) keyO;
-
-            if (nbt.getTag(key) instanceof NBTTagCompound) {
-                scanAndTranslateStacksToRegistry(nbt.getCompoundTag(key));
-            }
-
-            if (nbt.getTag(key) instanceof NBTTagList) {
-                NBTTagList list = (NBTTagList) nbt.getTag(key);
-
-                if (list.getTagType() == Constants.NBT.TAG_COMPOUND) {
-                    for (int i = 0; i < list.tagCount(); ++i) {
-                        scanAndTranslateStacksToRegistry(list.getCompoundTagAt(i));
-                    }
-                }
-            }
-        }
-    }
-
+    // 1.7.10 Back compat
     public void scanAndTranslateStacksToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
         // First, check if this nbt is itself a stack
 
-        if (isStackLayout(nbt)) {
+        if (isOldStackLayout(nbt)) {
             stackToWorld(nbt);
         }
 
@@ -248,6 +229,8 @@ public class MappingRegistry {
                         sub.setString("name", name);
                     }
                 }
+            } else {
+                throw new IllegalArgumentException("Found a null block!");
             }
             blocksMapping.appendTag(sub);
         }
@@ -259,7 +242,7 @@ public class MappingRegistry {
         for (Item i : idToItem) {
             NBTTagCompound sub = new NBTTagCompound();
             if (i != null) {
-                Object obj = Item.itemRegistry.getNameForObject(i);
+                ResourceLocation obj = Item.itemRegistry.getNameForObject(i);
                 if (obj == null) {
                     BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName()
                         + ") does not have a registry name! This is a bug!");
@@ -272,6 +255,8 @@ public class MappingRegistry {
                         sub.setString("name", name);
                     }
                 }
+            } else {
+                throw new IllegalArgumentException("Found a null item!");
             }
             itemsMapping.appendTag(sub);
         }
@@ -419,5 +404,19 @@ public class MappingRegistry {
         // for (Item i : idToItem) {
         // System.out.println("- " + (i != null ? i.toString() : "null"));
         // }
+    }
+
+    public void addToCrashReport(CrashReportCategory cat) {
+        Comparator<Entry<?, Integer>> comparator = (e1, e2) -> e1.getValue() - e2.getValue();
+
+        cat.addCrashSection("Item Map Count", itemToId.size());
+        itemToId.entrySet().stream().sorted(comparator).forEach(e -> cat.addCrashSection("  - ID " + e.getValue(), Item.itemRegistry.getNameForObject(
+                e.getKey())));
+
+        cat.addCrashSection("Block Map Count", blockToId.size());
+        blockToId.entrySet().stream().sorted(comparator).forEach(e -> cat.addCrashSection("  - ID " + e.getValue(), e.getKey()));
+
+        cat.addCrashSection("Entity Map Count", entityToId.size());
+        entityToId.entrySet().stream().sorted(comparator).forEach(e -> cat.addCrashSection("  - ID " + e.getValue(), e.getKey()));
     }
 }

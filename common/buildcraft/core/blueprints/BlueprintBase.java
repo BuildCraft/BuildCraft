@@ -170,8 +170,6 @@ public abstract class BlueprintBase {
             bpt = new Blueprint();
         }
 
-        System.out.println(kind + " -> " + bpt.getClass());
-
         bpt.readFromNBT(nbt);
 
         return bpt;

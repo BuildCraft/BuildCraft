@@ -5,6 +5,7 @@
 package buildcraft.transport.schematics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.item.Item;
@@ -18,6 +19,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.*;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
@@ -192,16 +194,13 @@ public class SchematicPipe extends SchematicTile {
         Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
         if (BlockGenericPipe.isValid(pipe)) {
-            ArrayList<ItemStack> items = pipe.computeItemDrop();
-            storedRequirements = new ItemStack[items.size() + 1];
-            items.toArray(storedRequirements);
-            storedRequirements[storedRequirements.length - 1] = new ItemStack(pipe.item, 1, pipe.container.getItemMetadata());
+            List<ItemStack> items = new ArrayList<>(pipe.computeItemDrop());
+            items.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
+            storedRequirements = items.toArray(new ItemStack[items.size()]);
+            BCLog.logger.info("Stored the requirements" + Arrays.toString(storedRequirements).replace(",", ",\n") + "@" + pos);
+        } else {
+            BCLog.logger.info("Tried and failed to find a pipe at " + pos);
         }
-    }
-    
-    @Override
-    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-
     }
 
     @Override

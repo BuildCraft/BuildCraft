@@ -6,6 +6,8 @@ package buildcraft.api.blueprints;
 
 import java.util.*;
 
+import com.google.gson.GsonBuilder;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
@@ -20,6 +22,8 @@ import net.minecraft.util.EnumFacing.Axis;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
+
+import buildcraft.api.core.BCLog;
 
 public class SchematicBlock extends SchematicBlockBase {
     public IBlockState state = null;
@@ -128,6 +132,7 @@ public class SchematicBlock extends SchematicBlockBase {
             Block block = registry.getBlockForId(nbt.getInteger("blockId"));
             state = block.getStateFromMeta(nbt.getInteger("blockMeta"));
         } catch (MappingNotFoundException e) {
+            BCLog.logger.info(e);
             doNotUse = true;
         }
     }
@@ -140,12 +145,8 @@ public class SchematicBlock extends SchematicBlockBase {
             for (int i = 0; i < rq.tagCount(); ++i) {
                 try {
                     NBTTagCompound sub = rq.getCompoundTagAt(i);
-                    if (sub.getInteger("id") >= 0) {
-                        registry.stackToWorld(sub);
-                        rqs.add(ItemStack.loadItemStackFromNBT(sub));
-                    } else {
-                        defaultPermission = BuildingPermission.CREATIVE_ONLY;
-                    }
+                    registry.stackToWorld(sub);
+                    rqs.add(ItemStack.loadItemStackFromNBT(sub));
                 } catch (MappingNotFoundException e) {
                     defaultPermission = BuildingPermission.CREATIVE_ONLY;
                 } catch (Throwable t) {
@@ -170,10 +171,12 @@ public class SchematicBlock extends SchematicBlockBase {
             NBTTagList rq = new NBTTagList();
 
             for (ItemStack stack : storedRequirements) {
+                if (stack == null || stack.getItem() == null) throw new IllegalStateException("Found a null requirement! " + getClass());
                 NBTTagCompound sub = new NBTTagCompound();
                 stack.writeToNBT(sub);
-                registry.stackToRegistry(sub);
                 rq.appendTag(sub);
+
+                BCLog.logger.info("Saved " + stack + " as " + new GsonBuilder().setPrettyPrinting().create().toJson(sub));
             }
 
             nbt.setTag("rq", rq);
