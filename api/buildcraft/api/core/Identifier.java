@@ -15,8 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.power.bc8.IPowerConnection;
-
 /** Identifies an in world tile entity or movable entity. Feel free to extend this class if your tile entity contains
  * multiple identifiable {@link IPowerConnection}. Just make sure to register it with
  * {@link #registerType(String, Supplier)} to make loading work.
