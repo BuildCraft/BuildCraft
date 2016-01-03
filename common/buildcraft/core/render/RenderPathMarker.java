@@ -46,7 +46,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer<TilePathMarker> 
     }
 
     @Override
-    public boolean func_181055_a() {
+    public boolean forceTileEntityRender() {
         return true;
     }
 }

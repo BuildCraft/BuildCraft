@@ -6,8 +6,6 @@ package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
 
-import com.google.gson.GsonBuilder;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -187,7 +185,7 @@ public class Blueprint extends BlueprintBase {
                 }
                 CrashReportCategory cat = crash.makeCategory("Block Being Saved");
                 cat.addCrashSection("Block Position (In schematic)", pos);
-                cat.addCrashSection("Schematic type", schematic == null ? "~~UNKNOWN~~" : schematic.getClass());
+                cat.addCrashSection("Schematic type", schematic == null ? "~~NULL~~" : schematic.getClass());
                 mapping.addToCrashReport(crash.makeCategory("Mapping Registry"));
                 throw new ReportedException(crash);
             }

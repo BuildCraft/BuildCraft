@@ -55,7 +55,7 @@ public class BlockHighlightHandler {
                 nPos = nPos.subtract(x, y, z);
                 for (AxisAlignedBB aabb : aabbs) {
                     AxisAlignedBB changed = aabb.expand(exp, exp, exp).offset(-nPos.xCoord, -nPos.yCoord, -nPos.zCoord);
-                    RenderGlobal.func_181561_a(changed);
+                    RenderGlobal.drawSelectionBoundingBox(changed);
                 }
 
                 GL11.glDepthMask(true);

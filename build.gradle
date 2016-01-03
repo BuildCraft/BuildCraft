@@ -25,7 +25,7 @@ apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 //apply plugin: 'checkstyle'
 
-version = "7.2.0pre6"
+version = "7.2.0-pre6"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
@@ -40,8 +40,8 @@ dependencies {
 }
 
 minecraft {
-    mappings = "snapshot_20151217"
-    version = "1.8.8-11.15.0.1635-1.8.8"
+    mappings = "snapshot_20160103"
+    version = "1.8.9-11.15.0.1672"
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 

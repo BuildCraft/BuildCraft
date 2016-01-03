@@ -175,8 +175,6 @@ public class SchematicBlock extends SchematicBlockBase {
                 NBTTagCompound sub = new NBTTagCompound();
                 stack.writeToNBT(sub);
                 rq.appendTag(sub);
-
-                BCLog.logger.info("Saved " + stack + " as " + new GsonBuilder().setPrettyPrinting().create().toJson(sub));
             }
 
             nbt.setTag("rq", rq);

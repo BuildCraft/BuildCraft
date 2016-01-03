@@ -22,8 +22,7 @@ public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRe
     public RenderBoxProvider() {}
 
     @Override
-    public boolean func_181055_a() {
-        // Should be called "Ignore chunk checks" or something like that
+    public boolean forceTileEntityRender() {
         return true;
     }
 
