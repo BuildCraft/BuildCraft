@@ -2,15 +2,18 @@ package buildcraft.api.power.bc8;
 
 import java.util.function.Predicate;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.APIHelper;
 import buildcraft.api.power.bc8.IPowerConnection.IPowerConsumer;
+import buildcraft.api.power.bc8.IPowerTunnel.IPowerTunnelHalfLoaded;
 
 public class PowerAPI_BC8 {
 
     public static final IPowerNetwork NETWORK;
 
     static {
-        NETWORK = APIHelper.getInstance("buildcraft.core.power.PowerNetwork", IPowerNetwork.class);
+        NETWORK = APIHelper.getInstance("buildcraft.core.power_bc8.PowerNetwork", IPowerNetwork.class);
     }
 
     public interface IPowerNetwork {
@@ -39,12 +42,20 @@ public class PowerAPI_BC8 {
         /** Requests a tunnel to supply the given consumer the number of units given, checking each node along the way
          * to make sure that it satisfies the filter.
          * 
+         * <p>
+         * <b>NOTE:</b> This may return an {@link IPowerTunnelHalfLoaded} if this cannot search the graph within a
+         * single tick. If this is the case then the resulting tunnel will return a non-null value from
+         * {@link IPowerTunnelHalfLoaded#loadedTunnel()}, which will be the loaded tunnel you can use.
+         * 
          * @param type The type of power that will be given.
          * @param units The number of power units to request. The resulting tunnel will supply up to the given number of
          *            units without fail, disconnecting automatically if nothing can fulfil the request.
          * @param connectionFilter The filter to check each possible connection against. Each connection will
          *            automatically be checked against the type and unit count for you. */
         IPowerTunnel requestTunnel(IPowerConsumer consumer, EnumPowerBar type, int units, Predicate<IPowerConnection> connectionFilter);
+
+        /** Loads the tunnel from NBT, given the consumer that saved it. */
+        IPowerTunnel loadTunnel(IPowerConsumer consumer, NBTTagCompound compound);
 
         public enum Void implements IPowerNetwork {
             INSTANCE;
@@ -57,6 +68,11 @@ public class PowerAPI_BC8 {
 
             @Override
             public IPowerTunnel requestTunnel(IPowerConsumer consumer, EnumPowerBar type, int units, Predicate<IPowerConnection> connectionFilter) {
+                return null;
+            }
+
+            @Override
+            public IPowerTunnel loadTunnel(IPowerConsumer consumer, NBTTagCompound compound) {
                 return null;
             }
         }

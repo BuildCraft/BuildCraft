@@ -1,6 +1,12 @@
 package buildcraft.api.power.bc8;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
+
+import buildcraft.api.core.Identifier;
+import buildcraft.api.power.bc8.PowerAPI_BC8.IPowerNetwork;
+
+// TODO: RETHINK THIS :P
 
 /** Indicates that this tile entity can connect to the power network. */
 public interface IPowerConnection {
@@ -25,8 +31,12 @@ public interface IPowerConnection {
         return delegate;
     }
 
+    /** @return A type of {@link Identifier} that describes how to load this connection from NBT. This should probably
+     *         be a cached value from {@link Identifier#getFor(Object)} */
+    Identifier itentifier();
+
     /** @return All of the OTHER {@link IPowerConnection} that connect to this {@link IPowerConnection} */
-    Set<IPowerConnection> connections();
+    Map<Identifier, IPowerConnection> connections();
 
     /** Provides a notification the the given {@link IPowerTunnel} is using this relay to tunnel through. This will be
      * called when the power network is loaded from disk (even if nothing changed in the world) to let you add the
@@ -61,22 +71,31 @@ public interface IPowerConnection {
     public interface IPowerSupplier extends IPowerConnection {}
 
     /** Indicates that this connection requires power to operate. It also allows requesting power from the power
-     * network. */
+     * network.
+     * <p>
+     * The consumer MUST be the one to save the {@link IPowerTunnel} with the {@link IPowerNetwork} */
     public interface IPowerConsumer extends IPowerConnection {}
 
     // Composite/Special case types
 
     /** Indicates that this relay must be given a constant flow of power to relay more power over itself. */
     public interface IPowerCostlyRelay extends IPowerRelay, IPowerConsumer {
-        /** @return True if the power requirements are satisfied for this relay to operate properly. */
+        /** @return True if the power requirements are satisfied for this relay to operate properly. Note that you can
+         *         return 0 from {@link #traversalCost(IPowerConnection)} and return false from this if you have a
+         *         different way of being activated */
         boolean satisfied();
 
         /** @param to The connection that is being attempted to traverse to. The connection will always be one returned
          *            from {@link #connections()}.
-         * @return The cost (in power flow) for traversing over this relay to a specific {@link IPowerConnection}. */
-        int traversalCost(IPowerConnection to);
+         * @param reverseRoute The route from the consumer to the supplier. This won't actually contain the supplier
+         *            (unless you ARE a supplier) but will contain the cheapest (first priority), shortest route to the
+         *            consumer from you.
+         * @return The cost (in power flow) for traversing over this relay to a specific {@link IPowerConnection}. This
+         *         value will be pushed DOWN (So if you return 0.1 and their are 9 of your {@link IPowerRelay} that add
+         *         up to 0.9 units it will cost 0 units total to traverse) */
+        double traversalCost(IPowerConnection to, List<IPowerConnection> reverseRoute);
 
-        /** @return The type of cost that it takes to traverse to teh given {@link IPowerConnection}. This will only be
+        /** @return The type of cost that it takes to traverse to the given {@link IPowerConnection}. This will only be
          *         called if {@link #traversalCost(IPowerConnection)} returns an integer greater than 0. */
         default EnumPowerBar traversalCostType(IPowerConnection to) {
             return EnumPowerBar.FULL;

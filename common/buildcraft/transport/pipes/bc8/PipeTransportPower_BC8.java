@@ -2,13 +2,13 @@ package buildcraft.transport.pipes.bc8;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.core.Identifier;
 import buildcraft.api.power.bc8.IPowerConnection;
 import buildcraft.api.power.bc8.IPowerConnection.IPowerRelay;
 import buildcraft.api.power.bc8.IPowerTunnel;
@@ -47,7 +47,8 @@ public class PipeTransportPower_BC8 implements IPipeListener, IPowerRelay {
             if (pipe.getPipe().getBehaviour().definition.type == EnumPipeType.POWER) {
                 event.couldAccept();
             }
-        } else if (other instanceof IPowerConnection) {
+        }
+        else if (other instanceof IPowerConnection) {
             event.couldAccept();
         }
         throw new RuntimeException("IMPLEMENT PipeTransportPower_BC8.attemptConnection");
@@ -76,7 +77,8 @@ public class PipeTransportPower_BC8 implements IPipeListener, IPowerRelay {
     // IPowerRelay
 
     @Override
-    public Set<IPowerConnection> connections() {
+    public Map<Identifier, IPowerConnection> connections() {
+        // TODO Auto-generated method stub
         return null;
     }
 
@@ -101,7 +103,14 @@ public class PipeTransportPower_BC8 implements IPipeListener, IPowerRelay {
 
     @Override
     public int maxUnitsTransfered() {
+        // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public Identifier itentifier() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public enum Factory implements IPipeListenerFactory {

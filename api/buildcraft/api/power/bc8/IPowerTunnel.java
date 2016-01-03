@@ -6,12 +6,12 @@ import java.util.Set;
 import buildcraft.api.power.bc8.IPowerConnection.IPowerConsumer;
 import buildcraft.api.power.bc8.IPowerConnection.IPowerRelay;
 import buildcraft.api.power.bc8.IPowerConnection.IPowerSupplier;
+import buildcraft.api.power.bc8.PowerAPI_BC8.IPowerNetwork;
 
-/** A power tunnel that has a specific {@link IPowerConnection.IPowerSupplier} and an
- * {@link IPowerConnection.IPowerConsumer} that it is transfered around. */
+/** A power tunnel that has a specific {@link IPowerConnection.IPowerConsumer} that power will be provided to. */
 public interface IPowerTunnel {
     /** @return The type of power that the units are in. */
-    EnumPowerBar barType();
+    EnumPowerBar powerType();
 
     /** @return {@link IPowerConsumer} that is taking this power */
     IPowerConsumer consumer();
@@ -29,9 +29,10 @@ public interface IPowerTunnel {
      * This will generally notify all of the relays that the specified power was transfered (so they can update
      * themselves graphically)
      * 
-     * @param rf The amount of RF to actually use. You are not limited by the maximum power that you have requested be
-     *            transfered but it may refuse more than what you had requested (due to the maximum allowed to pass by
-     *            {@link IPowerRelay#maxUnitsTransfered()})
+     * @param rfMin The minimum amount of RF to actually use. You are not limited by the maximum power that you have
+     *            requested be transfered but it may refuse more than what you had requested (due to the maximum allowed
+     *            to pass by {@link IPowerRelay#maxUnitsTransfered()})
+     * @param rfMax The maximum amount of RF to use.
      * 
      * @return The amount of power available that has been removed from the suppliers (and the consumer can consume) */
     int usePower(int rfMin, int rfMax);
@@ -64,7 +65,9 @@ public interface IPowerTunnel {
          * 
          * @return An (unmodifiable view) set that holds all of the indervidual tunnels that make the full composite
          *         tunnel. */
-        Set<IPowerTunnelSingle> singleTunnels();
+        /* Implementation note: this returns a set of *any* IPowerTunnelSingle as you are not meant to be able to add
+         * anything, and makes it cleaner for the concrete implementation to use a list of whatever type it desires. */
+        Set<? extends IPowerTunnelSingle> singleTunnels();
     }
 
     /** Created on 31 Dec 2015
@@ -73,5 +76,15 @@ public interface IPowerTunnel {
     public interface IPowerTunnelSingle extends IPowerTunnel {
         /** @return The {@link IPowerSupplier} that is suppling this power. */
         IPowerSupplier supplier();
+    }
+
+    /** Indicates that this power tunnel has not been fully loaded yet (for example not all of the chunks in a world
+     * have loaded or have finished loading their tile entities) This may also be returned by
+     * {@link IPowerNetwork#requestTunnel(IPowerConsumer, EnumPowerBar, int, java.util.function.Predicate)} if the
+     * request needs search a large number of blocks before a path can be found. */
+    public interface IPowerTunnelHalfLoaded extends IPowerTunnel {
+        /** @return The newly created power tunnel that you can use to request power, or null if the search has not
+         *         completed yet. */
+        IPowerTunnel loadedTunnel();
     }
 }
