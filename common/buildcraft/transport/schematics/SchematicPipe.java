@@ -15,6 +15,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
+import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.blueprints.*;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -33,7 +35,11 @@ public class SchematicPipe extends SchematicTile {
         Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
         if (BlockGenericPipe.isValid(pipe)) {
-            return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
+            if (tileNBT.hasKey("pipeId", Constants.NBT.TAG_INT)) {
+                return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
+            } else {
+                return pipe.item == Item.getByNameOrId(tileNBT.getString("pipeId"));
+            }
         } else {
             return false;
         }
@@ -47,7 +53,12 @@ public class SchematicPipe extends SchematicTile {
         props.rotateLeft();
         props.writeToNBT(tileNBT);
 
-        Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
+        Item pipeItem;
+        if (tileNBT.hasKey("pipeId", Constants.NBT.TAG_INT)) {
+            pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
+        } else {
+            pipeItem = Item.getByNameOrId(tileNBT.getString("pipeId"));
+        }
 
         if (BptPipeExtension.contains(pipeItem)) {
             BptPipeExtension.get(pipeItem).rotateLeft(this, context);
@@ -146,6 +157,7 @@ public class SchematicPipe extends SchematicTile {
         context.world().setBlockState(pos, state, 3);
 
         TileEntity tile = context.world().getTileEntity(pos);
+        tile.setWorldObj(context.world());
         tile.readFromNBT(tileNBT);
     }
 
@@ -186,6 +198,11 @@ public class SchematicPipe extends SchematicTile {
             storedRequirements[storedRequirements.length - 1] = new ItemStack(pipe.item, 1, pipe.container.getItemMetadata());
         }
     }
+    
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
+
+    }
 
     @Override
     public void postProcessing(IBuilderContext context, BlockPos pos) {
@@ -205,8 +222,12 @@ public class SchematicPipe extends SchematicTile {
     public void idsToBlueprint(MappingRegistry registry) {
         super.idsToBlueprint(registry);
 
-        if (tileNBT.hasKey("pipeId")) {
+        if (tileNBT.hasKey("pipeId", Constants.NBT.TAG_INT)) {
             Item item = Item.getItemById(tileNBT.getInteger("pipeId"));
+
+            tileNBT.setInteger("pipeId", registry.getIdForItem(item));
+        } else if (tileNBT.hasKey("pipeId")) {
+            Item item = Item.getByNameOrId(tileNBT.getString("pipeId"));
 
             tileNBT.setInteger("pipeId", registry.getIdForItem(item));
         }
@@ -220,7 +241,7 @@ public class SchematicPipe extends SchematicTile {
             try {
                 Item item = registry.getItemForId(tileNBT.getInteger("pipeId"));
 
-                tileNBT.setInteger("pipeId", Item.getIdFromItem(item));
+                tileNBT.setString("pipeId", Item.itemRegistry.getNameForObject(item).toString());
             } catch (MappingNotFoundException e) {
                 tileNBT.removeTag("pipeId");
             }

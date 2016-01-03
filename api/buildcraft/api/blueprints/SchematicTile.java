@@ -49,7 +49,9 @@ public class SchematicTile extends SchematicBlock {
             tileNBT.setInteger("x", pos.getX());
             tileNBT.setInteger("y", pos.getY());
             tileNBT.setInteger("z", pos.getZ());
-            context.world().setTileEntity(pos, TileEntity.createAndLoadEntity(tileNBT));
+            TileEntity tile = TileEntity.createAndLoadEntity(tileNBT);
+            tile.setWorldObj(context.world());
+            context.world().setTileEntity(pos, tile);
         }
     }
 
