@@ -60,5 +60,4 @@ public class BlockPipe extends BlockBuildCraft {
         // Just return the tinitIndex (It IS the colour needed- PipeBlockModel sorts that all out)
         return tintIndex;
     }
-
 }

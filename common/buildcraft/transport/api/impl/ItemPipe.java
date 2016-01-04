@@ -22,10 +22,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.BCStringUtils;
 
 public class ItemPipe extends Item implements IItemPipe, IModelRegister {
     private final PipeDefinition_BC8 defintion;
@@ -42,7 +42,7 @@ public class ItemPipe extends Item implements IItemPipe, IModelRegister {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
         super.addInformation(stack, player, list, advanced);
         if (stack.getItemDamage() >= 1) {
             int color = (stack.getItemDamage() - 1) & 15;
@@ -68,7 +68,7 @@ public class ItemPipe extends Item implements IItemPipe, IModelRegister {
         }
     }
 
-    // Copied from ItemBlock
+    // Copied from ItemBlock (mostly)
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY,
             float hitZ) {

@@ -108,14 +108,10 @@ public class BuildingSlotBlock extends BuildingSlot {
                         boolean contains = false;
                         for (ItemStack ss : oldRequirements) {
                             if (getSchematic().isItemMatchingRequirement(s, ss)) {
-                                BCLog.logger.info(" The item stack " + ss + " matched the stored requirement " + s);
                                 contains = true;
                                 break;
-                            } else {
-                                BCLog.logger.info(" The item stack " + ss + " DI NOT match the stored requirement " + s);
                             }
                         }
-                        BCLog.logger.info("Old requriements size = " + oldRequirements.size());
                         if (!contains) {
                             BCLog.logger.warn(
                                     "Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");

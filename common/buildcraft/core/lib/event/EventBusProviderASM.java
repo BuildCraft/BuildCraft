@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -22,7 +22,8 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
     private final Class<T> eventBaseClass;
     private final Class<? extends Annotation> annotationClass;
 
-    private final Map<Class<?>, EventProviderASM<T>> classMap = Maps.newHashMap();
+    // We don't synchronize this here as we only use this in one method, which handles sync properly.
+    private final Map<Class<?>, EventProviderASM<T>> classMap = new HashMap<>();
 
     public EventBusProviderASM(Class<T> eventClass, Class<? extends Annotation> annotation) {
         this.eventBaseClass = eventClass;
@@ -36,8 +37,12 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
 
     public EventProviderASM<T> getProviderFor(Class<?> clazz) {
         if (!classMap.containsKey(clazz)) {
-            EventProviderASM<T> prov = generateProvider(clazz);
-            classMap.put(clazz, prov);
+            synchronized (classMap) {
+                if (!classMap.containsKey(clazz)) {
+                    EventProviderASM<T> prov = generateProvider(clazz);
+                    classMap.put(clazz, prov);
+                }
+            }
         }
         return classMap.get(clazz);
     }
@@ -50,7 +55,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
             if (annotation == null) continue;
             Class<?>[] parameters = meth.getParameterTypes();
             if (parameters.length != 1) {
-                BCLog.logger.warn("Found a method " + meth.getName() + "in the class " + clazz.getName() + ", annoted with @" + annotationClass
+                BCLog.logger.warn("Found a method " + meth.getName() + " in the class " + clazz.getName() + ", annoted with @" + annotationClass
                         .getSimpleName() + ", that does not have a single argument!");
                 continue;
             }
@@ -102,7 +107,9 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
         node.superName = "java/lang/Object";
 
         // Method:
-        // public ClassName() {}
+        // public ClassName() {
+        // super();
+        // }
         {
             MethodNode consturctorMethod = new MethodNode();
             consturctorMethod.access = Opcodes.ACC_PUBLIC;
@@ -161,6 +168,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
 
         // This method does:
         // public ClassName(ListenerObject obj) {
+        // super();
         // this.listener = obj;
         // }
         {
@@ -237,6 +245,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
 
     private <A> Class<A> writeAndLoadClassOfA(byte[] bytes, String clsName) {
         try {
+            // Just output the classes for debugging. Remove this later when we know it works fully.
             File folder = new File("./asm/buildcraft/");
             folder.mkdirs();
             FileOutputStream fos = new FileOutputStream("./asm/buildcraft/" + clsName + ".class");
@@ -244,6 +253,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
             fos.flush();
             fos.close();
         } catch (Exception e) {
+            // We should never NOT be able to write the class to debug it.
             throw new RuntimeException(e);
         }
 
@@ -254,12 +264,22 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
     static class ByteCodeLoader extends ClassLoader {
         public static final ByteCodeLoader INSTANCE = new ByteCodeLoader();
 
+        private Map<String, Class<?>> classDefinitionMap = new HashMap<>();
+
         private ByteCodeLoader() {
             super(ByteCodeLoader.class.getClassLoader());
         }
 
         public Class<?> define(String name, byte[] data) {
-            return defineClass(name, data, 0, data.length);
+            // Synchronise around the map otherwise two different threads can try to define the same class at the same
+            // time
+            synchronized (classDefinitionMap) {
+                if (!classDefinitionMap.containsKey(name)) {
+                    BCLog.logger.info("Defining the class " + name);
+                    classDefinitionMap.put(name, defineClass(name, data, 0, data.length));
+                }
+                return classDefinitionMap.get(name);
+            }
         }
     }
 }

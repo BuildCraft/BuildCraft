@@ -8,15 +8,12 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -83,6 +80,8 @@ import buildcraft.transport.stripes.*;
 @Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
     /** Neptune pipes! */
+    // Test against this being a dev environment by checking if the version is a real one or not. (It is automatically
+    // changed from "@VERSION@" to a real version string at build time)
     public static final boolean NEPTUNE_TESTING = DefaultProps.VERSION.contains("@");
 
     @Mod.Instance("BuildCraft|Transport")
@@ -360,7 +359,23 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         InterModComms.registerHandler(new IMCHandlerTransport());
-        if (NEPTUNE_TESTING) TransportPipes_BC8.preInit();
+        if (NEPTUNE_TESTING) {
+            pipeBlock = new BlockPipe();
+            /* Ideally we would use "pipeBlock" but its taken by the generic pipe. Using pipeBlockNeptune will probably
+             * be fine for us though */
+            pipeBlock.setUnlocalizedName("pipeBlockNeptune");
+            BCRegistry.INSTANCE.registerBlock(pipeBlock,
+                    /* Register the block without registering an item - each pipe creates an item for itself. */
+                    null,
+                    /* Force register the pipe block- its probably a mistake for it to be disabled in the config, as you
+                     * can already disable pipes indervidually. We don't mind too much about using an additional block
+                     * id. */
+                    true);
+
+            // Let a seperate class handle all of the pipe initialisation- there is a lareg amount of it to do and we
+            // don't need to make this even bigger than what it already is
+            TransportPipes_BC8.preInit();
+        }
     }
 
     @Mod.EventHandler
@@ -456,13 +471,9 @@ public class BuildCraftTransport extends BuildCraftMod {
         TransportProxy.proxy.registerRenderers();
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new TransportGuiHandler());
 
-        // Make pipes extend to connect to blocks like chests
-        ICustomPipeConnection smallerBlockConnection = new ICustomPipeConnection() {
-            @Override
-            public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
-                return face == EnumFacing.UP ? 0 : 2 / 16f;
-            }
-        };
+        /* Make pipes extend to connect to blocks like chests. This means that a connection going UP (the bottom of the
+         * block in question) will be the only face that does not extend into the block slightly. */
+        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 2 / 16f;
 
         PipeConnectionAPI.registerConnection(Blocks.chest, smallerBlockConnection);
         PipeConnectionAPI.registerConnection(Blocks.trapped_chest, smallerBlockConnection);
