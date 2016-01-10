@@ -36,7 +36,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 		// Workaround: The colorRenderCache from the server tile from getServerTile(...) does not get synced properly
 		int color;
-		if(tank.getWorldObj().isRemote) {
+		if (tank.getWorldObj().isRemote) {
 			color = tank.tank.colorRenderCache;
 		} else {
 			color = liquid.getFluid().getColor(liquid);

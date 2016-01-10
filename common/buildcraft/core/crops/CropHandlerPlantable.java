@@ -7,6 +7,7 @@ import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.BlockMelon;
 import net.minecraft.block.BlockMushroom;
+import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.BlockTallGrass;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -72,6 +73,8 @@ public class CropHandlerPlantable implements ICropHandler {
 			return true;
 		} else if (block instanceof BlockCrops) {
 			return meta == 7;
+		} else if (block instanceof BlockNetherWart) {
+			return meta == 3;
 		} else if (block instanceof IPlantable) {
 			if (y > 0 && blockAccess.getBlock(x, y - 1, z) == block) {
 				return true;
