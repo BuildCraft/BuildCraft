@@ -37,7 +37,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 
 	@Override
 	public IIcon getIconFromDamage(int damage) {
-		return icons[damage];
+		return icons[damage % icons.length];
 	}
 
 	@Override
