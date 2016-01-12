@@ -302,7 +302,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	public int getFluidLightLevel() {
 		FluidStack tankFluid = tank.getFluid();
-		return tankFluid == null ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
+		return tankFluid == null || tankFluid.amount == 0 ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
 	}
 
 	public int calculateComparatorInputOverride() {
