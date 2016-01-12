@@ -182,7 +182,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 				context.world().playAuxSFXAtEntity(null, 2001,
 						destX, destY, destZ,
 						Block.getIdFromBlock(oldBlock) + (oldMeta << 12));
-			} else {
+			} else if (slotToBuild.stackConsumed != null) {
 				for (ItemStack s : slotToBuild.stackConsumed) {
 					if (s != null && !(s.getItem() instanceof ItemBlock && Block.getBlockFromItem(s.getItem()) instanceof BlockBuildTool)) {
 						InvUtils.dropItems(context.world(), s, destX, destY, destZ);
