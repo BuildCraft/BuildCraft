@@ -7,16 +7,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
-import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
-import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
+import buildcraft.api.transport.pipe_bc8.*;
 import buildcraft.api.transport.pipe_bc8.IPipeContents.IPipeContentsItem;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
-import buildcraft.api.transport.pipe_bc8.IPipeListener;
-import buildcraft.api.transport.pipe_bc8.IPipeListenerFactory;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipeProperty;
-import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
-import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8.Enter;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
@@ -154,7 +148,7 @@ public class TravellingItem_BC8 implements IPipeListener {
                 /* new PipeEventContents.ChangeSpeed(item, normalizedSpeed) */;
             pipe.fireEvent(changeSpeed);
 
-            normalizedSpeed = changeSpeed.getNormalizedSpeed();
+            // normalizedSpeed = changeSpeed.getNormalizedSpeed();
             item.setSpeed(normalizedSpeed / PipeTransportItem_BC8.SPEED_NORMALIZER);
 
             double distance = 0.25;

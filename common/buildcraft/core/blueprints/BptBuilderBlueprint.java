@@ -315,10 +315,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             iterator = new BuildingSlotMapIterator(this, builder);
         }
 
-        BuildingSlotBlock slot;
         iterator.refresh(builder);
 
-        while (readyForSlotLookup(builder) && (slot = iterator.next()) != null) {
+        while (readyForSlotLookup(builder)) {
+            BuildingSlotBlock slot = iterator.next();
+            if (slot == null) break;
+
             if (!world.isBlockLoaded(pos)) continue;
 
             boolean skipped = false;

@@ -171,11 +171,13 @@ public class BuildCraftSilicon extends BuildCraftMod {
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 4), "OCO", "ORO", "OGO", 'O', Blocks.obsidian, 'R', new ItemStack(
                 redstoneChipset, 1, 0), 'C', "gemEmerald", 'G', "gearDiamond");
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5), "OWO", "ORO", "OGO", 'O', Blocks.obsidian, 'W',
-                "craftingTableWood", 'G', "gearGold", 'R', new ItemStack(redstoneChipset, 1, 0));
+        // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5), "OWO", "ORO", "OGO", 'O',
+        // Blocks.obsidian, 'W',
+        // "craftingTableWood", 'G', "gearGold", 'R', new ItemStack(redstoneChipset, 1, 0));
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(packagerBlock, 1, 0), " I ", "ICI", " P ", 'I', "ingotIron", 'C', "craftingTableWood",
-                'P', Blocks.piston);
+        // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(packagerBlock, 1, 0), " I ", "ICI", " P ", 'I',
+        // "ingotIron", 'C', "craftingTableWood",
+        // 'P', Blocks.piston);
 
         // CHIPSETS
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", Math.round(100000 * chipsetCostMultiplier), Chipset.RED

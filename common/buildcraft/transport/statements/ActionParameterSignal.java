@@ -5,6 +5,7 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -85,6 +86,11 @@ public class ActionParameterSignal implements IStatementParameter {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color);
     }
 
     @Override

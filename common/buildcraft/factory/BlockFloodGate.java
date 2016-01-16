@@ -48,7 +48,7 @@ public class BlockFloodGate extends BlockBuildCraft {
             if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
                 if (side == EnumFacing.UP) {
                     floodGate.rebuildQueue();
-                } else {
+                } else if (side != null) {
                     floodGate.switchSide(side);
                 }
 

@@ -4,6 +4,8 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.statements;
 
+import java.util.Objects;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,6 +57,11 @@ public class StatementParameterItemStack implements IStatementParameter {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stack);
     }
 
     @Override

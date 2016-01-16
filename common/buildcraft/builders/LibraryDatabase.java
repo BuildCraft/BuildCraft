@@ -15,7 +15,7 @@ import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class LibraryDatabase {
-    protected Set<LibraryId> blueprintIds;
+    protected Set<LibraryId> blueprintIds = new TreeSet<>();
     protected LibraryId[] pages = new LibraryId[0];
 
     private File outputDir;
@@ -44,7 +44,7 @@ public class LibraryDatabase {
     }
 
     public void refresh() {
-        blueprintIds = new TreeSet<LibraryId>();
+        blueprintIds = new TreeSet<>();
         for (File f : inputDirs) {
             loadIndex(f);
         }
@@ -190,6 +190,6 @@ public class LibraryDatabase {
     }
 
     public List<LibraryId> getBlueprintIds() {
-        return Collections.unmodifiableList(new ArrayList<LibraryId>(blueprintIds));
+        return Collections.unmodifiableList(new ArrayList<>(blueprintIds));
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
@@ -93,7 +94,7 @@ public class RenderLaser extends Render<EntityLaser> {
 
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glDisable(GL11.GL_LIGHTING);
+        GlStateManager.disableLighting();
 
         Vec3 offset = laser.renderOffset();
         GL11.glTranslated(offset.xCoord, offset.yCoord, offset.zCoord);
@@ -103,6 +104,7 @@ public class RenderLaser extends Render<EntityLaser> {
         // we can use some other method for the animation though.
         doRenderLaser(laser.worldObj, renderManager.renderEngine, laser.data, laser.getTexture());
 
+        GlStateManager.enableLighting();
         GL11.glPopAttrib();
         GL11.glPopMatrix();
     }

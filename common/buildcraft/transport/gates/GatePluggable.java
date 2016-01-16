@@ -1,5 +1,6 @@
 package buildcraft.transport.gates;
 
+import java.util.Objects;
 import java.util.Set;
 
 import net.minecraft.item.ItemStack;
@@ -193,6 +194,11 @@ public class GatePluggable extends PipePluggable {
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(material, logic, expansions, isLit, isPulsing, realGate, instantiatedGate, pulseStage);
     }
 
     @Override

@@ -78,6 +78,9 @@ public interface IPipeEventContents_BC8 extends IPipeEvent_BC8 {
     }
 
     public interface ChangeSpeed extends IPipeEventContents_BC8 {
+        /** @return the normalized speed for this contents. For items the actual speed has been multiplied by a constant
+         *         that ensures that this returns 1 if the item is going at normal speed through a cobblestone pipe, and
+         *         4 if it is going at maximum speed through a gold pipe. */
         double getNormalizedSpeed();
 
         void setNormalizedSpeed(double speed);

@@ -71,6 +71,10 @@ public class FacadeItemModel extends BakedModelHolder implements ISmartItemModel
 
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state.state);
 
+        if (sprite == null) {
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        }
+
         List<BakedQuad> bakedQuads = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.ITEM, singleTextureFunction(sprite)).getGeneralQuads();
         Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.EAST);
 

@@ -20,6 +20,7 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
 
@@ -182,7 +183,7 @@ public class FakeWorldManager {
 
         IBakedModel model = dispatcher.getBlockModelShapes().getModelForState(actualState);
 
-        if (model == null) {
+        if (model == null || model.getParticleTexture() == null || model.getGeneralQuads() == null) {
             return;
         }
 
@@ -190,7 +191,7 @@ public class FakeWorldManager {
         try {
             dispatcher.getBlockModelRenderer().renderModelStandard(world, model, block, pos, renderer, checkSides);
         } catch (Throwable t) {
-            throw new IllegalArgumentException("The model from the block " + block + " was invalid for layer " + layer, t);
+            BCLog.logger.warn("The model from the block " + block + " was invalid for layer " + layer, t);
         }
     }
 }

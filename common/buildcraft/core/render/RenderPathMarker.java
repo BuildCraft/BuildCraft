@@ -7,7 +7,6 @@ package buildcraft.core.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
@@ -23,10 +22,6 @@ public class RenderPathMarker extends TileEntitySpecialRenderer<TilePathMarker> 
         if (marker != null) {
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-            GlStateManager.enableCull();
-            GlStateManager.enableLighting();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslated(x, y, z);
             GL11.glTranslated(-marker.getPos().getX(), -marker.getPos().getY(), -marker.getPos().getZ());

@@ -487,7 +487,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             }
         }
 
-        if (connectionsNum > 1 || connectionsNum == 0) {
+        if (connectionsNum > 1 || targetOrientation == null) {
             return null;
         }
 

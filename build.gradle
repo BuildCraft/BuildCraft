@@ -23,7 +23,6 @@ buildscript {
 
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
-//apply plugin: 'checkstyle'
 
 version = "7.2.0-pre6"
 group= "com.mod-buildcraft"
@@ -41,7 +40,7 @@ dependencies {
 
 minecraft {
     mappings = "snapshot_20160103"
-    version = "1.8.9-11.15.0.1675"
+    version = "1.8.9-11.15.0.1699"
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
@@ -103,8 +102,6 @@ processResources
 // extra jar section
 // -------------------
 
-
-
 def createMCModInfo(def id, def taskName)
 {
     File temp = new File("build/processing/" + taskName + "/mcmod.info")
@@ -146,13 +143,6 @@ javadoc {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from 'build/docs/javadoc'
-}
-
-// because the normal output has been made to be obfuscated
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    from sourceSets.api.output
-    classifier = 'dev'
 }
 
 task apiJar(type: Jar) {
@@ -257,14 +247,8 @@ jar {
 	from sourceSets.api.output
 }
 
-//checkstyle {
-//	configFile = file('guidelines/buildcraft.checkstyle')
-//}
-
-//checkstyleApi.exclude "cofh/**"
-
 // make sure all of these happen when we run build
-build.dependsOn sourceJar,/* javadocJar,*/ deobfJar, apiJar
+build.dependsOn sourceJar, apiJar
 
 // --------------------
 // maven section
@@ -290,8 +274,6 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-//    archives javadocJar
-    archives deobfJar
     archives apiJar
 
     // Modules
@@ -341,7 +323,7 @@ if (ext.priv == null)
 
 uploadArchives {
     // make sure this happens after reobfuscation
-    dependsOn 'reobf'
+    //dependsOn "reobf"
 
     repositories {
         if (project.hasProperty("filesmaven")) { // if this is the Forge server, and this stuff is defined...

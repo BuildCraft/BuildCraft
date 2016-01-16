@@ -50,7 +50,7 @@ public class MapManager implements Runnable {
         return worldMap.get(world);
     }
 
-    private boolean doUpdate(MapWorld world, Chunk chunk) {
+    private static boolean doUpdate(MapWorld world, Chunk chunk) {
         int x = chunk.xPosition;
         int z = chunk.zPosition;
         long updateTime = (new Date()).getTime() - UPDATE_DELAY;

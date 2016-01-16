@@ -77,7 +77,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
             }
         }
 
-        if (connections > 1 || connections == 0) {
+        if (connections > 1 || targetOrientation == null) {
             return false;
         }
 

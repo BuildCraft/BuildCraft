@@ -47,7 +47,7 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean adv) {
-        if (stack.getItemDamage() == 1) {
+        if (stack.getItemDamage() == 5) {
             strings.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
         }
     }

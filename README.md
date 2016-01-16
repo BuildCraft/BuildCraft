@@ -98,7 +98,7 @@ repositories {
 }
 
 dependencies {
-    compile name: "buildcraft", version: "7.0.7", classifier: "dev"
+    deobfCompile name: "buildcraft", version: "7.2.0"
 }
 ```
-Where `7.0.7` is the desired version of BuildCraft.
+Where `7.2.0` is the desired version of BuildCraft.

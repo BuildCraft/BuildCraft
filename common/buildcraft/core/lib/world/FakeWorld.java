@@ -33,6 +33,7 @@ public class FakeWorld extends World {
     public FakeWorld(final Blueprint blueprint) {
         this(EnumDecoratedBlock.TEMPLATE);
         BlockPos start = blueprint.getBoxForPos(BlockPos.ORIGIN).center();
+        start = start.add(0, -start.getY() + 1, 0);
 
         final BlockPos deployPos = start.add(blueprint.size).subtract(Utils.POS_ONE);
         final FakeWorld thisWorld = this;

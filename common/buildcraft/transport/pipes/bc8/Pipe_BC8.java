@@ -182,6 +182,7 @@ public class Pipe_BC8 implements IPipe_BC8 {
 
     @Override
     public void sendRenderUpdate() {
-
+        // Create a packet
+        // Send the packet
     }
 }
