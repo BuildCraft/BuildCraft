@@ -5,11 +5,11 @@
 package buildcraft;
 
 import java.io.File;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
@@ -28,7 +28,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -106,7 +105,7 @@ import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
-        dependencies = "required-after:Forge@[11.15.0.1675,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
+        dependencies = "required-after:Forge@[11.15.0.1702,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
         updateJSON = DefaultProps.UPDATE_JSON)
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
@@ -728,12 +727,14 @@ public class BuildCraftCore extends BuildCraftMod {
         }
     }
 
-    private List<World> worldsNeedingUpdate = Lists.newArrayList();
+    private Set<Integer> worldsNeedingUpdate = new HashSet<>();
 
     @SubscribeEvent
     public void worldTickEvent(WorldTickEvent event) {
-        if (worldsNeedingUpdate.contains(event.world)) {
-            worldsNeedingUpdate.remove(event.world);
+        if (event.side == Side.CLIENT) return;
+        int dimId = event.world.provider.getDimensionId();
+        if (worldsNeedingUpdate.contains(dimId)) {
+            worldsNeedingUpdate.remove(dimId);
             for (Object obj : event.world.loadedTileEntityList) {
                 TileEntity tile = (TileEntity) obj;
                 if (tile instanceof IAdditionalDataTile) {
@@ -745,6 +746,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
     @SubscribeEvent
     public void playerJoinWorld(EntityJoinWorldEvent event) {
-        worldsNeedingUpdate.add(event.world);
+        worldsNeedingUpdate.add(event.world.provider.getDimensionId());
     }
 }

@@ -6,8 +6,6 @@ package buildcraft.factory;
 
 import java.util.*;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -34,7 +32,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     private int rebuildDelay;
     private int tick = Utils.RANDOM.nextInt();
     private boolean powered = false;
-    private EnumMap<EnumFacing, Boolean> blockedSides = Maps.newEnumMap(EnumFacing.class);
+    private EnumSet<EnumFacing> blockedSides = EnumSet.noneOf(EnumFacing.class);
 
     static {
         REBUILD_DELAY[0] = 128;
@@ -177,7 +175,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
             return;
         }
         for (EnumFacing face : EnumFacing.VALUES) {
-            if (face != EnumFacing.UP && !blockedSides.get(face)) {
+            if (face != EnumFacing.UP && !blockedSides.contains(face)) {
                 queueForFilling(pos.offset(face));
             }
         }
@@ -223,8 +221,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         tank.readFromNBT(data);
         rebuildDelay = data.getByte("rebuildDelay");
         powered = data.getBoolean("powered");
+        blockedSides.clear();
         for (int i = 0; i < 6; i++) {
-            blockedSides.put(EnumFacing.VALUES[i], data.getBoolean("blocked[" + i + "]"));
+            boolean blocked = data.getBoolean("blocked[" + i + "]");
+            if (blocked) blockedSides.add(EnumFacing.VALUES[i]);
         }
     }
 
@@ -235,7 +235,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         data.setByte("rebuildDelay", (byte) rebuildDelay);
         data.setBoolean("powered", powered);
         for (int i = 0; i < 6; i++) {
-            if (blockedSides.get(EnumFacing.VALUES[i])) {
+            if (blockedSides.contains(EnumFacing.VALUES[i])) {
                 data.setBoolean("blocked[" + i + "]", true);
             }
         }
@@ -244,10 +244,11 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     @Override
     public void readData(ByteBuf stream) {
         byte data = stream.readByte();
+        blockedSides.clear();
         for (EnumFacing face : EnumFacing.VALUES) {
             int offset = face.ordinal();
             int isBlocked = (data >> offset) % 2;
-            blockedSides.put(face, isBlocked == 0 ? false : true);
+            if (isBlocked != 0) blockedSides.add(face);
         }
     }
 
@@ -256,7 +257,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         int offset = 0;
         byte data = 0;
         for (EnumFacing face : EnumFacing.VALUES) {
-            int isBlocked = blockedSides.get(face) ? 1 : 0;
+            int isBlocked = blockedSides.contains(face) ? 1 : 0;
             data &= isBlocked << offset;
             offset++;
         }
@@ -265,7 +266,8 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
     public void switchSide(EnumFacing side) {
         if (side != EnumFacing.UP) {
-            blockedSides.put(side, !blockedSides.get(side));
+            if (blockedSides.contains(side)) blockedSides.remove(side);
+            else blockedSides.add(side);
 
             rebuildQueue();
             sendNetworkUpdate();
@@ -316,6 +318,6 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     }
 
     public boolean isSideBlocked(EnumFacing face) {
-        return blockedSides.get(face);
+        return blockedSides.contains(face);
     }
 }
