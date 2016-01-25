@@ -105,7 +105,7 @@ import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
-        dependencies = "required-after:Forge@[11.15.0.1702,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
+        dependencies = "required-after:Forge@[11.15.0.1718,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
         updateJSON = DefaultProps.UPDATE_JSON)
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
@@ -719,7 +719,7 @@ public class BuildCraftCore extends BuildCraftMod {
             BlockPos pos = object.getBlockPos();
             TileEntity tile = mc.theWorld.getTileEntity(pos);
 
-            if (tile instanceof IDebuggable && tile != null) {
+            if (tile instanceof IDebuggable) {
                 ((IDebuggable) tile).getDebugInfo(event.left, event.right, object.sideHit);
             }
         } else if (type == MovingObjectType.ENTITY) {

@@ -740,10 +740,14 @@ public class BuildCraftTransport extends BuildCraftMod {
             }
         }
 
-        mrl = ModelHelper.getItemResourceLocation(pipeGate, "");
-        event.modelRegistry.putObject(mrl, new GateItemModel());
+        if (pipeGate != null) {
+            mrl = ModelHelper.getItemResourceLocation(pipeGate, "");
+            event.modelRegistry.putObject(mrl, new GateItemModel());
+        }
 
-        mrl = ModelHelper.getItemResourceLocation(facadeItem, "");
-        event.modelRegistry.putObject(mrl, new FacadeItemModel());
+        if (facadeItem != null) {
+            mrl = ModelHelper.getItemResourceLocation(facadeItem, "");
+            event.modelRegistry.putObject(mrl, new FacadeItemModel());
+        }
     }
 }

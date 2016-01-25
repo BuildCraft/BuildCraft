@@ -1,5 +1,7 @@
 package buildcraft.core.statements;
 
+import java.util.Objects;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,12 +79,17 @@ public class StatementParameterItemStackExact implements IStatementParameter {
         }
     }
 
-    private boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
+    private static boolean areItemsEqual(ItemStack stack1, ItemStack stack2) {
         if (stack1 != null) {
             return stack2 != null && stack1.isItemEqual(stack2) && ItemStack.areItemStackTagsEqual(stack1, stack2);
         } else {
             return stack2 == null;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stack);
     }
 
     @Override

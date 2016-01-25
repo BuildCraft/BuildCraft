@@ -13,6 +13,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import net.minecraftforge.fluids.*;
+import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
@@ -29,10 +30,12 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.ItemHandlerDelegate;
 import buildcraft.core.statements.IBlockDefaultTriggers;
+import buildcraft.robotics.ai.AIRobotHarvest;
+import buildcraft.robotics.statements.ActionRobotGotoStation;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IBlockDefaultTriggers {
-
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
     public static float HEAT_PER_RF = 0.00023F;
     public static float COOLDOWN_RATE = 0.05F;
@@ -51,12 +54,30 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     private int penaltyCooling = 0;
     private boolean lastPowered = false;
     private BiomeGenBase biomeCache;
+//    private final ItemHandlerDelegate invWrapper = ItemHandlerDelegate.createFrom(super.getItemHandler(), this::isItemValidForSlot);
 
     public TileEngineIron() {
         super(1);
         tankManager.add(tankFuel);
         tankManager.add(tankCoolant);
     }
+
+    @Override
+    public boolean isItemValidForSlot(/*IItemHandler handler, */int slot, ItemStack stack) {
+        if (stack == null) {
+            return false;
+        } else if (BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(stack)) != null) {
+            return true;
+        } else {
+            FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
+            return fluidStack != null && canFill(null, fluidStack.getFluid());
+        }
+    }
+
+//    @Override
+//    public IItemHandler getItemHandler() {
+//        return invWrapper;
+//    }
 
     @Override
     public EnumEngineType getEngineType() {
@@ -220,7 +241,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     public void engineUpdate() {
         super.engineUpdate();
 
-        ItemStack stack = getStackInSlot(0);
+        ItemStack stack = getStackInSlot(0);/*getItemHandler().getStackInSlot(0);*/
         if (stack != null) {
             FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
             if (liquid == null && heat > MIN_HEAT * 2) {
@@ -235,7 +256,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             if (liquid != null) {
                 if (fill(null, liquid, false) == liquid.amount) {
                     fill(null, liquid, true);
-                    setInventorySlotContents(0, InvUtils.consumeItem(stack));
+                    this.setInventorySlotContents(0, InvUtils.consumeItem(stack));
+//                    itemHandler.setStackInSlot(0, InvUtils.consumeItem(stack));
                 }
             }
         }
@@ -427,18 +449,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     @Override
     public FluidTankInfo[] getTankInfo(EnumFacing direction) {
         return tankManager.getTankInfo(direction);
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-        if (itemstack == null) {
-            return false;
-        } else if (BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(itemstack)) != null) {
-            return true;
-        } else {
-            FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemstack);
-            return fluidStack != null && canFill(null, fluidStack.getFluid());
-        }
     }
 
     public FluidStack getFuel() {

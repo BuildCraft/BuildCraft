@@ -1,18 +1,10 @@
 package buildcraft.transport;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
 import buildcraft.core.lib.event.IEventBus;
 import buildcraft.core.lib.event.IEventBusProvider;
 import buildcraft.transport.pipes.events.PipeEvent;
@@ -45,6 +37,11 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
 
             EventHandler e = (EventHandler) o;
             return e.method.equals(method) && e.owner == owner;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(method, owner);
         }
     }
 
