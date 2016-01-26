@@ -299,8 +299,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (item instanceof ItemPipe) {
             pipe = BlockGenericPipe.createPipe((ItemPipe) item);
         } else {
-            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
-            pipe = null;
+            String str = coreState.pipeId.replace("item.", "");
+            Item nwItem = Item.itemRegistry.getObject(new ResourceLocation(str));
+            if (nwItem instanceof ItemPipe) { // 1.8 migration
+                pipe = BlockGenericPipe.createPipe((ItemPipe) nwItem);
+            } else {
+                BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
+                pipe = null;
+            }
         }
 
         bindPipe();
