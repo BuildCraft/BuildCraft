@@ -86,6 +86,7 @@ public class BlockBuilder extends BlockBuildCraft {
         return 1;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

@@ -248,6 +248,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 
             if (uploadingPlayer != null) {
                 BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient", new CommandWriter() {
+                    @Override
                     public void write(ByteBuf data) {
                         id.generateUniqueId(dataOut);
                         id.writeData(data);
@@ -282,6 +283,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
                         final int chunks = (bptData.length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
                         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerBegin", new CommandWriter() {
+                            @Override
                             public void write(ByteBuf data) {
                                 entries.get(selected).writeData(data);
                                 data.writeShort(chunks);
@@ -293,6 +295,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
                             final int start = CHUNK_SIZE * chunk;
                             final int length = Math.min(CHUNK_SIZE, bptData.length - start);
                             BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerChunk", new CommandWriter() {
+                                @Override
                                 public void write(ByteBuf data) {
                                     data.writeShort(chunk);
                                     data.writeShort(length);

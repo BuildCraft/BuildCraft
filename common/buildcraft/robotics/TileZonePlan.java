@@ -188,6 +188,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
                     if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan && ((ContainerZonePlan) e.openContainer)
                             .getTile() == this) {
                         Packet p = new PacketCommand(e.openContainer, "areaLoaded", new CommandWriter() {
+                            @Override
                             public void write(ByteBuf data) {
                                 ((ZonePlan) zone).writeData(data);
                             }

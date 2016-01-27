@@ -97,12 +97,14 @@ public final class SchematicRegistry implements ISchematicRegistry {
         }
     }
 
+    @Override
     public void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
         for (Object obj : block.getBlockState().getValidStates()) {
             registerSchematicBlock((IBlockState) obj, clazz, params);
         }
     }
 
+    @Override
     public void registerSchematicBlock(IBlockState state, Class<? extends Schematic> clazz, Object... params) {
         String name = Utils.getNameForBlock(state.getBlock());
         if (name == null || "null".equals(name)) {
@@ -117,6 +119,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
         schematicBlocks.put(toStringKey(state), new SchematicConstructor(clazz, params));
     }
 
+    @Override
     public void registerSchematicEntity(Class<? extends Entity> entityClass, Class<? extends SchematicEntity> schematicClass, Object... params) {
         if (schematicEntities.containsKey(entityClass)) {
             throw new RuntimeException("Builder: Entity " + entityClass.getName() + " is already associated with a schematic.");

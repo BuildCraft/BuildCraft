@@ -453,6 +453,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return getPipeColor() >= 0 ? (1 + getPipeColor()) : 0;
     }
 
+    @Override
     public int getPipeColor() {
         return worldObj.isRemote ? renderState.getGlassColor() : this.glassColor;
     }
@@ -599,6 +600,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return initialized;
     }
 
+    @Override
     public void scheduleNeighborChange() {
         blockNeighborChange = true;
         blockNeighborChangedSides = 0x3F;
@@ -785,6 +787,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return canPipeConnect_internal(with, side);
     }
 
+    @Override
     public boolean hasBlockingPluggable(EnumFacing side) {
         PipePluggable pluggable = getPipePluggable(side);
         if (pluggable == null) {
@@ -904,6 +907,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return null;
     }
 
+    @Override
     public void scheduleRenderUpdate() {
         refreshRenderState = true;
     }

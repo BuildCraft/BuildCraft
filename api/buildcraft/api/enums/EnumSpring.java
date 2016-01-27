@@ -25,6 +25,7 @@ public enum EnumSpring implements IStringSerializable {
         return (EnumSpring) state.getValue(BuildCraftProperties.SPRING_TYPE);
     }
 
+    @Override
     public String getName() {
         return this.name();
     }

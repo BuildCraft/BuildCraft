@@ -37,6 +37,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     public void setRequest(final int index, final ItemStack stack) {
         if (worldObj.isRemote) {
             BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     data.writeByte(index);
                     NetworkUtils.writeStack(data, stack);

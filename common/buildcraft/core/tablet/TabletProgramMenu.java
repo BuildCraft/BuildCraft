@@ -19,6 +19,7 @@ public class TabletProgramMenu extends TabletProgram {
         this.tablet = tablet;
     }
 
+    @Override
     public void tick(float time) {
         t += time;
         if (!init && t > 2 && tablet.getSide() == Side.CLIENT) {

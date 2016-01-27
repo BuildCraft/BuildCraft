@@ -45,6 +45,7 @@ public class ItemBuildCraft extends Item implements IModelRegister {
         return passSneakClick;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void registerModels() {
         if (textureName == null) {

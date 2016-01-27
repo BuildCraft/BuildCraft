@@ -96,6 +96,7 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
         return false;
     }
 
+    @Override
     public int getEnergyStored(EnumFacing side) {
         return 0;
     }

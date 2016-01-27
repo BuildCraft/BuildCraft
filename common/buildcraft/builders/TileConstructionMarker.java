@@ -62,6 +62,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
     private Packet createLaunchItemPacket(final BuildingItem i) {
         return new PacketCommand(this, "launchItem", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 i.writeData(data);
             }

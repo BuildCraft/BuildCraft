@@ -346,6 +346,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public void rpcSetPatternFromString(final String name) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setPattern", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, name);
             }
@@ -404,6 +405,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public void rpcSetParameter(int i, IStatementParameter patternParameter) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setParameters", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NBTTagCompound parameterData = new NBTTagCompound();
                 writeParametersToNBT(parameterData);

@@ -74,6 +74,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
         return inventory.isItemValidForSlot(slotIndex, itemstack);
     }
 
+    @Override
     public boolean hasCustomName() {
         return inventory.hasCustomName();
     }

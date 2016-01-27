@@ -315,6 +315,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
     public void rpcSelectRecipe(final String id, final boolean select) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, id);
                 data.writeBoolean(select);

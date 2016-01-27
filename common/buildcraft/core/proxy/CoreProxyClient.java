@@ -166,10 +166,12 @@ public class CoreProxyClient extends CoreProxy {
         itemsToRegisterRenderersFor.add(item);
     }
 
+    @Override
     public EntityPlayer getClientPlayer() {
         return Minecraft.getMinecraft().thePlayer;
     }
 
+    @Override
     public <T extends TileEntity> T getServerTile(T source) {
         if (BuildCraftCore.useServerDataOnClient && Minecraft.getMinecraft().isSingleplayer() && source.getWorld().isRemote) {
             WorldServer w = DimensionManager.getWorld(source.getWorld().provider.getDimensionId());

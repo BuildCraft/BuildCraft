@@ -111,6 +111,7 @@ public class GuiFiller extends GuiAdvancedInterface {
             buttonList.set(2, getExcavateButton());
 
             BuildCraftCore.instance.sendToServer(new PacketCommand(filler, "setFlags", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     data.writeBoolean(filler.isExcavate());
                 }

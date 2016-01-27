@@ -642,6 +642,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             items.addAll(itemsIn);
 
             return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     data.writeMedium(items.size());
                     for (RequirementItemStack rb : items) {
@@ -950,6 +951,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         }
     }
 
+    @Override
     public Tank[] getFluidTanks() {
         return fluidTanks;
     }

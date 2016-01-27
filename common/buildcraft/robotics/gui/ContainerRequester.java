@@ -70,6 +70,7 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
             }
 
             BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     for (ItemStack s : stacks) {
                         NetworkUtils.writeStack(data, s);

@@ -60,6 +60,7 @@ public class StatisticsFrame extends JFrame implements TreeSelectionListener {
     public static void createStatisticsFrame() {
         if (instance != null) return;
         EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 synchronized (INSTANCE_SYNC_OBJ) {
                     if (instance != null) return;

@@ -18,6 +18,7 @@ import buildcraft.robotics.render.RenderZonePlan;
 import buildcraft.robotics.render.RobotStationRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {
+    @Override
     public void init() {
         RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BuildCraftRobotics.redstoneBoard, new RedstoneBoardMeshDefinition());

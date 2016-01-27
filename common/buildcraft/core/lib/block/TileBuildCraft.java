@@ -154,10 +154,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         sendNetworkUpdate = true;
     }
 
+    @Override
     public void writeData(ByteBuf stream) {
         stream.writeByte(ledPower);
     }
 
+    @Override
     public void readData(ByteBuf stream) {
         ledPower = stream.readByte();
     }
@@ -239,6 +241,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     /** If you want to use this, implement IEnergyProvider. */
+    @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         if (battery != null && this.canConnectEnergy(from)) {
             int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);

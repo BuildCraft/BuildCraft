@@ -92,6 +92,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         return activeState == null ? transparent : activeState.transparent;
     }
 
+    @Override
     public boolean isHollow() {
         prepareStates();
         return activeState == null ? renderAsHollow : activeState.hollow;

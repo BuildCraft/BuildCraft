@@ -173,6 +173,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
     public void rpcSelectOption(final int pos) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 data.writeByte(pos);
             }

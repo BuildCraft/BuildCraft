@@ -123,6 +123,7 @@ public class SchematicBlock extends SchematicBlockBase {
         context.world().setBlockState(pos, state, 3);
     }
 
+    @Override
     public boolean doNotUse() {
         return doNotUse;
     }

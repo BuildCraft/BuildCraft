@@ -322,7 +322,8 @@ public class BuildCraftCore extends BuildCraftMod {
         engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
         BCRegistry.INSTANCE.registerBlock(engineBlock, ItemEngine.class, true);
         engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), 0, "tile.engineWood");
-        BCRegistry.INSTANCE.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
+        BCRegistry.INSTANCE.registerTileEntity(TileEngineWood.class, "buildcraft.core.engine.wood",
+                "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
         markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
         BCRegistry.INSTANCE.registerBlock(markerBlock.setUnlocalizedName("markerBlock"), false);
