@@ -62,7 +62,9 @@ public class CropHandlerPlantable implements ICropHandler {
             || block instanceof BlockDoublePlant || block == Blocks.pumpkin) {
             return true;
         } else if (block instanceof BlockCrops) {
-            return (Integer) state.getValue(BlockCrops.AGE) == 7;
+            return state.getValue(BlockCrops.AGE) == 7;
+        } else if (block instanceof BlockNetherWart) {
+            return state.getValue(BlockNetherWart.AGE) == 3;
         } else if (block instanceof IPlantable) {
             if (blockAccess.getBlockState(pos.down()).getBlock() == block) {
                 return true;

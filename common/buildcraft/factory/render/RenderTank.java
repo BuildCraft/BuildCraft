@@ -41,6 +41,8 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         if (displayList == null) {
             return;
         }
+        
+        // FIXME: Use GlStateManager!
 
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
