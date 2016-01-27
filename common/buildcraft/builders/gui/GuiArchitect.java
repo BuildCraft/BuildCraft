@@ -159,6 +159,7 @@ public class GuiArchitect extends GuiBuildCraft {
                 textField.textboxKeyTyped(c, i);
                 final String text = textField.getText();
                 BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName", new CommandWriter() {
+                    @Override
                     public void write(ByteBuf data) {
                         NetworkUtils.writeUTF(data, text);
                     }

@@ -1,9 +1,14 @@
 package buildcraft.silicon;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
 import cofh.api.energy.IEnergyContainerItem;
+
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public class TileChargingTable extends TileLaserTableBase implements IHasWork {
@@ -61,5 +66,11 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         return slot == 0 && stack != null && stack.getItem() != null && stack.getItem() instanceof IEnergyContainerItem;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.assemblyTableBlock.getDefaultState().withProperty(BlockBuildCraftBase.LASER_TABLE_TYPE,
+                EnumLaserTableType.CHARGING_TABLE);
     }
 }

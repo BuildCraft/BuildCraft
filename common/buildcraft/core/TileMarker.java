@@ -515,4 +515,9 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         if (box.contains(pos)) return false;
         return box.distanceToSquared(pos) == 1;
     }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftCore.markerBlock.getDefaultState();
+    }
 }

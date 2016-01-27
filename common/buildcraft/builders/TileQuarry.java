@@ -979,4 +979,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         left.add("  - Head = " + BCStringUtils.vec3ToDispString(server.headPos));
         left.add("  - Target = " + BCStringUtils.vec3ToDispString(server.target));
     }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftBuilders.quarryBlock.getDefaultState();
+    }
 }

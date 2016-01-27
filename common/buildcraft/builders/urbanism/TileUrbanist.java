@@ -6,6 +6,7 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -84,6 +85,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 
     private Packet createXYZPacket(String name, final BlockPos pos) {
         return new PacketCommand(this, name, new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 data.writeInt(pos.getX());
                 data.writeShort(pos.getY());
@@ -202,6 +204,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 
     public void rpcStartFiller(final String fillerTag, final Box box) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "startFiller", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, fillerTag);
                 box.writeData(data);
@@ -344,5 +347,10 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
         }
 
         return result;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return Blocks.air.getDefaultState();
     }
 }

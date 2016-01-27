@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Throwables;
@@ -17,6 +18,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
@@ -254,6 +256,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             nbt.setByte(key, (byte) redstoneInputSide[i]);
         }
 
+        BCLog.logger.info("Writing pipe @" + getPos() + ", with pipe = " + pipe + ", pipeId = " + coreState.pipeId + ", name = " + Item.itemRegistry
+                .getNameForObject(pipe.item).toString());
+
         if (pipe != null) {
             nbt.setString("pipeId", Item.itemRegistry.getNameForObject(pipe.item).toString());
             pipe.writeToNBT(nbt);
@@ -287,13 +292,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         if (nbt.hasKey("pipeId", NBTUtils.STRING)) {
             coreState.pipeId = nbt.getString("pipeId");
-        }
-        if (nbt.hasKey("pipeId", NBTUtils.INT)) {
+            BCLog.logger.info("Loaded a string pipeid as " + coreState.pipeId);
+        } else if (nbt.hasKey("pipeId", Constants.NBT.TAG_ANY_NUMERIC)) {
             int id = nbt.getInteger("pipeId");
             Item item = Item.itemRegistry.getObjectById(id);
             ResourceLocation loc = Item.itemRegistry.getNameForObject(item);
-            if (loc == null) coreState.pipeId = "";
+            if (loc == null) coreState.pipeId = "" + id;
             else coreState.pipeId = loc.toString();
+            BCLog.logger.info("Loaded an integer pipeid as " + id + ", which is the item " + item + " and the registry name " + loc);
         }
         Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
         if (item instanceof ItemPipe) {
@@ -303,6 +309,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             Item nwItem = Item.itemRegistry.getObject(new ResourceLocation(str));
             if (nwItem instanceof ItemPipe) { // 1.8 migration
                 pipe = BlockGenericPipe.createPipe((ItemPipe) nwItem);
+                BCLog.logger.info("Remapped " + coreState.pipeId + " to " + str + " with a pipe object of " + pipe);
+                coreState.pipeId = str;
+                loadables.add(this);
             } else {
                 BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
                 pipe = null;
@@ -310,6 +319,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         bindPipe();
+
         if (pipe != null) {
             pipe.readFromNBT(nbt);
         } else {
@@ -319,6 +329,39 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         sideProperties.readFromNBT(nbt);
         attachPluggables = true;
+    }
+
+    private static final List<TileGenericPipe> loadables = new ArrayList<>();
+
+    public static void forceTiles() {
+        List<TileGenericPipe> lst = new ArrayList<>(loadables);
+        if (lst.size() == 0) return;
+        BCLog.logger.info("forcing tiles... (" + lst.size() + ")");
+        loadables.clear();
+        lst.forEach(t -> t.forceTile());
+    }
+
+    private void forceTile() {
+        BCLog.logger.info("forceTile");
+        if (worldObj.getBlockState(getPos()).getBlock() != BuildCraftTransport.genericPipeBlock) {
+            BCLog.logger.info("setting the block...");
+            IBlockState state = BuildCraftTransport.genericPipeBlock.getDefaultState();
+            state = state.withProperty(BlockGenericPipe.GENERIC_PIPE_DATA, 0);
+            if (worldObj == null) worldObj = MinecraftServer.getServer().worldServerForDimension(0);
+
+            NBTTagCompound tag = new NBTTagCompound();
+            writeToNBT(tag);
+
+            worldObj.removeTileEntity(getPos());
+            worldObj.setBlockState(pos, state);
+            TileEntity tile = worldObj.getTileEntity(getPos());
+            tile.readFromNBT(tag);
+        }
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
     }
 
     @Override
@@ -459,6 +502,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return getPipeColor() >= 0 ? (1 + getPipeColor()) : 0;
     }
 
+    @Override
     public int getPipeColor() {
         return worldObj.isRemote ? renderState.getGlassColor() : this.glassColor;
     }
@@ -596,7 +640,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     private void bindPipe() {
         if (!pipeBound && pipe != null) {
             pipe.setTile(this);
+            String s = coreState.pipeId;
             coreState.pipeId = Item.itemRegistry.getNameForObject(pipe.item).toString();
+            BCLog.logger.info("pipeId from \"" + s + "\" to \"" + coreState.pipeId + "\"");
             pipeBound = true;
         }
     }
@@ -605,6 +651,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return initialized;
     }
 
+    @Override
     public void scheduleNeighborChange() {
         blockNeighborChange = true;
         blockNeighborChangedSides = 0x3F;
@@ -791,6 +838,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return canPipeConnect_internal(with, side);
     }
 
+    @Override
     public boolean hasBlockingPluggable(EnumFacing side) {
         PipePluggable pluggable = getPipePluggable(side);
         if (pluggable == null) {
@@ -910,6 +958,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         return null;
     }
 
+    @Override
     public void scheduleRenderUpdate() {
         refreshRenderState = true;
     }
@@ -1093,11 +1142,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return DefaultProps.PIPE_CONTENTS_RENDER_DIST * DefaultProps.PIPE_CONTENTS_RENDER_DIST;
-    }
-
-    @Override
-    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-        return oldState.getBlock() != newState.getBlock();
     }
 
     @Override

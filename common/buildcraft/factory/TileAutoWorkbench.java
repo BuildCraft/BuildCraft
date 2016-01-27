@@ -6,6 +6,7 @@ package buildcraft.factory;
 
 import java.lang.ref.WeakReference;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
@@ -423,5 +425,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
     @Override
     public boolean hasCustomName() {
         return false;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.autoWorkbenchBlock.getDefaultState();
     }
 }

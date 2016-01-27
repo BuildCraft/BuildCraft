@@ -2,6 +2,7 @@ package buildcraft.silicon;
 
 import java.lang.ref.WeakReference;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -14,13 +15,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.gui.ContainerDummy;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -229,5 +233,11 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
         return slot >= 1;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.assemblyTableBlock.getDefaultState().withProperty(BlockBuildCraftBase.LASER_TABLE_TYPE,
+                EnumLaserTableType.STAMPING_TABLE);
     }
 }

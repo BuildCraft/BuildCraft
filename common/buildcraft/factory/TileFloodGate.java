@@ -7,12 +7,14 @@ package buildcraft.factory;
 import java.util.*;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.*;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
@@ -319,5 +321,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
     public boolean isSideBlocked(EnumFacing face) {
         return blockedSides.contains(face);
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.floodGateBlock.getDefaultState();
     }
 }

@@ -4,14 +4,17 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.engines.TileEngineBase;
 
 public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
@@ -96,6 +99,7 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
         return false;
     }
 
+    @Override
     public int getEnergyStored(EnumFacing side) {
         return 0;
     }
@@ -120,5 +124,10 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
         } else if (progressPart != 2) {
             hasSent = false;
         }
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftCore.engineBlock.getDefaultState().withProperty(BlockBuildCraft.ENGINE_TYPE, EnumEngineType.WOOD);
     }
 }

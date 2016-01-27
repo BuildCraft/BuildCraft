@@ -237,6 +237,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
         return 0;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

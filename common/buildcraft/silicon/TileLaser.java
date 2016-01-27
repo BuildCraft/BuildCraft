@@ -7,15 +7,13 @@ package buildcraft.silicon;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
@@ -307,5 +305,10 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
     @Override
     public boolean acceptsControlMode(Mode mode) {
         return mode == IControllable.Mode.On || mode == IControllable.Mode.Off;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.laserBlock.getDefaultState();
     }
 }

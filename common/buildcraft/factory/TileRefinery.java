@@ -6,6 +6,7 @@ package buildcraft.factory;
 
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -18,6 +19,7 @@ import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -318,6 +320,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     }
 
     // Network
+    @Override
     public void writeData(ByteBuf stream) {
         stream.writeFloat(animationSpeed);
         NetworkUtils.writeUTF(stream, currentRecipeId);
@@ -414,5 +417,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
         left.add("Result");
         left.add(" " + result.getFluidAmount() + "/" + result.getCapacity() + "mB");
         left.add(" " + (result.getFluid() == null ? "empty" : result.getFluidType().getLocalizedName(result.getFluid())));
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.refineryBlock.getDefaultState();
     }
 }

@@ -7,6 +7,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +17,7 @@ import net.minecraft.util.Vec3;
 
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -62,6 +64,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
     private Packet createLaunchItemPacket(final BuildingItem i) {
         return new PacketCommand(this, "launchItem", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 i.writeData(data);
             }
@@ -257,5 +260,10 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
         } else {
             itemBlueprint = null;
         }
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftBuilders.constructionMarkerBlock.getDefaultState();
     }
 }

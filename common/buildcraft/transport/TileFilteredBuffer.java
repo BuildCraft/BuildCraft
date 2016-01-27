@@ -4,11 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 
@@ -120,5 +122,10 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
         NBTTagCompound inventoryFiltersTag = new NBTTagCompound();
         inventoryFilters.writeToNBT(inventoryFiltersTag);
         nbtTagCompound.setTag("inventoryFilters", inventoryFiltersTag);
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftTransport.filteredBufferBlock.getDefaultState();
     }
 }

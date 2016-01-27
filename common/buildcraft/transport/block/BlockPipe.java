@@ -44,6 +44,7 @@ public class BlockPipe extends BlockBuildCraft {
         return false;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

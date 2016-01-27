@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -149,5 +150,10 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
     @Override
     public boolean acceptsControlMode(Mode mode) {
         return mode == Mode.Off || mode == Mode.On;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.miningWellBlock.getDefaultState();
     }
 }

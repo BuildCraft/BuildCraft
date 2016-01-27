@@ -6,6 +6,7 @@ package buildcraft.factory;
 
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,6 +15,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -314,5 +316,10 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
         left.add("");
         left.add(tank.getFluidAmount() + "/" + tank.getCapacity() + "mB");
         left.add(tank.getFluid() == null ? "empty" : tank.getFluidType().getLocalizedName(tank.getFluid()));
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.tankBlock.getDefaultState();
     }
 }

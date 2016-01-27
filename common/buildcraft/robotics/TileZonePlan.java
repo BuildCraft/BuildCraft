@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import java.util.Arrays;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -188,6 +189,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
                     if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan && ((ContainerZonePlan) e.openContainer)
                             .getTile() == this) {
                         Packet p = new PacketCommand(e.openContainer, "areaLoaded", new CommandWriter() {
+                            @Override
                             public void write(ByteBuf data) {
                                 ((ZonePlan) zone).writeData(data);
                             }
@@ -276,5 +278,10 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
         return inv.isItemValidForSlot(i, itemstack);
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftRobotics.zonePlanBlock.getDefaultState();
     }
 }

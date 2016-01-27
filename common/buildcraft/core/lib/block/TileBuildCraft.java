@@ -4,7 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -20,6 +23,7 @@ import net.minecraft.world.World;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.DefaultProps;
@@ -154,10 +158,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         sendNetworkUpdate = true;
     }
 
+    @Override
     public void writeData(ByteBuf stream) {
         stream.writeByte(ledPower);
     }
 
+    @Override
     public void readData(ByteBuf stream) {
         ledPower = stream.readByte();
     }
@@ -203,6 +209,41 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         if (nbt.hasKey("lastMode")) {
             mode = IControllable.Mode.values()[nbt.getByte("lastMode")];
         }
+        meta = nbt.getInteger("MIGRATION_META");
+        loadables.add(this);
+    }
+
+    private int meta = 0;
+
+    private static final List<TileBuildCraft> loadables = new ArrayList<>();
+
+    public static void forceTiles() {
+        List<TileBuildCraft> lst = new ArrayList<>(loadables);
+        if (lst.size() == 0) return;
+        BCLog.logger.info("forcing tiles... (" + lst.size() + ")");
+        loadables.clear();
+        lst.forEach(t -> t.forceTile());
+    }
+
+    public abstract IBlockState getBlockState_MIGRATION_ONLY();
+
+    private void forceTile() {
+        BCLog.logger.info("forceTile");
+        if (worldObj.getBlockState(getPos()).getBlock() != getBlockState_MIGRATION_ONLY().getBlock()) {
+            BCLog.logger.info("setting the block...");
+            IBlockState state = getBlockState_MIGRATION_ONLY();
+            if (worldObj == null) worldObj = MinecraftServer.getServer().worldServerForDimension(0);
+
+            state = state.getBlock().getStateFromMeta(meta);
+
+            NBTTagCompound tag = new NBTTagCompound();
+            writeToNBT(tag);
+
+            worldObj.removeTileEntity(getPos());
+            worldObj.setBlockState(pos, state);
+            TileEntity tile = worldObj.getTileEntity(getPos());
+            tile.readFromNBT(tag);
+        }
     }
 
     protected int getTicksSinceEnergyReceived() {
@@ -239,6 +280,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     /** If you want to use this, implement IEnergyProvider. */
+    @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         if (battery != null && this.canConnectEnergy(from)) {
             int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);

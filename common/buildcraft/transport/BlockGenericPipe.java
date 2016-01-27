@@ -135,6 +135,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return false;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

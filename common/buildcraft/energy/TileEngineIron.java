@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -15,6 +16,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.items.IItemHandler;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.enums.EnumEnergyStage;
@@ -25,6 +27,7 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
@@ -486,5 +489,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     @Override
     public boolean blockFluidHandlerTriggers(EnumFacing side) {
         return true;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftCore.engineBlock.getDefaultState().withProperty(BlockBuildCraft.ENGINE_TYPE, EnumEngineType.IRON);
     }
 }

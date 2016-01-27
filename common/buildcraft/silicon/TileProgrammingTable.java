@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -16,9 +17,12 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
@@ -173,6 +177,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
     public void rpcSelectOption(final int pos) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 data.writeByte(pos);
             }
@@ -221,5 +226,11 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
         return slot == 1;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.assemblyTableBlock.getDefaultState().withProperty(BlockBuildCraftBase.LASER_TABLE_TYPE,
+                EnumLaserTableType.PROGRAMMING_TABLE);
     }
 }

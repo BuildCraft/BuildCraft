@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,7 @@ import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.BCStringUtils;
 
@@ -121,5 +123,10 @@ public class TileEngineCreative extends TileEngineBase {
     @Override
     public int getIdealOutput() {
         return powerMode.maxPower;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftCore.engineBlock.getDefaultState().withProperty(BlockBuildCraft.ENGINE_TYPE, EnumEngineType.CREATIVE);
     }
 }

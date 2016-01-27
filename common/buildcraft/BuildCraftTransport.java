@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -724,6 +725,11 @@ public class BuildCraftTransport extends BuildCraftMod {
                 if (mapping.name.equals("BuildCraft|Transport:robotStation")) {
                     mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robotStation")));
                 }
+                BCLog.logger.info("Missing Mapping:");
+                BCLog.logger.info("Old name = " + mapping.name);
+                BCLog.logger.info("ID = " + mapping.id);
+                BCLog.logger.info("Type = " + mapping.type);
+
             }
         }
     }
@@ -749,5 +755,11 @@ public class BuildCraftTransport extends BuildCraftMod {
             mrl = ModelHelper.getItemResourceLocation(facadeItem, "");
             event.modelRegistry.putObject(mrl, new FacadeItemModel());
         }
+    }
+
+    // 1.8 migration
+    @SubscribeEvent
+    public void serverTick(ServerTickEvent event) {
+        TileGenericPipe.forceTiles();
     }
 }

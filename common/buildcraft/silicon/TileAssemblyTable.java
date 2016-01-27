@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,15 +21,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
+import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 
 import io.netty.buffer.ByteBuf;
@@ -315,6 +319,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
     public void rpcSelectRecipe(final String id, final boolean select) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, id);
                 data.writeBoolean(select);
@@ -383,5 +388,11 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
     @Override
     public int getCraftingFluidStackSize() {
         return 0;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.assemblyTableBlock.getDefaultState().withProperty(BlockBuildCraftBase.LASER_TABLE_TYPE,
+                EnumLaserTableType.ASSEMBLY_TABLE);
     }
 }

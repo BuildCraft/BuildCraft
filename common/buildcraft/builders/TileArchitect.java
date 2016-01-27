@@ -7,6 +7,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
@@ -315,6 +317,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
     public Packet getPacketSetName() {
         return new PacketCommand(this, "setName", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, name);
             }
@@ -340,6 +343,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         readConfiguration = conf;
 
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 readConfiguration.writeData(data);
             }
@@ -372,5 +376,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftBuilders.architectBlock.getDefaultState();
     }
 }

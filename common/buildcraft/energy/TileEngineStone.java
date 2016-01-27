@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
@@ -13,9 +14,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.MathUtils;
@@ -159,5 +162,10 @@ public class TileEngineStone extends TileEngineWithInventory {
     @Override
     public boolean hasCustomName() {
         return false;
+    }
+    
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftCore.engineBlock.getDefaultState().withProperty(BlockBuildCraft.ENGINE_TYPE, EnumEngineType.STONE);
     }
 }

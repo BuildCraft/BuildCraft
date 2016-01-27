@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IInvSlot;
@@ -642,6 +644,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             items.addAll(itemsIn);
 
             return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     data.writeMedium(items.size());
                     for (RequirementItemStack rb : items) {
@@ -950,7 +953,13 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         }
     }
 
+    @Override
     public Tank[] getFluidTanks() {
         return fluidTanks;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftBuilders.builderBlock.getDefaultState();
     }
 }

@@ -1,12 +1,9 @@
 package buildcraft.silicon;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.netty.buffer.ByteBuf;
-import gnu.trove.map.hash.TObjectIntHashMap;
-
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -16,15 +13,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
+
+import gnu.trove.map.hash.TObjectIntHashMap;
+import io.netty.buffer.ByteBuf;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
     private class Requirement {
@@ -500,5 +500,10 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
         return slot == 11;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftSilicon.packagerBlock.getDefaultState();
     }
 }

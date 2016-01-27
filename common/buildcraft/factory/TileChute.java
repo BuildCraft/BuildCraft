@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -194,5 +196,10 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
     public boolean canConnectEnergy(EnumFacing side) {
         // blocks up and down
         return side.ordinal() >= 2 && !(getTile(side) instanceof IPipeTile);
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.chuteBlock.getDefaultState();
     }
 }

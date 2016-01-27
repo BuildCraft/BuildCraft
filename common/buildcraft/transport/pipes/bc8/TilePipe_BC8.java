@@ -1,9 +1,11 @@
 package buildcraft.transport.pipes.bc8;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.pipe_bc8.IPipeHolder_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
@@ -50,5 +52,10 @@ public class TilePipe_BC8 extends TileBuildCraft implements IPipeHolder_BC8 {
         if (pipe.initialize()) return;
         IPipeEvent_BC8.Tick tick = getWorld().isRemote ? new PipeEvent_BC8.Tick.Client(pipe) : new PipeEvent_BC8.Tick.Server(pipe);
         pipe.fireEvent(tick);
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftTransport.pipeBlock.getDefaultState();
     }
 }

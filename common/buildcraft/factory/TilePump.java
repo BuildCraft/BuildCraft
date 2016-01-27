@@ -474,4 +474,9 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public boolean canConnectRedstoneEngine(EnumFacing side) {
         return !BuildCraftFactory.pumpsNeedRealPower;
     }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftFactory.pumpBlock.getDefaultState();
+    }
 }

@@ -593,6 +593,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // @Override TODO
+    @Override
     public void setPulsing(boolean pulsing) {
         if (pulsing != isPulsing) {
             isPulsing = pulsing;
@@ -629,6 +630,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         broadcastSignal |= 1 << color.ordinal();
     }
 
+    @Override
     public IPipe getPipe() {
         return pipe;
     }

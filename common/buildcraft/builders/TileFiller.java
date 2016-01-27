@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +14,7 @@ import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
@@ -346,6 +348,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public void rpcSetPatternFromString(final String name) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setPattern", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NetworkUtils.writeUTF(data, name);
             }
@@ -404,6 +407,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public void rpcSetParameter(int i, IStatementParameter patternParameter) {
         BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setParameters", new CommandWriter() {
+            @Override
             public void write(ByteBuf data) {
                 NBTTagCompound parameterData = new NBTTagCompound();
                 writeParametersToNBT(parameterData);
@@ -425,5 +429,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public void setExcavate(boolean excavate) {
         this.excavate = excavate;
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftBuilders.fillerBlock.getDefaultState();
     }
 }

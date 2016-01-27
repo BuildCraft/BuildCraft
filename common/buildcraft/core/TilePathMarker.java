@@ -133,6 +133,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         }
     }
 
+    @Override
     public List<BlockPos> getPath() {
         HashSet<BlockPos> visitedPaths = new HashSet<BlockPos>();
         List<BlockPos> res = new ArrayList<BlockPos>();

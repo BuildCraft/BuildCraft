@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
@@ -37,6 +39,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     public void setRequest(final int index, final ItemStack stack) {
         if (worldObj.isRemote) {
             BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest", new CommandWriter() {
+                @Override
                 public void write(ByteBuf data) {
                     data.writeByte(index);
                     NetworkUtils.writeStack(data, stack);
@@ -230,5 +233,10 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
         } else {
             return stack;
         }
+    }
+
+    @Override
+    public IBlockState getBlockState_MIGRATION_ONLY() {
+        return BuildCraftRobotics.requesterBlock.getDefaultState();
     }
 }
