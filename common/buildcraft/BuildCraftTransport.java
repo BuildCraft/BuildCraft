@@ -52,6 +52,7 @@ import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.*;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
@@ -761,5 +762,6 @@ public class BuildCraftTransport extends BuildCraftMod {
     @SubscribeEvent
     public void serverTick(ServerTickEvent event) {
         TileGenericPipe.forceTiles();
+        TileBuildCraft.forceTiles();
     }
 }
