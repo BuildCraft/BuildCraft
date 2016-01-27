@@ -14,11 +14,11 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeRenderState;
 
 public class PipeRendererWires {

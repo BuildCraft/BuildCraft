@@ -70,6 +70,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
         List<BakedQuad> quads = Lists.newArrayList();
 
+
         EnumWorldBlockLayer layer = MinecraftForgeClient.getRenderLayer();
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             renderCutoutPass(render, pluggable, pipe, quads);
@@ -170,9 +171,6 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         spriteMap.put(null, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null)));
         renderPipe(render, quads, spriteMap, false);
 
-        // Wires
-        PipeRendererWires.renderPipeWires(quads, render);
-
         // Pluggables
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable plug = pluggable.getPluggables()[face.ordinal()];
@@ -186,6 +184,9 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 }
             }
         }
+
+        // Wires
+        PipeRendererWires.renderPipeWires(quads, render);
     }
 
     // Used basically for pipe colour

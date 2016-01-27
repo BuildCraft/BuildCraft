@@ -227,6 +227,19 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileGenericPipe) {
+            TileGenericPipe tgp = (TileGenericPipe) tile;
+            if (tgp.pipe == null) return super.getLightValue(world, pos);
+            for (PipeWire wire : PipeWire.VALUES) {
+                if (tgp.pipe.isWireActive(wire)) return 6;
+            }
+        }
+        return super.getLightValue(world, pos);
+    }
+
+    @Override
     public boolean isNormalCube() {
         return false;
     }

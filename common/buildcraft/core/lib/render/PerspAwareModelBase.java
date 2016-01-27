@@ -27,10 +27,11 @@ public class PerspAwareModelBase implements IPerspectiveAwareModel, IFlexibleBak
     // (mc -> forge)
     private final ImmutableList<BakedQuad> quads;
     private final TextureAtlasSprite particle;
+    @SuppressWarnings("deprecation")
     private final ImmutableMap<TransformType, TRSRTransformation> transforms;
 
     public PerspAwareModelBase(VertexFormat format, ImmutableList<BakedQuad> quads, TextureAtlasSprite particle,
-            ImmutableMap<TransformType, TRSRTransformation> transforms) {
+            @SuppressWarnings("deprecation") ImmutableMap<TransformType, TRSRTransformation> transforms) {
         this.format = format;
         this.quads = quads == null ? ImmutableList.<BakedQuad> of() : quads;
         this.particle = particle;
