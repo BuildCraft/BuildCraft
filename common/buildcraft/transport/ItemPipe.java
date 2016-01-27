@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -45,24 +44,20 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float par8, float par9,
-            float par10) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
         Block block = BuildCraftTransport.genericPipeBlock;
 
         Block worldBlock = world.getBlockState(pos).getBlock();
 
-        if (worldBlock == Blocks.snow) {
-            side = EnumFacing.UP;
-        } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush && (worldBlock == null || !worldBlock
-                .isReplaceable(world, pos))) {
+        if (!worldBlock.isReplaceable(world, pos)) {
             pos = pos.offset(side);
         }
 
-        if (itemstack.stackSize == 0) {
+        if (stack.stackSize == 0) {
             return false;
-        }
-
-        if (world.canBlockBePlaced(block, pos, false, side, entityplayer, itemstack)) {
+        } else if (!player.canPlayerEdit(pos, side, stack)) {
+            return false;
+        } else if (world.canBlockBePlaced(block, pos, false, side, null, stack)) {
             Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
             if (pipe == null) {
@@ -70,18 +65,18 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
                 return true;
             }
 
-            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), entityplayer, side)) {
-                block.onBlockPlacedBy(world, pos, block.getDefaultState(), entityplayer, itemstack);
+            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), player, side)) {
+                block.onBlockPlacedBy(world, pos, block.getDefaultState(), player, stack);
 
                 if (!world.isRemote) {
                     TileEntity tile = world.getTileEntity(pos);
-                    ((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
+                    ((TileGenericPipe) tile).initializeFromItemMetadata(stack.getItemDamage());
                 }
 
                 world.playSoundEffect(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound
                         .getVolume() + 1.0F) / 2.0F, block.stepSound.getFrequency() * 0.8F);
 
-                itemstack.stackSize--;
+                stack.stackSize--;
 
                 return true;
             } else {

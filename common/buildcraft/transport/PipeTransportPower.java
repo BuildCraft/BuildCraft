@@ -35,6 +35,7 @@ import buildcraft.transport.pipes.*;
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
     public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
+    private static int MAX_POWER = 0;
 
     private static final int OVERLOAD_TICKS = 60;
     public static final short POWER_STAGES = 1 << 6;
@@ -345,7 +346,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             packet.displayPower = new short[6];
             for (int i = 0; i < 6; i++) {
                 double val = displayPower[i];
-                val /= maxPower;
+                val /= MAX_POWER;
                 val = Math.sqrt(val);
                 val *= POWER_STAGES;
                 packet.displayPower[i] = (short) val;
@@ -488,6 +489,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         powerCapacities.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerDiamond.class, 128 * TransportConstants.PIPE_POWER_BASE_CAP);
+        MAX_POWER = 128 * TransportConstants.PIPE_POWER_BASE_CAP;
 
         powerResistances.put(PipePowerCobblestone.class, 0.05F);
         powerResistances.put(PipePowerStone.class, 0.025F);

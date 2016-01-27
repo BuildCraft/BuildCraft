@@ -29,7 +29,6 @@ public class PipeRendererPower {
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GlStateManager.disableLighting();
-        GL11.glDisable(GL11.GL_LIGHTING);
         // GL11.glEnable(GL11.GL_BLEND);
 
         GL11.glTranslatef((float) x, (float) y, (float) z);
