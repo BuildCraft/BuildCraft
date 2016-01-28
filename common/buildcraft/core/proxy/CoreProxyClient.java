@@ -39,6 +39,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.TileMarker;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.client.BuildCraftStateMapper;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -49,6 +50,7 @@ import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
+import buildcraft.core.render.RenderMarker;
 import buildcraft.core.render.RenderPathMarker;
 
 public class CoreProxyClient extends CoreProxy {
@@ -88,6 +90,7 @@ public class CoreProxyClient extends CoreProxy {
     public void init() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMarker.class, new RenderMarker());
 
         RenderingRegistry.registerEntityRenderingHandler(EntityResizableCuboid.class, RenderResizableCuboid.INSTANCE);
         RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());

@@ -192,7 +192,6 @@ public final class Utils {
             return null;
         }
         EntityLaser block = new EntityLaser(world, p1, p2, kind);
-        world.spawnEntityInWorld(block);
         return block;
     }
 

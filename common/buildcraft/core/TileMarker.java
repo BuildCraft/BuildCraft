@@ -1,4 +1,5 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Teamffsetffset)
+ * http://wffsetsldkjsjsjhd;kjdhskjhfd;ffsetkjsfhslkjdfhlskjfshlfww.mod-buildcraft.com
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
@@ -17,7 +18,6 @@ import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
 
@@ -139,8 +139,8 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 
     private Vec3 initVectO;
     private Vec3[] initVect;
-    private EntityLaser[] lasers;
-    private EntityLaser[] signals;
+    public LaserData[] lasers;
+    public LaserData[] signals;
 
     public void updateSignals() {
         if (!worldObj.isRemote) {
@@ -150,32 +150,26 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     }
 
     private void switchSignals() {
-        if (signals != null) {
-            for (EntityLaser b : signals) {
-                if (b != null) {
-                    CoreProxy.proxy.removeEntity(b);
-                }
-            }
-            signals = null;
-        }
+        signals = null;
         if (showSignals) {
-            signals = new EntityLaser[6];
+            signals = new LaserData[6];
             Vec3 cPos = Utils.convert(pos);
             int rangePlus = DefaultProps.MARKER_RANGE + 1;
             int rangeMinus = DefaultProps.MARKER_RANGE - 1;
+            Vec3 offset = Utils.VEC_HALF;
             if (!origin.isSet() || !origin.vect[0].isSet()) {
-                signals[0] = Utils.createLaser(worldObj, cPos, cPos.addVector(rangeMinus, 0, 0), LaserKind.Blue);
-                signals[1] = Utils.createLaser(worldObj, cPos.addVector(-rangePlus, 0, 0), cPos, LaserKind.Blue);
+                signals[0] = new LaserData(cPos.add(offset), cPos.add(offset).addVector(rangeMinus, 0, 0));
+                signals[1] = new LaserData(cPos.add(offset).addVector(-rangePlus, 0, 0), cPos.add(offset));
             }
 
             if (!origin.isSet() || !origin.vect[1].isSet()) {
-                signals[2] = Utils.createLaser(worldObj, cPos, cPos.addVector(0, rangeMinus, 0), LaserKind.Blue);
-                signals[3] = Utils.createLaser(worldObj, cPos.addVector(0, -rangePlus, 0), cPos, LaserKind.Blue);
+                signals[2] = new LaserData(cPos.add(offset), cPos.add(offset).addVector(0, rangeMinus, 0));
+                signals[3] = new LaserData(cPos.add(offset).addVector(0, -rangePlus, 0), cPos.add(offset));
             }
 
             if (!origin.isSet() || !origin.vect[2].isSet()) {
-                signals[4] = Utils.createLaser(worldObj, cPos, cPos.addVector(0, 0, rangeMinus), LaserKind.Blue);
-                signals[5] = Utils.createLaser(worldObj, cPos.addVector(0, 0, -rangePlus), cPos, LaserKind.Blue);
+                signals[4] = new LaserData(cPos.add(offset), cPos.add(offset).addVector(0, 0, rangeMinus));
+                signals[5] = new LaserData(cPos.add(offset).addVector(0, 0, -rangePlus), cPos.add(offset));
             }
         }
     }
@@ -281,15 +275,9 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     }
 
     private void createLasers() {
-        if (lasers != null) {
-            for (EntityLaser entity : lasers) {
-                if (entity != null) {
-                    CoreProxy.proxy.removeEntity(entity);
-                }
-            }
-        }
+        lasers = null;
 
-        lasers = new EntityLaser[12];
+        lasers = new LaserData[12];
         Origin o = origin;
 
         if (!origin.vect[0].isSet()) {
@@ -325,7 +313,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             o.zMax = origin.vect[2].z;
         }
 
-        lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax, o.yMax, o.zMax, LaserKind.Red);
+        lasers = Utils.createLaserDataBox(o.xMin + 0.5, o.yMin + 0.5, o.zMin + 0.5, o.xMax + 0.5, o.yMax + 0.5, o.zMax + 0.5);
     }
 
     @Override
@@ -356,11 +344,6 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             Origin o = origin;
 
             if (markerOrigin != null && markerOrigin.lasers != null) {
-                for (EntityLaser entity : markerOrigin.lasers) {
-                    if (entity != null) {
-                        entity.setDead();
-                    }
-                }
                 markerOrigin.lasers = null;
             }
 
@@ -368,14 +351,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
                 TileMarker mark = m.getMarker(worldObj);
 
                 if (mark != null) {
-                    if (mark.lasers != null) {
-                        for (EntityLaser entity : mark.lasers) {
-                            if (entity != null) {
-                                entity.setDead();
-                            }
-                        }
-                        mark.lasers = null;
-                    }
+                    mark.lasers = null;
 
                     if (mark != this) {
                         mark.origin = new Origin();
@@ -396,14 +372,6 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             }
             if (markerOrigin != null) {
                 markerOrigin.updateSignals();
-            }
-        }
-
-        if (signals != null) {
-            for (EntityLaser block : signals) {
-                if (block != null) {
-                    block.setDead();
-                }
             }
         }
 

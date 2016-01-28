@@ -28,7 +28,7 @@ public class RenderQuarry extends RenderBuilder<TileQuarry> {
         }
     }
 
-    private void renderCuboid(TileQuarry quarry, EntityResizableCuboid cuboid, double x, double y, double z, float partialTicks) {
+    private static void renderCuboid(TileQuarry quarry, EntityResizableCuboid cuboid, double x, double y, double z, float partialTicks) {
         Vec3 interp = Utils.getInterpolatedVec(cuboid, partialTicks);
         interp = interp.subtract(Utils.convert(quarry.getPos()));
         interp = interp.addVector(x, y, z);
