@@ -488,8 +488,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         powerCapacities.put(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerDiamond.class, 128 * TransportConstants.PIPE_POWER_BASE_CAP);
-        MAX_POWER = 128 * TransportConstants.PIPE_POWER_BASE_CAP;
+        powerCapacities.put(PipePowerDiamond.class, 48 * TransportConstants.PIPE_POWER_BASE_CAP);
+        MAX_POWER = 48 * TransportConstants.PIPE_POWER_BASE_CAP;
 
         powerResistances.put(PipePowerCobblestone.class, 0.05F);
         powerResistances.put(PipePowerStone.class, 0.025F);
