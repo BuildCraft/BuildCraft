@@ -64,9 +64,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             return;
         }
 
-        BCLog.logger.info("onEntityCollidedWithBlock(" + entity + ")");
         if (canSuck(entity, 0)) {
-            BCLog.logger.info("canSuck(entity, 0) = true");
             pullItemIntoPipe(entity, 0);
         }
     }
