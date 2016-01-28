@@ -930,6 +930,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public void onEntityCollidedWithBlock(World world, BlockPos pos, Entity entity) {
         super.onEntityCollidedWithBlock(world, pos, entity);
 
+        handleEntityCollision(world, pos, entity);
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        handleEntityCollision(world, pos, entity);
+    }
+
+    private static void handleEntityCollision(World world, BlockPos pos, Entity entity) {
         Pipe<?> pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {

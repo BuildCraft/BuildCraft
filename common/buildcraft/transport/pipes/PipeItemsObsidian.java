@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -32,11 +33,7 @@ import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.StackFilter;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TransportProxy;
-import buildcraft.transport.TravelingItem;
+import buildcraft.transport.*;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
@@ -67,7 +64,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             return;
         }
 
+        BCLog.logger.info("onEntityCollidedWithBlock(" + entity + ")");
         if (canSuck(entity, 0)) {
+            BCLog.logger.info("canSuck(entity, 0) = true");
             pullItemIntoPipe(entity, 0);
         }
     }
@@ -76,7 +75,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
         if (orientation == null) {
             return null;
         }
-        Vec3 p1 = Utils.convert(container.getPos());
+        Vec3 p1 = Utils.convert(container.getPos()).add(Utils.VEC_HALF);
         Vec3 p2 = p1;
 
         switch (orientation) {
