@@ -17,6 +17,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
@@ -61,6 +63,7 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
         ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable {
@@ -672,9 +675,39 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public net.minecraft.network.Packet getDescriptionPacket() {
-        sendNetworkUpdate();
-        return null;
+    public S35PacketUpdateTileEntity getDescriptionPacket() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString("net-type", "desc-packet");
+        Packet p = getBCDescriptionPacket();
+        ByteBuf buf = Unpooled.buffer();
+        p.writeData(buf);
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        nbt.setByteArray("net-data", bytes);
+        S35PacketUpdateTileEntity tileUpdate = new S35PacketUpdateTileEntity(getPos(), 0, nbt);
+        return tileUpdate;
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+        if (!worldObj.isRemote) return;
+        if (pkt.getNbtCompound() == null) throw new RuntimeException("No NBTTag compound! This is a bug!");
+        NBTTagCompound nbt = pkt.getNbtCompound();
+        try {
+            if ("desc-packet".equals(nbt.getString("net-type"))) {
+                byte[] bytes = nbt.getByteArray("net-data");
+                ByteBuf data = Unpooled.wrappedBuffer(bytes);
+                PacketTileState p = new PacketTileState();
+                p.readData(data);
+                // The player is not used so its fine
+                p.applyData(worldObj, null);
+            } else {
+                BCLog.logger.warn("Recieved a packet with a different type that expected (" + nbt.getString("net-type") + ")");
+            }
+        } catch (Throwable t) {
+            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data")
+                + "\")", t);
+        }
     }
 
     public void sendNetworkUpdate() {

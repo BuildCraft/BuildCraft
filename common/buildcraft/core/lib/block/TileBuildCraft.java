@@ -13,6 +13,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -20,6 +22,7 @@ import net.minecraft.world.World;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.DefaultProps;
@@ -29,6 +32,7 @@ import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
@@ -164,14 +168,44 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         ledPower = stream.readByte();
     }
 
-    public Packet getPacketUpdate() {
+    public PacketTileUpdate getPacketUpdate() {
         return new PacketTileUpdate(this, this);
     }
 
     @Override
-    public net.minecraft.network.Packet getDescriptionPacket() {
-        sendNetworkUpdate();
-        return null;
+    public S35PacketUpdateTileEntity getDescriptionPacket() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString("net-type", "desc-packet");
+        Packet p = getPacketUpdate();
+        ByteBuf buf = Unpooled.buffer();
+        p.writeData(buf);
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        nbt.setByteArray("net-data", bytes);
+        S35PacketUpdateTileEntity tileUpdate = new S35PacketUpdateTileEntity(getPos(), 0, nbt);
+        return tileUpdate;
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+        if (!worldObj.isRemote) return;
+        if (pkt.getNbtCompound() == null) throw new RuntimeException("No NBTTag compound! This is a bug!");
+        NBTTagCompound nbt = pkt.getNbtCompound();
+        try {
+            if ("desc-packet".equals(nbt.getString("net-type"))) {
+                byte[] bytes = nbt.getByteArray("net-data");
+                ByteBuf data = Unpooled.wrappedBuffer(bytes);
+                PacketTileUpdate p = new PacketTileUpdate();
+                p.readData(data);
+                // The player is not used so its fine
+                p.applyData(worldObj, null);
+            } else {
+                BCLog.logger.warn("Recieved a packet with a different type that expected (" + nbt.getString("net-type") + ")");
+            }
+        } catch (Throwable t) {
+            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data")
+                + "\")", t);
+        }
     }
 
     @Override

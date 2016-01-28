@@ -33,7 +33,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     public PacketHandler() {
         Map<Side, Map<Integer, Queue<Packet>>> map = Maps.newHashMap();
         for (Side side : Side.values()) {
-            Map<Integer, Queue<Packet>> mp = new ConcurrentHashMap<Integer, Queue<Packet>>();
+            Map<Integer, Queue<Packet>> mp = new ConcurrentHashMap<>();
             map.put(side, mp);
         }
         packetMap = ImmutableMap.copyOf(map);
