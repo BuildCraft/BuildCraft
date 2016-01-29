@@ -480,7 +480,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     static {
-        powerCapacities.put(PipePowerCobblestone.class, TransportConstants.PIPE_POWER_BASE_CAP);
+        powerCapacities.put(PipePowerCobblestone.class, 1 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerStone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerWood.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerCapacities.put(PipePowerSandstone.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
