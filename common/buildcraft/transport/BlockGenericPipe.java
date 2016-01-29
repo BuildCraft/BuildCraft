@@ -36,6 +36,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -997,6 +998,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 
         BCRegistry.INSTANCE.registerItem(item, true);
+        String oldRegName = Item.itemRegistry.getNameForObject(item).toString().replace("buildcraftPipe.", "item.buildcraftPipe.");
+        Item.itemRegistry.putObject(new ResourceLocation(oldRegName), item);
 
         pipes.put(item, clas);
 

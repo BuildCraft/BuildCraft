@@ -300,10 +300,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             if (loc == null) coreState.pipeId = "" + id;
             else coreState.pipeId = loc.toString();
             BCLog.logger.info("Loaded an integer pipeid as " + id + ", which is the item " + item + " and the registry name " + loc);
+            throw new RuntimeException("Attempted to load a pipe with an integer id! (#" + id + " @" + getPos() + ")");
         }
         Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
         if (item instanceof ItemPipe) {
             pipe = BlockGenericPipe.createPipe((ItemPipe) item);
+            loadables.add(this);
         } else {
             String str = coreState.pipeId.replace("item.", "");
             Item nwItem = Item.itemRegistry.getObject(new ResourceLocation(str));
@@ -321,9 +323,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         bindPipe();
 
         if (pipe != null) {
+            BCLog.logger.log(Level.INFO, "Pipe successfully loaded from NBT @" + getPos());
             pipe.readFromNBT(nbt);
         } else {
-            BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at " + getPos());
+            BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT @" + getPos());
             deletePipe = true;
         }
 
@@ -336,13 +339,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     public static void forceTiles() {
         List<TileGenericPipe> lst = new ArrayList<>(loadables);
         if (lst.size() == 0) return;
-        BCLog.logger.info("forcing tiles... (" + lst.size() + ")");
+        BCLog.logger.info("forcing pipes... (" + lst.size() + ")");
         loadables.clear();
         lst.forEach(t -> t.forceTile());
     }
 
     private void forceTile() {
-        BCLog.logger.info("forceTile");
+        BCLog.logger.info("forcePipe");
         if (worldObj.getBlockState(getPos()).getBlock() != BuildCraftTransport.genericPipeBlock) {
             BCLog.logger.info("setting the block...");
             IBlockState state = BuildCraftTransport.genericPipeBlock.getDefaultState();
