@@ -1,0 +1,9 @@
+# Blender MTL File: 'lens_cutout.blend'
+# Material Count: 2
+
+newmtl None
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+d 1
+map_Kd filter_tex

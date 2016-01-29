@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipe;
@@ -18,13 +19,13 @@ public class LensFilterHandler {
         LinkedList<EnumFacing> correctColored = new LinkedList<EnumFacing>();
         LinkedList<EnumFacing> notColored = new LinkedList<EnumFacing>();
         boolean encounteredColor = false;
-        int myColor = event.item.color == null ? -1 : event.item.color.ordinal();
+        EnumDyeColor myColor = event.item.color;
 
         for (EnumFacing dir : event.destinations) {
             boolean hasFilter = false;
             boolean hasLens = false;
-            int sideColor = -1;
-            int sideLensColor = -1;
+            EnumDyeColor sideColor = null;
+            EnumDyeColor sideLensColor = null;
 
             // Get the side's color
             // (1/2) From this pipe's outpost
@@ -32,10 +33,10 @@ public class LensFilterHandler {
             if (pluggable != null && pluggable instanceof LensPluggable) {
                 if (((LensPluggable) pluggable).isFilter) {
                     hasFilter = true;
-                    sideColor = ((LensPluggable) pluggable).color;
+                    sideColor = ((LensPluggable) pluggable).dyeColor;
                 } else {
                     hasLens = true;
-                    sideLensColor = ((LensPluggable) pluggable).color;
+                    sideLensColor = ((LensPluggable) pluggable).dyeColor;
                 }
             }
 
@@ -45,7 +46,7 @@ public class LensFilterHandler {
                 IPipeTile otherContainer = otherPipe.getTile();
                 pluggable = otherContainer.getPipePluggable(dir.getOpposite());
                 if (pluggable != null && pluggable instanceof LensPluggable && ((LensPluggable) pluggable).isFilter) {
-                    int otherColor = ((LensPluggable) pluggable).color;
+                    EnumDyeColor otherColor = ((LensPluggable) pluggable).dyeColor;
                     if (hasFilter && otherColor != sideColor) {
                         // Filter colors conflict - the side is unpassable
                         continue;
@@ -54,7 +55,7 @@ public class LensFilterHandler {
                         // treated as colorless
                         if (sideLensColor == otherColor) {
                             hasFilter = false;
-                            sideColor = -1;
+                            sideColor = null;
                         } else {
                             continue;
                         }

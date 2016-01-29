@@ -11,14 +11,14 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 import io.netty.buffer.ByteBuf;
 
 public class LensPluggable extends PipePluggable {
-    @Deprecated
-    public int color;
+    public EnumDyeColor dyeColor;
     public boolean isFilter;
     protected IPipeTile container;
     private EnumFacing side;
@@ -28,11 +28,11 @@ public class LensPluggable extends PipePluggable {
     }
 
     public LensPluggable(ItemStack stack) {
-        color = stack.getItemDamage() & 15;
+        dyeColor = EnumDyeColor.byDyeDamage(stack.getItemDamage() & 15);
         isFilter = stack.getItemDamage() >= 16;
         if (stack.getItemDamage() >= 32) {
             isFilter = stack.getItemDamage() == 33;
-            color = -1;
+            dyeColor = null;
         }
     }
 
@@ -50,12 +50,13 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public ItemStack[] getDropItems(IPipeTile pipe) {
-        int meta = color | (isFilter ? 16 : 0);
-        if (color == -1) {
-            meta = isFilter ? 33 : 32;
+        int colourMeta;
+        if (dyeColor == null) {
+            colourMeta = isFilter ? 33 : 32;
+        } else {
+            colourMeta = dyeColor.getDyeDamage() | (isFilter ? 16 : 0);
         }
-
-        return new ItemStack[] { new ItemStack(BuildCraftTransport.lensItem, 1, meta) };
+        return new ItemStack[] { new ItemStack(BuildCraftTransport.lensItem, 1, colourMeta) };
     }
 
     @Override
@@ -87,41 +88,44 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public void readFromNBT(NBTTagCompound tag) {
-        color = tag.getByte("c");
+        if (tag.hasKey("colour")) {
+            dyeColor = NBTUtils.readEnum(tag.getTag("colour"), EnumDyeColor.class);
+        } else {
+            dyeColor = EnumDyeColor.byDyeDamage(tag.getByte("c"));
+        }
         isFilter = tag.getBoolean("f");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tag) {
-        tag.setByte("c", (byte) color);
+        tag.setTag("colour", NBTUtils.writeEnum(dyeColor));
         tag.setBoolean("f", isFilter);
     }
 
     @Override
     public void writeData(ByteBuf data) {
-        data.writeByte(((color + 1) & 0x1F) | (isFilter ? 0x20 : 0));
+        int col = dyeColor == null ? 0 : dyeColor.getDyeDamage() + 1;
+        data.writeByte((col & 0x1F) | (isFilter ? 0x20 : 0));
     }
 
     @Override
     public void readData(ByteBuf data) {
         int flags = data.readUnsignedByte();
-        color = (flags & 0x1F) - 1;
+        int col = (flags & 0x1F);
+        if (col == 0) dyeColor = null;
+        else dyeColor = EnumDyeColor.byDyeDamage(col - 1);
         isFilter = (flags & 0x20) > 0;
     }
 
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
         LensPluggable other = (LensPluggable) o;
-        return other.color != color || other.isFilter != isFilter;
+        return other.dyeColor != dyeColor || other.isFilter != isFilter;
     }
 
     private void color(TravelingItem item) {
         if ((item.toCenter && item.input.getOpposite() == side) || (!item.toCenter && item.output == side)) {
-            if (color == -1) {
-                item.color = null;
-            } else {
-                item.color = EnumDyeColor.byDyeDamage(color);
-            }
+            item.color = dyeColor;
         }
     }
 
@@ -138,6 +142,6 @@ public class LensPluggable extends PipePluggable {
     }
 
     public EnumDyeColor getColour() {
-        return EnumDyeColor.byDyeDamage(color);
+        return dyeColor;
     }
 }

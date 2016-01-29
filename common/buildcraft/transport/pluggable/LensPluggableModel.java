@@ -33,16 +33,23 @@ import buildcraft.core.lib.utils.MatrixUtils;
 public final class LensPluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer.Translucent {
     public static final LensPluggableModel INSTANCE = new LensPluggableModel();
 
-    private static final ResourceLocation cutoutLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_cutout.obj");
+    private static final ResourceLocation cutoutLensLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_cutout.obj");
+    private static final ResourceLocation cutoutFilterLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/filter_cutout.obj");
     private static final ResourceLocation translucentLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_translucent.obj");
-    private static final ResourceLocation cutoutSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens");
+
+    private static final ResourceLocation cutoutLensSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens");
+    private static final ResourceLocation cutoutFilterSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/filter");
     private static final ResourceLocation translucentSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/overlay_lens");
-    private static TextureAtlasSprite spriteCutout, spriteTranslucent;
+    private static TextureAtlasSprite spriteLensCutout, spriteFilterCutout, spriteTranslucent;
 
     private LensPluggableModel() {}
 
-    public IModel modelCutout() {
-        return getModelOBJ(cutoutLoc);
+    public IModel modelCutoutLens() {
+        return getModelOBJ(cutoutLensLoc);
+    }
+
+    public IModel modelCutoutFilter() {
+        return getModelOBJ(cutoutFilterLoc);
     }
 
     public IModel modelTranslucent() {
@@ -51,13 +58,17 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
 
     @SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event) {
-        spriteCutout = null;
-        spriteCutout = event.map.getTextureExtry(cutoutSpriteLoc.toString());
-        if (spriteCutout == null) spriteCutout = event.map.registerSprite(cutoutSpriteLoc);
+        spriteLensCutout = null;
+        spriteLensCutout = event.map.getTextureExtry(cutoutLensSpriteLoc.toString());
+        if (spriteLensCutout == null) spriteLensCutout = event.map.registerSprite(cutoutLensSpriteLoc);
+
+        spriteFilterCutout = null;
+        spriteFilterCutout = event.map.getTextureExtry(cutoutFilterSpriteLoc.toString());
+        if (spriteFilterCutout == null) spriteFilterCutout = event.map.registerSprite(cutoutFilterSpriteLoc);
 
         spriteTranslucent = null;
         spriteTranslucent = event.map.getTextureExtry(translucentSpriteLoc.toString());
-        if (spriteTranslucent == null) spriteCutout = event.map.registerSprite(translucentSpriteLoc);
+        if (spriteTranslucent == null) spriteLensCutout = event.map.registerSprite(translucentSpriteLoc);
     }
 
     @Override
@@ -65,15 +76,14 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
             EnumFacing face) {
         LensPluggable lens = (LensPluggable) pluggable;
 
-        EnumDyeColor colour = lens.getColour();
-        int shade = ColorUtils.getLightHex(colour);
+        IModel model = lens.isFilter ? modelCutoutFilter() : modelCutoutLens();
+        TextureAtlasSprite sprite = lens.isFilter ? spriteFilterCutout : spriteLensCutout;
 
         List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderLens(modelCutout(), spriteCutout, DefaultVertexFormats.BLOCK);
+        List<BakedQuad> bakedQuads = renderLens(model, sprite, DefaultVertexFormats.BLOCK);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             quad = transform(quad, matrix);
-            quad = replaceShade(quad, shade);
             quad = applyDiffuse(quad);
             quads.add(quad);
         }
@@ -94,6 +104,22 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
     @Override
     public List<BakedQuad> bakeTranslucent(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
-        return Collections.emptyList();
+        LensPluggable lens = (LensPluggable) pluggable;
+
+        EnumDyeColor colour = lens.getColour();
+        if (colour == null) return Collections.emptyList();
+        int shade = ColorUtils.getLightHex(colour);
+
+        List<BakedQuad> quads = Lists.newArrayList();
+        List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), spriteTranslucent, DefaultVertexFormats.BLOCK);
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        for (BakedQuad quad : bakedQuads) {
+            quad = transform(quad, matrix);
+            quad = applyDiffuse(quad);
+            quad = replaceTint(quad, shade);
+            quads.add(quad);
+        }
+
+        return quads;
     }
 }
