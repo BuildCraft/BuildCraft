@@ -29,6 +29,7 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.MatrixUtils;
 
 public class BuildCraftBakedModel extends PerspAwareModelBase {
@@ -44,6 +45,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int SHADE = 3;
     public static final int U = 4;
     public static final int V = 5;
+    /** Represents either the normal (for items) or lightmap (for blocks) */
     public static final int UNUSED = 6;
 
     // Size of each array
@@ -305,6 +307,43 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static BakedQuad replaceTint(BakedQuad quad, int tint) {
         boolean colour = quad instanceof IColoredBakedQuad;
         return colour ? new ColoredBakedQuad(quad.getVertexData(), tint, quad.getFace()) : new BakedQuad(quad.getVertexData(), tint, quad.getFace());
+    }
+
+    public static BakedQuad replaceNormal(BakedQuad quad, Vector3f normal) {
+        int[] data = quad.getVertexData();
+        int step = data.length / 4;
+        data = Arrays.copyOf(data, data.length);
+        boolean colour = quad instanceof IColoredBakedQuad;
+        normal.normalize();
+        // @formatter:off
+        int value = (int) (normal.x * 0x7F) * 0x010000
+                  + (int) (normal.y * 0x7F) * 0x000100
+                  + (int) (normal.z * 0x7F) * 0x000001;
+        // @formatter:on
+        BCLog.logger.info(normal + " -> 0x" + Integer.toHexString(value));
+        for (int i = 0; i < 4; i++) {
+            data[i * step + UNUSED] = value;
+        }
+        return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    }
+
+    public static BakedQuad replaceLightMap(BakedQuad quad, int lmap) {
+        int[] data = quad.getVertexData();
+        int step = data.length / 4;
+        data = Arrays.copyOf(data, data.length);
+        boolean colour = quad instanceof IColoredBakedQuad;
+        for (int i = 0; i < 4; i++) {
+            data[i * step + UNUSED] = lmap;
+        }
+        return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    }
+
+    public static final int MAX_BLOCK_LIGHT_MAP = 0b0000_0000_0000_0000_1111_0000;
+    public static final int MAX_SKY_LIGHT_MAP   = 0b1111_0000_0000_0000_0000_0000;
+    public static final int MAX_LIGHT_MAP       = 0b1111_0000_0000_0000_1111_0000;
+
+    public static BakedQuad maxLightMap(BakedQuad quad) {
+        return replaceLightMap(quad, MAX_BLOCK_LIGHT_MAP);
     }
 
     public static Vector3f normal(BakedQuad quad) {

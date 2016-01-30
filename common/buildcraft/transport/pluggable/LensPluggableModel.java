@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,6 +29,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.PerspAwareModelBase;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixUtils;
 
@@ -43,6 +46,15 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
     private static TextureAtlasSprite spriteLensCutout, spriteFilterCutout, spriteTranslucent;
 
     private LensPluggableModel() {}
+
+    public static PerspAwareModelBase create(ItemLens lensItem, int meta) {
+        LensPluggable lens = new LensPluggable(new ItemStack(lensItem, 1, meta));
+        ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+        VertexFormat format = DefaultVertexFormats.ITEM;
+        quads.addAll(INSTANCE.bakeCutout(lens, EnumFacing.EAST, format));
+        quads.addAll(INSTANCE.bakeTransclucent(lens, EnumFacing.EAST, format));
+        return new PerspAwareModelBase(format, quads.build(), spriteLensCutout, getBlockTransforms());
+    }
 
     public IModel modelCutoutLens() {
         return getModelOBJ(cutoutLensLoc);
@@ -76,29 +88,7 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
             EnumFacing face) {
         LensPluggable lens = (LensPluggable) pluggable;
 
-        IModel model = lens.isFilter ? modelCutoutFilter() : modelCutoutLens();
-        TextureAtlasSprite sprite = lens.isFilter ? spriteFilterCutout : spriteLensCutout;
-
-        List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderLens(model, sprite, DefaultVertexFormats.BLOCK);
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
-        for (BakedQuad quad : bakedQuads) {
-            quad = transform(quad, matrix);
-            quad = applyDiffuse(quad);
-            quads.add(quad);
-        }
-
-        return quads;
-    }
-
-    public List<BakedQuad> renderLens(IModel model, TextureAtlasSprite sprite, VertexFormat format) {
-        List<BakedQuad> quads = Lists.newArrayList();
-        IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, format, singleTextureFunction(sprite));
-        for (BakedQuad quad : baked.getGeneralQuads()) {
-            quad = replaceShade(quad, 0xFFFFFF);
-            quads.add(quad);
-        }
-        return quads;
+        return bakeCutout(lens, face, DefaultVertexFormats.BLOCK);
     }
 
     @Override
@@ -106,20 +96,51 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
             EnumFacing face) {
         LensPluggable lens = (LensPluggable) pluggable;
 
-        EnumDyeColor colour = lens.getColour();
-        if (colour == null) return Collections.emptyList();
-        int shade = ColorUtils.getLightHex(colour);
+        return bakeTransclucent(lens, face, DefaultVertexFormats.BLOCK);
+    }
+
+    private List<BakedQuad> bakeCutout(LensPluggable lens, EnumFacing face, VertexFormat format) {
+        IModel model = lens.isFilter ? modelCutoutFilter() : modelCutoutLens();
+        TextureAtlasSprite sprite = lens.isFilter ? spriteFilterCutout : spriteLensCutout;
 
         List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), spriteTranslucent, DefaultVertexFormats.BLOCK);
+        List<BakedQuad> bakedQuads = renderLens(model, sprite, format);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             quad = transform(quad, matrix);
-            quad = applyDiffuse(quad);
+            // quad = applyDiffuse(quad);
+            quads.add(quad);
+        }
+
+        return quads;
+    }
+
+    private List<BakedQuad> bakeTransclucent(LensPluggable lens, EnumFacing face, VertexFormat format) {
+        EnumDyeColor colour = lens.getColour();
+        if (colour == null) return Collections.emptyList();
+        int shade = ColorUtils.getLightHex(colour);
+        if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertARGBtoABGR(shade);
+
+        List<BakedQuad> quads = Lists.newArrayList();
+        List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), spriteTranslucent, format);
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        for (BakedQuad quad : bakedQuads) {
+            quad = transform(quad, matrix);
+            // quad = applyDiffuse(quad);
             quad = replaceTint(quad, shade);
             quads.add(quad);
         }
 
+        return quads;
+    }
+
+    public static List<BakedQuad> renderLens(IModel model, TextureAtlasSprite sprite, VertexFormat format) {
+        List<BakedQuad> quads = Lists.newArrayList();
+        IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, format, singleTextureFunction(sprite));
+        for (BakedQuad quad : baked.getGeneralQuads()) {
+            quad = replaceShade(quad, 0xFFFFFFFF);
+            quads.add(quad);
+        }
         return quads;
     }
 }

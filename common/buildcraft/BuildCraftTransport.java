@@ -102,7 +102,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static ItemGate pipeGate;
     public static Item pipeWire;
     public static Item plugItem;
-    public static Item lensItem;
+    public static ItemLens lensItem;
     public static Item powerAdapterItem;
     public static Item pipeStructureCobblestone;
     public static Item gateCopier;
@@ -722,7 +722,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
             if (mapping.type == GameRegistry.Type.ITEM) {
                 if (mapping.name.equals("BuildCraft|Transport:robotStation")) {
-                    mapping.remap((Item) Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robotStation")));
+                    mapping.remap(Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robotStation")));
                 }
             }
         }
@@ -737,6 +737,13 @@ public class BuildCraftTransport extends BuildCraftMod {
             for (int i = 0; i < 17; i++) {
                 mrl = ModelHelper.getItemResourceLocation(itemPipe, "_" + i);
                 event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe, i));
+            }
+        }
+
+        if (lensItem != null) {
+            for (int i = 0; i < 34; i++) {
+                mrl = ModelHelper.getItemResourceLocation(lensItem, "_" + i);
+                event.modelRegistry.putObject(mrl, LensPluggableModel.create(lensItem, i));
             }
         }
 

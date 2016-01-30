@@ -28,7 +28,7 @@ public class LensPluggable extends PipePluggable {
     }
 
     public LensPluggable(ItemStack stack) {
-        dyeColor = EnumDyeColor.byDyeDamage(stack.getItemDamage() & 15);
+        dyeColor = EnumDyeColor.byMetadata(stack.getItemDamage() & 15);
         isFilter = stack.getItemDamage() >= 16;
         if (stack.getItemDamage() >= 32) {
             isFilter = stack.getItemDamage() == 33;
@@ -54,7 +54,7 @@ public class LensPluggable extends PipePluggable {
         if (dyeColor == null) {
             colourMeta = isFilter ? 33 : 32;
         } else {
-            colourMeta = dyeColor.getDyeDamage() | (isFilter ? 16 : 0);
+            colourMeta = dyeColor.getMetadata() | (isFilter ? 16 : 0);
         }
         return new ItemStack[] { new ItemStack(BuildCraftTransport.lensItem, 1, colourMeta) };
     }
@@ -91,7 +91,7 @@ public class LensPluggable extends PipePluggable {
         if (tag.hasKey("colour")) {
             dyeColor = NBTUtils.readEnum(tag.getTag("colour"), EnumDyeColor.class);
         } else {
-            dyeColor = EnumDyeColor.byDyeDamage(tag.getByte("c"));
+            dyeColor = EnumDyeColor.byMetadata(tag.getByte("c"));
         }
         isFilter = tag.getBoolean("f");
     }
@@ -104,7 +104,7 @@ public class LensPluggable extends PipePluggable {
 
     @Override
     public void writeData(ByteBuf data) {
-        int col = dyeColor == null ? 0 : dyeColor.getDyeDamage() + 1;
+        int col = dyeColor == null ? 0 : dyeColor.getMetadata() + 1;
         data.writeByte((col & 0x1F) | (isFilter ? 0x20 : 0));
     }
 
@@ -113,7 +113,7 @@ public class LensPluggable extends PipePluggable {
         int flags = data.readUnsignedByte();
         int col = (flags & 0x1F);
         if (col == 0) dyeColor = null;
-        else dyeColor = EnumDyeColor.byDyeDamage(col - 1);
+        else dyeColor = EnumDyeColor.byMetadata(col - 1);
         isFilter = (flags & 0x20) > 0;
     }
 

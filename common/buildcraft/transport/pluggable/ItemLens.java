@@ -22,12 +22,14 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     public ItemLens() {
         super();
+        setMaxDamage(0);
         setHasSubtypes(true);
     }
 
@@ -38,10 +40,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     @Override
     @SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack stack, int pass) {
-        if (stack.getItemDamage() >= 32) {
-            return 16777215;
-        }
-        return pass == 0 ? ColorUtils.getRGBColor(getDye(stack)) : 16777215;
+        return pass;
     }
 
     @Override
@@ -75,6 +74,14 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
             return new LensPluggable(stack);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerModels() {
+        for (int i = 0; i < 34; i++) {
+            ModelHelper.registerItemModel(this, i, "_" + i);
         }
     }
 }

@@ -1,5 +1,6 @@
 package buildcraft.transport.render.tile;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -73,7 +74,11 @@ public class PipeRendererWires {
     private static void renderPipeWire(List<BakedQuad> quads, PipeRenderState renderState, PipeWire wire) {
         Vec3 pos = wirePosMap.get(wire);
 
-        TextureAtlasSprite sprite = BuildCraftTransport.instance.wireIconProvider.getIcon(wire, renderState.wireMatrix.isWireLit(wire));
+        boolean isLit = renderState.wireMatrix.isWireLit(wire);
+
+        TextureAtlasSprite sprite = BuildCraftTransport.instance.wireIconProvider.getIcon(wire, isLit);
+
+        List<BakedQuad> unprocessed = new ArrayList<>();
 
         Vec3 center = pos;
         Vec3 centerSize = new Vec3(WIRE_WIDTH, WIRE_WIDTH, WIRE_WIDTH);
@@ -98,7 +103,7 @@ public class PipeRendererWires {
                     start = Utils.withValue(start, axis, 0);
                     end = Utils.withValue(end, axis, Utils.getValue(end, axis) - WIRE_WIDTH);
                 }
-                renderCuboid(quads, start, end.subtract(start), sprite);
+                renderCuboid(unprocessed, start, end.subtract(start), sprite);
             } else {
                 boolean anyOther = false;
                 for (EnumFacing face2 : EnumFacing.values()) {
@@ -121,13 +126,20 @@ public class PipeRendererWires {
                 }
                 Vec3 size = end.subtract(start);
                 if (size.lengthVector() > WIRE_WIDTH * 2) {
-                    renderCuboid(quads, start, size, sprite);
+                    renderCuboid(unprocessed, start, size, sprite);
                 }
             }
         }
         if (numFaces != 1) {
-            renderCuboid(quads, center, centerSize, sprite);
+            renderCuboid(unprocessed, center, centerSize, sprite);
         }
+
+        // if (isLit) {
+        for (BakedQuad quad : unprocessed) {
+            quad = BuildCraftBakedModel.maxLightMap(quad);
+            quads.add(quad);
+        }
+        // } else quads.addAll(unprocessed);
     }
 
     private static void renderCuboid(List<BakedQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {

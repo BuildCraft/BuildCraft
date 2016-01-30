@@ -82,7 +82,15 @@ public final class ColorUtils {
     }
 
     public static int getLightHex(EnumDyeColor color) {
-        return LIGHT_HEX[color.getDyeDamage()];
+        return LIGHT_HEX[color.getMetadata()];
+    }
+
+    public static int convertARGBtoABGR(int argb) {
+        int a = argb >>> 24;
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = argb & 0xFF;
+        return (a << 24) + (b << 16) + (g << 8) + r;
     }
 
     public static EnumDyeColor next(EnumDyeColor color) {

@@ -226,18 +226,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return extended;
     }
 
-    @Override
-    public int getLightValue(IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileGenericPipe) {
-            TileGenericPipe tgp = (TileGenericPipe) tile;
-            if (tgp.pipe == null) return super.getLightValue(world, pos);
-            for (PipeWire wire : PipeWire.VALUES) {
-                if (tgp.pipe.isWireActive(wire)) return 6;
-            }
-        }
-        return super.getLightValue(world, pos);
-    }
+    // @Override
+    // public int getLightValue(IBlockAccess world, BlockPos pos) {
+    // TileEntity tile = world.getTileEntity(pos);
+    // if (tile instanceof TileGenericPipe) {
+    // TileGenericPipe tgp = (TileGenericPipe) tile;
+    // if (tgp.pipe == null) return super.getLightValue(world, pos);
+    // for (PipeWire wire : PipeWire.VALUES) {
+    // if (tgp.pipe.isWireActive(wire)) return 6;
+    // }
+    // }
+    // return super.getLightValue(world, pos);
+    // }
 
     @Override
     public boolean isNormalCube() {
@@ -814,7 +814,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     private boolean addOrStripPipePluggable(World world, BlockPos pos, ItemStack stack, EntityPlayer player, EnumFacing side, Pipe<?> pipe) {
         RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
-
         EnumFacing placementSide = rayTraceResult != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side;
 
         IPipePluggableItem pluggableItem = (IPipePluggableItem) stack.getItem();
@@ -837,6 +836,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                     if (!player.capabilities.isCreativeMode) {
                         stack.stackSize--;
                     }
+
+                    world.playSoundEffect(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, "dig.stone", 1.0f, 0.8f);
 
                     return true;
                 } else {

@@ -21,7 +21,7 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
-public class PerspAwareModelBase implements IPerspectiveAwareModel, IFlexibleBakedModel {
+public class PerspAwareModelBase implements IPerspectiveAwareModel {
     private final VertexFormat format;
     // TODO: BakedQuad -> UnpackedBakedQuad
     // (mc -> forge)

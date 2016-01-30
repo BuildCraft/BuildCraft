@@ -1,5 +1,6 @@
 package buildcraft.transport.render;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,6 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         }
 
         List<BakedQuad> quads = Lists.newArrayList();
-
 
         EnumWorldBlockLayer layer = MinecraftForgeClient.getRenderLayer();
         if (layer == EnumWorldBlockLayer.CUTOUT) {
@@ -157,7 +157,12 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setSize(actualSize);
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
-                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
+                List<BakedQuad> toUse = new ArrayList<>();
+                RenderResizableCuboid.INSTANCE.renderCubeStatic(toUse, cuboid);
+                for (BakedQuad quad : toUse) {
+//                    quad = maxLightMap(quad);
+                    quads.add(quad);
+                }
             }
         }
     }

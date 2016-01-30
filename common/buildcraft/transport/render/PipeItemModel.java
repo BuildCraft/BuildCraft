@@ -2,6 +2,8 @@ package buildcraft.transport.render;
 
 import java.util.List;
 
+import javax.vecmath.Vector3f;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -9,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.Vec3;
 
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -21,13 +24,13 @@ import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemModel extends BuildCraftBakedModel {
     protected PipeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle) {
-        super(quads, particle, DefaultVertexFormats.BLOCK, getBlockTransforms());
+        super(quads, particle, DefaultVertexFormats.ITEM, getBlockTransforms());
     }
 
-    // @Override
-    // public boolean isGui3d() {
-    // return true;
-    // }
+    @Override
+    public boolean isGui3d() {
+        return true;
+    }
 
     public static PipeItemModel create(ItemPipe item, int colorIndex) {
         TextureAtlasSprite sprite = item.getSprite();
@@ -50,8 +53,9 @@ public class PipeItemModel extends BuildCraftBakedModel {
         RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
 
         for (BakedQuad quad : unprocessed) {
-            quad = replaceShade(quad, 0xFFFFFF);
-            quad = replaceTint(quad, 0xFFFFFF);// For some reason all pipes are dark. Hmmm.
+            quad = replaceShade(quad, 0xFFFFFFFF);
+            quad = replaceNormal(quad, new Vector3f(0, 1, 0));
+            quad = replaceTint(quad, 0xFFFFFFFF);// For some reason all pipes are dark. Hmmm.
             quads.add(quad);
         }
 
@@ -69,10 +73,13 @@ public class PipeItemModel extends BuildCraftBakedModel {
             // Render it into a different list
             RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
 
-            int quadColor = ColorUtils.getRGBColor(colorIndex - 1);
+            EnumDyeColor dye = EnumDyeColor.byDyeDamage(colorIndex - 1);
+
+            int quadColor = ColorUtils.getLightHex(dye);
             // Add all of the quads we just rendered to the main list
             for (BakedQuad quad : unprocessed) {
-                quad = replaceShade(quad, 0xFFFFFF);
+                quad = replaceShade(quad, 0xFFFFFFFF);
+                quad = replaceNormal(quad, new Vector3f(0, 1, 0));
                 quad = replaceTint(quad, quadColor);
                 quads.add(quad);
             }
