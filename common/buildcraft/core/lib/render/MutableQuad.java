@@ -202,15 +202,21 @@ public class MutableQuad {
         public Vector2f tex() {return new Vector2f(uv);}
 
         public void lightv(Vector2f vec) {lightf(vec.x, vec.y);}
-        public void lightf(float block, float sky) {lighti((int)(block*0xF),(int)(sky*0xF));}
-        public void lighti(int combined) {lighti(combined >> 4, combined >> 20);}
-        public void lighti(int block, int sky) {light[0]=light(block);light[1]=light(sky);}
+        public void lightf(float block, float sky) { lighti((int) (block * 0xF), (int) (sky * 0xF)); }
+        public void lighti(int combined) { lighti(combined >> 4, combined >> 20); }
+        public void lighti(int block, int sky) { light[0] = light(block); light[1] = light(sky); }
         public Vector2f light() {return new Vector2f(light);}
+        public int lightc() { return light(light[0]) << 4 + light(light[1]) << 20; }
+        public int[] lighti() { return new int[] { light(light[0]), light(light[1]) }; };
         // @formatter:on
 
         private static float light(int val) {
             val &= 0xF;
             return (float) val * 0x20 / 0xFFFF;
+        }
+
+        private static int light(float val) {
+            return (int) (val * 0xFFFF / 0x20);
         }
 
         @Override
