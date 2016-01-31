@@ -134,12 +134,12 @@ public class PipeRendererWires {
             renderCuboid(unprocessed, center, centerSize, sprite);
         }
 
-        // if (isLit) {
-        for (BakedQuad quad : unprocessed) {
-            quad = BuildCraftBakedModel.maxLightMap(quad);
-            quads.add(quad);
-        }
-        // } else quads.addAll(unprocessed);
+        if (isLit) {
+            for (BakedQuad quad : unprocessed) {
+                quad = BuildCraftBakedModel.maxLightMap(quad);
+                quads.add(quad);
+            }
+        } else quads.addAll(unprocessed);
     }
 
     private static void renderCuboid(List<BakedQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {

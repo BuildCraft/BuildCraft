@@ -327,23 +327,34 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
     }
 
-    public static BakedQuad replaceLightMap(BakedQuad quad, int lmap) {
-        int[] data = quad.getVertexData();
-        int step = data.length / 4;
-        data = Arrays.copyOf(data, data.length);
-        boolean colour = quad instanceof IColoredBakedQuad;
-        for (int i = 0; i < 4; i++) {
-            data[i * step + UNUSED] = lmap;
-        }
-        return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    public static final int MAX_LIGHT = 0xF;
+    public static final int MIN_LIGHT = 0;
+
+    public static BakedQuad replaceLightMap(BakedQuad quad, int block, int sky) {
+        MutableQuad mutable = MutableQuad.create(quad);
+        mutable.lightf(0.96f, 0f);
+        return mutable.toUnpacked(MutableQuad.ITEM_LMAP);
     }
 
-    public static final int MAX_BLOCK_LIGHT_MAP = 0b0000_0000_0000_0000_1111_0000;
-    public static final int MAX_SKY_LIGHT_MAP   = 0b1111_0000_0000_0000_0000_0000;
-    public static final int MAX_LIGHT_MAP       = 0b1111_0000_0000_0000_1111_0000;
-
     public static BakedQuad maxLightMap(BakedQuad quad) {
-        return replaceLightMap(quad, MAX_BLOCK_LIGHT_MAP);
+        return replaceLightMap(quad, MIN_LIGHT, MIN_LIGHT);
+    }
+
+    public static String toStringPretty(BakedQuad unpacked) {
+        StringBuilder builder = new StringBuilder();
+        int[] data = unpacked.getVertexData();
+        int stride = data.length / 4;
+        for (int v = 0; v < 4; v++) {
+            builder.append("\nV#" + v + "=[");
+            for (int e = 0; e < stride; e++) {
+                if (e != 0) builder.append(", ");
+                int d = data[v * stride + e];
+                builder.append(Integer.toHexString(d));
+            }
+            builder.append("]");
+        }
+        String s = builder.toString();
+        return s;
     }
 
     public static Vector3f normal(BakedQuad quad) {

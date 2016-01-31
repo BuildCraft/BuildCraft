@@ -24,7 +24,7 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 
-version = "7.2.0-pre9"
+version = "7.2.0-pre10"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 

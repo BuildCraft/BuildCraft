@@ -85,7 +85,7 @@ public final class ColorUtils {
         return LIGHT_HEX[color.getMetadata()];
     }
 
-    public static int convertARGBtoABGR(int argb) {
+    public static int convertBGRAtoRGBA(int argb) {
         int a = argb >>> 24;
         int r = (argb >> 16) & 0xFF;
         int g = (argb >> 8) & 0xFF;

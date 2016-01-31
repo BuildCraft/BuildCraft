@@ -45,7 +45,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     }
 
     public enum DefaultFacingLocation implements IFacingLocation {
-        INSTANCE;
+        FACING_INSTANCE;
 
         @Override
         public EnumFacing transformToWorld(EnumFacing face) {
@@ -154,7 +154,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
                 return entPos.add(vec);
             }
         };
-        renderCube((EntityResizableCuboid) entity, EnumShadeArgument.FACE_LIGHT, formula, null);
+        renderCube(entity, EnumShadeArgument.FACE_LIGHT, formula, null);
         GL11.glPopMatrix();
     }
 
@@ -172,7 +172,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
     public void renderCube(EntityResizableCuboid cube, EnumShadeArgument shadeTypes, IBlockLocation formula, IFacingLocation faceFormula) {
         if (faceFormula == null) {
-            faceFormula = DefaultFacingLocation.INSTANCE;
+            faceFormula = DefaultFacingLocation.FACING_INSTANCE;
         }
 
         TextureAtlasSprite[] sprites = cube.textures;
@@ -311,8 +311,8 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
             index++;
 
-            skyLight[index] = (int) (combindedLight / 0x10000);
-            blockLight[index] = (int) (combindedLight % 0x10000);
+            skyLight[index] = combindedLight / 0x10000;
+            blockLight[index] = combindedLight % 0x10000;
             colorMultiplier[index] = block.getAmbientOcclusionLightValue();
             // The extra 0.1 is to stop any 1 divided by 0 errors
             distances[index] = 1 / (transVertex.distanceTo(Utils.convertMiddle(pos)) + 0.1);

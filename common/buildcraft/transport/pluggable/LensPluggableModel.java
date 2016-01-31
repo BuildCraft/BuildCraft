@@ -119,7 +119,7 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
         EnumDyeColor colour = lens.getColour();
         if (colour == null) return Collections.emptyList();
         int shade = ColorUtils.getLightHex(colour);
-        if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertARGBtoABGR(shade);
+        if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertBGRAtoRGBA(shade);
 
         List<BakedQuad> quads = Lists.newArrayList();
         List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), spriteTranslucent, format);

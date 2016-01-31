@@ -1,6 +1,5 @@
 package buildcraft.transport.render;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -157,12 +156,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setSize(actualSize);
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
-                List<BakedQuad> toUse = new ArrayList<>();
-                RenderResizableCuboid.INSTANCE.renderCubeStatic(toUse, cuboid);
-                for (BakedQuad quad : toUse) {
-//                    quad = maxLightMap(quad);
-                    quads.add(quad);
-                }
+                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
             }
         }
     }
