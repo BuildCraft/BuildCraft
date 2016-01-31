@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 
@@ -21,6 +22,7 @@ import buildcraft.api.core.BCLog;
 
 public class MutableQuad {
     public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
+    public static final VertexFormat ITEM_BLOCK_PADDING = new VertexFormat();
 
     // Baked Quad array indices
     public static final int X = 0;
@@ -34,9 +36,14 @@ public class MutableQuad {
 
     static {
         ITEM_LMAP.addElement(DefaultVertexFormats.TEX_2S);
+
+        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.POSITION_3F);
+        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.COLOR_4UB);
+        ITEM_BLOCK_PADDING.addElement(DefaultVertexFormats.TEX_2F);
+        ITEM_BLOCK_PADDING.addElement(new VertexFormatElement(0, EnumType.INT, EnumUsage.PADDING, 1));
     }
 
-    public static MutableQuad create(BakedQuad quad) {
+    public static MutableQuad create(BakedQuad quad, VertexFormat format) {
         int[] data = quad.getVertexData();
         int stride = data.length / 4;
         MutableQuad mutable = new MutableQuad(quad.getTintIndex(), quad.getFace());
@@ -52,6 +59,16 @@ public class MutableQuad {
             vertex.texf(texU, texV);
         }
         return mutable;
+    }
+
+    /** Creates a mutable quad as a copy of the given {@link BakedQuad}. This assumes the baked quad uses the format
+     * {@link DefaultVertexFormats#BLOCK} or {@link DefaultVertexFormats#ITEM}, but ignores the lightmap value. (This
+     * uses Mutable
+     * 
+     * @param quad
+     * @return */
+    public static MutableQuad create(BakedQuad quad) {
+        return create(quad, ITEM_BLOCK_PADDING);
     }
 
     public static float fromBits(int bits) {
@@ -96,8 +113,10 @@ public class MutableQuad {
         return verticies[v & 0b11];
     }
 
+    /* A lot of delegate functions here. The actual documentation should be per-vertex. */
+
     // @formatter:off
-    public void normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec));}
+    /** @see Vertex#normalv(Vector3f) */ public void normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec));}
     public void normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z));}
 
     public void colourv(Vector4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec));};
@@ -176,39 +195,113 @@ public class MutableQuad {
 
         private static Set<String> failedStrings = new HashSet<>();
 
-        // @formatter:off
-        public void positionv(Vector3f vec) {position[0] = vec.x; position[1] = vec.y; position[2] = vec.z;}
-        public void positionf(float x, float y, float z) {position[0] = x; position[1] = y; position[2] = z;}
-        public Vector3f position() {return new Vector3f(position);}
+        public void positionv(Vector3f vec) {
+            positionf(vec.x, vec.y, vec.z);
+        }
 
-        public void normalv(Vector3f vec) {normal[0] = vec.x; normal[1] = vec.y; normal[2] = vec.z;}
-        public void normalf(float x, float y, float z) {normal[0] = x; normal[1] = y; normal[2] = z;}
-        public Vector3f normal() {return new Vector3f(normal);}
+        public void positionf(float x, float y, float z) {
+            position[0] = x;
+            position[1] = y;
+            position[2] = z;
+        }
 
-        public void colourv(Vector4f vec) {colour[0] = vec.x; colour[1] = vec.y; colour[2] = vec.z; colour[3] = vec.w;};
-        public void colourf(float r, float g, float b, float a) {colour[0] = r; colour[1] = g; colour[2] = b; colour[3] = a;}
-        public void colouri(int rgba) {colouri(rgba, rgba >> 8, rgba >> 16, rgba >>> 24);}
-        public void colouri(int r, int g, int b, int a) {colourf((r & 0xFF) / 255f,(g & 0xFF) / 255f,(b & 0xFF) / 255f,(a & 0xFF) / 255f);}
-        public Vector4f colourv() {return new Vector4f(colour);}
+        public Vector3f position() {
+            return new Vector3f(position);
+        }
+
+        /** Sets the current normal for this vertex based off the given vector.
+         * 
+         * @see #normalf(float, float, float)
+         * @implNote This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings. */
+        public void normalv(Vector3f vec) {
+            normalf(vec.x, vec.y, vec.z);
+        }
+
+        /** Sets the current normal given the x, y, and z coordinates. These are NOT normalised or checked. */
+        public void normalf(float x, float y, float z) {
+            normal[0] = x;
+            normal[1] = y;
+            normal[2] = z;
+        }
+
+        /** @return The current normal vector of this vertex. This might be normalised. */
+        public Vector3f normal() {
+            return new Vector3f(normal);
+        }
+
+        public void colourv(Vector4f vec) {
+            colourf(vec.x, vec.y, vec.z, vec.w);
+        };
+
+        public void colourf(float r, float g, float b, float a) {
+            colour[0] = r;
+            colour[1] = g;
+            colour[2] = b;
+            colour[3] = a;
+        }
+
+        public void colouri(int rgba) {
+            colouri(rgba, rgba >> 8, rgba >> 16, rgba >>> 24);
+        }
+
+        public void colouri(int r, int g, int b, int a) {
+            colourf((r & 0xFF) / 255f, (g & 0xFF) / 255f, (b & 0xFF) / 255f, (a & 0xFF) / 255f);
+        }
+
+        public Vector4f colourv() {
+            return new Vector4f(colour);
+        }
+
         public int colourRGBA() {
+            // @formatter:off
             return (int) (colour[0] * 0xFF)
                 + ((int) (colour[1] * 0xFF)) <<  8
                 + ((int) (colour[2] * 0xFF)) << 16
                 + ((int) (colour[3] * 0xFF)) << 24;
+            // @formatter:on
         }
 
-        public void texv(Vector2f vec) {texf(vec.x, vec.y);}
-        public void texf(float u, float v) {uv[0]=u;uv[1]=v;}
-        public Vector2f tex() {return new Vector2f(uv);}
+        public void texv(Vector2f vec) {
+            texf(vec.x, vec.y);
+        }
 
-        public void lightv(Vector2f vec) {lightf(vec.x, vec.y);}
-        public void lightf(float block, float sky) { lighti((int) (block * 0xF), (int) (sky * 0xF)); }
-        public void lighti(int combined) { lighti(combined >> 4, combined >> 20); }
-        public void lighti(int block, int sky) { light[0] = light(block); light[1] = light(sky); }
-        public Vector2f light() {return new Vector2f(light);}
-        public int lightc() { return light(light[0]) << 4 + light(light[1]) << 20; }
-        public int[] lighti() { return new int[] { light(light[0]), light(light[1]) }; };
-        // @formatter:on
+        public void texf(float u, float v) {
+            uv[0] = u;
+            uv[1] = v;
+        }
+
+        public Vector2f tex() {
+            return new Vector2f(uv);
+        }
+
+        public void lightv(Vector2f vec) {
+            lightf(vec.x, vec.y);
+        }
+
+        public void lightf(float block, float sky) {
+            lighti((int) (block * 0xF), (int) (sky * 0xF));
+        }
+
+        public void lighti(int combined) {
+            lighti(combined >> 4, combined >> 20);
+        }
+
+        public void lighti(int block, int sky) {
+            light[0] = light(block);
+            light[1] = light(sky);
+        }
+
+        public Vector2f light() {
+            return new Vector2f(light);
+        }
+
+        public int lightc() {
+            return light(light[0]) << 4 + light(light[1]) << 20;
+        }
+
+        public int[] lighti() {
+            return new int[] { light(light[0]), light(light[1]) };
+        };
 
         private static float light(int val) {
             val &= 0xF;

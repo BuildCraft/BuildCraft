@@ -107,7 +107,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         // Internal check
         if (isTriggeringPipe(source.getTile())) {
-            return isActive(((IPipeTile) source.getTile()).getPipe(), null);
+            return isActive(((IPipeTile) source.getTile()).getPipe(), EnumPipePart.CENTER);
         }
 
         Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
