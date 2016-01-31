@@ -97,12 +97,6 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
         return false;
     }
 
-    // @Override
-    // @SideOnly(Side.CLIENT)
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_energy_storage_" + (high ? "high" : "low"));
-    // }
-
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         // Internal check

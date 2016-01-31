@@ -244,9 +244,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
                 signalStrength[c.ordinal()] = 0;
             }
 
-            if (prevStrength != signalStrength[c.ordinal()]) {
-                container.scheduleRenderUpdate();
-            }
+//            if (prevStrength != signalStrength[c.ordinal()]) {
+//                container.scheduleRenderUpdate();
+//            }
 
             if (signalStrength[c.ordinal()] == 0) {
                 for (Pipe<?> p : pipes) {

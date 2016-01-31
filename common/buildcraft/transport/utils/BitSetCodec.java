@@ -15,15 +15,22 @@ public class BitSetCodec {
         return result;
     }
 
-    public void decode(byte data, BitSet target) {
+    public boolean decode(byte data, BitSet target) {
         byte localData = data;
         int t = 1;
 
-        target.clear();
+        boolean dirty = false;
 
         for (byte i = 0; i < 8; i++) {
-            target.set(i, (localData & t) != 0);
+            boolean newValue = (localData & t) != 0;
+            boolean current = target.get(i);
+            if (newValue != current) {
+                dirty = true;
+                target.set(i, newValue);
+            }
             t <<= 1;
         }
+
+        return dirty;
     }
 }

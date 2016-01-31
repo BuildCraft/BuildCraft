@@ -425,6 +425,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                             ((TileGenericPipe) tile).scheduleRenderUpdate();
                         }
                     }
+                    scheduleRenderUpdate();
+                    sendClientUpdate = true;
                 }
 
                 refreshRenderState = false;
@@ -542,15 +544,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
          * network bandwidth */
         pluggableState.setPluggables(sideProperties.pluggables);
 
-        boolean changed = renderState.isDirty();
+        boolean isDirty = renderState.isDirty();
         // TODO (Pass 1): If the pluggable state has changed, also update it!
 
-        if (renderState.isDirty()) {
+        if (isDirty) {
+            sendNetworkUpdate();
             renderState.clean();
         }
 
-        sendNetworkUpdate();
-        return changed;
+        return isDirty;
 
     }
 
@@ -699,7 +701,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 ByteBuf data = Unpooled.wrappedBuffer(bytes);
                 PacketTileState p = new PacketTileState();
                 p.readData(data);
-                // The player is not used so its fine
+                // The player is not used so its fine to pass null
                 p.applyData(worldObj, null);
             } else {
                 BCLog.logger.warn("Recieved a packet with a different type that expected (" + nbt.getString("net-type") + ")");
@@ -854,7 +856,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             return;
         }
 
-        TileBuffer t = cache[side.ordinal()];
+        // TileBuffer t = cache[side.ordinal()];
         // For blocks which are not loaded, keep the old connection value.
         // if (t.exists() || !initialized) {
         // t.refresh();
@@ -946,7 +948,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public boolean hasFacade(EnumFacing direction) {
-        if (direction == null || direction == null) {
+        if (direction == null) {
             return false;
         } else {
             return sideProperties.pluggables[direction.ordinal()] instanceof IFacadePluggable;
@@ -954,7 +956,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public boolean hasGate(EnumFacing direction) {
-        if (direction == null || direction == null) {
+        if (direction == null) {
             return false;
         } else {
             return sideProperties.pluggables[direction.ordinal()] instanceof GatePluggable;
@@ -970,7 +972,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             return false;
         }
 
-        if (direction == null || direction == null) {
+        if (direction == null) {
             return false;
         }
 

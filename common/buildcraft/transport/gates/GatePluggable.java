@@ -90,6 +90,8 @@ public class GatePluggable extends PipePluggable {
         }
     }
 
+    private boolean recentlyRead = false;
+
     @Override
     public void readData(ByteBuf buf) {
         material = GateDefinition.GateMaterial.fromOrdinal(buf.readByte());
@@ -103,11 +105,15 @@ public class GatePluggable extends PipePluggable {
         for (int i = 0; i < expansionsSize; i++) {
             expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
         }
+        recentlyRead = true;
     }
 
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
-        // rendered by TESR
+        if (recentlyRead) {
+            recentlyRead = false;
+            return true;
+        }
         return false;
     }
 

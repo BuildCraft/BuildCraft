@@ -54,7 +54,7 @@ public class PipeRenderState implements ISerializable, IPipeRenderState, Compara
     }
 
     public boolean needsRenderUpdate() {
-        return glassColorDirty || pipeConnectionMatrix.isDirty() || pipeConnectionBanned.isDirty() || pipeConnectionExtensions.isDirty()
+        return pipeConnectionMatrix.isDirty() || pipeConnectionBanned.isDirty() || pipeConnectionExtensions.isDirty() || glassColorDirty
             || textureMatrix.isDirty() || wireMatrix.isDirty();
     }
 

@@ -12,7 +12,6 @@ import buildcraft.api.transport.PipeWire;
 
 import io.netty.buffer.ByteBuf;
 
-@Deprecated
 public class WireMatrix {
     private final BitSet hasWire = new BitSet(PipeWire.values().length);
     private final BitSetCodec bitSetCodec = new BitSetCodec();
@@ -59,14 +58,16 @@ public class WireMatrix {
     }
 
     public boolean isDirty() {
-
+        boolean d = dirty;
+        boolean[] dirtyArray = new boolean[5];
+        dirtyArray[4] = dirty;
         for (int i = 0; i < PipeWire.values().length; i++) {
             if (wires[i].isDirty()) {
-                return true;
+                dirtyArray[i] = true;
+                d = true;
             }
         }
-
-        return dirty;
+        return d;
     }
 
     public void clean() {
@@ -86,8 +87,8 @@ public class WireMatrix {
     }
 
     public void readData(ByteBuf data) {
-        bitSetCodec.decode(data.readByte(), hasWire);
-        bitSetCodec.decode(data.readByte(), lit);
+        dirty |= bitSetCodec.decode(data.readByte(), hasWire);
+        dirty |= bitSetCodec.decode(data.readByte(), lit);
 
         for (int i = 0; i < PipeWire.values().length; i++) {
             wires[i].readData(data);
