@@ -337,9 +337,10 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         if (worldObj != null) return;
         CrashReport crash = new CrashReport("Attempted to create a cache for a BC tile without a world! WTF? Thats a bad idea!",
                 new NullPointerException("worldObj"));
-        CrashReportCategory cat = crash.makeCategory("BC debug info");
-        cat.addCrashSection("pos", getPos());
-        cat.addCrashSection("init", init);
+        CrashReportCategory cat = crash.makeCategory("BC tile debug info");
+        cat.addCrashSection("VN::getPos()", getPos());
+        cat.addCrashSection("VN::isInvalid()", this.isInvalid());
+        cat.addCrashSection("BC::init", init);
         throw new ReportedException(crash);
     }
 
