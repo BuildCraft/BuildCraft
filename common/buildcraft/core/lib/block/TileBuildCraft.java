@@ -9,6 +9,8 @@ import java.util.HashSet;
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -71,6 +73,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public void update() {
+        if (worldObj == null) throw new NullPointerException("worldObj");
         if (init != 2 && !isInvalid()) {
             if (init < 1) {
                 init++;
@@ -315,6 +318,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     public IBlockState getBlockState(EnumFacing side) {
+        throwNullWorldCrash();
         if (cache == null) {
             cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
@@ -322,10 +326,21 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     public TileEntity getTile(EnumFacing side) {
+        throwNullWorldCrash();
         if (cache == null) {
             cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
         return cache[side.ordinal()].getTile();
+    }
+
+    private void throwNullWorldCrash() {
+        if (worldObj != null) return;
+        CrashReport crash = new CrashReport("Attempted to create a cache for a BC tile without a world! WTF? Thats a bad idea!",
+                new NullPointerException("worldObj"));
+        CrashReportCategory cat = crash.makeCategory("BC debug info");
+        cat.addCrashSection("pos", getPos());
+        cat.addCrashSection("init", init);
+        throw new ReportedException(crash);
     }
 
     public IControllable.Mode getControlMode() {

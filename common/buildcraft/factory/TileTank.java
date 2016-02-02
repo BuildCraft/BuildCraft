@@ -148,6 +148,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     public static TileTank getTankBelow(TileTank tile) {
         TileEntity below = tile.getTile(EnumFacing.DOWN);
         if (below instanceof TileTank) {
+            if (!below.hasWorldObj()) return null;
             return (TileTank) below;
         } else {
             return null;
@@ -157,6 +158,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     public static TileTank getTankAbove(TileTank tile) {
         TileEntity above = tile.getTile(EnumFacing.UP);
         if (above instanceof TileTank) {
+            if (!above.hasWorldObj()) return null;
             return (TileTank) above;
         } else {
             return null;

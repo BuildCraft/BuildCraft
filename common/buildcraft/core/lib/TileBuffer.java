@@ -11,7 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.lib.utils.Utils;
 
 public final class TileBuffer {
 
@@ -24,6 +23,7 @@ public final class TileBuffer {
     private final boolean loadUnloaded;
 
     public TileBuffer(World world, BlockPos pos, boolean loadUnloaded) {
+        if (world == null) throw new NullPointerException("world");
         this.world = world;
         this.pos = pos;
         this.loadUnloaded = loadUnloaded;
