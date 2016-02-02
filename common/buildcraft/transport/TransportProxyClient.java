@@ -39,8 +39,9 @@ public class TransportProxyClient extends TransportProxy {
 
     @Override
     public void registerRenderers() {
-        // Should none of these register? Should they all be called by  a single modelBakeEvent, textureStitchPre and textureStitchPost?
-        
+        /* Should none of these register? Should they all be called by a single modelBakeEvent, textureStitchPre and
+         * textureStitchPost? */
+
         // MinecraftForge.EVENT_BUS.register(FluidShaderManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(FacadePluggableModel.INSTANCE);
         MinecraftForge.EVENT_BUS.register(FacadeItemModel.INSTANCE);

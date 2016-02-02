@@ -32,8 +32,6 @@ public class RoboticsProxyClient extends RoboticsProxy {
             loadBCTransport();
         }
     }
-    
-    
 
     private void loadBCTransport() {
         // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, new

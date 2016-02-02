@@ -42,8 +42,8 @@ public class PlugPluggableModel extends BakedModelHolder implements IPipePluggab
     public static PerspAwareModelBase create() {
         ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
         VertexFormat format = DefaultVertexFormats.ITEM;
-        quads.addAll(INSTANCE.bakeCutout(EnumFacing.EAST, format));
-        return new PerspAwareModelBase(format, quads.build(), spritePlug, getBlockTransforms());
+        quads.addAll(INSTANCE.bakeCutout(EnumFacing.SOUTH, format));
+        return new PerspAwareModelBase(format, quads.build(), spritePlug, getPluggableTransforms());
     }
 
     public IModel modelPlug() {

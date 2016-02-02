@@ -7,6 +7,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -31,6 +33,7 @@ import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
@@ -46,6 +49,13 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
 
     private IModel modelBase() {
         return getModelOBJ(baseLoc);
+    }
+
+    public PerspAwareModelBase createItemModel() {
+        ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+        VertexFormat format = DefaultVertexFormats.ITEM;
+        quads.addAll(INSTANCE.bakeCutout(EnumRobotStationState.Available, EnumFacing.SOUTH, format));
+        return new PerspAwareModelBase(format, quads.build(), baseSprite, getPluggableTransforms());
     }
 
     @SubscribeEvent
@@ -86,22 +96,25 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
             EnumFacing face) {
         RobotStationPluggable station = (RobotStationPluggable) pluggable;
 
+        return bakeCutout(station.getRenderState(), face, DefaultVertexFormats.BLOCK);
+    }
+
+    private List<BakedQuad> bakeCutout(EnumRobotStationState state, EnumFacing face, VertexFormat format) {
         final TextureAtlasSprite baseSprite = this.baseSprite;
 
         IModel base = modelBase();
-        List<BakedQuad> stateQuads = this.stateQuads.get(station.getRenderState());
+        List<BakedQuad> stateQuads = this.stateQuads.get(state);
 
         List<BakedQuad> quads = Lists.newArrayList();
         if (base != null) {
             Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
-            IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK,
-                    new Function<ResourceLocation, TextureAtlasSprite>() {
-                        @Override
-                        public TextureAtlasSprite apply(ResourceLocation input) {
-                            return baseSprite;
-                        }
-                    });
+            IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, format, new Function<ResourceLocation, TextureAtlasSprite>() {
+                @Override
+                public TextureAtlasSprite apply(ResourceLocation input) {
+                    return baseSprite;
+                }
+            });
             for (BakedQuad quad : baked.getGeneralQuads()) {
                 quad = transform(quad, matrix);
                 quad = replaceShade(quad, 0xFFFFFFFF);
@@ -117,7 +130,6 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
                 }
             }
         }
-
         return quads;
     }
 }
