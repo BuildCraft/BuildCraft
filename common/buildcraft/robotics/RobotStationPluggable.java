@@ -22,7 +22,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.robotics.render.RobotStationRenderer;
+import buildcraft.robotics.render.RobotStationModel;
 
 import io.netty.buffer.ByteBuf;
 
@@ -125,7 +125,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public IPipePluggableStaticRenderer getRenderer() {
-        return RobotStationRenderer.INSTANCE;
+        return RobotStationModel.INSTANCE;
     }
 
     @Override

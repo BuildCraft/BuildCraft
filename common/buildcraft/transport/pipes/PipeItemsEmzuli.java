@@ -92,9 +92,9 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
     /** Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain
      * cases, the extractable slot depends on the position of the pipe. */
-
+    
     @Override
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
+    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         if (activeFlags.isEmpty()) {
             return null;
         }
@@ -104,7 +104,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
         }
 
         IInventory inv = InvUtils.getInventory(inventory);
-        ItemStack result = checkExtractGeneric(inv, doRemove, from);
+        ItemStack result = checkExtractGeneric(inv, doRemove, from, maxItems);
 
         if (result != null) {
             return new ItemStack[] { result };
@@ -114,7 +114,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
     }
 
     @Override
-    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         if (inventory == null) {
             return null;
         }

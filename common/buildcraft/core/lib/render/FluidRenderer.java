@@ -19,13 +19,17 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.core.lib.EntityResizableCuboid;
 
 public final class FluidRenderer {
+    public static final FluidRenderer INSTANCE = new FluidRenderer();
 
     public enum FluidType {
         FLOWING,
@@ -35,20 +39,24 @@ public final class FluidRenderer {
 
     public static final int DISPLAY_STAGES = 100;
     public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
-
-    private static Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
-    private static Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
-
-    private static Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
+    private final Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
+    private final Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
+    private final Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
 
     private static TextureAtlasSprite missingIcon = null;
 
     /** Deactivate default constructor */
-    private FluidRenderer() {
+    private FluidRenderer() {}
 
+    @SubscribeEvent
+    public void modelBakeEvent(ModelBakeEvent event) {
+        flowingRenderCache.clear();
+        stillRenderCache.clear();
     }
 
-    public static void initFluidTextures(TextureMap map) {
+    @SubscribeEvent
+    public void textureStitchPost(TextureStitchEvent.Post event) {
+        TextureMap map = event.map;
         missingIcon = map.getMissingSprite();
 
         textureMap.clear();
@@ -102,7 +110,7 @@ public final class FluidRenderer {
         if (fluid == null || type == null) {
             return missingIcon;
         }
-        Map<Fluid, TextureAtlasSprite> map = textureMap.get(type);
+        Map<Fluid, TextureAtlasSprite> map = INSTANCE.textureMap.get(type);
         return map.containsKey(fluid) ? map.get(fluid) : missingIcon;
     }
 
@@ -181,7 +189,7 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        Map<Fluid, Map<Vec3, int[]>> cache = flowing ? flowingRenderCache : stillRenderCache;
+        Map<Fluid, Map<Vec3, int[]>> cache = flowing ? INSTANCE.flowingRenderCache : INSTANCE.stillRenderCache;
         Map<Vec3, int[]> displayLists = cache.get(fluid);
         int[] displayList;
         if (displayLists != null) {

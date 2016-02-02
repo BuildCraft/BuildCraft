@@ -65,7 +65,6 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
                 enablePulse(count);
                 return true;
             } else if (action instanceof ActionSingleEnergyPulse) {
-                enableSinglePulse(count);
                 return true;
             }
             return false;

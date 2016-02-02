@@ -19,7 +19,9 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
@@ -28,16 +30,23 @@ import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.render.GatePluggableRenderer.GateState;
+import buildcraft.transport.render.GatePluggableModel.GateState;
 
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
-    private static Map<GateState, GateItemModel> map = Maps.newHashMap();
+    public static final GateItemModel INSTANCE = new GateItemModel();
+
+    private final Map<GateState, GateItemModel> map = Maps.newHashMap();
 
     public GateItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format, getPluggableTransforms());
     }
 
-    public GateItemModel() {}
+    private GateItemModel() {}
+
+    @SubscribeEvent
+    public void modelBake(ModelBakeEvent event) {
+        map.clear();
+    }
 
     @Override
     public GateItemModel handleItemState(ItemStack stack) {
@@ -45,7 +54,7 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
 
         if (!map.containsKey(state)) {
             List<BakedQuad> quads = Lists.newArrayList();
-            List<BakedQuad> bakedQuads = GatePluggableRenderer.INSTANCE.renderGate(state, DefaultVertexFormats.BLOCK);
+            List<BakedQuad> bakedQuads = GatePluggableModel.INSTANCE.renderGate(state, DefaultVertexFormats.BLOCK);
             Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
 
             Matrix4f matScale = new Matrix4f();

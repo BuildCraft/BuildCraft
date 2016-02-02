@@ -19,22 +19,33 @@ import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 
-public class FacadeItemModel extends BakedModelHolder implements ISmartItemModel {
-    private static Map<FacadeState, FacadeItemModel> map = Maps.newHashMap();
+public class FacadeItemModel extends BuildCraftBakedModel implements ISmartItemModel {
+    public static final FacadeItemModel INSTANCE = new FacadeItemModel();
+
+    private final Map<FacadeState, FacadeItemModel> map = Maps.newHashMap();
 
     public FacadeItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format, getBlockTransforms());
     }
 
-    public FacadeItemModel() {}
+    private FacadeItemModel() {
+        super(null, null, null);
+    }
+
+    @SubscribeEvent
+    public void modelBake(ModelBakeEvent event) {
+        map.clear();
+    }
 
     @Override
     public boolean isGui3d() {
@@ -66,8 +77,8 @@ public class FacadeItemModel extends BakedModelHolder implements ISmartItemModel
     private FacadeItemModel createFacadeItemModel(FacadeState state) {
         List<BakedQuad> quads = Lists.newArrayList();
         IModel model;
-        if (state.hollow) model = FacadePluggableRenderer.INSTANCE.modelHollow();
-        else model = FacadePluggableRenderer.INSTANCE.modelFilled();
+        if (state.hollow) model = FacadePluggableModel.INSTANCE.modelHollow();
+        else model = FacadePluggableModel.INSTANCE.modelFilled();
 
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state.state);
 

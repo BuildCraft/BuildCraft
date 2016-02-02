@@ -95,7 +95,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     @Override
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
+    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         if (inventory == null) {
             return null;
         }
@@ -107,10 +107,10 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
             return checkExtractRoundRobin(sidedInventory, doRemove, from);
         }
 
-        return checkExtractFiltered(sidedInventory, doRemove, from);
+        return checkExtractFiltered(sidedInventory, doRemove, from, maxItems);
     }
 
-    private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+    private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         for (int k : inventory.getSlotsForFace(from)) {
             ItemStack stack = inventory.getStackInSlot(k);
 
@@ -131,7 +131,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 
             if (doRemove) {
                 int maxStackSize = stack.stackSize;
-                int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+                int stackSize = Math.min(maxStackSize, maxItems);
                 if (stackSize > 0) {
                     speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
                     int energyUsed = (int) (stackSize * 10 * speedMultiplier);

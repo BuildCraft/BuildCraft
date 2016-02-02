@@ -20,7 +20,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
@@ -65,6 +64,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     private EnumFacing direction;
 
     private HashMultiset<IStatement> statementCounts = HashMultiset.create();
+    private long[] tickActivated = new long[] { -1, -1, -1, -1, -1, -1, -1, -1 };
     private int[] actionGroups = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
 
     // / CONSTRUCTOR
@@ -400,6 +400,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
         activeActions.clear();
 
+        long now = getPipe().getTile().getWorldBC().getTotalWorldTime();
+
         for (int it = 0; it < MAX_STATEMENTS; ++it) {
             boolean allActive = true;
             boolean oneActive = false;
@@ -427,10 +429,23 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                     }
                 }
 
+                if (tickActivated[it] == -1) tickActivated[it] = now;
+
                 StatementSlot slot = new StatementSlot();
-                slot.statement = actions[it];
+                IStatement statement = actions[it];
+                slot.statement = statement;
                 slot.parameters = actionParameters[it];
-                activeActions.add(slot);
+                if (statement instanceof IActionInternal) {
+                    if (((IActionInternal) statement).singleActionTick()) {
+                        if (tickActivated[it] == now) activeActions.add(slot);
+                    } else {
+                        activeActions.add(slot);
+                    }
+                } else {
+                    activeActions.add(slot);
+                }
+            } else {
+                tickActivated[it] = -1;
             }
 
             if (logic == GateLogic.OR && actionsState[it] == ActionActiveState.Partial) {

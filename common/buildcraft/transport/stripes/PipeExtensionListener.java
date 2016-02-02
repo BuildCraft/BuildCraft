@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
@@ -37,28 +38,28 @@ public class PipeExtensionListener {
         public IStripesActivator h;
     }
 
-    private final Map<World, HashSet<PipeExtensionRequest>> requests = new HashMap<World, HashSet<PipeExtensionRequest>>();
+    private final Map<Integer, HashSet<PipeExtensionRequest>> requests = new HashMap<>();
 
     public void requestPipeExtension(ItemStack stack, World world, BlockPos pos, EnumFacing o, IStripesActivator h) {
         if (world.isRemote) {
             return;
         }
 
-        if (!requests.containsKey(world)) {
-            requests.put(world, new HashSet<PipeExtensionRequest>());
+        if (!requests.containsKey(world.provider.getDimensionId())) {
+            requests.put(world.provider.getDimensionId(), new HashSet<PipeExtensionRequest>());
         }
         PipeExtensionRequest r = new PipeExtensionRequest();
         r.stack = stack;
         r.pos = pos;
         r.o = o;
         r.h = h;
-        requests.get(world).add(r);
+        requests.get(world.provider.getDimensionId()).add(r);
     }
 
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world)) {
-            HashSet<PipeExtensionRequest> rSet = requests.get(event.world);
+        if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimensionId())) {
+            HashSet<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimensionId());
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
                 Vec3 target = Utils.convert(r.pos);
@@ -79,7 +80,12 @@ public class PipeExtensionListener {
                 // Step 1: Copy over and remove existing pipe
                 IBlockState oldState = w.getBlockState(r.pos);
                 NBTTagCompound nbt = new NBTTagCompound();
-                w.getTileEntity(r.pos).writeToNBT(nbt);
+                TileEntity old = w.getTileEntity(r.pos);
+                if (!(old instanceof TileGenericPipe)) {
+                    BCLog.logger.warn("Found an invalid request at " + r.pos + " as " + old + " was not a tile generic pipe!");
+                    continue;
+                }
+                old.writeToNBT(nbt);
                 w.setBlockToAir(r.pos);
 
                 boolean failedPlacement = false;
@@ -101,10 +107,10 @@ public class PipeExtensionListener {
                 nbt.setInteger("y", MathHelper.floor_double(target.yCoord));
                 nbt.setInteger("z", MathHelper.floor_double(target.zCoord));
                 // - Create block and tile
-                TileGenericPipe pipeTile = (TileGenericPipe) TileEntity.createAndLoadEntity(nbt);
-
                 w.setBlockState(targetPos, oldState, 3);
-                w.setTileEntity(targetPos, pipeTile);
+
+                TileGenericPipe pipeTile = (TileGenericPipe) w.getTileEntity(targetPos);
+                pipeTile.readFromNBT(nbt);
 
                 pipeTile.setWorldObj(w);
                 pipeTile.validate();

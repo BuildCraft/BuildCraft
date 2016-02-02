@@ -16,9 +16,11 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -36,8 +38,10 @@ public class PipeRendererFluids {
     /** The number of pixels the fluid moves by per millisecond */
     public static final double FLOW_MULTIPLIER = 0.016;
 
+    public static final PipeRendererFluids INSTANCE = new PipeRendererFluids();
+
     /** Map of FluidID -> Fluid Render Call Lists */
-    private static Map<Integer, DisplayFluidList> fluidLists = Maps.newHashMap();
+    private final Map<Integer, DisplayFluidList> fluidLists = Maps.newHashMap();
 
     /** While this class isn't actually completely Immutable, you shouldn't modify any instances after creation */
     static class DisplayFluidList {
@@ -73,6 +77,11 @@ public class PipeRendererFluids {
             this.centerFacesVertical = centerFacesVertical;
             this.sideFaces = sideFaces;
         }
+    }
+
+    @SubscribeEvent
+    public void modelBake(ModelBakeEvent event) {
+        fluidLists.clear();
     }
 
     static void renderFluidPipe(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
@@ -227,8 +236,8 @@ public class PipeRendererFluids {
     }
 
     private static DisplayFluidList getDisplayFluidList(int fluidID) {
-        if (fluidLists.containsKey(fluidID)) {
-            return fluidLists.get(fluidID);
+        if (INSTANCE.fluidLists.containsKey(fluidID)) {
+            return INSTANCE.fluidLists.get(fluidID);
         }
 
         long start = System.nanoTime();
@@ -236,7 +245,7 @@ public class PipeRendererFluids {
         Fluid fluid = FluidRegistry.getFluid(fluidID);
 
         if (fluid == null) {
-            fluidLists.put(fluidID, null);
+            INSTANCE.fluidLists.put(fluidID, null);
             return null;
         }
 
@@ -334,7 +343,7 @@ public class PipeRendererFluids {
         }
 
         DisplayFluidList dfl = new DisplayFluidList(center, vertical, connections);
-        fluidLists.put(fluidID, dfl);
+        INSTANCE.fluidLists.put(fluidID, dfl);
 
         long diff = System.nanoTime() - start;
         BCLog.logger.info("DisplayFluidList generation took " + (diff / 1000000) + "ms, " + (diff % 1000000) + "ns for " + new FluidStack(fluid, 1)

@@ -188,7 +188,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     protected void actionsActivated(Collection<StatementSlot> actions) {
         super.actionsActivated(actions);
 
-        actionDir = null;
+        actionDir = EnumPipePart.CENTER;
 
         for (StatementSlot action : actions) {
             if (action.statement instanceof ActionPipeDirection) {

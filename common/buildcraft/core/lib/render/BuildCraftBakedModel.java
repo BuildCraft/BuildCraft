@@ -29,7 +29,6 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.MatrixUtils;
 
 public class BuildCraftBakedModel extends PerspAwareModelBase {
@@ -320,11 +319,14 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
                   + (int) (normal.y * 0x7F) * 0x000100
                   + (int) (normal.z * 0x7F) * 0x000001;
         // @formatter:on
-        BCLog.logger.info(normal + " -> 0x" + Integer.toHexString(value));
         for (int i = 0; i < 4; i++) {
             data[i * step + UNUSED] = value;
         }
         return colour ? new ColoredBakedQuad(data, quad.getTintIndex(), quad.getFace()) : new BakedQuad(data, quad.getTintIndex(), quad.getFace());
+    }
+
+    public static BakedQuad createNormal(BakedQuad quad) {
+        return replaceNormal(quad, normal(quad));
     }
 
     public static final int MAX_LIGHT = 0xF;
@@ -332,7 +334,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
 
     public static BakedQuad replaceLightMap(BakedQuad quad, int block, int sky) {
         MutableQuad mutable = MutableQuad.create(quad);
-        mutable.lightf(0.96f, 0f);
+        mutable.lighti(block, sky);
         return mutable.toUnpacked(MutableQuad.ITEM_LMAP);
     }
 
@@ -449,6 +451,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
     }
 
     public static Function<ResourceLocation, TextureAtlasSprite> singleTextureFunction(final TextureAtlasSprite sprite) {
+        if (sprite == null) throw new NullPointerException("sprite");
         return new Function<ResourceLocation, TextureAtlasSprite>() {
             @Override
             public TextureAtlasSprite apply(ResourceLocation input) {

@@ -346,8 +346,10 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     }
 
     /** Note that this method DOES take into account its position. But not its rotation. (Open an issue on github if you
-     * need rotation, and a second method will be made that does all the trig required) */
-    public void renderCubeStatic(List<BakedQuad> quads, EntityResizableCuboid cuboid) {
+     * need rotation, and a second method will be made that does all the trig required)
+     * 
+     * @param insideFaceToo TODO */
+    public void renderCubeStatic(List<BakedQuad> quads, EntityResizableCuboid cuboid, boolean insideFaceToo) {
         TextureAtlasSprite[] sprites = cuboid.textures;
         if (sprites == null) {
             sprites = new TextureAtlasSprite[6];
@@ -391,44 +393,44 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
                 arr[1] = new double[] { ri.xyz[U_MAX], cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
                 arr[2] = new double[] { ri.xyz[U_MIN], cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
                 arr[3] = new double[] { ri.xyz[U_MIN], cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.DOWN);
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.DOWN);
+                else quads.add(convertToQuad(arr, EnumFacing.DOWN));
             }
         }
 
         if (sprites[1] != null) {
             // Up
             float[] uv = getUVArray(sprites[1], flips[1], textureStartX, textureEndX, textureStartZ, textureEndZ);
-
             for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeZ, textureSizeX, textureSizeZ, textureOffsetX, textureOffsetZ)) {
                 ri = ri.offset(cuboid, Axis.Y);
                 double[][] arr = new double[4][];
-                arr[0] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.UP);
+                arr[3] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
+                arr[2] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
+                arr[1] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
+                arr[0] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.UP);
+                else quads.add(convertToQuad(arr, EnumFacing.UP));
             }
         }
 
         if (sprites[2] != null) {
             // North (-Z)
             float[] uv = getUVArray(sprites[2], flips[2], textureStartX, textureEndX, textureStartY, textureEndY);
-
             for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeY, textureSizeX, textureSizeY, textureOffsetX, textureOffsetY)) {
                 ri = ri.offset(cuboid, Axis.Z);
                 double[][] arr = new double[4][];
-                arr[0] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.NORTH);
+                arr[3] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
+                arr[2] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
+                arr[1] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
+                arr[0] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.NORTH);
+                else quads.add(convertToQuad(arr, EnumFacing.NORTH));
             }
         }
 
         if (sprites[3] != null) {
             // South (+Z)
             float[] uv = getUVArray(sprites[3], flips[3], textureStartX, textureEndX, textureStartY, textureEndY);
-
             for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeY, textureSizeX, textureSizeY, textureOffsetX, textureOffsetY)) {
                 ri = ri.offset(cuboid, Axis.Z);
                 double[][] arr = new double[4][];
@@ -436,14 +438,14 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
                 arr[1] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MAX], cuboid.posZ + sizeZ, -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
                 arr[2] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MAX], cuboid.posZ + sizeZ, -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
                 arr[3] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MIN], cuboid.posZ + sizeZ, -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.SOUTH);
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.SOUTH);
+                else quads.add(convertToQuad(arr, EnumFacing.SOUTH));
             }
         }
 
         if (sprites[4] != null) {
             // West (-X)
             float[] uv = getUVArray(sprites[4], flips[4], textureStartZ, textureEndZ, textureStartY, textureEndY);
-
             for (RenderInfo ri : getRenderInfos(uv, sizeZ, sizeY, textureSizeZ, textureSizeY, textureOffsetZ, textureOffsetY)) {
                 ri = ri.offset(cuboid, Axis.X);
                 double[][] arr = new double[4][];
@@ -451,22 +453,23 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
                 arr[1] = new double[] { cuboid.posX, ri.xyz[V_MAX], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
                 arr[2] = new double[] { cuboid.posX, ri.xyz[V_MAX], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
                 arr[3] = new double[] { cuboid.posX, ri.xyz[V_MIN], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.WEST);
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.WEST);
+                else quads.add(convertToQuad(arr, EnumFacing.WEST));
             }
         }
 
         if (sprites[5] != null) {
             // East (+X)
             float[] uv = getUVArray(sprites[5], flips[5], textureStartZ, textureEndZ, textureStartY, textureEndY);
-
             for (RenderInfo ri : getRenderInfos(uv, sizeZ, sizeY, textureSizeZ, textureSizeY, textureOffsetZ, textureOffsetY)) {
                 ri = ri.offset(cuboid, Axis.X);
                 double[][] arr = new double[4][];
-                arr[0] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                convertToDoubleQuads(quads, arr, EnumFacing.EAST);
+                arr[3] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
+                arr[2] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
+                arr[1] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
+                arr[0] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
+                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.EAST);
+                else quads.add(convertToQuad(arr, EnumFacing.EAST));
             }
         }
     }

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -25,7 +23,10 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
     }
 
     @Override
-    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {}
 
+    @Override
+    public boolean singleActionTick() {
+        return true;
     }
 }

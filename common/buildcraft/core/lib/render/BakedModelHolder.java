@@ -39,7 +39,6 @@ public abstract class BakedModelHolder extends BuildCraftBakedModel {
 
     public BakedModelHolder() {
         this(null, null, null);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent

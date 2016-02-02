@@ -16,7 +16,7 @@ import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.render.FacadePluggableRenderer;
+import buildcraft.transport.render.FacadePluggableModel;
 
 import io.netty.buffer.ByteBuf;
 
@@ -122,7 +122,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
     @Override
     public IPipePluggableStaticRenderer getRenderer() {
-        return FacadePluggableRenderer.INSTANCE;
+        return FacadePluggableModel.INSTANCE;
     }
 
     @Override

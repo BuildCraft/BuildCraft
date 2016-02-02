@@ -470,12 +470,13 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         // - one of the coordinates must be either -1 or 1 away
         // - it must be physically touching the box
         // - however, it cannot be INSIDE the box
-        int equal = (pos.getX() == this.pos.getX() ? 1 : 0) + (pos.getY() == this.pos.getY() ? 1 : 0) + (pos.getZ() == this.pos.getZ() ? 1 : 0);
-        int touching = 0;
-
-        if (equal == 0 || equal == 3) {
-            return false;
-        }
+        // int equal = (pos.getX() == this.pos.getX() ? 1 : 0) + (pos.getY() == this.pos.getY() ? 1 : 0) + (pos.getZ()
+        // == this.pos.getZ() ? 1 : 0);
+        // int touching = 0;
+        //
+        // if (equal == 0 || equal == 3) {
+        // return false;
+        // }
 
         Box box = new Box(min(), max());
 

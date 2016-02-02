@@ -30,6 +30,7 @@ import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.render.PerspAwareModelBase;
+import buildcraft.core.lib.render.SubIcon;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixUtils;
 
@@ -43,7 +44,7 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
     private static final ResourceLocation cutoutLensSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/lens");
     private static final ResourceLocation cutoutFilterSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/filter");
     private static final ResourceLocation translucentSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/overlay_lens");
-    private static TextureAtlasSprite spriteLensCutout, spriteFilterCutout, spriteTranslucent;
+    private static TextureAtlasSprite spriteLensCutout, spriteFilterCutout, spriteTranslucent, spriteWaterFlow;
 
     private LensPluggableModel() {}
 
@@ -83,6 +84,15 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
         if (spriteTranslucent == null) spriteLensCutout = event.map.registerSprite(translucentSpriteLoc);
     }
 
+    @SubscribeEvent
+    public void textureGetter(TextureStitchEvent.Post event) {
+        spriteWaterFlow = event.map.getAtlasSprite("minecraft:blocks/water_flow");
+        // The water sprite is too big normally, so get 1/2 of each axis
+        spriteWaterFlow = new SubIcon(spriteWaterFlow, 8, 8);
+        // The water sprite flows upwards if we don't flip the V
+        spriteWaterFlow = new SubIcon.FlippedV(spriteWaterFlow);
+    }
+
     @Override
     public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
@@ -117,12 +127,18 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
 
     private List<BakedQuad> bakeTransclucent(LensPluggable lens, EnumFacing face, VertexFormat format) {
         EnumDyeColor colour = lens.getColour();
-        if (colour == null) return Collections.emptyList();
-        int shade = ColorUtils.getLightHex(colour);
-        if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertBGRAtoRGBA(shade);
+        TextureAtlasSprite sprite = spriteTranslucent;
+        int shade = -1;
+        if (colour == null) {
+            if (lens.isFilter) return Collections.emptyList();
+            sprite = spriteWaterFlow;
+        } else {
+            shade = ColorUtils.getLightHex(colour);
+            if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertBGRAtoRGBA(shade);
+        }
 
         List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), spriteTranslucent, format);
+        List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), sprite, format);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             quad = transform(quad, matrix);

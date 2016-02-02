@@ -156,7 +156,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setSize(actualSize);
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
-                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid);
+                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid, true);
             }
         }
     }

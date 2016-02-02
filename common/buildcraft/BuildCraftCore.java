@@ -84,7 +84,6 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
-import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -694,12 +693,6 @@ public class BuildCraftCore extends BuildCraftMod {
         PatternParameterHollow.registerSprites(evt.map);
         PatternParameterXZDir.registerSprites(evt.map);
         PatternParameterYDir.registerSprites(evt.map);
-    }
-
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void loadTextures(TextureStitchEvent.Post evt) {
-        FluidRenderer.initFluidTextures(evt.map);
     }
 
     @SubscribeEvent

@@ -15,7 +15,7 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
 import buildcraft.robotics.render.RenderRobot;
 import buildcraft.robotics.render.RenderZonePlan;
-import buildcraft.robotics.render.RobotStationRenderer;
+import buildcraft.robotics.render.RobotStationModel;
 
 public class RoboticsProxyClient extends RoboticsProxy {
     @Override
@@ -25,13 +25,15 @@ public class RoboticsProxyClient extends RoboticsProxy {
         // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
         ClientRegistry.bindTileEntitySpecialRenderer(TileZonePlan.class, new RenderZonePlan());
 
-        MinecraftForge.EVENT_BUS.register(RobotStationRenderer.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RobotStationModel.INSTANCE);
 
         // TODO: Move robot station textures locally
         if (Loader.isModLoaded("BuildCraft|Transport")) {
             loadBCTransport();
         }
     }
+    
+    
 
     private void loadBCTransport() {
         // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, new

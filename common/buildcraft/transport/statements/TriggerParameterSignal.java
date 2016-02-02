@@ -132,7 +132,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         icons[3] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_yellow_inactive");
         icons[4] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_red_active");
         icons[5] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_blue_active");
-        icons[6] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_green_active)");
+        icons[6] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_green_active");
         icons[7] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_yellow_active");
     }
 

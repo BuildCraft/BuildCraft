@@ -8,4 +8,8 @@ public interface IActionInternal extends IStatement {
 
     void actionActivate(IStatementContainer source, IStatementParameter[] parameters);
 
+    /** @return True if this action should only be fired for the first tick of it being active. */
+    default boolean singleActionTick() {
+        return false;
+    }
 }

@@ -11,7 +11,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
+import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.transport.pluggable.LensPluggableModel;
+import buildcraft.transport.pluggable.PlugPluggableModel;
+import buildcraft.transport.pluggable.PowerAdapterModel;
+import buildcraft.transport.render.FacadeItemModel;
+import buildcraft.transport.render.FacadePluggableModel;
+import buildcraft.transport.render.GateItemModel;
+import buildcraft.transport.render.GatePluggableModel;
 import buildcraft.transport.render.tile.PipeRendererTESR;
 
 public class TransportProxyClient extends TransportProxy {
@@ -32,8 +39,17 @@ public class TransportProxyClient extends TransportProxy {
 
     @Override
     public void registerRenderers() {
+        // Should none of these register? Should they all be called by  a single modelBakeEvent, textureStitchPre and textureStitchPost?
+        
         // MinecraftForge.EVENT_BUS.register(FluidShaderManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(FacadePluggableModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(FacadeItemModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(GatePluggableModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(GateItemModel.INSTANCE);
         MinecraftForge.EVENT_BUS.register(LensPluggableModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(PlugPluggableModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(PowerAdapterModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(FluidRenderer.INSTANCE);
     }
 
     @Override

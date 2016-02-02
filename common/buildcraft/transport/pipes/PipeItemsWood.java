@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import java.util.Collection;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -21,12 +23,14 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.*;
+import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
@@ -104,7 +108,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
         if (shouldTick()) {
             if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
-                extractItems();
+                extractItems(maxExtractable());
             }
 
             battery.setEnergy(0);
@@ -133,7 +137,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
                 if (tile instanceof IInventory) {
                     int stackSize = 0;
                     IInventory inventory = (IInventory) tile;
-                    ItemStack[] extracted = checkExtract(inventory, false, side.getOpposite());
+                    int maxItems = maxExtractable();
+                    ItemStack[] extracted = checkExtract(inventory, false, side.getOpposite(), maxItems);
                     if (extracted != null) {
                         for (ItemStack s : extracted) {
                             stackSize += s.stackSize;
@@ -151,7 +156,21 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
         return ticksSincePull >= 16 && battery.getEnergyStored() >= 10;
     }
 
-    private void extractItems() {
+    @Override
+    protected void actionsActivated(Collection<StatementSlot> actions) {
+        super.actionsActivated(actions);
+        for (StatementSlot slot : actions) {
+            if (slot.statement instanceof ActionSingleEnergyPulse) {
+                extractItems(1);
+            }
+        }
+    }
+
+    private int maxExtractable() {
+        return battery.getEnergyStored() / 10;
+    }
+
+    private void extractItems(int maxItems) {
         int meta = container.getBlockMetadata();
 
         if (meta > 5) {
@@ -164,7 +183,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
         if (tile instanceof IInventory) {
             IInventory inventory = (IInventory) tile;
 
-            ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite());
+            ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite(), maxItems);
             if (extracted == null) {
                 return;
             }
@@ -193,9 +212,9 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
     /** Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain
      * cases, the extractable slot depends on the position of the pipe. */
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
+    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         IInventory inv = InvUtils.getInventory(inventory);
-        ItemStack result = checkExtractGeneric(inv, doRemove, from);
+        ItemStack result = checkExtractGeneric(inv, doRemove, from, maxItems);
 
         if (result != null) {
             return new ItemStack[] { result };
@@ -204,11 +223,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
         return null;
     }
 
-    public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, EnumFacing from) {
-        return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from);
+    public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
+        return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from, maxItems);
     }
 
-    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
         if (inventory == null) {
             return null;
         }
@@ -219,7 +238,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
             if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
                 if (doRemove) {
                     int maxStackSize = slot.stackSize;
-                    int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+                    int stackSize = Math.min(maxStackSize, maxItems);
                     // TODO: Look into the Speed Multiplier again someday.
                     // speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
                     int energyUsed = (int) (stackSize * 10 * speedMultiplier);

@@ -17,7 +17,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.BCStatement;
 
 public class ActionPipeDirection extends BCStatement implements IActionInternal {
-
     public final EnumFacing direction;
 
     public ActionPipeDirection(EnumFacing direction) {
@@ -39,4 +38,9 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 
     @Override
     public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {}
+
+    @Override
+    public String toString() {
+        return "ActionPipeDirection[" + direction + "]";
+    }
 }

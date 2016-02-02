@@ -22,7 +22,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.render.GatePluggableRenderer;
+import buildcraft.transport.render.GatePluggableModel;
 
 import io.netty.buffer.ByteBuf;
 
@@ -229,12 +229,12 @@ public class GatePluggable extends PipePluggable {
 
     @Override
     public IPipePluggableStaticRenderer getRenderer() {
-        return GatePluggableRenderer.INSTANCE;
+        return GatePluggableModel.INSTANCE;
     }
 
     @Override
     public IPipePluggableDynamicRenderer getDynamicRenderer() {
-        return GatePluggableRenderer.INSTANCE;
+        return GatePluggableModel.INSTANCE;
     }
 
     public float getPulseStage() {

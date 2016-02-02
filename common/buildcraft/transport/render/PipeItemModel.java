@@ -2,8 +2,6 @@ package buildcraft.transport.render;
 
 import java.util.List;
 
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -50,12 +48,10 @@ public class PipeItemModel extends BuildCraftBakedModel {
         List<BakedQuad> unprocessed = Lists.newArrayList();
         List<BakedQuad> quads = Lists.newArrayList();
 
-        RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
+        RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid, false);
 
         for (BakedQuad quad : unprocessed) {
-            quad = replaceShade(quad, 0xFFFFFFFF);
-            quad = replaceNormal(quad, new Vector3f(0, 1, 0));
-            quad = replaceTint(quad, 0xFFFFFFFF);// For some reason all pipes are dark. Hmmm.
+            quad = createNormal(quad);
             quads.add(quad);
         }
 
@@ -71,15 +67,14 @@ public class PipeItemModel extends BuildCraftBakedModel {
             cuboid.setSize(Utils.multiply(radius, 2));
 
             // Render it into a different list
-            RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid);
+            RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid, false);
 
             EnumDyeColor dye = EnumDyeColor.byDyeDamage(colorIndex - 1);
 
             int quadColor = ColorUtils.getLightHex(dye);
             // Add all of the quads we just rendered to the main list
             for (BakedQuad quad : unprocessed) {
-                quad = replaceShade(quad, 0xFFFFFFFF);
-                quad = replaceNormal(quad, new Vector3f(0, 1, 0));
+                quad = createNormal(quad);
                 quad = replaceTint(quad, quadColor);
                 quads.add(quad);
             }

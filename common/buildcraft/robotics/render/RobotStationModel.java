@@ -35,8 +35,8 @@ import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
 
-public class RobotStationRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer {
-    public static final RobotStationRenderer INSTANCE = new RobotStationRenderer();
+public class RobotStationModel extends BakedModelHolder implements IPipePluggableStaticRenderer {
+    public static final RobotStationModel INSTANCE = new RobotStationModel();
 
     private static final ResourceLocation baseLoc = new ResourceLocation("buildcraftrobotics:models/pluggables/robot_station_base.obj");
 

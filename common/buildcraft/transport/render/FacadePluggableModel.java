@@ -22,13 +22,13 @@ import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.render.BakedModelHolder;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public final class FacadePluggableRenderer extends BakedModelHolder implements IPipePluggableStaticRenderer {
+public final class FacadePluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
     private static final ResourceLocation filledLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_filled.obj");
-    public static final FacadePluggableRenderer INSTANCE = new FacadePluggableRenderer();
+    public static final FacadePluggableModel INSTANCE = new FacadePluggableModel();
 
-    private FacadePluggableRenderer() {
-        // We only extend BuildCraftBakedModel to get the model functions
+    private FacadePluggableModel() {
+        // We only extend BakedModelHolder to get the model functions
     }
 
     public IModel modelHollow() {
