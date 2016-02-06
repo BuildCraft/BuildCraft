@@ -9,7 +9,6 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
@@ -187,6 +186,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     public void setActiveState(int activeState2) {
-        BCLog.logger.error("TRIED TO SET THE ACTIVE STATE OF A FACEDE PLUGGABLE TO " + activeState2);
+        // FIXME: I have no idea what this should do, so we'll find out when a bug report comes in :)
+        // BCLog.logger.error("TRIED TO SET THE ACTIVE STATE OF A FACEDE PLUGGABLE TO " + activeState2);
     }
 }
