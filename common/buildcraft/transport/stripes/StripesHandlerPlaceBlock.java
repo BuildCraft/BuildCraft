@@ -34,7 +34,7 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 
         ItemBlock ib = (ItemBlock) stack.getItem();
 
-        if (ib.placeBlockAt(stack, player, world, pos, direction, 0.0f, 0.0f, 0.0f, ib.block.getStateFromMeta(stack.getMetadata()))) {
+        if (ib.onItemUse(stack, player, world, pos, direction, 0.5f, 0.5f, 0.5f)) {
             if (stack.stackSize > 0) {
                 activator.sendItem(stack, direction.getOpposite());
             }
