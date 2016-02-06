@@ -185,8 +185,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         }
     }
 
-    public void setActiveState(int activeState2) {
-        // FIXME: I have no idea what this should do, so we'll find out when a bug report comes in :)
-        // BCLog.logger.error("TRIED TO SET THE ACTIVE STATE OF A FACEDE PLUGGABLE TO " + activeState2);
+    public void setActiveState(int activeStateIndex) {
+        activeStateIndex = ((activeStateIndex % states.length) + activeStateIndex) % states.length;
+        activeState = states[activeStateIndex];
     }
 }
