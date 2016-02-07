@@ -260,7 +260,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (pipe != null) {
             nbt.setString("pipeId", Item.itemRegistry.getNameForObject(pipe.item).toString());
             pipe.writeToNBT(nbt);
-        } else {
+        } else if (coreState.pipeId != null){
             nbt.setString("pipeId", coreState.pipeId);
         }
 
@@ -298,12 +298,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             if (loc == null) coreState.pipeId = "";
             else coreState.pipeId = loc.toString();
         }
-        Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
-        if (item instanceof ItemPipe) {
-            pipe = BlockGenericPipe.createPipe((ItemPipe) item);
-        } else {
-            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
-            pipe = null;
+        // TODO: Find out why coreState.pipeId is sometimes null
+        if(coreState.pipeId != null) {
+            Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
+            if (item instanceof ItemPipe) {
+                pipe = BlockGenericPipe.createPipe((ItemPipe) item);
+            } else {
+                BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
+                pipe = null;
+            }
         }
 
         bindPipe();
