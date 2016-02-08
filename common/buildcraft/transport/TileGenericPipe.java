@@ -363,7 +363,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                     worldObj.setBlockToAir(getPos());
                 }
 
-                if (pipe == null) {
+                if (pipe == null || coreState.pipeId == null) {
                     return;
                 }
 
@@ -581,6 +581,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         bindPipe();
+
+        if (coreState.pipeId == null || coreState.pipeId.length() <= 0) {
+            throw new IllegalStateException("Tried to create a pipe without a pipeID from item " + pipe.item);
+        }
 
         computeConnections();
         scheduleNeighborChange();

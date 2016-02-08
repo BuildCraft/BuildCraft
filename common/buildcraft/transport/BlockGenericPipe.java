@@ -1052,7 +1052,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                 TileGenericPipe tilePipe = (TileGenericPipe) tile;
                 tilePipe.initialize(pipe);
                 tilePipe.sendNetworkUpdate();
-                MinecraftForge.EVENT_BUS.post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), pos));
+                MinecraftForge.EVENT_BUS.post(new PipePlacedEvent(player, pipe.item, pos));
             }
         }
 
