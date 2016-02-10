@@ -368,12 +368,16 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     protected boolean middleReached(TravelingItem item) {
-        //float middleLimit = item.getSpeed() * 1.01F;
-        return Utils.convertMiddle(container.getPos()).subtract(item.pos).lengthVector() < 0.3;
+        float middleLimit = item.getSpeed() * 1.01F;
+        Vec3 middlepoint = new Vec3(0.5, TransportUtils.getPipeFloorOf(item.getItemStack()),0.5);
+        Vec3 compare = Utils.convert(container.getPos()).add(middlepoint).subtract(item.pos);
+        return Math.abs(compare.xCoord) < middleLimit
+                && Math.abs(compare.yCoord) < middleLimit
+                && Math.abs(compare.zCoord) < middleLimit;
     }
 
     protected boolean endReached(TravelingItem item) {
-        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 0.5;
+        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 0.65;
         // return item.pos.xCoord > container.getPos().getX() + 1 || item.pos.xCoord < container.x() || item.pos.yCoord
         // > container.y() + 1
         // || item.pos.yCoord < container.y() || item.pos.zCoord > container.z() + 1 || item.pos.zCoord < container.z();
