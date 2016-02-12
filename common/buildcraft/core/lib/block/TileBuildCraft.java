@@ -21,7 +21,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
@@ -39,7 +40,7 @@ import io.netty.buffer.Unpooled;
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, ITickable, IAdditionalDataTile {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyProvider, IEnergyReceiver, ISerializable, ITickable, IAdditionalDataTile {
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;

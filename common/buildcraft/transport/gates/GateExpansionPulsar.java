@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
@@ -93,9 +93,9 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
                 return;
             }
 
-            if (pipeTile instanceof IEnergyHandler && (!singlePulse || !hasPulsed)) {
+            if (pipeTile instanceof IEnergyReceiver && (!singlePulse || !hasPulsed)) {
                 gate.setPulsing(true);
-                ((IEnergyHandler) pipeTile).receiveEnergy(null, Math.min(1 << (count - 1), 64) * 10, false);
+                ((IEnergyReceiver) pipeTile).receiveEnergy(null, Math.min(1 << (count - 1), 64) * 10, false);
                 hasPulsed = true;
             } else {
                 gate.setPulsing(true);

@@ -22,7 +22,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.fluids.IFluidBlock;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
@@ -47,7 +47,7 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyReceiver, IStripesPipe {
     private RFBattery battery = new RFBattery(320 * 50, 640, 0);
     private EnumPipePart actionDir = EnumPipePart.CENTER;
 
@@ -240,11 +240,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         return battery.receiveEnergy(maxReceive, simulate);
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override

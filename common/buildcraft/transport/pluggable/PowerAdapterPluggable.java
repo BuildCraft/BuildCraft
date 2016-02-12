@@ -6,6 +6,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
@@ -15,7 +16,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 
 import io.netty.buffer.ByteBuf;
 
-public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {
+public class PowerAdapterPluggable extends PipePluggable implements IEnergyReceiver {
     private static final int MAX_POWER = 40;
     private IPipeTile container;
 
@@ -88,19 +89,14 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         int maxR = Math.min(MAX_POWER, maxReceive);
-        if (container != null && container.getPipe() instanceof IEnergyHandler) {
-            int energyCanReceive = ((IEnergyHandler) container.getPipe()).receiveEnergy(from, maxR, true);
+        if (container != null && container.getPipe() instanceof IEnergyReceiver) {
+            int energyCanReceive = ((IEnergyReceiver) container.getPipe()).receiveEnergy(from, maxR, true);
             if (!simulate) {
-                return ((IEnergyHandler) container.getPipe()).receiveEnergy(from, energyCanReceive, false);
+                return ((IEnergyReceiver) container.getPipe()).receiveEnergy(from, energyCanReceive, false);
             } else {
                 return energyCanReceive;
             }
         }
-        return 0;
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         return 0;
     }
 

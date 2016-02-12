@@ -33,6 +33,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
@@ -65,8 +67,8 @@ import buildcraft.transport.pluggable.PlugPluggable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
-        ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable {
+public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile,
+        ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable, IEnergyProvider {
 
     public boolean initialized = false;
     public final PipeRenderState renderState = new PipeRenderState();
@@ -1219,8 +1221,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         IEnergyHandler handler = internalGetEnergyHandler(from);
-        if (handler != null) {
-            return handler.receiveEnergy(from, maxReceive, simulate);
+        if (handler instanceof IEnergyReceiver) {
+            return ((IEnergyReceiver) handler).receiveEnergy(from, maxReceive, simulate);
         } else {
             return 0;
         }
@@ -1229,8 +1231,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         IEnergyHandler handler = internalGetEnergyHandler(from);
-        if (handler != null) {
-            return handler.extractEnergy(from, maxExtract, simulate);
+        if (handler instanceof IEnergyProvider) {
+            return ((IEnergyProvider) handler).extractEnergy(from, maxExtract, simulate);
         } else {
             return 0;
         }

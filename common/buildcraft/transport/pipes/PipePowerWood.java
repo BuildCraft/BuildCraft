@@ -10,25 +10,27 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IRedstoneEngineReceiver, IDebuggable {
     public final boolean[] powerSources = new boolean[6];
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
@@ -112,10 +114,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
                     int energyExtracted = battery.addEnergy(0, ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
                             false);
                     ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyExtracted, true);
-                } else if (source instanceof IEnergyHandler) {
-                    int energyExtracted = battery.addEnergy(0, ((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
-                            false);
-                    ((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyExtracted, true);
                 }
             }
         }
@@ -194,11 +192,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override

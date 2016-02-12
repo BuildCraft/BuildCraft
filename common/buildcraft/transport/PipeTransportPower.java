@@ -235,12 +235,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                                 displayFlow[j] = -1;
                             } else {
                                 int iWatts = (int) watts;
-                                if (ep instanceof IEnergyHandler) {
-                                    IEnergyHandler handler = (IEnergyHandler) ep;
-                                    if (handler.canConnectEnergy(EnumFacing.values()[j].getOpposite())) {
-                                        iWatts = handler.receiveEnergy(EnumFacing.values()[j].getOpposite(), iWatts, false);
-                                    }
-                                } else if (ep instanceof IEnergyReceiver) {
+                                if (ep instanceof IEnergyReceiver) {
                                     IEnergyReceiver handler = (IEnergyReceiver) ep;
                                     if (handler.canConnectEnergy(EnumFacing.values()[j].getOpposite())) {
                                         iWatts = handler.receiveEnergy(EnumFacing.values()[j].getOpposite(), iWatts, false);
@@ -292,8 +287,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                     .getPipe()).transport instanceof PipeTransportPower) {
                 continue;
             }
-            if (tile instanceof IEnergyHandler) {
-                IEnergyHandler handler = (IEnergyHandler) tile;
+            if (tile instanceof IEnergyReceiver) {
+                IEnergyReceiver handler = (IEnergyReceiver) tile;
                 if (handler.canConnectEnergy(dir.getOpposite())) {
                     int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
                     if (request > 0) {

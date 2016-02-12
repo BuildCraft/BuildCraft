@@ -254,11 +254,6 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
             int maxEnergy = engine.receiveEnergyFromEngine(orientation.getOpposite(), this.energy, true);
             return extractEnergy(maxEnergy, false);
-        } else if (tile instanceof IEnergyHandler) {
-            IEnergyHandler handler = (IEnergyHandler) tile;
-
-            int maxEnergy = handler.receiveEnergy(orientation.getOpposite(), this.energy, true);
-            return extractEnergy(maxEnergy, false);
         } else if (tile instanceof IEnergyReceiver) {
             IEnergyReceiver handler = (IEnergyReceiver) tile;
 
@@ -283,11 +278,6 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
             if (tile instanceof IEngine) {
                 IEngine engine = (IEngine) tile;
                 int neededRF = engine.receiveEnergyFromEngine(orientation.getOpposite(), extracted, false);
-
-                extractEnergy(neededRF, true);
-            } else if (tile instanceof IEnergyHandler) {
-                IEnergyHandler handler = (IEnergyHandler) tile;
-                int neededRF = handler.receiveEnergy(orientation.getOpposite(), extracted, false);
 
                 extractEnergy(neededRF, true);
             } else if (tile instanceof IEnergyReceiver) {

@@ -18,7 +18,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
@@ -32,7 +32,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.*;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
-public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
+public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
@@ -262,11 +262,6 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         return battery.receiveEnergy(maxReceive, simulate);
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override

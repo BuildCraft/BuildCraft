@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
@@ -31,7 +31,7 @@ import buildcraft.transport.PipeTransportFluids;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable, IDebuggable {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyReceiver, ISerializable, IDebuggable {
     private static final int ENERGY_MULTIPLIER = 50;
 
     public int fluidToExtract;
@@ -182,11 +182,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
             fluidToExtract += getEnergyMultiplier() * received;
         }
         return received;
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override

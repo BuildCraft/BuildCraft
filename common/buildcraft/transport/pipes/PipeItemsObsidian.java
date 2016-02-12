@@ -22,10 +22,9 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -37,9 +36,9 @@ import buildcraft.transport.*;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
+public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     private final RFBattery battery = new RFBattery(2560, 640, 0);
-    private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<Entity, Long>();
+    private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<>();
 
     public PipeItemsObsidian(Item item) {
         super(new PipeTransportItems(), item);
@@ -280,11 +279,6 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         return battery.receiveEnergy(maxReceive, simulate);
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override
