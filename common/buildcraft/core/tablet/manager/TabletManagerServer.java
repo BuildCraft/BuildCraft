@@ -19,7 +19,7 @@ public enum TabletManagerServer {
             TabletServer tablet = new TabletServer(player);
             TabletThread thread = new TabletThread(tablet);
             threads.put(player, thread);
-            new Thread(thread).start();
+            new Thread(thread, "BuildCraft Tablet Manager").start();
         }
         return (TabletServer) threads.get(player).getTablet();
     }

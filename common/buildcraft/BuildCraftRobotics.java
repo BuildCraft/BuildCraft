@@ -328,7 +328,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
         stopMapManager();
 
         manager = new MapManager(f);
-        managerThread = new Thread(manager);
+        managerThread = new Thread(manager, "BuildCraft Robotics Manager");
         managerThread.start();
 
         BoardRobotPicker.onServerStart();
