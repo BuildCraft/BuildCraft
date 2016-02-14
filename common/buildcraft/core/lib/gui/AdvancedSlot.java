@@ -115,7 +115,6 @@ public abstract class AdvancedSlot {
 
         gui.drawStack(item, cornerX + x, cornerY + y);
         GlStateManager.color(1, 1, 1, 1);
-        System.out.println("hi");
     }
 
     public boolean shouldDrawHighlight() {

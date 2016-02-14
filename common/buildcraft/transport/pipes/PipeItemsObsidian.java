@@ -186,9 +186,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             return;
         }
 
-        EnumFacing orientation = getOpenOrientation().getOpposite();
-
+        EnumFacing orientation = getOpenOrientation();
         if (orientation != null) {
+            orientation = orientation.getOpposite();
             container.getWorld().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorld().rand.nextFloat() - container.getWorld().rand
                     .nextFloat()) * 0.7F + 1.0F) * 2.0F);
 

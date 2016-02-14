@@ -6,6 +6,8 @@ package buildcraft.transport;
 
 import java.util.*;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -244,9 +246,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
                 signalStrength[c.ordinal()] = 0;
             }
 
-//            if (prevStrength != signalStrength[c.ordinal()]) {
-//                container.scheduleRenderUpdate();
-//            }
+            // if (prevStrength != signalStrength[c.ordinal()]) {
+            // container.scheduleRenderUpdate();
+            // }
 
             if (signalStrength[c.ordinal()] == 0) {
                 for (Pipe<?> p : pipes) {
@@ -471,6 +473,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     }
 
     /** If this pipe is open on one side, return it. */
+    @Nullable
     public EnumFacing getOpenOrientation() {
         int connectionsNum = 0;
 
