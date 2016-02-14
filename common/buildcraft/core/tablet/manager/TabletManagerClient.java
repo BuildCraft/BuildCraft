@@ -15,7 +15,7 @@ public enum TabletManagerClient {
         if (currentTablet == null) {
             currentTablet = new TabletClient();
             currentTabletThread = new TabletThread(currentTablet);
-            new Thread(currentTabletThread).start();
+            new Thread(currentTabletThread, "BuildCraft Tablet Manager").start();
         }
         return currentTabletThread;
     }
