@@ -905,7 +905,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         rotationYaw = rotationYaw + step;
     }
-    
+
     @Override
     protected float updateDistance(float targetYaw, float dist) {
         if (worldObj.isRemote) {
@@ -929,7 +929,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
         return 0;
     }
-    
+
     @Override
     public void setItemActive(final boolean isActive) {
         if (isActive != itemActive) {
