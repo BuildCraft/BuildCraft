@@ -26,6 +26,6 @@ public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
 
     @Override
     public void registerModels() {
-        ModelHelper.registerItemModel(this, 0, "");
+        ModelHelper.registerItemModel(this, 0, "forge:dynbucket", "");
     }
 }

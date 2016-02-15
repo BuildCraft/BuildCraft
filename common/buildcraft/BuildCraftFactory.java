@@ -44,6 +44,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.factory.*;
+import buildcraft.factory.refining.ComplexRefiningManager;
 import buildcraft.factory.render.ChuteRenderModel;
 import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
@@ -118,9 +119,12 @@ public class BuildCraftFactory extends BuildCraftMod {
         chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
         BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
 
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
+            ComplexRefiningManager.preInit();
+        }
+
         FactoryProxy.proxy.initializeEntityRenders();
 
-        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -175,6 +179,10 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileTank.class, "buildcraft.factory.Tank", "net.minecraft.src.buildcraft.factory.TileTank");
         BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
         BCRegistry.INSTANCE.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
+
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
+            ComplexRefiningManager.init();
+        }
 
         FactoryProxy.proxy.fmlInit();
 

@@ -37,7 +37,8 @@ public final class BCRegistry {
     }
 
     public boolean registerBlock(Block block, Class<? extends ItemBlock> item, boolean forced) {
-        String name = block.getUnlocalizedName().replace("tile.", "");
+        String name = block.getRegistryName();
+        if (name == null || name.isEmpty()) name = block.getUnlocalizedName().replace("tile.", "");
         if (forced || regCfg.get("blocks", name, true).getBoolean()) {
             GameRegistry.registerBlock(block, item, name);
             CoreProxy.proxy.postRegisterBlock(block);
@@ -47,7 +48,8 @@ public final class BCRegistry {
     }
 
     public boolean registerItem(Item item, boolean forced) {
-        String name = item.getUnlocalizedName().replace("item.", "");
+        String name = item.getRegistryName();
+        if (name == null || name.isEmpty()) name = item.getUnlocalizedName().replace("item.", "");
         if (forced || regCfg.get("items", name, true).getBoolean()) {
             GameRegistry.registerItem(item, name);
             CoreProxy.proxy.postRegisterItem(item);
