@@ -39,8 +39,8 @@ dependencies {
 }
 
 minecraft {
-    mappings = "snapshot_20160123"
-    version = "1.8.9-11.15.1.1726"
+    mappings = "snapshot_20160214"
+    version = "1.8.9-11.15.1.1744"
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
