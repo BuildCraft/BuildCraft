@@ -45,6 +45,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     private int index = -1;
     private String tooltip = null;
 
+    // JEI compat
+    public int actionRows, triggerRows;
+    public int lastActionRowSize, lastTriggerRowSize;
+
     private class TriggerSlot extends StatementSlot {
         public TriggerSlot(int x, int y, IPipe pipe, int slot) {
             super(instance, x, y, slot);
@@ -268,14 +272,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
+        GlStateManager.disableLighting();
         GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GlStateManager.enableAlpha();
         GL11.glEnable(GL11.GL_BLEND);
+        GlStateManager.enableBlend();
 
         tooltip = null;
 
         int sX = 18;
         int sY = 6;
 
+        triggerRows = 1;
         for (IStatement statement : container.getTriggerCollection(false)) {
             int pX = this.guiLeft - sX;
             int pY = this.guiTop + sY;
@@ -287,12 +295,17 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             if (sX > 18 * 5) {
                 sX = 18;
                 sY += 18;
-            } else sX += 18;
+                triggerRows++;
+            } else {
+                sX += 18;
+                lastTriggerRowSize = sX;
+            }
         }
 
         sX = 0;
         sY = 6;
 
+        actionRows = 1;
         for (IStatement statement : container.getActionCollection(false)) {
             int pX = this.guiLeft + this.getXSize() + sX;
             int pY = this.guiTop + sY;
@@ -304,7 +317,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             if (sX > 18 * 4) {
                 sX = 0;
                 sY += 18;
-            } else sX += 18;
+                actionRows++;
+            } else {
+                sX += 18;
+                lastActionRowSize = sX;
+            }
         }
 
         if (index != -1) {
@@ -330,10 +347,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
             GlStateManager.color(1.0f, 1.0f, 1.0f);
         }
-
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.enableLighting();
+        GlStateManager.disableAlpha();
+        GlStateManager.disableBlend();
     }
 
     private void drawStatement(int x, int y, IStatement state) {

@@ -60,7 +60,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
-        if (entity == null || (entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying)) {
+        if (entity == null || (entity instanceof EntityPlayer && !((EntityPlayer) entity).isPushedByWater())) {
             return;
         }
 
@@ -74,7 +74,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         }
 
         double within = 0.05;
-
+        
         entity.motionX = within(entity.motionX, within) + accDir.xCoord;
         entity.motionY = within(entity.motionY, within) + accDir.yCoord;
         entity.motionZ = within(entity.motionZ, within) + accDir.zCoord;

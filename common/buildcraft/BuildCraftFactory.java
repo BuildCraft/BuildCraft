@@ -35,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -44,6 +45,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.factory.*;
+import buildcraft.factory.refining.ComplexRefineryRecipeManager;
 import buildcraft.factory.refining.ComplexRefiningManager;
 import buildcraft.factory.render.ChuteRenderModel;
 import buildcraft.factory.schematics.SchematicAutoWorkbench;
@@ -52,8 +54,12 @@ import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
 
 @Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
-        dependencies = DefaultProps.DEPENDENCY_CORE)
+        dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
 public class BuildCraftFactory extends BuildCraftMod {
+
+    // Test against this being a dev environment by checking if the version is a real one or not. (It is automatically
+    // changed from "@VERSION@" to a real version string at build time)
+    public static final boolean NEW_REFINERY_TESTING = DefaultProps.VERSION.contains("@");
 
     @Mod.Instance("BuildCraft|Factory")
     public static BuildCraftFactory instance;
@@ -78,6 +84,8 @@ public class BuildCraftFactory extends BuildCraftMod {
     @Mod.EventHandler
     public void fmlPreInit(FMLPreInitializationEvent evt) {
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
+
+        BuildcraftRecipeRegistry.complexRefinery = ComplexRefineryRecipeManager.INSTANCE;
 
         String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
             + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
@@ -119,7 +127,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
         BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
 
-        if (Loader.isModLoaded("BuildCraft|Energy")) {
+        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
             ComplexRefiningManager.preInit();
         }
 
@@ -180,7 +188,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
         BCRegistry.INSTANCE.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
 
-        if (Loader.isModLoaded("BuildCraft|Energy")) {
+        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
             ComplexRefiningManager.init();
         }
 
