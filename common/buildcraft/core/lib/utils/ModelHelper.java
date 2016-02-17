@@ -8,8 +8,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
-import buildcraft.api.core.BCLog;
-
 public enum ModelHelper {
     INSTANCE;
 
@@ -32,7 +30,7 @@ public enum ModelHelper {
         return new ModelResourceLocation(type, "inventory");
     }
 
-    public static Object getBlockResourceLocation(Block block) {
+    public static ModelResourceLocation getBlockResourceLocation(Block block) {
         return new ModelResourceLocation(Utils.getNameForBlock(block).replace("|", ""));
     }
 }

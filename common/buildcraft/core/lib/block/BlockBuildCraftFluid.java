@@ -30,9 +30,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.render.EntityDropParticleFX;
 import buildcraft.core.lib.utils.ICustomStateMapper;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.ModelHelper;
 
-public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper {
+public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper, IModelRegister {
 
     protected float particleRed;
     protected float particleGreen;
@@ -74,7 +75,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         }
 
         double within = 0.05;
-        
+
         entity.motionX = within(entity.motionX, within) + accDir.xCoord;
         entity.motionY = within(entity.motionY, within) + accDir.yCoord;
         entity.motionZ = within(entity.motionZ, within) + accDir.zCoord;
@@ -166,7 +167,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     @Override
     @SideOnly(Side.CLIENT)
     public void setCusomStateMappers() {
-        final ModelResourceLocation loc = new ModelResourceLocation(Utils.getNameForBlock(this).replace("|", ""), "fluid");
+        final ModelResourceLocation loc = ModelHelper.getBlockResourceLocation(this);
         ModelLoader.setCustomStateMapper(this, new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
@@ -178,5 +179,10 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     @Override
     public boolean canDropFromExplosion(Explosion explosion) {
         return false;
+    }
+
+    @Override
+    public void registerModels() {
+
     }
 }

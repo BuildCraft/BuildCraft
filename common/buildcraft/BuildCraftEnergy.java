@@ -8,25 +8,20 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -47,8 +42,8 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.config.ConfigManager.RestartRequirement;
-import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.fluids.FluidDefinition;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.energy.*;
@@ -73,20 +68,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
     public static boolean spawnOilSprings = true;
     public static BiomeGenOilDesert biomeOilDesert;
     public static BiomeGenOilOcean biomeOilOcean;
-    public static Fluid fluidOil;
-    public static Fluid fluidFuel;
-    public static Fluid fluidRedPlasma;
-    public static Block blockOil;
-    public static Block blockFuel;
-    public static Block blockRedPlasma;
-    public static Item bucketOil;
-    public static Item bucketFuel;
-    public static Item bucketRedPlasma;
-    public static Item fuel;
 
-    public static MaterialLiquid materialOil;
-    public static MaterialLiquid materialFuel;
-    public static MaterialLiquid materialRedPlasma;
+    public static FluidDefinition oil;
+    public static FluidDefinition fuel;
+    public static FluidDefinition redPlasma;
 
     public static Achievement engineAchievement1;
     public static Achievement engineAchievement2;
@@ -175,120 +160,56 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         String fluidTextureBase = "buildcraftenergy:blocks/fluids/";
 
-        // Oil and fuel
-        if (!FluidRegistry.isFluidRegistered("oil")) {
-            buildcraftFluidOil = new Fluid("oil", new ResourceLocation(fluidTextureBase + "oil_still"), new ResourceLocation(fluidTextureBase
-                + "oil_flow"));
-            buildcraftFluidOil.setDensity(800).setViscosity(10000);
-            FluidRegistry.registerFluid(buildcraftFluidOil);
-        } else {
-            BCLog.logger.warn("Not using BuildCraft oil - issues might occur!");
+        // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
+        if (!BuildCraftCore.DEVELOPER_MODE || !Loader.isModLoaded("BuildCraft|Factory")) {
+            oil = new FluidDefinition("oil", 800, 10000, true);
+            if (oil.masterBlock != null) {
+                oil.masterBlock.setLightOpacity(8);
+                oil.masterBlock.setFlammability(0);
+                BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
+                        ConfigManager.RestartRequirement.NONE);
+                BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
+                        ConfigManager.RestartRequirement.NONE);
+            }
+
+            fuel = new FluidDefinition("fuel", 1000, 1000, true);
+            if (fuel.masterBlock != null) {
+                fuel.masterBlock.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
+            }
         }
-        fluidOil = FluidRegistry.getFluid("oil");
 
-        if (!FluidRegistry.isFluidRegistered("fuel")) {
-            buildcraftFluidFuel = new Fluid("fuel", new ResourceLocation(fluidTextureBase + "fuel_still"), new ResourceLocation(fluidTextureBase
-                + "fuel_flow"));
-            FluidRegistry.registerFluid(buildcraftFluidFuel);
-        } else {
-            BCLog.logger.warn("Not using BuildCraft fuel - issues might occur!");
-        }
-        fluidFuel = FluidRegistry.getFluid("fuel");
-
-        if (!FluidRegistry.isFluidRegistered("redplasma")) {
-            buildcraftFluidRedPlasma = new Fluid("redplasma", new ResourceLocation(fluidTextureBase + "redplasma_still"), new ResourceLocation(
-                    fluidTextureBase + "redplasma_flow"));
-            buildcraftFluidRedPlasma.setDensity(10000).setViscosity(10000).setLuminosity(30);
-            FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
-        } else {
-            BCLog.logger.warn("Not using BuildCraft red plasma - issues might occur!");
-        }
-        fluidRedPlasma = FluidRegistry.getFluid("redplasma");
-
-        if (fluidOil.getBlock() == null) {
-            materialOil = new MaterialBuildCraftLiquid(MapColor.blackColor);
-            blockOil = new BlockBuildCraftFluid(fluidOil, materialOil).setFlammability(0);
-            blockOil.setUnlocalizedName("blockOil").setLightOpacity(8);
-            BCRegistry.INSTANCE.registerBlock(blockOil, true);
-            fluidOil.setBlock(blockOil);
-
-            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
-                    ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
-                    ConfigManager.RestartRequirement.NONE);
-        } else {
-            blockOil = fluidOil.getBlock();
+        if (BuildCraftCore.DEVELOPER_MODE) {
+            redPlasma = new FluidDefinition("redplasma", 10000, 10000, true);
+            if (redPlasma.masterFluid != null) {
+                redPlasma.masterFluid.setLuminosity(30);
+            }
+            if (redPlasma.masterBlock != null) {
+                redPlasma.masterBlock.setFlammable(false).setParticleColor(0.9F, 0, 0);
+            }
         }
 
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-        if (blockOil != null) {
+        if (oil.masterBlock != null) {
             spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
             EnumSpring.OIL.canGen = spawnOilSprings;
-            EnumSpring.OIL.liquidBlock = blockOil.getDefaultState();
-        }
-
-        if (fluidFuel.getBlock() == null) {
-            materialFuel = new MaterialBuildCraftLiquid(MapColor.yellowColor);
-            blockFuel = new BlockBuildCraftFluid(fluidFuel, materialFuel).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
-            blockFuel.setUnlocalizedName("blockFuel").setLightOpacity(3);
-            BCRegistry.INSTANCE.registerBlock(blockFuel, true);
-            fluidFuel.setBlock(blockFuel);
-        } else {
-            blockFuel = fluidFuel.getBlock();
-        }
-
-        if (fluidRedPlasma.getBlock() == null) {
-            materialRedPlasma = new MaterialBuildCraftLiquid(MapColor.redColor);
-            blockRedPlasma = new BlockBuildCraftFluid(fluidRedPlasma, materialRedPlasma).setFlammable(false).setParticleColor(0.9F, 0, 0);
-            blockRedPlasma.setUnlocalizedName("blockRedPlasma");
-            BCRegistry.INSTANCE.registerBlock(blockRedPlasma, true);
-            fluidRedPlasma.setBlock(blockRedPlasma);
-        } else {
-            blockRedPlasma = fluidRedPlasma.getBlock();
-        }
-
-        // Buckets
-
-        if (blockOil != null) {
-            bucketOil = new ItemBucketBuildcraft(blockOil);
-            bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
-            BCRegistry.INSTANCE.registerItem(bucketOil, true);
-            FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(
-                    bucketOil), new ItemStack(Items.bucket));
-        }
-
-        if (blockFuel != null) {
-            bucketFuel = new ItemBucketBuildcraft(blockFuel);
-            bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
-            BCRegistry.INSTANCE.registerItem(bucketFuel, true);
-            FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(
-                    bucketFuel), new ItemStack(Items.bucket));
-        }
-
-        if (BuildCraftCore.DEVELOPER_MODE) {
-            if (blockRedPlasma != null) {
-                bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
-                bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
-                BCRegistry.INSTANCE.registerItem(bucketRedPlasma, true);
-                FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME),
-                        new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
-            }
+            EnumSpring.OIL.liquidBlock = oil.masterBlock.getDefaultState();
         }
 
         // BucketHandler ensures empty buckets fill with the correct liquid.
-        if (blockOil != null) {
-            BucketHandler.INSTANCE.buckets.put(blockOil.getDefaultState(), bucketOil);
-        }
-        if (blockFuel != null) {
-            BucketHandler.INSTANCE.buckets.put(blockFuel.getDefaultState(), bucketFuel);
-        }
+        // if (blockOil != null) {
+        // BucketHandler.INSTANCE.buckets.put(blockOil.getDefaultState(), bucketOil);
+        // }
+        // if (blockFuel != null) {
+        // BucketHandler.INSTANCE.buckets.put(blockFuel.getDefaultState(), bucketFuel);
+        // }
+
         MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
-        BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(fluidFuel, 1), 120, 1);
+        BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(oil.fluid, 1), new FluidStack(fuel.fluid, 1), 120, 1);
 
-        BuildcraftFuelRegistry.fuel.addFuel(fluidOil, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
-        BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
+        BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
+        BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
 
         BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
         BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);
@@ -301,7 +222,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
         InterModComms.registerHandler(new IMCHandlerEnergy());
 
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {
@@ -312,10 +232,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            if (blockOil instanceof BlockBuildCraftFluid) {
+            if (oil.masterBlock != null) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-                ((BlockBuildCraftFluid) blockOil).setFlammable(canOilBurn).setDense(isOilDense);
+                oil.masterBlock.setFlammable(canOilBurn).setDense(isOilDense);
             }
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {

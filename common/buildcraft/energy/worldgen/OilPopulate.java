@@ -151,7 +151,7 @@ public final class OilPopulate {
 
                         if (distance <= radiusSq) {
                             BlockPos pos = new BlockPos(poolX + wellX, poolY + wellY, poolZ + wellZ);
-                            world.setBlockState(pos, BuildCraftEnergy.blockOil.getDefaultState(), distance == radiusSq ? 3 : 2);
+                            world.setBlockState(pos, BuildCraftEnergy.oil.block.getDefaultState(), distance == radiusSq ? 3 : 2);
                         }
                     }
                 }
@@ -187,7 +187,7 @@ public final class OilPopulate {
                 state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
                 world.setBlockState(well, state, 3);
             }
-            IBlockState oil = BuildCraftEnergy.blockOil.getDefaultState();
+            IBlockState oil = BuildCraftEnergy.oil.block.getDefaultState();
             for (int y = 1; y <= maxHeight - baseY; ++y) {
                 world.setBlockState(well.up(y), oil, 3);
             }
@@ -269,7 +269,7 @@ public final class OilPopulate {
 
     private boolean isOil(World world, int x, int y, int z) {
         Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        return block == BuildCraftEnergy.blockOil;
+        return block == BuildCraftEnergy.oil.block;
     }
 
     @SuppressWarnings("unchecked")
@@ -327,7 +327,7 @@ public final class OilPopulate {
             }
             BlockPos pos = new BlockPos(x, y, z);
             if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.down(), EnumFacing.UP)) {
-                world.setBlockState(pos, BuildCraftEnergy.blockOil.getDefaultState(), update);
+                world.setBlockState(pos, BuildCraftEnergy.oil.block.getDefaultState(), update);
             } else {
                 return;
             }
@@ -340,7 +340,7 @@ public final class OilPopulate {
                 if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
-                world.setBlockState(down, BuildCraftEnergy.blockOil.getDefaultState(), 2);
+                world.setBlockState(down, BuildCraftEnergy.oil.block.getDefaultState(), 2);
             }
         }
     }

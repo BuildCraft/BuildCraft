@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Deprecated
 public final class BucketHandler {
 
     public static BucketHandler INSTANCE = new BucketHandler();
@@ -38,15 +39,15 @@ public final class BucketHandler {
     }
 
     private ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
-        IBlockState state = world.getBlockState(pos.getBlockPos());
+        // IBlockState state = world.getBlockState(pos.getBlockPos());
 
-        Item bucket = buckets.get(state);
+        // Item bucket = buckets.get(state);
 
-        if (bucket != null) {
-            world.setBlockToAir(pos.getBlockPos());
-            return new ItemStack(bucket);
-        } else {
-            return null;
-        }
+        // if (bucket != null) {
+        // world.setBlockToAir(pos.getBlockPos());
+        // return new ItemStack(bucket);
+        // } else {
+        return null;
+        // }
     }
 }

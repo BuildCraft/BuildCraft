@@ -290,6 +290,10 @@ public class BuildCraftFactory extends BuildCraftMod {
         TextureMap terrainTextures = evt.map;
         FactoryProxyClient.pumpTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/pump/tube"));
         ChuteRenderModel.sideTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/chute/side"));
+
+        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+            ComplexRefiningManager.textureStitchPre(evt);
+        }
     }
 
     @SubscribeEvent
@@ -301,6 +305,10 @@ public class BuildCraftFactory extends BuildCraftMod {
             if (str.contains("buildcraftfactory")) {
                 BCLog.logger.info(str);
             }
+        }
+
+        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+            ComplexRefiningManager.registerModels(event);
         }
 
         IBakedModel model = event.modelRegistry.getObject(mrl);

@@ -12,8 +12,24 @@ public interface IFuelManager {
     IFuel addFuel(IFuel fuel);
 
     IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime);
+    // IFuel addFuel(FluidStack fuel, int rfPerBucket, int burnTimePerBucket);
+
+    // IDirtyFuel addDirtyFuel(Fluid fuel, int powerPerCycle, int totalBurningTime, FluidStack residue);
 
     Collection<IFuel> getFuels();
 
     IFuel getFuel(Fluid fluid);
+
+    // TODO!
+    // public interface IFuel {
+    // FluidStack getFuelIngrediant();
+    //
+    // int rfPerBucket();
+    //
+    // int burnTimePerBucket();
+    // }
+    //
+    // public interface IDirtyFuel extends IFuel {
+    // FluidStack getResidue();
+    // }
 }
