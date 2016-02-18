@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
@@ -30,10 +31,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.render.EntityDropParticleFX;
 import buildcraft.core.lib.utils.ICustomStateMapper;
-import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
 
-public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper, IModelRegister {
+public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper {
 
     protected float particleRed;
     protected float particleGreen;
@@ -182,7 +182,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     }
 
     @Override
-    public void registerModels() {
-
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 }

@@ -151,9 +151,6 @@ public final class FluidRenderer {
 
         int[] lists = new int[DISPLAY_STAGES];
 
-        GlStateManager.disableLighting();
-        GlStateManager.disableBlend();
-        GlStateManager.disableCull();
 
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
             lists[s] = GLAllocation.generateDisplayLists(1);
@@ -172,11 +169,6 @@ public final class FluidRenderer {
 
             GL11.glEndList();
         }
-
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.enableCull();
 
         return lists;
     }
@@ -206,10 +198,6 @@ public final class FluidRenderer {
 
         cache.put(fluid, displayLists);
 
-        GlStateManager.disableLighting();
-        GlStateManager.disableBlend();
-        GlStateManager.disableCull();
-
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
             displayList[s] = GLAllocation.generateDisplayLists(1);
             GL11.glNewList(displayList[s], GL11.GL_COMPILE);
@@ -224,11 +212,6 @@ public final class FluidRenderer {
 
             GL11.glEndList();
         }
-
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.enableCull();
 
         displayLists.put(size, displayList);
 

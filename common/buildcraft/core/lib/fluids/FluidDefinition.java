@@ -1,5 +1,7 @@
 package buildcraft.core.lib.fluids;
 
+import java.util.Locale;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -34,16 +36,18 @@ public class FluidDefinition {
     public final MaterialBuildCraftLiquid masterMaterial;
 
     public FluidDefinition(String fluidName, int density, int viscocity, boolean createBucket) {
-        this(fluidName, fluidName, density, viscocity, createBucket, 0xFFFFFFFF);
+        this(fluidName, fluidName, density, viscocity, createBucket, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
     }
 
-    public FluidDefinition(String fluidName, String textureSuffix, int density, int viscocity, boolean createBucket, int colour) {
+    public FluidDefinition(String fluidName, String textureSuffix, int density, int viscocity, boolean createBucket, int colourLight,
+            int colourDark) {
         // Fluid itself
         if (!FluidRegistry.isFluidRegistered(fluidName)) {
-            String fluidTextureBase = "buildcraftenergy:blocks/fluids/" + textureSuffix;
+            String modid = Loader.instance().activeModContainer().getModId();
+            String fluidTextureBase = modid.toLowerCase(Locale.ROOT).replace("|", "") + ":blocks/fluids/" + textureSuffix;
             ResourceLocation still = new ResourceLocation(fluidTextureBase + "_still");
             ResourceLocation flow = new ResourceLocation(fluidTextureBase + "_flow");
-            masterFluid = new BCFluid(fluidName, still, flow).setColour(colour);
+            masterFluid = new BCFluid(fluidName, still, flow).setColour(colourLight, colourDark);
             fluid = masterFluid;
             fluid.setDensity(density).setViscosity(viscocity);
             if (density < 0) fluid.setGaseous(true);
@@ -72,19 +76,21 @@ public class FluidDefinition {
         }
 
         // Bucket
+        FluidStack bucketFluid = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
         if (createBucket) {
             bucket = new ItemBucketBuildcraft(block);
             bucket.setUnlocalizedName("bucket_" + fluidName);
             bucket.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_bucket_" + fluidName);
             BCRegistry.INSTANCE.registerItem(bucket, true);
-            FluidStack stack = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
-            FluidContainerRegistry.registerFluidContainer(stack, new ItemStack(bucket), new ItemStack(Items.bucket));
+            FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new ItemStack(Items.bucket));
         } else {
-            bucket = null;
+            ItemStack stack = FluidContainerRegistry.fillFluidContainer(bucketFluid, new ItemStack(Items.bucket));
+            if (stack == null) bucket = null;
+            else bucket = stack.getItem();
         }
     }
 
-    public FluidStack createFluidStack(int amount) {
+    public final FluidStack createFluidStack(int amount) {
         return new FluidStack(fluid, amount);
     }
 
@@ -98,7 +104,8 @@ public class FluidDefinition {
     }
 
     public static class BCFluid extends Fluid {
-        private int colour = 0xFFFFFFFF;
+        private int colour = 0xFFFFFFFF, light = 0xFF_FF_FF_FF, dark = 0xFF_FF_FF_FF;
+        private int heat;
 
         public BCFluid(String fluidName, ResourceLocation still, ResourceLocation flowing) {
             super(fluidName, still, flowing);
@@ -109,9 +116,33 @@ public class FluidDefinition {
             return colour;
         }
 
+        public int getLightColour() {
+            return light;
+        }
+
+        public int getDarkColour() {
+            return dark;
+        }
+
         public BCFluid setColour(int colour) {
             this.colour = colour;
             return this;
+        }
+
+        public BCFluid setColour(int light, int dark) {
+            this.light = light;
+            this.dark = dark;
+            this.colour = 0xFF_FF_FF_FF;
+            return this;
+        }
+
+        public BCFluid setHeat(int heat) {
+            this.heat = heat;
+            return this;
+        }
+
+        public int getHeatValue() {
+            return heat;
         }
     }
 }

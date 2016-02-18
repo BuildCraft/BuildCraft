@@ -4,7 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
+import java.util.Locale;
 import java.util.Set;
+
+import com.google.common.base.Throwables;
 
 import org.apache.logging.log4j.Level;
 
@@ -124,15 +127,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
             BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
-        double fuelOilMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F,
-                "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME).getDouble();
-        double fuelFuelMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F,
-                "adjust energy value of Fuel in Combustion Engines", RestartRequirement.GAME).getDouble();
+        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines",
+                RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines",
+                RestartRequirement.GAME);
 
-        int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30,
-                "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME).getInt();
-        int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60,
-                "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME).getInt();
+        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30,
+                "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60,
+                "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME);
 
         BuildCraftCore.mainConfiguration.save();
 
@@ -157,8 +160,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
             }
             biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
         }
-
-        String fluidTextureBase = "buildcraftenergy:blocks/fluids/";
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
         if (!BuildCraftCore.DEVELOPER_MODE || !Loader.isModLoaded("BuildCraft|Factory")) {
@@ -188,12 +189,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
             }
         }
 
-        reloadConfig(ConfigManager.RestartRequirement.GAME);
-
-        if (oil.masterBlock != null) {
+        if (oil != null) {
             spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
             EnumSpring.OIL.canGen = spawnOilSprings;
-            EnumSpring.OIL.liquidBlock = oil.masterBlock.getDefaultState();
+            EnumSpring.OIL.liquidBlock = oil.block.getDefaultState();
         }
 
         // BucketHandler ensures empty buckets fill with the correct liquid.
@@ -204,16 +203,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         // BucketHandler.INSTANCE.buckets.put(blockFuel.getDefaultState(), bucketFuel);
         // }
 
-        MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
-
-        BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(oil.fluid, 1), new FluidStack(fuel.fluid, 1), 120, 1);
-
-        BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
-        BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
-
-        BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
-        BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);
-        BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.packed_ice), StackKey.fluid(FluidRegistry.WATER), 2.0f);
+        // MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
         BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, 1, "tile.engineStone");
         BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, 2, "tile.engineIron");
@@ -232,7 +222,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            if (oil.masterBlock != null) {
+            if (oil.masterBlock != null && !BuildCraftCore.DEVELOPER_MODE) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
                 oil.masterBlock.setFlammable(canOilBurn).setDense(isOilDense);
@@ -297,6 +287,27 @@ public class BuildCraftEnergy extends BuildCraftMod {
             loadRecipes();
         }
 
+        // If, for whatever reason, they haven't been registed in pre-init then get the fluids now.
+        if (oil == null) oil = new FluidDefinition("oil", 800, 10000, true);
+        if (fuel == null) fuel = new FluidDefinition("fuel", 1000, 1000, true);
+
+        reloadConfig(ConfigManager.RestartRequirement.GAME);
+
+        BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(oil.fluid, 1), new FluidStack(fuel.fluid, 1), 120, 1);
+
+        double fuelOilMultiplier = BuildCraftCore.mainConfigManager.get("general", "fuel.oil.combustion").getDouble();
+        double fuelFuelMultiplier = BuildCraftCore.mainConfigManager.get("general", "fuel.fuel.combustion").getDouble();
+
+        int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.oil.combustion.energyOutput").getInt();
+        int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.fuel.combustion.energyOutput").getInt();
+
+        BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
+        BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
+
+        BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
+        BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);
+        BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.packed_ice), StackKey.fluid(FluidRegistry.WATER), 2.0f);
+
         EnergyProxy.proxy.registerBlockRenderers();
         EnergyProxy.proxy.registerTileEntities();
 
@@ -346,14 +357,60 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
-        for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-            if (mapping.name.equals("BuildCraft|Energy:engineBlock")) {
-                if (mapping.type == GameRegistry.Type.BLOCK) {
-                    mapping.remap(BuildCraftCore.engineBlock);
-                } else if (mapping.type == GameRegistry.Type.ITEM) {
-                    mapping.remap(Item.getItemFromBlock(BuildCraftCore.engineBlock));
+        Throwable error = null;
+        BCLog.logger.info("Energy|Remap " + System.identityHashCode(event));
+        for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
+            try {
+                final String name = mapping.name;
+                final String domain = mapping.resourceLocation.getResourceDomain().toLowerCase(Locale.ROOT);
+                final String path = mapping.resourceLocation.getResourcePath().toLowerCase(Locale.ROOT);
+                BCLog.logger.info("        - " + name + " " + mapping.type + " [" + domain + "][" + path + "]");
+
+                if (name.equals("BuildCraft|Energy:engineBlock")) {
+                    if (mapping.type == GameRegistry.Type.BLOCK) {
+                        mapping.remap(BuildCraftCore.engineBlock);
+                    } else if (mapping.type == GameRegistry.Type.ITEM) {
+                        mapping.remap(Item.getItemFromBlock(BuildCraftCore.engineBlock));
+                    }
                 }
+
+                if (domain.equals("buildcraft|energy")) {
+                    if (path.contains("_")) continue;
+                    if (path.endsWith("oil")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(oil.block);
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            if (path.contains("bucket")) mapping.remap(oil.bucket);
+                            else if (path.contains("block")) mapping.ignore();
+                        }
+                        BCLog.logger.info("            " + path + " matched oil");
+                    } else if (path.endsWith("fuel")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(fuel.block);
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            if (path.contains("bucket")) mapping.remap(fuel.bucket);
+                            else if (path.contains("block")) mapping.ignore();
+                        }
+                        BCLog.logger.info("            " + path + " matched fuel");
+                    } else if (path.endsWith("redplasma")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(redPlasma.block);
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            if (path.contains("bucket")) mapping.remap(redPlasma.bucket);
+                            else if (path.contains("block")) mapping.ignore();
+                        }
+                        BCLog.logger.info("            " + path + " matched redplasma");
+                    } else {
+                        BCLog.logger.info("            " + path + " matched nothing");
+                    }
+                } else {
+                    BCLog.logger.info("Unknown domain " + domain);
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+                error = t;
             }
         }
+        if (error != null) throw Throwables.propagate(error);
     }
 }

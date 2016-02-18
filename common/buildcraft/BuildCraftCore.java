@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -110,7 +111,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
 
-    public static final boolean DEVELOPER_MODE = false;
+    public static final boolean DEVELOPER_MODE = DefaultProps.VERSION.contains("@");
 
     public enum RenderMode {
         Full,
@@ -629,52 +630,18 @@ public class BuildCraftCore extends BuildCraftMod {
     // 1.7.10 migration
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
+        BCLog.logger.info("Core|Remap " + System.identityHashCode(event));
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
             String name = mapping.name;
+            BCLog.logger.info("        - " + name);
 
             // Special cases where we broke something
             if (name.equals("buildcraft|builders:machineBlock")) {
-                name = "buildcraft|builders:quarryBlock";
-            }
-
-            // If we did nothing to it, ignore it
-            if (name.equals(mapping.name)) {
-                BCLog.logger.info("Remap " + mapping.name + " not used");
-                continue;
-            }
-
-            // After changing the name, remap it to something else
-            Throwable error = null;
-            switch (mapping.type) {
-                case BLOCK: {
-                    try {
-                        mapping.remap(Block.getBlockFromName(name));
-                        continue;
-                    } catch (Throwable t) {
-                        error = t;
-                    }
-                    continue;
+                if (mapping.type == Type.BLOCK) {
+                    mapping.remap(Block.getBlockFromName("buildcraft|builders:quarryBlock"));
+                } else {
+                    mapping.remap(Item.getByNameOrId("buildcraft|builders:quarryBlock"));
                 }
-                case ITEM: {
-                    try {
-                        mapping.remap(Item.getByNameOrId(name));
-                        continue;
-                    } catch (Throwable t) {
-                        error = t;
-                    }
-
-                }
-            }
-
-            if (error != null) {
-                BCLog.logger.error("Could not remap a block correctly- did a programmer do something wrong "
-                    + "or is there actually an issue with the mapping?");
-                BCLog.logger.error("Old name = " + mapping.name);
-                BCLog.logger.error("New name = " + name);
-                BCLog.logger.error("ID = " + mapping.id);
-                BCLog.logger.error("Type = " + mapping.type);
-                BCLog.logger.error("Error:", error);
-                mapping.fail();
             }
         }
     }
