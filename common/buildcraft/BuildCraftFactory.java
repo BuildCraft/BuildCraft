@@ -45,6 +45,9 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.factory.*;
+import buildcraft.factory.blocks.BlockDistiller;
+import buildcraft.factory.blocks.BlockEnergyHeater;
+import buildcraft.factory.blocks.BlockHeatExchange;
 import buildcraft.factory.refining.ComplexRefineryRecipeManager;
 import buildcraft.factory.refining.ComplexRefiningManager;
 import buildcraft.factory.render.ChuteRenderModel;
@@ -52,6 +55,9 @@ import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
+import buildcraft.factory.tile.TileDistiller;
+import buildcraft.factory.tile.TileEnergyHeater;
+import buildcraft.factory.tile.TileHeatExchange;
 
 @Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
         dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
@@ -72,12 +78,17 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static BlockTank tankBlock;
     public static BlockRefinery refineryBlock;
     public static BlockChute chuteBlock;
+    // Complex refinining
+    public static BlockDistiller distillerBlock;
+    public static BlockEnergyHeater energyHeaterBlock;
+    public static BlockHeatExchange heatExchangeBlock;
 
     public static Achievement aLotOfCraftingAchievement;
     public static Achievement straightDownAchievement;
     public static Achievement refineAndRedefineAchievement;
 
     public static int miningDepth = 256;
+    public static int rfPerHeatPerMB = 2;
     public static boolean pumpsNeedRealPower = false;
     public static PumpDimensionList pumpDimensionList;
 
@@ -128,6 +139,15 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
 
         if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+            energyHeaterBlock = (BlockEnergyHeater) CompatHooks.INSTANCE.getBlock(BlockEnergyHeater.class);
+            BCRegistry.INSTANCE.registerBlock(energyHeaterBlock.setUnlocalizedName("blockEnergyHeater"), false);
+
+            heatExchangeBlock = (BlockHeatExchange) CompatHooks.INSTANCE.getBlock(BlockHeatExchange.class);
+            BCRegistry.INSTANCE.registerBlock(heatExchangeBlock.setUnlocalizedName("blockHeatExchange"), false);
+
+            distillerBlock = (BlockDistiller) CompatHooks.INSTANCE.getBlock(BlockDistiller.class);
+            BCRegistry.INSTANCE.registerBlock(distillerBlock.setUnlocalizedName("blockDistiller"), false);
+
             ComplexRefiningManager.preInit();
         }
 
@@ -187,6 +207,9 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileTank.class, "buildcraft.factory.Tank", "net.minecraft.src.buildcraft.factory.TileTank");
         BCRegistry.INSTANCE.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
         BCRegistry.INSTANCE.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
+        BCRegistry.INSTANCE.registerTileEntity(TileEnergyHeater.class, "buildcraft.factory.TileEnergyHeater");
+        BCRegistry.INSTANCE.registerTileEntity(TileHeatExchange.class, "buildcraft.factory.TileHeatExchange");
+        BCRegistry.INSTANCE.registerTileEntity(TileDistiller.class, "buildcraft.factory.TileDistiller");
 
         if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
             ComplexRefiningManager.init();

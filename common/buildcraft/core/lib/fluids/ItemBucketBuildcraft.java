@@ -4,15 +4,21 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.fluids;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
 
+// FIXME: Remove in BC 8! (or 9)
+@Deprecated
 public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
     public ItemBucketBuildcraft(Block block) {
         this(block, BCCreativeTab.get("main"));
@@ -21,11 +27,18 @@ public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
     public ItemBucketBuildcraft(Block block, CreativeTabs creativeTab) {
         super(block);
         setContainerItem(Items.bucket);
-        setCreativeTab(creativeTab);
+        setCreativeTab(null);
     }
 
     @Override
     public void registerModels() {
         ModelHelper.registerItemModel(this, 0, "forge:dynbucket", "");
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        tooltip.add("Deprecated");
+        tooltip.add("Place and pick up for");
+        tooltip.add("the new version");
     }
 }

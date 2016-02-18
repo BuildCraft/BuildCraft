@@ -47,7 +47,6 @@ import buildcraft.robotics.ai.*;
 import buildcraft.robotics.boards.*;
 import buildcraft.robotics.item.ItemRobotGoggles;
 import buildcraft.robotics.map.MapManager;
-import buildcraft.robotics.render.RobotItemModel;
 import buildcraft.robotics.render.RobotStationModel;
 import buildcraft.robotics.statements.*;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
@@ -371,11 +370,11 @@ public class BuildCraftRobotics extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelBakeEvent event) {
-        ModelResourceLocation mrl = new ModelResourceLocation("buildcraftrobotics:robot", "inventory");
-        event.modelRegistry.putObject(mrl, RobotItemModel.create());
+        // ModelResourceLocation mrl = new ModelResourceLocation("buildcraftrobotics:robot", "inventory");
+        // event.modelRegistry.putObject(mrl, /*RobotItemModel.create()*/Minecraf);
 
         if (robotStationItem != null) {
-            mrl = ModelHelper.getItemResourceLocation(robotStationItem, "");
+            ModelResourceLocation mrl = ModelHelper.getItemResourceLocation(robotStationItem, "");
             event.modelRegistry.putObject(mrl, RobotStationModel.INSTANCE.createItemModel());
         }
     }

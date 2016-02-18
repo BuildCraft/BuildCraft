@@ -20,7 +20,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -96,9 +95,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
     public static ITriggerExternal triggerCoolantBelow25 = new TriggerCoolantBelowThreshold(0.25F);
     public static ITriggerExternal triggerCoolantBelow50 = new TriggerCoolantBelowThreshold(0.50F);
 
-    private static Fluid buildcraftFluidOil;
-    private static Fluid buildcraftFluidFuel;
-    private static Fluid buildcraftFluidRedPlasma;
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -180,7 +179,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         if (BuildCraftCore.DEVELOPER_MODE) {
-            redPlasma = new FluidDefinition("redplasma", 10000, 10000, true);
+            redPlasma = new FluidDefinition("redplasma", 10000, 10000, false);
             if (redPlasma.masterFluid != null) {
                 redPlasma.masterFluid.setLuminosity(30);
             }

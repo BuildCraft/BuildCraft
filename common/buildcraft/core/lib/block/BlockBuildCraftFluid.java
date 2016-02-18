@@ -55,6 +55,11 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         }
     }
 
+    @Override
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        return true;
+    }
+
     private double within(double current, double maximum) {
         return Math.max(-maximum, Math.min(current, maximum));
     }

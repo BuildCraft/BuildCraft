@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -38,6 +39,10 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         }
         packetMap = ImmutableMap.copyOf(map);
         TickHandlerCore.addPacketHandler(this);
+    }
+
+    public int packetQueueSize() {
+        return packetMap.values().stream().mapToInt(v -> v.values().stream().mapToInt(v2 -> v2.size()).sum()).sum();
     }
 
     public void tick(World world) {

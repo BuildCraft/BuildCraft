@@ -192,10 +192,12 @@ public class BuildCraftCore extends BuildCraftMod {
 
     public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
 
+    private PacketHandler handler;
+
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
         BCLog.logger.info("Starting BuildCraft " + DefaultProps.VERSION);
-        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2015");
+        BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
 
         new BCCreativeTab("main");
@@ -348,7 +350,7 @@ public class BuildCraftCore extends BuildCraftMod {
         ChannelHandler coreChannelHandler = new ChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
-        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, handler = new PacketHandler());
 
         achievementManager = new AchievementManager("BuildCraft");
         MinecraftForge.EVENT_BUS.register(achievementManager);
@@ -670,6 +672,9 @@ public class BuildCraftCore extends BuildCraftMod {
         if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo || !mc.thePlayer.capabilities.isCreativeMode) {
             return;
         }
+        event.right.add("");
+        event.right.add("BC PQS|" + handler.packetQueueSize());
+
         MovingObjectPosition object = mc.objectMouseOver;
         if (object == null) {
             return;

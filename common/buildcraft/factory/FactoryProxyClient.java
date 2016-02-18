@@ -7,6 +7,7 @@ package buildcraft.factory;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.World;
 
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.BuildCraftFactory;
@@ -28,6 +29,8 @@ public class FactoryProxyClient extends FactoryProxy {
         if (BuildCraftFactory.refineryBlock != null) {
             ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
         }
+
+        OBJLoader.instance.addDomain("buildcraftfactory");
     }
 
     @Override

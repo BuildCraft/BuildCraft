@@ -11,20 +11,19 @@ import java.util.List;
 import com.google.common.collect.ForwardingList;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import io.netty.buffer.ByteBuf;
 
-public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T> {
+public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, INBTSerializable<NBTTagCompound> {
 
-    private List<T> tanks = new ArrayList<T>();
+    private List<T> tanks = new ArrayList<>();
 
     public TankManager() {}
 
@@ -95,12 +94,30 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
         return info;
     }
 
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (Tank t : tanks) {
+            nbt.setTag(t.getTankName(), t.serializeNBT());
+        }
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        for (Tank t : tanks) {
+            t.deserializeNBT(nbt.getCompoundTag(t.getTankName()));
+        }
+    }
+
+    @Deprecated
     public void writeToNBT(NBTTagCompound data) {
         for (Tank tank : tanks) {
             tank.writeToNBT(data);
         }
     }
 
+    @Deprecated
     public void readFromNBT(NBTTagCompound data) {
         for (Tank tank : tanks) {
             tank.readFromNBT(data);
@@ -108,22 +125,24 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     }
 
     public void writeData(ByteBuf data) {
+        PacketBuffer packet = new PacketBuffer(data);
         for (Tank tank : tanks) {
             FluidStack fluidStack = tank.getFluid();
             if (fluidStack != null && fluidStack.getFluid() != null) {
-                data.writeShort(fluidStack.getFluid().getID());
-                data.writeInt(fluidStack.amount);
-                data.writeInt(fluidStack.getFluid().getColor(fluidStack));
+                packet.writeString(fluidStack.getFluid().getName());
+                packet.writeInt(fluidStack.amount);
+                packet.writeInt(fluidStack.getFluid().getColor(fluidStack));
             } else {
-                data.writeShort(-1);
+                packet.writeString("~");
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
     public void readData(ByteBuf data) {
+        PacketBuffer packet = new PacketBuffer(data);
         for (Tank tank : tanks) {
-            int fluidId = data.readShort();
+            String fluidId = packet.readStringFromBuffer(40);
             if (FluidRegistry.getFluid(fluidId) != null) {
                 tank.setFluid(new FluidStack(FluidRegistry.getFluid(fluidId), data.readInt()));
                 tank.colorRenderCache = data.readInt();

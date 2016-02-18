@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBuf;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggable {
     public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
-    public final TankManager<Tank> tankManager = new TankManager<Tank>(tank);
+    public final TankManager<Tank> tankManager = new TankManager<>(tank);
     public boolean hasUpdate = false;
     public boolean hasNetworkUpdate = false;
     public SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);

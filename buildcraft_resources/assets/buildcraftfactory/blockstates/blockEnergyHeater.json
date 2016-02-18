@@ -1,0 +1,40 @@
+{
+    "forge_marker":1,
+    "defaults": {
+        "textures":{
+            "#mainTex":"buildcraftfactory:blocks/energy_heater/all"
+        }
+    },
+    "variants": {
+        "facing": {
+			"east":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":270   },
+			"north": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":180  },
+			"west":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":90 },
+			"south": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":0 }
+		},
+		"connected_up": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "x":270 },
+		    "false": {}
+		},
+		"connected_down": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "x":90 },
+		    "false": {}
+		},
+		"connected_east": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "y":90 },
+		    "false": {}
+		},
+		"connected_west": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "y":270 },
+		    "false": {}
+		},
+		"connected_north": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "y":0 },
+		    "false": {}
+		},
+		"connected_south": {
+		    "true": { "submodel":"buildcraftfactory:energy_heater/energy.obj", "y":180 },
+		    "false": {}
+		}
+    }
+}

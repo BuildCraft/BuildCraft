@@ -9,13 +9,14 @@ import java.util.Locale;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 
-public class Tank extends FluidTank {
+public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> {
     public int colorRenderCache = 0xFFFFFF;
 
     protected final ToolTip toolTip = new ToolTip() {
@@ -31,6 +32,10 @@ public class Tank extends FluidTank {
         super(capacity);
         this.name = name;
         this.tile = tile;
+    }
+
+    public String getTankName() {
+        return name;
     }
 
     public boolean isEmpty() {
@@ -85,5 +90,17 @@ public class Tank extends FluidTank {
             amount = getFluid().amount;
         }
         toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+
     }
 }
