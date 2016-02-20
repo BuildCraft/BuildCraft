@@ -397,13 +397,6 @@ uploadArchives {
                 }
             }
         }
-        else if (false) 
-        {
-            repositories.mavenDeployer {
-            	println(new File("../maven-repo-test/"))
-				repository(url: "file:./../maven-repo-test/")
-			}
-        }
         else
         {
             // otherwise publishing to the local repo in ~/.m2 is fine...
