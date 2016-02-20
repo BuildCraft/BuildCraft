@@ -63,10 +63,6 @@ import buildcraft.factory.tile.TileHeatExchange;
         dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
 public class BuildCraftFactory extends BuildCraftMod {
 
-    // Test against this being a dev environment by checking if the version is a real one or not. (It is automatically
-    // changed from "@VERSION@" to a real version string at build time)
-    public static final boolean NEW_REFINERY_TESTING = DefaultProps.VERSION.contains("@");
-
     @Mod.Instance("BuildCraft|Factory")
     public static BuildCraftFactory instance;
 
@@ -138,7 +134,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
         BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             energyHeaterBlock = (BlockEnergyHeater) CompatHooks.INSTANCE.getBlock(BlockEnergyHeater.class);
             BCRegistry.INSTANCE.registerBlock(energyHeaterBlock.setUnlocalizedName("blockEnergyHeater"), false);
 
@@ -211,7 +207,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileHeatExchange.class, "buildcraft.factory.TileHeatExchange");
         BCRegistry.INSTANCE.registerTileEntity(TileDistiller.class, "buildcraft.factory.TileDistiller");
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.init();
         }
 
@@ -314,7 +310,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         FactoryProxyClient.pumpTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/pump/tube"));
         ChuteRenderModel.sideTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/chute/side"));
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.textureStitchPre(evt);
         }
     }
@@ -330,7 +326,7 @@ public class BuildCraftFactory extends BuildCraftMod {
             }
         }
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && NEW_REFINERY_TESTING) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.registerModels(event);
         }
 
