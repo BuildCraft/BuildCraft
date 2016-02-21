@@ -219,8 +219,12 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     @Override
     public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
         if (from.getAxis() != Axis.Y) {
+            if (outCooled.isEmpty()) return null;
             if (outCooled.getFluid().equals(resource)) return outCooled.drain(resource.amount, doDrain);
-        } else if (outHeated.getFluid().equals(resource)) return outHeated.drain(resource.amount, doDrain);
+        } else {
+            if (outHeated.isEmpty()) return null;
+            if (outHeated.getFluid().equals(resource)) return outHeated.drain(resource.amount, doDrain);
+        }
         return null;
     }
 
