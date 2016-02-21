@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
@@ -74,7 +73,7 @@ public final class FluidRenderer {
                 if (map.getTextureExtry(flow) != null) {
                     sprite = map.getTextureExtry(flow);
                 } else {
-                    sprite = map.registerSprite(fluid.getStill());
+                    sprite = map.registerSprite(fluid.getFlowing());
                 }
                 // toUse = sprite;
                 textureMap.get(FluidType.FLOWING).put(fluid, sprite);
@@ -150,7 +149,6 @@ public final class FluidRenderer {
         }
 
         int[] lists = new int[DISPLAY_STAGES];
-
 
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
             lists[s] = GLAllocation.generateDisplayLists(1);
