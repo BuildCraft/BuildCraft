@@ -2,6 +2,7 @@ package buildcraft.factory.blocks;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -10,7 +11,9 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.tile.TileEnergyHeater;
 
@@ -68,5 +71,25 @@ public class BlockEnergyHeater extends BlockBuildCraft {
             state = state.withProperty(CONNECTED_MAP.get(face), connected);
         }
         return state;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ)) {
+            return true;
+        }
+
+        TileEntity tile = world.getTileEntity(pos);
+
+        if (!(tile instanceof TileEnergyHeater)) {
+            return false;
+        }
+
+        if (!world.isRemote) {
+            player.openGui(BuildCraftFactory.instance, GuiIds.ENERGY_HEATER, world, pos.getX(), pos.getY(), pos.getZ());
+        }
+
+        return true;
     }
 }

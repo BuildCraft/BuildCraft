@@ -3,6 +3,9 @@ package buildcraft.factory.tile;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -11,6 +14,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -27,11 +32,12 @@ import buildcraft.core.lib.fluids.TankManager;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable {
+public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank in, out;
     private final TankManager<Tank> manager;
     private IHeatableRecipe currentRecipe;
     private int sleep = 0, lateSleep = 0;
+    private long lastCraftTick = -1;
 
     public TileEnergyHeater() {
         this.setBattery(new RFBattery(1000, 20, 0));
@@ -54,15 +60,40 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void readData(ByteBuf stream) {
+        getBattery().setEnergy(stream.readInt());
         manager.readData(stream);
         sleep = stream.readInt();
+        lastCraftTick = stream.readLong();
     }
 
     @Override
     public void writeData(ByteBuf stream) {
+        stream.writeInt(getBattery().getEnergyStored());
         manager.writeData(stream);
         stream.writeInt(sleep);
+        stream.writeLong(lastCraftTick);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getInputFluid() {
+        return in.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getOutputFluid() {
+        return out.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasCraftedRecently() {
+        return lastCraftTick + 30 > worldObj.getTotalWorldTime();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasEnergy() {
+        return getBattery().getEnergyStored() > 0;
     }
 
     @Override
@@ -129,6 +160,7 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     }
 
     private void heat(boolean care) {
+        lastCraftTick = worldObj.getTotalWorldTime();
         int heatDiff = currentRecipe.heatTo() - currentRecipe.heatFrom();
         int required = heatDiff * BuildCraftFactory.rfPerHeatPerMB * currentRecipe.ticks() * Math.min(in.getFluidAmount(), currentRecipe.in().amount);
         if (getBattery().useEnergy(required, required, false) == required) {
@@ -151,12 +183,24 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     // IFluidHandler
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state == null || state.getBlock() != BuildCraftFactory.energyHeaterBlock) return 0;
+        EnumFacing curFace = state.getValue(BlockBuildCraftBase.FACING_PROP);
+        EnumFacing exportDir = curFace.rotateYCCW();
+        if (exportDir.getOpposite() != from) return 0;
+
         if (BuildcraftRecipeRegistry.complexRefinery.getHeatableRegistry().getRecipeForInput(resource) == null) return 0;
         return in.fill(resource, doFill);
     }
 
     @Override
     public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state == null || state.getBlock() != BuildCraftFactory.energyHeaterBlock) return null;
+        EnumFacing curFace = state.getValue(BlockBuildCraftBase.FACING_PROP);
+        EnumFacing exportDir = curFace.rotateYCCW();
+        if (exportDir != from) return null;
+
         if (!canDrain(from, resource.getFluid())) return null;
         if (out.getFluid().equals(resource)) return out.drain(resource.amount, doDrain);
         return null;
@@ -164,16 +208,34 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
 
     @Override
     public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state == null || state.getBlock() != BuildCraftFactory.energyHeaterBlock) return null;
+        EnumFacing curFace = state.getValue(BlockBuildCraftBase.FACING_PROP);
+        EnumFacing exportDir = curFace.rotateYCCW();
+        if (exportDir != from) return null;
+
         return out.drain(maxDrain, doDrain);
     }
 
     @Override
     public boolean canFill(EnumFacing from, Fluid fluid) {
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state == null || state.getBlock() != BuildCraftFactory.energyHeaterBlock) return false;
+        EnumFacing curFace = state.getValue(BlockBuildCraftBase.FACING_PROP);
+        EnumFacing exportDir = curFace.rotateYCCW();
+        if (exportDir.getOpposite() != from) return false;
+
         return in.fill(new FluidStack(fluid, 1), false) == 1;
     }
 
     @Override
     public boolean canDrain(EnumFacing from, Fluid fluid) {
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state == null || state.getBlock() != BuildCraftFactory.energyHeaterBlock) return false;
+        EnumFacing curFace = state.getValue(BlockBuildCraftBase.FACING_PROP);
+        EnumFacing exportDir = curFace.rotateYCCW();
+        if (exportDir != from) return false;
+
         return out.drain(1, false) != null;
     }
 
@@ -207,11 +269,60 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
         Tank[] tanks = { in, out };
         left.add("");
         left.add("Sleep = " + sleep);
+        left.add("Power = " + getBattery().getEnergyStored() + "RF");
         left.add("Input");
         left.add(" " + tanks[0].getFluidAmount() + "/" + tanks[0].getCapacity() + "mB");
         left.add(" " + (tanks[0].getFluid() == null ? "empty" : tanks[0].getFluidType().getLocalizedName(tanks[0].getFluid())));
         left.add("Output");
         left.add(" " + tanks[1].getFluidAmount() + "/" + tanks[1].getCapacity() + "mB");
         left.add(" " + (tanks[1].getFluid() == null ? "empty" : tanks[1].getFluidType().getLocalizedName(tanks[1].getFluid())));
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return 2;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (isItemValidForSlot(index, stack)) {
+
+        }
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return true;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return false;
     }
 }

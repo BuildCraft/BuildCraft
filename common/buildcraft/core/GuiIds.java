@@ -20,6 +20,7 @@ public final class GuiIds {
 
     public static final int ENGINE_IRON = 20;
     public static final int ENGINE_STONE = 21;
+    public static final int ENERGY_HEATER = 22;
 
     public static final int AUTO_CRAFTING_TABLE = 30;
     public static final int REFINERY = 31;

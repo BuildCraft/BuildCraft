@@ -95,12 +95,12 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-
+        writeToNBT(nbt);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-
+        readFromNBT(nbt);
     }
 }
