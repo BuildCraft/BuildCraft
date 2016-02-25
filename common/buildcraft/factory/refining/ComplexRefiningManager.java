@@ -173,17 +173,17 @@ public class ComplexRefiningManager {
         addDistilationRecipe(fuelMixedHeavy[2], _light_dense, fuelLight[2], _light, fuelDense[2], _dense, 3);
         addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 3);
 
-        final int powerBase = 240;
+        final int powerBase = 60;
         final int timeBase = 25000;
 
-        BuildcraftFuelRegistry.fuel.addFuel(fuelGaseous[0].fluid, 4 * powerBase / _gas, timeBase / 4);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelLight[0].fluid, 2 * powerBase / _light, timeBase / 2);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelDense[0].fluid, powerBase / _dense, timeBase);
+        BuildcraftFuelRegistry.fuel.addFuel(fuelGaseous[0].fluid, 4 * powerBase, timeBase / _gas / 4);
+        BuildcraftFuelRegistry.fuel.addFuel(fuelLight[0].fluid, 2 * powerBase, timeBase / _light / 2);
+        BuildcraftFuelRegistry.fuel.addFuel(fuelDense[0].fluid, powerBase, timeBase / _dense);
 
-        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedLight[0].fluid, powerBase / _gas_light, timeBase);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedHeavy[0].fluid, powerBase / _light_dense, timeBase);
+        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedLight[0].fluid, powerBase, timeBase / _gas_light);
+        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedHeavy[0].fluid, powerBase, timeBase / _light_dense);
 
-        BuildcraftFuelRegistry.fuel.addFuel(oilDistilled[0].fluid, powerBase / _gas_light_dense, timeBase);
+        BuildcraftFuelRegistry.fuel.addFuel(oilDistilled[0].fluid, powerBase, timeBase / _gas_light_dense);
     }
 
     private static void addBiDirectionalHeatExchange(FluidDefinition[] coldToHot, int amount, int ticks) {

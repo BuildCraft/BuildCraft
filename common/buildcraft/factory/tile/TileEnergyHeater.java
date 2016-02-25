@@ -93,7 +93,11 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
 
     @SideOnly(Side.CLIENT)
     public boolean hasEnergy() {
-        return getBattery().getEnergyStored() > 0;
+        checkRecipe();
+        if (currentRecipe == null) return getBattery().getEnergyStored() > 10;
+        int heatDiff = currentRecipe.heatTo() - currentRecipe.heatFrom();
+        int required = heatDiff * BuildCraftFactory.rfPerHeatPerMB * currentRecipe.ticks() * currentRecipe.in().amount;
+        return getBattery().getEnergyStored() >= required;
     }
 
     @Override
@@ -160,7 +164,6 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     }
 
     private void heat(boolean care) {
-        lastCraftTick = worldObj.getTotalWorldTime();
         int heatDiff = currentRecipe.heatTo() - currentRecipe.heatFrom();
         int required = heatDiff * BuildCraftFactory.rfPerHeatPerMB * currentRecipe.ticks() * Math.min(in.getFluidAmount(), currentRecipe.in().amount);
         if (getBattery().useEnergy(required, required, false) == required) {
@@ -172,10 +175,12 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
                     FluidStack altOut = currentRecipe.out().copy();
                     altOut.amount = stack.amount;
                     out.fill(altOut, true);
+                    lastCraftTick = worldObj.getTotalWorldTime();
                 }
             } else {
                 out.fill(currentRecipe.out(), true);
                 sleep = currentRecipe.ticks();
+                lastCraftTick = worldObj.getTotalWorldTime();
             }
         }
     }
