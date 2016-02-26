@@ -31,7 +31,7 @@ public class GuiHeatExchange extends GuiAdvancedInterface {
         boolean crafted = heatExchange.hasCraftedRecently();
         if (crafted) craftTicks = 20;
         if ((heatExchange.getInputCoolable() != null && heatExchange.getInputCoolable().amount > 0) || crafted) inCoolableTicks = 20;
-        if ((heatExchange.getInputHeatable() != null && heatExchange.getInputHeatable().amount > 0) || crafted) inCoolableTicks = 20;
+        if ((heatExchange.getInputHeatable() != null && heatExchange.getInputHeatable().amount > 0) || crafted) inHeatableTicks = 20;
 
         if ((heatExchange.getOutputCooled() != null && heatExchange.getOutputCooled().amount > 0) || crafted) outCooledTicks = 20;
         if ((heatExchange.getOutputHeated() != null && heatExchange.getOutputHeated().amount > 0) || crafted) outHeatedTicks = 20;
