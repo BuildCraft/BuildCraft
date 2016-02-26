@@ -165,7 +165,7 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
         if (currentRecipe == null) {
             currentRecipe = BuildcraftRecipeRegistry.complexRefinery.getDistilationRegistry().getRecipeForInput(in.getFluid());
             if (currentRecipe != null) {
-                sleep = currentRecipe.ticks();
+                resetSleep();
             }
             return;
         }
@@ -182,9 +182,17 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
         } else {
             outGas.fill(currentRecipe.outGas(), true);
             outLiquid.fill(currentRecipe.outLiquid(), true);
-            sleep = currentRecipe.ticks();
+            resetSleep();
             lastCraftTick = worldObj.getTotalWorldTime();
         }
+    }
+
+    private void resetSleep() {
+        double multiplier = in.getCapacity() - in.getFluidAmount();
+        multiplier /= in.getCapacity();
+        multiplier *= 3;
+        if (multiplier < 1) multiplier = 1;
+        sleep = currentRecipe.ticks() * (int) multiplier;
     }
 
     // IFluidHandler

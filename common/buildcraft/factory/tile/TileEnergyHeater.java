@@ -154,7 +154,7 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
         if (currentRecipe == null) {
             currentRecipe = BuildcraftRecipeRegistry.complexRefinery.getHeatableRegistry().getRecipeForInput(in.getFluid());
             if (currentRecipe != null) {
-                sleep = currentRecipe.ticks();
+                resetSleep();
             }
             return;
         }
@@ -179,10 +179,18 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
                 }
             } else {
                 out.fill(currentRecipe.out(), true);
-                sleep = currentRecipe.ticks();
+                resetSleep();
                 lastCraftTick = worldObj.getTotalWorldTime();
             }
         }
+    }
+
+    private void resetSleep() {
+        double multiplier = in.getCapacity() - in.getFluidAmount();
+        multiplier /= in.getCapacity();
+        multiplier *= 3;
+        if (multiplier < 1) multiplier = 1;
+        sleep = currentRecipe.ticks() * (int) multiplier;
     }
 
     // IFluidHandler

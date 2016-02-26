@@ -5,6 +5,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,6 +17,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -30,7 +35,7 @@ import buildcraft.core.lib.fluids.TankManager;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable {
+public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank inCoolable, outCooled;
     private final Tank inHeatable, outHeated;
 
@@ -38,6 +43,7 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     private IHeatableRecipe heatableRecipe;
     private ICoolableRecipe coolableRecipe;
     private int sleep = 0, lateSleep = 0;
+    private long lastCraftTick = -1;
 
     public TileHeatExchange() {
         inCoolable = new Tank("inCoolable", 500, this);
@@ -61,15 +67,43 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void readData(ByteBuf stream) {
         manager.readData(stream);
         sleep = stream.readInt();
+        lastCraftTick = stream.readLong();
     }
 
     @Override
     public void writeData(ByteBuf stream) {
         manager.writeData(stream);
         stream.writeInt(sleep);
+        stream.writeLong(lastCraftTick);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getInputCoolable() {
+        return inCoolable.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getInputHeatable() {
+        return inHeatable.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getOutputCooled() {
+        return outCooled.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getOutputHeated() {
+        return outHeated.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasCraftedRecently() {
+        return lastCraftTick + 30 > worldObj.getTotalWorldTime();
     }
 
     @Override
@@ -189,6 +223,7 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
         outCooled.fill(coolableRecipe.out(), true);
         outHeated.fill(heatableRecipe.out(), true);
         sleep = Math.max(coolableRecipe.ticks(), heatableRecipe.ticks());
+        lastCraftTick = worldObj.getTotalWorldTime();
     }
 
     // IFluidHandler
@@ -288,5 +323,53 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
             left.add(" " + t.getFluidAmount() + "/" + t.getCapacity() + "mB");
             left.add(" " + (t.getFluid() == null ? "empty" : t.getFluidType().getLocalizedName(t.getFluid())));
         }
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return 4;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (isItemValidForSlot(index, stack)) {
+
+        }
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return true;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return false;
     }
 }

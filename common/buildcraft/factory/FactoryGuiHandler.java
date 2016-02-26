@@ -15,6 +15,7 @@ import buildcraft.core.GuiIds;
 import buildcraft.factory.gui.*;
 import buildcraft.factory.tile.TileDistiller;
 import buildcraft.factory.tile.TileEnergyHeater;
+import buildcraft.factory.tile.TileHeatExchange;
 
 public class FactoryGuiHandler implements IGuiHandler {
 
@@ -61,6 +62,12 @@ public class FactoryGuiHandler implements IGuiHandler {
             case GuiIds.DISTILLER: {
                 if (tile instanceof TileDistiller) {
                     return new GuiDistiller(player, (TileDistiller) tile);
+                }
+                return null;
+            }
+            case GuiIds.HEAT_EXCHANGE: {
+                if (tile instanceof TileHeatExchange) {
+                    return new GuiHeatExchange(player, (TileHeatExchange) tile);
                 }
                 return null;
             }
@@ -112,6 +119,12 @@ public class FactoryGuiHandler implements IGuiHandler {
             case GuiIds.DISTILLER: {
                 if (tile instanceof TileDistiller) {
                     return new ContainerDistiller(player, (TileDistiller) tile);
+                }
+                return null;
+            }
+            case GuiIds.HEAT_EXCHANGE: {
+                if (tile instanceof TileHeatExchange) {
+                    return new ContainerHeatExchange(player, (TileHeatExchange) tile);
                 }
                 return null;
             }
