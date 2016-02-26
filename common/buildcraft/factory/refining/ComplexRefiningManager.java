@@ -74,16 +74,16 @@ public class ComplexRefiningManager {
         oilHeavy = defineFluids("oilHeavy", 4000, 4000, 3, 2, colours[index][0], colours[index++][1]);
         oilDense = defineFluids("oilDense", 5000, 5000, 3, 4, colours[index][0], colours[index++][1]);
         oilDistilled = defineFluids("oilDistilled", 3000, 3500, 3, 2, colours[index][0], colours[index++][1]);
-        fuelDense = new FluidDefinition[] {
+        fuelDense = defineFluids("fuelDense", 2000, 5000, 3, 2, colours[index][0], colours[index++][1]);
+        fuelMixedHeavy = defineFluids("fuelMixedHeavy", 1200, 700, 3, 2, colours[index][0], colours[index++][1]);
+        fuelLight = new FluidDefinition[] {
             // @formatter:off
-            defineFluid("fuel",       2000, 5000, 0, 2, colours[index][0], colours[index][1]),
-            defineFluid("fuelDense", 2000, 5000, 1, 2, colours[index][0], colours[index][1]),
-            defineFluid("fuelDense", 2000, 5000, 2, 2, colours[index][0], colours[index][1]),
-            defineFluid("fuelDense", 2000, 5000, 3, 2,colours[index][0], colours[index++][1]),
+            defineFluid("fuel",      1000, 900, 0, 1, colours[index][0], colours[index][1]),
+            defineFluid("fuelLight", 1000, 900, 1, 1, colours[index][0], colours[index][1]),
+            defineFluid("fuelLight", 1000, 900, 2, 1, colours[index][0], colours[index][1]),
+            defineFluid("fuelLight", 1000, 900, 3, 1, colours[index][0], colours[index++][1]),
             // @formatter:on
         };
-        fuelMixedHeavy = defineFluids("fuelMixedHeavy", 1200, 700, 3, 2, colours[index][0], colours[index++][1]);
-        fuelLight = defineFluids("fuelLight", 1000, 900, 3, 1, colours[index][0], colours[index++][1]);
         fuelMixedLight = defineFluids("fuelMixedLight", 800, 700, 3, 1, colours[index][0], colours[index++][1]);
         fuelGaseous = defineFluids("fuelGaseous", 300, 600, 3, 0, colours[index][0], colours[index++][1]);
 
@@ -174,7 +174,8 @@ public class ComplexRefiningManager {
         addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 3);
 
         final int powerBase = 60;
-        final int timeBase = 25000;
+        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
+        final int timeBase = 128_000;
 
         BuildcraftFuelRegistry.fuel.addFuel(fuelGaseous[0].fluid, 4 * powerBase, timeBase / _gas / 4);
         BuildcraftFuelRegistry.fuel.addFuel(fuelLight[0].fluid, 2 * powerBase, timeBase / _light / 2);

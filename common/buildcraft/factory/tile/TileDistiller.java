@@ -5,6 +5,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,6 +17,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -28,11 +33,12 @@ import buildcraft.core.lib.fluids.TankManager;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable {
+public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank in, outGas, outLiquid;
     private final TankManager<Tank> manager;
     private IDistilationRecipe currentRecipe;
     private int sleep = 0, lateSleep = 0;
+    private long lastCraftTick = -1;
 
     public TileDistiller() {
         in = new Tank("in", 750, this);
@@ -55,15 +61,38 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void readData(ByteBuf stream) {
         manager.readData(stream);
         sleep = stream.readInt();
+        lastCraftTick = stream.readLong();
     }
 
     @Override
     public void writeData(ByteBuf stream) {
         manager.writeData(stream);
         stream.writeInt(sleep);
+        stream.writeLong(lastCraftTick);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getInputFluid() {
+        return in.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getOutputFluidGas() {
+        return outGas.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public FluidStack getOutputFluidLiquid() {
+        return outLiquid.getFluid();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasCraftedRecently() {
+        return lastCraftTick + 30 > worldObj.getTotalWorldTime();
     }
 
     @Override
@@ -154,6 +183,7 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
             outGas.fill(currentRecipe.outGas(), true);
             outLiquid.fill(currentRecipe.outLiquid(), true);
             sleep = currentRecipe.ticks();
+            lastCraftTick = worldObj.getTotalWorldTime();
         }
     }
 
@@ -246,5 +276,53 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
             left.add(" " + t.getFluidAmount() + "/" + t.getCapacity() + "mB");
             left.add(" " + (t.getFluid() == null ? "empty" : t.getFluidType().getLocalizedName(t.getFluid())));
         }
+    }
+
+    @Override
+    public int getSizeInventory() {
+        return 3;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        return null;
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (isItemValidForSlot(index, stack)) {
+
+        }
+    }
+
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer player) {
+        return true;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return false;
     }
 }

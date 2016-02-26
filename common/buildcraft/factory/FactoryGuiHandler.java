@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.core.GuiIds;
 import buildcraft.factory.gui.*;
+import buildcraft.factory.tile.TileDistiller;
 import buildcraft.factory.tile.TileEnergyHeater;
 
 public class FactoryGuiHandler implements IGuiHandler {
@@ -54,6 +55,12 @@ public class FactoryGuiHandler implements IGuiHandler {
             case GuiIds.ENERGY_HEATER: {
                 if (tile instanceof TileEnergyHeater) {
                     return new GuiEnergyHeater(player, (TileEnergyHeater) tile);
+                }
+                return null;
+            }
+            case GuiIds.DISTILLER: {
+                if (tile instanceof TileDistiller) {
+                    return new GuiDistiller(player, (TileDistiller) tile);
                 }
                 return null;
             }
@@ -99,6 +106,12 @@ public class FactoryGuiHandler implements IGuiHandler {
             case GuiIds.ENERGY_HEATER: {
                 if (tile instanceof TileEnergyHeater) {
                     return new ContainerEnergyHeater(player, (TileEnergyHeater) tile);
+                }
+                return null;
+            }
+            case GuiIds.DISTILLER: {
+                if (tile instanceof TileDistiller) {
+                    return new ContainerDistiller(player, (TileDistiller) tile);
                 }
                 return null;
             }
