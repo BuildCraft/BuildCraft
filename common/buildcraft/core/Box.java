@@ -193,8 +193,8 @@ public class Box implements IBox, ISerializable {
     public void writeToNBT(NBTTagCompound nbt) {
         nbt.setByte("kind", (byte) kind.ordinal());
 
-        nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        if (min != null) nbt.setTag("min", NBTUtils.writeBlockPos(min));
+        if (max != null) nbt.setTag("max", NBTUtils.writeBlockPos(max));
     }
 
     @Override

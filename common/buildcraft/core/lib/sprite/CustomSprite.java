@@ -28,8 +28,8 @@ public class CustomSprite extends TextureAtlasSprite {
         return true;
     }
 
-    private static boolean isPowerOfTwo(int p_151235_0_) {
-        return p_151235_0_ != 0 && (p_151235_0_ & p_151235_0_ - 1) == 0;
+    private static boolean isPowerOfTwo(int i) {
+        return i != 0 && (i & i - 1) == 0;
     }
 
     @Override
