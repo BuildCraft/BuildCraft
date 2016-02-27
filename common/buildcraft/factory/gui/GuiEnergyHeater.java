@@ -28,19 +28,20 @@ public class GuiEnergyHeater extends GuiAdvancedInterface {
         craftTicks--;
         boolean crafted = heater.hasCraftedRecently();
         if (crafted) craftTicks = 20;
-        if ((heater.getInputFluid() != null && heater.getInputFluid().amount > 0) || crafted) inTicks = 20;
-        if ((heater.getOutputFluid() != null && heater.getOutputFluid().amount > 0) || crafted) outTicks = 20;
+        if ((heater.getInputTank().getFluid() != null && heater.getInputTank().getFluidAmount() > 0) || crafted) inTicks = 20;
+        if ((heater.getOutputTank().getFluid() != null && heater.getOutputTank().getFluidAmount() > 0) || crafted) outTicks = 20;
         if (heater.hasEnergy()) energyTicks = 20;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         mc.renderEngine.bindTexture(TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         if (heater != null) {
 
-            drawFluid(heater.getInputFluid(), guiLeft + 44, guiTop + 12, 16, 38, 1000);
-            drawFluid(heater.getOutputFluid(), guiLeft + 116, guiTop + 12, 16, 38, 1000);
+            // drawFluid(heater.getInputTank(), guiLeft + 44, guiTop + 12, 16, 38, 1000);
+            // drawFluid(heater.getOutputTank(), guiLeft + 116, guiTop + 12, 16, 38, 1000);
 
             mc.renderEngine.bindTexture(TEXTURE);
 

@@ -77,13 +77,13 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getInputFluid() {
-        return in.getFluid();
+    public Tank getInputTank() {
+        return in;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getOutputFluid() {
-        return out.getFluid();
+    public Tank getOutputTank() {
+        return out;
     }
 
     @SideOnly(Side.CLIENT)

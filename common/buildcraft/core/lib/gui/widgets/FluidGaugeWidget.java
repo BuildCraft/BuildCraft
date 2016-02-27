@@ -4,22 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
-import buildcraft.core.lib.render.FluidRenderer;
 
 public class FluidGaugeWidget extends Widget {
-
     public final Tank tank;
 
-    public FluidGaugeWidget(Tank tank, int x, int y, int u, int v, int w, int h) {
-        super(x, y, u, v, w, h);
+    public FluidGaugeWidget(Tank tank, int x, int y, int w, int h) {
+        super(x, y, 0, 0, w, h);
         this.tank = tank;
     }
 
@@ -29,6 +26,7 @@ public class FluidGaugeWidget extends Widget {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
         if (tank == null) {
             return;
@@ -38,26 +36,8 @@ public class FluidGaugeWidget extends Widget {
             return;
         }
 
-        TextureAtlasSprite liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
-
-        if (liquidIcon == null) {
-            return;
-        }
-
-        float scale = Math.min(fluidStack.amount, tank.getCapacity()) / (float) tank.getCapacity();
-
-        gui.bindTexture(TextureMap.locationBlocksTexture);
-
-        for (int col = 0; col < w / 16; col++) {
-            for (int row = 0; row <= h / 16; row++) {
-                gui.drawTexturedModalRect(guiX + x + col * 16, guiY + y + row * 16 - 1, liquidIcon, 16, 16);
-            }
-        }
+        gui.drawFluid(fluidStack, guiX + x, guiY + y, w, h, tank.getCapacity());
 
         gui.bindTexture(gui.texture);
-
-        gui.drawTexturedModalRect(guiX + x, guiY + y - 1, x, y - 1, w, h - (int) Math.floor(h * scale) + 1);
-        gui.drawTexturedModalRect(guiX + x, guiY + y, u, v, w, h);
     }
-
 }

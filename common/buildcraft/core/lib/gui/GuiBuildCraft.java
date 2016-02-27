@@ -162,7 +162,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         tess.draw();
     }
 
-    private void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
+    private static void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
         wr.pos(x, y, z).tex(u, v).endVertex();;
     }
 
