@@ -11,9 +11,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+
 import buildcraft.core.lib.EntityResizableCuboid;
 
-public class EntityMechanicalArm extends Entity {
+import io.netty.buffer.ByteBuf;
+
+public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpawnData {
 
     protected TileQuarry parent;
 
@@ -85,6 +89,33 @@ public class EntityMechanicalArm extends Entity {
         updatePosition();
     }
 
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
+        nbttagcompound.setDouble("xRoot", root.xCoord);
+        nbttagcompound.setDouble("yRoot", root.yCoord);
+        nbttagcompound.setDouble("zRoot", root.zCoord);
+        nbttagcompound.setDouble("armSizeX", armSizeX);
+        nbttagcompound.setDouble("armSizeZ", armSizeZ);
+    }
+
+    @Override
+    public void readSpawnData(ByteBuf buffer) {
+        root = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+        armSizeX = buffer.readDouble();
+        armSizeZ = buffer.readDouble();
+        setArmSize(armSizeX, armSizeZ);
+        updatePosition();
+    }
+
+    @Override
+    public void writeSpawnData(ByteBuf buffer) {
+        buffer.writeDouble(root.xCoord);
+        buffer.writeDouble(root.yCoord);
+        buffer.writeDouble(root.zCoord);
+        buffer.writeDouble(armSizeX);
+        buffer.writeDouble(armSizeZ);
+    }
+
     private void findAndJoinQuarry() {
         TileEntity te = worldObj.getTileEntity(new BlockPos((int) posX, (int) posY, (int) posZ));
         if (te instanceof TileQuarry) {
@@ -96,19 +127,10 @@ public class EntityMechanicalArm extends Entity {
     }
 
     @Override
-    protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setDouble("xRoot", root.xCoord);
-        nbttagcompound.setDouble("yRoot", root.yCoord);
-        nbttagcompound.setDouble("zRoot", root.zCoord);
-        nbttagcompound.setDouble("armSizeX", armSizeX);
-        nbttagcompound.setDouble("armSizeZ", armSizeZ);
-    }
-
-    @Override
     public void onUpdate() {
         super.onUpdate();
         updatePosition();
-        if (parent == null) {
+        if (parent == null || parent.arm != this) {
             findAndJoinQuarry();
         }
 
@@ -123,6 +145,7 @@ public class EntityMechanicalArm extends Entity {
     }
 
     public void updatePosition() {
+        if (root == null || head == null) return;
         // HEAD MAY BE NULL!
         this.xArm.setPosition(root.xCoord, root.yCoord, head.zCoord + 0.25);
         this.yArm.ySize = root.yCoord - head.yCoord - 1;

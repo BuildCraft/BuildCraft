@@ -55,6 +55,8 @@ public final class FluidRenderer {
 
     @SubscribeEvent
     public void textureStitchPost(TextureStitchEvent.Post event) {
+        flowingRenderCache.clear();
+        stillRenderCache.clear();
         TextureMap map = event.map;
         missingIcon = map.getMissingSprite();
 

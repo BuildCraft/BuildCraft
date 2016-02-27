@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -53,6 +54,7 @@ import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.network.EntityIds;
 
 @Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
         dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -281,7 +283,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
         }
 
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(this);
 
         StatementManager.registerActionProvider(new BuildersActionProvider());
     }
@@ -291,6 +292,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
 
         MinecraftForge.EVENT_BUS.register(new BuilderTooltipHandler());
+        EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
         // Standard blocks
         ISchematicRegistry schemes = BuilderAPI.schematicRegistry;

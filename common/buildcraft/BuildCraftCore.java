@@ -340,7 +340,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
         OreDictionary.registerOre("chestWood", Blocks.chest);
         OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
-
     }
 
     @Mod.EventHandler
