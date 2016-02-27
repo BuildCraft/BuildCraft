@@ -161,7 +161,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
-        if (!BuildCraftCore.DEVELOPER_MODE || !Loader.isModLoaded("BuildCraft|Factory")) {
+        if (!Loader.isModLoaded("BuildCraft|Factory")) {
             oil = new FluidDefinition("oil", 800, 10000, true);
             if (oil.masterBlock != null) {
                 oil.masterBlock.setLightOpacity(8);
@@ -300,8 +300,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
         int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.oil.combustion.energyOutput").getInt();
         int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.fuel.combustion.energyOutput").getInt();
 
-        BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
-        BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
+        if (!Loader.isModLoaded("BuildCraft|Factory")) {
+            BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
+            BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
+        }
 
         BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
         BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 1.5f);

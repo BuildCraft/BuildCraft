@@ -389,7 +389,6 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         energyStage = EnumEnergyStage.values()[flags & 0x07];
         isPumping = (flags & 0x08) != 0;
         orientation = EnumFacing.values()[stream.readByte()];
-        worldObj.markBlockForUpdate(getPos());
     }
 
     @Override

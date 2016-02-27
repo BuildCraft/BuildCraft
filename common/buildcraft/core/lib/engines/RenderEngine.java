@@ -25,7 +25,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid.EnumShadeArgument;
@@ -76,7 +75,7 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
             if (engineState.getBlock() instanceof BlockEngineBase) {
                 engineState = engineState.getBlock().getActualState(engineState, world, pos);
 
-                if (engineState.getValue(BuildCraftProperties.MOVING)) {
+                if (/* engineState.getValue(BuildCraftProperties.MOVING) */true) {
                     Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
                     // int light = world.getCombinedLight(pos, 0);
