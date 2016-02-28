@@ -28,8 +28,8 @@ public class ContainerEnergyHeater extends BuildCraftContainer {
             addSlotToContainer(new Slot(player.inventory, x, 8 + x * 18, 120));
         }
 
-        addWidget(new FluidGaugeWidget(heater.getInputTank(), 44, 12, 16, 38));
-        addWidget(new FluidGaugeWidget(heater.getOutputTank(), 116, 12, 16, 38));
+        addWidget(new FluidGaugeWidget(heater.getInputTank(), 44, 12, 16, 38).withOverlay(0, 144));
+        addWidget(new FluidGaugeWidget(heater.getOutputTank(), 116, 12, 16, 38).withOverlay(0, 144));
     }
 
     @Override

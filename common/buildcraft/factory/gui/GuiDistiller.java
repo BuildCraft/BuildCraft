@@ -29,20 +29,17 @@ public class GuiDistiller extends GuiAdvancedInterface {
         craftTicks--;
         boolean crafted = distiller.hasCraftedRecently();
         if (crafted) craftTicks = 20;
-        if ((distiller.getInputFluid() != null && distiller.getInputFluid().amount > 0) || crafted) inTicks = 20;
-        if ((distiller.getOutputFluidGas() != null && distiller.getOutputFluidGas().amount > 0) || crafted) outGasTicks = 20;
-        if ((distiller.getOutputFluidLiquid() != null && distiller.getOutputFluidLiquid().amount > 0) || crafted) outLiquidTicks = 20;
+        if ((distiller.getInputTank().getFluidAmount() > 0) || crafted) inTicks = 20;
+        if ((distiller.getOutputTankGas().getFluidAmount() > 0) || crafted) outGasTicks = 20;
+        if ((distiller.getOutputTankLiquid().getFluidAmount() > 0) || crafted) outLiquidTicks = 20;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
         mc.renderEngine.bindTexture(TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         if (distiller != null) {
-
-            drawFluid(distiller.getInputFluid(), guiLeft + 44, guiTop + 23, 16, 38, 750);
-            drawFluid(distiller.getOutputFluidGas(), guiLeft + 98, guiTop + 10, 34, 17, 750);
-            drawFluid(distiller.getOutputFluidLiquid(), guiLeft + 98, guiTop + 54, 34, 17, 750);
 
             mc.renderEngine.bindTexture(TEXTURE);
 

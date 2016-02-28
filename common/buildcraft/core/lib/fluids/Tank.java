@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
@@ -84,7 +85,7 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         toolTip.clear();
         int amount = 0;
         if (getFluid() != null && getFluid().amount > 0) {
-            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()));
+            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()), EnumChatFormatting.WHITE);
             fluidName.setSpacing(2);
             toolTip.add(fluidName);
             amount = getFluid().amount;

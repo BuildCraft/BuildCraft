@@ -35,14 +35,10 @@ public class GuiEnergyHeater extends GuiAdvancedInterface {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         mc.renderEngine.bindTexture(TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         if (heater != null) {
-
-            // drawFluid(heater.getInputTank(), guiLeft + 44, guiTop + 12, 16, 38, 1000);
-            // drawFluid(heater.getOutputTank(), guiLeft + 116, guiTop + 12, 16, 38, 1000);
-
             mc.renderEngine.bindTexture(TEXTURE);
 
             int state = 0;

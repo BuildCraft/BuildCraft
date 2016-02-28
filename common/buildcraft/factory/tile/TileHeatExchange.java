@@ -82,23 +82,23 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getInputCoolable() {
-        return inCoolable.getFluid();
+    public Tank getInputCoolable() {
+        return inCoolable;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getInputHeatable() {
-        return inHeatable.getFluid();
+    public Tank getInputHeatable() {
+        return inHeatable;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getOutputCooled() {
-        return outCooled.getFluid();
+    public Tank getOutputCooled() {
+        return outCooled;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getOutputHeated() {
-        return outHeated.getFluid();
+    public Tank getOutputHeated() {
+        return outHeated;
     }
 
     @SideOnly(Side.CLIENT)

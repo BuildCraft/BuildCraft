@@ -14,10 +14,19 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 public class FluidGaugeWidget extends Widget {
     public final Tank tank;
+    private boolean overlay;
+    private int overlayX, overlayY;
 
     public FluidGaugeWidget(Tank tank, int x, int y, int w, int h) {
         super(x, y, 0, 0, w, h);
         this.tank = tank;
+    }
+
+    public FluidGaugeWidget withOverlay(int x, int y) {
+        overlay = true;
+        overlayX = x;
+        overlayY = y;
+        return this;
     }
 
     @Override
@@ -32,12 +41,14 @@ public class FluidGaugeWidget extends Widget {
             return;
         }
         FluidStack fluidStack = tank.getFluid();
-        if (fluidStack == null || fluidStack.amount <= 0 || fluidStack.getFluid() == null) {
-            return;
+        if (fluidStack != null && fluidStack.amount > 0) {
+            gui.drawFluid(fluidStack, guiX + x, guiY + y, w, h, tank.getCapacity());
         }
 
-        gui.drawFluid(fluidStack, guiX + x, guiY + y, w, h, tank.getCapacity());
-
         gui.bindTexture(gui.texture);
+
+        if (overlay) {
+            gui.drawTexturedModalRect(guiX + x, guiY + y, overlayX, overlayY, w, h);
+        }
     }
 }

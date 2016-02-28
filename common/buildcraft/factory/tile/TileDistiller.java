@@ -76,18 +76,18 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getInputFluid() {
-        return in.getFluid();
+    public Tank getInputTank() {
+        return in;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getOutputFluidGas() {
-        return outGas.getFluid();
+    public Tank getOutputTankGas() {
+        return outGas;
     }
 
     @SideOnly(Side.CLIENT)
-    public FluidStack getOutputFluidLiquid() {
-        return outLiquid.getFluid();
+    public Tank getOutputTankLiquid() {
+        return outLiquid;
     }
 
     @SideOnly(Side.CLIENT)

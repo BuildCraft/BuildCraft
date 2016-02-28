@@ -30,23 +30,23 @@ public class GuiHeatExchange extends GuiAdvancedInterface {
         craftTicks--;
         boolean crafted = heatExchange.hasCraftedRecently();
         if (crafted) craftTicks = 20;
-        if ((heatExchange.getInputCoolable() != null && heatExchange.getInputCoolable().amount > 0) || crafted) inCoolableTicks = 20;
-        if ((heatExchange.getInputHeatable() != null && heatExchange.getInputHeatable().amount > 0) || crafted) inHeatableTicks = 20;
+        if (heatExchange.getInputCoolable().getFluidAmount() > 0 || crafted) inCoolableTicks = 20;
+        if (heatExchange.getInputHeatable().getFluidAmount() > 0 || crafted) inHeatableTicks = 20;
 
-        if ((heatExchange.getOutputCooled() != null && heatExchange.getOutputCooled().amount > 0) || crafted) outCooledTicks = 20;
-        if ((heatExchange.getOutputHeated() != null && heatExchange.getOutputHeated().amount > 0) || crafted) outHeatedTicks = 20;
+        if (heatExchange.getOutputCooled().getFluidAmount() > 0 || crafted) outCooledTicks = 20;
+        if (heatExchange.getOutputHeated().getFluidAmount() > 0 || crafted) outHeatedTicks = 20;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
         mc.renderEngine.bindTexture(TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         if (heatExchange != null) {
-
-            drawFluid(heatExchange.getInputCoolable(), guiLeft + 44, guiTop + 12, 16, 38, 500);
-            drawFluid(heatExchange.getInputHeatable(), guiLeft + 44, guiTop + 64, 34, 17, 500);
-            drawFluid(heatExchange.getOutputCooled(), guiLeft + 116, guiTop + 43, 16, 38, 500);
-            drawFluid(heatExchange.getOutputHeated(), guiLeft + 98, guiTop + 12, 34, 17, 500);
+            // drawFluid(heatExchange.getInputCoolable(), guiLeft + 44, guiTop + 12, 16, 38, 500);
+            // drawFluid(heatExchange.getInputHeatable(), guiLeft + 44, guiTop + 64, 34, 17, 500);
+            // drawFluid(heatExchange.getOutputCooled(), guiLeft + 116, guiTop + 43, 16, 38, 500);
+            // drawFluid(heatExchange.getOutputHeated(), guiLeft + 98, guiTop + 12, 34, 17, 500);
 
             mc.renderEngine.bindTexture(TEXTURE);
 

@@ -5,6 +5,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotValidated;
+import buildcraft.core.lib.gui.widgets.FluidGaugeWidget;
 import buildcraft.factory.tile.TileDistiller;
 
 public class ContainerDistiller extends BuildCraftContainer {
@@ -27,6 +28,10 @@ public class ContainerDistiller extends BuildCraftContainer {
         for (int x = 0; x < 9; x++) {
             addSlotToContainer(new Slot(player.inventory, x, 8 + x * 18, 137));
         }
+
+        addWidget(new FluidGaugeWidget(distiller.getInputTank(), 44, 23, 16, 38).withOverlay(0, 161));
+        addWidget(new FluidGaugeWidget(distiller.getOutputTankGas(), 98, 10, 34, 17).withOverlay(17, 161));
+        addWidget(new FluidGaugeWidget(distiller.getOutputTankLiquid(), 98, 54, 34, 17).withOverlay(17, 161));
     }
 
     @Override

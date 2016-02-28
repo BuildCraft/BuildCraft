@@ -14,9 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -182,11 +180,11 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngine) {
+        if (from != null && container.getNeighborTile(from) instanceof IRedstoneEngine) {
             allowExtraction = true;
             return maxReceive;
         }
-        if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
+        if (from != null && powerSources[from.ordinal()]) {
             return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : Math.min(maxReceive, battery.getMaxEnergyStored()
                 - battery.getEnergyStored()), simulate);
         } else {
