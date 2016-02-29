@@ -19,6 +19,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.silicon.TileProgrammingTable;
 
@@ -33,6 +34,7 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
         int textColour = 0x000000;
 
         public LaserTableLedger() {
+            super(GuiProgrammingTable.this);
             maxHeight = 94;
             overlayColor = 0xd46c1f;
         }

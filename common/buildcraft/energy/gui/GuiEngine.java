@@ -14,6 +14,7 @@ import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class GuiEngine extends GuiBuildCraft {
@@ -28,6 +29,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
         int textColour = 0x000000;
 
         public EngineLedger(TileEngineBase engine) {
+            super(GuiEngine.this);
             this.engine = engine;
             maxHeight = 94;
             overlayColor = 0xd46c1f;

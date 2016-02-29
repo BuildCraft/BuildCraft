@@ -4,11 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.gui;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.lwjgl.opengl.GL11;
 
@@ -24,6 +20,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 
@@ -38,6 +35,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
         int textColour = 0x000000;
 
         public LaserTableLedger() {
+            super(GuiAssemblyTable.this);
             maxHeight = 94;
             overlayColor = 0xd46c1f;
         }

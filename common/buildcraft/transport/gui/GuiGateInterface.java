@@ -307,7 +307,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
         actionRows = 1;
         for (IStatement statement : container.getActionCollection(false)) {
-            int pX = this.guiLeft + this.getXSize() + sX;
+            int pX = this.guiLeft + this.xSize() + sX;
             int pY = this.guiTop + sY;
             drawStatement(pX, pY, statement);
             if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
@@ -510,7 +510,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         collect = container.getActionCollection(false);
 
         for (int i = 0; i < collect.size(); i++) {
-            int pX = this.guiLeft + this.getXSize() + sX;
+            int pX = this.guiLeft + this.xSize() + sX;
             int pY = this.guiTop + sY;
             if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
                 trigger = false;

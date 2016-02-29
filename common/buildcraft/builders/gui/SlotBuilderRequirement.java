@@ -22,8 +22,8 @@ public class SlotBuilderRequirement extends AdvancedSlot {
 
     @Override
     public void drawStack(ItemStack item) {
-        int cornerX = (gui.width - gui.getXSize()) / 2;
-        int cornerY = (gui.height - gui.getYSize()) / 2;
+        int cornerX = (gui.width - gui.xSize()) / 2;
+        int cornerY = (gui.height - gui.ySize()) / 2;
 
         GlStateManager.color(1, 1, 1, 1);
 

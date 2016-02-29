@@ -13,14 +13,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
-    public ArrayList<AdvancedSlot> slots = new ArrayList<AdvancedSlot>();
+    public ArrayList<AdvancedSlot> slots = new ArrayList<>();
 
     public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
         super(container, inventory, texture);
@@ -110,14 +109,6 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
     public RenderItem getItemRenderer() {
         return itemRender;
-    }
-
-    public int getXSize() {
-        return xSize;
-    }
-
-    public int getYSize() {
-        return ySize;
     }
 
     @Override

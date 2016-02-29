@@ -14,6 +14,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.silicon.TileLaserTableBase;
 
@@ -26,6 +27,7 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
         int textColour = 0x000000;
 
         public LaserTableLedger() {
+            super(GuiLaserTable.this);
             maxHeight = 94;
             overlayColor = 0xd46c1f;
         }

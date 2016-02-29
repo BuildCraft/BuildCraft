@@ -42,8 +42,8 @@ public abstract class AdvancedSlot {
             ItemStack stack = getItemStack();
 
             if (stack != null) {
-                int cornerX = (gui.width - gui.getXSize()) / 2;
-                int cornerY = (gui.height - gui.getYSize()) / 2;
+                int cornerX = (gui.width - gui.xSize()) / 2;
+                int cornerY = (gui.height - gui.ySize()) / 2;
 
                 int xS = x - cornerX;
                 int yS = y - cornerY;
@@ -108,8 +108,8 @@ public abstract class AdvancedSlot {
     }
 
     public void drawStack(ItemStack item) {
-        int cornerX = (gui.width - gui.getXSize()) / 2;
-        int cornerY = (gui.height - gui.getYSize()) / 2;
+        int cornerX = (gui.width - gui.xSize()) / 2;
+        int cornerY = (gui.height - gui.ySize()) / 2;
 
         RenderHelper.enableGUIStandardItemLighting();
 

@@ -43,11 +43,6 @@ public class GuiHeatExchange extends GuiAdvancedInterface {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         super.drawGuiContainerBackgroundLayer(f, mouseX, mouseY);
         if (heatExchange != null) {
-            // drawFluid(heatExchange.getInputCoolable(), guiLeft + 44, guiTop + 12, 16, 38, 500);
-            // drawFluid(heatExchange.getInputHeatable(), guiLeft + 44, guiTop + 64, 34, 17, 500);
-            // drawFluid(heatExchange.getOutputCooled(), guiLeft + 116, guiTop + 43, 16, 38, 500);
-            // drawFluid(heatExchange.getOutputHeated(), guiLeft + 98, guiTop + 12, 34, 17, 500);
-
             mc.renderEngine.bindTexture(TEXTURE);
 
             if (craftTicks > 0) {
