@@ -178,16 +178,19 @@ fillerpattern.parameter.filled=Filled
 fluid.oil=Oil
 fluid.fuel=Fuel
 fluid.oilDistilled=Distilled Oil
+fluid.oilHeavy=Heavy Oil
+fluid.oilDense=Dense Oil
 fluid.oilResidue=Residue
+fluid.tar=Tar
 fluid.fuelMixed=Mixed Fuels
-fluid.fuelMixedHeavy=Mised Heavy Fuels
+fluid.fuelMixedHeavy=Mixed Heavy Fuels
 fluid.fuelMixedLight=Light Mixed Fuels
 fluid.fuelDense=Dense Fuel
 fluid.fuelLight=Fuel
 fluid.fuelGaseous=Gaseous Fuel
 
-buildcraft.fluid.heat_1= (Warm)
-buildcraft.fluid.heat_2= (§eHot§r)
+buildcraft.fluid.heat_1= (§eWarm§r)
+buildcraft.fluid.heat_2= (§6Hot§r)
 buildcraft.fluid.heat_3= (§cSearing§r)
 
 gate.action.extraction=%s Extraction Preset
