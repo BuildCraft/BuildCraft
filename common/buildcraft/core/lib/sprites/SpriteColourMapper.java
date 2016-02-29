@@ -17,6 +17,7 @@ import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.resources.data.TextureMetadataSection;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.fluids.FluidDefinition.BCFluid;
 
 public class SpriteColourMapper extends TextureAtlasSprite {
@@ -109,7 +110,7 @@ public class SpriteColourMapper extends TextureAtlasSprite {
             data.animationMeta = (AnimationMetadataSection) iresource.getMetadata("animation");
             return data;
         } catch (Throwable t) {
-            t.printStackTrace();
+            BCLog.logger.warn("[SpriteColourMapper] Could not find " + location);
             return missingTex(16, 16);
         }
     }

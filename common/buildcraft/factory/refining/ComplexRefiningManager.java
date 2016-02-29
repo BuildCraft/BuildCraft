@@ -127,16 +127,16 @@ public class ComplexRefiningManager {
         // Add the heatables
         addBiDirectionalHeatExchange(crudeOil, 10, 7);
 
-        addBiDirectionalHeatExchange(oilDistilled, 10, 4);
-        addBiDirectionalHeatExchange(oilHeavy, 10, 6);
+        addBiDirectionalHeatExchange(oilDistilled, 5, 2);// Divided from 10, 4
+        addBiDirectionalHeatExchange(oilHeavy, 5, 3);// Divided from 10, 6
 
-        addBiDirectionalHeatExchange(oilDense, 10, 6);
-        addBiDirectionalHeatExchange(fuelMixedHeavy, 10, 5);
-        addBiDirectionalHeatExchange(fuelMixedLight, 10, 4);
+        addBiDirectionalHeatExchange(oilDense, 5, 3);// 10, 6
+        addBiDirectionalHeatExchange(fuelMixedHeavy, 2, 1);// 10,5
+        addBiDirectionalHeatExchange(fuelMixedLight, 5, 2);// 10, 4
 
-        addBiDirectionalHeatExchange(oilResidue, 10, 8);
-        addBiDirectionalHeatExchange(fuelDense, 10, 5);
-        addBiDirectionalHeatExchange(fuelLight, 10, 4);
+        addBiDirectionalHeatExchange(oilResidue, 5, 4);// 10, 8
+        addBiDirectionalHeatExchange(fuelDense, 2, 1);// 10, 5
+        addBiDirectionalHeatExchange(fuelLight, 5, 2);// 10, 4
         addBiDirectionalHeatExchange(fuelGaseous, 10, 3);
 
         BuildcraftRecipeRegistry.complexRefinery.addHeatableRecipe(new FluidStack(FluidRegistry.WATER, 10), steam.createFluidStack(10), 0, 2, 3,
@@ -174,18 +174,22 @@ public class ComplexRefiningManager {
         addDistilationRecipe(fuelMixedHeavy[2], _light_dense, fuelLight[2], _light, fuelDense[2], _dense, 3);
         addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 3);
 
-        final int powerBase = 40;
+        final int powerBase = 10;
         // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
-        final int timeBase = 128_000;
+        final int timeBase = 512_000;
 
-        BuildcraftFuelRegistry.fuel.addFuel(fuelGaseous[0].fluid, 4 * powerBase, timeBase / _gas / 4);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelLight[0].fluid, 2 * powerBase, timeBase / _light / 2);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelDense[0].fluid, powerBase, timeBase / _dense);
+        addNormalFuel(fuelGaseous[0], _gas, 8, 1);
+        addNormalFuel(fuelLight[0], _light, 6, 1);
+        addNormalFuel(fuelDense[0], _dense, 4, 1);
 
-        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedLight[0].fluid, powerBase, timeBase / _gas_light);
-        BuildcraftFuelRegistry.fuel.addFuel(fuelMixedHeavy[0].fluid, powerBase, timeBase / _light_dense);
+        addNormalFuel(fuelMixedLight[0], _gas_light, 6.5, 0.75);
+        addNormalFuel(fuelMixedHeavy[0], _light_dense, 4.5, 0.75);
+        addDirtyFuel(oilDense[0], _dense_residue, 2, 0.75);
 
-        BuildcraftFuelRegistry.fuel.addFuel(oilDistilled[0].fluid, powerBase, timeBase / _gas_light_dense);
+        addNormalFuel(oilDistilled[0], _gas_light_dense, 3.5, 0.5);
+        addDirtyFuel(oilHeavy[0], _light_dense_residue, 2.5, 0.5);
+
+        addDirtyFuel(crudeOil[0], _oil, 3, 0.25);
     }
 
     private static void addBiDirectionalHeatExchange(FluidDefinition[] coldToHot, int amount, int ticks) {
@@ -204,6 +208,26 @@ public class ComplexRefiningManager {
         FluidStack outGas = gas.createFluidStack(gasAmount);
         FluidStack outLiquid = liquid.createFluidStack(liquidAmount);
         BuildcraftRecipeRegistry.complexRefinery.addDistilationRecipe(in, outGas, outLiquid, ticks, false);
+    }
+
+    private static void addNormalFuel(FluidDefinition def, int amountDiff, double multiplier, double efficiencyMultiplier) {
+        final int powerBase = 10;
+        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
+        final int timeBase = 512_000;
+
+        int powerPerCycle = (int) (multiplier * powerBase);
+        int totalTime = (int) (timeBase * efficiencyMultiplier / multiplier / amountDiff);
+        BuildcraftFuelRegistry.fuel.addFuel(def.fluid, powerPerCycle, totalTime);
+    }
+
+    private static void addDirtyFuel(FluidDefinition def, int amountDiff, double multiplier, double efficiencyMultiplier) {
+        final int powerBase = 10;
+        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
+        final int timeBase = 512_000;
+
+        int powerPerCycle = (int) (multiplier * powerBase);
+        int totalTime = (int) (timeBase * efficiencyMultiplier / multiplier / amountDiff);
+        BuildcraftFuelRegistry.fuel.addDirtyFuel(def.fluid, powerPerCycle, totalTime, oilResidue[0].createFluidStack(250 / amountDiff));
     }
 
     @SideOnly(Side.CLIENT)

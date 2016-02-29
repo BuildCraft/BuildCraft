@@ -63,21 +63,21 @@ public abstract class BlockBuildCraftBase extends Block {
     @SuppressWarnings("unchecked")
     public static final BuildCraftProperty<Boolean>[] CONNECTED_ARRAY = CONNECTED_MAP.values().toArray(new BuildCraftProperty[6]);
 
-    protected final BuildCraftProperty<?>[] properties;
-    protected final BuildCraftProperty<?>[] nonMetaProperties;
-    protected final BuildCraftExtendedProperty<?>[] extendedProperties;
+    protected BuildCraftProperty<?>[] properties;
+    protected BuildCraftProperty<?>[] nonMetaProperties;
+    protected BuildCraftExtendedProperty<?>[] extendedProperties;
 
-    protected final boolean hasExtendedProperties;
+    protected boolean hasExtendedProperties;
 
-    protected final List<BuildCraftProperty<?>> propertyList;
+    protected List<BuildCraftProperty<?>> propertyList;
     protected final Map<Integer, IBlockState> intToState = Maps.newHashMap();
     protected final Map<IBlockState, Integer> stateToInt = Maps.newHashMap();
     protected final BlockState myBlockState;
 
     /** True if this block can rotate in any of the horizontal directions */
-    public final boolean horizontallyRotatable;
+    public boolean horizontallyRotatable;
     /** True if this block can rotate in any of the six facing directions */
-    public final boolean allRotatable;
+    public boolean allRotatable;
 
     protected BlockBuildCraftBase(Material material) {
         this(material, BCCreativeTab.get("main"), false, new BuildCraftProperty<?>[0]);
@@ -103,6 +103,19 @@ public abstract class BlockBuildCraftBase extends Block {
         List<BuildCraftProperty<?>> nonMetas = Lists.newArrayList();
         List<BuildCraftExtendedProperty<?>> infinites = Lists.newArrayList();
 
+        this.hasExtendedProperties = fillStateListsPre(hasExtendedProps, metas, nonMetas, infinites, properties);
+
+        this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
+        this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
+        this.extendedProperties = infinites.toArray(new BuildCraftExtendedProperty<?>[0]);
+        this.myBlockState = createBlockState();
+
+        fillStateMapPost(metas, nonMetas, properties);
+    }
+
+    @SuppressWarnings("static-method")
+    protected boolean fillStateListsPre(boolean hasExtendedProps, List<BuildCraftProperty<?>> metas, List<BuildCraftProperty<?>> nonMetas,
+            List<BuildCraftExtendedProperty<?>> infinites, BuildCraftProperty<?>... properties) {
         int total = 1;
         for (BuildCraftProperty<?> prop : properties) {
             if (prop == null) {
@@ -125,14 +138,10 @@ public abstract class BlockBuildCraftBase extends Block {
             }
         }
 
-        this.hasExtendedProperties = hasExtendedProps;
+        return hasExtendedProps;
+    }
 
-        this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
-        this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
-        this.extendedProperties = infinites.toArray(new BuildCraftExtendedProperty<?>[0]);
-
-        this.myBlockState = createBlockState();
-
+    protected void fillStateMapPost(List<BuildCraftProperty<?>> metas, List<BuildCraftProperty<?>> nonMetas, BuildCraftProperty<?>... properties) {
         IBlockState defaultState = getBlockState().getBaseState();
 
         Map<IBlockState, Integer> tempValidStates = Maps.newHashMap();
@@ -231,12 +240,12 @@ public abstract class BlockBuildCraftBase extends Block {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return stateToInt.get(state);
+        return stateToInt.containsKey(state) ? stateToInt.get(state) : 0;
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return intToState.get(meta);
+        return intToState.containsKey(meta) ? intToState.get(meta) : getDefaultState();
     }
 
     @Override

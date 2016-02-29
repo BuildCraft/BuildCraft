@@ -15,7 +15,7 @@ public class BuildCraftStateMapper extends StateMapperBase {
 
     @Override
     protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-        ResourceLocation location = (ResourceLocation) Block.blockRegistry.getNameForObject(state.getBlock());
+        ResourceLocation location = Block.blockRegistry.getNameForObject(state.getBlock());
         location = new ResourceLocation(location.getResourceDomain().replace("|", ""), location.getResourcePath());
         return new ModelResourceLocation(location, getPropertyString(state));
     }

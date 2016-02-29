@@ -1,0 +1,8 @@
+# Blender MTL File: 'energy_heater_main.blend'
+# Material Count: 1
+
+newmtl None.000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+map_Kd #mainTex

@@ -1,0 +1,27 @@
+{
+    "forge_marker":1,
+    "defaults": {
+        "textures":{
+            "#mainTex":"buildcraftfactory:blocks/distiller/main"
+        },
+        "model":"buildcraftfactory:distiller/main.obj"
+    },
+    "variants": {
+		"connected_east": {
+		    "true": { "submodel":"buildcraftfactory:distiller/fluid.obj", "y":90 },
+		    "false": {}
+		},
+		"connected_west": {
+		    "true": { "submodel":"buildcraftfactory:distiller/fluid.obj", "y":270 },
+		    "false": {}
+		},
+		"connected_north": {
+		    "true": { "submodel":"buildcraftfactory:distiller/fluid.obj", "y":0 },
+		    "false": {}
+		},
+		"connected_south": {
+		    "true": { "submodel":"buildcraftfactory:distiller/fluid.obj", "y":180 },
+		    "false": {}
+		}
+    }
+}

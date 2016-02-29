@@ -36,7 +36,7 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
     private final Tank in, out;
     private final TankManager<Tank> manager;
     private IHeatableRecipe currentRecipe;
-    private int sleep = 0, lateSleep = 0;
+    private int sleep = 0;
     private long lastCraftTick = -1;
 
     public TileEnergyHeater() {
@@ -118,14 +118,7 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
                     sleep--;
                     return;
                 }
-                heat(true);
-            } else if (hasWork(false)) {
-                if (lateSleep < 20) {
-                    lateSleep++;
-                    return;
-                }
-                heat(false);
-                lateSleep = 0;
+                heat();
             }
         }
     }
@@ -163,20 +156,13 @@ public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, I
         }
     }
 
-    private void heat(boolean care) {
+    private void heat() {
         int heatDiff = currentRecipe.heatTo() - currentRecipe.heatFrom();
         int required = heatDiff * BuildCraftFactory.rfPerHeatPerMB * currentRecipe.ticks() * Math.min(in.getFluidAmount(), currentRecipe.in().amount);
         if (getBattery().useEnergy(required, required, false) == required) {
             FluidStack stack = in.drain(currentRecipe.in().amount, true);
             if (stack.amount < currentRecipe.in().amount) {
-                if (currentRecipe.out().amount != currentRecipe.in().amount || care) {
-                    in.fill(stack, true);
-                } else {
-                    FluidStack altOut = currentRecipe.out().copy();
-                    altOut.amount = stack.amount;
-                    out.fill(altOut, true);
-                    lastCraftTick = worldObj.getTotalWorldTime();
-                }
+                in.fill(stack, true);
             } else {
                 out.fill(currentRecipe.out(), true);
                 resetSleep();

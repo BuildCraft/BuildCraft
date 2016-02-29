@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager;
@@ -16,7 +17,7 @@ import buildcraft.api.fuels.IFuelManager;
 public final class FuelManager implements IFuelManager {
     public static final FuelManager INSTANCE = new FuelManager();
 
-    private final List<IFuel> fuels = new LinkedList<IFuel>();
+    private final List<IFuel> fuels = new LinkedList<>();
 
     private FuelManager() {}
 
@@ -29,6 +30,13 @@ public final class FuelManager implements IFuelManager {
     @Override
     public IFuel addFuel(Fluid fluid, int powerPerCycle, int totalBurningTime) {
         return addFuel(new BCFuel(fluid, powerPerCycle, totalBurningTime));
+    }
+
+    @Override
+    public IDirtyFuel addDirtyFuel(Fluid fuel, int powerPerCycle, int totalBurningTime, FluidStack residue) {
+        BCDirtyFuel dirty = new BCDirtyFuel(fuel, powerPerCycle, totalBurningTime, residue);
+        addFuel(dirty);
+        return dirty;
     }
 
     @Override
@@ -46,7 +54,7 @@ public final class FuelManager implements IFuelManager {
         return null;
     }
 
-    private static final class BCFuel implements IFuel {
+    private static class BCFuel implements IFuel {
         private final Fluid fluid;
         private final int powerPerCycle;
         private final int totalBurningTime;
@@ -70,6 +78,20 @@ public final class FuelManager implements IFuelManager {
         @Override
         public int getPowerPerCycle() {
             return powerPerCycle;
+        }
+    }
+
+    private static class BCDirtyFuel extends BCFuel implements IDirtyFuel {
+        private final FluidStack residue;
+
+        public BCDirtyFuel(Fluid fluid, int powerPerCycle, int totalBurningTime, FluidStack residue) {
+            super(fluid, powerPerCycle, totalBurningTime);
+            this.residue = residue.copy();
+        }
+
+        @Override
+        public FluidStack getResidue() {
+            return residue.copy();
         }
     }
 }

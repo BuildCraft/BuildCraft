@@ -177,6 +177,7 @@ fillerpattern.parameter.filled=Filled
 
 fluid.oil=Oil
 fluid.fuel=Fuel
+fluid.steam=Steam
 fluid.oilDistilled=Distilled Oil
 fluid.oilHeavy=Heavy Oil
 fluid.oilDense=Dense Oil
