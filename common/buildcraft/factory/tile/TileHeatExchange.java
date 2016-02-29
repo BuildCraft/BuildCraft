@@ -46,10 +46,10 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     private long lastCraftTick = -1;
 
     public TileHeatExchange() {
-        inCoolable = new Tank("inCoolable", 500, this);
-        outCooled = new Tank("outCooled", 500, this);
-        inHeatable = new Tank("inHeatable", 500, this);
-        outHeated = new Tank("outHeated", 500, this);
+        inCoolable = new Tank("inCoolable", 1000, this);
+        outCooled = new Tank("outCooled", 1000, this);
+        inHeatable = new Tank("inHeatable", 1000, this);
+        outHeated = new Tank("outHeated", 1000, this);
         manager = new TankManager<>(inCoolable, outCooled, inHeatable, outHeated);
         mode = Mode.On;
     }

@@ -116,6 +116,7 @@ public class ComplexRefiningManager {
         }
         if (def.masterFluid != null) {
             def.masterFluid.setHeat(heat);
+            def.masterFluid.setUnlocalizedName(name);
             def.fluid.setTemperature(300 + 20 * heat);
         }
         allFluids.add(def);

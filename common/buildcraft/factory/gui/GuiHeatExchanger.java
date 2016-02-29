@@ -6,14 +6,14 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.factory.tile.TileHeatExchange;
 
-public class GuiHeatExchange extends GuiAdvancedInterface {
+public class GuiHeatExchanger extends GuiAdvancedInterface {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/heat_exchanger.png");
 
     private final TileHeatExchange heatExchange;
     private int inCoolableTicks, inHeatableTicks, outCooledTicks, outHeatedTicks, craftTicks;
 
-    public GuiHeatExchange(EntityPlayer player, TileHeatExchange heatExchange) {
+    public GuiHeatExchanger(EntityPlayer player, TileHeatExchange heatExchange) {
         super(new ContainerHeatExchange(player, heatExchange), heatExchange, TEXTURE);
         this.heatExchange = heatExchange;
         xSize = 176;
@@ -49,10 +49,10 @@ public class GuiHeatExchange extends GuiAdvancedInterface {
                 drawTexturedModalRect(guiLeft + 61, guiTop + 11, 176, 71, 54, 71);
             } else {
                 if (inCoolableTicks > 0) {
-                    drawTexturedModalRect(guiLeft + 79, guiTop + 67, 194, 56, 11, 11);
+                    drawTexturedModalRect(guiLeft + 61, guiTop + 41, 176, 30, 11, 11);
                 }
                 if (inHeatableTicks > 0) {
-                    drawTexturedModalRect(guiLeft + 61, guiTop + 41, 176, 30, 11, 11);
+                    drawTexturedModalRect(guiLeft + 79, guiTop + 67, 194, 56, 11, 11);
                 }
                 if (outCooledTicks > 0) {
                     drawTexturedModalRect(guiLeft + 104, guiTop + 41, 219, 30, 11, 11);

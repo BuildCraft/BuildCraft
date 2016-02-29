@@ -67,7 +67,7 @@ public class FactoryGuiHandler implements IGuiHandler {
             }
             case GuiIds.HEAT_EXCHANGE: {
                 if (tile instanceof TileHeatExchange) {
-                    return new GuiHeatExchange(player, (TileHeatExchange) tile);
+                    return new GuiHeatExchanger(player, (TileHeatExchange) tile);
                 }
                 return null;
             }

@@ -10,6 +10,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -114,6 +115,14 @@ public class FluidDefinition {
 
         public BCFluid(String fluidName, ResourceLocation still, ResourceLocation flowing) {
             super(fluidName, still, flowing);
+        }
+
+        @Override
+        public String getLocalizedName(FluidStack stack) {
+            if (heat <= 0) return super.getLocalizedName(stack);
+            String name = super.getLocalizedName(stack);
+            String heatString = StatCollector.translateToLocalFormatted("buildcraft.fluid.heat_" + heat);
+            return name + heatString;
         }
 
         @Override

@@ -40,10 +40,13 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
     private int sleep = 0, lateSleep = 0;
     private long lastCraftTick = -1;
 
+    @SideOnly(Side.CLIENT)
+    private boolean hasCraftedRecently;
+
     public TileDistiller() {
-        in = new Tank("in", 750, this);
-        outGas = new Tank("outGas", 750, this);
-        outLiquid = new Tank("outLiquid", 750, this);
+        in = new Tank("in", 1000, this);
+        outGas = new Tank("outGas", 1000, this);
+        outLiquid = new Tank("outLiquid", 1000, this);
         manager = new TankManager<>(in, outGas, outLiquid);
         mode = Mode.On;
     }
@@ -65,14 +68,14 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
     public void readData(ByteBuf stream) {
         manager.readData(stream);
         sleep = stream.readInt();
-        lastCraftTick = stream.readLong();
+        hasCraftedRecently = stream.readBoolean();
     }
 
     @Override
     public void writeData(ByteBuf stream) {
         manager.writeData(stream);
         stream.writeInt(sleep);
-        stream.writeLong(lastCraftTick);
+        stream.writeBoolean(worldObj.getTotalWorldTime() - lastCraftTick < 30);
     }
 
     @SideOnly(Side.CLIENT)
@@ -92,7 +95,7 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
 
     @SideOnly(Side.CLIENT)
     public boolean hasCraftedRecently() {
-        return lastCraftTick + 30 > worldObj.getTotalWorldTime();
+        return hasCraftedRecently;
     }
 
     @Override
