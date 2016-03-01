@@ -174,10 +174,6 @@ public class ComplexRefiningManager {
         addDistilationRecipe(fuelMixedHeavy[2], _light_dense, fuelLight[2], _light, fuelDense[2], _dense, 3);
         addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 3);
 
-        final int powerBase = 10;
-        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
-        final int timeBase = 512_000;
-
         addNormalFuel(fuelGaseous[0], _gas, 8, 1);
         addNormalFuel(fuelLight[0], _light, 6, 1);
         addNormalFuel(fuelDense[0], _dense, 4, 1);
@@ -212,8 +208,7 @@ public class ComplexRefiningManager {
 
     private static void addNormalFuel(FluidDefinition def, int amountDiff, double multiplier, double efficiencyMultiplier) {
         final int powerBase = 10;
-        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
-        final int timeBase = 512_000;
+        final int timeBase = 256_000;
 
         int powerPerCycle = (int) (multiplier * powerBase);
         int totalTime = (int) (timeBase * efficiencyMultiplier / multiplier / amountDiff);
@@ -222,12 +217,11 @@ public class ComplexRefiningManager {
 
     private static void addDirtyFuel(FluidDefinition def, int amountDiff, double multiplier, double efficiencyMultiplier) {
         final int powerBase = 10;
-        // Minimum possible to make gas work the same as the others... :/ (1 tick per mB)
-        final int timeBase = 512_000;
+        final int timeBase = 256_000;
 
         int powerPerCycle = (int) (multiplier * powerBase);
         int totalTime = (int) (timeBase * efficiencyMultiplier / multiplier / amountDiff);
-        BuildcraftFuelRegistry.fuel.addDirtyFuel(def.fluid, powerPerCycle, totalTime, oilResidue[0].createFluidStack(250 / amountDiff));
+        BuildcraftFuelRegistry.fuel.addDirtyFuel(def.fluid, powerPerCycle, totalTime, oilResidue[0].createFluidStack(1000 / amountDiff));
     }
 
     @SideOnly(Side.CLIENT)
