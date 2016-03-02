@@ -20,7 +20,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IComplexRefineryRecipeManager.ICoolableRecipe;
 import buildcraft.api.recipes.IComplexRefineryRecipeManager.IHeatableRecipe;
@@ -40,6 +42,7 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
     private final Tank inHeatable, outHeated;
 
     private final TankManager<Tank> manager;
+    private SafeTimeTracker networkUpdateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
     private IHeatableRecipe heatableRecipe;
     private ICoolableRecipe coolableRecipe;
     private int sleep = 0, lateSleep = 0;
@@ -111,6 +114,10 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
         super.update();
 
         if (worldObj.isRemote) return;
+
+        if (networkUpdateTracker.markTimeIfDelay(worldObj)) {
+            sendNetworkUpdate();
+        }
 
         craft();
         export();

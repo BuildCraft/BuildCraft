@@ -40,7 +40,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
     public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
-    private int burnTime = 0;
+    private double burnTime = 0;
     private float coolingBuffer = 0.0f;
     private int tankFuelAmountCache = 0;
     private int tankCoolantAmountCache = 0;
@@ -207,7 +207,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                         if (--fuel.amount <= 0) {
                             tankFuel.setFluid(null);
                         }
-                        burnTime = currentFuel.getTotalBurningTime() / FluidContainerRegistry.BUCKET_VOLUME;
+                        burnTime += currentFuel.getTotalBurningTime() /(double) FluidContainerRegistry.BUCKET_VOLUME;
                     } else {
                         currentFuel = null;
                         return;
@@ -315,7 +315,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         super.readFromNBT(data);
         tankManager.readFromNBT(data);
 
-        burnTime = data.getInteger("burnTime");
+        burnTime = data.getDouble("burnTime");
         penaltyCooling = data.getInteger("penaltyCooling");
 
     }
@@ -325,7 +325,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         super.writeToNBT(data);
         tankManager.writeToNBT(data);
 
-        data.setInteger("burnTime", burnTime);
+        data.setDouble("burnTime", burnTime);
         data.setInteger("penaltyCooling", penaltyCooling);
 
     }

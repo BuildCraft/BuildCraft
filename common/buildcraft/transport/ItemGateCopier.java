@@ -67,7 +67,15 @@ public class ItemGateCopier extends ItemBuildCraft {
 
         if (isCopying) {
             if (gate == null) {
-                stack.setTagCompound(new NBTTagCompound());
+                data = new NBTTagCompound();
+                stack.setTagCompound(data);
+
+                // Tell ItemModelMesher that this is NOT damageable, so it will use the meta for the icon
+                data.setBoolean("Unbreakable", true);
+
+                // Tell ItemStack.getToolTip() that we want to hide the resulting "Unbreakable" line that we just added
+                data.setInteger("HideFlags", 4);
+
                 player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
                 return true;
             }

@@ -29,6 +29,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * itself. */
 @Sharable
 public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+    private static volatile int livePacketCount = 0;
+    private static int lastSomethingPackets = 0;
+    private static long lastDispMs = System.currentTimeMillis();
     private final Map<Side, Map<Integer, Queue<Packet>>> packetMap;
 
     public PacketHandler() {
@@ -41,8 +44,14 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         TickHandlerCore.addPacketHandler(this);
     }
 
-    public int packetQueueSize() {
-        return packetMap.values().stream().mapToInt(v -> v.values().stream().mapToInt(v2 -> v2.size()).sum()).sum();
+    public static int packetQueueSize() {
+        long now = System.currentTimeMillis();
+        if (now - lastDispMs > 800) {
+            lastDispMs = now;
+            lastSomethingPackets = livePacketCount;
+            livePacketCount = 0;
+        }
+        return lastSomethingPackets;
     }
 
     public void tick(World world) {
@@ -68,6 +77,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         Side side = ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
         if (side != null) {
             getQueue(side, packet.dimensionId).add(packet);
+            livePacketCount++;
         } else {
             BCLog.logger.error("Found a message without a side! THIS IS VERY BAD, MAJOR ERRORS COULD OCCOUR!");
         }

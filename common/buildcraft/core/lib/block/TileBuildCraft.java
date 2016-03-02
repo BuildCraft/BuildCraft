@@ -105,7 +105,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
         if (!worldObj.isRemote) {
             if (battery != null) {
                 if (battery.getMaxEnergyStored() > 0) {
-                    ledPower = (int) (3 * battery.getEnergyStored() / battery.getMaxEnergyStored());
+                    ledPower = 3 * battery.getEnergyStored() / battery.getMaxEnergyStored();
                 } else {
                     ledPower = 0;
                 }
