@@ -381,7 +381,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                         if (mapping.type == GameRegistry.Type.BLOCK) {
                             mapping.remap(oil.block);
                         } else if (mapping.type == GameRegistry.Type.ITEM) {
-                            if (path.contains("bucket")) mapping.remap(oil.bucket);
+                            if (path.contains("bucket") && oil.bucket != null) mapping.remap(oil.bucket);
                             else if (path.contains("block")) mapping.ignore();
                         }
                         BCLog.logger.info("            " + path + " matched oil");
@@ -389,7 +389,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                         if (mapping.type == GameRegistry.Type.BLOCK) {
                             mapping.remap(fuel.block);
                         } else if (mapping.type == GameRegistry.Type.ITEM) {
-                            if (path.contains("bucket")) mapping.remap(fuel.bucket);
+                            if (path.contains("bucket") && fuel.bucket != null) mapping.remap(fuel.bucket);
                             else if (path.contains("block")) mapping.ignore();
                         }
                         BCLog.logger.info("            " + path + " matched fuel");

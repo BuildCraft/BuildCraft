@@ -45,7 +45,7 @@ import io.netty.buffer.Unpooled;
  * underlying functionality to stop code repetition. */
 public abstract class TileBuildCraft extends TileEntity implements IEnergyProvider, IEnergyReceiver, ISerializable, ITickable, IAdditionalDataTile {
     protected TileBuffer[] cache;
-    protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
+    protected HashSet<EntityPlayer> guiWatchers = new HashSet<>();
     protected IControllable.Mode mode;
     private boolean sendNetworkUpdate = false;
 
@@ -58,6 +58,10 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     /** Used at the client for the power LED brightness */
     public int ledPower = 0, lastLedPower = 0;
     public boolean ledDone = false, lastLedDone = false;
+
+    /** Used to help migrate existing worlds to whatever new blockstate format we use. Note that proper migration cannot
+     * be implemented until this pre-release has gone out for a while now. */
+    private NBTTagCompound lastBlockState = null;
 
     public String getOwner() {
         return owner;
@@ -233,7 +237,14 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
             nbt.setByte("lastMode", (byte) mode.ordinal());
         }
 
+        // Version tag that can be used for upgrading.
+        // 0 means[1.8.9] 7.2.0-pre12 or before (default value)
+        // 1 means [1.8.9] 7.2.0-pre13 up until 7.2.0-preX
+        // 2 means [1.8.9] 7.2.0-preX or later
+        nbt.setInteger("data-version", 1);
+
         /* Also save the state of all BC tiles. This will be helpful for migration. */
+        // REMOVE THIS AFTER preX
         if (hasWorldObj()) {
             IBlockState blockstate = worldObj.getBlockState(getPos());
             Block block = blockstate.getBlock();
@@ -263,6 +274,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
         if (nbt.hasKey("lastMode")) {
             mode = IControllable.Mode.values()[nbt.getByte("lastMode")];
         }
+
+        int version = nbt.getInteger("data-version");
+
+        // Load up the block from pre12 -> preX
+        if (nbt.hasKey("blockstate") && version == 1) lastBlockState = nbt.getCompoundTag("blockstate");
     }
 
     protected int getTicksSinceEnergyReceived() {

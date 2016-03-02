@@ -13,7 +13,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.nbt.NBTBase.NBTPrimitive;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
+import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 
@@ -191,6 +194,18 @@ public final class NBTUtils {
             nbt.setBoolean("boolean", (Boolean) obj);
             return nbt;
         }
+        if (obj instanceof EnumFacing) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setString("type", "minecraft:enumfacing");
+            nbt.setTag("value", writeEnum((EnumFacing) obj));
+            return nbt;
+        }
+        if (obj instanceof Enum<?>) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setString("type", "enum:" + obj.getClass());
+            nbt.setTag("value", writeEnum((Enum) obj));
+            return nbt;
+        }
         throw new IllegalArgumentException("Cannot write class " + obj.getClass() + " directly to NBT!");
     }
 
@@ -210,6 +225,11 @@ public final class NBTUtils {
         if (nbt instanceof NBTTagCompound) {
             NBTTagCompound comp = (NBTTagCompound) nbt;
             if (comp.hasKey("boolean")) return comp.getBoolean("boolean");
+            if (comp.hasKey("type", Constants.NBT.TAG_STRING) && comp.hasKey("value")) {
+                String type = ((NBTTagCompound) nbt).getString("type");
+                NBTBase valueTag = comp.getTag("value");
+                if ("minecraft:enumfacing".equals(type)) return readEnum(valueTag, EnumFacing.class);
+            }
         }
         throw new Error("Tried to load an object from an unknown tag! " + nbt);
     }

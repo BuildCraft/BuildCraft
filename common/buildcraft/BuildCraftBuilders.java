@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.common.collect.Lists;
 
@@ -595,6 +596,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
                     mapping.remap(Item.getItemFromBlock(BuildCraftCore.pathMarkerBlock));
                 } else {
                     mapping.remap(BuildCraftCore.pathMarkerBlock);
+                }
+            } else if (mapping.name.toLowerCase(Locale.ROOT).equals("buildcraft|builders:machineblock")) {
+                if (mapping.type == GameRegistry.Type.ITEM) {
+                    mapping.remap(Item.getItemFromBlock(quarryBlock));
+                } else {
+                    mapping.remap(quarryBlock);
                 }
             }
         }

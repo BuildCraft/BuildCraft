@@ -6,6 +6,7 @@ package buildcraft;
 
 import java.io.PrintWriter;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -719,11 +720,20 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
-        for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
+        BCLog.logger.info("Transport|Remap " + System.identityHashCode(event));
+        for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
+            String name = mapping.name;
+            BCLog.logger.info("        - " + name);
+
             if (mapping.type == GameRegistry.Type.ITEM) {
                 if (mapping.name.equals("BuildCraft|Transport:robotStation")) {
                     mapping.remap(Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Robotics:robotStation")));
                 }
+            }
+
+            if (mapping.name.toLowerCase(Locale.ROOT).contains("pipe")) {
+                mapping.remap(Item.itemRegistry.getObject(new ResourceLocation(mapping.name.replace("item.", ""))));
+                BCLog.logger.info("          - remapped pipe");
             }
         }
     }
