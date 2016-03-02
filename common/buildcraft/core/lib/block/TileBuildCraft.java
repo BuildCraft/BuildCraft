@@ -8,6 +8,8 @@ import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -33,6 +35,7 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
+import buildcraft.core.lib.utils.NBTUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -228,6 +231,23 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
         }
         if (mode != null) {
             nbt.setByte("lastMode", (byte) mode.ordinal());
+        }
+
+        /* Also save the state of all BC tiles. This will be helpful for migration. */
+        if (hasWorldObj()) {
+            IBlockState blockstate = worldObj.getBlockState(getPos());
+            Block block = blockstate.getBlock();
+            if (block instanceof BlockBuildCraft) {
+                // Assume that this is us- it would be odd for this tile to be with the wrong block.
+                BlockBuildCraft bcBlock = (BlockBuildCraft) block;
+                NBTTagCompound statenbt = new NBTTagCompound();
+                for (IProperty<?> prop : bcBlock.properties) {
+                    Object value = blockstate.getValue(prop);
+                    if (value == null) continue;
+                    statenbt.setTag(prop.getName(), NBTUtils.writeObject(value));
+                }
+                nbt.setTag("blockstate", statenbt);
+            }
         }
     }
 

@@ -179,16 +179,16 @@ public final class NBTUtils {
     }
 
     public static NBTBase writeObject(Object obj) {
-        if (obj == null) return null;
-        if (obj instanceof Byte) return new NBTTagByte((byte) (Byte) obj);
-        if (obj instanceof Short) return new NBTTagShort((short) (Short) obj);
-        if (obj instanceof Integer) return new NBTTagInt((int) (Integer) obj);
-        if (obj instanceof Long) return new NBTTagLong((long) (Long) obj);
-        if (obj instanceof Float) return new NBTTagFloat((float) (Float) obj);
-        if (obj instanceof Double) return new NBTTagDouble((double) (Double) obj);
+        if (obj == null) throw new NullPointerException("obj");
+        if (obj instanceof Byte) return new NBTTagByte((Byte) obj);
+        if (obj instanceof Short) return new NBTTagShort((Short) obj);
+        if (obj instanceof Integer) return new NBTTagInt((Integer) obj);
+        if (obj instanceof Long) return new NBTTagLong((Long) obj);
+        if (obj instanceof Float) return new NBTTagFloat((Float) obj);
+        if (obj instanceof Double) return new NBTTagDouble((Double) obj);
         if (obj instanceof Boolean) {
             NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setBoolean("boolean", (boolean) (Boolean) obj);
+            nbt.setBoolean("boolean", (Boolean) obj);
             return nbt;
         }
         throw new IllegalArgumentException("Cannot write class " + obj.getClass() + " directly to NBT!");
