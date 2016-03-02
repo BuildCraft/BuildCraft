@@ -20,7 +20,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IComplexRefineryRecipeManager.IDistilationRecipe;
 import buildcraft.api.tiles.IControllable;
@@ -36,6 +38,7 @@ import io.netty.buffer.ByteBuf;
 public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank in, outGas, outLiquid;
     private final TankManager<Tank> manager;
+    private final SafeTimeTracker networkTimeTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
     private IDistilationRecipe currentRecipe;
     private int sleep = 0, lateSleep = 0;
     private long lastCraftTick = -1;
@@ -103,6 +106,10 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
         super.update();
 
         if (worldObj.isRemote) return;
+
+        if (networkTimeTracker.markTimeIfDelay(worldObj)) {
+            sendNetworkUpdate();
+        }
 
         craft();
         export();

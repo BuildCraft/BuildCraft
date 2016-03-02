@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.power.ILaserTarget;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
@@ -20,12 +21,16 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork, IControllable {
     public int clientRequiredEnergy = 0;
     protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
     private int energy = 0;
     private int recentEnergyAverage;
     private AverageInt recentEnergyAverageUtil = new AverageInt(20);
+
+    public TileLaserTableBase() {
+        setControlMode(Mode.On);
+    }
 
     @Override
     public void update() {
@@ -68,8 +73,13 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
     public abstract boolean canCraft();
 
     @Override
+    public boolean acceptsControlMode(Mode mode) {
+        return mode == Mode.On || mode == Mode.Off;
+    }
+
+    @Override
     public boolean requiresLaserEnergy() {
-        return canCraft() && energy < getRequiredEnergy() * 5F;
+        return canCraft() && energy < getRequiredEnergy() * 5F && mode == Mode.On;
     }
 
     @Override
