@@ -635,15 +635,6 @@ public class BuildCraftCore extends BuildCraftMod {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
             String name = mapping.name;
             BCLog.logger.info("        - " + name);
-
-            // Special cases where we broke something
-            if (name.equals("buildcraft|builders:machineBlock")) {
-                if (mapping.type == Type.BLOCK) {
-                    mapping.remap(Block.getBlockFromName("buildcraft|builders:quarryBlock"));
-                } else {
-                    mapping.remap(Item.getByNameOrId("buildcraft|builders:quarryBlock"));
-                }
-            }
         }
     }
 

@@ -578,7 +578,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
-        for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
+        for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
             if (mapping.name.equals("BuildCraft|Builders:buildToolBlock") || mapping.name.equals("BuildCraft|Builders:null")) {
                 if (mapping.type == GameRegistry.Type.ITEM) {
                     mapping.remap(Item.getItemFromBlock(BuildCraftCore.decoratedBlock));

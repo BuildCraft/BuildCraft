@@ -12,9 +12,12 @@ public class EnergyProxy {
     public static EnergyProxy proxy;
 
     public void registerTileEntities() {
-        GameRegistry.registerTileEntity(TileEngineStone.class, "buildcraft.energy.engine.stone");
-        GameRegistry.registerTileEntity(TileEngineIron.class, "buildcraft.energy.engine.iron");
-        GameRegistry.registerTileEntity(TileEngineCreative.class, "buildcraft.energy.engine.creative");
+        GameRegistry.registerTileEntityWithAlternatives(TileEngineStone.class, "buildcraft.energy.engine.stone",
+                "net.minecraft.src.buildcraft.energy.TileEngineStone");
+        GameRegistry.registerTileEntityWithAlternatives(TileEngineIron.class, "buildcraft.energy.engine.iron",
+                "net.minecraft.src.buildcraft.energy.TileEngineIron");
+        GameRegistry.registerTileEntityWithAlternatives(TileEngineCreative.class, "buildcraft.energy.engine.creative",
+                "net.minecraft.src.buildcraft.energy.TileEngineCreative");
     }
 
     public void registerBlockRenderers() {}

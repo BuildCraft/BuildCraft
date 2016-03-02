@@ -8,18 +8,17 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.tile.TileEnergyHeater;
 
-public class BlockEnergyHeater extends BlockBuildCraft {
+public class BlockEnergyHeater extends BlockBuildCraft implements ICustomPipeConnection {
     public BlockEnergyHeater() {
-        super(Material.iron, FACING_PROP, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_SOUTH, CONNECTED_NORTH);
+        super(Material.iron, FACING_PROP);
         setLightOpacity(0);
     }
 
@@ -58,22 +57,6 @@ public class BlockEnergyHeater extends BlockBuildCraft {
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
-        state = super.getActualState(state, access, pos);
-        Axis ignored = state.getValue(FACING_PROP).rotateYCCW().getAxis();
-        for (EnumFacing face : EnumFacing.values()) {
-            TileEntity tile = access.getTileEntity(pos.offset(face));
-            boolean connected = false;
-            if (face.getAxis() != ignored && tile instanceof IPipeTile) {
-                IPipeTile pipe = (IPipeTile) tile;
-                if (pipe.isPipeConnected(face.getOpposite())) connected = true;
-            }
-            state = state.withProperty(CONNECTED_MAP.get(face), connected);
-        }
-        return state;
-    }
-
-    @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
             float hitZ) {
         if (super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ)) {
@@ -91,5 +74,12 @@ public class BlockEnergyHeater extends BlockBuildCraft {
         }
 
         return true;
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        EnumFacing current = state.getValue(FACING_PROP);
+        if (current.rotateY().getAxis() == face.getAxis()) return 0;
+        return 0.25f;
     }
 }

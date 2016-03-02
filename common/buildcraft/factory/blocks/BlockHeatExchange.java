@@ -10,14 +10,14 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.factory.tile.TileHeatExchange;
 
-public class BlockHeatExchange extends BlockBuildCraft {
+public class BlockHeatExchange extends BlockBuildCraft implements ICustomPipeConnection {
     public BlockHeatExchange() {
-        super(Material.iron, BlockBuildCraftBase.FACING_PROP);
+        super(Material.iron, FACING_PROP);
     }
 
     @Override
@@ -52,5 +52,10 @@ public class BlockHeatExchange extends BlockBuildCraft {
         }
 
         return true;
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        return 0.125f;
     }
 }

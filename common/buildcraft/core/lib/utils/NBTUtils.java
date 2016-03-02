@@ -202,7 +202,7 @@ public final class NBTUtils {
         }
         if (obj instanceof Enum<?>) {
             NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString("type", "enum:" + obj.getClass());
+            nbt.setString("type", "enum:" + obj.getClass().getName());
             nbt.setTag("value", writeEnum((Enum) obj));
             return nbt;
         }
@@ -229,6 +229,16 @@ public final class NBTUtils {
                 String type = ((NBTTagCompound) nbt).getString("type");
                 NBTBase valueTag = comp.getTag("value");
                 if ("minecraft:enumfacing".equals(type)) return readEnum(valueTag, EnumFacing.class);
+                if (type.startsWith("enum:")) try {
+                    Class<?> clazz = Class.forName(type.replace("enum:", ""));
+                    if (clazz.isEnum()) {
+                        return readEnum(valueTag, (Class<Enum>) clazz);
+                    } else {
+                        BCLog.logger.warn("The type " + type + " refered to a class that was not an enum type!");
+                    }
+                } catch (ClassNotFoundException e) {
+                    BCLog.logger.warn("Tried to load " + type + " but couldn't find the enum class!");
+                }
             }
         }
         throw new Error("Tried to load an object from an unknown tag! " + nbt);

@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
+import java.util.Locale;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -276,8 +279,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
-        for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-            if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:machineBlock") || mapping.name.equalsIgnoreCase("BuildCraft|Factory:quarryBlock")) {
+        for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
+            final String name = mapping.name.toLowerCase(Locale.ROOT);
+            if (name.equalsIgnoreCase("BuildCraft|Factory:machineBlock") || name.equalsIgnoreCase("BuildCraft|Factory:quarryBlock")) {
                 if (Loader.isModLoaded("BuildCraft|Builders")) {
                     if (mapping.type == GameRegistry.Type.BLOCK) {
                         mapping.remap(Block.getBlockFromName("BuildCraft|Builders:quarryBlock"));
@@ -287,7 +291,7 @@ public class BuildCraftFactory extends BuildCraftMod {
                 } else {
                     mapping.warn();
                 }
-            } else if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:frameBlock")) {
+            } else if (name.equalsIgnoreCase("BuildCraft|Factory:frameBlock")) {
                 if (Loader.isModLoaded("BuildCraft|Builders")) {
                     if (mapping.type == GameRegistry.Type.BLOCK) {
                         mapping.remap(Block.getBlockFromName("BuildCraft|Builders:frameBlock"));
@@ -297,8 +301,12 @@ public class BuildCraftFactory extends BuildCraftMod {
                 } else {
                     mapping.ignore();
                 }
-            } else if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:hopperBlock")) {
-                mapping.remap(Block.getBlockFromName("BuildCraft|Factory:chuteBlock"));
+            } else if (name.equals("buildcraft|factory:hopperblock") || name.equals("buildcraft|factory:blockhopper")) {
+                if (mapping.type == Type.BLOCK) {
+                    mapping.remap(chuteBlock);
+                } else {
+                    mapping.remap(Item.getItemFromBlock(chuteBlock));
+                }
             }
         }
     }

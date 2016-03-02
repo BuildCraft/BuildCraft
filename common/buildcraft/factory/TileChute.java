@@ -10,8 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
-import cofh.api.energy.IEnergyHandler;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
@@ -22,7 +21,7 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.Transactor;
 
-public class TileChute extends TileBuildCraft implements IInventory, IEnergyHandler, IRedstoneEngineReceiver {
+public class TileChute extends TileBuildCraft implements IInventory, IRedstoneEngineReceiver {
 
     private final SimpleInventory inventory = new SimpleInventory(4, "Chute", 64);
     private boolean isEmpty;
@@ -181,8 +180,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
 
     @Override
     public boolean canConnectRedstoneEngine(EnumFacing side) {
-        // blocks up and down
-        return side.ordinal() >= 2;
+        return side.getAxis() != Axis.Y;
     }
 
     @Override
@@ -192,7 +190,6 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
 
     @Override
     public boolean canConnectEnergy(EnumFacing side) {
-        // blocks up and down
-        return side.ordinal() >= 2 && !(getTile(side) instanceof IPipeTile);
+        return canConnectRedstoneEngine(side) && !(getTile(side) instanceof IPipeTile);
     }
 }
