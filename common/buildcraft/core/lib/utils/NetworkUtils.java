@@ -21,7 +21,7 @@ public final class NetworkUtils {
 
     public static void writeUTF(ByteBuf data, String str) {
         try {
-            if (str == null) {
+            if (str == null || str.length() == 0) {
                 data.writeInt(0);
                 return;
             }
@@ -141,7 +141,8 @@ public final class NetworkUtils {
     }
 
     public static <E extends Enum<E>> void writeEnum(ByteBuf stream, E value) {
-        if (value == null) writeUTF(stream, "!NULL");
+        // TODO: Make this check if the value imlpements "INetSerialisable" and write using that.
+        if (value == null) writeUTF(stream, "");
         else writeUTF(stream, value.name());
     }
 

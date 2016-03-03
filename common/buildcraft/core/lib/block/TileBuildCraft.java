@@ -30,12 +30,14 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -172,11 +174,13 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     @Override
     public void writeData(ByteBuf stream) {
         stream.writeByte(ledPower);
+        NetworkUtils.writeEnum(stream, mode);
     }
 
     @Override
     public void readData(ByteBuf stream) {
         ledPower = stream.readByte();
+        mode = NetworkUtils.readEnum(stream, Mode.class);
     }
 
     public PacketTileUpdate getPacketUpdate() {
@@ -387,6 +391,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
     public void setControlMode(IControllable.Mode mode) {
         this.mode = mode;
+        sendNetworkUpdate();
     }
 
     // IInventory

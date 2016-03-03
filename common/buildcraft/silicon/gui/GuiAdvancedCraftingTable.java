@@ -6,9 +6,13 @@ package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.tiles.IControllable.Mode;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 
 public class GuiAdvancedCraftingTable extends GuiLaserTable {
@@ -31,6 +35,10 @@ public class GuiAdvancedCraftingTable extends GuiLaserTable {
         if (workbench.getEnergy() > 0) {
             int progress = workbench.getProgressScaled(24);
             drawTexturedModalRect(guiLeft + 93, guiTop + 32, 176, 0, progress + 1, 18);
+        }
+        if (workbench.getControlMode() == Mode.Off) {
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            drawTexturedModalRect(guiLeft + 93, guiTop + 16, CoreIconProvider.TUNED_OFF.getSprite(), 16, 16);
         }
     }
 }

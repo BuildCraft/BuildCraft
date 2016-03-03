@@ -6,7 +6,9 @@ import net.minecraft.util.ResourceLocation;
 
 public enum CoreIconProvider {
     ENERGY("buildcraftcore:items/icons/energy"),
-    SLOT("buildcraftcore:gui/slot");
+    SLOT("buildcraftcore:gui/slot"),
+    LOCK("buildcraftcore:items/icons/lock"),
+    TUNED_OFF("buildcraftcore:triggers/action_machinecontrol_off");
 
     private final ResourceLocation location;
     private TextureAtlasSprite sprite;
@@ -15,14 +17,16 @@ public enum CoreIconProvider {
         this.location = new ResourceLocation(location);
     }
 
-    public static void registerIcons(TextureMap map) {
+    public static void registerSprites(TextureMap map) {
         for (CoreIconProvider icon : values()) {
             icon.registerSprite(map);
         }
     }
 
     private void registerSprite(TextureMap map) {
-        sprite = map.registerSprite(location);
+        sprite = null;
+        sprite = map.getTextureExtry(location.toString());
+        if (sprite == null) sprite = map.registerSprite(location);
     }
 
     public TextureAtlasSprite getSprite() {

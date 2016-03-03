@@ -641,7 +641,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Pre evt) {
-        CoreIconProvider.registerIcons(evt.map);
+        CoreIconProvider.registerSprites(evt.map);
         TextureAtlasSprite[] array = new TextureAtlasSprite[16];
         for (EnumColor color : EnumColor.values()) {
             String location = "buildcraftcore:items/paintbrush/" + color.name().toLowerCase(Locale.ROOT);
