@@ -373,7 +373,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                      * id. */
                     true);
 
-            // Let a seperate class handle all of the pipe initialisation- there is a lareg amount of it to do and we
+            // Let a seperate class handle all of the pipe initialisation- there is a large amount of it to do and we
             // don't need to make this even bigger than what it already is
             TransportPipes_BC8.preInit();
         }
@@ -585,7 +585,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         pipeExtensionListener = null;
     }
 
-    public void loadRecipes() {
+    public static void loadRecipes() {
         // Add base recipe for pipe waterproof.
         GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
         if (additionalWaterproofingRecipe) {
@@ -633,6 +633,27 @@ public class BuildCraftTransport extends BuildCraftMod {
                         "blockGlass"));
                 GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16), "OSO", "SGS", "OSO", 'O', Blocks.iron_bars, 'S', dye,
                         'G', "blockGlass"));
+            }
+        }
+    }
+
+    public static void loadComplexRefiningRecipes() {
+        for (PipeRecipe pipe : pipeRecipes) {
+            Object[] newInput = new Object[pipe.input.length];
+            System.arraycopy(pipe.input, 0, newInput, 0, pipe.input.length);
+            boolean changed = false;
+            for (int i = 0; i < newInput.length; i++) {
+                Object o = newInput[i];
+                if ("blockGlassColorless".equals(o)) {
+                    newInput[i] = BuildCraftFactory.plasticSheetItem;
+                    changed = true;
+                }
+            }
+            if (!changed) continue;
+            if (pipe.isShapeless) {
+                BCRegistry.INSTANCE.addShapelessRecipe(pipe.result, newInput);
+            } else {
+                BCRegistry.INSTANCE.addCraftingRecipe(pipe.result, newInput);
             }
         }
     }

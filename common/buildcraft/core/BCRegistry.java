@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
+import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -92,6 +93,20 @@ public final class BCRegistry {
         }
 
         GameRegistry.addRecipe(new ShapedOreRecipe(result, recipe));
+    }
+
+    public void addCraftingRecipeNBTAware(ItemStack result, Object... recipe) {
+        if (isInvalidRecipeElement(result)) {
+            return;
+        }
+
+        for (Object o : recipe) {
+            if (isInvalidRecipeElement(o)) {
+                return;
+            }
+        }
+        
+        GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, recipe));
     }
 
     public void addShapelessRecipe(ItemStack result, Object... recipe) {

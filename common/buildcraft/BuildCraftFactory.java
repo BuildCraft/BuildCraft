@@ -20,7 +20,9 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +47,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.factory.*;
@@ -81,6 +84,8 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static BlockDistiller distillerBlock;
     public static BlockEnergyHeater energyHeaterBlock;
     public static BlockHeatExchange heatExchangeBlock;
+
+    public static ItemBuildCraft plasticSheetItem;
 
     public static Achievement aLotOfCraftingAchievement;
     public static Achievement straightDownAchievement;
@@ -147,6 +152,12 @@ public class BuildCraftFactory extends BuildCraftMod {
             distillerBlock = (BlockDistiller) CompatHooks.INSTANCE.getBlock(BlockDistiller.class);
             BCRegistry.INSTANCE.registerBlock(distillerBlock.setUnlocalizedName("blockDistiller"), false);
 
+            plasticSheetItem = new ItemBuildCraft();
+            plasticSheetItem.setUnlocalizedName("plasticSheet");
+            plasticSheetItem.setLocalizationRuleArray("item.plasticSheet.singular", "item.plasticSheet.plural");
+            plasticSheetItem.setLocalizationRule((stack) -> stack == null ? 0 : stack.stackSize > 1 ? 1 : 0);
+            BCRegistry.INSTANCE.registerItem(plasticSheetItem, false);
+
             ComplexRefiningManager.preInit();
         }
 
@@ -192,6 +203,39 @@ public class BuildCraftFactory extends BuildCraftMod {
                 ? tankBlock : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
         }
 
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
+            // Complex refining
+            if (distillerBlock != null) {
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(distillerBlock), "GIG", "ITS", "GIG", 'I', "ingotIron", 'T', tankBlock != null
+                    ? tankBlock : "blockGlass", 'G', "glassPane", 'S', "gearIron");
+            }
+
+            if (heatExchangeBlock != null) {
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(heatExchangeBlock), "GIG", "ITI", "GIG", 'I', "ingotIron", 'T', tankBlock != null
+                    ? tankBlock : "blockGlass", 'G', "glassPane", 'S', "gearIron");
+            }
+
+            if (energyHeaterBlock != null) {
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(energyHeaterBlock), "RPR", "ITI", "GPG", 'I', "ingotIron", 'T', tankBlock != null
+                    ? tankBlock : "blockGlass", 'R', "dustRedstone", 'P', "glassPane", 'G', "gearIron");
+            }
+
+            UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
+            ItemStack residueBucket = UniversalBucket.getFilledBucket(bucket, ComplexRefiningManager.oilResidue[0].fluid);
+            ItemStack tarBucket = UniversalBucket.getFilledBucket(bucket, ComplexRefiningManager.tar.fluid);
+            tarBucket.stackSize = 2;
+            BCRegistry.INSTANCE.addCraftingRecipeNBTAware(tarBucket, " G ", "GBG", " G ", 'G', Blocks.gravel, 'B', residueBucket);
+            BCRegistry.INSTANCE.addCraftingRecipeNBTAware(new ItemStack(plasticSheetItem, 16), "WRW", 'R', residueBucket, 'W', Items.water_bucket);
+
+            if (Loader.isModLoaded("BuildCraft|Transport")) {
+                loadTransportRefiningRecipes();
+            }
+        }
+    }
+
+    private static void loadTransportRefiningRecipes() {
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftTransport.pipeWaterproof, 4), "PPP", 'P', new ItemStack(plasticSheetItem));
+        BuildCraftTransport.loadComplexRefiningRecipes();
     }
 
     @Mod.EventHandler
