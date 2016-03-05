@@ -107,7 +107,7 @@ public class ComplexRefiningManager {
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
         // Special case for now.
-        boolean bucket = name.equals("oil") || name.equals("fuel");
+        boolean bucket = true;// name.equals("oil") || name.equals("fuel");
 
         FluidDefinition def = new FluidDefinition(fullName, fullName, boilAdjustedDensity, tempAdjustedViscocity, bucket, 0xFF_00_00_00
             | texColourLight, 0xFF_00_00_00 | texColourDark);
@@ -150,29 +150,29 @@ public class ComplexRefiningManager {
         final int _residue = 1;
 
         // double
-        final int _gas_light = 12;
-        final int _light_dense = 6;
-        final int _dense_residue = 3;
+        final int _gas_light = 10;
+        final int _light_dense = 5;
+        final int _dense_residue = 2;
 
         // triple
-        final int _light_dense_residue = 6;
+        final int _light_dense_residue = 5;
         final int _gas_light_dense = 10;
 
         // 4 split up
-        addDistilationRecipe(crudeOil[1], _oil, fuelGaseous[1], _gas, oilHeavy[1], _light_dense_residue, 6);
-        addDistilationRecipe(crudeOil[2], _oil, fuelMixedLight[2], _gas_light, oilDense[2], _dense_residue, 4);
-        addDistilationRecipe(crudeOil[3], _oil, oilDistilled[3], _gas_light_dense, oilResidue[3], _residue, 2);
+        addDistilationRecipe(crudeOil[1], _oil, fuelGaseous[1], _gas, oilHeavy[1], _light_dense_residue, 12);
+        addDistilationRecipe(crudeOil[2], _oil, fuelMixedLight[2], _gas_light, oilDense[2], _dense_residue, 8);
+        addDistilationRecipe(crudeOil[3], _oil, oilDistilled[3], _gas_light_dense, oilResidue[3], _residue, 4);
 
         // 3 split up
-        addDistilationRecipe(oilDistilled[1], _gas_light_dense, fuelGaseous[1], _gas, fuelMixedHeavy[1], _light_dense, 3);
-        addDistilationRecipe(oilDistilled[2], _gas_light_dense, fuelMixedLight[2], _gas_light, fuelDense[2], _dense, 2);
-        addDistilationRecipe(oilHeavy[2], _light_dense_residue, fuelLight[2], _light, oilDense[2], _dense_residue, 2);
-        addDistilationRecipe(oilHeavy[3], _light_dense_residue, fuelMixedHeavy[3], _light_dense, oilResidue[3], _residue, 2);
+        addDistilationRecipe(oilDistilled[1], _gas_light_dense, fuelGaseous[1], _gas, fuelMixedHeavy[1], _light_dense, 6);
+        addDistilationRecipe(oilDistilled[2], _gas_light_dense, fuelMixedLight[2], _gas_light, fuelDense[2], _dense, 4);
+        addDistilationRecipe(oilHeavy[2], _light_dense_residue, fuelLight[2], _light, oilDense[2], _dense_residue, 4);
+        addDistilationRecipe(oilHeavy[3], _light_dense_residue, fuelMixedHeavy[3], _light_dense, oilResidue[3], _residue, 4);
 
         // 2 split up
-        addDistilationRecipe(fuelMixedLight[1], _gas_light, fuelGaseous[1], _gas, fuelLight[1], _light, 3);
-        addDistilationRecipe(fuelMixedHeavy[2], _light_dense, fuelLight[2], _light, fuelDense[2], _dense, 3);
-        addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 3);
+        addDistilationRecipe(fuelMixedLight[1], _gas_light, fuelGaseous[1], _gas, fuelLight[1], _light, 6);
+        addDistilationRecipe(fuelMixedHeavy[2], _light_dense, fuelLight[2], _light, fuelDense[2], _dense, 6);
+        addDistilationRecipe(oilDense[3], _dense_residue, fuelDense[3], _dense, oilResidue[3], _residue, 6);
 
         addNormalFuel(fuelGaseous[0], _gas, 8, 1);
         addNormalFuel(fuelLight[0], _light, 6, 1);

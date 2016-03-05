@@ -646,7 +646,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                 Object o = newInput[i];
                 if ("blockGlassColorless".equals(o)) {
                     newInput[i] = BuildCraftFactory.plasticSheetItem;
-                    changed = true;
+//                    changed = true;
                 }
             }
             if (!changed) continue;

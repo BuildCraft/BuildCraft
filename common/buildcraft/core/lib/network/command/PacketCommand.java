@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.core.lib.network.base.Packet;
@@ -24,7 +25,7 @@ public class PacketCommand extends Packet {
     private CommandWriter writer;
 
     static {
-        targets = new ArrayList<CommandTarget>();
+        targets = new ArrayList<>();
         targets.add(new CommandTargetTile());
         targets.add(new CommandTargetEntity());
         targets.add(new CommandTargetContainer());
@@ -50,6 +51,7 @@ public class PacketCommand extends Packet {
         }
 
         tempWorld = handler.getWorld(target);
+        dimensionId = tempWorld.provider.getDimensionId();
     }
 
     @Override

@@ -39,13 +39,14 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
     public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
+    public Tank tankResidue = new Tank("tankResidue", MAX_LIQUID, this);
 
     private double burnTime = 0;
     private float coolingBuffer = 0.0f;
     private int tankFuelAmountCache = 0;
     private int tankCoolantAmountCache = 0;
 
-    private TankManager<Tank> tankManager = new TankManager<Tank>();
+    private TankManager<Tank> tankManager = new TankManager<>();
     private IFuel currentFuel;
     private int penaltyCooling = 0;
     private boolean lastPowered = false;
@@ -193,9 +194,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             return;
         }
 
-        // WARNING: This is broken for values where the total times lasted is LESS than 1000 ticks.
         if (penaltyCooling <= 0 && isRedstonePowered) {
-
             lastPowered = true;
 
             if (burnTime > 0 || (fuel != null && fuel.amount > 0)) {
@@ -207,7 +206,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                         if (--fuel.amount <= 0) {
                             tankFuel.setFluid(null);
                         }
-                        burnTime += currentFuel.getTotalBurningTime() /(double) FluidContainerRegistry.BUCKET_VOLUME;
+                        burnTime += currentFuel.getTotalBurningTime() / (double) FluidContainerRegistry.BUCKET_VOLUME;
                     } else {
                         currentFuel = null;
                         return;

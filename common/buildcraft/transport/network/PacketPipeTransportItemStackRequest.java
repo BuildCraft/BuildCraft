@@ -24,7 +24,7 @@ public class PacketPipeTransportItemStackRequest extends Packet {
     }
 
     public PacketPipeTransportItemStackRequest(TileGenericPipe tile, PacketPipeTransportTraveler packet) {
-        this.tempWorld = tile.getWorld();
+        super(tile.getWorld());
         this.travelerID = packet.getTravelingEntityId();
     }
 

@@ -29,6 +29,7 @@ import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
@@ -128,7 +129,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
-        nbt.setByte("direction", (byte) direction.ordinal());
+        nbt.setTag("direction", NBTUtils.writeEnum(direction));
 
         if (itemBlueprint != null) {
             NBTTagCompound bptNBT = new NBTTagCompound();
@@ -151,7 +152,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
-        direction = EnumFacing.VALUES[(nbt.getByte("direction"))];
+        direction = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
 
         if (nbt.hasKey("itemBlueprint")) {
             itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));

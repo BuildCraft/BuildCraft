@@ -20,9 +20,8 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -220,12 +219,15 @@ public class BuildCraftFactory extends BuildCraftMod {
                     ? tankBlock : "blockGlass", 'R', "dustRedstone", 'P', "glassPane", 'G', "gearIron");
             }
 
-            UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
-            ItemStack residueBucket = UniversalBucket.getFilledBucket(bucket, ComplexRefiningManager.oilResidue[0].fluid);
-            ItemStack tarBucket = UniversalBucket.getFilledBucket(bucket, ComplexRefiningManager.tar.fluid);
+            ItemStack residueBucket = FluidContainerRegistry.fillFluidContainer(ComplexRefiningManager.oilResidue[0].createFluidStack(
+                    FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(Items.bucket));
+            ItemStack tarBucket = FluidContainerRegistry.fillFluidContainer(ComplexRefiningManager.tar.createFluidStack(
+                    FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(Items.bucket));
             tarBucket.stackSize = 2;
-            BCRegistry.INSTANCE.addCraftingRecipeNBTAware(tarBucket, " G ", "GBG", " G ", 'G', Blocks.gravel, 'B', residueBucket);
-            BCRegistry.INSTANCE.addCraftingRecipeNBTAware(new ItemStack(plasticSheetItem, 16), "WRW", 'R', residueBucket, 'W', Items.water_bucket);
+            BCRegistry.INSTANCE.addCraftingRecipe(tarBucket, " G ", "GBG", " G ", 'G', Blocks.gravel, 'B', residueBucket);
+            BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(plasticSheetItem, 16), residueBucket, Items.water_bucket, Items.water_bucket);
+            // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(plasticSheetItem, 16), "WRW", 'R', residueBucket,
+            // 'W', Items.water_bucket);
 
             if (Loader.isModLoaded("BuildCraft|Transport")) {
                 loadTransportRefiningRecipes();
@@ -234,8 +236,8 @@ public class BuildCraftFactory extends BuildCraftMod {
     }
 
     private static void loadTransportRefiningRecipes() {
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftTransport.pipeWaterproof, 4), "PPP", 'P', new ItemStack(plasticSheetItem));
-        BuildCraftTransport.loadComplexRefiningRecipes();
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftTransport.pipeWaterproof, 8), "PP", "PP", 'P', new ItemStack(plasticSheetItem));
+        // BuildCraftTransport.loadComplexRefiningRecipes();
     }
 
     @Mod.EventHandler

@@ -22,6 +22,7 @@ public class PacketTabletMessage extends Packet {
     }
 
     public PacketTabletMessage(NBTTagCompound tag, EntityPlayer player) {
+        super(player.worldObj);
         this.tag = tag;
         this.playerId = player.getEntityId();
     }

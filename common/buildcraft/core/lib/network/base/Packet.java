@@ -13,24 +13,35 @@ public abstract class Packet {
     protected boolean isChunkDataPacket = false;
     public int dimensionId;
     public World tempWorld;
+    boolean hasDoneByteStuff = false;
 
     /** Set by the channel handler AFTER read time. Package-private to hint that this should NOT be used at read time,
      * but at apply time. */
     EntityPlayer player = null;
 
     /** Default no-args constructor for constructing a received packet */
-    public Packet() {}
+    public Packet() {
+        dimensionId = PacketHandler.INVALID_DIM_ID;
+    }
 
     public Packet(int dimId) {
         this.dimensionId = dimId;
     }
 
+    public Packet(World world) {
+        this(world.provider.getDimensionId());
+        tempWorld = world;
+    }
+
     public void readData(ByteBuf data) {
         dimensionId = data.readInt();
+        hasDoneByteStuff = true;
     }
 
     public void writeData(ByteBuf data) {
+        if (dimensionId == PacketHandler.INVALID_DIM_ID) throw new IllegalStateException("Invalid Dimension ID!");
         data.writeInt(dimensionId);
+        hasDoneByteStuff = true;
     }
 
     /** Called in the main world tick to apply any data that cannot be applied in a different thread. So, everything. */

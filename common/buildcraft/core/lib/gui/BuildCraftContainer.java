@@ -54,7 +54,7 @@ public abstract class BuildCraftContainer extends Container {
     }
 
     public void sendWidgetDataToClient(Widget widget, ICrafting player, byte[] data) {
-        PacketGuiWidget pkt = new PacketGuiWidget(windowId, widgets.indexOf(widget), data);
+        PacketGuiWidget pkt = new PacketGuiWidget(this.player, windowId, widgets.indexOf(widget), data);
         BuildCraftCore.instance.sendToPlayer((EntityPlayer) player, pkt);
     }
 

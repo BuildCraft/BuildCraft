@@ -5,10 +5,7 @@
 package buildcraft;
 
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -16,9 +13,6 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
@@ -35,7 +29,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IBuildCraftMod;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.base.Packet;
-import buildcraft.core.lib.utils.ThreadSafeUtils;
+import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.Utils;
 
 public class BuildCraftMod implements IBuildCraftMod {
@@ -55,6 +49,11 @@ public class BuildCraftMod implements IBuildCraftMod {
                 NullPointerException npe = new NullPointerException("The packet's world was null! Cannot send this!");
                 BCLog.logger.fatal("// Blame AlexIIL", npe);
                 throw npe;
+            }
+            if (packet.dimensionId == PacketHandler.INVALID_DIM_ID) {
+                IllegalArgumentException iae = new IllegalArgumentException("The packet had an invalid dimension ID! Cannot send this!");
+                BCLog.logger.fatal("// Blame AlexIIL", iae);
+                throw iae;
             }
         }
 

@@ -22,7 +22,7 @@ public class PacketPipeTransportItemStack extends Packet {
     public PacketPipeTransportItemStack() {}
 
     public PacketPipeTransportItemStack(World world, int entityId, ItemStack stack) {
-        this.tempWorld = world;
+        super(world);
         this.entityId = entityId;
         this.stack = stack;
     }

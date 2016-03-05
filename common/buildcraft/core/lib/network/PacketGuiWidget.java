@@ -21,7 +21,8 @@ public class PacketGuiWidget extends Packet {
         super();
     }
 
-    public PacketGuiWidget(int windowId, int widgetId, byte[] data) {
+    public PacketGuiWidget(EntityPlayer player, int windowId, int widgetId, byte[] data) {
+        super(player.worldObj);
         this.windowId = (byte) windowId;
         this.widgetId = (byte) widgetId;
         this.payload = data;

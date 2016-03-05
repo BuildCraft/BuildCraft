@@ -29,6 +29,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * itself. */
 @Sharable
 public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+    /** A massive negative number. Close to {@link Integer#MIN_VALUE} to reduce the likelyhood of this being a valid dim
+     * ID in another mod. */
+    public static final int INVALID_DIM_ID = Integer.MIN_VALUE + 10;
+
     private static volatile int livePacketCount = 0;
     private static int lastSomethingPackets = 0;
     private static long lastDispMs = System.currentTimeMillis();
@@ -59,6 +63,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
         Side side = world.isRemote ? Side.CLIENT : Side.SERVER;
         int dimId = world.provider.getDimensionId();
         Queue<Packet> queue = getQueue(side, dimId);
+        // BCLog.logger.info("Ticking world " + dimId + " at " + side + " with " + queue.size() + " packets");
         while ((packet = queue.poll()) != null) {
             // Pass the packets player back to it (It was not accessible to subtypes)
             packet.applyData(world, packet.player);
@@ -75,6 +80,8 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
         Side side = ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get();
+        if (packet.dimensionId == INVALID_DIM_ID) BCLog.logger.warn("Found a packet with an invalid dimension id! [read]");
+        if (!packet.hasDoneByteStuff) throw new IllegalArgumentException("Tried to use a packet that hasn't read yet! THIS IS VERY BAD!");
         if (side != null) {
             getQueue(side, packet.dimensionId).add(packet);
             livePacketCount++;

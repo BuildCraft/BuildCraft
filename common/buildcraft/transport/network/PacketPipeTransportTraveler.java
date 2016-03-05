@@ -12,7 +12,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeTransportItems;
@@ -37,7 +36,7 @@ public class PacketPipeTransportTraveler extends Packet {
     public PacketPipeTransportTraveler() {}
 
     public PacketPipeTransportTraveler(TileEntity tile, TravelingItem item, boolean forceStackRefresh) {
-        this.tempWorld = tile.getWorld();
+        super(tile.getWorld());
         this.item = item;
         this.forceStackRefresh = forceStackRefresh;
     }

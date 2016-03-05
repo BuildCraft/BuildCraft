@@ -52,8 +52,6 @@ public class PacketTileState extends PacketCoordinates {
      * @param pos - the coordinates the tile to sync */
     public PacketTileState(TileEntity tile) {
         super(tile);
-        tempWorld = tile.getWorld();
-        isChunkDataPacket = true;
     }
 
     public void addStateForSerialization(byte stateId, ISerializable state) {
