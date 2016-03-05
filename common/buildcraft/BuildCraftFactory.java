@@ -15,7 +15,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.RegistrySimple;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -38,7 +37,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
@@ -372,21 +370,22 @@ public class BuildCraftFactory extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelBakeEvent event) {
-        ModelResourceLocation mrl = new ModelResourceLocation("buildcraftfactory:chuteBlock");
-        for (ModelResourceLocation entry : ((RegistrySimple<ModelResourceLocation, IBakedModel>) event.modelRegistry).getKeys()) {
-            String str = entry.toString();
-            if (str.contains("buildcraftfactory")) {
-                BCLog.logger.info(str);
-            }
-        }
-
-        if (Loader.isModLoaded("BuildCraft|Energy")) {
-            ComplexRefiningManager.registerModels(event);
-        }
+        ModelResourceLocation mrl = new ModelResourceLocation("buildcraftfactory:blockChute");
+        // for (ModelResourceLocation entry : ((RegistrySimple<ModelResourceLocation, IBakedModel>)
+        // event.modelRegistry).getKeys()) {
+        // String str = entry.toString();
+        // if (str.contains("buildcraftfactory")) {
+        // BCLog.logger.info(str);
+        // }
+        // }
 
         IBakedModel model = event.modelRegistry.getObject(mrl);
         if (model != null) {
             event.modelRegistry.putObject(mrl, ChuteRenderModel.create(model));
+        }
+
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
+            ComplexRefiningManager.registerModels(event);
         }
     }
 }

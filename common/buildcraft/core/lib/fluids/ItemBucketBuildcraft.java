@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.IModelRegister;
@@ -35,4 +36,9 @@ public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
     // tooltip.add("Place and pick up for");
     // tooltip.add("the new version");
     // }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {// TODO!
+        return super.getItemStackDisplayName(stack);
+    }
 }

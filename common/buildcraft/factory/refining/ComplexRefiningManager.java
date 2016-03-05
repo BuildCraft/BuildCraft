@@ -127,16 +127,16 @@ public class ComplexRefiningManager {
         // Add the heatables
         addBiDirectionalHeatExchange(crudeOil, 10, 7);
 
-        addBiDirectionalHeatExchange(oilDistilled, 5, 2);// Divided from 10, 4
-        addBiDirectionalHeatExchange(oilHeavy, 5, 3);// Divided from 10, 6
+        addBiDirectionalHeatExchange(oilDistilled, 10, 4);
+        addBiDirectionalHeatExchange(oilHeavy, 10, 6);
 
-        addBiDirectionalHeatExchange(oilDense, 5, 3);// 10, 6
-        addBiDirectionalHeatExchange(fuelMixedHeavy, 2, 1);// 10,5
-        addBiDirectionalHeatExchange(fuelMixedLight, 5, 2);// 10, 4
+        addBiDirectionalHeatExchange(oilDense, 10, 6);
+        addBiDirectionalHeatExchange(fuelMixedHeavy, 10, 5);
+        addBiDirectionalHeatExchange(fuelMixedLight, 10, 4);
 
-        addBiDirectionalHeatExchange(oilResidue, 5, 4);// 10, 8
-        addBiDirectionalHeatExchange(fuelDense, 2, 1);// 10, 5
-        addBiDirectionalHeatExchange(fuelLight, 5, 2);// 10, 4
+        addBiDirectionalHeatExchange(oilResidue, 10, 8);
+        addBiDirectionalHeatExchange(fuelDense, 10, 5);
+        addBiDirectionalHeatExchange(fuelLight, 10, 4);
         addBiDirectionalHeatExchange(fuelGaseous, 10, 3);
 
         BuildcraftRecipeRegistry.complexRefinery.addHeatableRecipe(new FluidStack(FluidRegistry.WATER, 10), steam.createFluidStack(10), 0, 2, 3,
