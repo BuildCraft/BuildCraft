@@ -222,7 +222,8 @@ public class BuildCraftFactory extends BuildCraftMod {
             ItemStack tarBucket = FluidContainerRegistry.fillFluidContainer(ComplexRefiningManager.tar.createFluidStack(
                     FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(Items.bucket));
             tarBucket.stackSize = 2;
-            BCRegistry.INSTANCE.addCraftingRecipe(tarBucket, " G ", "GBG", " G ", 'G', Blocks.gravel, 'B', residueBucket);
+            // BCRegistry.INSTANCE.addCraftingRecipe(tarBucket, " G ", "GBG", "GVG", 'G', Blocks.gravel, 'B',
+            // residueBucket, 'V', Items.bucket);
             BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(plasticSheetItem, 16), residueBucket, Items.water_bucket, Items.water_bucket);
             // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(plasticSheetItem, 16), "WRW", 'R', residueBucket,
             // 'W', Items.water_bucket);
