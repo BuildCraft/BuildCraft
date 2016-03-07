@@ -1,0 +1,16 @@
+{
+    "forge_marker":1,
+    "defaults": {
+        "textures":{
+            "#mainTex":"buildcraftfactory:blocks/heat_exchanger/main"
+        }
+    },
+    "variants": {
+        "facing": {
+			"east":  { "submodel":"buildcraftfactory:heat_exchanger/main.obj", "y":270   },
+			"north": { "submodel":"buildcraftfactory:heat_exchanger/main.obj", "y":180  },
+			"west":  { "submodel":"buildcraftfactory:heat_exchanger/main.obj", "y":90 },
+			"south": { "submodel":"buildcraftfactory:heat_exchanger/main.obj", "y":0 }
+		}
+    }
+}

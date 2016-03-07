@@ -7,15 +7,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.tile.TileHeatExchange;
 
-public class BlockHeatExchange extends BlockBuildCraft implements ICustomPipeConnection {
+public class BlockHeatExchange extends BlockBuildCraft {
     public BlockHeatExchange() {
         super(Material.iron, FACING_PROP);
     }
@@ -50,12 +50,26 @@ public class BlockHeatExchange extends BlockBuildCraft implements ICustomPipeCon
         if (!world.isRemote) {
             player.openGui(BuildCraftFactory.instance, GuiIds.HEAT_EXCHANGE, world, pos.getX(), pos.getY(), pos.getZ());
         }
-
         return true;
     }
 
     @Override
-    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
-        return 0.125f;
+    public boolean isFullBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
+        return false;
+    }
+
+    @Override
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 }

@@ -16,11 +16,9 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -79,8 +77,7 @@ public class PipeRendererFluids {
         }
     }
 
-    @SubscribeEvent
-    public void modelBake(ModelBakeEvent event) {
+    public void modelBake() {
         fluidLists.clear();
     }
 

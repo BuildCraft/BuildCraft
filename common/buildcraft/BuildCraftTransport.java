@@ -69,6 +69,7 @@ import buildcraft.transport.render.FacadeItemModel;
 import buildcraft.transport.render.GateItemModel;
 import buildcraft.transport.render.PipeBlockModel;
 import buildcraft.transport.render.PipeItemModel;
+import buildcraft.transport.render.tile.PipeRendererFluids;
 import buildcraft.transport.schematics.BptPipeFiltered;
 import buildcraft.transport.schematics.BptPipeRotatable;
 import buildcraft.transport.schematics.SchematicPipe;
@@ -646,7 +647,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                 Object o = newInput[i];
                 if ("blockGlassColorless".equals(o)) {
                     newInput[i] = BuildCraftFactory.plasticSheetItem;
-//                    changed = true;
+                    // changed = true;
                 }
             }
             if (!changed) continue;
@@ -764,6 +765,9 @@ public class BuildCraftTransport extends BuildCraftMod {
     public void registerModels(ModelBakeEvent event) {
         ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:pipeBlock");
         event.modelRegistry.putObject(mrl, new PipeBlockModel());
+
+        PipeRendererFluids.INSTANCE.modelBake();
+
         for (ItemPipe itemPipe : BlockGenericPipe.pipes.keySet()) {
             for (int i = 0; i < 17; i++) {
                 mrl = ModelHelper.getItemResourceLocation(itemPipe, "_" + i);
