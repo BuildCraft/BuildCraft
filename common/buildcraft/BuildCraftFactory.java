@@ -203,18 +203,19 @@ public class BuildCraftFactory extends BuildCraftMod {
         if (Loader.isModLoaded("BuildCraft|Energy")) {
             // Complex refining
             if (distillerBlock != null) {
-                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(distillerBlock), "GIG", "ITS", "GIG", 'I', "ingotIron", 'T', tankBlock != null
-                    ? tankBlock : "blockGlass", 'G', "glassPane", 'S', "gearIron");
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(distillerBlock), "gpi", "ptd", "gpi", 'i', "gearIron", 't', tankBlock != null
+                    ? tankBlock : "blockGlass", 'p', "paneGlassColorless", 'g', "gearGold", 'd', "gearDiamond");
             }
 
             if (heatExchangeBlock != null) {
-                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(heatExchangeBlock), "GIG", "ITI", "GIG", 'I', "ingotIron", 'T', tankBlock != null
-                    ? tankBlock : "blockGlass", 'G', "glassPane", 'S', "gearIron");
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(heatExchangeBlock), "gpg", "ptp", "gpg", 'g', "gearGold", 't', tankBlock != null
+                    ? tankBlock : "blockGlass", 'p', "paneGlassColorless");
             }
 
             if (energyHeaterBlock != null) {
-                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(energyHeaterBlock), "RPR", "ITI", "GPG", 'I', "ingotIron", 'T', tankBlock != null
-                    ? tankBlock : "blockGlass", 'R', "dustRedstone", 'P', "glassPane", 'G', "gearIron");
+
+                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(energyHeaterBlock), "iri", "ptp", "rgr", 'i', "gearIron", 't', tankBlock != null
+                    ? tankBlock : "blockGlass", 'r', "dustRedstone", 'p', "paneGlassColorless", 'g', "gearGold");
             }
 
             ItemStack residueBucket = FluidContainerRegistry.fillFluidContainer(ComplexRefiningManager.oilResidue[0].createFluidStack(
