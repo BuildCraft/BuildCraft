@@ -10,6 +10,8 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.widgets.FluidTankWidget;
+import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineStone;
 
 public class ContainerEngine extends BuildCraftContainer {
@@ -21,21 +23,28 @@ public class ContainerEngine extends BuildCraftContainer {
 
         engine = tileEngine;
 
+        int yOffset = 0;
+
         if (tileEngine instanceof TileEngineStone) {
             addSlotToContainer(new Slot(tileEngine, 0, 80, 41));
-        } else {
-            addSlotToContainer(new Slot(tileEngine, 0, 52, 41));
+        } else {// Assume TileEngineIron
+            TileEngineIron combustionEngine = (TileEngineIron) tileEngine;
+
+            FluidTankWidget fuelWidget = new FluidTankWidget(combustionEngine.tankFuel, 26, 19, 16, 58).withOverlay(176, 0);
+            addWidget(fuelWidget);
+            addWidget(fuelWidget.copyMoved(combustionEngine.tankCoolant, 80, 19));
+            addWidget(fuelWidget.copyMoved(combustionEngine.tankResidue, 134, 19));
+            yOffset = 11;
         }
 
         for (int i = 0; i < 3; i++) {
             for (int k = 0; k < 9; k++) {
-                addSlotToContainer(new Slot(player.inventory, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
+                addSlotToContainer(new Slot(player.inventory, k + i * 9 + 9, 8 + k * 18, 84 + i * 18 + yOffset));
             }
-
         }
 
         for (int j = 0; j < 9; j++) {
-            addSlotToContainer(new Slot(player.inventory, j, 8 + j * 18, 142));
+            addSlotToContainer(new Slot(player.inventory, j, 8 + j * 18, 142 + yOffset));
         }
     }
 

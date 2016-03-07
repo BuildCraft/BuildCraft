@@ -5,6 +5,7 @@
 package buildcraft.core.lib.fluids;
 
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,6 +13,7 @@ import net.minecraft.util.EnumChatFormatting;
 
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
@@ -28,11 +30,17 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     };
 
     private final String name;
+    private final Predicate<FluidStack> filter;
 
     public Tank(String name, int capacity, TileEntity tile) {
+        this(name, capacity, tile, null);
+    }
+
+    public Tank(String name, int capacity, TileEntity tile, Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
+        this.filter = filter;
     }
 
     public String getTankName() {
@@ -49,6 +57,18 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
 
     public Fluid getFluidType() {
         return getFluid() != null ? getFluid().getFluid() : null;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        writeToNBT(nbt);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        readFromNBT(nbt);
     }
 
     @Override
@@ -94,14 +114,13 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     }
 
     @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
-        return nbt;
+    public int fill(FluidStack resource, boolean doFill) {
+        if (filter == null || filter.test(resource)) return super.fill(resource, doFill);
+        return 0;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        readFromNBT(nbt);
+    public void setFluid(FluidStack fluid) {
+        if (fluid == null || filter == null || filter.test(fluid)) super.setFluid(fluid);
     }
 }

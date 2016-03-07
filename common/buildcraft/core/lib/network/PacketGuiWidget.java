@@ -7,12 +7,12 @@ package buildcraft.core.lib.network;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.base.Packet;
 
 import io.netty.buffer.ByteBuf;
 
-/** WARNING: Only sent to the client! */
 public class PacketGuiWidget extends Packet {
     private byte windowId, widgetId;
     private byte[] payload;
@@ -51,8 +51,11 @@ public class PacketGuiWidget extends Packet {
     public void applyData(World world, EntityPlayer player) {
         if (player != null) {
             if (player.openContainer instanceof BuildCraftContainer && player.openContainer.windowId == windowId) {
-                ((BuildCraftContainer) player.openContainer).handleWidgetClientData(widgetId, payload);
+                BuildCraftContainer bcContainer = (BuildCraftContainer) player.openContainer;
+                bcContainer.handleWidgetData(widgetId, payload);
             }
+        } else {
+            BCLog.logger.warn("No player!");
         }
     }
 }

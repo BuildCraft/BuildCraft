@@ -5,7 +5,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.core.lib.gui.widgets.FluidGaugeWidget;
+import buildcraft.core.lib.gui.widgets.FluidTankWidget;
 import buildcraft.factory.tile.TileHeatExchange;
 
 public class ContainerHeatExchange extends BuildCraftContainer {
@@ -30,10 +30,10 @@ public class ContainerHeatExchange extends BuildCraftContainer {
             addSlotToContainer(new Slot(player.inventory, x, 8 + x * 18, 147));
         }
 
-        addWidget(new FluidGaugeWidget(heatExchange.getInputCoolable(), 44, 12, 16, 38).withOverlay(0, 171));
-        addWidget(new FluidGaugeWidget(heatExchange.getInputHeatable(), 44, 64, 34, 17).withOverlay(17, 171));
-        addWidget(new FluidGaugeWidget(heatExchange.getOutputCooled(), 116, 43, 16, 38).withOverlay(0, 171));
-        addWidget(new FluidGaugeWidget(heatExchange.getOutputHeated(), 98, 12, 34, 17).withOverlay(17, 171));
+        addWidget(new FluidTankWidget(heatExchange.getInputCoolable(), 44, 12, 16, 38).withOverlay(0, 171));
+        addWidget(new FluidTankWidget(heatExchange.getInputHeatable(), 44, 64, 34, 17).withOverlay(17, 171));
+        addWidget(new FluidTankWidget(heatExchange.getOutputCooled(), 116, 43, 16, 38).withOverlay(0, 171));
+        addWidget(new FluidTankWidget(heatExchange.getOutputHeated(), 98, 12, 34, 17).withOverlay(17, 171));
     }
 
     @Override

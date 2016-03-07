@@ -21,6 +21,7 @@ import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
+import buildcraft.api.fuels.IFuelManager.IDirtyFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
@@ -37,9 +38,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     public static float COOLDOWN_RATE = 0.05F;
     public static int MAX_COOLANT_PER_TICK = 40;
 
-    public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this);
-    public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
-    public Tank tankResidue = new Tank("tankResidue", MAX_LIQUID, this);
+    public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this, this::isValidFuel);
+    public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this, this::isValidCoolant);
+    public Tank tankResidue = new Tank("tankResidue", MAX_LIQUID, this, this::isResidue);
 
     private double burnTime = 0;
     private float coolingBuffer = 0.0f;
@@ -424,9 +425,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             return 0;
         }
 
-        if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
+        if (isValidCoolant(resource)) {
             return tankCoolant.fill(resource, doFill);
-        } else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
+        } else if (isValidFuel(resource)) {
             int filled = tankFuel.fill(resource, doFill);
             if (filled > 0 && tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null && (currentFuel == null || tankFuel.getFluid()
                     .getFluid() != currentFuel.getFluid())) {
@@ -436,6 +437,22 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         } else {
             return 0;
         }
+    }
+
+    private boolean isValidCoolant(FluidStack fluid) {
+        return BuildcraftFuelRegistry.coolant.getCoolant(fluid.getFluid()) != null;
+    }
+
+    private boolean isValidFuel(FluidStack fluid) {
+        return BuildcraftFuelRegistry.fuel.getFuel(fluid.getFluid()) != null;
+    }
+
+    private boolean isResidue(FluidStack fluid) {
+        if (currentFuel == null) return false;
+        if (currentFuel instanceof IDirtyFuel) {
+            return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
+        }
+        return false;
     }
 
     @Override

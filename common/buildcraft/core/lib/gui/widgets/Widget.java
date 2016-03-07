@@ -61,6 +61,8 @@ public class Widget implements IToolTipProvider {
     @SideOnly(Side.CLIENT)
     public void handleClientPacketData(DataInputStream data) throws IOException {}
 
+    public void handleServerPacketData(DataInputStream data) throws IOException {}
+
     @SideOnly(Side.CLIENT)
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
         gui.drawTexturedModalRect(guiX + x, guiY + y, u, v, w, h);

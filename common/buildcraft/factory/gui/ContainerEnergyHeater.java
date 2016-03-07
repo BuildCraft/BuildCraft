@@ -5,7 +5,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotValidated;
-import buildcraft.core.lib.gui.widgets.FluidGaugeWidget;
+import buildcraft.core.lib.gui.widgets.FluidTankWidget;
 import buildcraft.factory.tile.TileEnergyHeater;
 
 public class ContainerEnergyHeater extends BuildCraftContainer {
@@ -28,8 +28,8 @@ public class ContainerEnergyHeater extends BuildCraftContainer {
             addSlotToContainer(new Slot(player.inventory, x, 8 + x * 18, 120));
         }
 
-        addWidget(new FluidGaugeWidget(heater.getInputTank(), 44, 12, 16, 38).withOverlay(0, 144));
-        addWidget(new FluidGaugeWidget(heater.getOutputTank(), 116, 12, 16, 38).withOverlay(0, 144));
+        addWidget(new FluidTankWidget(heater.getInputTank(), 44, 12, 16, 38).withOverlay(0, 144));
+        addWidget(new FluidTankWidget(heater.getOutputTank(), 116, 12, 16, 38).withOverlay(0, 144));
     }
 
     @Override

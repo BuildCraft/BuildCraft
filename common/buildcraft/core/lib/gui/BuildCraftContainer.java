@@ -19,6 +19,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
@@ -53,19 +54,28 @@ public abstract class BuildCraftContainer extends Container {
         widgets.add(widget);
     }
 
-    public void sendWidgetDataToClient(Widget widget, ICrafting player, byte[] data) {
+    public void sendWidgetDataToClient(Widget widget, EntityPlayer player, byte[] data) {
         PacketGuiWidget pkt = new PacketGuiWidget(this.player, windowId, widgets.indexOf(widget), data);
-        BuildCraftCore.instance.sendToPlayer((EntityPlayer) player, pkt);
+        BuildCraftCore.instance.sendToPlayer(player, pkt);
     }
 
-    public void handleWidgetClientData(int widgetId, byte[] data) {
+    public void sendWidgetDataToServer(Widget widget, byte[] data) {
+        PacketGuiWidget pkt = new PacketGuiWidget(this.player, windowId, widgets.indexOf(widget), data);
+        BuildCraftCore.instance.sendToServer(pkt);
+    }
+
+    public void handleWidgetData(int widgetId, byte[] data) {
         InputStream input = new ByteArrayInputStream(data);
         DataInputStream stream = new DataInputStream(input);
-
-        try {
-            widgets.get(widgetId).handleClientPacketData(stream);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (widgetId < 0 || widgetId >= widgets.size()) BCLog.logger.warn("Found a packet with an invalid widget ID! (" + widgetId + ")");
+        else {
+            Widget widget = widgets.get(widgetId);
+            try {
+                if (getPlayer().isServerWorld()) widget.handleServerPacketData(stream);
+                else widget.handleClientPacketData(stream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
