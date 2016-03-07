@@ -126,6 +126,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
     }
 
+    /** Draws a fluid into the gui. This will automatically cut and/or repeat the fluid sprite to ensure that it can
+     * fill up any sized tank while keeping the sprite the correct size and scale. */
     public void drawFluid(FluidStack fluid, int x, int y, int width, int height, int maxCapacity) {
         if (fluid == null || fluid.getFluid() == null) {
             return;
@@ -209,8 +211,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     public void drawCenteredString(String string, int xCenter, int yCenter, int textColor) {
-        fontRendererObj.drawString(string, xCenter - fontRendererObj.getStringWidth(string) / 2, yCenter - fontRendererObj.FONT_HEIGHT / 2,
-                textColor);
+        int x = xCenter - fontRendererObj.getStringWidth(string) / 2;
+        int y = yCenter - fontRendererObj.FONT_HEIGHT / 2;
+        fontRendererObj.drawString(string, x, y, textColor);
+        // Reset the colour afterwards as drawString leaves it at the last colour drawn
         GlStateManager.color(1, 1, 1, 1);
     }
 
@@ -295,7 +299,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         return null;
     }
 
-    public void bindTexture(ResourceLocation texture) {
+    public static void bindTexture(ResourceLocation texture) {
         Minecraft.getMinecraft().renderEngine.bindTexture(texture);
     }
 

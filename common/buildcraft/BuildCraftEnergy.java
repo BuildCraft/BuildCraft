@@ -163,46 +163,26 @@ public class BuildCraftEnergy extends BuildCraftMod {
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
         if (!Loader.isModLoaded("BuildCraft|Factory")) {
             oil = new FluidDefinition("oil", 800, 10000, true);
-            if (oil.masterBlock != null) {
-                oil.masterBlock.setLightOpacity(8);
-                oil.masterBlock.setFlammability(0);
-                BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
-                        ConfigManager.RestartRequirement.NONE);
-                BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
-                        ConfigManager.RestartRequirement.NONE);
-            }
+            oil.block.setLightOpacity(8);
+            oil.block.setFlammability(0);
+            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
+                    ConfigManager.RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
+                    ConfigManager.RestartRequirement.NONE);
 
             fuel = new FluidDefinition("fuel", 1000, 1000, true);
-            if (fuel.masterBlock != null) {
-                fuel.masterBlock.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
-            }
-        }
+            fuel.block.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 
-        if (BuildCraftCore.DEVELOPER_MODE) {
-            redPlasma = new FluidDefinition("redplasma", 10000, 10000, false);
-            if (redPlasma.masterFluid != null) {
-                redPlasma.masterFluid.setLuminosity(30);
-            }
-            if (redPlasma.masterBlock != null) {
-                redPlasma.masterBlock.setFlammable(false).setParticleColor(0.9F, 0, 0);
-            }
-        }
-
-        if (oil != null) {
             spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
             EnumSpring.OIL.canGen = spawnOilSprings;
             EnumSpring.OIL.liquidBlock = oil.block.getDefaultState();
         }
 
-        // BucketHandler ensures empty buckets fill with the correct liquid.
-        // if (blockOil != null) {
-        // BucketHandler.INSTANCE.buckets.put(blockOil.getDefaultState(), bucketOil);
-        // }
-        // if (blockFuel != null) {
-        // BucketHandler.INSTANCE.buckets.put(blockFuel.getDefaultState(), bucketFuel);
-        // }
-
-        // MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
+        if (BuildCraftCore.DEVELOPER_MODE) {
+            redPlasma = new FluidDefinition("redplasma", 10000, 10000, false);
+            redPlasma.fluid.setLuminosity(30);
+            redPlasma.block.setFlammable(false).setParticleColor(0.9F, 0, 0);
+        }
 
         BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, 1, "tile.engineStone");
         BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, 2, "tile.engineIron");
@@ -221,11 +201,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            if (oil.masterBlock != null && !BuildCraftCore.DEVELOPER_MODE) {
-                canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
-                isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-                oil.masterBlock.setFlammable(canOilBurn).setDense(isOilDense);
-            }
+            canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
+            isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
+            oil.block.setFlammable(canOilBurn).setDense(isOilDense);
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {
                 BuildCraftCore.mainConfiguration.save();
@@ -285,10 +263,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
         }
-
-        // If, for whatever reason, they haven't been registed in pre-init then get the fluids now.
-        if (oil == null) oil = new FluidDefinition("oil", 800, 10000, true);
-        if (fuel == null) fuel = new FluidDefinition("fuel", 1000, 1000, true);
 
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 

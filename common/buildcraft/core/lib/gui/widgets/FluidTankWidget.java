@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,6 +21,10 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 
+/** Provides a "view" of a given {@link Tank} for use in GUI's. The tank will be given a tooltip containing the name of
+ * the fluid and the amount of fluid current in the tank. The tank can be clicked with a valid
+ * {@link IFluidContainerItem} or any container registered with {@link FluidContainerRegistry} to fill or drain the
+ * tank. */
 public class FluidTankWidget extends Widget {
     public static final byte NET_CLICK = 0;
 
@@ -32,6 +37,7 @@ public class FluidTankWidget extends Widget {
         this.tank = tank;
     }
 
+    /** Adds an overlay for the tank from the specified location in the texture. */
     public FluidTankWidget withOverlay(int x, int y) {
         overlay = true;
         overlayX = x;
@@ -39,11 +45,11 @@ public class FluidTankWidget extends Widget {
         return this;
     }
 
+    /** Returns a copied version of this widget that instead looks at the give tank and displays in a different place.
+     * This will copy over the overlay (if one has been specified) from {@link #withOverlay(int, int)} */
     public FluidTankWidget copyMoved(Tank tank, int x, int y) {
         FluidTankWidget copy = new FluidTankWidget(tank, x, y, w, h);
-        if (overlay) {
-            copy = copy.withOverlay(overlayX, overlayY);
-        }
+        if (overlay) copy.withOverlay(overlayX, overlayY);
         return copy;
     }
 
@@ -64,6 +70,8 @@ public class FluidTankWidget extends Widget {
         if (b == NET_CLICK) handleTankClick();
     }
 
+    /** Attempts to interact the currently held item (in the gui) with this tank. This will either attempt to fill or
+     * drain the tank depending on what type of item is currently held. */
     private void handleTankClick() {
         InventoryPlayer inv = container.getPlayer().inventory;
         ItemStack heldStack = inv.getItemStack();
@@ -106,7 +114,7 @@ public class FluidTankWidget extends Widget {
             gui.drawFluid(fluidStack, guiX + x, guiY + y, w, h, tank.getCapacity());
         }
 
-        gui.bindTexture(gui.texture);
+        GuiBuildCraft.bindTexture(gui.texture);
 
         if (overlay) {
             gui.drawTexturedModalRect(guiX + x, guiY + y, overlayX, overlayY, w, h);

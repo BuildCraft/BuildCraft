@@ -19,6 +19,9 @@ import net.minecraftforge.fluids.FluidTank;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 
+/** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
+ * 
+ * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
 public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> {
     public int colorRenderCache = 0xFFFFFF;
 
@@ -32,10 +35,15 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     private final String name;
     private final Predicate<FluidStack> filter;
 
+    /** Creates a tank with the given name and capacity (in milli buckets) with no filter set (so any fluid can go into
+     * the tank) */
     public Tank(String name, int capacity, TileEntity tile) {
         this(name, capacity, tile, null);
     }
 
+    /** Creates a tank with the given name and capacity (in milli buckets) with the specified filter set. If the filter
+     * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
+     * null. */
     public Tank(String name, int capacity, TileEntity tile, Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;

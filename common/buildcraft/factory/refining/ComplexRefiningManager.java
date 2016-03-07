@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -89,6 +90,9 @@ public class ComplexRefiningManager {
 
         tar = defineFluid("tar", 7000, 8000, 0, 4, colours[index][0], colours[index++][1]);
         steam = defineFluid("steam", -100, 1000, 2, 1, colours[index][0], colours[index++][1]);
+
+        BuildCraftEnergy.oil = crudeOil[0];
+        BuildCraftEnergy.fuel = fuelLight[0];
     }
 
     private static FluidDefinition[] defineFluids(String name, int density, int baseViscocity, int maxHeat, int boilPoint, int texColourLight,
@@ -114,11 +118,9 @@ public class ComplexRefiningManager {
         if (def.bucket != null && heat != 0) {
             def.bucket.setCreativeTab(null);
         }
-        if (def.masterFluid != null) {
-            def.masterFluid.setHeat(heat);
-            def.masterFluid.setUnlocalizedName(name);
-            def.fluid.setTemperature(300 + 20 * heat);
-        }
+        def.fluid.setHeat(heat);
+        def.fluid.setUnlocalizedName(name);
+        def.fluid.setTemperature(300 + 20 * heat);
         allFluids.add(def);
         return def;
     }
@@ -227,7 +229,6 @@ public class ComplexRefiningManager {
     @SideOnly(Side.CLIENT)
     public static void registerModels(ModelBakeEvent event) {
         for (FluidDefinition def : allFluids) {
-            if (def.masterFluid == null || def.masterBlock == null) continue;
             IModel model = new ModelFluid(def.fluid);
             IBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
             ModelResourceLocation loc = ModelHelper.getBlockResourceLocation(def.block);
@@ -239,17 +240,13 @@ public class ComplexRefiningManager {
     @SideOnly(Side.CLIENT)
     public static void textureStitchPre(TextureStitchEvent.Pre event) {
         for (FluidDefinition def : allFluids) {
-            if (def.masterFluid == null) {
-                def.textureStitchPre(event);
-            } else {
-                int heat = def.masterFluid.getHeatValue();
-                String from = "buildcraftenergy:blocks/fluids/heat_" + heat;
-                SpriteColourMapper mapper = new SpriteColourMapper(def.masterFluid, from + "_still", true);
-                event.map.setTextureEntry(def.fluid.getStill().toString(), mapper);
+            int heat = def.fluid.getHeatValue();
+            String from = "buildcraftenergy:blocks/fluids/heat_" + heat;
+            SpriteColourMapper mapper = new SpriteColourMapper(def.fluid, from + "_still", true);
+            event.map.setTextureEntry(def.fluid.getStill().toString(), mapper);
 
-                mapper = new SpriteColourMapper(def.masterFluid, from + "_flow", false);
-                event.map.setTextureEntry(def.fluid.getFlowing().toString(), mapper);
-            }
+            mapper = new SpriteColourMapper(def.fluid, from + "_flow", false);
+            event.map.setTextureEntry(def.fluid.getFlowing().toString(), mapper);
         }
     }
 }
