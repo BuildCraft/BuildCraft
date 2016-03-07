@@ -58,6 +58,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         super(1);
         tankManager.add(tankFuel);
         tankManager.add(tankCoolant);
+        tankManager.add(tankResidue);
     }
 
     @Override

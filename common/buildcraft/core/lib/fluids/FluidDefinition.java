@@ -15,7 +15,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -54,7 +53,7 @@ public class FluidDefinition {
             fluid.setDensity(density).setViscosity(viscocity);
             if (density < 0) fluid.setGaseous(true);
             FluidRegistry.registerFluid(fluid);
-//            FluidRegistry.addBucketForFluid(masterFluid);
+            // FluidRegistry.addBucketForFluid(masterFluid);
         } else {
             BCLog.logger.warn("Not using BuildCraft fluid " + fluidName + " - issues might occur!");
             masterFluid = null;
@@ -85,10 +84,7 @@ public class FluidDefinition {
             bucket.setUnlocalizedName("bucket_" + fluidName);
             bucket.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_bucket_" + fluidName);
             BCRegistry.INSTANCE.registerItem(bucket, true);
-//            FluidContainerData data = new FluidContainerData(bucketFluid, new ItemStack(bucket), null, true);
-//            FluidContainerRegistry.registerFluidContainer(data);
-             FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new
-             ItemStack(Items.bucket));
+            FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new ItemStack(Items.bucket));
         } else {
             ItemStack stack = FluidContainerRegistry.fillFluidContainer(bucketFluid, new ItemStack(Items.bucket));
             if (stack == null) bucket = null;
