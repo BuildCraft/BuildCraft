@@ -5,16 +5,12 @@ import java.util.Locale;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,7 +22,7 @@ public class FluidDefinition {
     public final BCFluid fluid;
     public final BlockBuildCraftFluid block;
     public final MaterialBuildCraftLiquid material;
-    public final Item bucket;
+    public final ItemBucketBuildcraft bucket;
 
     public FluidDefinition(String fluidName, int density, int viscocity, boolean createBucket) {
         this(fluidName, fluidName, density, viscocity, createBucket, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
@@ -43,7 +39,7 @@ public class FluidDefinition {
         fluid.setDensity(density).setViscosity(viscocity);
         if (density < 0) fluid.setGaseous(true);
         FluidRegistry.registerFluid(fluid);
-        material  = new MaterialBuildCraftLiquid(MapColor.blackColor);
+        material = new MaterialBuildCraftLiquid(MapColor.blackColor);
         block = new BlockBuildCraftFluid(fluid, material).setFlammability(0);
         block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluidName);
         block.setUnlocalizedName("blockFluid_" + fluidName);
@@ -52,11 +48,13 @@ public class FluidDefinition {
 
         // Bucket
         FluidStack bucketFluid = new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
-        bucket = new ItemBucketBuildcraft(block);
+        bucket = new ItemBucketBuildcraft(block, fluid);
         bucket.setUnlocalizedName("bucket_" + fluidName);
         bucket.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_bucket_" + fluidName);
         BCRegistry.INSTANCE.registerItem(bucket, true);
         FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new ItemStack(Items.bucket));
+
+        BucketHandler.INSTANCE.buckets.put(block.getDefaultState().withProperty(BlockFluidClassic.LEVEL, 0), bucket);
     }
 
     public final FluidStack createFluidStack(int amount) {
@@ -75,6 +73,7 @@ public class FluidDefinition {
     public static class BCFluid extends Fluid {
         private int colour = 0xFFFFFFFF, light = 0xFF_FF_FF_FF, dark = 0xFF_FF_FF_FF;
         private int heat;
+        private boolean heatable;
 
         public BCFluid(String fluidName, ResourceLocation still, ResourceLocation flowing) {
             super(fluidName, still, flowing);
@@ -82,7 +81,7 @@ public class FluidDefinition {
 
         @Override
         public String getLocalizedName(FluidStack stack) {
-            if (heat <= 0) return super.getLocalizedName(stack);
+            if (heat <= 0 && !isHeatable()) return super.getLocalizedName(stack);
             String name = super.getLocalizedName(stack);
             String heatString = StatCollector.translateToLocalFormatted("buildcraft.fluid.heat_" + heat);
             return name + heatString;
@@ -120,6 +119,15 @@ public class FluidDefinition {
 
         public int getHeatValue() {
             return heat;
+        }
+
+        public BCFluid setHeatable(boolean value) {
+            heatable = value;
+            return this;
+        }
+
+        public boolean isHeatable() {
+            return heatable;
         }
     }
 }

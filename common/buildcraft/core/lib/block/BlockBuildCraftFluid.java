@@ -47,6 +47,12 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        meta = (meta % 16 + 16) % 16;
+        return getDefaultState().withProperty(LEVEL, meta);
+    }
+
+    @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
         super.onNeighborBlockChange(world, pos, state, block);
         if (flammable && world.provider.getDimensionId() == -1) {
@@ -188,6 +194,6 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT;
+        return EnumWorldBlockLayer.TRANSLUCENT;
     }
 }

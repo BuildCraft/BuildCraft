@@ -85,6 +85,7 @@ public class ComplexRefiningManager {
             defineFluid("fuelLight", 1000, 900, 3, 1, colours[index][0], colours[index++][1]),
             // @formatter:on
         };
+        fuelLight[0].fluid.setHeatable(true);
         fuelMixedLight = defineFluids("fuelMixedLight", 800, 700, 3, 1, colours[index][0], colours[index++][1]);
         fuelGaseous = defineFluids("fuelGaseous", 300, 600, 3, 0, colours[index][0], colours[index++][1]);
 
@@ -101,6 +102,7 @@ public class ComplexRefiningManager {
         for (int h = 0; h <= maxHeat; h++) {
             arr[h] = defineFluid(name, density, baseViscocity, h, boilPoint, texColourLight, texColourDark);
         }
+        if (maxHeat > 0) arr[0].fluid.setHeatable(true);
         return arr;
     }
 
@@ -121,6 +123,8 @@ public class ComplexRefiningManager {
         def.fluid.setHeat(heat);
         def.fluid.setUnlocalizedName(name);
         def.fluid.setTemperature(300 + 20 * heat);
+        if (heat > 0) def.fluid.setHeatable(true);
+
         allFluids.add(def);
         return def;
     }

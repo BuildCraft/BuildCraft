@@ -351,7 +351,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
                 if (domain.equals("buildcraft|energy")) {
                     if (path.contains("_")) continue;
-                    if (path.endsWith("oil")) {
+                    if (path.endsWith("oil") && !Loader.isModLoaded("BuildCraft|Factory")) {
                         if (mapping.type == GameRegistry.Type.BLOCK) {
                             mapping.remap(oil.block);
                         } else if (mapping.type == GameRegistry.Type.ITEM) {
@@ -359,7 +359,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                             else if (path.contains("block")) mapping.ignore();
                         }
                         BCLog.logger.info("            " + path + " matched oil");
-                    } else if (path.endsWith("fuel")) {
+                    } else if (path.endsWith("fuel") && !Loader.isModLoaded("BuildCraft|Factory")) {
                         if (mapping.type == GameRegistry.Type.BLOCK) {
                             mapping.remap(fuel.block);
                         } else if (mapping.type == GameRegistry.Type.ITEM) {

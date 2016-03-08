@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -76,6 +77,7 @@ public class FluidTankWidget extends Widget {
         InventoryPlayer inv = container.getPlayer().inventory;
         ItemStack heldStack = inv.getItemStack();
         if (heldStack == null || heldStack.getItem() == null) return;
+        Item heldItem = heldStack.getItem();
         if (FluidContainerRegistry.isEmptyContainer(heldStack)) {
             int capacity = FluidContainerRegistry.getContainerCapacity(tank.drain(1, false), heldStack);
             FluidStack potential = tank.drain(capacity, false);
@@ -100,6 +102,9 @@ public class FluidTankWidget extends Widget {
             if (inv.player instanceof EntityPlayerMP) {
                 ((EntityPlayerMP) inv.player).updateHeldItem();
             }
+        } else if (heldItem instanceof IFluidContainerItem) {
+            IFluidContainerItem container = (IFluidContainerItem) heldItem;
+            FluidStack held = container.getFluid(heldStack);
         }
     }
 

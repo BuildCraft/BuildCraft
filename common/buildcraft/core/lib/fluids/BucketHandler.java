@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.energy;
+package buildcraft.core.lib.fluids;
 
 import java.util.Map;
 
@@ -18,7 +18,6 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Deprecated
 public final class BucketHandler {
 
     public static BucketHandler INSTANCE = new BucketHandler();
@@ -39,15 +38,15 @@ public final class BucketHandler {
     }
 
     private ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
-        // IBlockState state = world.getBlockState(pos.getBlockPos());
+        IBlockState state = world.getBlockState(pos.getBlockPos());
 
-        // Item bucket = buckets.get(state);
+        Item bucket = buckets.get(state);
 
-        // if (bucket != null) {
-        // world.setBlockToAir(pos.getBlockPos());
-        // return new ItemStack(bucket);
-        // } else {
-        return null;
-        // }
+        if (bucket != null) {
+            world.setBlockToAir(pos.getBlockPos());
+            return new ItemStack(bucket);
+        } else {
+            return null;
+        }
     }
 }

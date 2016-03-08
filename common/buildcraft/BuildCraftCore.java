@@ -45,7 +45,6 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -82,6 +81,7 @@ import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.fluids.BucketHandler;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
@@ -335,8 +335,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
-
         MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
+        MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
         OreDictionary.registerOre("chestWood", Blocks.chest);
         OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);

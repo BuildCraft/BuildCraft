@@ -190,6 +190,7 @@ fluid.fuelDense=Dense Fuel
 fluid.fuelLight=Fuel
 fluid.fuelGaseous=Gaseous Fuel
 
+buildcraft.fluid.heat_0= (§bCool§b)
 buildcraft.fluid.heat_1= (§eWarm§r)
 buildcraft.fluid.heat_2= (§6Hot§r)
 buildcraft.fluid.heat_3= (§cSearing§r)

@@ -9,18 +9,24 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.block.BlockBuildCraftFluid;
+import buildcraft.core.lib.fluids.FluidDefinition.BCFluid;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
 
 public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
-    public ItemBucketBuildcraft(Block block) {
-        this(block, BCCreativeTab.get("main"));
+    private final BCFluid fluid;
+
+    public ItemBucketBuildcraft(BlockBuildCraftFluid block, BCFluid fluid) {
+        this(block, fluid, BCCreativeTab.get("main"));
     }
 
-    public ItemBucketBuildcraft(Block block, CreativeTabs creativeTab) {
+    public ItemBucketBuildcraft(Block block, BCFluid fluid, CreativeTabs creativeTab) {
         super(block);
+        this.fluid = fluid;
         setContainerItem(Items.bucket);
         setCreativeTab(creativeTab);
     }
@@ -30,15 +36,12 @@ public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
         ModelHelper.registerItemModel(this, 0, "forge:dynbucket", "");
     }
 
-    // @Override
-    // public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-    // tooltip.add("Deprecated");
-    // tooltip.add("Place and pick up for");
-    // tooltip.add("the new version");
-    // }
-
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {// TODO!
-        return super.getItemStackDisplayName(stack);
+    public String getItemStackDisplayName(ItemStack stack) {
+        String unloc = StatCollector.translateToLocal(fluid.getUnlocalizedName());
+        String s = "buildcraft.fluid.heat_" + fluid.getHeatValue();
+        String heatString = StatCollector.translateToLocal(s);
+        if (s.equals(heatString) || !fluid.isHeatable()) heatString = "";
+        return unloc + " " + StatCollector.translateToLocal("item.bucket.name") + heatString;
     }
 }

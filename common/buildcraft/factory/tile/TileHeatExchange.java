@@ -131,14 +131,7 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
                     sleep--;
                     return;
                 }
-                exchangeHeat(true);
-            } else if (hasWork(false)) {
-                if (lateSleep < 20) {
-                    lateSleep++;
-                    return;
-                }
-                exchangeHeat(false);
-                lateSleep = 0;
+                exchangeHeat();
             }
         }
     }
@@ -214,10 +207,7 @@ public class TileHeatExchange extends TileBuildCraft implements IFluidHandler, I
         }
     }
 
-    private void exchangeHeat(boolean care) {
-        // Ignore care for now, need to figure out the logic later
-        if (!care) return;
-
+    private void exchangeHeat() {
         FluidStack coolant = inCoolable.drain(coolableRecipe.in().amount, true);
         FluidStack heatant = inHeatable.drain(heatableRecipe.in().amount, true);
 

@@ -123,14 +123,7 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
                     sleep--;
                     return;
                 }
-                distill(true);
-            } else if (hasWork(false)) {
-                if (lateSleep < 20) {
-                    lateSleep++;
-                    return;
-                }
-                distill(false);
-                lateSleep = 0;
+                distill();
             }
         }
     }
@@ -184,8 +177,7 @@ public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHas
         }
     }
 
-    private void distill(boolean care) {
-        if (!care) return;
+    private void distill() {
         FluidStack stack = in.drain(currentRecipe.in().amount, true);
         if (stack.amount < currentRecipe.in().amount) {
             in.fill(stack, true);
