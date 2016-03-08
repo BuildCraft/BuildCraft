@@ -6,7 +6,10 @@ package buildcraft;
 
 import java.util.Locale;
 
+import com.google.common.base.Throwables;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -24,10 +27,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -37,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
@@ -325,34 +326,104 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
+        Throwable error = null;
+        BCLog.logger.info("Factory|Remap " + System.identityHashCode(event));
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
-            final String name = mapping.name.toLowerCase(Locale.ROOT);
-            if (name.equalsIgnoreCase("BuildCraft|Factory:machineBlock") || name.equalsIgnoreCase("BuildCraft|Factory:quarryBlock")) {
-                if (Loader.isModLoaded("BuildCraft|Builders")) {
-                    if (mapping.type == GameRegistry.Type.BLOCK) {
-                        mapping.remap(Block.getBlockFromName("BuildCraft|Builders:quarryBlock"));
-                    } else if (mapping.type == GameRegistry.Type.ITEM) {
-                        mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:quarryBlock")));
+            try {
+                final String name = mapping.name.toLowerCase(Locale.ROOT);
+                final String domain = mapping.resourceLocation.getResourceDomain().toLowerCase(Locale.ROOT);
+                final String path = mapping.resourceLocation.getResourcePath().toLowerCase(Locale.ROOT);
+
+                if (name.equalsIgnoreCase("BuildCraft|Factory:machineBlock") || name.equalsIgnoreCase("BuildCraft|Factory:quarryBlock")) {
+                    if (Loader.isModLoaded("BuildCraft|Builders")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(Block.getBlockFromName("BuildCraft|Builders:quarryBlock"));
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:quarryBlock")));
+                        }
+                    } else {
+                        mapping.warn();
                     }
-                } else {
-                    mapping.warn();
-                }
-            } else if (name.equalsIgnoreCase("BuildCraft|Factory:frameBlock")) {
-                if (Loader.isModLoaded("BuildCraft|Builders")) {
-                    if (mapping.type == GameRegistry.Type.BLOCK) {
-                        mapping.remap(Block.getBlockFromName("BuildCraft|Builders:frameBlock"));
-                    } else if (mapping.type == GameRegistry.Type.ITEM) {
-                        mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:frameBlock")));
+                } else if (name.equalsIgnoreCase("BuildCraft|Factory:frameBlock")) {
+                    if (Loader.isModLoaded("BuildCraft|Builders")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(Block.getBlockFromName("BuildCraft|Builders:frameBlock"));
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:frameBlock")));
+                        }
+                    } else {
+                        mapping.ignore();
                     }
-                } else {
-                    mapping.ignore();
+                } else if (name.equals("buildcraft|factory:hopperblock") || name.equals("buildcraft|factory:blockhopper")) {
+                    if (mapping.type == Type.BLOCK) {
+                        mapping.remap(chuteBlock);
+                    } else {
+                        mapping.remap(Item.getItemFromBlock(chuteBlock));
+                    }
                 }
-            } else if (name.equals("buildcraft|factory:hopperblock") || name.equals("buildcraft|factory:blockhopper")) {
-                if (mapping.type == Type.BLOCK) {
-                    mapping.remap(chuteBlock);
-                } else {
-                    mapping.remap(Item.getItemFromBlock(chuteBlock));
+
+                if (domain.contains("buildcraft") && Loader.isModLoaded("BuildCraft|Energy")) {
+                    String what = "nothing";
+                    String type = mapping.type.name().toLowerCase(Locale.ROOT);
+                    if (path.contains("_")) continue;
+                    if (path.endsWith("oil")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(ComplexRefiningManager.crudeOil[0].block);
+                            what = "remap-block";
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            if (path.contains("bucket") && ComplexRefiningManager.crudeOil[0].bucket != null) {
+                                mapping.remap(ComplexRefiningManager.crudeOil[0].bucket);
+                                what = "remap-item-bucket";
+                            } else if (path.contains("block")) {
+                                mapping.remap(Item.getItemFromBlock(ComplexRefiningManager.crudeOil[0].block));
+                                what = "remap-item-block";
+                            }
+                        }
+                        BCLog.logger.info("            [" + domain + "][" + path + "][" + type + "] matched oil " + what);
+                    } else if (path.endsWith("fuel")) {
+                        if (mapping.type == GameRegistry.Type.BLOCK) {
+                            mapping.remap(ComplexRefiningManager.fuelLight[0].block);
+                            what = "remap-block";
+                        } else if (mapping.type == GameRegistry.Type.ITEM) {
+                            if (path.contains("bucket") && ComplexRefiningManager.fuelLight[0].bucket != null) {
+                                mapping.remap(ComplexRefiningManager.fuelLight[0].bucket);
+                                what = "remap-item-bucket";
+                            } else if (path.contains("block")) {
+                                mapping.remap(Item.getItemFromBlock(ComplexRefiningManager.fuelLight[0].block));
+                                what = "remap-item-block";
+                            }
+                        }
+                        BCLog.logger.info("            [" + domain + "][" + path + "][" + type + "] matched fuel " + what);
+                    } else {
+                        BCLog.logger.info("            [" + domain + "][" + path + "][" + type + "] matched nothing");
+                    }
                 }
+            } catch (Throwable t) {
+                t.printStackTrace();
+                error = t;
+            }
+        }
+        if (error != null) throw Throwables.propagate(error);
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        ResourceLocation oilrl = new ResourceLocation("buildcraft|factory:fluid_block_oil");
+        // We hve ALREADY REGISTERED this block AGES ago in pre-init, and above we remmapped to it. this SHOULD work.
+        boolean contains = Block.blockRegistry.containsKey(oilrl);
+        // Prints: "Oil registry name buildcraft|factory:fluid_block_oil, false, -1"
+        BCLog.logger.info("Oil registry name " + oilrl + ", " + contains + ", " + Block.getIdFromBlock(ComplexRefiningManager.crudeOil[0].block));
+
+        if (!contains) {
+            // somehow false when we just remapped it
+            int id = Block.blockRegistry.getIDForObject(Block.getBlockFromName("buildcraft|energy:blockOil"));
+            BCLog.logger.info("Mapped ID = " + id);
+            for (int i = 0; i < 16; i++) {
+                int blockstateid = id << 4 | i;
+                IBlockState before = Block.BLOCK_STATE_IDS.getByValue(blockstateid);
+                IBlockState after = ComplexRefiningManager.crudeOil[0].block.getStateFromMeta(i);
+                Block.BLOCK_STATE_IDS.put(after, blockstateid);
+                BCLog.logger.info("Remapping " + blockstateid + " " + before + " -> " + after);
             }
         }
     }
