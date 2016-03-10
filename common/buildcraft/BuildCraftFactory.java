@@ -406,28 +406,6 @@ public class BuildCraftFactory extends BuildCraftMod {
         if (error != null) throw Throwables.propagate(error);
     }
 
-    @Mod.EventHandler
-    public void serverStarting(FMLServerStartingEvent event) {
-        ResourceLocation oilrl = new ResourceLocation("buildcraft|factory:fluid_block_oil");
-        // We hve ALREADY REGISTERED this block AGES ago in pre-init, and above we remmapped to it. this SHOULD work.
-        boolean contains = Block.blockRegistry.containsKey(oilrl);
-        // Prints: "Oil registry name buildcraft|factory:fluid_block_oil, false, -1"
-        BCLog.logger.info("Oil registry name " + oilrl + ", " + contains + ", " + Block.getIdFromBlock(ComplexRefiningManager.crudeOil[0].block));
-
-        if (!contains) {
-            // somehow false when we just remapped it
-            int id = Block.blockRegistry.getIDForObject(Block.getBlockFromName("buildcraft|energy:blockOil"));
-            BCLog.logger.info("Mapped ID = " + id);
-            for (int i = 0; i < 16; i++) {
-                int blockstateid = id << 4 | i;
-                IBlockState before = Block.BLOCK_STATE_IDS.getByValue(blockstateid);
-                IBlockState after = ComplexRefiningManager.crudeOil[0].block.getStateFromMeta(i);
-                Block.BLOCK_STATE_IDS.put(after, blockstateid);
-                BCLog.logger.info("Remapping " + blockstateid + " " + before + " -> " + after);
-            }
-        }
-    }
-
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Pre evt) {

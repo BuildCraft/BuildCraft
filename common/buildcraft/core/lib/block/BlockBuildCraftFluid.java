@@ -13,11 +13,10 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -44,6 +43,8 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     public BlockBuildCraftFluid(Fluid fluid, Material material) {
         super(fluid, material);
+        int colour = fluid.getColor();
+        setParticleColor(colour >> 16 & 0xFF, colour >> 8 & 0xFF, colour & 0xFF);
     }
 
     @Override
@@ -66,38 +67,17 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     // return true;
     // }
 
-    private double within(double current, double maximum) {
-        return Math.max(-maximum, Math.min(current, maximum));
+    @Override
+    public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
+        if (materialIn == Material.water) return Boolean.TRUE;
+        return null;
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
-        if (entity == null || (entity instanceof EntityPlayer && !((EntityPlayer) entity).isPushedByWater())) {
-            return;
-        }
-
-        Vec3 acc = new Vec3(0, 0, 0);
-        acc = modifyAcceleration(world, pos, entity, acc);
-        Vec3 accDir = new Vec3(0, 0, 0);
-        if (acc.lengthVector() > 0) {
-            acc = acc.normalize();
-            double multiplier = 0.07;
-            accDir = new Vec3(acc.xCoord * multiplier, acc.yCoord * multiplier, acc.zCoord * multiplier);
-        }
-
-        double within = 0.05;
-
-        entity.motionX = within(entity.motionX, within) + accDir.xCoord;
-        entity.motionY = within(entity.motionY, within) + accDir.yCoord;
-        entity.motionZ = within(entity.motionZ, within) + accDir.zCoord;
-
-        if (!dense) {
-            return;
-        }
-        if (entity.posY < pos.getY() + getQuantaPercentage(world, pos) - 0.5 && entity.motionY < 0.1) {
-            entity.motionY = 0.1;
-            entity.fallDistance = 0;
-        }
+    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn,
+            boolean testingHead) {
+        if (materialIn == Material.water) return Boolean.TRUE;
+        return null;
     }
 
     public BlockBuildCraftFluid setDense(boolean dense) {
