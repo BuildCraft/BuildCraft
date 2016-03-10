@@ -141,6 +141,16 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     }
 
     @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase) {
+            TileEngineBase engine = (TileEngineBase) tile;
+            return engine.switchOrientation(false);
+        }
+        return false;
+    }
+
+    @Override
     public int damageDropped(IBlockState state) {
         return state.getValue(ENGINE_TYPE).ordinal();
     }

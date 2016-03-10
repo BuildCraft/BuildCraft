@@ -20,8 +20,8 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
-    private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
-    private final Set<Class<? extends Block>> blacklistedRotations = new HashSet<Class<? extends Block>>();
+    private final Set<Class<? extends Block>> shiftRotations = new HashSet<>();
+    private final Set<Class<? extends Block>> blacklistedRotations = new HashSet<>();
 
     public ItemWrench() {
         super();

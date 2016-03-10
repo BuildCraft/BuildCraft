@@ -23,7 +23,7 @@ import buildcraft.core.lib.event.IEventBus;
 import buildcraft.core.lib.event.IEventBusProvider;
 
 public class Pipe_BC8 implements IPipe_BC8 {
-    private static final IEventBusProvider<IPipeEvent_BC8> eventBusProvider = new EventBusProviderASM<IPipeEvent_BC8>(IPipeEvent_BC8.class,
+    private static final IEventBusProvider<IPipeEvent_BC8> eventBusProvider = new EventBusProviderASM<>(IPipeEvent_BC8.class,
             BCPipeEventHandler.class);
 
     private final PipeDefinition_BC8 definition;
