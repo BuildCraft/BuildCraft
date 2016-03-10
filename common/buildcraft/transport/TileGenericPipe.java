@@ -7,8 +7,9 @@ package buildcraft.transport;
 import java.util.List;
 
 import com.google.common.base.Throwables;
-
 import org.apache.logging.log4j.Level;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -20,8 +21,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
@@ -35,7 +40,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -45,7 +49,13 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.*;
+import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.PipeConnectionAPI;
+import buildcraft.api.transport.PipeManager;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
@@ -63,9 +73,6 @@ import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile,
         ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable, IEnergyProvider {
@@ -259,12 +266,21 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             nbt.setByte(key, (byte) redstoneInputSide[i]);
         }
 
-        if (pipe != null) {
-            nbt.setString("pipeId", Item.itemRegistry.getNameForObject(pipe.item).toString());
-            pipe.writeToNBT(nbt);
+        if (coreState.pipeId != null) {
+			nbt.setString("pipeId", coreState.pipeId);
         } else {
-            nbt.setString("pipeId", coreState.pipeId);
+			ResourceLocation loc = pipe != null ? Item.itemRegistry.getNameForObject(pipe.item) : null;
+			if (loc == null) {
+				BCLog.logger.error("A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!");
+			} else {
+				BCLog.logger.warn("A BuildCraft pipe @ " + pos.toString() + " did not have pipe ID, but did have a valid item. Not a fatal error, but please report nonetheless.");
+				nbt.setString("pipeId", loc.toString());
+			}
         }
+
+		if (pipe != null) {
+			pipe.writeToNBT(nbt);
+		}
 
         sideProperties.writeToNBT(nbt);
     }
@@ -293,6 +309,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (nbt.hasKey("pipeId", NBTUtils.STRING)) {
             coreState.pipeId = nbt.getString("pipeId");
         }
+
         if (nbt.hasKey("pipeId", NBTUtils.INT)) {
             int id = nbt.getInteger("pipeId");
             Item item = Item.itemRegistry.getObjectById(id);
@@ -300,6 +317,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             if (loc == null) coreState.pipeId = "";
             else coreState.pipeId = loc.toString();
         }
+
         Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
         if (item instanceof ItemPipe) {
             pipe = BlockGenericPipe.createPipe((ItemPipe) item);
