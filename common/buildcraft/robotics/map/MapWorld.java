@@ -9,15 +9,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import gnu.trove.map.hash.TLongLongHashMap;
+import gnu.trove.set.hash.TLongHashSet;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.core.lib.utils.NBTUtils;
-
-import gnu.trove.map.hash.TLongLongHashMap;
-import gnu.trove.set.hash.TLongHashSet;
 
 public class MapWorld {
     private final LongHashMap regionMap;

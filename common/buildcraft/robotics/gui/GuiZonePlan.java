@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -31,12 +32,10 @@ import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.ZonePlan;
-
-import io.netty.buffer.ByteBuf;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -112,8 +111,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         getContainer().currentAreaSelection = new ZonePlan();
 
-        cx = zonePlan.chunkStartX;
-        cz = zonePlan.chunkStartZ;
+        cx = zonePlan.getPos().getX();
+		cz = zonePlan.getPos().getZ();
 
         resetNullSlots(16);
 

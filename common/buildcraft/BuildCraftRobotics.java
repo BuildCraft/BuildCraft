@@ -298,7 +298,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
         if (manager != null) {
             manager.stop();
             MinecraftForge.EVENT_BUS.unregister(manager);
-            MinecraftForge.EVENT_BUS.unregister(manager);
         }
 
         if (managerThread != null) {

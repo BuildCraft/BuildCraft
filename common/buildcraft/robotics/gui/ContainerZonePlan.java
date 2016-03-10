@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -22,8 +24,6 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.ZonePlan;
 import buildcraft.robotics.map.MapWorld;
-
-import io.netty.buffer.ByteBuf;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
     private static final int MAX_PACKET_LENGTH = 30000;
@@ -85,8 +85,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
     @Override
     public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-        if (side.isClient()) {
-            if ("areaLoaded".equals(command)) {
+		if (side.isClient()) {
+			if ("areaLoaded".equals(command)) {
                 currentAreaSelection = new ZonePlan();
                 currentAreaSelection.readData(stream);
                 gui.refreshSelectedArea();
@@ -130,15 +130,15 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
         int mapStartX = map.chunkStartX << 4;
         int mapStartZ = map.chunkStartZ << 4;
 
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
+		for (int j = 0; j < height; ++j) {
+        	for (int i = 0; i < width; ++i) {
                 int x = Math.round(startX + i * blocksPerPixel);
                 int z = Math.round(startZ + j * blocksPerPixel);
                 int ix = x - mapStartX;
                 int iz = z - mapStartZ;
 
                 if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
-                    textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorld()).getColor(x, z);
+                    textureData[i + j * width] = (byte) w.getColor(x, z);
                 }
             }
         }
