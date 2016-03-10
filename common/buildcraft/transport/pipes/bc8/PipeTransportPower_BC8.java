@@ -4,7 +4,6 @@ import net.minecraft.nbt.NBTBase;
 
 import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
 import buildcraft.api.transport.pipe_bc8.IPipeListener;
-import buildcraft.api.transport.pipe_bc8.IPipeListenerFactory;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.AttemptCreate;
@@ -54,13 +53,4 @@ public class PipeTransportPower_BC8 implements IPipeListener {
 
     @Override
     public void writeToByteBuf(ByteBuf buf) {}
-
-    public enum Factory implements IPipeListenerFactory {
-        INSTANCE;
-
-        @Override
-        public IPipeListener createNewListener(IPipe_BC8 pipe) {
-            return new PipeTransportPower_BC8(pipe);
-        }
-    }
 }

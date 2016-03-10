@@ -86,13 +86,4 @@ public class PipeTransportItem_BC8 implements IPipeListener {
 
     @Override
     public void writeToByteBuf(ByteBuf buf) {}
-
-    public enum Factory implements IPipeListenerFactory {
-        INSTANCE;
-
-        @Override
-        public IPipeListener createNewListener(IPipe_BC8 pipe) {
-            return new PipeTransportItem_BC8(pipe);
-        }
-    }
 }

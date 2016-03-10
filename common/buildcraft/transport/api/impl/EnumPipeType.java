@@ -12,8 +12,8 @@ import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
 import buildcraft.transport.pipes.bc8.PipeTransportPower_BC8;
 
 public enum EnumPipeType implements IPipeType {
-    ITEM(PipeTransportItem_BC8.Factory.INSTANCE),
-    POWER(PipeTransportPower_BC8.Factory.INSTANCE),
+    ITEM(PipeTransportItem_BC8::new),
+    POWER(PipeTransportPower_BC8::new),
     FLUID(null),
     STRUCTURE(null);
 

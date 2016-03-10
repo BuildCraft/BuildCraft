@@ -45,9 +45,7 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPip
         List<BakedQuad> quads = Lists.newArrayList();
         IFacadePluggable facade = (IFacadePluggable) pluggable;
 
-        // Use the particle texture for the block. Not ideal, but we have NO way of getting the actual
-        // texture of the block without hackery...
-        // TODO: use a model squisher to squash a baked model down. Maybe just remove facades? :P
+        // FIXME: Use the model bisector to cut a model down + squish one side down so it looks right
 
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(facade
                 .getCurrentState());
