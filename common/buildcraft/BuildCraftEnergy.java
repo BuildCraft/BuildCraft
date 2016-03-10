@@ -201,9 +201,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
-            isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-            oil.block.setFlammable(canOilBurn).setDense(isOilDense);
+			if (!Loader.isModLoaded("BuildCraft|Factory")) {
+				canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
+				isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
+				oil.block.setFlammable(canOilBurn).setDense(isOilDense);
+			}
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {
                 BuildCraftCore.mainConfiguration.save();

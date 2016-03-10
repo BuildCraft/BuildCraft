@@ -20,16 +20,16 @@ import buildcraft.core.lib.utils.NetworkUtils;
 
 import io.netty.buffer.ByteBuf;
 
-public class ContainerListNew extends BuildCraftContainer implements ICommandReceiver {
-    public ListHandlerNew.Line[] lines;
+public class ContainerList extends BuildCraftContainer implements ICommandReceiver {
+    public ListHandler.Line[] lines;
     private EntityPlayer player;
 
-    public ContainerListNew(EntityPlayer iPlayer) {
+    public ContainerList(EntityPlayer iPlayer) {
         super(iPlayer, iPlayer.inventory.getSizeInventory());
 
         player = iPlayer;
 
-        lines = ListHandlerNew.getLines(player.getCurrentEquippedItem());
+        lines = ListHandler.getLines(player.getCurrentEquippedItem());
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
@@ -49,7 +49,7 @@ public class ContainerListNew extends BuildCraftContainer implements ICommandRec
 
     public void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
         lines[lineIndex].setStack(slotIndex, stack);
-        ListHandlerNew.saveLines(player.getCurrentEquippedItem(), lines);
+        ListHandler.saveLines(player.getCurrentEquippedItem(), lines);
 
         if (player.worldObj.isRemote) {
             BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setStack", new CommandWriter() {
@@ -65,7 +65,7 @@ public class ContainerListNew extends BuildCraftContainer implements ICommandRec
 
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
-        ListHandlerNew.saveLines(player.getCurrentEquippedItem(), lines);
+        ListHandler.saveLines(player.getCurrentEquippedItem(), lines);
 
         if (player.worldObj.isRemote) {
             BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton", new CommandWriter() {

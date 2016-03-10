@@ -23,7 +23,7 @@ import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
 import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.core.lib.inventory.StackHelper;
 
-public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEventListener {
+public class GuiList extends GuiAdvancedInterface implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
     private static final int BUTTON_COUNT = 3;
 
@@ -45,11 +45,11 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 
         @Override
         public ItemStack getItemStack() {
-            ContainerListNew container = (ContainerListNew) gui.getContainer();
+            ContainerList container = (ContainerList) gui.getContainer();
             if (slotIndex == 0 || !container.lines[lineIndex].isOneStackMode()) {
                 return container.lines[lineIndex].getStack(slotIndex);
             } else {
-                List<ItemStack> data = ((GuiListNew) gui).getExamplesList(lineIndex, container.lines[lineIndex].getSortingType());
+                List<ItemStack> data = ((GuiList) gui).getExamplesList(lineIndex, container.lines[lineIndex].getSortingType());
                 if (data.size() >= slotIndex) {
                     return data.get(slotIndex - 1);
                 } else {
@@ -70,13 +70,13 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 
         @Override
         public boolean shouldDrawHighlight() {
-            ContainerListNew container = (ContainerListNew) gui.getContainer();
+            ContainerList container = (ContainerList) gui.getContainer();
             return slotIndex == 0 || !container.lines[lineIndex].isOneStackMode();
         }
     }
 
-    public GuiListNew(EntityPlayer iPlayer) {
-        super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
+    public GuiList(EntityPlayer iPlayer) {
+        super(new ContainerList(iPlayer), iPlayer.inventory, TEXTURE_BASE);
 
         xSize = 176;
         ySize = 191;
@@ -98,7 +98,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
             exampleCache.put(lineId, exampleList);
         }
 
-        ContainerListNew container = (ContainerListNew) getContainer();
+        ContainerList container = (ContainerList) getContainer();
 
         if (!exampleList.containsKey(type)) {
             List<ItemStack> examples = container.lines[lineId].getExamples();
@@ -125,12 +125,12 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
         slots.clear();
         buttonList.clear();
 
-        for (int sy = 0; sy < ListHandlerNew.HEIGHT; sy++) {
-            for (int sx = 0; sx < ListHandlerNew.WIDTH; sx++) {
+        for (int sy = 0; sy < ListHandler.HEIGHT; sy++) {
+            for (int sx = 0; sx < ListHandler.WIDTH; sx++) {
                 slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 33, sy, sx));
             }
             int bOff = sy * BUTTON_COUNT;
-            int bOffX = this.guiLeft + 8 + ListHandlerNew.WIDTH * 18 - BUTTON_COUNT * 11;
+            int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
             int bOffY = this.guiTop + 32 + sy * 33 + 18;
 
             buttonList.add(new GuiImageButton(bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
@@ -142,7 +142,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
             GuiImageButton b = (GuiImageButton) o;
             int lineId = b.id / BUTTON_COUNT;
             int buttonId = b.id % BUTTON_COUNT;
-            if (((ContainerListNew) getContainer()).lines[lineId].getOption(buttonId)) {
+            if (((ContainerList) getContainer()).lines[lineId].getOption(buttonId)) {
                 b.activate();
             }
 
@@ -159,7 +159,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         super.drawGuiContainerBackgroundLayer(f, x, y);
 
-        ContainerListNew containerL = (ContainerListNew) getContainer();
+        ContainerList containerL = (ContainerList) getContainer();
         for (int i = 0; i < 2; i++) {
             if (containerL.lines[i].isOneStackMode()) {
                 drawTexturedModalRect(guiLeft + 6, guiTop + 30 + i * 33, 0, ySize, 20, 20);
@@ -195,7 +195,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
         }
 
         AdvancedSlot slot = getSlotAtLocation(x, y);
-        ContainerListNew container = (ContainerListNew) getContainer();
+        ContainerList container = (ContainerList) getContainer();
 
         if (slot instanceof ListSlot) {
             container.setStack(((ListSlot) slot).lineIndex, ((ListSlot) slot).slotIndex, mc.thePlayer.inventory.getItemStack());
@@ -210,7 +210,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
         int buttonId = id % BUTTON_COUNT;
         int lineId = id / BUTTON_COUNT;
 
-        ContainerListNew container = (ContainerListNew) getContainer();
+        ContainerList container = (ContainerList) getContainer();
         container.switchButton(lineId, buttonId);
         clearExamplesCache(lineId);
     }
@@ -222,7 +222,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
                 textField.setFocused(false);
             } else {
                 textField.textboxKeyTyped(c, i);
-                ((ContainerListNew) container).setLabel(textField.getText());
+                ((ContainerList) container).setLabel(textField.getText());
             }
         } else {
             super.keyTyped(c, i);

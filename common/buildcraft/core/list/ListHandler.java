@@ -15,7 +15,7 @@ import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public final class ListHandlerNew {
+public final class ListHandler {
     public static final int WIDTH = 9;
     public static final int HEIGHT = 2;
 
@@ -173,7 +173,7 @@ public final class ListHandlerNew {
         }
     }
 
-    private ListHandlerNew() {
+    private ListHandler() {
 
     }
 

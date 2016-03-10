@@ -11,8 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,8 +21,7 @@ import buildcraft.api.items.IList;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.list.ListHandlerNew;
-import buildcraft.core.list.ListHandlerOld;
+import buildcraft.core.list.ListHandler;
 
 public class ItemList extends ItemBuildCraft implements IList {
     public ItemList() {
@@ -36,7 +33,7 @@ public class ItemList extends ItemBuildCraft implements IList {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-            player.openGui(BuildCraftCore.instance, stack.getItemDamage() == 1 ? GuiIds.LIST_NEW : GuiIds.LIST_OLD, world, 0, 0, 0);
+            player.openGui(BuildCraftCore.instance, GuiIds.LIST_NEW, world, 0, 0, 0);
         }
 
         return stack;
@@ -44,10 +41,6 @@ public class ItemList extends ItemBuildCraft implements IList {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
-        if (stack.getItemDamage() == 0) {
-            list.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
-        }
-
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
         if (nbt.hasKey("label")) {
             list.add(nbt.getString("label"));
@@ -78,18 +71,13 @@ public class ItemList extends ItemBuildCraft implements IList {
 
     @Override
     public boolean matches(ItemStack stackList, ItemStack item) {
-        if (stackList.getItemDamage() == 1) {
-            return ListHandlerNew.matches(stackList, item);
-        } else {
-            return ListHandlerOld.matches(stackList, item);
-        }
+        return ListHandler.matches(stackList, item);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> itemList) {
-        itemList.add(new ItemStack(this, 1, 0)); // TODO: remove
-        itemList.add(new ItemStack(this, 1, 1));
+        itemList.add(new ItemStack(this, 1, 0));
     }
 
     @Override
