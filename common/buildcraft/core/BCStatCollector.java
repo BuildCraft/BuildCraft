@@ -40,7 +40,6 @@ public enum BCStatCollector {
         String statName = toStatName(item);
         StatCrafting used = createCrafting("stat.useItem", statName, new ItemStack(item));
         StatCrafting craft = createCrafting("stat.craftItem", statName, new ItemStack(item));
-        craft.registerStat();
 
         if (!(item instanceof ItemBlock)) {
             StatList.itemStats.add(used);
@@ -70,9 +69,5 @@ public enum BCStatCollector {
         for (Entry<Item, StatCrafting> crafted : itemCrafted.entrySet()) {
             StatList.objectCraftStats[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
         }
-    }
-
-    public interface ICustomStatRegister {
-        void registerStat();
     }
 }
