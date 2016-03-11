@@ -1,5 +1,6 @@
 package buildcraft.transport.render;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,8 @@ import buildcraft.transport.TileGenericPipe.CoreState;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
+    public static final int INSIDE_COLOUR_MULT = 0xFF_AA_AA_AA;
+
     public PipeBlockModel() {
         super(ImmutableList.<BakedQuad> of(), null, null);
     }
@@ -106,7 +109,25 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                         double smallerValue = Utils.getValue(radius, face.getAxis()) - 0.01f;
                         radius = Utils.withValue(radius, face.getAxis(), smallerValue);
                     }
-                    bakeDoubleFace(quads, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
+
+                    List<BakedQuad> quadsIn = new ArrayList<>();
+                    List<BakedQuad> quadsOut = new ArrayList<>();
+
+                    bakeFace(quadsIn, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
+                    bakeInverseFace(quadsOut, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
+                    if (!shouldInvertForRender(face)) {
+                        for (BakedQuad q : quadsIn) {
+                            q = replaceShade(q, INSIDE_COLOUR_MULT);
+                            quads.add(q);
+                        }
+                        quads.addAll(quadsOut);
+                    } else {
+                        quads.addAll(quadsIn);
+                        for (BakedQuad q : quadsOut) {
+                            q = replaceShade(q, INSIDE_COLOUR_MULT);
+                            quads.add(q);
+                        }
+                    }
                 }
             }
         }
@@ -156,7 +177,15 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setSize(actualSize);
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
-                RenderResizableCuboid.INSTANCE.renderCubeStatic(quads, cuboid, true);
+                List<BakedQuad> quadsIn = new ArrayList<>();
+
+                RenderResizableCuboid.bakeCube(quadsIn, cuboid, false, true);
+                RenderResizableCuboid.bakeCube(quads, cuboid, true, false);
+
+                for (BakedQuad q : quadsIn) {
+                    q = replaceShade(q, INSIDE_COLOUR_MULT);
+                    quads.add(q);
+                }
             }
         }
     }

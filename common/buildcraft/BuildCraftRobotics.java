@@ -94,6 +94,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         new BCCreativeTab("boards");
+        
+        RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
+        RedstoneBoardRegistry.instance.setEmptyRobotBoard(RedstoneBoardRobotEmptyNBT.instance);
 
         BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[] {}, "Blacklisted robots boards",
                 ConfigManager.RestartRequirement.GAME);
@@ -121,10 +124,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
         requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
         requesterBlock.setUnlocalizedName("requester");
         BCRegistry.INSTANCE.registerBlock(requesterBlock, false);
-
-        RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
-
-        RedstoneBoardRegistry.instance.setEmptyRobotBoard(RedstoneBoardRobotEmptyNBT.instance);
 
         // Cheapest, dumbest robot types
         // Those generally do very simple tasks

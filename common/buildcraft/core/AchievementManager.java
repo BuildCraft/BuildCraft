@@ -36,6 +36,7 @@ public class AchievementManager {
         }
         if (registered) {
             page.getAchievements().add(achievement);
+            achievement.registerStat();
             return achievement;
         } else {
             return getRegisteredParent(achievement);

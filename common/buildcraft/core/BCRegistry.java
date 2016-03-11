@@ -42,6 +42,7 @@ public final class BCRegistry {
         if (name == null || name.isEmpty()) name = block.getUnlocalizedName().replace("tile.", "");
         if (forced || regCfg.get("blocks", name, true).getBoolean()) {
             GameRegistry.registerBlock(block, item, name);
+            BCStatCollector.registerStats(block);
             CoreProxy.proxy.postRegisterBlock(block);
             return true;
         }
@@ -53,6 +54,7 @@ public final class BCRegistry {
         if (name == null || name.isEmpty()) name = item.getUnlocalizedName().replace("item.", "");
         if (forced || regCfg.get("items", name, true).getBoolean()) {
             GameRegistry.registerItem(item, name);
+            BCStatCollector.registerStats(item);
             CoreProxy.proxy.postRegisterItem(item);
             return true;
         }
@@ -105,7 +107,7 @@ public final class BCRegistry {
                 return;
             }
         }
-        
+
         GameRegistry.addRecipe(new NBTAwareShapedOreRecipe(result, recipe));
     }
 

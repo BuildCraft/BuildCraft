@@ -506,6 +506,8 @@ public class BuildCraftCore extends BuildCraftMod {
             BuildingSlotMapIterator.MAX_PER_ITEM = builderMaxPerItemFactor;
         }
 
+        BCStatCollector.INSTANCE.serverStarting();
+
         if (Utils.CAULDRON_DETECTED) {
             BCLog.logger.warn("############################################");
             BCLog.logger.warn("#                                          #");

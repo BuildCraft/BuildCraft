@@ -216,9 +216,9 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         GlStateManager.enableFog();
     }
 
-    private void renderCuboidFace(WorldRenderer wr, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3 textureStart, Vec3 textureSize,
-            Vec3 size, Vec3 textureOffset, EnumShadeArgument shadeTypes, IBlockLocation locationFormula, IFacingLocation faceFormula,
-            IBlockAccess access) {
+    private static void renderCuboidFace(WorldRenderer wr, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3 textureStart,
+            Vec3 textureSize, Vec3 size, Vec3 textureOffset, EnumShadeArgument shadeTypes, IBlockLocation locationFormula,
+            IFacingLocation faceFormula, IBlockAccess access) {
         int ordinal = face.ordinal();
         if (sprites[ordinal] == null) {
             return;
@@ -251,7 +251,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         }
     }
 
-    private void renderPoint(WorldRenderer wr, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV,
+    private static void renderPoint(WorldRenderer wr, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV,
             IBlockLocation locationFormula, IFacingLocation faceFormula, IBlockAccess access, EnumShadeArgument shadeTypes) {
         int U_ARRAY = minU ? U_MIN : U_MAX;
         int V_ARRAY = minV ? V_MIN : V_MAX;
@@ -280,8 +280,8 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         wr.endVertex();
     }
 
-    private void applyLocalAO(WorldRenderer wr, EnumFacing face, IBlockLocation locationFormula, IBlockAccess access, EnumShadeArgument shadeTypes,
-            Vec3 vertex) {
+    private static void applyLocalAO(WorldRenderer wr, EnumFacing face, IBlockLocation locationFormula, IBlockAccess access,
+            EnumShadeArgument shadeTypes, Vec3 vertex) {
         // This doesn't work. At all.
         boolean allAround = false;
 
@@ -345,11 +345,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         RenderUtils.setWorldRendererRGB(wr, color);
     }
 
-    /** Note that this method DOES take into account its position. But not its rotation. (Open an issue on github if you
-     * need rotation, and a second method will be made that does all the trig required)
-     * 
-     * @param insideFaceToo TODO */
-    public void renderCubeStatic(List<BakedQuad> quads, EntityResizableCuboid cuboid, boolean insideFaceToo) {
+    public static void bakeCube(List<BakedQuad> quads, EntityResizableCuboid cuboid, boolean outsideFace, boolean insideFace) {
         TextureAtlasSprite[] sprites = cuboid.textures;
         if (sprites == null) {
             sprites = new TextureAtlasSprite[6];
@@ -363,165 +359,80 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
             flips = new int[6];
         }
 
-        double textureStartX = cuboid.textureStartX / 16D;
-        double textureStartY = cuboid.textureStartY / 16D;
-        double textureStartZ = cuboid.textureStartZ / 16D;
+        Vec3 textureStart = new Vec3(cuboid.textureStartX / 16D, cuboid.textureStartY / 16D, cuboid.textureStartZ / 16D);
+        Vec3 textureSize = new Vec3(cuboid.textureSizeX / 16D, cuboid.textureSizeY / 16D, cuboid.textureSizeZ / 16D);
+        Vec3 textureOffset = new Vec3(cuboid.textureOffsetX / 16D, cuboid.textureOffsetY / 16D, cuboid.textureOffsetZ / 16D);
+        Vec3 size = new Vec3(cuboid.xSize, cuboid.ySize, cuboid.zSize);
 
-        double textureSizeX = cuboid.textureSizeX / 16D;
-        double textureSizeY = cuboid.textureSizeY / 16D;
-        double textureSizeZ = cuboid.textureSizeZ / 16D;
+        for (EnumFacing face : EnumFacing.values()) {
+            bakeCuboidFace(quads, cuboid, face, sprites, flips, textureStart, textureSize, size, textureOffset, outsideFace, insideFace);
+        }
+    }
 
-        double textureEndX = textureSizeX + textureStartX;
-        double textureEndY = textureSizeY + textureStartY;
-        double textureEndZ = textureSizeZ + textureStartZ;
-
-        double textureOffsetX = cuboid.textureOffsetX / 16D;
-        double textureOffsetY = cuboid.textureOffsetY / 16D;
-        double textureOffsetZ = cuboid.textureOffsetZ / 16D;
-
-        double sizeX = cuboid.xSize;
-        double sizeY = cuboid.ySize;
-        double sizeZ = cuboid.zSize;
-
-        if (sprites[0] != null) {
-            // Down
-            float[] uv = getUVArray(sprites[0], flips[0], textureStartX, textureEndX, textureStartZ, textureEndZ);
-            for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeZ, textureSizeX, textureSizeZ, textureOffsetX, textureOffsetZ)) {
-                ri = ri.offset(cuboid, Axis.Y);
-                double[][] arr = new double[4][];
-                arr[0] = new double[] { ri.xyz[U_MAX], cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { ri.xyz[U_MAX], cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { ri.xyz[U_MIN], cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { ri.xyz[U_MIN], cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.DOWN);
-                else quads.add(convertToQuad(arr, EnumFacing.DOWN));
-            }
+    private static void bakeCuboidFace(List<BakedQuad> quads, EntityResizableCuboid cuboid, EnumFacing face, TextureAtlasSprite[] sprites,
+            int[] flips, Vec3 textureStart, Vec3 textureSize, Vec3 size, Vec3 textureOffset, boolean out, boolean in) {
+        int ordinal = face.ordinal();
+        if (sprites[ordinal] == null) {
+            return;
         }
 
-        if (sprites[1] != null) {
-            // Up
-            float[] uv = getUVArray(sprites[1], flips[1], textureStartX, textureEndX, textureStartZ, textureEndZ);
-            for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeZ, textureSizeX, textureSizeZ, textureOffsetX, textureOffsetZ)) {
-                ri = ri.offset(cuboid, Axis.Y);
-                double[][] arr = new double[4][];
-                arr[3] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[2] = new double[] { ri.xyz[U_MAX], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[1] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MAX], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[0] = new double[] { ri.xyz[U_MIN], sizeY + cuboid.posY, ri.xyz[V_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.UP);
-                else quads.add(convertToQuad(arr, EnumFacing.UP));
-            }
-        }
+        Vec3 textureEnd = textureStart.add(textureSize);
+        float[] uv = getUVArray(sprites[ordinal], flips[ordinal], face, textureStart, textureEnd);
+        List<RenderInfo> renderInfoList = getRenderInfos(uv, face, size, textureSize, textureOffset);
 
-        if (sprites[2] != null) {
-            // North (-Z)
-            float[] uv = getUVArray(sprites[2], flips[2], textureStartX, textureEndX, textureStartY, textureEndY);
-            for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeY, textureSizeX, textureSizeY, textureOffsetX, textureOffsetY)) {
-                ri = ri.offset(cuboid, Axis.Z);
-                double[][] arr = new double[4][];
-                arr[3] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[2] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[1] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MAX], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[0] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MIN], cuboid.posZ, -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.NORTH);
-                else quads.add(convertToQuad(arr, EnumFacing.NORTH));
-            }
-        }
+        Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
+        Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
+        double other = face.getAxisDirection() == AxisDirection.POSITIVE ? Utils.getValue(size, face.getAxis()) : 0;
 
-        if (sprites[3] != null) {
-            // South (+Z)
-            float[] uv = getUVArray(sprites[3], flips[3], textureStartX, textureEndX, textureStartY, textureEndY);
-            for (RenderInfo ri : getRenderInfos(uv, sizeX, sizeY, textureSizeX, textureSizeY, textureOffsetX, textureOffsetY)) {
-                ri = ri.offset(cuboid, Axis.Z);
-                double[][] arr = new double[4][];
-                arr[0] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MIN], cuboid.posZ + sizeZ, -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { ri.xyz[U_MAX], ri.xyz[V_MAX], cuboid.posZ + sizeZ, -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MAX], cuboid.posZ + sizeZ, -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { ri.xyz[U_MIN], ri.xyz[V_MIN], cuboid.posZ + sizeZ, -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.SOUTH);
-                else quads.add(convertToQuad(arr, EnumFacing.SOUTH));
-            }
-        }
+        /* Swap the face if this is positive: the renderer returns indexes that ALWAYS are for the negative face, so
+         * light it properly this way */
+        // face = face.getAxisDirection() == AxisDirection.NEGATIVE ? face : face.getOpposite();
 
-        if (sprites[4] != null) {
-            // West (-X)
-            float[] uv = getUVArray(sprites[4], flips[4], textureStartZ, textureEndZ, textureStartY, textureEndY);
-            for (RenderInfo ri : getRenderInfos(uv, sizeZ, sizeY, textureSizeZ, textureSizeY, textureOffsetZ, textureOffsetY)) {
-                ri = ri.offset(cuboid, Axis.X);
-                double[][] arr = new double[4][];
-                arr[0] = new double[] { cuboid.posX, ri.xyz[V_MIN], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[1] = new double[] { cuboid.posX, ri.xyz[V_MAX], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[2] = new double[] { cuboid.posX, ri.xyz[V_MAX], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[3] = new double[] { cuboid.posX, ri.xyz[V_MIN], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.WEST);
-                else quads.add(convertToQuad(arr, EnumFacing.WEST));
-            }
-        }
+        EnumFacing opposite = face.getOpposite();
 
-        if (sprites[5] != null) {
-            // East (+X)
-            float[] uv = getUVArray(sprites[5], flips[5], textureStartZ, textureEndZ, textureStartY, textureEndY);
-            for (RenderInfo ri : getRenderInfos(uv, sizeZ, sizeY, textureSizeZ, textureSizeY, textureOffsetZ, textureOffsetY)) {
-                ri = ri.offset(cuboid, Axis.X);
-                double[][] arr = new double[4][];
-                arr[3] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MIN], 0 };
-                arr[2] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MAX], -1, ri.uv[U_MAX], ri.uv[V_MAX], 0 };
-                arr[1] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MAX], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MAX], 0 };
-                arr[0] = new double[] { cuboid.posX + sizeX, ri.xyz[V_MIN], ri.xyz[U_MIN], -1, ri.uv[U_MIN], ri.uv[V_MIN], 0 };
-                if (insideFaceToo) convertToDoubleQuads(quads, arr, EnumFacing.EAST);
-                else quads.add(convertToQuad(arr, EnumFacing.EAST));
+        boolean flip = BuildCraftBakedModel.shouldInvertForRender(face);
+
+        for (RenderInfo ri : renderInfoList) {
+            ri = ri.offset(cuboid, face.getAxis());
+            double otherMoved = other + Utils.getValue(cuboid.getPositionVector(), face.getAxis());
+
+            if (flip ? out : in) {
+                int[] data = new int[28];
+                bakePoint(data, 0, face, u, v, otherMoved, ri, true, false);
+                bakePoint(data, 1, face, u, v, otherMoved, ri, true, true);
+                bakePoint(data, 2, face, u, v, otherMoved, ri, false, true);
+                bakePoint(data, 3, face, u, v, otherMoved, ri, false, false);
+                quads.add(new BakedQuad(data, -1, face));
+            }
+            if (flip ? in : out) {
+                int[] data = new int[28];
+                bakePoint(data, 0, opposite, u, v, otherMoved, ri, false, false);
+                bakePoint(data, 1, opposite, u, v, otherMoved, ri, false, true);
+                bakePoint(data, 2, opposite, u, v, otherMoved, ri, true, true);
+                bakePoint(data, 3, opposite, u, v, otherMoved, ri, true, false);
+                quads.add(new BakedQuad(data, -1, opposite));
             }
         }
     }
 
-    private void convertToDoubleQuads(List<BakedQuad> quads, double[][] points, EnumFacing face) {
-        BakedQuad quad = convertToQuad(points, face);
-        quads.add(quad);
+    private static void bakePoint(int[] data, int i, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV) {
+        int offset = i * data.length / 4;
+        int U_ARRAY = minU ? U_MIN : U_MAX;
+        int V_ARRAY = minV ? V_MIN : V_MAX;
 
-        double[][] otherPoints = new double[][] { points[3], points[2], points[1], points[0] };
-        quad = convertToQuad(otherPoints, face);
-        quads.add(quad);
+        Vec3 vertex = Utils.withValue(Utils.VEC_ZERO, u, ri.xyz[U_ARRAY]);
+        vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
+        vertex = Utils.withValue(vertex, face.getAxis(), other);
+
+        data[offset + BuildCraftBakedModel.X] = BuildCraftBakedModel.asInt((float) vertex.xCoord);
+        data[offset + BuildCraftBakedModel.Y] = BuildCraftBakedModel.asInt((float) vertex.yCoord);
+        data[offset + BuildCraftBakedModel.Z] = BuildCraftBakedModel.asInt((float) vertex.zCoord);
+        data[offset + BuildCraftBakedModel.SHADE] = 0xFF_FF_FF_FF;
+        data[offset + BuildCraftBakedModel.U] = BuildCraftBakedModel.asInt(ri.uv[U_ARRAY]);
+        data[offset + BuildCraftBakedModel.V] = BuildCraftBakedModel.asInt(ri.uv[V_ARRAY]);
     }
 
-    private BakedQuad convertToQuad(double[][] points, EnumFacing face) {
-        int[] list = new int[points.length * points[0].length];
-        for (int i = 0; i < points.length; i++) {
-            double[] arr = points[i];
-            for (int j = 0; j < arr.length; j++) {
-                double d = arr[j];
-                int used = 0;
-                if (j == 3 || j == 6) {// Shade or unused
-                    used = (int) d;
-                } else {
-                    used = Float.floatToRawIntBits((float) d);
-                }
-                list[i * arr.length + j] = used;
-            }
-        }
-        return new BakedQuad(list, -1, face);
-    }
-
-    /** Returns an array containing [uMin, uMax, vMin, vMax]. start* and end* must be doubles between 0 and 1 */
-    private float[] getUVArray(TextureAtlasSprite sprite, int flips, double startU, double endU, double startV, double endV) {
-        float minU = sprite.getInterpolatedU(startU * 16);
-        float maxU = sprite.getInterpolatedU(endU * 16);
-        float minV = sprite.getInterpolatedV(startV * 16);
-        float maxV = sprite.getInterpolatedV(endV * 16);
-        float[] uvarray = new float[] { minU, maxU, minV, maxV };
-        if (flips % 2 == 1) {
-            float holder = uvarray[0];
-            uvarray[0] = uvarray[1];
-            uvarray[1] = holder;
-        }
-        if (flips >> 1 % 2 == 1) {
-            float holder = uvarray[2];
-            uvarray[2] = uvarray[3];
-            uvarray[3] = holder;
-        }
-        return uvarray;
-    }
-
-    private float[] getUVArray(TextureAtlasSprite sprite, int flips, EnumFacing face, Vec3 start, Vec3 end) {
+    private static float[] getUVArray(TextureAtlasSprite sprite, int flips, EnumFacing face, Vec3 start, Vec3 end) {
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
 
@@ -544,7 +455,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         return uvarray;
     }
 
-    private List<RenderInfo> getRenderInfos(float[] uv, EnumFacing face, Vec3 size, Vec3 texSize, Vec3 texOffset) {
+    private static List<RenderInfo> getRenderInfos(float[] uv, EnumFacing face, Vec3 size, Vec3 texSize, Vec3 texOffset) {
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
 
@@ -561,8 +472,8 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     /** A way to automatically generate the different positions given the same arguments.
      * 
      * @param rotation TODO */
-    private List<RenderInfo> getRenderInfos(float[] uv, double sizeU, double sizeV, double textureSizeU, double textureSizeV, double textureOffsetU,
-            double textureOffsetV) {
+    private static List<RenderInfo> getRenderInfos(float[] uv, double sizeU, double sizeV, double textureSizeU, double textureSizeV,
+            double textureOffsetU, double textureOffsetV) {
 
         List<RenderInfo> infos = Lists.newArrayList();
         boolean firstU = true;

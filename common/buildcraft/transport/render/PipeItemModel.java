@@ -48,7 +48,7 @@ public class PipeItemModel extends BuildCraftBakedModel {
         List<BakedQuad> unprocessed = Lists.newArrayList();
         List<BakedQuad> quads = Lists.newArrayList();
 
-        RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid, false);
+        RenderResizableCuboid.INSTANCE.bakeCube(unprocessed, cuboid, true, false);
 
         for (BakedQuad quad : unprocessed) {
             quad = createNormal(quad);
@@ -67,7 +67,7 @@ public class PipeItemModel extends BuildCraftBakedModel {
             cuboid.setSize(Utils.multiply(radius, 2));
 
             // Render it into a different list
-            RenderResizableCuboid.INSTANCE.renderCubeStatic(unprocessed, cuboid, false);
+            RenderResizableCuboid.INSTANCE.bakeCube(unprocessed, cuboid, true, false);
 
             EnumDyeColor dye = EnumDyeColor.byDyeDamage(colorIndex - 1);
 

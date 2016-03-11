@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
 
@@ -183,6 +184,19 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         return getDoubleFrom(array[0], array[1], array[2], array[3], uvs);
     }
 
+    public static int[] getInverseFrom(Vector3f[] array, float[] uvs) {
+        return getInverseFrom(array[0], array[1], array[2], array[3], uvs);
+    }
+
+    public static int[] getInverseFrom(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float[] uvs) {
+        float[] duvs = new float[4];
+        duvs[U_MIN] = uvs[U_MAX];
+        duvs[U_MAX] = uvs[U_MIN];
+        duvs[V_MIN] = uvs[V_MIN];
+        duvs[V_MAX] = uvs[V_MAX];
+        return getFrom(p4, p3, p2, p1, duvs);
+    }
+
     public static int[] getFrom(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float[] uvs) {
         int[] i1 = new int[] { asInt(p1.x), asInt(p1.y), asInt(p1.z), -1, asInt(uvs[U_MIN]), asInt(uvs[V_MIN]), 0 };
         int[] i2 = new int[] { asInt(p2.x), asInt(p2.y), asInt(p2.z), -1, asInt(uvs[U_MIN]), asInt(uvs[V_MAX]), 0 };
@@ -257,6 +271,12 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         Vector3f[] points = getPointsForFace(face, center, radius);
         int[][] quadData = getDoubleFrom(points, uvs);
         bakeQuads(quads, quadData, face.getOpposite(), face);
+    }
+
+    public static void bakeInverseFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
+        Vector3f[] points = getPointsForFace(face, center, radius);
+        int[] quadData = getInverseFrom(points, uvs);
+        bakeQuad(quads, quadData, face.getOpposite());
     }
 
     public static Vector3f[] getPointsForFace(EnumFacing face, Vector3f center, Vector3f radius) {
@@ -458,5 +478,16 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
                 return sprite;
             }
         };
+    }
+
+    public static boolean shouldInvertForRender(EnumFacing face) {
+        boolean flip = face.getAxisDirection() == AxisDirection.NEGATIVE;
+        if (face.getAxis() == Axis.Z) flip = !flip;
+        return flip;
+    }
+
+    public static EnumFacing faceForRender(EnumFacing face) {
+        if (shouldInvertForRender(face)) return face.getOpposite();
+        return face;
     }
 }
