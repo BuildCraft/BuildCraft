@@ -26,11 +26,9 @@ public enum BCStatCollector {
         Item item = Item.getItemFromBlock(block);
 
         if (item == null) return;
-        String statName = toStatName(item);
-        Object[] translation = { (new ItemStack(block)).getChatComponent() };
 
-        StatCrafting mineBlock = new StatCrafting("stat.mineBlock.", statName, new ChatComponentTranslation("stat.mineBlock", translation), item);
-        mineBlock.registerStat();
+        String statName = toStatName(item);
+        StatCrafting mineBlock = createCrafting("stat.mineBlock", statName, new ItemStack(block));
 
         StatList.objectMineStats.add(mineBlock);
         INSTANCE.blockMined.put(block, mineBlock);
@@ -40,11 +38,8 @@ public enum BCStatCollector {
 
     public static void registerStats(Item item) {
         String statName = toStatName(item);
-        Object[] translation = { (new ItemStack(item)).getChatComponent() };
-
-        StatCrafting used = new StatCrafting("stat.useItem.", statName, new ChatComponentTranslation("stat.useItem", translation), item);
-        StatCrafting craft = new StatCrafting("stat.craftItem.", statName, new ChatComponentTranslation("stat.craftItem", translation), item);
-        used.registerStat();
+        StatCrafting used = createCrafting("stat.useItem", statName, new ItemStack(item));
+        StatCrafting craft = createCrafting("stat.craftItem", statName, new ItemStack(item));
         craft.registerStat();
 
         if (!(item instanceof ItemBlock)) {
@@ -53,6 +48,13 @@ public enum BCStatCollector {
 
         INSTANCE.itemUsed.put(item, used);
         INSTANCE.itemCrafted.put(item, craft);
+    }
+
+    public static StatCrafting createCrafting(String start, String statName, ItemStack stack) {
+        Object[] translation = { stack.getChatComponent() };
+        StatCrafting stat = new StatCrafting(start + ".", statName, new ChatComponentTranslation(start, translation), stack.getItem());
+        stat.registerStat();
+        return stat;
     }
 
     private static String toStatName(Item item) {
@@ -68,5 +70,9 @@ public enum BCStatCollector {
         for (Entry<Item, StatCrafting> crafted : itemCrafted.entrySet()) {
             StatList.objectCraftStats[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
         }
+    }
+
+    public interface ICustomStatRegister {
+        void registerStat();
     }
 }

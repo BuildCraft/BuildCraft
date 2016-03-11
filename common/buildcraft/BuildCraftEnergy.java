@@ -201,11 +201,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-			if (!Loader.isModLoaded("BuildCraft|Factory")) {
-				canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
-				isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-				oil.block.setFlammable(canOilBurn).setDense(isOilDense);
-			}
+            if (!Loader.isModLoaded("BuildCraft|Factory")) {
+                canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
+                isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
+                oil.block.setFlammable(canOilBurn).setDense(isOilDense);
+            }
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {
                 BuildCraftCore.mainConfiguration.save();
@@ -369,7 +369,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                             else if (path.contains("block")) mapping.ignore();
                         }
                         BCLog.logger.info("            " + path + " matched fuel");
-                    } else if (path.endsWith("redplasma")) {
+                    } else if (path.endsWith("redplasma") && redPlasma != null) {
                         if (mapping.type == GameRegistry.Type.BLOCK) {
                             mapping.remap(redPlasma.block);
                         } else if (mapping.type == GameRegistry.Type.ITEM) {
