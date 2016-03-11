@@ -316,7 +316,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public boolean isPumping() {
-        return isPumping || lastTick == 0;
+        return isPumping;
     }
 
     public boolean isOrientationValid() {

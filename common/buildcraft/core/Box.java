@@ -4,17 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
-
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
@@ -22,8 +11,17 @@ import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3i;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox, ISerializable {
@@ -259,6 +257,9 @@ public class Box implements IBox, ISerializable {
         if (initialized) {
             min = NetworkUtils.readBlockPos(stream);
             max = NetworkUtils.readBlockPos(stream);
+        } else {
+            min = null;
+            max = null;
         }
     }
 

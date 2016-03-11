@@ -4,31 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.world.ChunkCoordIntPair;
-
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeChunkManager.Type;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fluids.IFluidBlock;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -57,8 +32,29 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.core.proxy.CoreProxy;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fluids.IFluidBlock;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable,
         IDebuggable {
@@ -890,7 +886,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos(), chunks.size()));
+            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos().getZ(), chunks.size()));
         }
     }
 
