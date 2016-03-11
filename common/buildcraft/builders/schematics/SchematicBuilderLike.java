@@ -1,10 +1,10 @@
 package buildcraft.builders.schematics;
 
-import buildcraft.core.builders.schematics.SchematicRotateMeta;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicBuilderLike extends SchematicRotateMeta {
+public class SchematicBuilderLike extends SchematicTile {
     public SchematicBuilderLike() {
-        super(new int[] { 2, 5, 3, 4 }, true);
+        super();
     }
 
     @Override

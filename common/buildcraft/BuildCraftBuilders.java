@@ -321,13 +321,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-        schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicBlock.class);
-
         schemes.registerSchematicBlock(Blocks.log, SchematicLog.class);
         schemes.registerSchematicBlock(Blocks.log2, SchematicLog.class);
         schemes.registerSchematicBlock(Blocks.hay_block, SchematicRotatedPillar.class);
@@ -377,11 +370,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.glass_pane, SchematicGlassPane.class);
         schemes.registerSchematicBlock(Blocks.stained_glass_pane, SchematicGlassPane.class);
 
-        schemes.registerSchematicBlock(Blocks.piston, SchematicTile.class);
-        schemes.registerSchematicBlock(Blocks.piston_extension, SchematicTile.class);
-        schemes.registerSchematicBlock(Blocks.sticky_piston, SchematicTile.class);
-
-        // schemes.registerSchematicBlock(Blocks.lit_pumpkin, SchematicPumpkin.class);
+        schemes.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
+        schemes.registerSchematicBlock(Blocks.piston_extension, SchematicIgnore.class);
+        schemes.registerSchematicBlock(Blocks.sticky_piston, SchematicPiston.class);
 
         schemes.registerSchematicBlock(Blocks.oak_stairs, SchematicStandalone.class);
         schemes.registerSchematicBlock(Blocks.stone_stairs, SchematicStandalone.class);
@@ -455,7 +446,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
         // BuildCraft blocks
 
         schemes.registerSchematicBlock(architectBlock, SchematicTile.class);
-        schemes.registerSchematicBlock(builderBlock, SchematicTile.class);
+        schemes.registerSchematicBlock(builderBlock, SchematicBuilderLike.class);
+        schemes.registerSchematicBlock(fillerBlock, SchematicBuilderLike.class);
+        schemes.registerSchematicBlock(libraryBlock, SchematicTile.class);
+        schemes.registerSchematicBlock(quarryBlock, SchematicBuilderLike.class);
 
         // schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
         // schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);

@@ -27,7 +27,7 @@ public class SchematicStandingSign extends SchematicTile {
 
     @Override
     public void rotateLeft(IBuilderContext context) {
-        int rotation = (Integer) state.getValue(BlockStandingSign.ROTATION);
+        int rotation = state.getValue(BlockStandingSign.ROTATION);
         rotation += 4;
         if (rotation >= 16) {
             rotation -= 16;

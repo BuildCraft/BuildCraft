@@ -4,16 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.schematics;
 
-import java.util.List;
-
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import java.util.List;
 
-public class SchematicIgnoreMeta extends SchematicBlock {
-
+public class SchematicIgnoreState extends SchematicBlock {
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         requirements.add(new ItemStack(state.getBlock(), 1, 0));
