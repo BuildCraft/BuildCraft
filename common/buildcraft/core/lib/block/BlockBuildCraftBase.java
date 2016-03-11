@@ -1,13 +1,13 @@
 package buildcraft.core.lib.block;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.*;
+import buildcraft.api.properties.BuildCraftExtendedProperty;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.core.BCCreativeTab;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -19,17 +19,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.enums.*;
-import buildcraft.api.properties.BuildCraftExtendedProperty;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.core.BCCreativeTab;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class BlockBuildCraftBase extends Block {
 
@@ -226,12 +223,8 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         IProperty[] props = new IProperty[properties.length + nonMetaProperties.length];
-        for (int i = 0; i < properties.length; i++) {
-            props[i] = properties[i];
-        }
-        for (int i = 0; i < nonMetaProperties.length; i++) {
-            props[properties.length + i] = nonMetaProperties[i];
-        }
+        System.arraycopy(properties, 0, props, 0, properties.length);
+        System.arraycopy(nonMetaProperties, 0, props, properties.length, nonMetaProperties.length);
         if (hasExtendedProperties) {
             return new ExtendedBlockState(this, props, extendedProperties);
         }

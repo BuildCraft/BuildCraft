@@ -15,10 +15,8 @@ import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderQuarry;
-import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderVoid;
-import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
 
 public class BuilderProxyClient extends BuilderProxy {
@@ -34,7 +32,6 @@ public class BuilderProxyClient extends BuilderProxy {
     public void registerBlockRenderers() {
         super.registerBlockRenderers();
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider<TileUrbanist>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
         ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder<TileFiller>());
         ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());

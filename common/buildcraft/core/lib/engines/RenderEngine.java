@@ -4,26 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderResizableCuboid;
@@ -33,6 +13,22 @@ import buildcraft.core.lib.render.RenderResizableCuboid.IFacingLocation;
 import buildcraft.core.lib.render.RenderResizableCuboid.RotatedFacingLocation;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
+import com.google.common.collect.Maps;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Map;
 
 public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 

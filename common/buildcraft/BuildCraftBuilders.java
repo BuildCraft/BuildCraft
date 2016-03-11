@@ -4,15 +4,21 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Locale;
-
+import buildcraft.api.blueprints.*;
+import buildcraft.api.core.JavaTools;
+import buildcraft.api.library.LibraryAPI;
+import buildcraft.api.statements.StatementManager;
+import buildcraft.builders.*;
+import buildcraft.builders.blueprints.RealBlueprintDeployer;
+import buildcraft.builders.schematics.*;
+import buildcraft.builders.statements.BuildersActionProvider;
+import buildcraft.core.*;
+import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.schematics.SchematicBlockCreative;
+import buildcraft.core.builders.schematics.SchematicIgnore;
+import buildcraft.core.config.ConfigManager;
+import buildcraft.core.network.EntityIds;
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.*;
@@ -25,7 +31,6 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -41,21 +46,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blueprints.*;
-import buildcraft.api.core.JavaTools;
-import buildcraft.api.library.LibraryAPI;
-import buildcraft.api.statements.StatementManager;
-import buildcraft.builders.*;
-import buildcraft.builders.blueprints.RealBlueprintDeployer;
-import buildcraft.builders.schematics.*;
-import buildcraft.builders.statements.BuildersActionProvider;
-import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
-import buildcraft.core.*;
-import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.builders.schematics.SchematicBlockCreative;
-import buildcraft.core.builders.schematics.SchematicIgnore;
-import buildcraft.core.config.ConfigManager;
-import buildcraft.core.network.EntityIds;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Locale;
 
 @Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
         dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -568,7 +564,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
         TextureMap terrainTextures = evt.map;
         BuilderProxyClient.drillTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill"));
         BuilderProxyClient.drillHeadTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill_head"));
-        UrbanistToolsIconProvider.INSTANCE.registerSprites(terrainTextures);
     }
 
     @Mod.EventHandler
