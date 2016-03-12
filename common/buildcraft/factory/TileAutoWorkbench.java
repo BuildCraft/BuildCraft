@@ -103,15 +103,17 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 				} else {
 					return null;
 				}
+			} else {
+				return super.getStackInSlot(slot);
 			}
-			return super.getStackInSlot(slot);
 		}
 
 		public ItemStack getRecipeOutput() {
+			currentRecipe = findRecipe(); // Fixes repair recipe handling (why is it not dynamic?)
 			if (currentRecipe == null) {
 				return null;
 			}
-			ItemStack result = currentRecipe.getCraftingResult(craftMatrix);
+			ItemStack result = currentRecipe.getCraftingResult(this);
 			if (result != null) {
 				result = result.copy();
 			}

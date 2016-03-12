@@ -49,14 +49,6 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
-		if (stack.getItemDamage() == 1) {
-			strings.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
-		}
-	}
-
-	@Override
 	public int getMetadata(int meta) {
 		return meta < BlockLaserTable.TABLE_MAX ? meta : 0;
 	}

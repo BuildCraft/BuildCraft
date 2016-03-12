@@ -68,6 +68,18 @@ public class PipeExtensionListener {
 
 				if (retract) {
 					target.moveBackwards(1.0D);
+					if (w.getBlock((int) target.x, (int) target.y, (int) target.z) != BuildCraftTransport.genericPipeBlock) {
+						r.h.sendItem(r.stack, r.o.getOpposite());
+						continue;
+					}
+
+					target.moveBackwards(1.0D);
+					if (w.getBlock((int) target.x, (int) target.y, (int) target.z) != BuildCraftTransport.genericPipeBlock) {
+						r.h.sendItem(r.stack, r.o.getOpposite());
+						continue;
+					}
+
+					target.moveForwards(1.0D);
 				} else {
 					target.moveForwards(1.0D);
 					if (!w.isAirBlock((int) target.x, (int) target.y, (int) target.z)) {
