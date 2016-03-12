@@ -38,7 +38,7 @@ public class GuiAdvancedCraftingTable extends GuiLaserTable {
         }
         if (workbench.getControlMode() == Mode.Off) {
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-            drawTexturedModalRect(guiLeft + 93, guiTop + 16, CoreIconProvider.TUNED_OFF.getSprite(), 16, 16);
+            drawTexturedModalRect(guiLeft + 93, guiTop + 16, CoreIconProvider.TURNED_OFF.getSprite(), 16, 16);
         }
     }
 }

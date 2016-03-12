@@ -8,7 +8,7 @@ public enum CoreIconProvider {
     ENERGY("buildcraftcore:items/icons/energy"),
     SLOT("buildcraftcore:gui/slot"),
     LOCK("buildcraftcore:items/icons/lock"),
-    TUNED_OFF("buildcraftcore:triggers/action_machinecontrol_off");
+    TURNED_OFF("buildcraftcore:triggers/action_machinecontrol_off");
 
     private final ResourceLocation location;
     private TextureAtlasSprite sprite;

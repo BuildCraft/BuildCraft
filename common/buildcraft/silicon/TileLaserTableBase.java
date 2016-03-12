@@ -4,14 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
@@ -20,8 +12,15 @@ import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork, IControllable {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
     public int clientRequiredEnergy = 0;
     protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
     private int energy = 0;
@@ -29,7 +28,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
     private AverageInt recentEnergyAverageUtil = new AverageInt(20);
 
     public TileLaserTableBase() {
-        setControlMode(Mode.On);
+        setControlMode(IControllable.Mode.On);
     }
 
     @Override
@@ -72,14 +71,14 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
     public abstract boolean canCraft();
 
-    @Override
+    /* @Override
     public boolean acceptsControlMode(Mode mode) {
         return mode == Mode.On || mode == Mode.Off;
-    }
+    } */
 
     @Override
     public boolean requiresLaserEnergy() {
-        return canCraft() && energy < getRequiredEnergy() * 5F && mode == Mode.On;
+        return canCraft() && energy < getRequiredEnergy() * 5F /* && mode == Mode.On */;
     }
 
     @Override
