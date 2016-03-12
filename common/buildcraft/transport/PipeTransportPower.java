@@ -4,20 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -31,6 +17,18 @@ import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.*;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -503,7 +501,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         left.add("PipeTransportPower (" + maxPower + " RF/t)");
         for (EnumFacing face : EnumFacing.VALUES) {
             int ord = face.ordinal();
-            left.add(" - " + face.getName2() + " " + displayPower[ord] + "RF");
+            left.add(" - " + face.getName2() + " " + displayPower[ord]);
         }
         // left.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
         // left.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));

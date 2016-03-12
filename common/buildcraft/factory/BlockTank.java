@@ -105,6 +105,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
                     return true;
                 }
                 return false;
+
 //                // Handle FluidContainerRegistry
 //                if (FluidContainerRegistry.isContainer(current)) {
 //                    FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);

@@ -1,24 +1,5 @@
 package buildcraft.transport.stripes;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IStripesActivator;
@@ -29,6 +10,23 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.utils.TransportUtils;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class PipeExtensionListener {
     private class PipeExtensionRequest {
@@ -69,6 +67,18 @@ public class PipeExtensionListener {
 
                 if (retract) {
                     target = target.add(Utils.convert(r.o, -1));
+					if (w.getBlockState(Utils.convertFloor(target)).getBlock() != BuildCraftTransport.genericPipeBlock) {
+						r.h.sendItem(r.stack, r.o.getOpposite());
+						continue;
+					}
+
+					target = target.add(Utils.convert(r.o, -1));
+					if (w.getBlockState(Utils.convertFloor(target)).getBlock() != BuildCraftTransport.genericPipeBlock) {
+						r.h.sendItem(r.stack, r.o.getOpposite());
+						continue;
+					}
+
+					target = target.add(Utils.convert(r.o, 1));
                 } else {
                     target = target.add(Utils.convert(r.o, 1));
                     if (!w.isAirBlock(Utils.convertFloor(target))) {

@@ -4,17 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import java.lang.ref.WeakReference;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
@@ -26,9 +15,18 @@ import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
+
+import java.lang.ref.WeakReference;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
-
     public static final int SLOT_RESULT = 9;
     public static final int CRAFT_TIME = 256;
     public static final int UPDATE_TIME = 16;
@@ -90,15 +88,17 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                 } else {
                     return null;
                 }
-            }
-            return super.getStackInSlot(slot);
+            } else {
+				return super.getStackInSlot(slot);
+			}
         }
 
         public ItemStack getRecipeOutput() {
+			currentRecipe = findRecipe(); // Fixes repair recipe handling (why is it not dynamic?)
             if (currentRecipe == null) {
                 return null;
             }
-            ItemStack result = currentRecipe.getCraftingResult(craftMatrix);
+            ItemStack result = currentRecipe.getCraftingResult(this);
             if (result != null) {
                 result = result.copy();
             }
