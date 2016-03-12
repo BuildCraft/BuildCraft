@@ -24,6 +24,7 @@ import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionInternal.IActionInternalSingle;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.transport.IPipe;
@@ -436,7 +437,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 slot.statement = statement;
                 slot.parameters = actionParameters[it];
                 if (statement instanceof IActionInternal) {
-                    if (((IActionInternal) statement).singleActionTick()) {
+                    if (statement instanceof IActionInternalSingle && ((IActionInternalSingle) statement).singleActionTick()) {
                         if (tickActivated[it] == now) activeActions.add(slot);
                     } else {
                         activeActions.add(slot);

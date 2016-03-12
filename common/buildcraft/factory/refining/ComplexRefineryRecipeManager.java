@@ -2,8 +2,10 @@ package buildcraft.factory.refining;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.base.Predicate;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -22,13 +24,28 @@ public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManage
     }
 
     @Override
+    public IHeatableRecipe addHeatableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
+        return getHeatableRegistry().addRecipe(createHeatingRecipe(in, out, heatFrom, heatTo, ticks), replaceExisting);
+    }
+
+    @Override
     public ICoolableRecipe createCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks) {
         return new CoolableRecipe(ticks, in, out, heatFrom, heatTo);
+    }
+    
+    @Override
+    public ICoolableRecipe addCoolableRecipe(FluidStack in, FluidStack out, int heatFrom, int heatTo, int ticks, boolean replaceExisting) {
+        return getCoolableRegistry().addRecipe(createCoolableRecipe(in, out, heatFrom, heatTo, ticks), replaceExisting);
     }
 
     @Override
     public IDistilationRecipe createDistilationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, int ticks) {
         return new DistilationRecipe(in, ticks, outGas, outLiquid);
+    }
+    
+    @Override
+    public IDistilationRecipe addDistilationRecipe(FluidStack in, FluidStack outGas, FluidStack outLiquid, int ticks, boolean replaceExisting) {
+        return getDistilationRegistry().addRecipe(createDistilationRecipe(in, outGas, outLiquid, ticks), replaceExisting);
     }
 
     @Override
@@ -66,13 +83,27 @@ public enum ComplexRefineryRecipeManager implements IComplexRefineryRecipeManage
         }
 
         @Override
-        public Stream<R> getRecipes(Predicate<R> toReturn) {
-            return recipeSet.stream().filter(toReturn);
+        public Set<R> getAllRecipes() {
+            return getRecipes(o -> true);
+        }
+
+        @Override
+        public R getRecipeForInput(FluidStack fluid) {
+            return getRecipesAsStream(f -> f.in().isFluidEqual(fluid)).findAny().orElse(null);
+        }
+
+        @Override
+        public Set<R> getRecipes(Predicate<R> toReturn) {
+            return getRecipesAsStream(toReturn).collect(Collectors.toCollection(HashSet::new));
+        }
+
+        public Stream<R> getRecipesAsStream(Predicate<R> toReturn) {
+            return recipeSet.stream().filter(r -> toReturn.apply(r));
         }
 
         @Override
         public Set<R> removeRecipes(Predicate<R> toRemove) {
-            Set<R> removeSet = getRecipesAsSet(toRemove);
+            Set<R> removeSet = getRecipes(toRemove);
             recipeSet.removeAll(removeSet);
             return removeSet;
         }

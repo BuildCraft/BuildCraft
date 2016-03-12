@@ -181,8 +181,18 @@ public class Pipe_BC8 implements IPipe_BC8 {
     }
 
     @Override
+    public void scheduleClientUpdate(IPipeListener listener) {
+        sendClientUpdate(listener);
+    }
+
+    @Override
     public void sendRenderUpdate() {
         // Create a packet
         // Send the packet
+    }
+
+    @Override
+    public void scheduleRenderUpdate() {
+        sendRenderUpdate();
     }
 }

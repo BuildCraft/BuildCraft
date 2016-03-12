@@ -122,7 +122,12 @@ public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver 
 
         int energyRequired = getEnergyCost(contents);
 
-        boolean inserted = insertable.tryInsert(contents, pipe, extractionFace.face.getOpposite(), false);
+        boolean inserted;
+        if (contents instanceof IPipeContentsEditableItem) {
+            inserted = insertable.tryInsertItems((IPipeContentsEditableItem) contents, pipe, extractionFace.face.getOpposite(), false);
+        } else {
+            inserted = insertable.tryInsertFluid((IPipeContentsEditableFluid) contents, pipe, extractionFace.face.getOpposite(), false);
+        }
         if (!inserted) throw new IllegalStateException("Cannot NOT insert!");
         return energyRequired;
     }
