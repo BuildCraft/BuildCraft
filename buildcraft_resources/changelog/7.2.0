@@ -1,0 +1,23 @@
+NOTE: This changelog is likely incomplete. There have been a lot of little changes in the mod which may not have been caught properly.
+
+Additions:
+
+* **Ported to Minecraft 1.8.9.** This took a lot more effort than we ever expected.
+* **Robot goggles!** Spot your robots from far away (AlexIIL)
+
+Improvements:
+
+* **Rendering**
+  * Builder now shows if a blueprint or template is inserted (AlexIIL)
+  * Clear lenses now use a water texture (AlexIIL)
+  * Engines are now a static/dynamic mix, meaning they are less FPS-taxing (AlexIIL)
+  * Pipes are now shaded properly (AlexIIL)
+  * Power in pipes is now animated, showing its direction (AlexIIL)
+  * Things now have somewhat more 3D models (gates, docking stations, builders, fillers at least) (AlexIIL)
+* **Transport**
+  * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
+* Support for Minecraft's statistics system (AlexIIL)
+
+Removals:
+
+* The deprecated List (asie)
