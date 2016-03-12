@@ -90,7 +90,7 @@ public class ComplexRefiningManager {
         fuelGaseous = defineFluids("fuelGaseous", 300, 600, 3, 0, colours[index][0], colours[index++][1]);
 
         tar = defineFluid("tar", 7000, 8000, 0, 4, colours[index][0], colours[index++][1]);
-        steam = defineFluid("steam", -100, 1000, 2, 1, colours[index][0], colours[index++][1]);
+        steam = defineFluid("steam", 100, 1000, 2, 1, colours[index][0], colours[index++][1]);
 
         BuildCraftEnergy.oil = crudeOil[0];
         BuildCraftEnergy.fuel = fuelLight[0];

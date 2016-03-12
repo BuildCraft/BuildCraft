@@ -70,11 +70,10 @@ sourceSets {
     }
     api {
 		java {
-			srcDir 'api'
+			srcDir "./BuildCraftAPI/api"
 		}
     }
 }
-
 
 // Obfuscated Jar location
 ext.jarFile = zipTree(jar.archivePath)

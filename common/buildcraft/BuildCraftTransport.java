@@ -753,7 +753,8 @@ public class BuildCraftTransport extends BuildCraftMod {
                 }
             }
 
-            if (mapping.name.toLowerCase(Locale.ROOT).contains("pipe")) {
+            if (mapping.resourceLocation.getResourceDomain().equals("BuildCraft|Transport") && mapping.name.toLowerCase(Locale.ROOT).contains(
+                    "pipe")) {
                 mapping.remap(Item.itemRegistry.getObject(new ResourceLocation(mapping.name.replace("item.", ""))));
                 BCLog.logger.info("          - remapped pipe");
             }
