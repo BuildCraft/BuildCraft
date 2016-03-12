@@ -8,16 +8,8 @@
  */
 package buildcraft.silicon;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
