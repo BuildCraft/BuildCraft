@@ -380,6 +380,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
                 done = false;
             } else if ("setParameters".equals(command)) {
+                // You cannot set the pattern if it is locked
+                if (isPatternLocked()) return;
                 NBTTagCompound patternData = NetworkUtils.readNBT(stream);
                 readParametersFromNBT(patternData);
 

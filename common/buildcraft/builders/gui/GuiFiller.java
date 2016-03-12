@@ -131,7 +131,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 
         AdvancedSlot slot = getSlotAtLocation(x, y);
 
-        if (slot != null) {
+        if (slot != null && !filler.isPatternLocked()) {
             int i = ((FillerParameterSlot) slot).slot;
             if (i < filler.patternParameters.length) {
                 if (filler.patternParameters[i] != null) {

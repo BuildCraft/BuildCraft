@@ -10,14 +10,17 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.blueprints.RequirementItemStack;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
@@ -136,6 +139,11 @@ public class GuiBuilder extends GuiAdvancedInterface {
             for (GuiButton b : (List<GuiButton>) buttonList) {
                 b.visible = false;
             }
+        }
+        
+        if (builder.getControlMode() == Mode.Off) {
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            drawTexturedModalRect(guiLeft + 80, guiTop + 44, CoreIconProvider.TURNED_OFF.getSprite(), 16, 16);
         }
 
         drawWidgets(x, y);

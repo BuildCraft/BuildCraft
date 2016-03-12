@@ -15,7 +15,11 @@ Improvements:
   * Power in pipes is now animated, showing its direction (AlexIIL)
   * Things now have somewhat more 3D models (gates, docking stations, builders, fillers at least) (AlexIIL)
   * Lasers now render at least 2px wide, improving far away lasers. (AlexIIL)
-  * The filler has an icon showing if a gate is locking the pattern, or if it is in a different mode to normal (AlexIIL
+  * The filler has an icon showing if a gate is locking the pattern, or if it is in a different mode to normal (AlexIIL)
+  * The builder has an icon showing if a gate has turned it off (AlexIIL)
+  * The mining pipes for the quarry are transparent (they match the texture of the frame block) (AlexIIL)
+  * The mining pipes light properly depending on the light value of the block each part is in (AlexIIL)
+  * Pipe wire now glows in the dark (when it is on) (AlexIIL)
 * **Transport**
   * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
 * Support for Minecraft's statistics system (AlexIIL)
