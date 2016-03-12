@@ -1,23 +1,17 @@
 package buildcraft.robotics.boards;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import buildcraft.api.boards.RedstoneBoardRobot;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.BCStringUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.utils.BCStringUtils;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BCBoardNBT extends RedstoneBoardRobotNBT {
     public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<String, BCBoardNBT>();
@@ -25,14 +19,11 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
     private final String id, upperName, boardType;
     private final Constructor<? extends RedstoneBoardRobot> boardInit;
 
-    @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite icon;
-
     public BCBoardNBT(String id, String name, Class<? extends RedstoneBoardRobot> board, String boardType) {
         this.id = id;
         this.boardType = boardType;
         this.upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
-        this.texture = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_" + name + ".png");
+        this.texture = new ResourceLocation("buildcraftrobotics:entities/robot_" + name);
 
         Constructor<? extends RedstoneBoardRobot> boardInitLocal;
         try {

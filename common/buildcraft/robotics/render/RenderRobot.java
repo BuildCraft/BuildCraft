@@ -4,12 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.render;
 
-import java.util.Date;
-
+import buildcraft.BuildCraftRobotics;
+import buildcraft.api.robots.IRobotOverlayItem;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.render.RenderLaser;
+import buildcraft.robotics.EntityRobot;
 import com.mojang.authlib.GameProfile;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -19,6 +22,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.entity.item.EntityItem;
@@ -30,18 +34,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.util.Constants.NBT;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.robots.IRobotOverlayItem;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.lib.render.RenderUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.render.RenderLaser;
-import buildcraft.robotics.EntityRobot;
+import java.util.Date;
 
 /** All of this is getting a mega-rewrite for Neptune */
 public class RenderRobot extends Render<EntityRobot> {
@@ -57,9 +54,9 @@ public class RenderRobot extends Render<EntityRobot> {
     private ModelRenderer skullOverlayBox;
     private ModelRenderer box, helmetBox;
 
-    public RenderRobot() {
-        super(Minecraft.getMinecraft().getRenderManager());
-        customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
+    public RenderRobot(RenderManager manager) {
+        super(manager);
+        customRenderItem = new RenderEntityItem(manager, Minecraft.getMinecraft().getRenderItem()) {
             @Override
             public boolean shouldBob() {
                 return false;
@@ -72,6 +69,7 @@ public class RenderRobot extends Render<EntityRobot> {
         };
 
         box = new ModelRenderer(model, 0, 0);
+        box.setTextureSize(32, 32);
         box.addBox(-4F, -4F, -4F, 8, 8, 8);
         box.setRotationPoint(0.0F, 0.0F, 0.0F);
         helmetBox = new ModelRenderer(modelHelmet, 0, 0);

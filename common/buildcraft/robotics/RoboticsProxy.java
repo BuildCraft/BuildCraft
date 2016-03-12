@@ -10,5 +10,9 @@ public class RoboticsProxy {
     @SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide = "buildcraft.robotics.RoboticsProxy")
     public static RoboticsProxy proxy;
 
+    public void preInit() {
+
+    }
+
     public void init() {}
 }
