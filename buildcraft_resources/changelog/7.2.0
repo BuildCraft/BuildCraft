@@ -19,7 +19,6 @@ Improvements:
   * The builder has an icon showing if a gate has turned it off (AlexIIL)
   * The mining pipes for the quarry are transparent (they match the texture of the frame block) (AlexIIL)
   * The mining pipes light properly depending on the light value of the block each part is in (AlexIIL)
-  * Pipe wire now glows in the dark (when it is on) (AlexIIL)
 * **Transport**
   * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
 * Support for Minecraft's statistics system (AlexIIL)

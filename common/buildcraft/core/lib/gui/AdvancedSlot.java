@@ -114,6 +114,7 @@ public abstract class AdvancedSlot {
         RenderHelper.enableGUIStandardItemLighting();
 
         gui.drawStack(item, cornerX + x, cornerY + y);
+        RenderHelper.disableStandardItemLighting();
         GlStateManager.color(1, 1, 1, 1);
     }
 

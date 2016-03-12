@@ -57,14 +57,9 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
     protected void drawSlotHighlight(AdvancedSlot slot, int mouseX, int mouseY) {
         if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.shouldDrawHighlight()) {
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
-            GlStateManager.enableAlpha();
             GlStateManager.colorMask(true, true, true, false);
             this.drawGradientRect(guiLeft + slot.x, guiTop + slot.y, guiLeft + slot.x + 16, guiTop + slot.y + 16, -2130706433, -2130706433);
             GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
         }
     }
 
