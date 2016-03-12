@@ -1000,7 +1000,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 
         BCRegistry.INSTANCE.registerItem(item, true);
-        BCLog.logger.info("Registered " + clas + " as " + Item.itemRegistry.getNameForObject(item));
         pipes.put(item, clas);
 
         Pipe<?> dummyPipe = createPipe(item);

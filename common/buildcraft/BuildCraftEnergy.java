@@ -11,12 +11,21 @@ import com.google.common.base.Throwables;
 
 import org.apache.logging.log4j.Level;
 
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelFluid;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -29,6 +38,8 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
@@ -48,6 +59,8 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.fluids.FluidDefinition;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
+import buildcraft.core.lib.sprites.SpriteColourMapper;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.energy.*;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
@@ -161,9 +174,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
-        if (!Loader.isModLoaded("BuildCraft|Factory")) {
+        if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
             oil = new FluidDefinition("oil", 800, 10000, true);
             oil.block.setLightOpacity(8);
+            oil.fluid.setColour(0x50_50_50, 0x05_05_05);
             oil.block.setFlammability(0);
             BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
                     ConfigManager.RestartRequirement.NONE);
@@ -172,6 +186,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
             fuel = new FluidDefinition("fuel", 1000, 1000, true);
             fuel.block.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
+            fuel.fluid.setColour(0xFF_FF_30, 0xE4_CF_00);
 
             spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
             EnumSpring.OIL.canGen = spawnOilSprings;
@@ -201,7 +216,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            if (!Loader.isModLoaded("BuildCraft|Factory")) {
+            if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
                 oil.block.setFlammable(canOilBurn).setDense(isOilDense);
@@ -276,7 +291,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.oil.combustion.energyOutput").getInt();
         int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.fuel.combustion.energyOutput").getInt();
 
-        if (!Loader.isModLoaded("BuildCraft|Factory")) {
+        if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
             BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
             BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
         }
@@ -389,5 +404,48 @@ public class BuildCraftEnergy extends BuildCraftMod {
             }
         }
         if (error != null) throw Throwables.propagate(error);
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void registerModels(ModelBakeEvent event) {
+        FluidDefinition[] arr = { oil, fuel, redPlasma };
+        if (Loader.isModLoaded("BuildCraft|Factory") && BuildCraftCore.DEVELOPER_MODE) {
+            arr[0] = null;
+            arr[1] = null;
+        }
+        if (!BuildCraftCore.DEVELOPER_MODE) {
+            arr[2] = null;
+        }
+        for (FluidDefinition def : arr) {
+            if (def == null) continue;
+            IModel model = new ModelFluid(def.fluid);
+            IBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+            ModelResourceLocation loc = ModelHelper.getBlockResourceLocation(def.block);
+            event.modelRegistry.putObject(loc, baked);
+        }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void textureStitchPre(TextureStitchEvent.Pre event) {
+        FluidDefinition[] arr = { oil, fuel, redPlasma };
+        if (Loader.isModLoaded("BuildCraft|Factory") && BuildCraftCore.DEVELOPER_MODE) {
+            arr[0] = null;
+            arr[1] = null;
+        }
+        if (!BuildCraftCore.DEVELOPER_MODE) {
+            arr[2] = null;
+        }
+        for (FluidDefinition def : arr) {
+            if (def == null) continue;
+            int heat = def.fluid.getHeatValue();
+            String from = "buildcraftenergy:blocks/fluids/heat_" + heat;
+            SpriteColourMapper mapper = new SpriteColourMapper(def.fluid, from + "_still", true);
+            event.map.setTextureEntry(def.fluid.getStill().toString(), mapper);
+
+            mapper = new SpriteColourMapper(def.fluid, from + "_flow", false);
+            event.map.setTextureEntry(def.fluid.getFlowing().toString(), mapper);
+        }
     }
 }

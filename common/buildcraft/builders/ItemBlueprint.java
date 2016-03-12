@@ -9,7 +9,6 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,9 +23,9 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
     public ItemBlueprint() {
@@ -44,17 +43,17 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
         return true;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        if (world.isRemote) {
-            BlueprintBase bpt = loadBlueprint(stack);
-            if (bpt != null) {
-                openGui(bpt);
-            }
-        }
-        return stack;
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    // if (world.isRemote) {
+    // // BlueprintBase bpt = loadBlueprint(stack);
+    // // if (bpt != null) {
+    // // openGui(bpt);
+    // // }
+    // }
+    // return stack;
+    // }
 
     @SideOnly(Side.CLIENT)
     protected abstract void openGui(BlueprintBase bpt);
