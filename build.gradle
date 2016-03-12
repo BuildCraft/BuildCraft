@@ -24,7 +24,15 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 
-version = "7.2.0"
+ext.configFile = file "BuildCraftAPI/build.properties"
+configFile.withReader {
+    // Load config. It shall from now be referenced as simply config or project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+version = config.mod_version
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
@@ -40,10 +48,17 @@ dependencies {
 }
 
 minecraft {
-    version = "1.8.9-11.15.1.1764"
-    mappings = "stable_22"
+    version = config.mc_version + "-" + config.forge_version
+    runDir = "run"
 
-    runDir = "run" // the directory for ForgeGradle to run Minecraft in
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not allways work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings = config.mappings_version
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
 
     // replacing stuff in the source
     replace "@VERSION@", project.version
@@ -54,15 +69,13 @@ minecraft {
 sourceSets {
     main {
         java {
-            srcDir 'common'
+            srcDir "common"
             // exclude 'some exclusion'
             // include 'some inclusion'
         }
         resources {
-            srcDir 'buildcraft_resources'
-            def l10n = file('../BuildCraft-Localization')
-            if(l10n.exists())
-                srcDir l10n
+            srcDir "buildcraft_resources"
+            srcDir "BuildCraft-Localization"
             exclude "**/.md" // exclude readme from localization repo
             // exclude 'some exclusion'
             // include 'some inclusion'
