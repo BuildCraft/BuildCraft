@@ -14,6 +14,8 @@ Improvements:
   * Pipes are now shaded properly (AlexIIL)
   * Power in pipes is now animated, showing its direction (AlexIIL)
   * Things now have somewhat more 3D models (gates, docking stations, builders, fillers at least) (AlexIIL)
+  * Lasers now render at least 2px wide, improving far away lasers. (AlexIIL)
+  * The filler has an icon showing if a gate is locking the pattern, or if it is in a different mode to normal (AlexIIL
 * **Transport**
   * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
 * Support for Minecraft's statistics system (AlexIIL)
