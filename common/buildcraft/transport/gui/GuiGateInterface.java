@@ -24,6 +24,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.client.CoreIconProvider;
+import buildcraft.core.lib.config.DetailedConfigOption;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
@@ -34,6 +35,15 @@ import buildcraft.transport.Gate;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
+    // Options are public so that JEI compat can see them
+    /** Options for the maximum number of pickables. Min is 1. */
+    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new DetailedConfigOption("gate.gui.picker.triggers.wide", "6");
+    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new DetailedConfigOption("gate.gui.picker.actions.wide", "6");
+
+    /** Options for the y-start positions of the lists. */
+    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new DetailedConfigOption("gate.gui.picker.triggers.y", "8");
+    public static final DetailedConfigOption OPTION_ACTIONS_Y = new DetailedConfigOption("gate.gui.picker.actions.y", "8");
+
     IInventory playerInventory;
     private final ContainerGateInterface container;
     private final GuiGateInterface instance;
@@ -281,7 +291,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
         tooltip = null;
 
         int sX = 18;
-        int sY = 6;
+        int sY = OPTION_TRIGGERS_Y.getAsInt();
+
+        int width = OPTION_TRIGGERS_WIDE.getAsInt() * 18;
 
         triggerRows = 1;
         for (IStatement statement : container.getTriggerCollection(false)) {
@@ -292,7 +304,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 tooltip = StatCollector.translateToLocal(desc);
             }
             drawStatement(pX, pY, statement);
-            if (sX > 18 * 5) {
+            if (sX >= width) {
                 sX = 18;
                 sY += 18;
                 triggerRows++;
@@ -302,8 +314,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             }
         }
 
+        width = OPTION_ACTIONS_WIDE.getAsInt() * 18;
+
         sX = 0;
-        sY = 6;
+        sY = OPTION_ACTIONS_Y.getAsInt();
 
         actionRows = 1;
         for (IStatement statement : container.getActionCollection(false)) {
@@ -314,7 +328,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 String desc = statement.getDescription();
                 tooltip = StatCollector.translateToLocal(desc);
             }
-            if (sX > 18 * 4) {
+            if (sX >= width - 18) {
                 sX = 0;
                 sY += 18;
                 actionRows++;

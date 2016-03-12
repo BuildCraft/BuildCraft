@@ -79,6 +79,7 @@ import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
+import buildcraft.core.lib.config.DetailedConfigManager;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.fluids.BucketHandler;
@@ -214,9 +215,11 @@ public class BuildCraftCore extends BuildCraftMod {
         BuilderAPI.schematicHelper = SchematicHelper.INSTANCE;
         BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 
-        BCRegistry.INSTANCE.setRegistryConfig(new File(evt.getModConfigurationDirectory(), "buildcraft/objects.cfg"));
+        File cfgBase = new File(evt.getModConfigurationDirectory(), "buildcraft");
 
-        mainConfiguration = new Configuration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
+        BCRegistry.INSTANCE.setRegistryConfig(new File(cfgBase, "objects.cfg"));
+        mainConfiguration = new Configuration(new File(cfgBase, "main.cfg"));
+        DetailedConfigManager.INSTANCE.setConfigFile(new File(cfgBase, "detailed.properties"));
         mainConfigManager = new ConfigManager(mainConfiguration, this);
         mainConfiguration.load();
 

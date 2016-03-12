@@ -20,9 +20,13 @@ import net.minecraft.world.World;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.config.DetailedConfigOption;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 
 public class RenderLaser extends Render<EntityLaser> {
+    /** Option for the number of pixels that each laser should render as. */
+    private static final DetailedConfigOption OPTION_LASER_FALLBACK_PIXELS = new DetailedConfigOption("laser.world.fallback.pixels", "2");
+
     // FIXME: REWRITE THE LASER RENDERER
     public static final float STEP = 0.04F;
 
@@ -170,7 +174,7 @@ public class RenderLaser extends Render<EntityLaser> {
 
         // Render a constant width line to stop "aliasing" with lasers that are very far away
         // Deprecated GL but its only a single line per laser so it shouldn't be too bad
-        GL11.glLineWidth(2);
+        GL11.glLineWidth(OPTION_LASER_FALLBACK_PIXELS.getAsInt());
         GL11.glBegin(GL11.GL_LINES);
         // The texture point at (1, 1) is always the light (not black) colour that we want.
         GL11.glTexCoord2d(0.9999d, 0.9999d);

@@ -1,0 +1,14 @@
+# The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no affect on gameplay.
+# You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)
+# This file will be overwritten every time that buildcraft starts, so there is no point in adding comments
+#Sat Mar 12 18:22:38 GMT 2016
+builder.gui.extra.x=80
+builder.gui.extra.y=44
+filler.gui.extra.modefirst=true
+filler.gui.extra.x=38
+filler.gui.extra.y=9
+gate.gui.picker.actions.wide=6
+gate.gui.picker.actions.y=8
+gate.gui.picker.triggers.wide=6
+gate.gui.picker.triggers.y=8
+laser.world.fallback.pixels=2
