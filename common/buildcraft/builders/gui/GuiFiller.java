@@ -6,7 +6,9 @@ package buildcraft.builders.gui;
 
 import java.io.IOException;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -16,8 +18,10 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
+import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
+import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.gui.*;
 import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -101,9 +105,9 @@ public class GuiFiller extends GuiAdvancedInterface {
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
 
-        if (button.id == 0) {
+        if (button.id == 0 && !filler.isPatternLocked()) {
             filler.currentPattern = (FillerPattern) FillerManager.registry.getPreviousPattern(filler.currentPattern);
-        } else if (button.id == 1) {
+        } else if (button.id == 1 && !filler.isPatternLocked()) {
             filler.currentPattern = (FillerPattern) FillerManager.registry.getNextPattern(filler.currentPattern);
         } else if (button.id == 2) {
             filler.setExcavate(!filler.isExcavate());
@@ -145,6 +149,22 @@ public class GuiFiller extends GuiAdvancedInterface {
     protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
         super.drawGuiContainerBackgroundLayer(f, mx, my);
         drawBackgroundSlots(mx, my);
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        CoreIconProvider[] sprites = new CoreIconProvider[2];
+        int count = 0;
+
+        CoreIconProvider sprite = CoreIconProvider.getForControlMode(filler.getControlMode());
+        if (filler.getControlMode() != Mode.On && sprite != null) sprites[count++] = sprite;
+        if (filler.isPatternLocked()) sprites[count++] = CoreIconProvider.LOCK;
+
+        if (count == 1) {
+            CoreIconProvider first = sprites[0] == null ? sprites[1] : sprites[0];
+            drawTexturedModalRect(guiLeft + 37, guiTop + 9, first.getSprite(), 16, 16);
+        } else if (count == 2) {
+            drawTexturedModalRect(guiLeft + 29, guiTop + 9, sprites[0].getSprite(), 16, 16);
+            drawTexturedModalRect(guiLeft + 45, guiTop + 9, sprites[1].getSprite(), 16, 16);
+        }
     }
 
     @Override

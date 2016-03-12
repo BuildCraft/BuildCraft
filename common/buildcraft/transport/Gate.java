@@ -436,12 +436,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 IStatement statement = actions[it];
                 slot.statement = statement;
                 slot.parameters = actionParameters[it];
-                if (statement instanceof IActionInternal) {
-                    if (statement instanceof IActionInternalSingle && ((IActionInternalSingle) statement).singleActionTick()) {
-                        if (tickActivated[it] == now) activeActions.add(slot);
-                    } else {
-                        activeActions.add(slot);
-                    }
+                if (statement instanceof IActionInternalSingle && ((IActionInternalSingle) statement).singleActionTick()) {
+                    if (tickActivated[it] == now) activeActions.add(slot);
                 } else {
                     activeActions.add(slot);
                 }

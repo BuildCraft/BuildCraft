@@ -15,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IActionExternal;
@@ -77,7 +78,7 @@ public class ActionFiller extends BCStatement implements IActionExternal {
     @Override
     public void actionActivate(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
         if (target instanceof TileFiller) {
-            ((TileFiller) target).setPattern(pattern);
+            ((TileFiller) target).setPattern(pattern, true);
             ((TileFiller) target).patternParameters = parameters;
         }
     }

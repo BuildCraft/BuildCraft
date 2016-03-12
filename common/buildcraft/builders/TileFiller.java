@@ -42,6 +42,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     public FillerPattern currentPattern = PatternNone.INSTANCE;
     public IStatementParameter[] patternParameters;
+    private int patternLocked;
 
     private BptBuilderTemplate currentTemplate;
 
@@ -53,6 +54,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     private NBTTagCompound initNBT = null;
 
     public TileFiller() {
+        setControlMode(Mode.On);
         inv.addListener(this);
         box.kind = Kind.STRIPES;
         initPatternParameters();
@@ -103,6 +105,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         if (worldObj.isRemote) {
             return;
         }
+
+        if (patternLocked > 0) patternLocked--;
 
         if (mode == Mode.Off) {
             return;
@@ -264,14 +268,24 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
     }
 
-    public void setPattern(FillerPattern pattern) {
+    public boolean setPattern(FillerPattern pattern, boolean lock) {
         if (pattern != null && currentPattern != pattern) {
             currentPattern = pattern;
             currentTemplate = null;
+            if (lock) patternLocked = 2;
+            else patternLocked = 0;
             setDone(false);
             initPatternParameters();
             sendNetworkUpdate();
+            return true;
+        } else if (pattern != null && lock) {
+            patternLocked = 2;
         }
+        return false;
+    }
+
+    public boolean isPatternLocked() {
+        return patternLocked > 0;
     }
 
     private void writeParametersToNBT(NBTTagCompound nbt) {
@@ -305,7 +319,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     public void writeData(ByteBuf data) {
         super.writeData(data);
         box.writeData(data);
-        data.writeByte((done ? 1 : 0) | (excavate ? 2 : 0));
+        data.writeByte((done ? 1 : 0) | (excavate ? 2 : 0) | (isPatternLocked() ? 4 : 0));
         NetworkUtils.writeUTF(data, currentPattern.getUniqueTag());
 
         NBTTagCompound parameterData = new NBTTagCompound();
@@ -320,12 +334,13 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         int flags = data.readUnsignedByte();
         done = (flags & 1) > 0;
         excavate = (flags & 2) > 0;
+        patternLocked = (flags & 4) > 0 ? 2 : 0;
         FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(NetworkUtils.readUTF(data));
         NBTTagCompound parameterData = NetworkUtils.readNBT(data);
         readParametersFromNBT(parameterData);
-        setPattern(pattern);
-
-        worldObj.markBlockForUpdate(pos);
+        if (setPattern(pattern, isPatternLocked())) {
+            worldObj.markBlockForUpdate(pos);
+        }
     }
 
     @Override
@@ -358,8 +373,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         super.receiveCommand(command, side, sender, stream);
         if (side.isServer()) {
             if ("setPattern".equals(command)) {
+                // You cannot set the pattern if it is locked
+                if (isPatternLocked()) return;
                 String name = NetworkUtils.readUTF(stream);
-                setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+                setPattern((FillerPattern) FillerManager.registry.getPattern(name), false);
 
                 done = false;
             } else if ("setParameters".equals(command)) {
