@@ -14,11 +14,9 @@ public class FactoryProxy {
     @SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
     public static FactoryProxy proxy;
 
+    public void preInit() {}
+
     public void fmlInit() {}
-
-    public void initializeEntityRenders() {}
-
-    public void initializeNEIIntegration() {}
 
     public EntityResizableCuboid newPumpTube(World w) {
         return new EntityResizableCuboid(w);

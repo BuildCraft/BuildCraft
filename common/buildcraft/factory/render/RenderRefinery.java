@@ -54,10 +54,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
         }
     }
 
-    public RenderRefinery(String baseTexture) {
-        this();
-    }
-
     @Override
     public void renderTileEntityAt(TileRefinery tile, double x, double y, double z, float partialTicks, int arg) {
         FluidStack liquid1 = null, liquid2 = null, liquidResult = null;
