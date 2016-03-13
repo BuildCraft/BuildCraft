@@ -4,6 +4,30 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -27,28 +51,6 @@ import buildcraft.robotics.render.RobotStationModel;
 import buildcraft.robotics.statements.*;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.silicon.ItemRedstoneChipset;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Mod(name = "BuildCraft Robotics", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Robotics",
         dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
@@ -92,7 +94,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         new BCCreativeTab("boards");
-        
+
         RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
         RedstoneBoardRegistry.instance.setEmptyRobotBoard(RedstoneBoardRobotEmptyNBT.instance);
 
@@ -111,9 +113,11 @@ public class BuildCraftRobotics extends BuildCraftMod {
         redstoneBoard.setUnlocalizedName("redstone_board");
         BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
 
-        robotGoggles = new ItemRobotGoggles();
-        robotGoggles.setUnlocalizedName("robot_goggles");
-        BCRegistry.INSTANCE.registerItem(robotGoggles, false);
+        if (BuildCraftCore.DEVELOPER_MODE) {
+            robotGoggles = new ItemRobotGoggles();
+            robotGoggles.setUnlocalizedName("robot_goggles");
+            BCRegistry.INSTANCE.registerItem(robotGoggles, false);
+        }
 
         zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
         zonePlanBlock.setUnlocalizedName("zonePlan");

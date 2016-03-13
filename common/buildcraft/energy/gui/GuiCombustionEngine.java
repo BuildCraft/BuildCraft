@@ -7,16 +7,25 @@ package buildcraft.energy.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.energy.TileEngineIron;
 
 public class GuiCombustionEngine extends GuiEngine {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
+    private static final ResourceLocation TEXTURE;
+
+    static {
+        if (BuildCraftCore.DEVELOPER_MODE) {
+            TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
+        } else {
+            TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui_old.png");
+        }
+    }
 
     public GuiCombustionEngine(EntityPlayer player, TileEngineIron tileEngine) {
         super(new ContainerEngine(player, tileEngine), tileEngine, TEXTURE);
-        ySize = 177;
+        ySize = BuildCraftCore.DEVELOPER_MODE ? 177 : 166;
     }
 
     @Override

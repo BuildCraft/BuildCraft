@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.widgets.FluidTankWidget;
@@ -30,11 +31,18 @@ public class ContainerEngine extends BuildCraftContainer {
         } else {// Assume TileEngineIron
             TileEngineIron combustionEngine = (TileEngineIron) tileEngine;
 
-            FluidTankWidget fuelWidget = new FluidTankWidget(combustionEngine.tankFuel, 26, 19, 16, 58).withOverlay(176, 0);
-            addWidget(fuelWidget);
-            addWidget(fuelWidget.copyMoved(combustionEngine.tankCoolant, 80, 19));
-            addWidget(fuelWidget.copyMoved(combustionEngine.tankResidue, 134, 19));
-            yOffset = 11;
+            if (!BuildCraftCore.DEVELOPER_MODE) {
+                addSlotToContainer(new Slot(tileEngine, 0, 52, 41));
+                FluidTankWidget fuelWidget = new FluidTankWidget(combustionEngine.tankFuel, 104, 19, 16, 58).withOverlay(176, 0);
+                addWidget(fuelWidget);
+                addWidget(fuelWidget.copyMoved(combustionEngine.tankCoolant, 122, 19));
+            } else {
+                FluidTankWidget fuelWidget = new FluidTankWidget(combustionEngine.tankFuel, 26, 19, 16, 58).withOverlay(176, 0);
+                addWidget(fuelWidget);
+                addWidget(fuelWidget.copyMoved(combustionEngine.tankCoolant, 80, 19));
+                addWidget(fuelWidget.copyMoved(combustionEngine.tankResidue, 134, 19));
+                yOffset = 11;
+            }
         }
 
         for (int i = 0; i < 3; i++) {
