@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +20,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -43,6 +48,7 @@ import buildcraft.core.TileMarker;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.client.BuildCraftStateMapper;
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.config.DetailedConfigOption;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderResizableCuboid;
@@ -88,6 +94,9 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void init() {
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(
+                DetailedConfigOption.ReloadListener.INSTANCE);
+
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMarker.class, new RenderMarker());
@@ -189,5 +198,15 @@ public class CoreProxyClient extends CoreProxy {
             }
         }
         return source;
+    }
+
+    @Override
+    public InputStream getStreamForResource(ResourceLocation location) {
+        try {
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(location);
+            return resource.getInputStream();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

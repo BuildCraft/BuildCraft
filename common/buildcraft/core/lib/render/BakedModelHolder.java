@@ -20,7 +20,6 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class BakedModelHolder extends BuildCraftBakedModel {
@@ -44,6 +43,20 @@ public abstract class BakedModelHolder extends BuildCraftBakedModel {
     @SubscribeEvent
     public void modelBakeEvent(ModelBakeEvent event) {
         models.clear();
+    }
+
+    protected IModel getModelJSON(ResourceLocation loc) {
+        if (!models.containsKey(loc)) {
+            IModel model = null;
+            try {
+                model = ModelLoaderRegistry.getModel(loc);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (model == null) model = ModelLoaderRegistry.getMissingModel();
+            models.put(loc, model);
+        }
+        return models.get(loc);
     }
 
     protected IModel getModelOBJ(ResourceLocation loc) {

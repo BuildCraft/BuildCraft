@@ -17,6 +17,7 @@ import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.client.resources.data.TextureMetadataSection;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.fluids.FluidDefinition.BCFluid;
 
@@ -86,14 +87,16 @@ public class SpriteColourMapper extends TextureAtlasSprite {
     }
 
     private static void output(BufferedImage bufferedImage, String string) {
-        File loc = new File("./bc-tex/");
-        loc = new File(loc.getAbsolutePath());
-        loc.mkdir();
-        loc = new File(loc, string + ".png");
-        try {
-            ImageIO.write(bufferedImage, "png", loc);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (BuildCraftCore.DEVELOPER_MODE) {
+            File loc = new File("./bc-tex/");
+            loc = new File(loc.getAbsolutePath());
+            loc.mkdir();
+            loc = new File(loc, string + ".png");
+            try {
+                ImageIO.write(bufferedImage, "png", loc);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

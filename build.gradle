@@ -268,7 +268,7 @@ jar {
 }
 
 // make sure all of these happen when we run build
-build.dependsOn sourceJar, apiJar
+build.dependsOn sourceJar, apiJar, deobfJar
 
 // --------------------
 // maven section

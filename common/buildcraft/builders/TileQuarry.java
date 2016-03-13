@@ -4,6 +4,31 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.ChunkCoordIntPair;
+
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeChunkManager.Ticket;
+import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -32,29 +57,8 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.core.proxy.CoreProxy;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.common.ForgeChunkManager.Type;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fluids.IFluidBlock;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import io.netty.buffer.ByteBuf;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable,
         IDebuggable {
@@ -284,15 +288,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     protected boolean findFrame() {
-        for (EnumFacing face : EnumFacing.Plane.HORIZONTAL.facings()) {
-            if (box.contains(getPos().offset(face))) {
-                return worldObj.getBlockState(getPos().offset(face)).getBlock() == BuildCraftBuilders.frameBlock;
-            }
-        }
-
-        // Could not find any location in box - this is strange, so obviously
-        // we're going to ignore it!
-        return true;
+        return worldObj.getBlockState(box.min()).getBlock() == BuildCraftBuilders.frameBlock;
     }
 
     protected void idling() {
@@ -651,7 +647,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         PatternQuarryFrame pqf = PatternQuarryFrame.INSTANCE;
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
-        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.min().getX(), getPos().getY(), box.min().getZ()));
+        builder = new BptBuilderBlueprint(bpt, worldObj, box.min());
         builder.setOrder(new Utils.AxisOrder(EnumAxisOrder.XZY, true, true, false));
         speed = 0;
         stage = Stage.BUILDING;
@@ -886,7 +882,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos().getZ(), chunks.size()));
+            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos()
+                    .getZ(), chunks.size()));
         }
     }
 

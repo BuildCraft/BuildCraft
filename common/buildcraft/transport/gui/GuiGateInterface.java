@@ -37,12 +37,12 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 public class GuiGateInterface extends GuiAdvancedInterface {
     // Options are public so that JEI compat can see them
     /** Options for the maximum number of pickables. Min is 1. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new DetailedConfigOption("gate.gui.picker.triggers.wide", "6");
-    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new DetailedConfigOption("gate.gui.picker.actions.wide", "6");
+    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new DetailedConfigOption("gui.gate.picker.triggers.wide", "6");
+    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new DetailedConfigOption("gui.gate.picker.actions.wide", "6");
 
     /** Options for the y-start positions of the lists. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new DetailedConfigOption("gate.gui.picker.triggers.y", "8");
-    public static final DetailedConfigOption OPTION_ACTIONS_Y = new DetailedConfigOption("gate.gui.picker.actions.y", "8");
+    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new DetailedConfigOption("gui.gate.picker.triggers.y", "8");
+    public static final DetailedConfigOption OPTION_ACTIONS_Y = new DetailedConfigOption("gui.gate.picker.actions.y", "8");
 
     IInventory playerInventory;
     private final ContainerGateInterface container;
@@ -572,10 +572,26 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             if (trigger && slot instanceof TriggerSlot) {
                 TriggerSlot trig = (TriggerSlot) slot;
                 container.setTrigger(trig.slot, changeTo.getUniqueTag(), true);
+
+                for (StatementParameterSlot p : trig.parameters) {
+                    IStatementParameter parameter = null;
+                    if (p.slot < changeTo.minParameters()) {
+                        parameter = changeTo.createParameter(p.slot);
+                    }
+                    container.setTriggerParameter(trig.slot, p.slot, parameter, true);
+                }
             }
             if (!trigger && slot instanceof ActionSlot) {
                 ActionSlot trig = (ActionSlot) slot;
                 container.setAction(trig.slot, changeTo.getUniqueTag(), true);
+
+                for (StatementParameterSlot p : trig.parameters) {
+                    IStatementParameter parameter = null;
+                    if (p.slot < changeTo.minParameters()) {
+                        parameter = changeTo.createParameter(p.slot);
+                    }
+                    container.setActionParameter(trig.slot, p.slot, parameter, true);
+                }
             }
         }
     }

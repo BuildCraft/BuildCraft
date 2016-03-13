@@ -34,8 +34,8 @@ import io.netty.buffer.ByteBuf;
 public class GuiBuilder extends GuiAdvancedInterface {
 
     /** Options for controlling the position of extra icons are laid out */
-    private static final DetailedConfigOption OPTION_EXTRA_X_POS = new DetailedConfigOption("builder.gui.extra.x", "80");
-    private static final DetailedConfigOption OPTION_EXTRA_Y_POS = new DetailedConfigOption("builder.gui.extra.y", "44");
+    private static final DetailedConfigOption OPTION_EXTRA_X_POS = new DetailedConfigOption("gui.builder.extra.x", "80");
+    private static final DetailedConfigOption OPTION_EXTRA_Y_POS = new DetailedConfigOption("gui.builder.extra.y", "44");
 
     private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
     private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");

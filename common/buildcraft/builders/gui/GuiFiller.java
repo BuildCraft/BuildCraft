@@ -22,7 +22,7 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.client.CoreIconProvider;
-import buildcraft.core.lib.config.DetailedConfigOption;
+import buildcraft.core.lib.config.OverridableConfigOption;
 import buildcraft.core.lib.gui.*;
 import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -59,12 +59,11 @@ public class GuiFiller extends GuiAdvancedInterface {
 
     /** Option for controlling the order of the mode icons. Default is mode then lock, but changing it to false will
      * make it lock then mode */
-    private static final DetailedConfigOption OPTION_EXTRA_MODE_FIRST = new DetailedConfigOption("filler.gui.extra.modefirst", "true");
+    private static final OverridableConfigOption OPTION_EXTRA_MODE_FIRST = new OverridableConfigOption("gui.filler", "extra.modefirst", "true");
 
-    // These 2 options should probably be moved to a json file that can be changed with a resource pack
     /** Options for controlling the position of extra icons are laid out */
-    private static final DetailedConfigOption OPTION_EXTRA_X_POS = new DetailedConfigOption("filler.gui.extra.x", "38");
-    private static final DetailedConfigOption OPTION_EXTRA_Y_POS = new DetailedConfigOption("filler.gui.extra.y", "9");
+    private static final OverridableConfigOption OPTION_EXTRA_X_POS = new OverridableConfigOption("gui.filler", "extra.x", "38");
+    private static final OverridableConfigOption OPTION_EXTRA_Y_POS = new OverridableConfigOption("gui.filler", "extra.y", "9");
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
     private static final IButtonTextureSet EXCAVATE_OFF = new ButtonTextureSet(240, -16, 16, 16, TEXTURE);

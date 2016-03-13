@@ -7,9 +7,8 @@ package buildcraft.transport;
 import java.util.List;
 
 import com.google.common.base.Throwables;
+
 import org.apache.logging.log4j.Level;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -21,12 +20,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
@@ -40,6 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -49,13 +45,7 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.ICustomPipeConnection;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeConnectionAPI;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.*;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
@@ -73,6 +63,9 @@ import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile,
         ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable, IEnergyProvider {
@@ -267,20 +260,21 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         if (coreState.pipeId != null) {
-			nbt.setString("pipeId", coreState.pipeId);
+            nbt.setString("pipeId", coreState.pipeId);
         } else {
-			ResourceLocation loc = pipe != null ? Item.itemRegistry.getNameForObject(pipe.item) : null;
-			if (loc == null) {
-				BCLog.logger.error("A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!");
-			} else {
-				BCLog.logger.warn("A BuildCraft pipe @ " + pos.toString() + " did not have pipe ID, but did have a valid item. Not a fatal error, but please report nonetheless.");
-				nbt.setString("pipeId", loc.toString());
-			}
+            ResourceLocation loc = pipe != null ? Item.itemRegistry.getNameForObject(pipe.item) : null;
+            if (loc == null) {
+                BCLog.logger.error("A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!");
+            } else {
+                BCLog.logger.warn("A BuildCraft pipe @ " + pos.toString()
+                    + " did not have pipe ID, but did have a valid item. Not a fatal error, but please report nonetheless.");
+                nbt.setString("pipeId", loc.toString());
+            }
         }
 
-		if (pipe != null) {
-			pipe.writeToNBT(nbt);
-		}
+        if (pipe != null) {
+            pipe.writeToNBT(nbt);
+        }
 
         sideProperties.writeToNBT(nbt);
     }
@@ -892,6 +886,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public boolean isPipeConnected(EnumFacing with) {
+        if (with == null) return false;
         if (worldObj.isRemote) {
             return renderState.pipeConnectionMatrix.isConnected(with);
         } else {
@@ -1341,5 +1336,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     public World getWorldBC() {
         return getWorld();
+    }
+
+    @Override
+    public BlockPos getPosBC() {
+        return getPos();
     }
 }
