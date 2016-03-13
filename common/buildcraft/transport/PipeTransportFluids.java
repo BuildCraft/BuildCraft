@@ -577,7 +577,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         if (this.container.pipe instanceof IPipeTransportFluidsHook) {
             filled = ((IPipeTransportFluidsHook) this.container.pipe).fill(from, resource, doFill);
         } else {
-            filled = sections[from.ordinal()].fill(resource.amount, doFill);
+            int index = from == null ? 6 : from.ordinal();
+            filled = sections[index].fill(resource.amount, doFill);
         }
 
         if (doFill && filled > 0) {

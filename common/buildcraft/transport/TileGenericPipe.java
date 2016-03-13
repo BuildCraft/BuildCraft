@@ -886,6 +886,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public boolean isPipeConnected(EnumFacing with) {
+        if (with == null) return false;
         if (worldObj.isRemote) {
             return renderState.pipeConnectionMatrix.isConnected(with);
         } else {

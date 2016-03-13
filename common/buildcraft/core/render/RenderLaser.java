@@ -25,7 +25,7 @@ import buildcraft.core.lib.render.RenderResizableCuboid;
 
 public class RenderLaser extends Render<EntityLaser> {
     /** Option for the number of pixels that each laser should render as. */
-    private static final DetailedConfigOption OPTION_LASER_FALLBACK_PIXELS = new DetailedConfigOption("laser.world.fallback.pixels", "2");
+    private static final DetailedConfigOption OPTION_LASER_FALLBACK_PIXELS = new DetailedConfigOption("render.laser.fallback.pixels", "2");
 
     // FIXME: REWRITE THE LASER RENDERER
     public static final float STEP = 0.04F;

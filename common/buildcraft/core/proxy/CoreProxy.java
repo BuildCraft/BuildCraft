@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.block.Block;
@@ -15,6 +16,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -124,4 +126,8 @@ public class CoreProxy implements ICoreProxy {
     public void postRegisterBlock(Block block) {}
 
     public void postRegisterItem(Item item) {}
+
+    public InputStream getStreamForResource(ResourceLocation location) {
+        return null;
+    }
 }
