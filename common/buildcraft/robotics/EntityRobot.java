@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -24,6 +25,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1051,8 +1054,25 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
+				Multimap<String, AttributeModifier> attributes = itemInUse != null ? (Multimap<String, AttributeModifier>) itemInUse.getAttributeModifiers() : null;
 				float attackDamage = 2.0F;
 				int knockback = 0;
+
+				if (attributes != null) {
+					for (AttributeModifier modifier : attributes.get(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName())) {
+						switch (modifier.getOperation()) {
+							case 0:
+								attackDamage += modifier.getAmount();
+								break;
+							case 1:
+								attackDamage *= modifier.getAmount();
+								break;
+							case 2:
+								attackDamage *= 1.0F + modifier.getAmount();
+								break;
+						}
+					}
+				}
 
 				if (par1Entity instanceof EntityLivingBase) {
 					attackDamage += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase) par1Entity);
