@@ -572,10 +572,26 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             if (trigger && slot instanceof TriggerSlot) {
                 TriggerSlot trig = (TriggerSlot) slot;
                 container.setTrigger(trig.slot, changeTo.getUniqueTag(), true);
+
+                for (StatementParameterSlot p : trig.parameters) {
+                    IStatementParameter parameter = null;
+                    if (p.slot < changeTo.minParameters()) {
+                        parameter = changeTo.createParameter(p.slot);
+                    }
+                    container.setTriggerParameter(trig.slot, p.slot, parameter, true);
+                }
             }
             if (!trigger && slot instanceof ActionSlot) {
                 ActionSlot trig = (ActionSlot) slot;
                 container.setAction(trig.slot, changeTo.getUniqueTag(), true);
+
+                for (StatementParameterSlot p : trig.parameters) {
+                    IStatementParameter parameter = null;
+                    if (p.slot < changeTo.minParameters()) {
+                        parameter = changeTo.createParameter(p.slot);
+                    }
+                    container.setActionParameter(trig.slot, p.slot, parameter, true);
+                }
             }
         }
     }
