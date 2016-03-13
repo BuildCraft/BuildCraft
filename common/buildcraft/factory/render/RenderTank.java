@@ -38,7 +38,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
             color = liquid.getFluid().getColor(liquid);
         }
 
-        int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, false, TANK_SIZE);
+        int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, FluidRenderer.FluidType.STILL, TANK_SIZE);
         if (displayList == null) {
             return;
         }

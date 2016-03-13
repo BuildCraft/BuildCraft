@@ -4,28 +4,24 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
+import buildcraft.core.lib.EntityResizableCuboid;
 import com.google.common.collect.Maps;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.core.lib.EntityResizableCuboid;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class FluidRenderer {
     public static final FluidRenderer INSTANCE = new FluidRenderer();
@@ -40,6 +36,7 @@ public final class FluidRenderer {
     public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
     private final Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
     private final Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
+    private final Map<Fluid, Map<Vec3, int[]>> frozenRenderCache = Maps.newHashMap();
     private final Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
 
     private static TextureAtlasSprite missingIcon = null;
@@ -51,12 +48,14 @@ public final class FluidRenderer {
     public void modelBakeEvent(ModelBakeEvent event) {
         flowingRenderCache.clear();
         stillRenderCache.clear();
+        frozenRenderCache.clear();
     }
 
     @SubscribeEvent
     public void textureStitchPost(TextureStitchEvent.Post event) {
         flowingRenderCache.clear();
         stillRenderCache.clear();
+        frozenRenderCache.clear();
         TextureMap map = event.map;
         missingIcon = map.getMissingSprite();
 
@@ -115,17 +114,6 @@ public final class FluidRenderer {
         return map.containsKey(fluid) ? map.get(fluid) : missingIcon;
     }
 
-    @Deprecated
-    public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
-        if (fluidStack == null) return null;
-        return getFluidTexture(fluidStack.getFluid(), flowing);
-    }
-
-    @Deprecated
-    public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
-        return getFluidTexture(fluid, flowing ? FluidType.FLOWING : FluidType.STILL);
-    }
-
     public static void setColorForFluidStack(FluidStack fluidstack) {
         if (fluidstack == null) {
             return;
@@ -135,13 +123,8 @@ public final class FluidRenderer {
         RenderUtils.setGLColorFromInt(color);
     }
 
-    /** @deprecated Use {@link #getFluidDisplayLists(FluidStack,boolean,double,double,double)} instead */
-    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing) {
-        return getFluidDisplayLists(fluidStack, flowing, BLOCK_SIZE);
-    }
-
     /** Note that this does NOT implement caching. */
-    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, boolean flowing, Vec3 size, EnumFacing side) {
+    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, FluidType type, Vec3 size, EnumFacing side) {
         if (fluidStack == null) {
             return null;
         }
@@ -160,7 +143,7 @@ public final class FluidRenderer {
             ent.xSize = size.xCoord;
             ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
             ent.zSize = size.zCoord;
-            ent.texture = getFluidTexture(fluidStack, flowing);
+            ent.texture = getFluidTexture(fluidStack, type);
             ent.makeClient();
             Arrays.fill(ent.textures, null);
             ent.textures[side.ordinal()] = ent.texture;
@@ -173,7 +156,7 @@ public final class FluidRenderer {
         return lists;
     }
 
-    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing, Vec3 size) {
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, FluidType type, Vec3 size) {
         if (fluidStack == null) {
             return null;
         }
@@ -181,7 +164,7 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        Map<Fluid, Map<Vec3, int[]>> cache = flowing ? INSTANCE.flowingRenderCache : INSTANCE.stillRenderCache;
+        Map<Fluid, Map<Vec3, int[]>> cache = type == FluidType.FLOWING ? INSTANCE.flowingRenderCache : (type == FluidType.STILL ? INSTANCE.stillRenderCache : INSTANCE.frozenRenderCache);
         Map<Vec3, int[]> displayLists = cache.get(fluid);
         int[] displayList;
         if (displayLists != null) {
@@ -206,7 +189,7 @@ public final class FluidRenderer {
             ent.xSize = size.xCoord;
             ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
             ent.zSize = size.zCoord;
-            ent.texture = getFluidTexture(fluidStack, flowing);
+            ent.texture = getFluidTexture(fluidStack, type);
 
             RenderResizableCuboid.INSTANCE.renderCube(ent);
 

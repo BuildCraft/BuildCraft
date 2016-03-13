@@ -162,7 +162,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             bindTexture(TextureMap.locationBlocksTexture);
 
             if (liquid1 != null && liquid1.amount > 0) {
-                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, false, TANK_SIZE);
+                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, FluidRenderer.FluidType.STILL, TANK_SIZE);
 
                 if (list1 != null) {
                     bindTexture(TextureMap.locationBlocksTexture);
@@ -177,7 +177,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             }
 
             if (liquid2 != null && liquid2.amount > 0) {
-                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, false, TANK_SIZE);
+                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, FluidRenderer.FluidType.STILL, TANK_SIZE);
 
                 if (list2 != null) {
                     GL11.glPushMatrix();
@@ -192,7 +192,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             }
 
             if (liquidResult != null && liquidResult.amount > 0) {
-                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, false, TANK_SIZE);
+                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, FluidRenderer.FluidType.STILL, TANK_SIZE);
 
                 if (list3 != null) {
                     GL11.glPushMatrix();
