@@ -27,11 +27,12 @@ public class RobotItemModel extends BuildCraftBakedModel implements ISmartItemMo
     public static RobotItemModel handle(ItemStack stack) {
         if (stack != null) {
             RedstoneBoardRobotNBT board = ItemRobot.getRobotNBT(stack);
-            if (board != null) {
-                IBakedModel model = RoboticsProxyClient.robotModel.get(board.getID());
-                if (model != null) {
-                    return new RobotItemModel(ImmutableList.copyOf(model.getGeneralQuads()), model.getParticleTexture(), DefaultVertexFormats.ITEM);
-                }
+            IBakedModel model = board != null ? RoboticsProxyClient.robotModel.get(board.getID()) : null;
+            if (model == null) {
+                model = RoboticsProxyClient.defaultRobotModel;
+            }
+            if (model != null) {
+                return new RobotItemModel(ImmutableList.copyOf(model.getGeneralQuads()), model.getParticleTexture(), DefaultVertexFormats.ITEM);
             }
         }
 

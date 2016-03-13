@@ -15,7 +15,6 @@ import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.*;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
@@ -69,7 +68,7 @@ import java.util.*;
 
 public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
 
-    public static final ResourceLocation ROBOT_BASE = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
+    public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraftrobotics", "entities/robot_base");
 
     private static final int DATA_LASER_TAIL_X = 12;
     private static final int DATA_LASER_TAIL_Y = 13;

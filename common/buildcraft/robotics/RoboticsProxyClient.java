@@ -35,6 +35,7 @@ import java.util.Map;
 
 public class RoboticsProxyClient extends RoboticsProxy {
     public static Map<String, IBakedModel> robotModel = new HashMap<>();
+    public static IBakedModel defaultRobotModel;
 
     @SubscribeEvent
     public void onPostBake(ModelBakeEvent event) {
@@ -43,6 +44,7 @@ public class RoboticsProxyClient extends RoboticsProxy {
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Pre event) {
+        event.map.registerSprite(EntityRobot.ROBOT_BASE);
         for (RedstoneBoardNBT board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             if (board instanceof RedstoneBoardRobotNBT) {
                 RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
@@ -55,8 +57,14 @@ public class RoboticsProxyClient extends RoboticsProxy {
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Post event) {
         try {
+            robotModel.clear();
+            defaultRobotModel = null;
+
             IModel robotModelBase = ModelLoaderRegistry.getModel(new ResourceLocation("buildcraftrobotics:robot"));
             if (robotModelBase instanceof IRetexturableModel) {
+                defaultRobotModel = ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", EntityRobot.ROBOT_BASE.toString()))
+                        .bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+
                 for (RedstoneBoardNBT board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
                     if (board instanceof RedstoneBoardRobotNBT) {
                         RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
