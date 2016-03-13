@@ -44,14 +44,14 @@ PR implementing new features or changing large portions of code are helpful. But
 1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
  * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads))
 1. Create a base directory for the build
-1. Clone the Buildcraft repository into 'baseDir/BuildCraft/'
- * Optional: Copy BuildCraft localization repository into `baseDir/BuildCraft-Localization`
+1. Clone the Buildcraft repository into 'baseDir/BuildCraft/' recursivly
 1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
  * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
  * `gradlew setupDecompWorkspace` to setup a complete developement enviroment.
  * With `Gradle` installed: use `gradle` instead of `gradlew`
  * On Windows: use `gradlew.bat` instead of `gradlew`
 1. The compiled and obfuscated jar will be in 'baseDir/BuildCraft/build/libs'
+2. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/modules'
 
 Your directory structure should look like this before running gradle:
 ***
@@ -61,8 +61,12 @@ Your directory structure should look like this before running gradle:
      |- buildcraft_resources
      |- common
      |- ...
-    \- BuildCraft-Localization
-     |- lang
+     \- BuildCraftAPI
+      |- api
+      |- ...
+     \- BuildCraft-Localization
+      |- lang
+      |- ...
 
 ***
 
@@ -76,8 +80,12 @@ And like this after running gradle:
      |- buildcraft_resources
      |- common
      |- ...
-    \- BuildCraft-Localization
-     |- lang
+     \- BuildCraftAPI
+      |- api
+      |- ...
+     \- BuildCraft-Localization
+      |- lang
+      |- ...
 
 ***
 
