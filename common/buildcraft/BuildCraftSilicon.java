@@ -4,27 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
@@ -34,10 +13,23 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
-import buildcraft.core.network.EntityIds;
 import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 @Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
         dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -46,10 +38,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
     public static BuildCraftSilicon instance;
 
     public static ItemRedstoneChipset redstoneChipset;
-    public static ItemPackage packageItem;
     public static BlockLaser laserBlock;
     public static BlockLaserTable assemblyTableBlock;
-    public static BlockPackager packagerBlock;
     public static Item redstoneCrystal;
 
     public static Achievement timeForSomeLogicAchievement;
@@ -76,26 +66,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
         assemblyTableBlock.setUnlocalizedName("laserTableBlock");
         BCRegistry.INSTANCE.registerBlock(assemblyTableBlock, ItemLaserTable.class, false);
 
-        packagerBlock = (BlockPackager) CompatHooks.INSTANCE.getBlock(BlockPackager.class);
-        packagerBlock.setUnlocalizedName("packagerBlock");
-        BCRegistry.INSTANCE.registerBlock(packagerBlock, false);
-
         redstoneChipset = new ItemRedstoneChipset();
         redstoneChipset.setUnlocalizedName("redstoneChipset");
         BCRegistry.INSTANCE.registerItem(redstoneChipset, false);
         redstoneChipset.registerItemStacks();
-
-        packageItem = new ItemPackage();
-        packageItem.setUnlocalizedName("package");
-        BCRegistry.INSTANCE.registerItem(packageItem, false);
 
         redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
         if (BCRegistry.INSTANCE.registerItem(redstoneCrystal, false)) {
             OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal)); // Deprecated
             OreDictionary.registerOre("crystalRedstone", new ItemStack(redstoneCrystal));
         }
-
-        EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
 
         SiliconProxy.proxy.preInit();
     }
@@ -116,8 +96,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
                 "net.minecraft.src.buildcraft.factory.TileChargingTable");
         BCRegistry.INSTANCE.registerTileEntity(TileProgrammingTable.class, "buildcraft.silicon.TileProgrammingTable",
                 "net.minecraft.src.buildcraft.factory.TileProgrammingTable");
-        BCRegistry.INSTANCE.registerTileEntity(TilePackager.class, "buildcraft.silicon.TilePackager", "buildcraft.TilePackager");
-        BCRegistry.INSTANCE.registerTileEntity(TileStampingTable.class, "buildcraft.silicon.TileStampingTable", "buildcraft.TileStampingTable");
 
         timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic",
                 "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
@@ -128,17 +106,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
             loadRecipes();
         }
 
-        BlockDispenser.dispenseBehaviorRegistry.putObject(packageItem, new ItemPackage.DispenseBehaviour());
-        if (Loader.isModLoaded("BuildCraft|Transport")) {
-            initTransport();
-        }
-
         SiliconProxy.proxy.registerRenderers();
-    }
-
-    @Optional.Method(modid = "BuildCraft|Transport")
-    private void initTransport() {
-        StripesHandlerDispenser.items.add(packageItem);
     }
 
     public static void loadRecipes() {

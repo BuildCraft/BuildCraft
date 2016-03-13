@@ -4,8 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import java.util.List;
-
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.enums.EnumLaserTableType;
+import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,18 +22,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.block.BlockBuildCraft;
+import java.util.List;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-    public static final int TABLE_MAX = 6;
+    public static final int TABLE_MAX = EnumLaserTableType.values().length;
 
     public BlockLaserTable() {
         super(Material.iron, LASER_TABLE_TYPE);
@@ -86,8 +84,6 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
                 return new TileChargingTable();
             case PROGRAMMING_TABLE:
                 return new TileProgrammingTable();
-            case STAMPING_TABLE:
-                return new TileStampingTable();
         }
         return null;
     }
