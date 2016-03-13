@@ -16,7 +16,9 @@ public class AchievementManager {
 	}
 
 	public Achievement registerAchievement(Achievement a) {
-		page.getAchievements().add(a.registerStat());
+		if (a.theItemStack != null && a.theItemStack.getItem() != null) {
+			page.getAchievements().add(a.registerStat());
+		}
 		return a;
 	}
 
