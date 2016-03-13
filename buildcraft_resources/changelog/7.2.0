@@ -3,7 +3,6 @@ NOTE: This changelog is likely incomplete. There have been a lot of little chang
 Additions:
 
 * **Ported to Minecraft 1.8.9.** This took a lot more effort than we ever expected.
-* **Robot goggles!** Spot your robots from far away (AlexIIL)
 * Detailed client-side configuration - lets you change a lot of client-side options. Advanced users only! (AlexIIL)
 
 Improvements:
@@ -23,9 +22,9 @@ Improvements:
   * The quarry frame lights properly depending on the light value of the block each part is in (AlexIIL)
 * **Transport**
   * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
-* Cleaner Combustion Engine GUI (AlexIIL)
 * Support for Minecraft's statistics system (AlexIIL)
 
 Removals:
 
-* The deprecated List (asie)
+* The deprecated (pre-BC 7.0) version of the List (asie)
+* The Recipe Packager and Stamping Table. They may come back in a different form (asie)
