@@ -113,11 +113,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
         redstoneBoard.setUnlocalizedName("redstone_board");
         BCRegistry.INSTANCE.registerItem(redstoneBoard, false);
 
-        if (BuildCraftCore.DEVELOPER_MODE) {
-            robotGoggles = new ItemRobotGoggles();
-            robotGoggles.setUnlocalizedName("robot_goggles");
-            BCRegistry.INSTANCE.registerItem(robotGoggles, false);
-        }
+        robotGoggles = new ItemRobotGoggles();
+        robotGoggles.setUnlocalizedName("robot_goggles");
+        BCRegistry.INSTANCE.registerItem(robotGoggles, false);
 
         zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
         zonePlanBlock.setUnlocalizedName("zonePlan");
