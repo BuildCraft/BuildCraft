@@ -24,7 +24,7 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge" // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 
-ext.configFile = file "BuildCraftAPI/build.properties"
+ext.configFile = file "build.properties"
 configFile.withReader {
     // Load config. It shall from now be referenced as simply config or project.config
     def prop = new Properties()

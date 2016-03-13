@@ -4,15 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderSnowball;
-
+import buildcraft.silicon.render.RenderLaserTile;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-
-import buildcraft.BuildCraftSilicon;
-import buildcraft.silicon.render.RenderLaserTile;
 
 public class SiliconProxyClient extends SiliconProxy {
     @Override
@@ -23,8 +17,5 @@ public class SiliconProxyClient extends SiliconProxy {
     @Override
     public void registerRenderers() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserTile());
-
-        RenderingRegistry.registerEntityRenderingHandler(EntityPackage.class, new RenderSnowball<EntityPackage>(Minecraft.getMinecraft()
-                .getRenderManager(), BuildCraftSilicon.packageItem, Minecraft.getMinecraft().getRenderItem()));
     }
 }

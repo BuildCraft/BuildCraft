@@ -61,20 +61,6 @@ public class SiliconGuiHandler implements IGuiHandler {
                     return new GuiProgrammingTable(player, (TileProgrammingTable) tile);
                 }
 
-            case 5:
-                if (!(tile instanceof TileStampingTable)) {
-                    return null;
-                } else {
-                    return new GuiStampingTable(player, (TileStampingTable) tile);
-                }
-
-            case 10:
-                if (!(tile instanceof TilePackager)) {
-                    return null;
-                } else {
-                    return new GuiPackager(player, (TilePackager) tile);
-                }
-
             default:
                 return null;
         }
@@ -125,20 +111,6 @@ public class SiliconGuiHandler implements IGuiHandler {
                     return null;
                 } else {
                     return new ContainerProgrammingTable(player, (TileProgrammingTable) tile);
-                }
-
-            case 5:
-                if (!(tile instanceof TileStampingTable)) {
-                    return null;
-                } else {
-                    return new ContainerStampingTable(player, (TileStampingTable) tile);
-                }
-
-            case 10:
-                if (!(tile instanceof TilePackager)) {
-                    return null;
-                } else {
-                    return new ContainerPackager(player, (TilePackager) tile);
                 }
 
             default:
