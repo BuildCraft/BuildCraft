@@ -24,6 +24,10 @@ public class BptPipeRotatable extends BptPipeExtension {
         int orientation = meta & 7;
         int others = meta - orientation;
 
+        if (orientation >= 6) {
+            return;
+        }
+        
         EnumFacing face = EnumFacing.values()[orientation];
 
         if (face.getAxis() != Axis.Y) {
