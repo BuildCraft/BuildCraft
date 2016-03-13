@@ -236,7 +236,6 @@ public class ComplexRefiningManager {
             IModel model = new ModelFluid(def.fluid);
             IBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
             ModelResourceLocation loc = ModelHelper.getBlockResourceLocation(def.block);
-            BCLog.logger.info("Registering the model " + loc + " to the fluid " + def.fluid.getName());
             event.modelRegistry.putObject(loc, baked);
         }
     }
