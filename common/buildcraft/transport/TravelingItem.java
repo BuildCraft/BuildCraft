@@ -4,27 +4,23 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.EnumSet;
-import java.util.Map;
-
+import buildcraft.BuildCraftCore;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 import com.google.common.collect.MapMaker;
-
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.Utils;
+import java.util.EnumSet;
+import java.util.Map;
 
 public class TravelingItem {
 
@@ -304,7 +300,7 @@ public class TravelingItem {
     }
 
     public static class InsertionHandler {
-        public boolean canInsertItem(TravelingItem item, IInventory inv) {
+        public boolean canInsertItem(TravelingItem item, Object target) {
             return true;
         }
     }

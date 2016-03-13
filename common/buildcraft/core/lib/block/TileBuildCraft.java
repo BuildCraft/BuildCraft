@@ -4,28 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import java.util.HashSet;
-
-import org.apache.commons.lang3.StringUtils;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.world.World;
-
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
@@ -38,9 +16,34 @@ import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashSet;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
@@ -392,6 +395,48 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     public void setControlMode(IControllable.Mode mode) {
         this.mode = mode;
         sendNetworkUpdate();
+    }
+
+    // Capability wrapper
+
+    private IItemHandler[] invWrapper;
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return this instanceof IInventory;
+        } else {
+            return super.hasCapability(capability, facing);
+        }
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (this instanceof IInventory) {
+                if (invWrapper == null) {
+                    if (this instanceof ISidedInventory) {
+                        invWrapper = new IItemHandler[7];
+                        for (EnumFacing facing1 : EnumFacing.VALUES) {
+                            invWrapper[facing1.ordinal()] = new SidedInvWrapper((ISidedInventory) this, facing);
+                        }
+                        invWrapper[6] = new SidedInvWrapper((ISidedInventory) this, null);
+                    } else {
+                        invWrapper = new IItemHandler[1];
+                        invWrapper[0] = new InvWrapper((IInventory) this);
+                    }
+                }
+
+                if (invWrapper.length == 7) {
+                    return (T) invWrapper[facing == null ? 6 : facing.ordinal()];
+                } else {
+                    return (T) invWrapper[0];
+                }
+            }
+            return null;
+        } else {
+            return super.getCapability(capability, facing);
+        }
     }
 
     // IInventory

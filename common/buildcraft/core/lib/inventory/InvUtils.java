@@ -57,8 +57,8 @@ public final class InvUtils {
         if (stack == null || dest == null) {
             return false;
         }
-        ITransactor tran = Transactor.getTransactorFor(dest);
-        return tran.add(stack, side, false).stackSize > 0;
+        ITransactor tran = Transactor.getTransactorFor(dest, side);
+        return tran.add(stack, false).stackSize > 0;
     }
 
     /** Attempts to move a single item from one inventory to another.
@@ -67,14 +67,14 @@ public final class InvUtils {
      * @param dest
      * @param filter an IStackFilter to match against
      * @return null if nothing was moved, the stack moved otherwise */
-    public static ItemStack moveOneItem(IInventory source, EnumFacing output, IInventory dest, EnumFacing intput, IStackFilter filter) {
-        ITransactor imSource = Transactor.getTransactorFor(source);
-        ItemStack stack = imSource.remove(filter, output, false);
+    public static ItemStack moveOneItem(IInventory source, EnumFacing output, IInventory dest, EnumFacing input, IStackFilter filter) {
+        ITransactor imSource = Transactor.getTransactorFor(source, output);
+        ItemStack stack = imSource.remove(filter, false);
         if (stack != null) {
-            ITransactor imDest = Transactor.getTransactorFor(dest);
-            int moved = imDest.add(stack, intput, true).stackSize;
+            ITransactor imDest = Transactor.getTransactorFor(dest, input);
+            int moved = imDest.add(stack, true).stackSize;
             if (moved > 0) {
-                imSource.remove(filter, output, true);
+                imSource.remove(filter, true);
                 return stack;
             }
         }

@@ -74,8 +74,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             }
         } else if (ai instanceof AIRobotGotoBlock) {
             if (ai.success()) {
-                ITransactor t = Transactor.getTransactorFor(robot);
-                ItemStack stack = t.remove(TNT_FILTER, null, true);
+                ITransactor t = Transactor.getTransactorFor(robot, null);
+                ItemStack stack = t.remove(TNT_FILTER, true);
 
                 if (stack != null && stack.stackSize > 0) {
                     EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1, robot.posZ + 0.25, robot);

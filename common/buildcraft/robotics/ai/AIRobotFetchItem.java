@@ -51,9 +51,9 @@ public class AIRobotFetchItem extends AIRobot {
             pickTime++;
 
             if (pickTime > 5) {
-                TransactorSimple inventoryInsert = new TransactorSimple(robot);
+                TransactorSimple inventoryInsert = new TransactorSimple(robot, null);
 
-                target.getEntityItem().stackSize -= inventoryInsert.inject(target.getEntityItem(), null, true);
+                target.getEntityItem().stackSize -= inventoryInsert.inject(target.getEntityItem(), true);
 
                 if (target.getEntityItem().stackSize <= 0) {
                     target.setDead();
@@ -93,7 +93,7 @@ public class AIRobotFetchItem extends AIRobot {
 
     private void scanForItem() {
         double previousDistance = Double.MAX_VALUE;
-        TransactorSimple inventoryInsert = new TransactorSimple(robot);
+        TransactorSimple inventoryInsert = new TransactorSimple(robot, null);
 
         for (Object o : robot.worldObj.loadedEntityList) {
             Entity e = (Entity) o;
@@ -114,7 +114,7 @@ public class AIRobotFetchItem extends AIRobot {
                 } else {
                     EntityItem item = (EntityItem) e;
 
-                    if (inventoryInsert.inject(item.getEntityItem(), null, false) > 0) {
+                    if (inventoryInsert.inject(item.getEntityItem(), false) > 0) {
                         if (target == null) {
                             previousDistance = sqrDistance;
                             target = item;

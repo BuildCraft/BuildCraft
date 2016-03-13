@@ -4,26 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.List;
-import java.util.WeakHashMap;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
@@ -35,6 +15,23 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.*;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
+import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
+import java.util.WeakHashMap;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     private final RFBattery battery = new RFBattery(2560, 640, 0);
@@ -161,12 +158,12 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             if (distance == 1 && entity instanceof EntityMinecart && entity instanceof IInventory) {
                 EntityMinecart cart = (EntityMinecart) entity;
                 if (!cart.isDead) {
-                    ITransactor trans = Transactor.getTransactorFor(cart);
                     EnumFacing openOrientation = getOpenOrientation();
-                    ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
+                    ITransactor trans = Transactor.getTransactorFor(cart, openOrientation);
+                    ItemStack stack = trans.remove(StackFilter.ALL, false);
 
                     if (stack != null && battery.useEnergy(10, 10, false) > 0) {
-                        stack = trans.remove(StackFilter.ALL, openOrientation, true);
+                        stack = trans.remove(StackFilter.ALL, true);
                         if (stack != null) {
                             Vec3 pos = Utils.convertMiddle(container.getPos());
                             TravelingItem item = TravelingItem.make(pos, stack);

@@ -108,9 +108,9 @@ public final class Utils {
             BlockPos newpos = pos.offset(orientation);
 
             TileEntity tile = world.getTileEntity(newpos);
-            ITransactor transactor = Transactor.getTransactorFor(tile);
-            if (transactor != null && !(tile instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
-                return transactor.add(stack, orientation.getOpposite(), true).stackSize;
+            ITransactor transactor = Transactor.getTransactorFor(tile, orientation.getOpposite());
+            if (transactor != null && !(tile instanceof IEngine) && transactor.add(stack, false).stackSize > 0) {
+                return transactor.add(stack, true).stackSize;
             }
         }
         return 0;

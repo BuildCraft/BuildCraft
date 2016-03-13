@@ -63,7 +63,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IRedstoneEn
 
         TileEntity outputTile = getTile(EnumFacing.DOWN);
 
-        ITransactor transactor = Transactor.getTransactorFor(outputTile);
+        ITransactor transactor = Transactor.getTransactorFor(outputTile, EnumFacing.UP);
 
         if (transactor == null) {
             if (outputTile instanceof IInjectable && getBattery().getEnergyStored() >= 10) {
@@ -100,7 +100,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IRedstoneEn
             }
 
             ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-            if (transactor.add(clonedStack, EnumFacing.UP, true).stackSize > 0) {
+            if (transactor.add(clonedStack, true).stackSize > 0) {
                 inventory.decrStackSize(internalSlot, 1);
                 return;
             }

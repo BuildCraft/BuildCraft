@@ -4,14 +4,20 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.logging.log4j.Level;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.lib.inventory.ITransactor;
+import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
+import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.utils.TransportUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -22,25 +28,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import org.apache.logging.log4j.Level;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
-import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
-import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.utils.TransportUtils;
+import java.util.*;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
-
     public static final int MAX_PIPE_STACKS = PipeTransportItem_BC8.MAX_PIPE_STACKS;
     public static final int MAX_PIPE_ITEMS = PipeTransportItem_BC8.MAX_PIPE_ITEMS;
     public boolean allowBouncing = false;
@@ -236,8 +230,9 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
             // return !pipe.pipe.isClosed() && pipe.pipe.transport instanceof PipeTransportItems;
             return pipe.inputOpen(o.getOpposite()) && pipe.transport instanceof PipeTransportItems;
-        } else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity)) {
-            if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0) {
+        } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
+            ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
+            if (transactor != null && transactor.add(item.getItemStack(), false).stackSize > 0) {
                 return true;
             }
         }
@@ -327,19 +322,25 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     private void handleTileReached(TravelingItem item, TileEntity tile) {
         if (passToNextPipe(item, tile)) {
             // NOOP
-        } else if (tile instanceof IInventory) {
+        } else {
+            boolean handled = false;
+
             if (!container.getWorld().isRemote) {
-                if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
-                    ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
-                    item.getItemStack().stackSize -= added.stackSize;
+                if (item.getInsertionHandler().canInsertItem(item, tile)) {
+                    ITransactor transactor = Transactor.getTransactorFor(tile, item.output.getOpposite());
+                    if (transactor != null) {
+                        handled = true;
+                        ItemStack added = transactor.add(item.getItemStack(), true);
+                        item.getItemStack().stackSize -= added.stackSize;
+                    }
                 }
 
-                if (item.getItemStack().stackSize > 0) {
+                if (!handled) {
+                    dropItem(item);
+                } else if (item.getItemStack().stackSize > 0) {
                     reverseItem(item);
                 }
             }
-        } else {
-            dropItem(item);
         }
     }
 
@@ -491,12 +492,22 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     @Override
     public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
+        if (tile == null) {
+            return false;
+        }
+
         if (tile instanceof IPipeTile) {
             Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
             if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
                 return false;
             }
         }
+
+        if (tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
+            return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()).getSlots() > 0;
+        }
+
+        // TODO: Remove IInv/ISidedInv in 1.9
 
         if (tile instanceof ISidedInventory) {
             int[] slots = ((ISidedInventory) tile).getSlotsForFace(side.getOpposite());

@@ -4,24 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
@@ -33,6 +15,21 @@ import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import com.google.common.collect.Lists;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory, PacketSlotChange.ITile {
 
@@ -322,7 +319,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         }
 
         for (ItemStack output : outputs) {
-            output.stackSize -= Transactor.getTransactorFor(invOutput).add(output, EnumFacing.UP, true).stackSize;
+            output.stackSize -= Transactor.getTransactorFor(invOutput, EnumFacing.UP).add(output, true).stackSize;
 
             if (output.stackSize > 0) {
                 output.stackSize -= Utils.addToRandomInventoryAround(worldObj, getPos(), output);

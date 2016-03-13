@@ -75,9 +75,9 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
             return false;
         }
 
-        ITransactor trans = Transactor.getTransactorFor(tileInventory);
+        ITransactor trans = Transactor.getTransactorFor(tileInventory, robot.getDockingStation().getItemInputSide().face);
 
-        ItemStack itemFound = trans.remove(filter, robot.getDockingStation().getItemInputSide().face, true);
+        ItemStack itemFound = trans.remove(filter, true);
 
         if (itemFound != null) {
             robot.setItemInUse(itemFound);
