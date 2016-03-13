@@ -27,20 +27,24 @@ public class AchievementManager {
      * with the game. */
     public Achievement registerAchievement(Achievement achievement) {
         boolean registered;
-        Item item = achievement.theItemStack.getItem();
-        if (item instanceof ItemBlock) {
-            Block block = ((ItemBlock) item).getBlock();
-            registered = Block.blockRegistry.getNameForObject(block) != null;
-        } else {
-            registered = Item.itemRegistry.getNameForObject(item) != null;
-        }
-        if (registered) {
-            page.getAchievements().add(achievement);
-            achievement.registerStat();
-            return achievement;
-        } else {
-            return getRegisteredParent(achievement);
-        }
+		if (achievement.theItemStack != null && achievement.theItemStack.getItem() != null) {
+			Item item = achievement.theItemStack.getItem();
+			if (item instanceof ItemBlock) {
+				Block block = ((ItemBlock) item).getBlock();
+				registered = Block.blockRegistry.getNameForObject(block) != null;
+			} else {
+				registered = Item.itemRegistry.getNameForObject(item) != null;
+			}
+			if (registered) {
+				page.getAchievements().add(achievement);
+				achievement.registerStat();
+				return achievement;
+			} else {
+				return getRegisteredParent(achievement);
+			}
+		} else {
+			return getRegisteredParent(achievement);
+		}
     }
 
     @SubscribeEvent

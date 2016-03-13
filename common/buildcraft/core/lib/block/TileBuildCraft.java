@@ -310,7 +310,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (battery != null && this.canConnectEnergy(from)) {
-            int received = battery.receiveEnergy(maxReceive - receivedTick, simulate);
+            int received = battery.receiveEnergy(Math.min(maxReceive, battery.getMaxEnergyReceive() - receivedTick), simulate);
             if (!simulate) {
                 receivedTick += received;
                 worldTimeEnergyReceive = worldObj.getTotalWorldTime();
@@ -325,7 +325,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         if (battery != null && this.canConnectEnergy(from)) {
-            int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);
+            int extracted = battery.extractEnergy(Math.min(maxExtract, battery.getMaxEnergyExtract() - extractedTick), simulate);
             if (!simulate) {
                 extractedTick += extracted;
             }

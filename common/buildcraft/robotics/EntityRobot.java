@@ -31,6 +31,7 @@ import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -39,6 +40,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -986,8 +989,25 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
         if (par1Entity.canAttackWithItem()) {
             if (!par1Entity.hitByEntity(this)) {
+                Multimap<String, AttributeModifier> attributes = itemInUse != null ? (Multimap<String, AttributeModifier>) itemInUse.getAttributeModifiers() : null;
                 float attackDamage = 2.0F;
                 int knockback = 0;
+
+                if (attributes != null) {
+                    for (AttributeModifier modifier : attributes.get(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName())) {
+                        switch (modifier.getOperation()) {
+                            case 0:
+                                attackDamage += modifier.getAmount();
+                                break;
+                            case 1:
+                                attackDamage *= modifier.getAmount();
+                                break;
+                            case 2:
+                                attackDamage *= 1.0F + modifier.getAmount();
+                                break;
+                        }
+                    }
+                }
 
                 if (par1Entity instanceof EntityLivingBase) {
                     // FIXME: This was probably meant to do something at some point
@@ -1025,6 +1045,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
                         if (itemstack != null && par1Entity instanceof EntityLivingBase) {
                             itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) par1Entity, this);
+                        }
+
+                        if (itemInUse.stackSize == 0) {
+                            setItemInUse(null);
                         }
                     }
                 }
