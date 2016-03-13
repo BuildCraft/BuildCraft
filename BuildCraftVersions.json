@@ -1,10 +1,10 @@
 {
-    "homepage": "http://www.mod-buildcraft.com/forums/showthread.php?tid=1853",
+    "homepage": "http://www.mod-buildcraft.com/",
     "promos": {
         "1.8.8-latest": "7.2.0pre4",
         "1.8.8-recommended": "7.2.0pre4",
-        "1.8.9-latest": "7.2.0-pre12",
-        "1.8.9-recommended": "7.2.0-pre12"
+        "1.8.9-latest": "7.2.0",
+        "1.8.9-recommended": "7.2.0"
     },
     "1.8.8": {
         "7.2.0pre2":"      Add this versioning scheme",
