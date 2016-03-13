@@ -1048,6 +1048,7 @@ public class EntityRobot extends EntityRobotBase implements
 				par1Entity))) {
 			return;
 		}
+
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
 				float attackDamage = 2.0F;
@@ -1085,6 +1086,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 						if (itemstack != null && par1Entity instanceof EntityLivingBase) {
 							itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) par1Entity, this);
+						}
+
+						if (itemInUse.stackSize == 0) {
+							setItemInUse(null);
 						}
 					}
 				}

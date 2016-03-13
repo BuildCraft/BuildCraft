@@ -22,6 +22,7 @@ import buildcraft.core.lib.utils.IEntityFilter;
 import buildcraft.robotics.ai.AIRobotAttack;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
 import buildcraft.robotics.ai.AIRobotSearchEntity;
 
 public class BoardRobotButcher extends RedstoneBoardRobot {
@@ -44,6 +45,8 @@ public class BoardRobotButcher extends RedstoneBoardRobot {
 					return stack.getItem() instanceof ItemSword;
 				}
 			}));
+		} else if (robot.getHeldItem() != null && robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+			startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 		} else {
 			startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
 				@Override
