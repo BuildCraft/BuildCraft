@@ -4,7 +4,7 @@ Additions:
 
 * **Ported to Minecraft 1.8.9.** This took a lot more effort than we ever expected.
 * **Robot goggles!** Spot your robots from far away (AlexIIL)
-* **Detailed Config** Change a lot of client-side options. Advanced users only! (AlexIIL)
+* Detailed client-side configuration - lets you change a lot of client-side options. Advanced users only! (AlexIIL)
 
 Improvements:
 
@@ -12,16 +12,18 @@ Improvements:
   * Builder now shows if a blueprint or template is inserted (AlexIIL)
   * Clear lenses now use a water texture (AlexIIL)
   * Engines are now a static/dynamic mix, meaning they are less FPS-taxing (AlexIIL)
-  * Pipes are now shaded properly (AlexIIL)
+  * Laser beams now have a wider minimum size, improving far away lasers (AlexIIL)
+  * Pipes are now shaded properly - yay for ambient occlusion! (AlexIIL)
   * Power in pipes is now animated, showing its direction (AlexIIL)
+  * Slight tweaks to many textures across the mod (asie, AlexIIL)
   * Things now have somewhat more 3D models (gates, docking stations, builders, fillers at least) (AlexIIL)
-  * Lasers now render at least 2px[detail config] wide, improving far away lasers. (AlexIIL)
-  * The filler has an icon showing if a gate is locking the pattern, or if it is in a different mode to normal. Positions and order in [detail config] (AlexIIL)
-  * The builder has an icon showing if a gate has turned it off. Positions in [detail config] (AlexIIL)
-  * The mining pipes for the quarry are transparent (they match the texture of the frame block) (AlexIIL)
-  * The mining pipes light properly depending on the light value of the block each part is in (AlexIIL)
+  * The Builder has an icon showing if a gate has turned it off. (AlexIIL)
+  * The Filler has an icon showing if a gate is locking the pattern, or if it is in a different mode to normal. (AlexIIL)
+  * The entire frame for the quarry is now transparent, matching the texture of the frame block (AlexIIL)
+  * The quarry frame lights properly depending on the light value of the block each part is in (AlexIIL)
 * **Transport**
   * Gates now let you drag and drop triggers and actions! Lists of them are available to the sides (AlexIIL)
+* Cleaner Combustion Engine GUI (AlexIIL)
 * Support for Minecraft's statistics system (AlexIIL)
 
 Removals:
