@@ -1,17 +1,5 @@
 package buildcraft.robotics;
 
-import java.util.List;
-
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
@@ -31,6 +19,16 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.PipeItemsWood;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fluids.IFluidHandler;
+
+import java.util.List;
 
 public class DockingStationPipe extends DockingStation implements IRequestProvider {
 
@@ -246,9 +244,15 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
     @Override
     public ItemStack getRequest(int slot) {
-        EnumFacing side = EnumFacing.values()[(slot & 0x70) >> 4];
+        int facing = (slot & 0x70) >> 4;
         int action = (slot & 0xc) >> 2;
         int param = slot & 0x3;
+
+        if (facing >= 6) {
+            return null;
+        }
+
+        EnumFacing side = EnumFacing.getFront(facing);
         IGate gate = getPipe().getPipe().getGate(side);
         if (gate == null) {
             return null;

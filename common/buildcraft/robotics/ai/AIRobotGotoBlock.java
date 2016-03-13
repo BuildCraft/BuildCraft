@@ -4,20 +4,18 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
-import java.util.LinkedList;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.PathFinding;
 import buildcraft.core.lib.utils.Utils;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.LinkedList;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
@@ -114,7 +112,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     }
 
     private void setNextInPath() {
-        if (path.size() > 0) {
+        if (path != null && path.size() > 0) {
 
             boolean isFirst = prevDistance == Double.MAX_VALUE;
 

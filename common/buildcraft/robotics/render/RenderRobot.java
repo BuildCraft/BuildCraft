@@ -23,6 +23,8 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.entity.item.EntityItem;
@@ -47,6 +49,7 @@ public class RenderRobot extends Render<EntityRobot> {
 
     private final EntityItem dummyEntityItem = new EntityItem(null);
     private final RenderEntityItem customRenderItem;
+    private final LayerBipedArmor armorRenderer;
 
     private ModelBase model = new ModelBase() {};
     private ModelBase modelHelmet = new ModelBase() {};
@@ -68,6 +71,8 @@ public class RenderRobot extends Render<EntityRobot> {
             }
         };
 
+        armorRenderer = new LayerBipedArmor(new RenderPlayer(manager));
+
         box = new ModelRenderer(model, 0, 0);
         box.setTextureSize(32, 32);
         box.addBox(-4F, -4F, -4F, 8, 8, 8);
@@ -81,8 +86,7 @@ public class RenderRobot extends Render<EntityRobot> {
     }
 
     @Override
-    public void doRender(EntityRobot entity, double x, double y, double z, float f, float f1) {
-        EntityRobot robot = (EntityRobot) entity;
+    public void doRender(EntityRobot robot, double x, double y, double z, float f, float f1) {
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
 
@@ -251,7 +255,7 @@ public class RenderRobot extends Render<EntityRobot> {
                 GL11.glColor3ub((byte) (color >> 16), (byte) ((color >> 8) & 255), (byte) (color & 255));
             }
 
-            textureManager.bindTexture(new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, "", 0, "")));
+            textureManager.bindTexture(armorRenderer.getArmorResource(entity, wearable, 0, null));
             ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
             if (armorModel != null) {
                 armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);

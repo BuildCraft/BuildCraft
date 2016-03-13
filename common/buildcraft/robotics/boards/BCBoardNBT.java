@@ -6,6 +6,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BCStringUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 import java.lang.reflect.Constructor;
@@ -45,6 +46,7 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+        list.add(EnumChatFormatting.BOLD + BCStringUtils.localize("buildcraft.boardRobot" + upperName));
         list.add(BCStringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
     }
 

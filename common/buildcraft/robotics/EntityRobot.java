@@ -1113,7 +1113,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                     syncWearablesToClient();
                 } else if (itemInUse != null) {
                     entityDropItem(itemInUse, 0);
-                    itemInUse = null;
+                    setItemInUse(null);
                 } else {
                     convertToItems();
                 }

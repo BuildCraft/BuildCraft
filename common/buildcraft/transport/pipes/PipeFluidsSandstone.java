@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import buildcraft.api.core.EnumPipePart;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -45,7 +46,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
         if (!(container.getTile(from) instanceof IPipeTile)) {
             return 0;
         } else {
-            return transport.sections[from.ordinal()].fill(resource.amount, doFill);
+            return transport.sections[EnumPipePart.ordinal(from)].fill(resource.amount, doFill);
         }
     }
 

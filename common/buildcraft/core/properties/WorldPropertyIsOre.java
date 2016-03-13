@@ -4,25 +4,28 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.properties;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class WorldPropertyIsOre extends WorldProperty {
     private final HashSet<Integer> ores = new HashSet<Integer>();
+    private final int harvestLevel;
 
     public WorldPropertyIsOre(int harvestLevel) {
         initBlockHarvestTools();
+        this.harvestLevel = harvestLevel;
+
         for (String oreName : OreDictionary.getOreNames()) {
             if (oreName.startsWith("ore")) {
                 List<ItemStack> oreStacks = OreDictionary.getOres(oreName);
@@ -46,9 +49,6 @@ public class WorldPropertyIsOre extends WorldProperty {
 
     private void initBlockHarvestTools() {
         // Make sure the static code block in the ForgeHooks class is run
-        // ForgeHooks.canToolHarvestBlock(Blocks.coal_ore, 0, new ItemStack(Items.diamond_pickaxe));
-
-        // This is better in pretty much every way
         new ForgeHooks();
     }
 
@@ -58,6 +58,11 @@ public class WorldPropertyIsOre extends WorldProperty {
         if (block == null) {
             return false;
         } else {
+            // Workaround for lit redstone ore
+            if (state.getBlock() == Blocks.lit_redstone_ore) {
+                return block.getHarvestLevel(state) <= harvestLevel;
+            }
+
             List<ItemStack> toCheck = new ArrayList<ItemStack>();
             toCheck.add(new ItemStack(block, 1, block.getMetaFromState(state)));
 

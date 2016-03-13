@@ -1,21 +1,5 @@
 package buildcraft.transport;
 
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.EnumMultiset;
-import com.google.common.collect.Multiset;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import net.minecraftforge.fluids.*;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
@@ -29,6 +13,19 @@ import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
+import com.google.common.collect.EnumMultiset;
+import com.google.common.collect.Multiset;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fluids.*;
+
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -494,7 +491,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         if (fluidType == null) {
             return null;
         } else {
-            return new FluidStack(fluidType, sections[direction.ordinal()].amount);
+            return new FluidStack(fluidType, sections[EnumPipePart.ordinal(direction)].amount);
         }
     }
 
@@ -577,7 +574,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         if (this.container.pipe instanceof IPipeTransportFluidsHook) {
             filled = ((IPipeTransportFluidsHook) this.container.pipe).fill(from, resource, doFill);
         } else {
-            filled = sections[from.ordinal()].fill(resource.amount, doFill);
+            filled = sections[EnumPipePart.ordinal(from)].fill(resource.amount, doFill);
         }
 
         if (doFill && filled > 0) {
@@ -615,7 +612,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     @Override
     public FluidTankInfo[] getTankInfo(EnumFacing from) {
-        return new FluidTankInfo[] { new FluidTankInfo(fluidType, sections[EnumPipePart.fromFacing(from).ordinal()].amount) };
+        return new FluidTankInfo[] { new FluidTankInfo(fluidType, sections[EnumPipePart.ordinal(from)].amount) };
     }
 
     @Override
