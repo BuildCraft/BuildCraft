@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.vecmath.*;
 
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -96,16 +97,18 @@ public class MutableQuad {
         return clone;
     }
 
-    public void setTint(int tint) {
+    public MutableQuad setTint(int tint) {
         tintIndex = tint;
+        return this;
     }
 
     public int getTint() {
         return tintIndex;
     }
 
-    public void setFace(EnumFacing face) {
+    public MutableQuad setFace(EnumFacing face) {
         this.face = face;
+        return this;
     }
 
     public EnumFacing getFace() {
@@ -129,6 +132,12 @@ public class MutableQuad {
             }
         }
         return new UnpackedBakedQuad(data, tintIndex, face, format);
+    }
+
+    public void render(WorldRenderer wr) {
+        for (MutableVertex v : verticies) {
+            v.render(wr);
+        }
     }
 
     public MutableVertex getVertex(int v) {

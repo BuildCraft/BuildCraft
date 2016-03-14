@@ -34,16 +34,17 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.config.DetailedConfigOption;
-import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.*;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipePluggableState;
+import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
+import buildcraft.transport.render.tile.PipeModelCacheBase;
+import buildcraft.transport.render.tile.PipeRendererFacades;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
-    private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.67");
-
     public PipeBlockModel() {
         super(ImmutableList.<BakedQuad> of(), null, null);
     }
@@ -90,109 +91,6 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
     }
 
-    private static void renderPipe(PipeRenderState render, List<MutableQuad> quads, Map<EnumFacing, TextureAtlasSprite> spriteMap, boolean smaller) {
-        float min = CoreConstants.PIPE_MIN_POS;
-        float max = CoreConstants.PIPE_MAX_POS;
-
-        float minUV = min * 16;
-        float maxUV = max * 16;
-
-        float insideColourMult = OPTION_INSIDE_COLOUR_MULT.getAsFloatCapped(0, 1);
-
-        // Center bit
-        {
-            TextureAtlasSprite sprite = spriteMap.get(null);
-
-            float[] uvs = new float[4];
-            uvs[U_MIN] = sprite.getInterpolatedU(minUV);
-            uvs[U_MAX] = sprite.getInterpolatedU(maxUV);
-            uvs[V_MIN] = sprite.getInterpolatedV(minUV);
-            uvs[V_MAX] = sprite.getInterpolatedV(maxUV);
-
-            for (EnumFacing face : EnumFacing.VALUES) {
-                if (!render.pipeConnectionMatrix.isConnected(face) || !render.pipeConnectionBanned.isConnected(face)) {
-                    Vec3 radius = Utils.vec3(0.25);
-                    if (smaller) {
-                        double smallerValue = Utils.getValue(radius, face.getAxis()) - 0.01f;
-                        radius = Utils.withValue(radius, face.getAxis(), smallerValue);
-                    }
-
-                    List<MutableQuad> quadsIn = new ArrayList<>();
-                    List<MutableQuad> quadsOut = new ArrayList<>();
-
-                    Tuple3f center = Utils.vec3f(0.5f);
-                    Tuple3f radiusf = Utils.convertFloat(radius);
-
-                    BCModelHelper.appendQuads(quadsIn, BCModelHelper.createFace(face, center, radiusf, uvs));
-                    BCModelHelper.appendQuads(quadsOut, BCModelHelper.createInverseFace(face, center, radiusf, uvs));
-
-                    List<MutableQuad> inside = BCModelHelper.shouldInvertForRender(face) ? quadsOut : quadsIn;
-                    for (MutableQuad q : inside) {
-                        q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
-                    }
-                    quads.addAll(quadsIn);
-                    quads.addAll(quadsOut);
-                }
-            }
-        }
-
-        // All the connected bits
-        for (EnumFacing connect : EnumFacing.VALUES) {
-            if (render.pipeConnectionMatrix.isConnected(connect) && render.pipeConnectionBanned.isConnected(connect)) {
-                float extension = render.customConnections[connect.ordinal()];
-                TextureAtlasSprite sprite = spriteMap.get(connect);
-
-                Vec3 actualCenter = Utils.convert(connect, 0.375f + extension / 2).add(Utils.VEC_HALF);
-
-                Vec3 smallerFace = null;
-                if (connect.getAxisDirection() == AxisDirection.POSITIVE) {
-                    smallerFace = Utils.convert(connect, 4 / 16d - extension);
-                } else {
-                    smallerFace = Utils.convert(connect.getOpposite(), 4 / 16d - extension);
-                }
-                Vec3 actualSize = Utils.VEC_HALF.subtract(smallerFace);
-
-                if (smaller) {
-                    // Decrease the entire size
-                    Vec3 allSmaller = actualSize.subtract(Utils.vec3(0.02));
-                    // Increase the size of axis the connection is in.
-                    actualSize = allSmaller.add(Utils.convert(Utils.convertPositive(connect), 0.02));
-                }
-
-                Vec3 pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
-
-                EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
-                cuboid.texture = sprite;
-                cuboid.makeClient();
-
-                double start = connect.getAxisDirection() == AxisDirection.POSITIVE ? 12 : 0;
-
-                cuboid.textureStartX = connect.getAxis() == Axis.X ? start : 4;
-                cuboid.textureStartY = connect.getAxis() == Axis.Y ? start : 4;
-                cuboid.textureStartZ = connect.getAxis() == Axis.Z ? start : 4;
-
-                cuboid.textureSizeX = connect.getAxis() == Axis.X ? 4 : 8;
-                cuboid.textureSizeY = connect.getAxis() == Axis.Y ? 4 : 8;
-                cuboid.textureSizeZ = connect.getAxis() == Axis.Z ? 4 : 8;
-
-                cuboid.textures[connect.ordinal()] = null;
-                cuboid.textures[connect.getOpposite().ordinal()] = null;
-
-                cuboid.setSize(actualSize);
-                cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-
-                List<MutableQuad> quadsIn = new ArrayList<>();
-
-                RenderResizableCuboid.bakeCube(quadsIn, cuboid, false, true);
-                RenderResizableCuboid.bakeCube(quads, cuboid, true, false);
-                for (MutableQuad mutable : quadsIn) {
-                    mutable.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
-                }
-                quads.addAll(quadsIn);
-            }
-        }
-    }
-
     // The main block model
     private static void renderCutoutPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
         Map<EnumFacing, TextureAtlasSprite> spriteMap = Maps.newHashMap();
@@ -200,9 +98,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             spriteMap.put(face, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(face)));
         }
         spriteMap.put(null, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null)));
-        List<MutableQuad> mutableQuads = new ArrayList<>();
-        renderPipe(render, mutableQuads, spriteMap, false);
-        BCModelHelper.appendBakeQuads(quads, mutableQuads);
+        quads.addAll(PipeModelCacheBase.getCutoutModel(render, spriteMap));
 
         // Pluggables
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -218,6 +114,9 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             }
         }
 
+        // Facades
+        PipeRendererFacades.renderPipeFacades(quads, pluggable);
+
         // Wires
         PipeRendererWires.renderPipeWires(quads, render);
     }
@@ -225,22 +124,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
     // Used basically for pipe colour
     private static void renderTranslucentPass(PipeRenderState render, PipePluggableState pluggable, Pipe<?> pipe, List<BakedQuad> quads) {
         if (render.getGlassColor() >= 0 && render.getGlassColor() < 16) {
-            Map<EnumFacing, TextureAtlasSprite> spriteMap = Maps.newHashMap();
-            TextureAtlasSprite sprite = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
-            for (EnumFacing face : EnumFacing.values()) {
-                spriteMap.put(face, sprite);
-            }
-            spriteMap.put(null, sprite);
-
-            List<MutableQuad> mutableQuads = new ArrayList<>();
-
-            renderPipe(render, mutableQuads, spriteMap, true);
-
-            int colour = ColorUtils.getRGBColor(render.getGlassColor());
-            for (MutableQuad q : mutableQuads) {
-                q.setTint(colour);
-            }
-            BCModelHelper.appendBakeQuads(quads, mutableQuads);
+            quads.addAll(PipeModelCacheBase.getTranslucentModel(render));
         }
 
         // Pluggables

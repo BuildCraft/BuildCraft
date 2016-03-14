@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.vecmath.*;
 
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -63,6 +64,20 @@ public class MutableVertex {
     }
 
     private static Set<String> failedStrings = new HashSet<>();
+
+    public void render(WorldRenderer wr) {
+        VertexFormat vf = wr.getVertexFormat();
+        for (VertexFormatElement vfe : vf.getElements()) {
+            if (vfe.getUsage() == EnumUsage.POSITION) wr.pos(position[0], position[1], position[2]);
+            else if (vfe.getUsage() == EnumUsage.NORMAL) wr.normal(normal[0], normal[1], normal[2]);
+            else if (vfe.getUsage() == EnumUsage.COLOR) wr.color(colour[0], colour[1], colour[2], colour[3]);
+            else if (vfe.getUsage() == EnumUsage.UV) {
+                if (vfe.getIndex() == 0) wr.tex(uv[0], uv[1]);
+                else if (vfe.getIndex() == 1) wr.lightmap((int) light[0], (int) light[1]);
+            }
+        }
+        wr.endVertex();
+    }
 
     public MutableVertex setAll(MutableVertex from) {
         positionv(from.position());
