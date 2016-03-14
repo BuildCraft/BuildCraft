@@ -292,7 +292,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     private void registerValidFacades(Block block, Item item) {
-        ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(16);
+        ArrayList<ItemStack> stacks = new ArrayList<>(16);
         try {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
                 for (CreativeTabs ct : item.getCreativeTabs()) {
@@ -311,7 +311,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 if (block.hasTileEntity(block.getDefaultState())) continue;
 
                 // Check if all of these functions work correctly.
-                // If an exception is filed, or null is returned, this generally means that
+                // If an exception is fired, or null is returned, this generally means that
                 // this block is invalid.
                 try {
                     if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) continue;
@@ -427,7 +427,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         Block block = Block.getBlockFromItem(itemStack.getItem());
         if (block == null) return;
-        if (!block.getMaterial().blocksMovement()) return;
 
         String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
 

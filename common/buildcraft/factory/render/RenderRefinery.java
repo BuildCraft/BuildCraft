@@ -213,7 +213,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
 
         GlStateManager.enableLighting();
         GlStateManager.disableCull();
-        GlStateManager.disableAlpha();
     }
 
     private int getDisplayListIndex(Tank tank) {

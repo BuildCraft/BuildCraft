@@ -90,7 +90,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
     }
 
-    private static void renderPipe(PipeRenderState render, List<BakedQuad> quads, Map<EnumFacing, TextureAtlasSprite> spriteMap, boolean smaller) {
+    private static void renderPipe(PipeRenderState render, List<MutableQuad> quads, Map<EnumFacing, TextureAtlasSprite> spriteMap, boolean smaller) {
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
 
@@ -125,19 +125,13 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
                     BCModelHelper.appendQuads(quadsIn, BCModelHelper.createFace(face, center, radiusf, uvs));
                     BCModelHelper.appendQuads(quadsOut, BCModelHelper.createInverseFace(face, center, radiusf, uvs));
-                    if (!BCModelHelper.shouldInvertForRender(face)) {
-                        for (MutableQuad q : quadsIn) {
-                            q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
-                            BCModelHelper.appendBakeQuads(quads, q);
-                        }
-                        BCModelHelper.appendBakeQuads(quads, quadsOut);
-                    } else {
-                        BCModelHelper.appendBakeQuads(quads, quadsIn);
-                        for (MutableQuad q : quadsOut) {
-                            q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
-                            BCModelHelper.appendBakeQuads(quads, q);
-                        }
+
+                    List<MutableQuad> inside = BCModelHelper.shouldInvertForRender(face) ? quadsOut : quadsIn;
+                    for (MutableQuad q : inside) {
+                        q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
                     }
+                    quads.addAll(quadsIn);
+                    quads.addAll(quadsOut);
                 }
             }
         }
@@ -188,16 +182,13 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
                 List<MutableQuad> quadsIn = new ArrayList<>();
-                List<MutableQuad> quadsOut = new ArrayList<>();
 
                 RenderResizableCuboid.bakeCube(quadsIn, cuboid, false, true);
-                RenderResizableCuboid.bakeCube(quadsOut, cuboid, true, false);
-
+                RenderResizableCuboid.bakeCube(quads, cuboid, true, false);
                 for (MutableQuad mutable : quadsIn) {
                     mutable.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
-                    BCModelHelper.appendBakeQuads(quads, mutable);
                 }
-                BCModelHelper.appendBakeQuads(quads, quadsOut);
+                quads.addAll(quadsIn);
             }
         }
     }
@@ -209,7 +200,9 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             spriteMap.put(face, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(face)));
         }
         spriteMap.put(null, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null)));
-        renderPipe(render, quads, spriteMap, false);
+        List<MutableQuad> mutableQuads = new ArrayList<>();
+        renderPipe(render, mutableQuads, spriteMap, false);
+        BCModelHelper.appendBakeQuads(quads, mutableQuads);
 
         // Pluggables
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -239,18 +232,15 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             }
             spriteMap.put(null, sprite);
 
-            // Grab the first index to apply shading to
-            int startIndex = quads.size();
+            List<MutableQuad> mutableQuads = new ArrayList<>();
 
-            renderPipe(render, quads, spriteMap, true);
+            renderPipe(render, mutableQuads, spriteMap, true);
 
             int colour = ColorUtils.getRGBColor(render.getGlassColor());
-            for (int i = startIndex; i < quads.size(); i++) {
-                quads.get(i).getTintIndex();
-                BakedQuad shapeQuad = quads.get(i);
-                BakedQuad colouredQuad = new BakedQuad(shapeQuad.getVertexData(), colour, shapeQuad.getFace());
-                quads.set(i, colouredQuad);
+            for (MutableQuad q : mutableQuads) {
+                q.setTint(colour);
             }
+            BCModelHelper.appendBakeQuads(quads, mutableQuads);
         }
 
         // Pluggables

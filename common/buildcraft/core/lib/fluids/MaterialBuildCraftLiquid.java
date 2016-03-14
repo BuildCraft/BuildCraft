@@ -10,6 +10,6 @@ public class MaterialBuildCraftLiquid extends MaterialLiquid {
 
     @Override
     public boolean blocksMovement() {
-        return false;
+        return true;
     }
 }
