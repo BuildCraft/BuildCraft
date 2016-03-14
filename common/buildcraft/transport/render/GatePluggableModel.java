@@ -29,6 +29,7 @@ import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -62,13 +63,12 @@ public final class GatePluggableModel extends BakedModelHolder implements IPipeP
         GateState state = new GateState(gate.getMaterial(), gate.getLogic(), gate.isLit, getExtensions(gate));
 
         List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderGate(state, DefaultVertexFormats.BLOCK);
+        List<MutableQuad> bakedQuads = renderGate(state, DefaultVertexFormats.BLOCK);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
-        for (BakedQuad quad : bakedQuads) {
-            quad = transform(quad, matrix);
-            quad = replaceShade(quad, 0xFFFFFFFF);
-            quad = applyDiffuse(quad);
-            quads.add(quad);
+        for (MutableQuad quad : bakedQuads) {
+            quad.transform(matrix);
+            quad.setCalculatedDiffuse();
+            quads.add(quad.toUnpacked());
         }
 
         return quads;
@@ -82,29 +82,31 @@ public final class GatePluggableModel extends BakedModelHolder implements IPipeP
         return states;
     }
 
-    public List<BakedQuad> renderGate(GateState gate, VertexFormat format) {
+    public List<MutableQuad> renderGate(GateState gate, VertexFormat format) {
         TextureAtlasSprite logicSprite = gate.on ? gate.logic.getIconLit() : gate.logic.getIconDark();
         TextureAtlasSprite materialSprite = gate.material.getIconBlock();
 
         IModel main = modelMain();
         IModel material = modelMaterial();
 
-        List<BakedQuad> quads = Lists.newArrayList();
+        List<MutableQuad> quads = Lists.newArrayList();
         IFlexibleBakedModel baked = main.bake(ModelRotation.X0_Y0, format, singleTextureFunction(logicSprite));
         for (BakedQuad quad : baked.getGeneralQuads()) {
-            quad = replaceShade(quad, 0xFFFFFFFF);
-            quads.add(quad);
+            MutableQuad mutable = MutableQuad.create(quad, format);
+            if (gate.on) mutable.lightf(1, 0);
+            quads.add(mutable);
         }
 
-        if (materialSprite != null) {// Its null for redstone (As we don't render any material for redstoen gates)
+        if (materialSprite != null) {// Its null for redstone (As we don't render any material for redstone gates)
             baked = material.bake(ModelRotation.X0_Y0, format, singleTextureFunction(materialSprite));
             for (BakedQuad quad : baked.getGeneralQuads()) {
-                quad = replaceShade(quad, 0xFFFFFFFF);
-                quads.add(quad);
+                quads.add(MutableQuad.create(quad, format));
             }
         }
         for (IGateStaticRenderState ext : gate.extensionStates) {
-            quads.addAll(ext.bake(format));
+            for (BakedQuad q : ext.bake(format)) {
+                quads.add(MutableQuad.create(q, format));
+            }
         }
 
         return quads;

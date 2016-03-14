@@ -18,7 +18,9 @@ import net.minecraft.util.Vec3;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeRenderState;
 
@@ -78,7 +80,7 @@ public class PipeRendererWires {
 
         TextureAtlasSprite sprite = BuildCraftTransport.instance.wireIconProvider.getIcon(wire, isLit);
 
-        List<BakedQuad> unprocessed = new ArrayList<>();
+        List<MutableQuad> unprocessed = new ArrayList<>();
 
         Vec3 center = pos;
         Vec3 centerSize = new Vec3(WIRE_WIDTH, WIRE_WIDTH, WIRE_WIDTH);
@@ -134,15 +136,14 @@ public class PipeRendererWires {
             renderCuboid(unprocessed, center, centerSize, sprite);
         }
 
-        if (isLit) {
-            for (BakedQuad quad : unprocessed) {
-                quad = BuildCraftBakedModel.maxLightMap(quad);
-                quads.add(quad);
-            }
-        } else quads.addAll(unprocessed);
+        for (MutableQuad quad : unprocessed) {
+            if (isLit) quad.lightf(1, 0);
+            quad.setCalculatedDiffuse();
+            quads.add(quad.toUnpacked());
+        }
     }
 
-    private static void renderCuboid(List<BakedQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {
+    private static void renderCuboid(List<MutableQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {
         Vec3 radius = Utils.multiply(size, 0.5);
         Vector3f radiusF = Utils.convertFloat(radius);
         Vector3f center = Utils.convertFloat(min.add(radius));
@@ -163,7 +164,7 @@ public class PipeRendererWires {
             uvs[BuildCraftBakedModel.U_MAX] = sprite.getInterpolatedU(Utils.getValue(size, uFace.getAxis()) * 16);
             uvs[BuildCraftBakedModel.V_MIN] = sprite.getMinV();
             uvs[BuildCraftBakedModel.V_MAX] = sprite.getInterpolatedV(Utils.getValue(size, vFace.getAxis()) * 16);
-            BuildCraftBakedModel.bakeDoubleFace(quads, face, center, radiusF, uvs);
+            BCModelHelper.appendQuads(quads, BCModelHelper.createDoubleFace(face, center, radiusF, uvs));
         }
     }
 }

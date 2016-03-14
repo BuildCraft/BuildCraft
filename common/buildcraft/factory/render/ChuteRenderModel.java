@@ -14,7 +14,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.MutableQuad;
 
 public class ChuteRenderModel extends BuildCraftBakedModel {
     public static TextureAtlasSprite sideTexture = null;
@@ -52,17 +54,16 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
         uvs[V_MIN] = sideTexture.getMinV();
         uvs[V_MAX] = sideTexture.getInterpolatedV(8);
 
-        int[] eastVertexData = getFrom(eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs);
-        bakeQuad(lst, eastVertexData, EnumFacing.EAST);
-
-        int[] westVertexData = getFrom(westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs);
-        bakeQuad(lst, westVertexData, EnumFacing.WEST);
-
-        int[] northVertexData = getFrom(westNorthDown, westNorthUp__, eastNorthUp__, eastNorthDown, uvs);
-        bakeQuad(lst, northVertexData, EnumFacing.NORTH);
-
-        int[] southVertexData = getFrom(eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs);
-        bakeQuad(lst, southVertexData, EnumFacing.SOUTH);
+        MutableQuad[] quads = {//
+            BCModelHelper.createFace(EnumFacing.EAST, eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs),//
+            BCModelHelper.createFace(EnumFacing.WEST, westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs),//
+            BCModelHelper.createFace(EnumFacing.NORTH, westNorthDown, westNorthUp__, eastNorthUp__, eastNorthDown, uvs),//
+            BCModelHelper.createFace(EnumFacing.SOUTH, eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs),//
+        };
+        for (MutableQuad q : quads) {
+            q.setCalculatedDiffuse();
+        }
+        BCModelHelper.appendBakeQuads(lst, quads);
 
         return new ChuteRenderModel(ImmutableList.copyOf(lst), parent);
     }

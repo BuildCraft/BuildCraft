@@ -24,7 +24,9 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
@@ -101,9 +103,10 @@ public class FacadeItemModel extends BuildCraftBakedModel implements ISmartItemM
         totalMatrix.mul(translateToItem);
 
         for (BakedQuad quad : bakedQuads) {
-            quad = transform(quad, totalMatrix);
-            quad = replaceShade(quad, 0xFFFFFFFF);
-            quads.add(quad);
+            MutableQuad mutable = MutableQuad.create(quad);
+            mutable.transform(totalMatrix);
+            mutable.colouri(0xFF_FF_FF_FF);
+            BCModelHelper.appendBakeQuads(quads, DefaultVertexFormats.ITEM, mutable);
         }
 
         return new FacadeItemModel(ImmutableList.copyOf(quads), sprite, DefaultVertexFormats.ITEM);

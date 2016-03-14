@@ -25,7 +25,9 @@ import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.render.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 
@@ -71,9 +73,9 @@ public class PlugPluggableModel extends BakedModelHolder implements IPipePluggab
         List<BakedQuad> bakedQuads = renderPlug(model, sprite, format);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
-            quad = transform(quad, matrix);
-            // quad = applyDiffuse(quad);
-            quads.add(quad);
+            MutableQuad mutable = MutableQuad.create(quad);
+            mutable.transform(matrix);
+            BCModelHelper.appendBakeQuads(quads, format, mutable);
         }
 
         return quads;
@@ -83,8 +85,9 @@ public class PlugPluggableModel extends BakedModelHolder implements IPipePluggab
         List<BakedQuad> quads = Lists.newArrayList();
         IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, format, singleTextureFunction(sprite));
         for (BakedQuad quad : baked.getGeneralQuads()) {
-            quad = replaceShade(quad, 0xFFFFFFFF);
-            quads.add(quad);
+            MutableQuad mutable = MutableQuad.create(quad);
+            mutable.colouri(0xFF_FF_FF_FF);
+            BCModelHelper.appendBakeQuads(quads, format, mutable);
         }
         return quads;
     }

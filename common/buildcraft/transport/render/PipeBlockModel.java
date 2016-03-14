@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.vecmath.Tuple3f;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,7 +30,10 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer.Transluce
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.config.DetailedConfigOption;
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -37,7 +42,7 @@ import buildcraft.transport.TileGenericPipe.CoreState;
 import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
-    public static final int INSIDE_COLOUR_MULT = 0xFF_AA_AA_AA;
+    private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.67");
 
     public PipeBlockModel() {
         super(ImmutableList.<BakedQuad> of(), null, null);
@@ -92,6 +97,8 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         float minUV = min * 16;
         float maxUV = max * 16;
 
+        float insideColourMult = OPTION_INSIDE_COLOUR_MULT.getAsFloatCapped(0, 1);
+
         // Center bit
         {
             TextureAtlasSprite sprite = spriteMap.get(null);
@@ -110,22 +117,25 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                         radius = Utils.withValue(radius, face.getAxis(), smallerValue);
                     }
 
-                    List<BakedQuad> quadsIn = new ArrayList<>();
-                    List<BakedQuad> quadsOut = new ArrayList<>();
+                    List<MutableQuad> quadsIn = new ArrayList<>();
+                    List<MutableQuad> quadsOut = new ArrayList<>();
 
-                    bakeFace(quadsIn, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
-                    bakeInverseFace(quadsOut, face, Utils.vec3f(0.5f), Utils.convertFloat(radius), uvs);
-                    if (!shouldInvertForRender(face)) {
-                        for (BakedQuad q : quadsIn) {
-                            q = replaceShade(q, INSIDE_COLOUR_MULT);
-                            quads.add(q);
+                    Tuple3f center = Utils.vec3f(0.5f);
+                    Tuple3f radiusf = Utils.convertFloat(radius);
+
+                    BCModelHelper.appendQuads(quadsIn, BCModelHelper.createFace(face, center, radiusf, uvs));
+                    BCModelHelper.appendQuads(quadsOut, BCModelHelper.createInverseFace(face, center, radiusf, uvs));
+                    if (!BCModelHelper.shouldInvertForRender(face)) {
+                        for (MutableQuad q : quadsIn) {
+                            q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
+                            BCModelHelper.appendBakeQuads(quads, q);
                         }
-                        quads.addAll(quadsOut);
+                        BCModelHelper.appendBakeQuads(quads, quadsOut);
                     } else {
-                        quads.addAll(quadsIn);
-                        for (BakedQuad q : quadsOut) {
-                            q = replaceShade(q, INSIDE_COLOUR_MULT);
-                            quads.add(q);
+                        BCModelHelper.appendBakeQuads(quads, quadsIn);
+                        for (MutableQuad q : quadsOut) {
+                            q.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
+                            BCModelHelper.appendBakeQuads(quads, q);
                         }
                     }
                 }
@@ -177,15 +187,17 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                 cuboid.setSize(actualSize);
                 cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 
-                List<BakedQuad> quadsIn = new ArrayList<>();
+                List<MutableQuad> quadsIn = new ArrayList<>();
+                List<MutableQuad> quadsOut = new ArrayList<>();
 
                 RenderResizableCuboid.bakeCube(quadsIn, cuboid, false, true);
-                RenderResizableCuboid.bakeCube(quads, cuboid, true, false);
+                RenderResizableCuboid.bakeCube(quadsOut, cuboid, true, false);
 
-                for (BakedQuad q : quadsIn) {
-                    q = replaceShade(q, INSIDE_COLOUR_MULT);
-                    quads.add(q);
+                for (MutableQuad mutable : quadsIn) {
+                    mutable.colourf(insideColourMult, insideColourMult, insideColourMult, 1);
+                    BCModelHelper.appendBakeQuads(quads, mutable);
                 }
+                BCModelHelper.appendBakeQuads(quads, quadsOut);
             }
         }
     }

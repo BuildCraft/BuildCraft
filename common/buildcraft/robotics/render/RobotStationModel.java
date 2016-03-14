@@ -1,12 +1,12 @@
 package buildcraft.robotics.render;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -31,9 +31,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.lib.render.BakedModelHolder;
-import buildcraft.core.lib.render.BuildCraftBakedModel;
-import buildcraft.core.lib.render.PerspAwareModelBase;
+import buildcraft.core.lib.render.*;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
@@ -45,7 +43,8 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
 
     private TextureAtlasSprite baseSprite;
     private final Map<EnumRobotStationState, TextureAtlasSprite> stateSprites = Maps.newEnumMap(EnumRobotStationState.class);
-    private final Map<EnumRobotStationState, List<BakedQuad>> stateQuads = Maps.newEnumMap(EnumRobotStationState.class);
+    private final Map<EnumRobotStationState, List<MutableQuad>> stateQuads = Maps.newEnumMap(EnumRobotStationState.class);
+    private final List<MutableQuad> modelBaseQuads = new ArrayList<>();
 
     private IModel modelBase() {
         return getModelOBJ(baseLoc);
@@ -81,11 +80,11 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
             translation.setIdentity();
             translation.setTranslation(new Vector3f(2.8f / 16f, 0, 0));
 
-            List<BakedQuad> quads = Lists.newArrayList();
-            for (BakedQuad quad : BuildCraftBakedModel.createModelItemLayer(stateSprites.get(state)).getGeneralQuads()) {
-                quad = transform(quad, translation);
-                quad = replaceTint(quad, 0xFFFFFF);
-                quads.add(quad);
+            List<MutableQuad> quads = Lists.newArrayList();
+            for (MutableQuad mutable : BuildCraftBakedModel.createQuadsItemLayer(stateSprites.get(state))) {
+                mutable.transform(translation);
+                mutable.colouri(0xFF_FF_FF_FF);
+                quads.add(mutable);
             }
             stateQuads.put(state, quads);
         }
@@ -99,34 +98,44 @@ public class RobotStationModel extends BakedModelHolder implements IPipePluggabl
         return bakeCutout(station.getRenderState(), face, DefaultVertexFormats.BLOCK);
     }
 
+    private List<MutableQuad> baseQuads() {
+        if (modelBaseQuads.isEmpty()) {
+            IModel base = modelBase();
+            if (base != null) {
+                IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, BuildCraftBakedModel.singleTextureFunction(
+                        baseSprite));
+                for (BakedQuad quad : baked.getGeneralQuads()) {
+                    MutableQuad mutable = MutableQuad.create(quad);
+                    modelBaseQuads.add(mutable);
+                }
+            }
+        }
+        return modelBaseQuads;
+    }
+
     private List<BakedQuad> bakeCutout(EnumRobotStationState state, EnumFacing face, VertexFormat format) {
         final TextureAtlasSprite baseSprite = this.baseSprite;
 
         IModel base = modelBase();
-        List<BakedQuad> stateQuads = this.stateQuads.get(state);
+        List<MutableQuad> stateQuads = this.stateQuads.get(state);
 
         List<BakedQuad> quads = Lists.newArrayList();
         if (base != null) {
             Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
-            IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, format, new Function<ResourceLocation, TextureAtlasSprite>() {
-                @Override
-                public TextureAtlasSprite apply(ResourceLocation input) {
-                    return baseSprite;
-                }
-            });
-            for (BakedQuad quad : baked.getGeneralQuads()) {
-                quad = transform(quad, matrix);
-                quad = replaceShade(quad, 0xFFFFFFFF);
-                quad = applyDiffuse(quad);
-                quads.add(quad);
+            for (MutableQuad mutable : baseQuads()) {
+                mutable = mutable.deepClone();
+                mutable.transform(matrix);
+                mutable.setCalculatedDiffuse();
+                BCModelHelper.appendBakeQuads(quads, format, mutable);
             }
 
             if (stateQuads != null) {
-                for (BakedQuad quad : stateQuads) {
-                    quad = transform(quad, matrix);
-                    quad = applyDiffuse(quad);
-                    quads.add(quad);
+                for (MutableQuad mutable : stateQuads) {
+                    mutable = mutable.deepClone();
+                    mutable.transform(matrix);
+                    mutable.setCalculatedDiffuse();
+                    BCModelHelper.appendBakeQuads(quads, format, mutable);
                 }
             }
         }

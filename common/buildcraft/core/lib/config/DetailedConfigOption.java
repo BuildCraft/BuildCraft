@@ -124,6 +124,12 @@ public class DetailedConfigOption {
         return (float) getAsDouble();
     }
 
+    // Helper methods
+
+    public float getAsFloatCapped(float min, float max) {
+        return Math.min(max, Math.max(min, getAsFloat()));
+    }
+
     @SideOnly(Side.CLIENT)
     public enum ReloadListener implements IResourceManagerReloadListener {
         INSTANCE;

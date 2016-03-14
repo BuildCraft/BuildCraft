@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -54,7 +55,7 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
 
         if (!map.containsKey(state)) {
             List<BakedQuad> quads = Lists.newArrayList();
-            List<BakedQuad> bakedQuads = GatePluggableModel.INSTANCE.renderGate(state, DefaultVertexFormats.BLOCK);
+            List<MutableQuad> mutableQuads = GatePluggableModel.INSTANCE.renderGate(state, DefaultVertexFormats.BLOCK);
             Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
 
             Matrix4f matScale = new Matrix4f();
@@ -73,10 +74,10 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
             totalMatrix.mul(matScale);
             totalMatrix.mul(rotation);
 
-            for (BakedQuad quad : bakedQuads) {
-                quad = transform(quad, totalMatrix);
-                quad = replaceShade(quad, 0xFFFFFFFF);
-                quads.add(quad);
+            for (MutableQuad quad : mutableQuads) {
+                quad.transform(totalMatrix);
+                quad.colouri(0xFF_FF_FF_FF);
+                quads.add(quad.toUnpacked());
             }
             map.put(state, new GateItemModel(ImmutableList.copyOf(quads), null, DefaultVertexFormats.BLOCK));
         }

@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -345,7 +344,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         RenderUtils.setWorldRendererRGB(wr, color);
     }
 
-    public static void bakeCube(List<BakedQuad> quads, EntityResizableCuboid cuboid, boolean outsideFace, boolean insideFace) {
+    public static void bakeCube(List<MutableQuad> quads, EntityResizableCuboid cuboid, boolean outsideFace, boolean insideFace) {
         TextureAtlasSprite[] sprites = cuboid.textures;
         if (sprites == null) {
             sprites = new TextureAtlasSprite[6];
@@ -369,7 +368,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         }
     }
 
-    private static void bakeCuboidFace(List<BakedQuad> quads, EntityResizableCuboid cuboid, EnumFacing face, TextureAtlasSprite[] sprites,
+    private static void bakeCuboidFace(List<MutableQuad> quads, EntityResizableCuboid cuboid, EnumFacing face, TextureAtlasSprite[] sprites,
             int[] flips, Vec3 textureStart, Vec3 textureSize, Vec3 size, Vec3 textureOffset, boolean out, boolean in) {
         int ordinal = face.ordinal();
         if (sprites[ordinal] == null) {
@@ -390,33 +389,32 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         EnumFacing opposite = face.getOpposite();
 
-        boolean flip = BuildCraftBakedModel.shouldInvertForRender(face);
+        boolean flip = BCModelHelper.shouldInvertForRender(face);
 
         for (RenderInfo ri : renderInfoList) {
             ri = ri.offset(cuboid, face.getAxis());
             double otherMoved = other + Utils.getValue(cuboid.getPositionVector(), face.getAxis());
 
             if (flip ? out : in) {
-                int[] data = new int[28];
-                bakePoint(data, 0, face, u, v, otherMoved, ri, true, false);
-                bakePoint(data, 1, face, u, v, otherMoved, ri, true, true);
-                bakePoint(data, 2, face, u, v, otherMoved, ri, false, true);
-                bakePoint(data, 3, face, u, v, otherMoved, ri, false, false);
-                quads.add(new BakedQuad(data, -1, face));
+                MutableQuad mutable = new MutableQuad(-1, face);
+                bakePoint(mutable.getVertex(0), face, u, v, otherMoved, ri, true, false);
+                bakePoint(mutable.getVertex(1), face, u, v, otherMoved, ri, true, true);
+                bakePoint(mutable.getVertex(2), face, u, v, otherMoved, ri, false, true);
+                bakePoint(mutable.getVertex(3), face, u, v, otherMoved, ri, false, false);
+                quads.add(mutable);
             }
             if (flip ? in : out) {
-                int[] data = new int[28];
-                bakePoint(data, 0, opposite, u, v, otherMoved, ri, false, false);
-                bakePoint(data, 1, opposite, u, v, otherMoved, ri, false, true);
-                bakePoint(data, 2, opposite, u, v, otherMoved, ri, true, true);
-                bakePoint(data, 3, opposite, u, v, otherMoved, ri, true, false);
-                quads.add(new BakedQuad(data, -1, opposite));
+                MutableQuad mutable = new MutableQuad(-1, face);
+                bakePoint(mutable.getVertex(0), opposite, u, v, otherMoved, ri, false, false);
+                bakePoint(mutable.getVertex(1), opposite, u, v, otherMoved, ri, false, true);
+                bakePoint(mutable.getVertex(2), opposite, u, v, otherMoved, ri, true, true);
+                bakePoint(mutable.getVertex(3), opposite, u, v, otherMoved, ri, true, false);
+                quads.add(mutable);
             }
         }
     }
 
-    private static void bakePoint(int[] data, int i, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV) {
-        int offset = i * data.length / 4;
+    private static void bakePoint(MutableVertex mutable, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV) {
         int U_ARRAY = minU ? U_MIN : U_MAX;
         int V_ARRAY = minV ? V_MIN : V_MAX;
 
@@ -424,12 +422,9 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
         vertex = Utils.withValue(vertex, face.getAxis(), other);
 
-        data[offset + BuildCraftBakedModel.X] = BuildCraftBakedModel.asInt((float) vertex.xCoord);
-        data[offset + BuildCraftBakedModel.Y] = BuildCraftBakedModel.asInt((float) vertex.yCoord);
-        data[offset + BuildCraftBakedModel.Z] = BuildCraftBakedModel.asInt((float) vertex.zCoord);
-        data[offset + BuildCraftBakedModel.SHADE] = 0xFF_FF_FF_FF;
-        data[offset + BuildCraftBakedModel.U] = BuildCraftBakedModel.asInt(ri.uv[U_ARRAY]);
-        data[offset + BuildCraftBakedModel.V] = BuildCraftBakedModel.asInt(ri.uv[V_ARRAY]);
+        mutable.positionv(Utils.convertFloat(vertex));
+        mutable.colouri(0xFF_FF_FF_FF);
+        mutable.texf(ri.uv[U_ARRAY], ri.uv[V_ARRAY]);
     }
 
     private static float[] getUVArray(TextureAtlasSprite sprite, int flips, EnumFacing face, Vec3 start, Vec3 end) {

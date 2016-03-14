@@ -13,7 +13,9 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.Vec3;
 
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -45,20 +47,21 @@ public class PipeItemModel extends BuildCraftBakedModel {
         cuboid.setPosition(center.subtract(radius));
         cuboid.setSize(Utils.multiply(radius, 2));
 
-        List<BakedQuad> unprocessed = Lists.newArrayList();
+        List<MutableQuad> unprocessed = Lists.newArrayList();
         List<BakedQuad> quads = Lists.newArrayList();
 
-        RenderResizableCuboid.INSTANCE.bakeCube(unprocessed, cuboid, true, false);
+        RenderResizableCuboid.bakeCube(unprocessed, cuboid, true, false);
 
-        for (BakedQuad quad : unprocessed) {
-            quad = createNormal(quad);
-            quads.add(quad);
+        for (MutableQuad quad : unprocessed) {
+            quad.normalf(0, 1, 0);
+            BCModelHelper.appendBakeQuads(quads, DefaultVertexFormats.ITEM, quad);
         }
 
         unprocessed.clear();
 
         // Set up the colour
         if (colorIndex != 0) {
+            // Very sligthly smaller
             radius = new Vec3(0.249, 0.499, 0.249);
             cuboid = new EntityResizableCuboid(null);
             cuboid.setTextureOffset(new Vec3(4, 0, 4));
@@ -67,16 +70,16 @@ public class PipeItemModel extends BuildCraftBakedModel {
             cuboid.setSize(Utils.multiply(radius, 2));
 
             // Render it into a different list
-            RenderResizableCuboid.INSTANCE.bakeCube(unprocessed, cuboid, true, false);
+            RenderResizableCuboid.bakeCube(unprocessed, cuboid, true, false);
 
             EnumDyeColor dye = EnumDyeColor.byDyeDamage(colorIndex - 1);
 
             int quadColor = ColorUtils.getLightHex(dye);
             // Add all of the quads we just rendered to the main list
-            for (BakedQuad quad : unprocessed) {
-                quad = createNormal(quad);
-                quad = replaceTint(quad, quadColor);
-                quads.add(quad);
+            for (MutableQuad quad : unprocessed) {
+                quad.normalf(0, 1, 0);
+                quad.setTint(quadColor);
+                BCModelHelper.appendBakeQuads(quads, DefaultVertexFormats.ITEM, quad);
             }
             unprocessed.clear();
         }

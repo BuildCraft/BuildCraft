@@ -23,7 +23,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.lib.render.BCModelHelper;
 import buildcraft.core.lib.render.BakedModelHolder;
+import buildcraft.core.lib.render.MutableQuad;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
@@ -87,9 +89,10 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
                 translation.setTranslation(new Vector3f((2 - getPixelExtrusion()) / 16f, 0, 0));
 
                 for (BakedQuad quad : quads) {
-                    quad = transform(quad, translation);
-                    quad = replaceTint(quad, 0xFFFFFF);
-                    transformedQuads.add(quad);
+                    MutableQuad mutable = MutableQuad.create(quad);
+                    mutable.transform(translation);
+                    mutable.setTint(0xFF_FF_FF);
+                    BCModelHelper.appendBakeQuads(transformedQuads, mutable);
                 }
                 this.transformedQuads = transformedQuads;
             }

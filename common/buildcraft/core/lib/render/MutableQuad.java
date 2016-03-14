@@ -1,12 +1,8 @@
 package buildcraft.core.lib.render;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
+import javax.vecmath.*;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -17,8 +13,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-
-import buildcraft.api.core.BCLog;
 
 public class MutableQuad {
     public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
@@ -48,15 +42,15 @@ public class MutableQuad {
         int stride = data.length / 4;
         MutableQuad mutable = new MutableQuad(quad.getTintIndex(), quad.getFace());
         for (int v = 0; v < 4; v++) {
-            Vertex vertex = mutable.getVertex(v);
+            MutableVertex mutableVertex = mutable.getVertex(v);
             float x = fromBits(data[stride * v + X]);
             float y = fromBits(data[stride * v + Y]);
             float z = fromBits(data[stride * v + Z]);
-            vertex.positionf(x, y, z);
-            vertex.colouri(data[stride * v + SHADE]);
+            mutableVertex.positionf(x, y, z);
+            mutableVertex.colouri(data[stride * v + SHADE]);
             float texU = fromBits(data[stride * v + U]);
             float texV = fromBits(data[stride * v + V]);
-            vertex.texf(texU, texV);
+            mutableVertex.texf(texU, texV);
         }
         return mutable;
     }
@@ -75,7 +69,7 @@ public class MutableQuad {
         return Float.intBitsToFloat(bits);
     }
 
-    private final Vertex[] verticies = new Vertex[4];
+    private final MutableVertex[] verticies = new MutableVertex[4];
     private int tintIndex = -1;
     private EnumFacing face = null;
 
@@ -83,7 +77,7 @@ public class MutableQuad {
         this.tintIndex = tintIndex;
         this.face = face;
         for (int v = 0; v < 4; v++) {
-            verticies[v] = new Vertex();
+            verticies[v] = new MutableVertex();
         }
     }
 
@@ -92,6 +86,34 @@ public class MutableQuad {
         for (int v = 0; v < 4; v++) {
             verticies[v].setData(data[v], format);
         }
+    }
+
+    public MutableQuad deepClone() {
+        MutableQuad clone = new MutableQuad(tintIndex, face);
+        for (int v = 0; v < 4; v++) {
+            clone.verticies[v].setAll(verticies[v]);
+        }
+        return clone;
+    }
+
+    public void setTint(int tint) {
+        tintIndex = tint;
+    }
+
+    public int getTint() {
+        return tintIndex;
+    }
+
+    public void setFace(EnumFacing face) {
+        this.face = face;
+    }
+
+    public EnumFacing getFace() {
+        return face;
+    }
+
+    public UnpackedBakedQuad toUnpacked() {
+        return toUnpacked(ITEM_LMAP);
     }
 
     public UnpackedBakedQuad toUnpacked(VertexFormat format) {
@@ -109,14 +131,74 @@ public class MutableQuad {
         return new UnpackedBakedQuad(data, tintIndex, face, format);
     }
 
-    public Vertex getVertex(int v) {
+    public MutableVertex getVertex(int v) {
         return verticies[v & 0b11];
     }
 
-    /* A lot of delegate functions here. The actual documentation should be per-vertex. */
+    public Vector3f getCalculatedNormal() {
+        Point3f[] positions = { getVertex(0).position(), getVertex(1).position(), getVertex(2).position() };
 
+        Vector3f a = new Vector3f(positions[1]);
+        a.sub(positions[0]);
+
+        Vector3f b = new Vector3f(positions[2]);
+        b.sub(positions[0]);
+
+        Vector3f c = new Vector3f();
+        c.cross(a, b);
+        return c;
+    }
+
+    public void setCalculatedNormal() {
+        normalv(getCalculatedNormal());
+    }
+
+    public static float diffuseLight(Vector3f normal) {
+        return diffuseLight(normal.x, normal.y, normal.z);
+    }
+
+    public static float diffuseLight(float x, float y, float z) {
+        boolean up = y >= 0;
+
+        float xx = x * x;
+        float yy = y * y;
+        float zz = z * z;
+
+        float t = xx + yy + zz;
+        float light = (xx * 0.6f + zz * 0.8f) / t;
+
+        float yyt = yy / t;
+        if (!up) yyt *= 0.5;
+        light += yyt;
+
+        return light;
+    }
+
+    public float getCalculatedDiffuse() {
+        return diffuseLight(getCalculatedNormal());
+    }
+
+    public void setCalculatedDiffuse() {
+        float diffuse = getCalculatedDiffuse();
+        colourf(diffuse, diffuse, diffuse, 1);
+    }
+
+    /** Inverts this quad's normal so that it will render in the opposite direction. You will need to recall diffusion
+     * calculations if you had previously calculated the diffuse. */
+    public MutableQuad invertNormal() {
+        MutableVertex[] newArray = new MutableVertex[4];
+        newArray[0] = verticies[3];
+        newArray[1] = verticies[2];
+        newArray[2] = verticies[1];
+        newArray[3] = verticies[0];
+        for (int i = 0; i < 4; i++)
+            verticies[i] = newArray[i].invertNormal();
+        return this;
+    }
+
+    /* A lot of delegate functions here. The actual documentation should be per-vertex. */
     // @formatter:off
-    /** @see Vertex#normalv(Vector3f) */ public void normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec));}
+    /** @see MutableVertex#normalv(Vector3f) */ public void normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec));}
     public void normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z));}
 
     public void colourv(Vector4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec));};
@@ -124,11 +206,13 @@ public class MutableQuad {
     public void colouri(int rgba) {Arrays.stream(verticies).forEach(v -> v.colouri(rgba));}
     public void colouri(int r, int g, int b, int a) {Arrays.stream(verticies).forEach(v -> v.colouri(r, g, b, a));}
 
-    public void lightv(Vector2f vec) {for (Vertex v : verticies) v.lightv(vec);}
-    public void lightf(float block, float sky) {for (Vertex v : verticies) v.lightf(block, sky);}
-    public void lighti(int combined) {for (Vertex v : verticies) v.lighti(combined);}
-    public void lighti(int block, int sky) {for (Vertex v : verticies) v.lighti(block, sky);}
-     // @formatter:on
+    public void lightv(Vector2f vec) {for (MutableVertex v : verticies) v.lightv(vec);}
+    public void lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky);}
+    public void lighti(int combined) {for (MutableVertex v : verticies) v.lighti(combined);}
+    public void lighti(int block, int sky) {for (MutableVertex v : verticies) v.lighti(block, sky);}
+
+    public void transform(Matrix4f transformation) {for (MutableVertex v : verticies) v.transform(transformation);}
+    // @formatter:on
 
     @Override
     public String toString() {
@@ -137,185 +221,9 @@ public class MutableQuad {
 
     private String vToS() {
         StringBuilder builder = new StringBuilder();
-        for (Vertex v : verticies) {
+        for (MutableVertex v : verticies) {
             builder.append(v.toString() + "\n");
         }
         return builder.toString();
-    }
-
-    public static class Vertex {
-        private final float[] position = new float[3];
-        private final float[] normal = new float[] { -1, -1, -1 };
-        private final float[] colour = new float[4];
-        private final float[] uv = new float[2];
-        private final float[] light = new float[2];
-
-        public void setData(float[][] from, VertexFormat vfFrom) {
-            int index = 0;
-            for (VertexFormatElement elem : vfFrom.getElements()) {
-                System.arraycopy(from[index], 0, getFor(elem), 0, from[index].length);
-                index++;
-            }
-        }
-
-        public float[][] getData(VertexFormat as) {
-            float[][] data = new float[as.getElementCount()][];
-            int index = 0;
-            for (VertexFormatElement elem : as.getElements()) {
-                float[] f = getFor(elem);
-                data[index] = Arrays.copyOf(f, f.length);
-                index++;
-            }
-            return data;
-        }
-
-        private float[] getFor(VertexFormatElement element) {
-            EnumUsage usage = element.getUsage();
-            if (usage == EnumUsage.POSITION) {
-                return position;
-            } else if (usage == EnumUsage.NORMAL) {
-                return normal;
-            } else if (usage == EnumUsage.COLOR) {
-                return colour;
-            } else if (usage == EnumUsage.UV) {
-                if (element.getIndex() == 0) {
-                    return uv;
-                } else if (element.getIndex() == 1) {
-                    return light;
-                }
-            }
-            // Otherwise... thats not good.
-            String s = element.toString();
-            if (!failedStrings.contains(s)) {
-                failedStrings.add(s);
-                BCLog.logger.info("Element " + s + " failed!");
-            }
-            return new float[element.getElementCount()];
-        }
-
-        private static Set<String> failedStrings = new HashSet<>();
-
-        public void positionv(Vector3f vec) {
-            positionf(vec.x, vec.y, vec.z);
-        }
-
-        public void positionf(float x, float y, float z) {
-            position[0] = x;
-            position[1] = y;
-            position[2] = z;
-        }
-
-        public Vector3f position() {
-            return new Vector3f(position);
-        }
-
-        /** Sets the current normal for this vertex based off the given vector.
-         * 
-         * @see #normalf(float, float, float)
-         * @implNote This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings. */
-        public void normalv(Vector3f vec) {
-            normalf(vec.x, vec.y, vec.z);
-        }
-
-        /** Sets the current normal given the x, y, and z coordinates. These are NOT normalised or checked. */
-        public void normalf(float x, float y, float z) {
-            normal[0] = x;
-            normal[1] = y;
-            normal[2] = z;
-        }
-
-        /** @return The current normal vector of this vertex. This might be normalised. */
-        public Vector3f normal() {
-            return new Vector3f(normal);
-        }
-
-        public void colourv(Vector4f vec) {
-            colourf(vec.x, vec.y, vec.z, vec.w);
-        };
-
-        public void colourf(float r, float g, float b, float a) {
-            colour[0] = r;
-            colour[1] = g;
-            colour[2] = b;
-            colour[3] = a;
-        }
-
-        public void colouri(int rgba) {
-            colouri(rgba, rgba >> 8, rgba >> 16, rgba >>> 24);
-        }
-
-        public void colouri(int r, int g, int b, int a) {
-            colourf((r & 0xFF) / 255f, (g & 0xFF) / 255f, (b & 0xFF) / 255f, (a & 0xFF) / 255f);
-        }
-
-        public Vector4f colourv() {
-            return new Vector4f(colour);
-        }
-
-        public int colourRGBA() {
-            // @formatter:off
-            return (int) (colour[0] * 0xFF)
-                + ((int) (colour[1] * 0xFF)) <<  8
-                + ((int) (colour[2] * 0xFF)) << 16
-                + ((int) (colour[3] * 0xFF)) << 24;
-            // @formatter:on
-        }
-
-        public void texv(Vector2f vec) {
-            texf(vec.x, vec.y);
-        }
-
-        public void texf(float u, float v) {
-            uv[0] = u;
-            uv[1] = v;
-        }
-
-        public Vector2f tex() {
-            return new Vector2f(uv);
-        }
-
-        public void lightv(Vector2f vec) {
-            lightf(vec.x, vec.y);
-        }
-
-        public void lightf(float block, float sky) {
-            lighti((int) (block * 0xF), (int) (sky * 0xF));
-        }
-
-        public void lighti(int combined) {
-            lighti(combined >> 4, combined >> 20);
-        }
-
-        public void lighti(int block, int sky) {
-            light[0] = light(block);
-            light[1] = light(sky);
-        }
-
-        public Vector2f light() {
-            return new Vector2f(light);
-        }
-
-        public int lightc() {
-            return light(light[0]) << 4 + light(light[1]) << 20;
-        }
-
-        public int[] lighti() {
-            return new int[] { light(light[0]), light(light[1]) };
-        };
-
-        private static float light(int val) {
-            val &= 0xF;
-            return (float) val * 0x20 / 0xFFFF;
-        }
-
-        private static int light(float val) {
-            return (int) (val * 0xFFFF / 0x20);
-        }
-
-        @Override
-        public String toString() {
-            return "\tVertex [\n\t\tposition=" + Arrays.toString(position) + ",\n\t\tnormal=" + Arrays.toString(normal) + ",\n\t\tcolour=" + Arrays
-                    .toString(colour) + ",\n\t\tuv=" + Arrays.toString(uv) + ",\n\t\tlight=" + Arrays.toString(light) + "\n\t]";
-        }
     }
 }
