@@ -95,16 +95,11 @@ public abstract class PipeLogicIron {
         }
         return false;
     }
-
-    @Deprecated
-    public boolean blockActivated(EntityPlayer entityplayer) {
-        return blockActivated(entityplayer, EnumPipePart.CENTER);
-    }
-
+    
     public boolean blockActivated(EntityPlayer entityplayer, EnumPipePart side) {
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
         if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
-            if (side == EnumPipePart.CENTER) {
+            if (side == EnumPipePart.CENTER || !pipe.getContainer().isPipeConnected(side.face)) {
                 switchPosition();
             } else {
                 setFacing(side.face);
