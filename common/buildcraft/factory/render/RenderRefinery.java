@@ -100,10 +100,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
         }
 
         GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GlStateManager.enableLighting();
-        GlStateManager.disableCull();
-        GlStateManager.enableAlpha();
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         GL11.glScalef(0.99F, 0.99F, 0.99F);
@@ -153,8 +149,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
         GL11.glPopMatrix();
 
         if (tile != null) {
-            GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-            GlStateManager.enableCull();
+            // GlStateManager.enableCull();
             GlStateManager.disableLighting();
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -205,14 +200,13 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
                     GL11.glPopMatrix();
                 }
             }
-            GL11.glPopAttrib();
+
+            GlStateManager.disableBlend();
+            GlStateManager.enableLighting();
+            // GlStateManager.disableCull();
         }
 
-        GL11.glPopAttrib();
         GL11.glPopMatrix();
-
-        GlStateManager.enableLighting();
-        GlStateManager.disableCull();
     }
 
     private int getDisplayListIndex(Tank tank) {

@@ -29,11 +29,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.client.render.RenderResizableCuboid.EnumShadeArgument;
 import buildcraft.core.lib.client.render.RenderResizableCuboid.IBlockLocation;
 import buildcraft.core.lib.client.render.RenderResizableCuboid.IFacingLocation;
 import buildcraft.core.lib.client.render.RenderResizableCuboid.RotatedFacingLocation;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {

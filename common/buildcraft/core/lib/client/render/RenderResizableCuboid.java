@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -159,7 +158,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
             }
         };
         RenderHelper.disableStandardItemLighting();
-        renderCube(entity, EnumShadeArgument.FACE_LIGHT, formula, null);
+        renderCube(entity, EnumShadeArgument.FACE_LIGHT, formula, null, true, true);
         RenderHelper.enableStandardItemLighting();
         GL11.glPopMatrix();
     }
@@ -168,15 +167,24 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     public void renderCubeFromCentre(EntityResizableCuboid cuboid) {
         GL11.glPushMatrix();
         GL11.glTranslated(-cuboid.xSize / 2d, -cuboid.ySize / 2d, -cuboid.zSize / 2d);
-        renderCube(cuboid, EnumShadeArgument.NONE, null, null);
+        renderCube(cuboid, EnumShadeArgument.NONE, null, null, true, true);
         GL11.glPopMatrix();
     }
 
     public void renderCube(EntityResizableCuboid cuboid) {
-        renderCube(cuboid, EnumShadeArgument.NONE, null, null);
+        renderCube(cuboid, EnumShadeArgument.NONE, null, null, true, true);
+    }
+
+    public void renderCube(EntityResizableCuboid cuboid, boolean renderOut, boolean renderIn) {
+        renderCube(cuboid, EnumShadeArgument.NONE, null, null, renderOut, renderIn);
     }
 
     public void renderCube(EntityResizableCuboid cube, EnumShadeArgument shadeTypes, IBlockLocation formula, IFacingLocation faceFormula) {
+        renderCube(cube, shadeTypes, formula, faceFormula, true, true);
+    }
+
+    public void renderCube(EntityResizableCuboid cube, EnumShadeArgument shadeTypes, IBlockLocation formula, IFacingLocation faceFormula,
+            boolean renderOut, boolean renderIn) {
         if (faceFormula == null) {
             faceFormula = DefaultFacingLocation.FACING_INSTANCE;
         }
@@ -208,7 +216,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         for (EnumFacing face : EnumFacing.values()) {
             renderCuboidFace(wr, face, sprites, flips, textureStart, textureSize, size, textureOffset, shadeTypes, formula, faceFormula,
-                    cube.worldObj);
+                    cube.worldObj, renderOut, renderIn);
         }
 
         tess.draw();
@@ -216,7 +224,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
     private static void renderCuboidFace(WorldRenderer wr, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3 textureStart,
             Vec3 textureSize, Vec3 size, Vec3 textureOffset, EnumShadeArgument shadeTypes, IBlockLocation locationFormula,
-            IFacingLocation faceFormula, IBlockAccess access) {
+            IFacingLocation faceFormula, IBlockAccess access, boolean out, boolean in) {
         int ordinal = face.ordinal();
         if (sprites[ordinal] == null) {
             return;
@@ -230,22 +238,25 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
         double other = face.getAxisDirection() == AxisDirection.POSITIVE ? Utils.getValue(size, face.getAxis()) : 0;
 
-        /* Swap the face if this is positive: the renderer returns indexes that ALWAYS are for the negative face, so
-         * light it properly this way */
-        face = face.getAxisDirection() == AxisDirection.NEGATIVE ? face : face.getOpposite();
+        boolean flip = BCModelHelper.shouldInvertForRender(face);
 
+        // Flip it to be negative as the light renderer doesn't handle light proeprly
+        face = face.getAxisDirection() == AxisDirection.NEGATIVE ? face : face.getOpposite();
         EnumFacing opposite = face.getOpposite();
 
         for (RenderInfo ri : renderInfoList) {
-            renderPoint(wr, face, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, face, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, face, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, face, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
-
-            renderPoint(wr, opposite, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, opposite, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, opposite, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
-            renderPoint(wr, opposite, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
+            if (flip ? out : in) {
+                renderPoint(wr, face, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, face, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, face, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, face, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
+            }
+            if (flip ? in : out) {
+                renderPoint(wr, opposite, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, opposite, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, opposite, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(wr, opposite, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
+            }
         }
     }
 

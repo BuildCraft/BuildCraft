@@ -44,8 +44,6 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         }
 
         GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GlStateManager.enableCull();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -61,7 +59,9 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         GL11.glCallList(displayList[listIndex]);
 
-        GL11.glPopAttrib();
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+
         GL11.glPopMatrix();
     }
 }

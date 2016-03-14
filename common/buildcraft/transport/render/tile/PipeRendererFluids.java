@@ -266,7 +266,7 @@ public class PipeRendererFluids {
             cuboid.zSize = 0.5;
             cuboid.texture = sprite;
 
-            RenderResizableCuboid.INSTANCE.renderCube(cuboid);
+            RenderResizableCuboid.INSTANCE.renderCube(cuboid, true, false);
 
             GL11.glPopMatrix();
             GL11.glEndList();
@@ -291,7 +291,7 @@ public class PipeRendererFluids {
             cuboid.zSize = 0.5 * width;
             cuboid.texture = sprite;
 
-            RenderResizableCuboid.INSTANCE.renderCube(cuboid);
+            RenderResizableCuboid.INSTANCE.renderCube(cuboid, true, false);
 
             GL11.glPopMatrix();
             GL11.glEndList();
@@ -334,7 +334,7 @@ public class PipeRendererFluids {
                 cuboid.zSize = size.zCoord;
                 cuboid.texture = sprite;
 
-                RenderResizableCuboid.INSTANCE.renderCube(cuboid);
+                RenderResizableCuboid.INSTANCE.renderCube(cuboid, true, false);
 
                 GL11.glEndList();
             }

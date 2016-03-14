@@ -4,24 +4,28 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.client.render;
 
-import buildcraft.core.lib.EntityResizableCuboid;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.common.collect.Maps;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import buildcraft.core.lib.EntityResizableCuboid;
 
 public final class FluidRenderer {
     public static final FluidRenderer INSTANCE = new FluidRenderer();
@@ -164,7 +168,8 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        Map<Fluid, Map<Vec3, int[]>> cache = type == FluidType.FLOWING ? INSTANCE.flowingRenderCache : (type == FluidType.STILL ? INSTANCE.stillRenderCache : INSTANCE.frozenRenderCache);
+        Map<Fluid, Map<Vec3, int[]>> cache = type == FluidType.FLOWING ? INSTANCE.flowingRenderCache : (type == FluidType.STILL
+            ? INSTANCE.stillRenderCache : INSTANCE.frozenRenderCache);
         Map<Vec3, int[]> displayLists = cache.get(fluid);
         int[] displayList;
         if (displayLists != null) {
@@ -191,7 +196,7 @@ public final class FluidRenderer {
             ent.zSize = size.zCoord;
             ent.texture = getFluidTexture(fluidStack, type);
 
-            RenderResizableCuboid.INSTANCE.renderCube(ent);
+            RenderResizableCuboid.INSTANCE.renderCube(ent, true, false);
 
             GL11.glEndList();
         }
