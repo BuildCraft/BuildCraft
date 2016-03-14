@@ -1,16 +1,17 @@
 {
 	"forge_marker": 1,
 	"defaults": {
+		"model": "buildcraftbuilders:quarry/main",
 		"textures": {
 			"particle":"buildcraftbuilders:blocks/quarry/top"
 		}
 	},
     "variants": {
         "facing": {
-        	"east":  { "submodel":"buildcraftbuilders:quarry/main" },
-        	"south": { "submodel":"buildcraftbuilders:quarry/main", "y": 90 },
-        	"west":  { "submodel":"buildcraftbuilders:quarry/main", "y": 180 },
-        	"north": { "submodel":"buildcraftbuilders:quarry/main", "y": 270 }
+        	"east":  { },
+        	"south": { "y": 90 },
+        	"west":  { "y": 180 },
+        	"north": { y": 270 }
         },
         "led_done": {
         	"true":  { "submodel":"buildcraftbuilders:quarry/led_active_on" },

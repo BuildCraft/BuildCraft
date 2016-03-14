@@ -1,7 +1,7 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "cube_all",
+		"model": "buildcraftcore:default_cube_all",
 		"textures": {
 			"particle":"buildcrafttransport:blocks/filtered_buffer/default",
 			"all":"buildcrafttransport:blocks/filtered_buffer/default"

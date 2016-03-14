@@ -1,21 +1,7 @@
 {
-    "elements": [
-        {   "from": [ 2, 0, 2 ],
-            "to": [ 14, 16, 14 ],
-            "faces": {
-                "down":  { "texture": "#down", "cullface": "down" },
-                "up":    { "texture": "#up", "cullface": "up" },
-                "north": { "texture": "#side" },
-                "south": { "texture": "#side" },
-                "west":  { "texture": "#side" },
-                "east":  { "texture": "#side" }
-            }
-        }
-    ],
+    "parent": "buildcraftfactory:block/tank",
     "textures": {
         "particle": "buildcraftfactory:blocks/tank/side",
-        "up": "buildcraftfactory:blocks/tank/topbottom",
-        "down": "buildcraftfactory:blocks/tank/topbottom",
 	    "side": "buildcraftfactory:blocks/tank/side"
     }
 }
