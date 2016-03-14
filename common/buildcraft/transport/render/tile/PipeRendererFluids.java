@@ -118,9 +118,10 @@ public class PipeRendererFluids {
             }
             trans.clientLastDisplayTime = ms;
 
-            TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID), FluidType.STILL);
+            // TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID),
+            // FluidType.STILL);
 
-            RenderUtils.setGLColorFromInt(renderData.color);
+            RenderUtils.setGLColorFromInt(-1);// renderData.color);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
             boolean above = renderData.amount[EnumFacing.UP.ordinal()] > 0;

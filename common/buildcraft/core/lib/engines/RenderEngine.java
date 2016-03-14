@@ -12,6 +12,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -156,6 +158,8 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
         RenderUtils.translate(boxOffset);
         RenderResizableCuboid.INSTANCE.renderCube(boxCuboid, EnumShadeArgument.FACE_LIGHT, locationFormula, faceFormula);
         RenderUtils.translate(Utils.multiply(boxOffset, -1));
+
+        GlStateManager.enableAlpha();
 
         GL11.glPopMatrix();
     }

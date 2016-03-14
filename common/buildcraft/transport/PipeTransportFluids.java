@@ -431,7 +431,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
                 .getID())) {
             changed = true;
             renderCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
-            renderCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
+            renderCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : -1;
             renderCache.flags = FluidRenderData.getFlags(fluidType);
             delta.set(0);
         }

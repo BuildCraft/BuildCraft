@@ -130,7 +130,6 @@ public final class LensPluggableModel extends BakedModelHolder implements IPipeP
             sprite = spriteWaterFlow;
         } else {
             shade = ColorUtils.getLightHex(colour);
-            if (format == DefaultVertexFormats.ITEM) shade = ColorUtils.convertBGRAtoRGBA(shade);
         }
 
         List<BakedQuad> quads = Lists.newArrayList();

@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 
@@ -23,7 +22,7 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
     private final IBakedModel parent;
 
     protected ChuteRenderModel(ImmutableList<BakedQuad> quads, IBakedModel parent) {
-        super(quads, null, DefaultVertexFormats.BLOCK);
+        super(quads, null, MutableQuad.ITEM_BLOCK_PADDING);
         this.parent = parent;
     }
 
@@ -63,7 +62,7 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
         for (MutableQuad q : quads) {
             q.setCalculatedDiffuse();
         }
-        BCModelHelper.appendBakeQuads(lst, quads);
+        BCModelHelper.appendBakeQuads(lst, MutableQuad.ITEM_BLOCK_PADDING, quads);
 
         return new ChuteRenderModel(ImmutableList.copyOf(lst), parent);
     }
