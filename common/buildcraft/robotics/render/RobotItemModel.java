@@ -1,7 +1,7 @@
 package buildcraft.robotics.render;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.core.lib.render.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
 import buildcraft.robotics.ItemRobot;
 import buildcraft.robotics.RoboticsProxyClient;
 import com.google.common.collect.ImmutableList;

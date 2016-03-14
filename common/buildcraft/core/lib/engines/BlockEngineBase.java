@@ -27,7 +27,7 @@ import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.client.render.ICustomHighlight;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {

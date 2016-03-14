@@ -20,8 +20,8 @@ import net.minecraft.world.World;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.config.DetailedConfigOption;
-import buildcraft.core.lib.render.RenderResizableCuboid;
 
 public class RenderLaser extends Render<EntityLaser> {
     /** Option for the number of pixels that each laser should render as. */

@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.Fluid;
 
-import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.RenderUtils;
 
 /** For the refinery, a kind of phantom slot for fluid. */
 public class FluidSlot extends AdvancedSlot {

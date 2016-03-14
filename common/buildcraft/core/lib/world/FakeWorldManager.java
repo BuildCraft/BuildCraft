@@ -21,7 +21,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class FakeWorldManager {

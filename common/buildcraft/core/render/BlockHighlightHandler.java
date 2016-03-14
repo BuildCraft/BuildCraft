@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.client.render.ICustomHighlight;
 
 public class BlockHighlightHandler {
     @SideOnly(Side.CLIENT)

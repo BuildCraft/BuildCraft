@@ -1,4 +1,4 @@
-package buildcraft.core.lib.render;
+package buildcraft.core.lib.client.model;
 
 import java.util.Collections;
 import java.util.List;

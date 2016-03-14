@@ -19,9 +19,9 @@ import net.minecraftforge.client.model.IModel;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.*;
-import buildcraft.core.lib.render.BCModelHelper;
-import buildcraft.core.lib.render.BakedModelHolder;
-import buildcraft.core.lib.render.MutableQuad;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 
 public final class FacadePluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer {

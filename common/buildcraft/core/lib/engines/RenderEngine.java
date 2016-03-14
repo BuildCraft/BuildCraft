@@ -28,12 +28,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.render.RenderResizableCuboid;
-import buildcraft.core.lib.render.RenderResizableCuboid.EnumShadeArgument;
-import buildcraft.core.lib.render.RenderResizableCuboid.IBlockLocation;
-import buildcraft.core.lib.render.RenderResizableCuboid.IFacingLocation;
-import buildcraft.core.lib.render.RenderResizableCuboid.RotatedFacingLocation;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderResizableCuboid.EnumShadeArgument;
+import buildcraft.core.lib.client.render.RenderResizableCuboid.IBlockLocation;
+import buildcraft.core.lib.client.render.RenderResizableCuboid.IFacingLocation;
+import buildcraft.core.lib.client.render.RenderResizableCuboid.RotatedFacingLocation;
 import buildcraft.core.lib.utils.Utils;
 
 public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
@@ -79,16 +79,15 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 
                 Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-                // int light = world.getCombinedLight(pos, 0);
-                // int skyLight = light % (1 << 16);
-                // int blockLight = light / (1 << 16);
-                // OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight, blockLight);
-                // RenderHelper.enableStandardItemLighting();
-
                 GL11.glPushMatrix();
                 GL11.glTranslated(x, y, z);
 
+                RenderHelper.disableStandardItemLighting();
+
                 fireRenderer(engine.type, engine.orientation, engine.progress, pos);
+
+                RenderHelper.enableStandardItemLighting();
+
                 GL11.glPopMatrix();
             }
         }

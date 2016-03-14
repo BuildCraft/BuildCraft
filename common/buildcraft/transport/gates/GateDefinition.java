@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.sprite.SpriteBuilder;
+import buildcraft.core.lib.client.sprite.SpriteBuilder;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public final class GateDefinition {

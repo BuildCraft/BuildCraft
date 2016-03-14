@@ -1,4 +1,4 @@
-package buildcraft.core.lib.sprites;
+package buildcraft.core.lib.client.sprite;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

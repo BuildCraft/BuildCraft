@@ -57,7 +57,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.client.render.ICustomHighlight;
 import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.IdentifiableAABB;
 import buildcraft.core.lib.utils.MatrixTranformations;

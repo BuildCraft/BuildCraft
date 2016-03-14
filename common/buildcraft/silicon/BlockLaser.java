@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.client.render.ICustomHighlight;
 import buildcraft.core.lib.utils.MatrixUtils;
 
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {

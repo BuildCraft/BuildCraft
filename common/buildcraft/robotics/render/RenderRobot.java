@@ -8,7 +8,7 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.IRobotOverlayItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.robotics.EntityRobot;

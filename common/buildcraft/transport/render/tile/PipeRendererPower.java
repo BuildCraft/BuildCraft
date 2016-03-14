@@ -12,8 +12,8 @@ import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.render.RenderResizableCuboid;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;

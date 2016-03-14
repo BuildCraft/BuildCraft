@@ -5,7 +5,7 @@ import java.util.Date;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.SessionVars;
 
 /** Side ledger for guis */

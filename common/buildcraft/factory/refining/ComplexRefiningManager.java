@@ -23,8 +23,8 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IComplexRefineryRecipeManager;
+import buildcraft.core.lib.client.sprite.SpriteColourMapper;
 import buildcraft.core.lib.fluids.FluidDefinition;
-import buildcraft.core.lib.sprites.SpriteColourMapper;
 import buildcraft.core.lib.utils.ModelHelper;
 
 public class ComplexRefiningManager {

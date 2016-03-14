@@ -23,9 +23,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.render.BCModelHelper;
-import buildcraft.core.lib.render.BakedModelHolder;
-import buildcraft.core.lib.render.MutableQuad;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {

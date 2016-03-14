@@ -16,7 +16,7 @@ import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderQuarry;
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.render.RenderVoid;
+import buildcraft.core.lib.client.render.RenderVoid;
 import buildcraft.core.render.RenderBuilder;
 
 public class BuilderProxyClient extends BuilderProxy {

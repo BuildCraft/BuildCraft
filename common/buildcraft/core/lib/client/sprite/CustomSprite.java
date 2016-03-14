@@ -1,4 +1,4 @@
-package buildcraft.core.lib.sprite;
+package buildcraft.core.lib.client.sprite;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,7 +13,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.lib.sprite.SpriteBuilder.ISpriteAction;
+import buildcraft.core.lib.client.sprite.SpriteBuilder.ISpriteAction;
 
 public class CustomSprite extends TextureAtlasSprite {
     private final List<ISpriteAction> actions;

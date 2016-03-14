@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import buildcraft.core.lib.render.FluidRenderer;
+import buildcraft.core.lib.client.render.FluidRenderer;
 import buildcraft.transport.pluggable.LensPluggableModel;
 import buildcraft.transport.pluggable.PlugPluggableModel;
 import buildcraft.transport.pluggable.PowerAdapterModel;

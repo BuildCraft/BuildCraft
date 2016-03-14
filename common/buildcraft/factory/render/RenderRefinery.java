@@ -19,9 +19,9 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.fluids.Tank;
-import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {

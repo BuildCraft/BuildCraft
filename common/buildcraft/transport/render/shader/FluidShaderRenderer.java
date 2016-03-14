@@ -25,9 +25,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.FluidRenderer.FluidType;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeTransportFluids;
 

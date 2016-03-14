@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.tablet.TabletBitmap;
-import buildcraft.core.lib.render.DynamicTextureBC;
+import buildcraft.core.lib.client.sprite.DynamicTextureBC;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletThread;
 

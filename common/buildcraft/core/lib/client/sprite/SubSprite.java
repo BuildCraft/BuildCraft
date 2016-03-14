@@ -1,4 +1,4 @@
-package buildcraft.core.lib.render;
+package buildcraft.core.lib.client.sprite;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,18 +9,18 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.util.ResourceLocation;
 
-public class SubIcon extends TextureAtlasSprite {
+public class SubSprite extends TextureAtlasSprite {
     private final TextureAtlasSprite icon;
     private float u, v;
     private final int w, h;
     private float uScale, vScale;
     private int iw, ih;
 
-    public SubIcon(TextureAtlasSprite icon, int u, int v) {
+    public SubSprite(TextureAtlasSprite icon, int u, int v) {
         this(icon, u, v, 16, 16);
     }
 
-    public SubIcon(TextureAtlasSprite icon, int u, int v, int w, int h) {
+    public SubSprite(TextureAtlasSprite icon, int u, int v, int w, int h) {
         super(icon.getIconName() + "_SubIcon");
         iw = icon.getIconWidth();
         ih = icon.getIconHeight();

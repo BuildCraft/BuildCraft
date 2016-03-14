@@ -13,9 +13,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.core.lib.render.BCModelHelper;
-import buildcraft.core.lib.render.BuildCraftBakedModel;
-import buildcraft.core.lib.render.MutableQuad;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.MutableQuad;
 
 public class ChuteRenderModel extends BuildCraftBakedModel {
     public static TextureAtlasSprite sideTexture = null;

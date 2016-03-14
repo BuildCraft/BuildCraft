@@ -13,10 +13,10 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.Vec3;
 
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.render.BCModelHelper;
-import buildcraft.core.lib.render.BuildCraftBakedModel;
-import buildcraft.core.lib.render.MutableQuad;
-import buildcraft.core.lib.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemPipe;

@@ -24,9 +24,9 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.core.lib.render.BCModelHelper;
-import buildcraft.core.lib.render.BuildCraftBakedModel;
-import buildcraft.core.lib.render.MutableQuad;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;

@@ -13,8 +13,8 @@ import net.minecraft.util.Vec3;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
 

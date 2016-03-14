@@ -1,4 +1,4 @@
-package buildcraft.core.lib.render;
+package buildcraft.core.lib.client.render;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

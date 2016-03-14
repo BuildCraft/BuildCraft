@@ -27,14 +27,14 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
-import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.FluidRenderer.FluidType;
-import buildcraft.core.lib.render.RenderUtils;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 

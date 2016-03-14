@@ -4,7 +4,7 @@ import net.minecraft.util.Vec3;
 
 import buildcraft.builders.TileQuarry;
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderBuilder;
 

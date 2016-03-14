@@ -1,4 +1,4 @@
-package buildcraft.core.lib.render;
+package buildcraft.core.lib.client.render;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.culling.ICamera;
@@ -32,6 +33,10 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.FacingRotationHelper;
+import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.client.model.MutableVertex;
 import buildcraft.core.lib.utils.Utils;
 
 public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
@@ -153,7 +158,9 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
                 return entPos.add(vec);
             }
         };
+        RenderHelper.disableStandardItemLighting();
         renderCube(entity, EnumShadeArgument.FACE_LIGHT, formula, null);
+        RenderHelper.enableStandardItemLighting();
         GL11.glPopMatrix();
     }
 
@@ -197,10 +204,6 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Tessellator tess = Tessellator.getInstance();
         WorldRenderer wr = tess.getWorldRenderer();
 
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-        GlStateManager.disableLighting();
-
         wr.begin(GL11.GL_QUADS, shadeTypes.vertexFormat);
 
         for (EnumFacing face : EnumFacing.values()) {
@@ -209,10 +212,6 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         }
 
         tess.draw();
-
-        GlStateManager.disableAlpha();
-        GlStateManager.enableLighting();
-        GlStateManager.enableFog();
     }
 
     private static void renderCuboidFace(WorldRenderer wr, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3 textureStart,

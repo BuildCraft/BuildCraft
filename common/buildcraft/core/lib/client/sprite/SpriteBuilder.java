@@ -1,4 +1,4 @@
-package buildcraft.core.lib.sprite;
+package buildcraft.core.lib.client.sprite;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
