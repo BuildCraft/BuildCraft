@@ -4,47 +4,27 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicSign extends SchematicTile {
-
+public class SchematicSignLike extends SchematicTile {
     boolean isWall;
 
-    public SchematicSign(boolean isWall) {
+    public SchematicSignLike(boolean isWall) {
         this.isWall = isWall;
-    }
-
-    @Override
-    public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Items.sign));
-    }
-
-    @Override
-    public void storeRequirements(IBuilderContext context, BlockPos pos) {
-        // cancel requirements reading
     }
 
     @Override
     public void rotateLeft(IBuilderContext context) {
         if (!isWall) {
-            Block standing = Blocks.standing_sign;
-            int meta = standing.getMetaFromState(state);
+            int meta = state.getBlock().getMetaFromState(state);
             double angle = (meta * 360.0) / 16.0;
             angle += 90.0;
             if (angle >= 360) {
                 angle -= 360;
             }
             meta = (int) (angle / 360.0 * 16.0);
-            state = standing.getStateFromMeta(meta);
+            state = state.getBlock().getStateFromMeta(meta);
         } else {
             super.rotateLeft(context);
         }

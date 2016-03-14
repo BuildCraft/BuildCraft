@@ -15,7 +15,7 @@ import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
-import buildcraft.core.builders.schematics.SchematicIgnore;
+import buildcraft.core.builders.schematics.*;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 import com.google.common.collect.Lists;
@@ -355,12 +355,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
         schemes.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-        schemes.registerSchematicBlock(Blocks.powered_repeater, SchematicCustomStack.class, new ItemStack(Items.repeater));
-        schemes.registerSchematicBlock(Blocks.unpowered_repeater, SchematicCustomStack.class, new ItemStack(Items.repeater));
-        schemes.registerSchematicBlock(Blocks.powered_comparator, SchematicCustomStack.class, new ItemStack(Items.comparator));
-        schemes.registerSchematicBlock(Blocks.unpowered_comparator, SchematicCustomStack.class, new ItemStack(Items.comparator));
+        schemes.registerSchematicBlock(Blocks.powered_repeater, SchematicCustomStackFloored.class, new ItemStack(Items.repeater));
+        schemes.registerSchematicBlock(Blocks.unpowered_repeater, SchematicCustomStackFloored.class, new ItemStack(Items.repeater));
+        schemes.registerSchematicBlock(Blocks.powered_comparator, SchematicCustomStackFloored.class, new ItemStack(Items.comparator));
+        schemes.registerSchematicBlock(Blocks.unpowered_comparator, SchematicCustomStackFloored.class, new ItemStack(Items.comparator));
 
         schemes.registerSchematicBlock(Blocks.daylight_detector, SchematicTile.class);
+        schemes.registerSchematicBlock(Blocks.daylight_detector_inverted, SchematicTile.class);
         schemes.registerSchematicBlock(Blocks.jukebox, SchematicJukebox.class);
         schemes.registerSchematicBlock(Blocks.noteblock, SchematicTile.class);
 
@@ -397,8 +398,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         schemes.registerSchematicBlock(Blocks.bed, SchematicBed.class);
 
-        schemes.registerSchematicBlock(Blocks.wall_sign, SchematicTile.class);
-        schemes.registerSchematicBlock(Blocks.standing_sign, SchematicStandingSign.class);
+        schemes.registerSchematicBlock(Blocks.wall_sign, SchematicSignLike.class, true);
+        schemes.registerSchematicBlock(Blocks.standing_sign, SchematicSignLike.class, false);
 
         schemes.registerSchematicBlock(Blocks.portal, SchematicPortal.class);
 
@@ -433,6 +434,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.iron_bars, SchematicStandalone.class);
 
         // Standard entities
+
+        schemes.registerSchematicEntity(EntityArmorStand.class, SchematicArmorStand.class);
 
         schemes.registerSchematicEntity(EntityMinecartEmpty.class, SchematicMinecart.class, Items.minecart);
         schemes.registerSchematicEntity(EntityMinecartFurnace.class, SchematicMinecart.class, Items.furnace_minecart);

@@ -1,4 +1,4 @@
-package buildcraft.builders.schematics;
+package buildcraft.core.builders.schematics;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;

@@ -4,6 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.core.lib.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.init.Items;
@@ -13,10 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
-
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.core.lib.utils.Utils;
 
 public class SchematicHanging extends SchematicEntity {
 
@@ -60,9 +59,15 @@ public class SchematicHanging extends SchematicEntity {
         entityNBT.setInteger("TileY", (int) pos.yCoord);
         entityNBT.setInteger("TileZ", (int) pos.zCoord);
 
-        int direction = entityNBT.getByte("Direction");
-        direction = direction < 3 ? direction + 1 : 0;
-        entityNBT.setInteger("Direction", direction);
+        if (entityNBT.hasKey("Facing")) {
+            int direction = entityNBT.getByte("Facing");
+            direction = direction < 3 ? direction + 1 : 0;
+            entityNBT.setByte("Facing", (byte) direction);
+        } else if (entityNBT.hasKey("Direction")) {
+            int direction = entityNBT.getByte("Direction");
+            direction = direction < 3 ? direction + 1 : 0;
+            entityNBT.setByte("Direction", (byte) direction);
+        }
     }
 
     @Override
@@ -91,16 +96,16 @@ public class SchematicHanging extends SchematicEntity {
     public boolean isAlreadyBuilt(IBuilderContext context) {
         Vec3 newPosition = new Vec3(entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
 
-        int dir = entityNBT.getInteger("Direction");
+        int dir = entityNBT.getByte("Facing");
 
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;
 
             if (e instanceof EntityHanging) {
                 EntityHanging h = (EntityHanging) e;
-                Vec3 existingPositon = new Vec3(h.chunkCoordX, h.chunkCoordY, h.chunkCoordZ);
+                Vec3 existingPosition = new Vec3(h.chunkCoordX, h.chunkCoordY, h.chunkCoordZ);
 
-                if (existingPositon.distanceTo(newPosition) < 0.1F && EnumFacing.getFront(dir) == ((EntityHanging) e).facingDirection) {
+                if (existingPosition.distanceTo(newPosition) < 0.1F && EnumFacing.getFront(dir) == ((EntityHanging) e).facingDirection) {
                     return true;
                 }
             }
