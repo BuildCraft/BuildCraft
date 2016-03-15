@@ -19,7 +19,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
     public BlockBlueprintLibrary() {
-        super(Material.wood, BCCreativeTab.get("main"), FACING_PROP);
+        super(Material.iron, BCCreativeTab.get("main"), FACING_PROP);
         setHardness(5F);
     }
 
