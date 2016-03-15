@@ -29,7 +29,6 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
-
     public BlockPos pos;
     public SchematicBlockBase schematic;
 
@@ -252,5 +251,4 @@ public class BuildingSlotBlock extends BuildingSlot {
             return schematic.buildTime();
         }
     }
-
 }
