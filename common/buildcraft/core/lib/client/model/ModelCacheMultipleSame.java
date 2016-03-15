@@ -24,7 +24,7 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     private final IModelCache<T> seperateCache;
 
     public ModelCacheMultipleSame(String mainName, IModelKeyMultipleSameMapper<K, T> mapper, IModelCache<T> seperateCache) {
-        this.mainCache = new ModelCacheHelper<>(mainName, this::load);
+        this.mainCache = new ModelCache<>(mainName, this::load);
         this.mapper = mapper;
         this.seperateCache = seperateCache;
     }
@@ -50,6 +50,13 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     @Override
     public void render(K key, WorldRenderer wr) {
         mainCache.render(key, wr);
+    }
+
+    @Override
+    public void renderDisplayList(K key) {
+        for (T to : mapper.map(key)) {
+            seperateCache.renderDisplayList(to);
+        }
     }
 
     public interface IModelKeyMultipleSameMapper<F, T> {

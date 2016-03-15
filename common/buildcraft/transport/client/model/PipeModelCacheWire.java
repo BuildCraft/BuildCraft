@@ -23,7 +23,7 @@ import buildcraft.transport.PipeRenderState;
 
 public class PipeModelCacheWire {
     public static final IModelCache<PipeWireKey> cacheAll;
-    private static final IModelCache<PipeWireKeySingle> cacheSingle;
+    public static final ModelCache<PipeWireKeySingle> cacheSingle;
 
     private static EnumMap<PipeWire, Vec3> wirePosMap = Maps.newEnumMap(PipeWire.class);
     private static EnumMap<PipeWire, AxisDirection[]> wireDirectionMap = Maps.newEnumMap(PipeWire.class);
@@ -45,7 +45,9 @@ public class PipeModelCacheWire {
         wirePosMap.put(PipeWire.GREEN, getOffset(PipeWire.GREEN));
         wirePosMap.put(PipeWire.YELLOW, getOffset(PipeWire.YELLOW));
 
-        cacheSingle = new ModelCacheHelper<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
+        cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).setNeedGL(true).setKeepMutable(false)
+                .build();
+        // new ModelCache<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
         cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
     }
 
@@ -137,7 +139,8 @@ public class PipeModelCacheWire {
 
         for (MutableQuad quad : unprocessed) {
             if (isLit) quad.lightf(1, 0);
-            quad.setCalculatedDiffuse();
+            quad.colourf(1, 1, 1, 1);
+            // quad.setCalculatedDiffuse();
             builder.add(quad);
         }
 

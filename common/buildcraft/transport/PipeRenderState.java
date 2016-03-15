@@ -55,9 +55,7 @@ public class PipeRenderState implements ISerializable, IPipeRenderState, Compara
 
     public boolean needsRenderUpdate() {
         return pipeConnectionMatrix.isDirty() || pipeConnectionBanned.isDirty() || pipeConnectionExtensions.isDirty() || glassColorDirty
-            || textureMatrix.isDirty()
-            // remove when wires have been fully pushed to the TESR
-            || wireMatrix.isDirty();
+            || textureMatrix.isDirty();
     }
 
     public void setExtension(EnumFacing direction, float extension) {

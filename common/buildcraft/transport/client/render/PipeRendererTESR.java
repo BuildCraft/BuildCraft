@@ -6,6 +6,9 @@ package buildcraft.transport.client.render;
 
 import com.google.common.base.Throwables;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -17,6 +20,8 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.*;
+import buildcraft.transport.client.model.PipeModelCacheWire;
+import buildcraft.transport.client.model.PipeModelCacheWire.PipeWireKey;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe> {
     public PipeRendererTESR() {}
@@ -32,7 +37,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
 
         if (pipe.pipe.container == null) return;
 
-        // renderWire(pipe, x, y, z);
+        renderWire(pipe, x, y, z);
         renderPluggables(pipe, x, y, z);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
@@ -51,21 +56,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         }
     }
 
-    // private void renderWire(TileGenericPipe pipe, double x, double y, double z) {
-    // PipeWireKey key = new PipeWireKey(pipe.renderState);
-    //
-    // // TODO: Compile this into a display list (in the cache)
-    //
-    // Tessellator tess = Tessellator.getInstance();
-    // WorldRenderer wr = tess.getWorldRenderer();
-    // wr.begin(GL11.GL_QUADS, MutableQuad.ITEM_LMAP);
-    // PipeModelCacheWire.cacheAll.render(key, wr);
-    //
-    // GL11.glPushMatrix();
-    // GL11.glTranslated(x, y, z);
-    // tess.draw();
-    // GL11.glPopMatrix();
-    // }
+    private static void renderWire(TileGenericPipe pipe, double x, double y, double z) {
+        PipeWireKey key = new PipeWireKey(pipe.renderState);
+
+        RenderHelper.disableStandardItemLighting();
+        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+
+        GL11.glPushMatrix();
+        GL11.glTranslated(x, y, z);
+        PipeModelCacheWire.cacheAll.renderDisplayList(key);
+        GL11.glPopMatrix();
+
+        RenderHelper.enableStandardItemLighting();
+    }
 
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
         TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);

@@ -7,10 +7,16 @@ import java.util.Map;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
 import buildcraft.api.core.BCLog;
@@ -18,22 +24,35 @@ import buildcraft.core.lib.config.DetailedConfigOption;
 
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a
  * configurable time period, and up to a maximum number. */
-public class ModelCacheHelper<K> implements IModelCache<K> {
+public class ModelCache<K> implements IModelCache<K> {
     private final DetailedConfigOption optionCacheSize;
     private final IModelGenerator<K> generator;
     private final LoadingCache<K, ModelValue> modelCache;
+    private final boolean keepMutable, needGL;
 
-    public ModelCacheHelper(String detailedName, IModelGenerator<K> generator) {
+    public ModelCache(String detailedName, IModelGenerator<K> generator) {
         this(detailedName, 160, generator);
     }
 
-    public ModelCacheHelper(String detailedName, int defaultMaxSize, IModelGenerator<K> generator) {
-        this.generator = generator;
+    public ModelCache(String detailedName, int defaultMaxSize, IModelGenerator<K> generator) {
+        this(new ModelCacheBuilder<>(detailedName, generator).setMaxSize(defaultMaxSize));
+    }
+
+    public ModelCache(ModelCacheBuilder<K> builder) {
+        this.generator = builder.generator;
+        String detailedName = builder.detailedName;
+        int defaultMaxSize = builder.maxSize;
         optionCacheSize = new DetailedConfigOption("render.cache." + detailedName + ".maxsize", Integer.toString(defaultMaxSize));
         int maxSize = optionCacheSize.getAsInt();
         if (maxSize < 0) maxSize = 0;
         BCLog.logger.info("Making cache " + detailedName + " with a maximum size of " + maxSize);
-        modelCache = CacheBuilder.newBuilder().maximumSize(maxSize).build(CacheLoader.from(this::load));
+        modelCache = CacheBuilder.newBuilder().maximumSize(maxSize).removalListener(this::onRemove).build(CacheLoader.from(this::load));
+        keepMutable = builder.keepMutable;
+        needGL = builder.needGL;
+    }
+
+    private void onRemove(RemovalNotification<K, ModelValue> notification) {
+        notification.getValue().cleanup();
     }
 
     private ModelValue load(K key) {
@@ -58,17 +77,41 @@ public class ModelCacheHelper<K> implements IModelCache<K> {
         }
     }
 
+    @Override
+    public void renderDisplayList(K key) {
+        ModelValue value = modelCache.getUnchecked(key);
+        GL11.glCallList(value.glDisplayList);
+    }
+
     public interface IModelGenerator<T> {
         List<MutableQuad> generate(T key);
     }
 
-    private static class ModelValue {
+    private class ModelValue {
         private final ImmutableList<MutableQuad> mutableQuads;
         // Identity because VertexFormat is mutable, so we cannot guarentee that nothing changes it.
         private Map<VertexFormat, ImmutableList<BakedQuad>> bakedQuads = new IdentityHashMap<>();
+        private int glDisplayList;
 
         public ModelValue(List<MutableQuad> quads) {
-            mutableQuads = ImmutableList.copyOf(quads);
+            if (keepMutable) mutableQuads = ImmutableList.copyOf(quads);
+            else mutableQuads = ImmutableList.of();
+            if (needGL) {
+                glDisplayList = GLAllocation.generateDisplayLists(1);
+                GL11.glNewList(glDisplayList, GL11.GL_COMPILE);
+
+                Tessellator t = Tessellator.getInstance();
+                WorldRenderer wr = t.getWorldRenderer();
+                wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+                for (MutableQuad q : quads) {
+                    q.render(wr);
+                }
+                t.draw();
+
+                GL11.glEndList();
+            } else {
+                glDisplayList = -1;
+            }
         }
 
         public ImmutableList<BakedQuad> bake(VertexFormat format) {
@@ -80,6 +123,13 @@ public class ModelCacheHelper<K> implements IModelCache<K> {
                 bakedQuads.put(format, builder.build());
             }
             return bakedQuads.get(format);
+        }
+
+        private void cleanup() {
+            if (glDisplayList > 0) {
+                GLAllocation.deleteDisplayLists(glDisplayList);
+                glDisplayList = -1;
+            }
         }
     }
 }

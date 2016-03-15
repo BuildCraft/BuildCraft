@@ -4,6 +4,23 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BCRegistry;
 import buildcraft.core.CompatHooks;
@@ -15,21 +32,6 @@ import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 
 @Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
         dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -97,9 +99,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileProgrammingTable.class, "buildcraft.silicon.TileProgrammingTable",
                 "net.minecraft.src.buildcraft.factory.TileProgrammingTable");
 
-        timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic",
-                "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
-        tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser",
+        timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement(
+                "buildcraft|silicon:achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock,
+                BuildCraftCore.diamondGearAchievement));
+        tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|silicon:achievement.tinglyLaser",
                 "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {

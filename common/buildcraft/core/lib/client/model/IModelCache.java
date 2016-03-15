@@ -14,4 +14,6 @@ public interface IModelCache<K> {
     ImmutableList<BakedQuad> bake(K key, VertexFormat format);
 
     void render(K key, WorldRenderer wr);
+
+    void renderDisplayList(K key);
 }

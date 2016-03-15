@@ -17,7 +17,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.IModelCache;
-import buildcraft.core.lib.client.model.ModelCacheHelper;
+import buildcraft.core.lib.client.model.ModelCache;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.config.DetailedConfigOption;
@@ -34,8 +34,8 @@ public class PipeModelCacheBase {
     static final IModelCache<PipeBaseTransclucentKey> cacheTranslucent;
 
     static {
-        cacheCutout = new ModelCacheHelper<>("pipe.base.cutout", PipeModelCacheBase::generateCutout);
-        cacheTranslucent = new ModelCacheHelper<>("pipe.base.transclucent", PipeModelCacheBase::generateTranslucent);
+        cacheCutout = new ModelCache<>("pipe.base.cutout", PipeModelCacheBase::generateCutout);
+        cacheTranslucent = new ModelCache<>("pipe.base.transclucent", PipeModelCacheBase::generateTranslucent);
     }
 
     private static List<MutableQuad> generateCutout(PipeBaseCutoutKey key) {

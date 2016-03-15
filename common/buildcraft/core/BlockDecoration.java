@@ -22,9 +22,9 @@ public class BlockDecoration extends BlockBuildCraftBase {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for (EnumDecoratedBlock type : EnumDecoratedBlock.values()) {
-            list.add(new ItemStack(this, 1, type.ordinal()));
-        }
+        // for (EnumDecoratedBlock type : EnumDecoratedBlock.values()) {
+        list.add(new ItemStack(this, 1, 0));
+        // }
     }
 
     @Override

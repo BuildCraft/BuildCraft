@@ -73,7 +73,7 @@ public class MutableVertex {
             else if (vfe.getUsage() == EnumUsage.COLOR) wr.color(colour[0], colour[1], colour[2], colour[3]);
             else if (vfe.getUsage() == EnumUsage.UV) {
                 if (vfe.getIndex() == 0) wr.tex(uv[0], uv[1]);
-                else if (vfe.getIndex() == 1) wr.lightmap((int) light[0], (int) light[1]);
+                else if (vfe.getIndex() == 1) wr.lightmap(lighti()[0], lighti()[1]);
             }
         }
         wr.endVertex();

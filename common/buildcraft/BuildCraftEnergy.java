@@ -88,7 +88,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
     public static FluidDefinition fuel;
     public static FluidDefinition redPlasma;
 
-    public static Achievement engineAchievement1;
     public static Achievement engineAchievement2;
     public static Achievement engineAchievement3;
 
@@ -303,9 +302,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
         EnergyProxy.proxy.registerBlockRenderers();
         EnergyProxy.proxy.registerTileEntities();
 
-        engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2",
-                3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
-        engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine",
+        engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.stirlingEngine",
+                "engineAchievement2", 3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
+        engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.combustionEngine",
                 "engineAchievement3", 5, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
     }
 

@@ -25,14 +25,12 @@ public class PipeModelCacheAll {
     static {
         List<ModelKeyWrapper<PipeAllCutoutKey, ?>> cutout = new ArrayList<>();
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getBaseCutout, PipeModelCacheBase.cacheCutout));
-        // Remove when wires are fully moved to the TESR
-        cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getWire, PipeModelCacheWire.cacheAll));
-
         // TODO: Pluggables!
         cacheCutout = new ModelCacheJoiner<>("pipe.all.cutout", cutout);
 
         List<ModelKeyWrapper<PipeAllTranslucentKey, ?>> translucent = new ArrayList<>();
         translucent.add(new ModelKeyWrapper<>(PipeAllTranslucentKey::getBaseTranslucent, PipeModelCacheBase.cacheTranslucent));
+        // TODO: Pluggables!
         cacheTranslucent = new ModelCacheJoiner<>("pipe.all.transclucent", translucent);
     }
 

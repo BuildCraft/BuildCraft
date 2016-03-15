@@ -273,12 +273,14 @@ public class BuildCraftFactory extends BuildCraftMod {
         BuilderAPI.schematicRegistry.registerSchematicBlock(chuteBlock, SchematicTile.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(plainPipeBlock, SchematicFree.class);
 
-        aLotOfCraftingAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.aLotOfCrafting",
-                "aLotOfCraftingAchievement", 1, 2, autoWorkbenchBlock, BuildCraftCore.woodenGearAchievement));
-        straightDownAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.straightDown",
+        aLotOfCraftingAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement(
+                "buildcraft|factory:achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, autoWorkbenchBlock,
+                BuildCraftCore.woodenGearAchievement));
+        straightDownAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|factory:achievement.straightDown",
                 "straightDownAchievement", 5, 2, miningWellBlock, BuildCraftCore.ironGearAchievement));
-        refineAndRedefineAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.refineAndRedefine",
-                "refineAndRedefineAchievement", 10, 0, refineryBlock, BuildCraftCore.diamondGearAchievement));
+        refineAndRedefineAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement(
+                "buildcraft|factory:achievement.refineAndRedefine", "refineAndRedefineAchievement", 10, 0, refineryBlock,
+                BuildCraftCore.diamondGearAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
