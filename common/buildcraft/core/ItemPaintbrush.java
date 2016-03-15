@@ -4,8 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import java.util.List;
-
+import buildcraft.api.blocks.IColorRemovable;
+import buildcraft.api.core.EnumColor;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
+import buildcraft.core.lib.utils.NBTUtils;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,15 +19,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blocks.IColorRemovable;
-import buildcraft.api.core.EnumColor;
-import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import java.util.List;
 
 public class ItemPaintbrush extends ItemBuildCraft {
     private static final int MAX_DAMAGE = 63;
@@ -99,22 +97,19 @@ public class ItemPaintbrush extends ItemBuildCraft {
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return true;
-        }
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         int dye = getColor(stack);
         Block block = world.getBlockState(pos).getBlock();
 
         if (block == null) {
-            return true;
+            return false;
         }
 
         if (dye >= 0) {
             if (block.recolorBlock(world, pos, side, EnumDyeColor.byMetadata(15 - dye))) {
                 player.swingItem();
                 setDamage(stack, getDamage(stack) + 1);
-                return true;
+                return !world.isRemote;
             }
         } else {
             // NOTE: Clean paint brushes never damage.
@@ -126,7 +121,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
             }
         }
 
-        return true;
+        return false;
     }
 
     @Override
