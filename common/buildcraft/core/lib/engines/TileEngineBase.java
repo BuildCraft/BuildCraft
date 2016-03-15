@@ -341,8 +341,10 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
             if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
                 orientation = o;
+
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
                 worldObj.markBlockForUpdate(pos);
-                worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
+                worldObj.notifyNeighborsRespectDebug(pos, worldObj.getBlockState(pos).getBlock());
 
                 return true;
             }
