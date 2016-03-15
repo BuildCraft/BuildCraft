@@ -34,18 +34,19 @@ public class BCModelHelper {
     // Size of each array
     public static final int ARRAY_SIZE = 7;
 
-    public static Vector3f addOrNegate(Vector3f coord, boolean u, boolean v) {
-        boolean zisv = coord.x != 0 && coord.y == 0;
-        Vector3f neg = new Vector3f(coord.x * (u ? 1 : -1), coord.y * (v ? -1 : 1), coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1)));
-        return neg;
-    }
-
     public static MutableQuad createFace(EnumFacing face, Tuple3f a, Tuple3f b, Tuple3f c, Tuple3f d, float[] uvs) {
         MutableQuad mutable = new MutableQuad(-1, face);
-        mutable.getVertex(0).positionv(a).texf(uvs[U_MIN], uvs[V_MIN]);
-        mutable.getVertex(1).positionv(b).texf(uvs[U_MIN], uvs[V_MAX]);
-        mutable.getVertex(2).positionv(c).texf(uvs[U_MAX], uvs[V_MAX]);
-        mutable.getVertex(3).positionv(d).texf(uvs[U_MAX], uvs[V_MIN]);
+        if (face == null || shouldInvertForRender(face)) {
+            mutable.getVertex(0).positionv(a).texf(uvs[U_MIN], uvs[V_MIN]);
+            mutable.getVertex(1).positionv(b).texf(uvs[U_MIN], uvs[V_MAX]);
+            mutable.getVertex(2).positionv(c).texf(uvs[U_MAX], uvs[V_MAX]);
+            mutable.getVertex(3).positionv(d).texf(uvs[U_MAX], uvs[V_MIN]);
+        } else {
+            mutable.getVertex(3).positionv(a).texf(uvs[U_MIN], uvs[V_MIN]);
+            mutable.getVertex(2).positionv(b).texf(uvs[U_MIN], uvs[V_MAX]);
+            mutable.getVertex(1).positionv(c).texf(uvs[U_MAX], uvs[V_MAX]);
+            mutable.getVertex(0).positionv(d).texf(uvs[U_MAX], uvs[V_MIN]);
+        }
         return mutable;
     }
 
@@ -125,13 +126,22 @@ public class BCModelHelper {
         return getPoints(centerOfFace, faceRadius);
     }
 
-    public static Point3f[] getPoints(Point3f centerFace, Vector3f faceRadius) {
+    public static Point3f[] getPoints(Point3f centerFace, Tuple3f faceRadius) {
         Point3f[] array = { new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace), new Point3f(centerFace) };
         array[0].add(addOrNegate(faceRadius, false, false));
         array[1].add(addOrNegate(faceRadius, false, true));
         array[2].add(addOrNegate(faceRadius, true, true));
         array[3].add(addOrNegate(faceRadius, true, false));
         return array;
+    }
+
+    public static Vector3f addOrNegate(Tuple3f coord, boolean u, boolean v) {
+        boolean zisv = coord.x != 0 && coord.y == 0;
+        float x = coord.x * (u ? 1 : -1);
+        float y = coord.y * (v ? -1 : 1);
+        float z = coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1));
+        Vector3f neg = new Vector3f(x, y, z);
+        return neg;
     }
 
     public static boolean shouldInvertForRender(EnumFacing face) {

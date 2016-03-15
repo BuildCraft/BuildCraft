@@ -1,4 +1,4 @@
-package buildcraft.transport.render.shader;
+package buildcraft.transport.client.shader;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;

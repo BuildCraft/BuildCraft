@@ -1,4 +1,4 @@
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,9 @@ import buildcraft.core.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.render.tile.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.render.tile.PipeModelCacheBase.PipeBaseTransclucentKey;
-import buildcraft.transport.render.tile.PipeModelCacheWire.PipeWireKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCacheWire.PipeWireKey;
 
 public class PipeModelCacheAll {
     private static final IModelCache<PipeAllCutoutKey> cacheCutout;
@@ -25,7 +25,9 @@ public class PipeModelCacheAll {
     static {
         List<ModelKeyWrapper<PipeAllCutoutKey, ?>> cutout = new ArrayList<>();
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getBaseCutout, PipeModelCacheBase.cacheCutout));
+        // Remove when wires are fully moved to the TESR
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getWire, PipeModelCacheWire.cacheAll));
+
         // TODO: Pluggables!
         cacheCutout = new ModelCacheJoiner<>("pipe.all.cutout", cutout);
 

@@ -1,14 +1,13 @@
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 
 import javax.vecmath.Vector3f;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -18,13 +17,14 @@ import net.minecraft.util.Vec3;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.client.model.BCModelHelper;
-import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeRenderState;
 
-public class PipeRendererWires {
+public class PipeModelCacheWire {
+    public static final IModelCache<PipeWireKey> cacheAll;
+    private static final IModelCache<PipeWireKeySingle> cacheSingle;
+
     private static EnumMap<PipeWire, Vec3> wirePosMap = Maps.newEnumMap(PipeWire.class);
     private static EnumMap<PipeWire, AxisDirection[]> wireDirectionMap = Maps.newEnumMap(PipeWire.class);
     private static final double WIRE_WIDTH = 0.05;
@@ -44,6 +44,9 @@ public class PipeRendererWires {
         wirePosMap.put(PipeWire.BLUE, getOffset(PipeWire.BLUE));
         wirePosMap.put(PipeWire.GREEN, getOffset(PipeWire.GREEN));
         wirePosMap.put(PipeWire.YELLOW, getOffset(PipeWire.YELLOW));
+
+        cacheSingle = new ModelCacheHelper<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
+        cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
     }
 
     private static Vec3 getOffset(PipeWire wire) {
@@ -65,18 +68,12 @@ public class PipeRendererWires {
         return base.addVector(axisPos[0] ? inset : offset, axisPos[1] ? inset : offset, axisPos[2] ? inset : offset);
     }
 
-    public static void renderPipeWires(List<BakedQuad> quads, PipeRenderState renderState) {
-        for (PipeWire wire : PipeWire.values()) {
-            if (renderState.wireMatrix.hasWire(wire)) {
-                renderPipeWire(quads, renderState, wire);
-            }
-        }
-    }
-
-    private static void renderPipeWire(List<BakedQuad> quads, PipeRenderState renderState, PipeWire wire) {
+    private static ImmutableList<MutableQuad> generate(PipeWireKeySingle key) {
+        PipeWire wire = key.type;
         Vec3 pos = wirePosMap.get(wire);
 
-        boolean isLit = renderState.wireMatrix.isWireLit(wire);
+        boolean isLit = key.on;
+        // BCLog.logger.info("generate[" + wire + ", " + isLit + ", " + key.connections + "]");
 
         TextureAtlasSprite sprite = BuildCraftTransport.instance.wireIconProvider.getIcon(wire, isLit);
 
@@ -91,7 +88,7 @@ public class PipeRendererWires {
             boolean positive = face.getAxisDirection() == AxisDirection.POSITIVE;
             Axis axis = face.getAxis();
             AxisDirection wireCenter = directions[axis.ordinal()];
-            if (renderState.wireMatrix.isWireConnected(wire, face)) {
+            if (key.connections.contains(face)) {
                 if (wireCenter == face.getAxisDirection()) {
                     numFaces++;
                 }
@@ -112,7 +109,7 @@ public class PipeRendererWires {
                     if (face2.getOpposite() == face) {
                         continue;
                     }
-                    anyOther |= renderState.wireMatrix.isWireConnected(wire, face2);
+                    anyOther |= key.connections.contains(face2);
                 }
                 if (anyOther) {
                     continue;
@@ -136,11 +133,15 @@ public class PipeRendererWires {
             renderCuboid(unprocessed, center, centerSize, sprite);
         }
 
+        ImmutableList.Builder<MutableQuad> builder = ImmutableList.builder();
+
         for (MutableQuad quad : unprocessed) {
             if (isLit) quad.lightf(1, 0);
             quad.setCalculatedDiffuse();
-            quads.add(quad.toUnpacked());
+            builder.add(quad);
         }
+
+        return builder.build();
     }
 
     private static void renderCuboid(List<MutableQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {
@@ -164,7 +165,77 @@ public class PipeRendererWires {
             uvs[BuildCraftBakedModel.U_MAX] = sprite.getInterpolatedU(Utils.getValue(size, uFace.getAxis()) * 16);
             uvs[BuildCraftBakedModel.V_MIN] = sprite.getMinV();
             uvs[BuildCraftBakedModel.V_MAX] = sprite.getInterpolatedV(Utils.getValue(size, vFace.getAxis()) * 16);
-            BCModelHelper.appendQuads(quads, BCModelHelper.createDoubleFace(face, center, radiusF, uvs));
+            BCModelHelper.appendQuads(quads, BCModelHelper.createFace(face, center, radiusF, uvs));
+        }
+    }
+
+    public static final class PipeWireKey {
+        public final ImmutableSet<PipeWireKeySingle> keys;
+        private final int hash;
+
+        public PipeWireKey(PipeRenderState state) {
+            ImmutableSet.Builder<PipeWireKeySingle> set = ImmutableSet.builder();
+            for (PipeWire wire : PipeWire.VALUES) {
+                if (!state.wireMatrix.hasWire(wire)) continue;
+                EnumSet<EnumFacing> connections = EnumSet.noneOf(EnumFacing.class);
+                for (EnumFacing face : EnumFacing.values()) {
+                    if (state.wireMatrix.isWireConnected(wire, face)) connections.add(face);
+                }
+                set.add(new PipeWireKeySingle(wire, state.wireMatrix.isWireLit(wire), connections));
+            }
+            keys = set.build();
+            hash = keys.hashCode();
+        }
+
+        public static ImmutableSet<PipeWireKeySingle> getKeys(PipeWireKey key) {
+            return key.keys;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            PipeWireKey other = (PipeWireKey) obj;
+            if (keys == null) {
+                if (other.keys != null) return false;
+            } else if (!keys.equals(other.keys)) return false;
+            return true;
+        }
+    }
+
+    public static final class PipeWireKeySingle {
+        public final PipeWire type;
+        public final boolean on;
+        public final EnumSet<EnumFacing> connections;
+        private final int hash;
+
+        public PipeWireKeySingle(PipeWire type, boolean on, EnumSet<EnumFacing> connections) {
+            this.type = type;
+            this.on = on;
+            this.connections = connections;
+            hash = Objects.hash(type, on, connections);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            PipeWireKeySingle other = (PipeWireKeySingle) obj;
+            if (on != other.on) return false;
+            if (type != other.type) return false;
+            return connections.containsAll(other.connections) && other.connections.containsAll(connections);
         }
     }
 }

@@ -1,4 +1,4 @@
-package buildcraft.transport.render;
+package buildcraft.transport.client.model;
 
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,8 @@ import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.client.model.GatePluggableModel.GateState;
 import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.render.GatePluggableModel.GateState;
 
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
     public static final GateItemModel INSTANCE = new GateItemModel();

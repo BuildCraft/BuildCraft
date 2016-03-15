@@ -15,7 +15,7 @@ import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.render.FacadePluggableModel;
+import buildcraft.transport.client.model.FacadePluggableModel;
 
 import io.netty.buffer.ByteBuf;
 

@@ -1,4 +1,4 @@
-package buildcraft.transport.render;
+package buildcraft.transport.client.model;
 
 import com.google.common.collect.ImmutableList;
 
@@ -19,7 +19,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
-import buildcraft.transport.render.tile.PipeModelCacheAll;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
     public PipeBlockModel() {

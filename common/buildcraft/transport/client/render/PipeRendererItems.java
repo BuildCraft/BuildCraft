@@ -1,4 +1,4 @@
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.render;
 
 import org.lwjgl.opengl.GL11;
 

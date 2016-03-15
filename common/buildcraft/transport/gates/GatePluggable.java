@@ -22,7 +22,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.render.GatePluggableModel;
+import buildcraft.transport.client.model.GatePluggableModel;
 
 import io.netty.buffer.ByteBuf;
 

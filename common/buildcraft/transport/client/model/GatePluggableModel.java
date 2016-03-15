@@ -1,4 +1,4 @@
-package buildcraft.transport.render;
+package buildcraft.transport.client.model;
 
 import java.util.Collection;
 import java.util.List;

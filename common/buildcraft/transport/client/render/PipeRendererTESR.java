@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.render;
 
 import com.google.common.base.Throwables;
 
@@ -32,6 +32,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
 
         if (pipe.pipe.container == null) return;
 
+        // renderWire(pipe, x, y, z);
         renderPluggables(pipe, x, y, z);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
@@ -49,6 +50,22 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
             throw Throwables.propagate(t);
         }
     }
+
+    // private void renderWire(TileGenericPipe pipe, double x, double y, double z) {
+    // PipeWireKey key = new PipeWireKey(pipe.renderState);
+    //
+    // // TODO: Compile this into a display list (in the cache)
+    //
+    // Tessellator tess = Tessellator.getInstance();
+    // WorldRenderer wr = tess.getWorldRenderer();
+    // wr.begin(GL11.GL_QUADS, MutableQuad.ITEM_LMAP);
+    // PipeModelCacheWire.cacheAll.render(key, wr);
+    //
+    // GL11.glPushMatrix();
+    // GL11.glTranslated(x, y, z);
+    // tess.draw();
+    // GL11.glPopMatrix();
+    // }
 
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
         TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);

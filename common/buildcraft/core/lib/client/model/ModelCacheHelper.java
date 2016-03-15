@@ -3,7 +3,6 @@ package buildcraft.core.lib.client.model;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -20,23 +19,21 @@ import buildcraft.core.lib.config.DetailedConfigOption;
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a
  * configurable time period, and up to a maximum number. */
 public class ModelCacheHelper<K> implements IModelCache<K> {
-    private final DetailedConfigOption optionCacheExpire, optionCacheSize;
+    private final DetailedConfigOption optionCacheSize;
     private final IModelGenerator<K> generator;
     private final LoadingCache<K, ModelValue> modelCache;
 
     public ModelCacheHelper(String detailedName, IModelGenerator<K> generator) {
+        this(detailedName, 160, generator);
+    }
+
+    public ModelCacheHelper(String detailedName, int defaultMaxSize, IModelGenerator<K> generator) {
         this.generator = generator;
-        optionCacheExpire = new DetailedConfigOption("render.cache." + detailedName + ".keepalive", "60");
-        optionCacheSize = new DetailedConfigOption("render.cache." + detailedName + ".maxsize", "160");
-        int expireTime = optionCacheExpire.getAsInt();
-        if (expireTime < 10) expireTime = 10;
+        optionCacheSize = new DetailedConfigOption("render.cache." + detailedName + ".maxsize", Integer.toString(defaultMaxSize));
         int maxSize = optionCacheSize.getAsInt();
         if (maxSize < 0) maxSize = 0;
-        BCLog.logger.info("Making cache " + detailedName + " with expiry after " + expireTime + ", maxSize of " + maxSize);
-        modelCache = CacheBuilder.newBuilder()// Use our own
-                .expireAfterAccess(expireTime, TimeUnit.SECONDS)// Use our own
-                .maximumSize(maxSize)// Use our own
-                .build(CacheLoader.from(this::load));
+        BCLog.logger.info("Making cache " + detailedName + " with a maximum size of " + maxSize);
+        modelCache = CacheBuilder.newBuilder().maximumSize(maxSize).build(CacheLoader.from(this::load));
     }
 
     private ModelValue load(K key) {

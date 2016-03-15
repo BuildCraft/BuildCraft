@@ -1,4 +1,4 @@
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.model;
 
 import java.util.*;
 
@@ -130,14 +130,16 @@ public class PipeModelCacheBase {
             List<MutableQuad> mutableIn) {
         Vec3 actualCenter = Utils.convert(face, 0.25 + extension / 2).add(Utils.VEC_HALF);
 
-        Vec3 actualSize = Utils.convert(Utils.convertPositive(face), extension);
-        actualSize = actualSize.add(Utils.convertExcept(face, 0.5));
+        EnumFacing positive = Utils.convertPositive(face);
+
+        Vec3 actualSize = Utils.convert(positive, extension);
+        actualSize = actualSize.add(Utils.convertExcept(positive, 0.5));
 
         if (smaller) {
             // Decrease the entire size
             Vec3 allSmaller = actualSize.subtract(Utils.vec3(0.02));
             // Increase the size of axis the connection is in.
-            actualSize = allSmaller.add(Utils.convert(Utils.convertPositive(face), 0.02));
+            actualSize = allSmaller.add(Utils.convert(positive, 0.02));
         }
 
         Vec3 pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));

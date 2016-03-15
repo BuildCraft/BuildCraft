@@ -1,4 +1,4 @@
-package buildcraft.transport.render.tile;
+package buildcraft.transport.client.render;
 
 import java.util.List;
 
