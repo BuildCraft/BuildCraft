@@ -401,6 +401,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.wall_sign, SchematicSignLike.class, true);
         schemes.registerSchematicBlock(Blocks.standing_sign, SchematicSignLike.class, false);
 
+        schemes.registerSchematicBlock(Blocks.wall_banner, SchematicBanner.class, true);
+        schemes.registerSchematicBlock(Blocks.standing_banner, SchematicBanner.class, false);
+
         schemes.registerSchematicBlock(Blocks.portal, SchematicPortal.class);
 
         schemes.registerSchematicBlock(Blocks.rail, SchematicRail.class);

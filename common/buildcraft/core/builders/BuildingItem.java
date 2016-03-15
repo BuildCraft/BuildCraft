@@ -50,10 +50,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     private float lifetimeDisplay = 0;
     private float maxLifetime = 0;
     private boolean initialized = false;
-    /** Velocity */
     private Vec3 velocity;
-    @Deprecated
-    private double vx, vy, vz;
     private double maxHeight;
     private float lifetime = 0;
 
