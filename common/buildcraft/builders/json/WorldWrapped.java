@@ -1,71 +1,65 @@
 package buildcraft.builders.json;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.storage.ISaveHandler;
 
 public class WorldWrapped extends World {
 	private final World wrapped;
-	private final int targetX, targetY, targetZ;
+	private final BlockPos targetPos;
 	private final TileEntity targetTE;
 
-	public WorldWrapped(World wrapped, int x, int y, int z, TileEntity targetTE) {
-		super(wrapped.getSaveHandler(), wrapped.getWorldInfo().getWorldName(), wrapped.provider, new WorldSettings(wrapped.getWorldInfo()), wrapped.theProfiler);
+	public WorldWrapped(World wrapped, BlockPos pos, TileEntity targetTE) {
+		super(wrapped.getSaveHandler(), wrapped.getWorldInfo(), wrapped.provider, wrapped.theProfiler, false);
 		this.wrapped = wrapped;
-		this.targetX = x;
-		this.targetY = y;
-		this.targetZ = z;
+		this.targetPos = pos;
 		this.targetTE = targetTE;
 	}
 
 	@Override
-	public TileEntity getTileEntity(int x, int y, int z) {
-		if (x == targetX && y == targetY && z == targetZ) {
+	public TileEntity getTileEntity(BlockPos pos) {
+		if (targetPos.equals(pos)) {
 			return targetTE;
 		} else {
-			return super.getTileEntity(x, y, z);
+			return super.getTileEntity(pos);
 		}
 	}
 
 	// Minor safeguards
 
 	@Override
-	public boolean setBlock(int x, int y, int z, Block block, int meta, int flag) {
+	public boolean setBlockState(BlockPos pos, IBlockState state, int flag) {
 		return false;
 	}
 
 	@Override
-	public boolean setBlockToAir(int x, int y, int z) {
+	public boolean setBlockToAir(BlockPos pos) {
 		return false;
 	}
 
 	@Override
-	public boolean setBlockMetadataWithNotify(int x, int y, int z, int meta, int flag) {
-		markAndNotifyBlock(x, y, z, getChunkFromBlockCoords(x, z), getBlock(x, y, z), getBlock(x, y, z), flag);
+	public boolean setBlockState(BlockPos pos, IBlockState state) {
 		return false;
 	}
 
 	@Override
-	public void setTileEntity(int x, int y, int z, TileEntity tileEntity) {
+	public void setTileEntity(BlockPos pos, TileEntity tileEntity) {
 
 	}
 
 	// Required to implement
 
 	@Override
-	protected IChunkProvider createChunkProvider() {
-		return wrapped.getChunkProvider();
+	protected int getRenderDistanceChunks() {
+		return 1;
 	}
 
 	@Override
-	protected int func_152379_p() {
-		return 0;
+	protected IChunkProvider createChunkProvider() {
+		return wrapped.getChunkProvider();
 	}
 
 	@Override

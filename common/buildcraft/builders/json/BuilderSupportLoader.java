@@ -1,16 +1,14 @@
 package buildcraft.builders.json;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraft.block.Block;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.SchematicRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.ResourceLocation;
+
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class BuilderSupportLoader {
 	public static final BuilderSupportLoader INSTANCE = new BuilderSupportLoader();
@@ -23,9 +21,9 @@ public final class BuilderSupportLoader {
 	private void register(BuilderSupportFile supportFile, BuilderSupportEntry e, String modId, String name, Set<Block> loadedBlocks) {
 		Block b = Block.getBlockFromName(modId + ":" + name);
 
-		for (int i = 0; i < 16; i++) {
-			if (!SchematicRegistry.INSTANCE.isSupported(b, i) && e.isValidForMeta(i) && supportFile.isValidForMeta(i)) {
-				SchematicRegistry.INSTANCE.registerSchematicBlock(b, i, SchematicJSON.class, supportFile, name);
+		for (IBlockState state : b.getBlockState().getValidStates()) {
+			if (!SchematicRegistry.INSTANCE.isSupported(state) && e.isValidForState(state) && supportFile.isValidForState(state)) {
+				SchematicRegistry.INSTANCE.registerSchematicBlock(state, SchematicJSON.class, supportFile, name);
 				loadedBlocks.add(b);
 			}
 		}
@@ -59,16 +57,16 @@ public final class BuilderSupportLoader {
 	}
 
 	public void init() {
-		for (String blockFullName : (Collection<String>) Block.blockRegistry.getKeys()) {
-			Block b = (Block) Block.blockRegistry.getObject(blockFullName);
+		for (ResourceLocation blockLoc : Block.blockRegistry.getKeys()) {
+			Block b = Block.blockRegistry.getObject(blockLoc);
 			if (b == null) {
 				continue;
 			}
 
 			boolean noSupport = false;
 
-			for (int i = 0; i < 16; i++) {
-				if (!SchematicRegistry.INSTANCE.isSupported(b, i)) {
+			for (IBlockState state : b.getBlockState().getValidStates()) {
+				if (!SchematicRegistry.INSTANCE.isSupported(state)) {
 					noSupport = true;
 					break;
 				}
@@ -81,10 +79,10 @@ public final class BuilderSupportLoader {
 			String modId, pathDir, blockName, pathName;
 			ClassLoader classLoader = b.getClass().getClassLoader();
 
-			if (blockFullName.contains(":")) {
-				modId = blockFullName.substring(0, blockFullName.indexOf(":"));
+			if (blockLoc.getResourceDomain().length() > 0) {
+				modId = blockLoc.getResourceDomain();
 				pathDir = modId.toLowerCase().replaceAll("[^A-Za-z0-9]", "");
-				blockName = blockFullName.substring(blockFullName.indexOf(":") + 1);
+				blockName = blockLoc.getResourcePath();
 				pathName = blockName;
 				if (pathDir.equals("minecraft")) {
 					pathDir = "buildcraftbuilders";
@@ -93,8 +91,8 @@ public final class BuilderSupportLoader {
 			} else {
 				modId = "minecraft";
 				pathDir = "buildcraftbuilders";
-				blockName = blockFullName;
-				pathName = "unknown/" + blockFullName;
+				blockName = blockLoc.getResourcePath();
+				pathName = "unknown/" + blockLoc.getResourcePath();
 			}
 
 			if (!checkedModIds.contains(modId)) {

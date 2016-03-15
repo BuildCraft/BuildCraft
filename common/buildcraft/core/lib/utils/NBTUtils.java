@@ -4,21 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.UUID;
-
+import buildcraft.api.core.BCLog;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.nbt.NBTBase.NBTPrimitive;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BCLog;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 public final class NBTUtils {
     public static final int BYTE = 1;
@@ -37,6 +35,49 @@ public final class NBTUtils {
     private NBTUtils() {
 
     }
+
+	public static NBTBase getTag(NBTTagCompound cptBase, String nameBase) {
+		NBTTagCompound cpt = cptBase;
+		String name = nameBase;
+
+		while (cpt != null && name.contains("/")) {
+			String cptName = name.substring(0, name.indexOf("/"));
+			if (cpt.hasKey(cptName, 10)) {
+				cpt = cpt.getCompoundTag(cptName);
+				name = name.substring(name.indexOf("/") + 1);
+			}
+		}
+
+		return cpt != null ? cpt.getTag(name) : null;
+	}
+
+	public static void setInteger(NBTTagCompound cptBase, String nameBase, int i) {
+		NBTBase field = getTag(cptBase, nameBase);
+		if (field instanceof NBTTagByte) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagByte((byte) i));
+		} else if (field instanceof NBTTagShort) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagShort((short) i));
+		} else if (field instanceof NBTTagInt) {
+			NBTUtils.setTag(cptBase, nameBase, new NBTTagInt(i));
+		}
+	}
+
+	public static void setTag(NBTTagCompound cptBase, String nameBase, NBTBase tag) {
+		NBTTagCompound cpt = cptBase;
+		String name = nameBase;
+
+		while (cpt != null && name.contains("/")) {
+			String cptName = name.substring(0, name.indexOf("/"));
+			if (cpt.hasKey(cptName, 10)) {
+				cpt = cpt.getCompoundTag(cptName);
+				name = name.substring(name.indexOf("/") + 1);
+			}
+		}
+
+		if (cpt != null) {
+			cpt.setTag(name, tag);
+		}
+	}
 
     public static NBTTagCompound load(byte[] data) {
         try {

@@ -1,26 +1,20 @@
 package buildcraft.builders.json;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-
-import net.minecraft.block.Block;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.core.lib.utils.NBTUtils;
 import net.minecraft.block.BlockFalling;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.api.core.BlockIndex;
-import buildcraft.core.lib.utils.NBTUtils;
+import java.util.*;
 
 public class SchematicJSON extends SchematicTile {
 	public final String entryName;
@@ -57,7 +51,7 @@ public class SchematicJSON extends SchematicTile {
 	}
 
 	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
 		if (!entry.ignore) {
 			super.getRequirementsForPlacement(context, requirements);
 		}
@@ -71,66 +65,45 @@ public class SchematicJSON extends SchematicTile {
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		super.initializeFromObjectAt(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		super.initializeFromObjectAt(context, pos);
 		entry = file.getEntryForSchematic(this);
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
 		if (!entry.ignore) {
-			super.placeInWorld(context, x, y, z, stacks);
+			super.placeInWorld(context, pos, stacks);
 		}
 	}
 
-	protected Block getPlacedBlock() {
+	protected IBlockState getPlacedState() {
 		if (entry.placedBlock != null) {
 			BuilderSupportUtils.BlockItemPair bip = BuilderSupportUtils.parseBlockItemPair(entry.placedBlock);
 			if (bip != null) {
-				return bip.block;
+				return bip.block.getStateFromMeta(bip.meta);
 			}
 		}
-		return block;
-	}
-
-	protected int getPlacedMeta() {
-		if (entry.placedBlock != null && entry.placedBlock.contains("@")) {
-			BuilderSupportUtils.BlockItemPair bip = BuilderSupportUtils.parseBlockItemPair(entry.placedBlock);
-			if (bip != null) {
-				return bip.meta;
-			}
-		}
-		return meta;
+		return state;
 	}
 
 	@Override
-	protected void setBlockInWorld(IBuilderContext context, int x, int y, int z) {
+	protected void setBlockInWorld(IBuilderContext context, BlockPos pos) {
 		if (entry.placedBlock != null) {
 			BuilderSupportUtils.BlockItemPair bip = BuilderSupportUtils.parseBlockItemPair(entry.placedBlock);
 			if (bip != null) {
-				Block rblock = bip.block;
-				int rmeta = entry.placedBlock.contains("@") ? bip.meta : meta;
-
-				rmeta &= entry.metadataMask;
-
-				context.world().setBlock(x, y, z, rblock, rmeta, 3);
-				if (entry.notifyBlockTwice) {
-					context.world().setBlockMetadataWithNotify(x, y, z, rmeta, 3);
-				}
+				context.world().setBlockState(pos, bip.block.getStateFromMeta(bip.meta), 3);
 			}
 			return;
 		}
 
-		context.world().setBlock(x, y, z, block, meta & entry.metadataMask, 3);
-		if (entry.notifyBlockTwice) {
-			context.world().setBlockMetadataWithNotify(x, y, z, meta & entry.metadataMask, 3);
-		}
+		context.world().setBlockState(pos, state, 3);
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		if (!entry.ignore) {
-			ArrayList<ItemStack> req = null;
+			List<ItemStack> req = null;
 
 			if (entry.requirements != null) {
 				req = new ArrayList<ItemStack>();
@@ -140,24 +113,24 @@ public class SchematicJSON extends SchematicTile {
 						req.add(is);
 					}
 				}
-			} else if (block != null) {
+			} else if (state != null) {
 				World reqWorld = context.world();
 				if (tileNBT != null) {
-					tileNBT.setInteger("x", x);
-					tileNBT.setInteger("y", y);
-					tileNBT.setInteger("z", z);
-					reqWorld = new WorldWrapped(context.world(), x, y, z, TileEntity.createAndLoadEntity(tileNBT));
+					tileNBT.setInteger("x", pos.getX());
+					tileNBT.setInteger("y", pos.getY());
+					tileNBT.setInteger("z", pos.getZ());
+					reqWorld = new WorldWrapped(context.world(), pos, TileEntity.createAndLoadEntity(tileNBT));
 				}
 
 				if (entry.ignoreDrops) {
 					req = new ArrayList<ItemStack>();
-					req.add(new ItemStack(block, 1, meta));
+					req.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
 				} else {
-					req = block.getDrops(reqWorld, x, y, z, meta, 0);
+					req = state.getBlock().getDrops(reqWorld, pos, state, 0);
 				}
 
-				if (!entry.ignoreInventoryContents && block.hasTileEntity(meta)) {
-					TileEntity tile = reqWorld.getTileEntity(x, y, z);
+				if (!entry.ignoreInventoryContents && state.getBlock().hasTileEntity(state)) {
+					TileEntity tile = reqWorld.getTileEntity(pos);
 
 					if (tile instanceof IInventory) {
 						IInventory inv = (IInventory) tile;
@@ -181,24 +154,24 @@ public class SchematicJSON extends SchematicTile {
 	}
 
 	@Override
-	public Set<BlockIndex> getPrerequisiteBlocks(IBuilderContext context) {
-		Set<BlockIndex> prerequisites = new HashSet<BlockIndex>();
+	public Set<BlockPos> getPrerequisiteBlocks(IBuilderContext context) {
+		Set<BlockPos> prerequisites = new HashSet<BlockPos>();
 
 		if (entry.getPrerequisites() != null) {
 			prerequisites.addAll(entry.getPrerequisites());
 		} else {
-			if (block instanceof BlockFalling) {
-				prerequisites.add(RELATIVE_INDEXES[ForgeDirection.DOWN.ordinal()]);
+			if (state.getBlock() instanceof BlockFalling) {
+				prerequisites.add(BlockPos.ORIGIN.offset(EnumFacing.DOWN));
 			}
 		}
 
 		Collection<BuilderRotation> rotations = entry.getAllRotations();
 		if (rotations.size() > 0) {
 			for (BuilderRotation r : rotations) {
-				if (r.sticksToWall) {
-					ForgeDirection dir = r.getOrientation(this);
-					if (dir != ForgeDirection.UNKNOWN) {
-						prerequisites.add(new BlockIndex(dir.offsetX, dir.offsetY, dir.offsetZ));
+				if (r.sticky) {
+					EnumFacing dir = r.getOrientation(this);
+					if (dir != null) {
+						prerequisites.add(BlockPos.ORIGIN.offset(dir));
 					}
 				}
 			}
@@ -208,28 +181,23 @@ public class SchematicJSON extends SchematicTile {
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		if (getPlacedBlock() == context.world().getBlock(x, y, z)) {
-			int targetMeta = context.world().getBlockMetadata(x, y, z);
-			if (entry.metadataEqualityMask != 0) {
-				if ((getPlacedMeta() & entry.metadataEqualityMask) != (targetMeta & entry.metadataEqualityMask)) {
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		IBlockState oState = context.world().getBlockState(pos);
+		if (state.getBlock() == oState.getBlock()) {
+			// TODO: equality checks
+			for (BuilderRotation rotation : entry.getAllRotations()) {
+				if (!rotation.isEqual(this, state, tileNBT)) {
 					return false;
 				}
 			}
 
-			if (entry.nbt != null && entry.nbt.equality != null) {
-				TileEntity tileEntity = context.world().getTileEntity(x, y, z);
+			if (entry.nbt != null && entry.nbt.equal != null) {
+				TileEntity tileEntity = context.world().getTileEntity(pos);
 				if (tileEntity != null && tileNBT != null) {
 					NBTTagCompound targetNBT = new NBTTagCompound();
 					tileEntity.writeToNBT(targetNBT);
 
-					for (BuilderRotation rotation : entry.getAllRotations()) {
-						if (rotation.type != BuilderRotation.Type.METADATA && !rotation.isEqual(this, targetMeta, targetNBT)) {
-							return false;
-						}
-					}
-
-					for (String s : entry.nbt.equality) {
+					for (String s : entry.nbt.equal) {
 						NBTBase srcTag = NBTUtils.getTag(tileNBT, s);
 						NBTBase dstTag = NBTUtils.getTag(targetNBT, s);
 						if (!srcTag.equals(dstTag)) {

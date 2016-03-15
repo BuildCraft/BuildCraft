@@ -1,5 +1,9 @@
 package buildcraft.builders.json;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import net.minecraft.block.state.IBlockState;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -9,9 +13,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class BuilderSupportFile {
 	private static final Gson gson;
@@ -145,9 +146,9 @@ public class BuilderSupportFile {
 		return path.startsWith("/") ? path.substring(1) : path;
 	}
 
-	public boolean isValidForMeta(int metadata) {
+	public boolean isValidForState(IBlockState state) {
 		for (BuilderSupportEntry e : entries) {
-			if (e.isValidForMeta(metadata)) {
+			if (e.isValidForState(state)) {
 				return true;
 			}
 		}
@@ -156,7 +157,7 @@ public class BuilderSupportFile {
 	}
 
 	public BuilderSupportEntry getEntryForSchematic(SchematicJSON s) {
-		int metadata = s.meta;
+		IBlockState state = s.state;
 		String tileId = null;
 
 		if (s.tileNBT != null && s.tileNBT.hasKey("id", 8)) {
@@ -174,7 +175,7 @@ public class BuilderSupportFile {
 				}
 			}
 
-			if (e.isValidForMeta(metadata) && e.isValidForTile(tileId)) {
+			if (e.isValidForState(state) && e.isValidForTile(tileId)) {
 				return e;
 			}
 		}

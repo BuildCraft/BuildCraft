@@ -3,6 +3,7 @@ package buildcraft.builders.json;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 public final class BuilderSupportUtils {
 	public static class BlockItemPair {
@@ -29,7 +30,7 @@ public final class BuilderSupportUtils {
 		}
 
 		String n = s.split("!")[0].split("@")[0];
-		if (Item.itemRegistry.getObject(n) == null && Block.getBlockFromName(n) == null) {
+		if (Item.itemRegistry.getObject(new ResourceLocation(n)) == null && Block.getBlockFromName(n) == null) {
 			throw new JSONValidationException(e, "Item in stack defintion '" + s + "' does not exist!");
 		}
 	}
@@ -66,7 +67,7 @@ public final class BuilderSupportUtils {
 				metadata = new Integer(s.split("@")[1]).intValue();
 				s = s.split("@")[0];
 			}
-			Item i = (Item) Item.itemRegistry.getObject(s);
+			Item i = Item.itemRegistry.getObject(new ResourceLocation(s));
 			if (i != null) {
 				return new ItemStack(i, count, metadata);
 			}

@@ -10,6 +10,7 @@ import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.*;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
+import buildcraft.builders.json.BuilderSupportLoader;
 import buildcraft.builders.schematics.*;
 import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.core.*;
@@ -496,6 +497,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         HeuristicBlockDetection.start();
+        BuilderSupportLoader.INSTANCE.init();
+
         ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
 
         if (debugPrintSchematicList) {

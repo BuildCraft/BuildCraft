@@ -1,18 +1,15 @@
 package buildcraft.builders.json;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-
 import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.core.BlockIndex;
+import com.google.common.collect.Sets;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
+
+import java.util.*;
 
 public class BuilderSupportEntry {
 	public class NBTEntry {
-		public List<String> blacklist, whitelist, equality;
+		public List<String> blacklist, whitelist, equal;
 
 		public void validate(BuilderSupportEntry e) throws JSONValidationException {
 			if (blacklist != null && whitelist != null) {
@@ -29,11 +26,12 @@ public class BuilderSupportEntry {
 	@IncludeIgnore
 	public List<String> names;
 
-	public List<Integer> metadata;
+	public List<String> equalProperties;
+	// TODO
+	public List<String> forcedProperties;
+	// TODO
+	public List<String> bannedProperties;
 	public List<String> tileId;
-
-	public int metadataMask = 15;
-	public int metadataEqualityMask = 0;
 
 	@IncludeRecurse
 	public NBTEntry nbt;
@@ -47,18 +45,17 @@ public class BuilderSupportEntry {
 	public BuildingPermission buildingPermission;
 	public List<int[]> prerequisites;
 
-	public boolean notifyBlockTwice = false;
-
 	@IncludeRecurse
 	public BuilderRotation rotation = null;
-	public List<BuilderRotation> rotationList = null;
+	public List<BuilderRotation> rotations = null;
 
 	public transient int listPos;
 
-	private transient Set<BlockIndex> prerequisiteSet;
+	private transient Set<BlockPos> prerequisiteSet;
 
-	public boolean isValidForMeta(int meta) {
-		return metadata != null ? metadata.contains(meta) : true;
+	public boolean isValidForState(IBlockState state) {
+		// TODO
+		return true;
 	}
 
 	public boolean isValidForTile(String id) {
@@ -69,10 +66,10 @@ public class BuilderSupportEntry {
 	}
 
 	public Collection<BuilderRotation> getAllRotations() {
-		return rotationList != null ? rotationList : (rotation != null ? Sets.newHashSet(rotation) : new HashSet<BuilderRotation>());
+		return rotations != null ? rotations : (rotation != null ? Sets.newHashSet(rotation) : new HashSet<BuilderRotation>());
 	}
 
-	public Set<BlockIndex> getPrerequisites() {
+	public Set<BlockPos> getPrerequisites() {
 		return prerequisiteSet;
 	}
 
@@ -85,35 +82,18 @@ public class BuilderSupportEntry {
 			buildingPermission = BuildingPermission.ALL;
 		}
 
-		if (metadata != null) {
-			for (Integer i : metadata) {
-				if (i < 0 || i >= 16) {
-					throw new JSONValidationException(e, "Invalid metadata: " + i + "!");
-				}
-			}
-		}
-
 		if (nbt != null) {
 			nbt.validate(e);
 		}
 
 		if (rotation != null) {
-			if (rotationList != null) {
+			if (rotations != null) {
 				throw new JSONValidationException(e, "Must not provide both rotation list and entry!");
 			}
 			rotation.validate(e);
-		} else if (rotationList != null) {
-			for (BuilderRotation r : rotationList) {
+		} else if (rotations != null) {
+			for (BuilderRotation r : rotations) {
 				r.validate(e);
-			}
-		}
-
-		if (metadataEqualityMask == 0) {
-			// Try to heurestically deduce a good metadata equality mask.
-			for (BuilderRotation r : getAllRotations()) {
-				if (r.type == BuilderRotation.Type.METADATA) {
-					metadataEqualityMask |= r.mask;
-				}
 			}
 		}
 
@@ -129,12 +109,12 @@ public class BuilderSupportEntry {
 
 		if (prerequisites != null) {
 			for (int[] p : prerequisites) {
-				prerequisiteSet = new HashSet<BlockIndex>();
+				prerequisiteSet = new HashSet<BlockPos>();
 				if (p == null || p.length != 3) {
 					throw new JSONValidationException(e, "Invalid prerequisite length: " + (p != null ? p.length : "null") + "!");
 				}
 
-				prerequisiteSet.add(new BlockIndex(p[0], p[1], p[2]));
+				prerequisiteSet.add(new BlockPos(p[0], p[1], p[2]));
 			}
 		} else {
 			prerequisiteSet = null;
