@@ -1,5 +1,6 @@
 package buildcraft.transport.render.tile;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -28,11 +29,11 @@ public class PipeModelCacheWire {
     public static List<BakedQuad> getModel(PipeRenderState state) {
         // PipeCutoutKey key = new PipeCutoutKey(render, sprites);
         // return cacheCutout.bake(key, DefaultVertexFormats.BLOCK);
-        return null;
+        return Collections.emptyList();
     }
 
     private static List<MutableQuad> generate(PipeWireKeySingle key) {
-        return null;
+        return Collections.emptyList();
     }
 
     public static final class PipeWireKey {

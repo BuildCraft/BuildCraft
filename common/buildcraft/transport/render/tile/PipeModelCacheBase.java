@@ -5,10 +5,9 @@ import java.util.*;
 import javax.vecmath.Tuple3f;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -24,36 +23,22 @@ import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.config.DetailedConfigOption;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 
 public class PipeModelCacheBase {
     private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.67");
 
-    static final IModelCache<PipeCutoutKey> cacheCutout;
-    static final IModelCache<PipeTransclucentKey> cacheTranslucent;
+    static final IModelCache<PipeBaseCutoutKey> cacheCutout;
+    static final IModelCache<PipeBaseTransclucentKey> cacheTranslucent;
 
     static {
         cacheCutout = new ModelCacheHelper<>("pipe.base.cutout", PipeModelCacheBase::generateCutout);
         cacheTranslucent = new ModelCacheHelper<>("pipe.base.transclucent", PipeModelCacheBase::generateTranslucent);
     }
 
-    @Deprecated
-    public static ImmutableList<BakedQuad> getCutoutModel(PipeRenderState render, Map<EnumFacing, TextureAtlasSprite> sprites) {
-        PipeCutoutKey key = new PipeCutoutKey(render, sprites);
-        return cacheCutout.bake(key, DefaultVertexFormats.BLOCK);
-    }
-
-    @Deprecated
-    public static ImmutableList<BakedQuad> getTranslucentModel(PipeRenderState render) {
-        if (render.getGlassColor() >= 0 && render.getGlassColor() < 16) {
-            PipeTransclucentKey key = new PipeTransclucentKey(render);
-            return cacheTranslucent.bake(key, DefaultVertexFormats.BLOCK);
-        }
-        return ImmutableList.of();
-    }
-
-    private static List<MutableQuad> generateCutout(PipeCutoutKey key) {
+    private static List<MutableQuad> generateCutout(PipeBaseCutoutKey key) {
         TextureAtlasSprite center = key.center;
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
@@ -89,8 +74,8 @@ public class PipeModelCacheBase {
         return mutable;
     }
 
-    private static List<MutableQuad> generateTranslucent(PipeTransclucentKey key) {
-        if (key.colour < 0 || key.colour >= 16) return Collections.emptyList();
+    private static List<MutableQuad> generateTranslucent(PipeBaseTransclucentKey key) {
+        if (!key.shouldRender()) return ImmutableList.of();
         TextureAtlasSprite sprite = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
@@ -137,9 +122,8 @@ public class PipeModelCacheBase {
         Tuple3f center = Utils.vec3f(0.5f);
         Tuple3f radiusf = Utils.convertFloat(radius);
 
-        // BCModelHelper.appendQuads(mutable, BCModelHelper.createFace(face, center, radiusf, uvs));
-        // BCModelHelper.appendQuads(mutableIn, BCModelHelper.createInverseFace(face, center, radiusf,
-        // uvs).setFace(face.getOpposite()));
+        BCModelHelper.appendQuads(mutable, BCModelHelper.createFace(face, center, radiusf, uvs));
+        BCModelHelper.appendQuads(mutableIn, BCModelHelper.createInverseFace(face, center, radiusf, uvs).setFace(face.getOpposite()));
     }
 
     private static void renderPipeConnection(float extension, EnumFacing face, TextureAtlasSprite sprite, boolean smaller, List<MutableQuad> mutable,
@@ -199,13 +183,26 @@ public class PipeModelCacheBase {
         return f;
     }
 
-    public static final class PipeCutoutKey {
+    public static final class PipeBaseCutoutKey {
         public final TextureAtlasSprite center;
         public final TextureAtlasSprite[] sides;
         public final float[] connections;
         private final int hashCode;
 
-        public PipeCutoutKey(PipeRenderState render, Map<EnumFacing, TextureAtlasSprite> sprites) {
+        public PipeBaseCutoutKey(Pipe<?> pipe, PipeRenderState render) {
+            this(render, getSprites(pipe, render));
+        }
+
+        private static Map<EnumFacing, TextureAtlasSprite> getSprites(Pipe<?> pipe, PipeRenderState render) {
+            Map<EnumFacing, TextureAtlasSprite> spriteMap = Maps.newHashMap();
+            for (EnumFacing face : EnumFacing.values()) {
+                spriteMap.put(face, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(face)));
+            }
+            spriteMap.put(null, pipe.getIconProvider().getIcon(render.textureMatrix.getTextureIndex(null)));
+            return spriteMap;
+        }
+
+        public PipeBaseCutoutKey(PipeRenderState render, Map<EnumFacing, TextureAtlasSprite> sprites) {
             center = sprites.get(null);
             sides = new TextureAtlasSprite[6];
             for (EnumFacing face : EnumFacing.values()) {
@@ -225,7 +222,7 @@ public class PipeModelCacheBase {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            PipeCutoutKey other = (PipeCutoutKey) obj;
+            PipeBaseCutoutKey other = (PipeBaseCutoutKey) obj;
             if (center != other.center) return false;
             if (!Arrays.equals(connections, other.connections)) return false;
             if (!Arrays.equals(sides, other.sides)) return false;
@@ -233,12 +230,12 @@ public class PipeModelCacheBase {
         }
     }
 
-    public static final class PipeTransclucentKey {
+    public static final class PipeBaseTransclucentKey {
         public final byte colour;
         public final float[] connections;
         private final int hashCode;
 
-        public PipeTransclucentKey(PipeRenderState render) {
+        public PipeBaseTransclucentKey(PipeRenderState render) {
             this.colour = render.getGlassColor();
             if (shouldRender()) {
                 connections = computeConnections(render);
@@ -265,8 +262,8 @@ public class PipeModelCacheBase {
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null) return false;
-            if (!(obj instanceof PipeTransclucentKey)) return false;
-            PipeTransclucentKey other = (PipeTransclucentKey) obj;
+            if (!(obj instanceof PipeBaseTransclucentKey)) return false;
+            PipeBaseTransclucentKey other = (PipeBaseTransclucentKey) obj;
             /* If we don't have any translucency and neither does the other then we don't care what the other variables
              * are and are considered equal to the other one. */
             if (!shouldRender() && !other.shouldRender()) return true;

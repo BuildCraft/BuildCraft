@@ -23,6 +23,8 @@ public class FileConfigManager extends StreamConfigManager {
             exportDefault();
             return;
         }
+        if (!file.exists()) exportDefault();
+        if (!file.exists()) write();
         try (FileInputStream in = new FileInputStream(file)) {
             read(in);
         } catch (FileNotFoundException e) {
@@ -39,12 +41,11 @@ public class FileConfigManager extends StreamConfigManager {
         if (file == null) return;
         if (file.exists()) file.delete();
         try (FileOutputStream out = new FileOutputStream(file)) {
-
+            super.write(out);
         } catch (FileNotFoundException e) {
-
+            BCLog.logger.warn("Did not find the file! odd... while writing the detailed config file (" + file.getAbsolutePath() + ")");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            BCLog.logger.warn("Caught an IOException while writing the detailed config file: " + e.getMessage());
         }
     }
 
