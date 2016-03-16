@@ -1,13 +1,16 @@
 package buildcraft.core.lib.client.model;
 
+import net.minecraft.client.renderer.vertex.VertexFormat;
+
 import buildcraft.core.lib.client.model.ModelCache.IModelGenerator;
 
 public class ModelCacheBuilder<K> {
     final String detailedName;
     final IModelGenerator<K> generator;
-    int maxSize = 160;
+    int maxSize = 1600;
     boolean keepMutable = true;
     boolean needGL = false;
+    VertexFormat glVertexFormat;
 
     public ModelCacheBuilder(String detailedName, IModelGenerator<K> generator) {
         this.detailedName = detailedName;
@@ -19,7 +22,7 @@ public class ModelCacheBuilder<K> {
         return this;
     }
 
-    /** Toggle whether mutable quad versions should be kept or not. This is useful for {@link #setNeedGL(boolean)} when
+    /** Toggle whether mutable quad versions should be kept or not. This is useful for {@link #enableGL(boolean)} when
      * you never actually use the quads after they have been upoaded to the GPU */
     public ModelCacheBuilder<K> setKeepMutable(boolean keep) {
         this.keepMutable = keep;
@@ -28,8 +31,15 @@ public class ModelCacheBuilder<K> {
 
     /** Toggle whether an openGL display list is generated from the cached model. Does not imply anything, but you don't
      * have to */
-    public ModelCacheBuilder<K> setNeedGL(boolean need) {
-        this.needGL = need;
+    public ModelCacheBuilder<K> enableGL(VertexFormat glVertexFormat) {
+        needGL = true;
+        this.glVertexFormat = glVertexFormat;
+        return this;
+    }
+
+    public ModelCacheBuilder<K> disableGL() {
+        needGL = false;
+        glVertexFormat = null;
         return this;
     }
 

@@ -230,6 +230,26 @@ public class PipeModelCacheBase {
             if (!Arrays.equals(sides, other.sides)) return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "PipeBaseCutoutKey [center=" + center.getIconName() + ", sides=" + sidesToString() + ", connections=" + Arrays.toString(
+                    connections) + "]";
+        }
+
+        private String sidesToString() {
+            String s = "[";
+            for (int i = 0; i < sides.length; i++) {
+                if (i != 0) s += ", ";
+                TextureAtlasSprite sprite = sides[i];
+                if (sprite == null) {
+                    s += "null";
+                } else {
+                    s += sprite.getIconName();
+                }
+            }
+            return s + "]";
+        }
     }
 
     public static final class PipeBaseTransclucentKey {
@@ -241,7 +261,7 @@ public class PipeModelCacheBase {
             this.colour = render.getGlassColor();
             if (shouldRender()) {
                 connections = computeConnections(render);
-                hashCode = Objects.hash(colour, connections);
+                hashCode = Objects.hash(colour, Arrays.hashCode(connections));
             } else {
                 /* If we don't have any translucency then set our hash code to 0. We don't care what the other variables
                  * are, we will never render anything */
@@ -270,7 +290,12 @@ public class PipeModelCacheBase {
              * are and are considered equal to the other one. */
             if (!shouldRender() && !other.shouldRender()) return true;
             if (!Arrays.equals(connections, other.connections)) return false;
-            return true;
+            return colour == other.colour;
+        }
+
+        @Override
+        public String toString() {
+            return "PipeBaseTransclucentKey [colour=" + colour + ", connections=" + Arrays.toString(connections) + "]";
         }
     }
 }

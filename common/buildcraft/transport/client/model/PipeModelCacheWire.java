@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
@@ -45,8 +46,8 @@ public class PipeModelCacheWire {
         wirePosMap.put(PipeWire.GREEN, getOffset(PipeWire.GREEN));
         wirePosMap.put(PipeWire.YELLOW, getOffset(PipeWire.YELLOW));
 
-        cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).setNeedGL(true).setKeepMutable(false)
-                .build();
+        cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).enableGL(
+                DefaultVertexFormats.POSITION_TEX).setKeepMutable(false).build();
         // new ModelCache<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
         cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
     }

@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
 import buildcraft.api.core.BCLog;
@@ -25,13 +24,17 @@ import buildcraft.core.lib.config.DetailedConfigOption;
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a
  * configurable time period, and up to a maximum number. */
 public class ModelCache<K> implements IModelCache<K> {
+    private static final DetailedConfigOption OPTION_DEBUG = new DetailedConfigOption("render.cache.debug", "false");
+
+    private final String name;
     private final DetailedConfigOption optionCacheSize;
     private final IModelGenerator<K> generator;
     private final LoadingCache<K, ModelValue> modelCache;
     private final boolean keepMutable, needGL;
+    private final VertexFormat glVertexFormat;
 
     public ModelCache(String detailedName, IModelGenerator<K> generator) {
-        this(detailedName, 160, generator);
+        this(detailedName, 1600, generator);
     }
 
     public ModelCache(String detailedName, int defaultMaxSize, IModelGenerator<K> generator) {
@@ -40,22 +43,31 @@ public class ModelCache<K> implements IModelCache<K> {
 
     public ModelCache(ModelCacheBuilder<K> builder) {
         this.generator = builder.generator;
-        String detailedName = builder.detailedName;
+        this.name = builder.detailedName;
         int defaultMaxSize = builder.maxSize;
-        optionCacheSize = new DetailedConfigOption("render.cache." + detailedName + ".maxsize", Integer.toString(defaultMaxSize));
+        optionCacheSize = new DetailedConfigOption("render.cache." + name + ".maxsize", Integer.toString(defaultMaxSize));
         int maxSize = optionCacheSize.getAsInt();
         if (maxSize < 0) maxSize = 0;
-        BCLog.logger.info("Making cache " + detailedName + " with a maximum size of " + maxSize);
+        if (OPTION_DEBUG.getAsBoolean()) {
+            BCLog.logger.info("Making cache " + name + " with a maximum size of " + maxSize);
+        }
         modelCache = CacheBuilder.newBuilder().maximumSize(maxSize).removalListener(this::onRemove).build(CacheLoader.from(this::load));
         keepMutable = builder.keepMutable;
         needGL = builder.needGL;
+        this.glVertexFormat = builder.glVertexFormat;
     }
 
     private void onRemove(RemovalNotification<K, ModelValue> notification) {
+        if (OPTION_DEBUG.getAsBoolean()) {
+            BCLog.logger.info("Cache[" + name + "]Remove: " + notification.getKey());
+        }
         notification.getValue().cleanup();
     }
 
     private ModelValue load(K key) {
+        if (OPTION_DEBUG.getAsBoolean()) {
+            BCLog.logger.info("Cache[" + name + "]Miss: " + key);
+        }
         return new ModelValue(generator.generate(key));
     }
 
@@ -102,7 +114,7 @@ public class ModelCache<K> implements IModelCache<K> {
 
                 Tessellator t = Tessellator.getInstance();
                 WorldRenderer wr = t.getWorldRenderer();
-                wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
+                wr.begin(GL11.GL_QUADS, glVertexFormat);
                 for (MutableQuad q : quads) {
                     q.render(wr);
                 }

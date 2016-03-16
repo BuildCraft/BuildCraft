@@ -12,7 +12,7 @@ public class OverridableConfigOption extends DetailedConfigOption {
     public OverridableConfigOption(String assetLoc, String assetName, String defultVal) {
         super(assetLoc + "|" + assetName, defultVal);
         this.assetName = assetName;
-        ResourceLocation loc = new ResourceLocation("buildcraftconfig:", assetLoc.replace(".", "/"));
+        ResourceLocation loc = new ResourceLocation("buildcraftconfig:", assetLoc.replace(".", "/") + ".properties");
         this.manager = RoamingConfigManager.getOrCreateDefault(loc);
     }
 
