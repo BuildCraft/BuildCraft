@@ -8,6 +8,7 @@ import com.google.common.base.Throwables;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -36,9 +37,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         if (pipe.pipe == null) return;
 
         if (pipe.pipe.container == null) return;
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("pipe");
 
+        Minecraft.getMinecraft().mcProfiler.startSection("wire");
         renderWire(pipe, x, y, z);
+        Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
         renderPluggables(pipe, x, y, z);
+        Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
@@ -53,6 +59,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         } catch (Throwable t) {
             BCLog.logger.warn("A crash! Oh no!", t);
             throw Throwables.propagate(t);
+        } finally {
+            Minecraft.getMinecraft().mcProfiler.endSection();
+            Minecraft.getMinecraft().mcProfiler.endSection();
+            Minecraft.getMinecraft().mcProfiler.endSection();
         }
     }
 

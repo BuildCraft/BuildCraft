@@ -19,7 +19,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.robotics.render.RobotStationModel;
@@ -123,8 +123,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
         return renderState;
     }
 
-    @Override
-    public IPipePluggableStaticRenderer getRenderer() {
+    public IPluggableStaticBaker getRenderer() {
         return RobotStationModel.INSTANCE;
     }
 

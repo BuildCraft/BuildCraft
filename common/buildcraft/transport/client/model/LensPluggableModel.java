@@ -1,4 +1,4 @@
-package buildcraft.transport.pluggable;
+package buildcraft.transport.client.model;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BCModelHelper;
@@ -36,8 +36,10 @@ import buildcraft.core.lib.client.render.*;
 import buildcraft.core.lib.client.sprite.SubSprite;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.pluggable.ItemLens;
+import buildcraft.transport.pluggable.LensPluggable;
 
-public final class LensPluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer.Translucent {
+public final class LensPluggableModel extends BakedModelHolder implements IPluggableStaticBaker.Translucent {
     public static final LensPluggableModel INSTANCE = new LensPluggableModel();
 
     private static final ResourceLocation cutoutLensLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_cutout.obj");

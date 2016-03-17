@@ -71,6 +71,8 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
     @Override
     public void renderTileEntityAt(TileEngineBase engine, double x, double y, double z, float f, int wtfIsThis) {
         if (engine != null) {
+            Minecraft.getMinecraft().mcProfiler.startSection("bc");
+            Minecraft.getMinecraft().mcProfiler.startSection("engine");
             World world = engine.getWorld();
             BlockPos pos = engine.getPos();
             IBlockState engineState = world.getBlockState(pos);
@@ -90,6 +92,8 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 
                 GL11.glPopMatrix();
             }
+            Minecraft.getMinecraft().mcProfiler.endSection();
+            Minecraft.getMinecraft().mcProfiler.endSection();
         }
     }
 

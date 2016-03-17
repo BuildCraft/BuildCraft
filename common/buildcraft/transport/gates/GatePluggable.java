@@ -16,7 +16,7 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
@@ -227,8 +227,7 @@ public class GatePluggable extends PipePluggable {
         return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
-    @Override
-    public IPipePluggableStaticRenderer getRenderer() {
+    public IPluggableStaticBaker getRenderer() {
         return GatePluggableModel.INSTANCE;
     }
 

@@ -12,14 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.transport.client.model.FacadeItemModel;
-import buildcraft.transport.client.model.FacadePluggableModel;
-import buildcraft.transport.client.model.GateItemModel;
-import buildcraft.transport.client.model.GatePluggableModel;
+import buildcraft.transport.client.model.*;
 import buildcraft.transport.client.render.PipeRendererTESR;
-import buildcraft.transport.pluggable.LensPluggableModel;
-import buildcraft.transport.pluggable.PlugPluggableModel;
-import buildcraft.transport.pluggable.PowerAdapterModel;
 
 public class TransportProxyClient extends TransportProxy {
 

@@ -37,6 +37,8 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
 
     @Override
     public void renderTileEntityAt(TileConstructionMarker marker, double x, double y, double z, float f, int aThing) {
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("bpt_marker");
         super.renderTileEntityAt(marker, x, y, z, f, aThing);
 
         if (marker != null) {
@@ -68,6 +70,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
 
             renderItems.render(marker, x, y, z);
         }
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     public void doRenderItem(ItemStack stack, double x, double y, double z) {

@@ -8,11 +8,12 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.client.model.LensPluggableModel;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 import io.netty.buffer.ByteBuf;
@@ -81,8 +82,7 @@ public class LensPluggable extends PipePluggable {
         return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
-    @Override
-    public IPipePluggableStaticRenderer getRenderer() {
+    public IPluggableStaticBaker getRenderer() {
         return LensPluggableModel.INSTANCE;
     }
 

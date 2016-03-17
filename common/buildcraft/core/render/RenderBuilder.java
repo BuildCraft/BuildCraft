@@ -20,6 +20,7 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
 
     @Override
     public void renderTileEntityAt(B builder, double x, double y, double z, float f, int arg) {
+        Minecraft.getMinecraft().mcProfiler.startSection("builder");
         super.renderTileEntityAt(builder, x, y, z, f, arg);
 
         GL11.glPushMatrix();
@@ -49,6 +50,6 @@ public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvi
         GL11.glPopMatrix();
 
         renderItems.render(builder, x, y, z);
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
-
 }

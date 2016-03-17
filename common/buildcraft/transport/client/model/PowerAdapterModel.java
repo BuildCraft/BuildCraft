@@ -1,4 +1,4 @@
-package buildcraft.transport.pluggable;
+package buildcraft.transport.client.model;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BCModelHelper;
@@ -31,32 +31,32 @@ import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public class PlugPluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer {
-    public static final PlugPluggableModel INSTANCE = new PlugPluggableModel();
+public class PowerAdapterModel extends BakedModelHolder implements IPluggableStaticBaker {
+    public static final PowerAdapterModel INSTANCE = new PowerAdapterModel();
 
-    private static final ResourceLocation plugLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/plug.obj");
+    private static final ResourceLocation powerAdapterLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/power_adapter.obj");
 
-    private static final ResourceLocation plugSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/plug");
-    private static TextureAtlasSprite spritePlug;
+    private static final ResourceLocation powerAdapterSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/power_adapter");
+    private static TextureAtlasSprite spritePowerAdapter;
 
-    private PlugPluggableModel() {}
+    private PowerAdapterModel() {}
 
     public static PerspAwareModelBase create() {
         ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
         VertexFormat format = DefaultVertexFormats.ITEM;
-        quads.addAll(INSTANCE.bakeCutout(EnumFacing.SOUTH, format));
-        return new PerspAwareModelBase(format, quads.build(), spritePlug, getPluggableTransforms());
+        quads.addAll(INSTANCE.bakeCutout(EnumFacing.EAST, format));
+        return new PerspAwareModelBase(format, quads.build(), spritePowerAdapter, getBlockTransforms());
     }
 
-    public IModel modelPlug() {
-        return getModelOBJ(plugLoc);
+    public IModel modelPowerAdapter() {
+        return getModelOBJ(powerAdapterLoc);
     }
 
     @SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event) {
-        spritePlug = null;
-        spritePlug = event.map.getTextureExtry(plugSpriteLoc.toString());
-        if (spritePlug == null) spritePlug = event.map.registerSprite(plugSpriteLoc);
+        spritePowerAdapter = null;
+        spritePowerAdapter = event.map.getTextureExtry(powerAdapterSpriteLoc.toString());
+        if (spritePowerAdapter == null) spritePowerAdapter = event.map.registerSprite(powerAdapterSpriteLoc);
     }
 
     @Override
@@ -66,11 +66,11 @@ public class PlugPluggableModel extends BakedModelHolder implements IPipePluggab
     }
 
     private List<BakedQuad> bakeCutout(EnumFacing face, VertexFormat format) {
-        IModel model = modelPlug();
-        TextureAtlasSprite sprite = spritePlug;
+        IModel model = modelPowerAdapter();
+        TextureAtlasSprite sprite = spritePowerAdapter;
 
         List<BakedQuad> quads = Lists.newArrayList();
-        List<BakedQuad> bakedQuads = renderPlug(model, sprite, format);
+        List<BakedQuad> bakedQuads = renderAdapter(model, sprite, format);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             MutableQuad mutable = MutableQuad.create(quad);
@@ -81,7 +81,7 @@ public class PlugPluggableModel extends BakedModelHolder implements IPipePluggab
         return quads;
     }
 
-    public static List<BakedQuad> renderPlug(IModel model, TextureAtlasSprite sprite, VertexFormat format) {
+    public static List<BakedQuad> renderAdapter(IModel model, TextureAtlasSprite sprite, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
         IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, format, singleTextureFunction(sprite));
         for (BakedQuad quad : baked.getGeneralQuads()) {

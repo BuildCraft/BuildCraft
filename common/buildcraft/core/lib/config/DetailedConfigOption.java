@@ -75,7 +75,7 @@ public class DetailedConfigOption {
             try {
                 cacheLong = Long.parseLong(cache);
             } catch (NumberFormatException nfe) {
-                BCLog.logger.warn("Invalid option for " + id + ":" + cache + ", wanted an integer!");
+                BCLog.logger.warn("Invalid option for " + id + ":" + cache + ", wanted an integer! " + nfe.getMessage());
                 cacheLong = 0;
             }
         }
@@ -87,7 +87,7 @@ public class DetailedConfigOption {
             try {
                 cacheDouble = Double.parseDouble(cache);
             } catch (NumberFormatException nfe) {
-                BCLog.logger.warn("Invalid option for " + id + ":" + cache + ", wanted a floating-point!");
+                BCLog.logger.warn("Invalid option for " + id + ":" + cache + ", wanted a floating-point! " + nfe.getMessage());
                 cacheDouble = 0;
             }
         }

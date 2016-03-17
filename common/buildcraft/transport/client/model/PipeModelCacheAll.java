@@ -17,6 +17,7 @@ import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
+import buildcraft.transport.client.model.PipeModelCachePluggableCutout.PluggableCutoutKey;
 
 public class PipeModelCacheAll {
     private static final IModelCache<PipeAllCutoutKey> cacheCutout;
@@ -25,7 +26,7 @@ public class PipeModelCacheAll {
     static {
         List<ModelKeyWrapper<PipeAllCutoutKey, ?>> cutout = new ArrayList<>();
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getBaseCutout, PipeModelCacheBase.cacheCutout));
-        // TODO: Pluggables!
+        cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getPluggable, PipeModelCachePluggableCutout.cacheAll));
         cacheCutout = new ModelCacheJoiner<>("pipe.all.cutout", cutout);
 
         List<ModelKeyWrapper<PipeAllTranslucentKey, ?>> translucent = new ArrayList<>();
@@ -46,17 +47,21 @@ public class PipeModelCacheAll {
 
     public static class PipeAllCutoutKey {
         private final PipeBaseCutoutKey cutout;
-        // TODO: Pluggable key!
+        private final PluggableCutoutKey pluggable;
         private final int hash;
 
         public PipeAllCutoutKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
             cutout = new PipeBaseCutoutKey(pipe, render);
-            // TODO: Pluggable key!
-            hash = Objects.hash(cutout);
+            this.pluggable = new PluggableCutoutKey(pluggable);
+            hash = Objects.hash(cutout, pluggable);
         }
 
-        public static PipeBaseCutoutKey getBaseCutout(PipeAllCutoutKey key) {
-            return key.cutout;
+        public PipeBaseCutoutKey getBaseCutout() {
+            return cutout;
+        }
+
+        public PluggableCutoutKey getPluggable() {
+            return pluggable;
         }
 
         @Override
@@ -70,15 +75,14 @@ public class PipeModelCacheAll {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeAllCutoutKey other = (PipeAllCutoutKey) obj;
-            if (cutout == null) {
-                if (other.cutout != null) return false;
-            } else if (!cutout.equals(other.cutout)) return false;
+            if (!cutout.equals(other.cutout)) return false;
+            if (!pluggable.equals(other.pluggable)) return false;
             return true;
         }
 
         @Override
         public String toString() {
-            return "PipeAllCutoutKey [base=" + cutout + "]";
+            return "PipeAllCutoutKey [base=" + cutout + ", pluggable = " + pluggable + "]";
         }
     }
 
@@ -93,8 +97,8 @@ public class PipeModelCacheAll {
             hash = Objects.hash(translucent);
         }
 
-        public static PipeBaseTransclucentKey getBaseTranslucent(PipeAllTranslucentKey key) {
-            return key.translucent;
+        public PipeBaseTransclucentKey getBaseTranslucent() {
+            return translucent;
         }
 
         @Override
@@ -108,9 +112,7 @@ public class PipeModelCacheAll {
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
             PipeAllTranslucentKey other = (PipeAllTranslucentKey) obj;
-            if (translucent == null) {
-                if (other.translucent != null) return false;
-            } else if (!translucent.equals(other.translucent)) return false;
+            if (!translucent.equals(other.translucent)) return false;
             return true;
         }
 

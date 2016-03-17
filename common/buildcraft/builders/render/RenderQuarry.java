@@ -1,5 +1,6 @@
 package buildcraft.builders.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Vec3;
 
 import buildcraft.builders.TileQuarry;
@@ -11,7 +12,11 @@ import buildcraft.core.render.RenderBuilder;
 public class RenderQuarry extends RenderBuilder<TileQuarry> {
     @Override
     public void renderTileEntityAt(TileQuarry quarry, double x, double y, double z, float partialTicks, int arg) {
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("quarry");
         super.renderTileEntityAt(quarry, x, y, z, partialTicks, arg);
+
+        Minecraft.getMinecraft().mcProfiler.startSection("arm");
         if (quarry.arm != null) {
             if (quarry.arm.xArm != null) {
                 renderCuboid(quarry, quarry.arm.xArm, x, y, z, partialTicks);
@@ -26,6 +31,10 @@ public class RenderQuarry extends RenderBuilder<TileQuarry> {
                 renderCuboid(quarry, quarry.arm.headEntity, x, y, z, partialTicks);
             }
         }
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private static void renderCuboid(TileQuarry quarry, EntityResizableCuboid cuboid, double x, double y, double z, float partialTicks) {

@@ -5,11 +5,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.transport.client.model.ModelKeyPlug;
 
 import io.netty.buffer.ByteBuf;
 
@@ -56,8 +59,9 @@ public class PlugPluggable extends PipePluggable {
     }
 
     @Override
-    public IPipePluggableStaticRenderer getRenderer() {
-        return PlugPluggableModel.INSTANCE;
+    @SideOnly(Side.CLIENT)
+    public ModelKeyPlug getModelRenderKey(EnumFacing side) {
+        return new ModelKeyPlug(side);
     }
 
     @Override

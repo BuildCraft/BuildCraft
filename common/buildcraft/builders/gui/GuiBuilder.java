@@ -21,7 +21,7 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.client.CoreIconProvider;
-import buildcraft.core.lib.config.DetailedConfigOption;
+import buildcraft.core.lib.config.OverridableConfigOption;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
@@ -34,8 +34,8 @@ import io.netty.buffer.ByteBuf;
 public class GuiBuilder extends GuiAdvancedInterface {
 
     /** Options for controlling the position of extra icons are laid out */
-    private static final DetailedConfigOption OPTION_EXTRA_X_POS = new DetailedConfigOption("gui.builder|extra.x", "80");
-    private static final DetailedConfigOption OPTION_EXTRA_Y_POS = new DetailedConfigOption("gui.builder|extra.y", "44");
+    private static final OverridableConfigOption OPTION_EXTRA_X_POS = new OverridableConfigOption("gui.builder", "extra.x", "80");
+    private static final OverridableConfigOption OPTION_EXTRA_Y_POS = new OverridableConfigOption("gui.builder", "extra.y", "44");
 
     private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
     private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");

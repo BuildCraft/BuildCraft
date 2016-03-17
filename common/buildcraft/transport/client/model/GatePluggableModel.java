@@ -35,7 +35,7 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GatePluggable;
 
-public final class GatePluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer, IPipePluggableDynamicRenderer {
+public final class GatePluggableModel extends BakedModelHolder implements IPluggableStaticBaker, IPipePluggableDynamicRenderer {
     private static final ResourceLocation mainLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_main.obj");
     private static final ResourceLocation materialLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_material.obj");
     public static final GatePluggableModel INSTANCE = new GatePluggableModel();

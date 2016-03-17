@@ -1,5 +1,7 @@
 package buildcraft.builders.render;
 
+import net.minecraft.client.Minecraft;
+
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.render.RenderBuilder;
 
@@ -8,7 +10,13 @@ public class RenderBuilderTile extends RenderBuilder<TileBuilder> {
 
     @Override
     public void renderTileEntityAt(TileBuilder builder, double x, double y, double z, float f, int arg) {
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("builder");
+
         super.renderTileEntityAt(builder, x, y, z, f, arg);
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
         //
         // bindTexture(TextureMap.locationBlocksTexture);
         // RenderEntityBlock.RenderInfo renderBox = new RenderEntityBlock.RenderInfo();

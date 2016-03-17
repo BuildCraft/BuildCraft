@@ -12,8 +12,8 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
-import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableModelKeyCutout;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.client.model.FacadePluggableModel;
 
@@ -118,9 +118,13 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public boolean isSolidOnSide(IPipeTile pipe, EnumFacing direction) {
         return !isHollow();
     }
-
+    
     @Override
-    public IPipePluggableStaticRenderer getRenderer() {
+    public PluggableModelKeyCutout<?> getModelRenderKey(EnumFacing side) {
+        return null;
+    }
+
+    public FacadePluggableModel getRenderer() {
         return FacadePluggableModel.INSTANCE;
     }
 

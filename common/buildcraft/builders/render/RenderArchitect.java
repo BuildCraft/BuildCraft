@@ -19,8 +19,10 @@ public class RenderArchitect extends RenderBoxProvider<TileArchitect> {
 
     @Override
     public void renderTileEntityAt(TileArchitect architect, double x, double y, double z, float f, int aThing) {
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("architect");
         super.renderTileEntityAt(architect, x, y, z, f, aThing);
-
+        Minecraft.getMinecraft().mcProfiler.startSection("lasers");
         if (architect != null) {
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -45,6 +47,9 @@ public class RenderArchitect extends RenderBoxProvider<TileArchitect> {
             GL11.glPopAttrib();
             GL11.glPopMatrix();
         }
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
 }

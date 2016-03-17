@@ -52,6 +52,13 @@ public class MutableQuad {
             float texU = fromBits(data[stride * v + U]);
             float texV = fromBits(data[stride * v + V]);
             mutableVertex.texf(texU, texV);
+
+            if (format == DefaultVertexFormats.BLOCK) {
+                int lightmap = data[stride * v + UNUSED];
+                mutableVertex.lighti(lightmap);
+            } else if (format == DefaultVertexFormats.ITEM) {
+                int normal = data[stride * v + UNUSED];
+            }
         }
         return mutable;
     }

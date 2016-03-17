@@ -24,7 +24,7 @@ import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public final class FacadePluggableModel extends BakedModelHolder implements IPipePluggableStaticRenderer {
+public final class FacadePluggableModel extends BakedModelHolder implements IPluggableStaticBaker {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
     private static final ResourceLocation filledLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_filled.obj");
     public static final FacadePluggableModel INSTANCE = new FacadePluggableModel();
