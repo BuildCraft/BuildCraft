@@ -468,6 +468,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             box.initialize(nbttagcompound.getCompoundTag("box"));
         }
 
+        type = EnumBlueprintType.getType(getStackInSlot(0));
+
         if (nbttagcompound.hasKey("path")) {
             path = new LinkedList<BlockPos>();
             NBTTagList list = nbttagcompound.getTagList("path", Constants.NBT.TAG_COMPOUND);
