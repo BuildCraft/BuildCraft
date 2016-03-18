@@ -14,6 +14,7 @@ import io.netty.buffer.ByteBuf;
 public class PipePluggableState implements ISerializable, IPipePluggableState, Comparable<PipePluggableState> {
     private PipePluggable[] pluggables = new PipePluggable[6];
     private final ConnectionMatrix pluggableMatrix = new ConnectionMatrix();
+    private boolean isDirty = true;
 
     public PipePluggableState() {
 
@@ -24,6 +25,17 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
     }
 
     public void setPluggables(PipePluggable[] pluggables) {
+        for (int i = 0; i < 6; i++) {
+            if (pluggables[i] == null) {
+                if (this.pluggables[i] != null) isDirty = true;
+                else continue;
+            } else if (this.pluggables[i] == null) {
+                isDirty = true;
+            } else if (this.pluggables[i].getClass() != pluggables[i].getClass() || pluggables[i].requiresRenderUpdate(this.pluggables[i])) {
+                isDirty = true;
+                break;
+            }
+        }
         this.pluggables = pluggables;
     }
 
@@ -49,6 +61,7 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
         this.pluggableMatrix.readData(data);
         for (EnumFacing dir : EnumFacing.VALUES) {
             if (this.pluggableMatrix.isConnected(dir)) {
+                PipePluggable old = pluggables[dir.ordinal()];
                 try {
                     Class<? extends PipePluggable> pc = PipeManager.pipePluggables.get(data.readUnsignedShort());
                     if (pluggables[dir.ordinal()] == null || pc != pluggables[dir.ordinal()].getClass()) {
@@ -60,6 +73,12 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
                 }
                 if (pluggables[dir.ordinal()] != null) {
                     pluggables[dir.ordinal()].readData(data);
+
+                    if (old != null) {
+                        isDirty = pluggables[dir.ordinal()].requiresRenderUpdate(old);
+                    } else {
+                        isDirty = true;
+                    }
                 }
             } else {
                 pluggables[dir.ordinal()] = null;
@@ -83,5 +102,14 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
     @Override
     public int compareTo(PipePluggableState o) {
         return 0;
+    }
+
+    public void clean() {
+        isDirty = false;
+        pluggableMatrix.clean();
+    }
+
+    public boolean isDirty() {
+        return isDirty || pluggableMatrix.isDirty();
     }
 }

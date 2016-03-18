@@ -25,6 +25,10 @@ import io.netty.buffer.ByteBuf;
 public class TileEngineCreative extends TileEngineBase {
     private PowerMode powerMode = PowerMode.M2;
 
+    public TileEngineCreative() {
+        energyStage = EnumEnergyStage.BLACK;
+    }
+
     @Override
     protected EnumEnergyStage computeEnergyStage() {
         return EnumEnergyStage.BLACK;
@@ -81,11 +85,6 @@ public class TileEngineCreative extends TileEngineBase {
     public void readData(ByteBuf stream) {
         super.readData(stream);
         powerMode = PowerMode.fromId(stream.readUnsignedByte());
-
-        // This is a hack so that upon receiving the first description packet,
-        // the creative engine will re-render and change its trunk texture.
-        // TODO: A way to set default trunk textures from metadata? Or in the model?
-        worldObj.markBlockRangeForRenderUpdate(pos, pos);
     }
 
     @Override
