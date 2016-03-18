@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
-import java.util.List;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
@@ -29,14 +27,20 @@ public class AIRobotShutdown extends AIRobot {
         robot.motionZ = motionZ;
     }
 
+	private boolean isBlocked(float yOffset) {
+		return robot.worldObj.getCollidingBoundingBoxes(robot,
+				robot.getEntityBoundingBox().addCoord(robot.motionX, yOffset, robot.motionZ)).size() > 0;
+	}
+
     @Override
     public void update() {
         if (skip == 0) {
-            List<?> boxes = robot.worldObj.getCollidingBoundingBoxes(robot, robot.getEntityBoundingBox().addCoord(robot.motionX, -0.075f,
-                    robot.motionZ));
-            if (boxes.size() == 0) {
+			if (!isBlocked(-0.075f)) {
                 robot.motionY = -0.075f;
             } else {
+				while (isBlocked(0)) {
+					robot.posY += 0.075f;
+				}
                 robot.motionY = 0f;
                 if (robot.motionX != 0 || robot.motionZ != 0) {
                     robot.motionX = 0f;

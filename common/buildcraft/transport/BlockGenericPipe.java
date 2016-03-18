@@ -531,9 +531,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         pipeRemoved.put(pos, pipe);
         for (EnumFacing dir : EnumFacing.values()) {
-            TileEntity tile = world.getTileEntity(pos.offset(dir));
-            if (tile instanceof IPipeTile) {
-                Pipe<?> tpipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+            Pipe<?> tpipe = getPipe(world, pos.offset(dir));
+			if (tpipe != null) {
                 tpipe.scheduleWireUpdate();
             }
         }
@@ -1196,9 +1195,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     public TextureAtlasSprite getSprite(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileGenericPipe) {
-            Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
+        Pipe<?> pipe = getPipe(world, pos);
+        if (pipe != null) {
             return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
         }
 
