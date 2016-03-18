@@ -20,23 +20,22 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.*;
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public class PowerAdapterModel extends BakedModelHolder implements IPluggableModelBaker {
-    public static final PowerAdapterModel INSTANCE = new PowerAdapterModel();
+public class ModelPowerAdapter extends BakedModelHolder implements IPluggableModelBaker<ModelKeyPowerAdapter> {
+    public static final ModelPowerAdapter INSTANCE = new ModelPowerAdapter();
 
     private static final ResourceLocation powerAdapterLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/power_adapter.obj");
 
     private static final ResourceLocation powerAdapterSpriteLoc = new ResourceLocation("buildcrafttransport:pipes/power_adapter");
     private static TextureAtlasSprite spritePowerAdapter;
 
-    private PowerAdapterModel() {}
+    private ModelPowerAdapter() {}
 
     public static PerspAwareModelBase create() {
         ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
@@ -62,13 +61,8 @@ public class PowerAdapterModel extends BakedModelHolder implements IPluggableMod
     }
 
     @Override
-    public ImmutableList bake(PluggableModelKey key) {
-        return null;
-    }
-
-    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face) {
-        return bakeCutout(face, DefaultVertexFormats.BLOCK);
+    public ImmutableList<BakedQuad> bake(ModelKeyPowerAdapter key) {
+        return ImmutableList.copyOf(bakeCutout(key.side, DefaultVertexFormats.BLOCK));
     }
 
     private List<BakedQuad> bakeCutout(EnumFacing face, VertexFormat format) {

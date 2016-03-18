@@ -43,7 +43,7 @@ public class TransportProxyClient extends TransportProxy {
         MinecraftForge.EVENT_BUS.register(GateItemModel.INSTANCE);
         MinecraftForge.EVENT_BUS.register(LensPluggableModel.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PlugPluggableModel.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(PowerAdapterModel.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(ModelPowerAdapter.INSTANCE);
         MinecraftForge.EVENT_BUS.register(FluidRenderer.INSTANCE);
     }
 

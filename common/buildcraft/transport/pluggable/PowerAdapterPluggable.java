@@ -14,6 +14,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.transport.client.model.ModelKeyPowerAdapter;
 
 import io.netty.buffer.ByteBuf;
 
@@ -74,6 +75,9 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyRecei
 
     @Override
     public PluggableModelKey<?> getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyPowerAdapter(side);
+        }
         return null;
     }
 

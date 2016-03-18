@@ -18,6 +18,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
+import buildcraft.api.gates.GateExpansionModelKey;
+import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
@@ -90,14 +92,18 @@ public final class GatePluggableModel extends BakedModelHolder implements IPlugg
                 quads.add(MutableQuad.create(quad, format));
             }
         }
-        // FIXME!
 
-        // for (ModelKeyGateExpansion ext : gate.expansions) {
-        // for (BakedQuad q : ext.bake(format)) {
-        // quads.add(MutableQuad.create(q, format));
-        // }
-        // }
-
+        for (GateExpansionModelKey<?> expansion : gate.expansions) {
+            generate(quads, expansion);
+        }
         return quads;
+    }
+
+    private static <K extends GateExpansionModelKey<K>> void generate(List<MutableQuad> quads, GateExpansionModelKey<K> expansion) {
+        IExpansionBaker<K> baker = expansion.baker;
+        VertexFormat format = baker.getVertexFormat();
+        for (BakedQuad q : baker.bake((K) expansion)) {
+            quads.add(MutableQuad.create(q, format));
+        }
     }
 }

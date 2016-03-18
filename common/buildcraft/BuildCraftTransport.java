@@ -787,7 +787,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         if (powerAdapterItem != null) {
             mrl = ModelHelper.getItemResourceLocation(powerAdapterItem, "");
-            event.modelRegistry.putObject(mrl, PowerAdapterModel.create());
+            event.modelRegistry.putObject(mrl, ModelPowerAdapter.create());
         }
 
         if (pipeGate != null) {
