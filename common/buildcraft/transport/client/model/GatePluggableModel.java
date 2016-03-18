@@ -1,23 +1,5 @@
 package buildcraft.transport.client.model;
 
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.ModelRotation;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
-
 import buildcraft.api.gates.GateExpansionModelKey;
 import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.transport.IPipe;
@@ -27,6 +9,20 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.model.ModelRotation;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.IModel;
+
+import javax.vecmath.Matrix4f;
+import java.util.List;
 
 public final class GatePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyGate>, IPipePluggableDynamicRenderer {
     private static final ResourceLocation mainLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_main.obj");
@@ -73,7 +69,7 @@ public final class GatePluggableModel extends BakedModelHolder implements IPlugg
     }
 
     public List<MutableQuad> renderGate(ModelKeyGate gate, VertexFormat format) {
-        TextureAtlasSprite logicSprite = /* gate.on ? gate.logic.getIconLit() : */gate.logic.getIconDark();
+        TextureAtlasSprite logicSprite = gate.lit ? gate.logic.getIconLit() : gate.logic.getIconDark();
         TextureAtlasSprite materialSprite = gate.material.getIconBlock();
 
         IModel main = modelMain();

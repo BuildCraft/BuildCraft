@@ -426,17 +426,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             }
 
             if (refreshRenderState) {
-                if (refreshRenderState()) {
-                    for (EnumFacing face : EnumFacing.values()) {
-                        TileEntity tile = worldObj.getTileEntity(getPos().offset(face));
-                        if (tile != null && tile instanceof TileGenericPipe) {
-                            ((TileGenericPipe) tile).scheduleRenderUpdate();
-                        }
-                    }
-                    scheduleRenderUpdate();
-                    sendClientUpdate = true;
-                }
-
+                refreshRenderState();
                 refreshRenderState = false;
             }
 
@@ -552,8 +542,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
          * network bandwidth */
         pluggableState.setPluggables(sideProperties.pluggables);
 
-        boolean isDirty = renderState.isDirty();
-        // TODO (Pass 1): If the pluggable state has changed, also update it!
+        boolean isDirty = renderState.isDirty() || sideProperties.pluggables.length > 0;
 
         if (isDirty) {
             sendNetworkUpdate();

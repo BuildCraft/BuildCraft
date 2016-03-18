@@ -1,18 +1,5 @@
 package buildcraft.transport.gates;
 
-import java.util.Objects;
-import java.util.Set;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
@@ -24,8 +11,18 @@ import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.GatePluggableModel;
 import buildcraft.transport.client.model.ModelKeyGate;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.Objects;
+import java.util.Set;
 
 public class GatePluggable extends PipePluggable {
     public GateDefinition.GateMaterial material;
@@ -231,7 +228,7 @@ public class GatePluggable extends PipePluggable {
     @Override
     public ModelKeyGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
-            return new ModelKeyGate(side, material, logic, expansions);
+            return new ModelKeyGate(side, material, logic, isLit, expansions);
         }
         return null;
     }
