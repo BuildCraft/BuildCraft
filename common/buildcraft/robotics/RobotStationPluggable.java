@@ -21,8 +21,8 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.robotics.render.ModelKeyStation;
 
 import io.netty.buffer.ByteBuf;
 
@@ -124,7 +124,10 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     }
 
     @Override
-    public PluggableModelKey<?> getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+    public ModelKeyStation getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyStation(side, getRenderState());
+        }
         return null;
     }
 

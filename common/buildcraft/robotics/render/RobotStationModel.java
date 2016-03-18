@@ -26,14 +26,12 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.*;
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.MatrixUtils;
-import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
 
-public class RobotStationModel extends BakedModelHolder implements IPluggableModelBaker {
+public class RobotStationModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyStation> {
     public static final RobotStationModel INSTANCE = new RobotStationModel();
 
     private static final ResourceLocation baseLoc = new ResourceLocation("buildcraftrobotics:models/pluggables/robot_station_base.obj");
@@ -93,15 +91,8 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
     }
 
     @Override
-    public ImmutableList bake(PluggableModelKey key) {
-        return null;
-    }
-
-    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face) {
-        RobotStationPluggable station = (RobotStationPluggable) pluggable;
-
-        return bakeCutout(station.getRenderState(), face, DefaultVertexFormats.BLOCK);
+    public ImmutableList<BakedQuad> bake(ModelKeyStation key) {
+        return ImmutableList.copyOf(bakeCutout(key.state, key.side, getVertexFormat()));
     }
 
     private List<MutableQuad> baseQuads() {
@@ -120,8 +111,6 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
     }
 
     private List<BakedQuad> bakeCutout(EnumRobotStationState state, EnumFacing face, VertexFormat format) {
-        final TextureAtlasSprite baseSprite = this.baseSprite;
-
         IModel base = modelBase();
         List<MutableQuad> stateQuads = this.stateQuads.get(state);
 
