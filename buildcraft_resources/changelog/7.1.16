@@ -1,0 +1,9 @@
+Bugs fixed:
+
+* [#3254] Shutdown robots glitching through blocks in certain conditions (asie)
+* [#3253] Rare NPE in BlockGenericPipe with Logistics Pipes (asie)
+* [#3234] Engines don't properly power machines on multiple sides (asie)
+* [#3211] Knight Robots not dropping/unloading weapons (asie)
+* [#3159] Knight Robots not using the Attack Damage boost on weapons (asie)
+* [#3156] Achievement tab crash upon disabling certain items (asie)
+* [#3131] NPE in FacadeRenderHelper (asie)
