@@ -24,7 +24,6 @@ import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.IGateExpansion.IGateStaticRenderState;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
@@ -87,9 +86,9 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
         GateMaterial material = ItemGate.getMaterial(stack);
         GateLogic logic = ItemGate.getLogic(stack);
         Set<IGateExpansion> expansions = ItemGate.getInstalledExpansions(stack);
-        Set<IGateStaticRenderState> states = Sets.newHashSet();
-        for (IGateExpansion exp : expansions)
-            states.add(exp.getRenderState());
+//        Set<IGateStaticRenderState> states = Sets.newHashSet();
+//        for (IGateExpansion exp : expansions)
+//            states.add(exp.getRenderState());
         return new ModelKeyGate(EnumFacing.UP, material, logic, expansions.toArray(new IGateExpansion[0]));
     }
 }
