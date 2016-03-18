@@ -20,15 +20,14 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.*;
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public class PlugPluggableModel extends BakedModelHolder implements IPluggableStaticBaker, PluggableModelBaker.Cutout<ModelKeyPlug> {
+public class PlugPluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyPlug> {
     public static final PlugPluggableModel INSTANCE = new PlugPluggableModel();
 
     private static final ResourceLocation plugLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/plug.obj");
@@ -57,19 +56,14 @@ public class PlugPluggableModel extends BakedModelHolder implements IPluggableSt
     }
 
     @Override
-    public ImmutableList<BakedQuad> bakeCutout(ModelKeyPlug key) {
+    public ImmutableList<BakedQuad> bake(ModelKeyPlug key) {
+        // Assume its cutout
         return ImmutableList.copyOf(bakeCutout(key.side, getVertexFormat()));
     }
 
     @Override
     public VertexFormat getVertexFormat() {
         return DefaultVertexFormats.BLOCK;
-    }
-
-    @Override
-    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face) {
-        return bakeCutout(face, DefaultVertexFormats.BLOCK);
     }
 
     private List<BakedQuad> bakeCutout(EnumFacing face, VertexFormat format) {

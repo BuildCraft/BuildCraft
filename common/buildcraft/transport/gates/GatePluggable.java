@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -16,13 +17,13 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.GatePluggableModel;
+import buildcraft.transport.client.model.ModelKeyGate;
 
 import io.netty.buffer.ByteBuf;
 
@@ -227,8 +228,12 @@ public class GatePluggable extends PipePluggable {
         return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
-    public IPluggableStaticBaker getRenderer() {
-        return GatePluggableModel.INSTANCE;
+    @Override
+    public ModelKeyGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyGate(side, material, logic, expansions);
+        }
+        return null;
     }
 
     @Override

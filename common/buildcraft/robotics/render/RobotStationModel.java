@@ -27,17 +27,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
-import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.client.model.*;
-import buildcraft.core.lib.client.render.*;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
 
-public class RobotStationModel extends BakedModelHolder implements IPluggableStaticBaker {
+public class RobotStationModel extends BakedModelHolder implements IPluggableModelBaker {
     public static final RobotStationModel INSTANCE = new RobotStationModel();
 
     private static final ResourceLocation baseLoc = new ResourceLocation("buildcraftrobotics:models/pluggables/robot_station_base.obj");
@@ -92,6 +88,15 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableSta
     }
 
     @Override
+    public VertexFormat getVertexFormat() {
+        return DefaultVertexFormats.BLOCK;
+    }
+
+    @Override
+    public ImmutableList bake(PluggableModelKey key) {
+        return null;
+    }
+
     public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
         RobotStationPluggable station = (RobotStationPluggable) pluggable;

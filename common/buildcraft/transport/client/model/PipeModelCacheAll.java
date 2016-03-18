@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.core.lib.client.model.IModelCache;
 import buildcraft.core.lib.client.model.ModelCacheJoiner;
@@ -17,7 +18,7 @@ import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
-import buildcraft.transport.client.model.PipeModelCachePluggableCutout.PluggableCutoutKey;
+import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;
 
 public class PipeModelCacheAll {
     private static final IModelCache<PipeAllCutoutKey> cacheCutout;
@@ -26,12 +27,12 @@ public class PipeModelCacheAll {
     static {
         List<ModelKeyWrapper<PipeAllCutoutKey, ?>> cutout = new ArrayList<>();
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getBaseCutout, PipeModelCacheBase.cacheCutout));
-        cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getPluggable, PipeModelCachePluggableCutout.cacheAll));
+        cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getPluggable, PipeModelCachePluggable.cacheCutoutAll));
         cacheCutout = new ModelCacheJoiner<>("pipe.all.cutout", cutout);
 
         List<ModelKeyWrapper<PipeAllTranslucentKey, ?>> translucent = new ArrayList<>();
         translucent.add(new ModelKeyWrapper<>(PipeAllTranslucentKey::getBaseTranslucent, PipeModelCacheBase.cacheTranslucent));
-        // TODO: Pluggables!
+        translucent.add(new ModelKeyWrapper<>(PipeAllTranslucentKey::getPluggable, PipeModelCachePluggable.cacheTranslucentAll));
         cacheTranslucent = new ModelCacheJoiner<>("pipe.all.transclucent", translucent);
     }
 
@@ -47,12 +48,12 @@ public class PipeModelCacheAll {
 
     public static class PipeAllCutoutKey {
         private final PipeBaseCutoutKey cutout;
-        private final PluggableCutoutKey pluggable;
+        private final PluggableKey pluggable;
         private final int hash;
 
         public PipeAllCutoutKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
             cutout = new PipeBaseCutoutKey(pipe, render);
-            this.pluggable = new PluggableCutoutKey(pluggable);
+            this.pluggable = new PluggableKey(EnumWorldBlockLayer.CUTOUT, pluggable);
             hash = Objects.hash(cutout, pluggable);
         }
 
@@ -60,7 +61,7 @@ public class PipeModelCacheAll {
             return cutout;
         }
 
-        public PluggableCutoutKey getPluggable() {
+        public PluggableKey getPluggable() {
             return pluggable;
         }
 
@@ -88,17 +89,21 @@ public class PipeModelCacheAll {
 
     public static class PipeAllTranslucentKey {
         private final PipeBaseTransclucentKey translucent;
-        // TODO: Pluggable key!
+        private final PluggableKey pluggable;
         private final int hash;
 
         public PipeAllTranslucentKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
             translucent = new PipeBaseTransclucentKey(render);
-            // TODO: Pluggable key!
-            hash = Objects.hash(translucent);
+            this.pluggable = new PluggableKey(EnumWorldBlockLayer.TRANSLUCENT, pluggable);
+            hash = Objects.hash(translucent, pluggable);
         }
 
         public PipeBaseTransclucentKey getBaseTranslucent() {
             return translucent;
+        }
+
+        public PluggableKey getPluggable() {
+            return pluggable;
         }
 
         @Override
@@ -113,12 +118,13 @@ public class PipeModelCacheAll {
             if (getClass() != obj.getClass()) return false;
             PipeAllTranslucentKey other = (PipeAllTranslucentKey) obj;
             if (!translucent.equals(other.translucent)) return false;
+            if (!pluggable.equals(other.pluggable)) return false;
             return true;
         }
 
         @Override
         public String toString() {
-            return "PipeAllTranslucentKey [base=" + translucent + "]";
+            return "PipeAllTranslucentKey [base=" + translucent + ", pluggable = " + pluggable + "]";
         }
     }
 }

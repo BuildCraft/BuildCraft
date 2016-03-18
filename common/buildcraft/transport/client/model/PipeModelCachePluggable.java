@@ -6,49 +6,48 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableModelKeyCutout;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.client.model.IModelCache;
 import buildcraft.core.lib.client.model.ModelCache;
 import buildcraft.core.lib.client.model.ModelCacheMultipleSame;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.transport.PipePluggableState;
 
-public class PipeModelCachePluggableCutout {
-    public static final IModelCache<PluggableCutoutKey> cacheAll;
-    public static final ModelCache<PluggableModelKeyCutout<?>> cacheSingle;
+public class PipeModelCachePluggable {
+    public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;
+    public static final ModelCache<PluggableModelKey<?>> cacheCutoutSingle, cacheTranslucentSingle;
 
     static {
-        cacheSingle = new ModelCache<>("pipe.pluggable.single", PipeModelCachePluggableCutout::generate);
-        cacheAll = new ModelCacheMultipleSame<>("pipe.pluggable.all", PluggableCutoutKey::getKeys, cacheSingle);
+        cacheCutoutSingle = new ModelCache<>("pipe.pluggable.cutout.single", PipeModelCachePluggable::generate);
+        cacheCutoutAll = new ModelCacheMultipleSame<>("pipe.pluggable.cutout.all", PluggableKey::getKeys, cacheCutoutSingle);
+
+        cacheTranslucentSingle = new ModelCache<>("pipe.pluggable.translucent.single", PipeModelCachePluggable::generate);
+        cacheTranslucentAll = new ModelCacheMultipleSame<>("pipe.pluggable.translucent.all", PluggableKey::getKeys, cacheTranslucentSingle);
     }
 
-    public static <K extends PluggableModelKeyCutout<K>> ImmutableList<MutableQuad> generate(PluggableModelKeyCutout<K> key) {
+    private static <K extends PluggableModelKey<K>> ImmutableList<MutableQuad> generate(PluggableModelKey<K> key) {
         if (key == null) return ImmutableList.of();
         ImmutableList.Builder<MutableQuad> builder = ImmutableList.builder();
         VertexFormat format = key.baker.getVertexFormat();
-        for (BakedQuad bq : key.baker.bakeCutout((K) key)) {
+        for (BakedQuad bq : key.baker.bake((K) key)) {
             builder.add(MutableQuad.create(bq, format));
         }
         return builder.build();
     }
 
-    public static class PluggableCutoutKey {
-        private final ImmutableSet<PluggableModelKeyCutout<?>> pluggables;
+    public static class PluggableKey {
+        private final ImmutableSet<PluggableModelKey<?>> pluggables;
         private final int hash;
 
-        public PluggableCutoutKey(ImmutableSet<PluggableModelKeyCutout<?>> pluggables) {
-            this.pluggables = pluggables;
-            this.hash = pluggables.hashCode();
-        }
-
-        public PluggableCutoutKey(PipePluggableState state) {
-            ImmutableSet.Builder<PluggableModelKeyCutout<?>> builder = ImmutableSet.builder();
+        public PluggableKey(EnumWorldBlockLayer layer, PipePluggableState state) {
+            ImmutableSet.Builder<PluggableModelKey<?>> builder = ImmutableSet.builder();
             for (EnumFacing side : EnumFacing.values()) {
                 PipePluggable pluggable = state.getPluggable(side);
                 if (pluggable == null) continue;
-                PluggableModelKeyCutout<?> key = pluggable.getModelRenderKey(side);
+                PluggableModelKey<?> key = pluggable.getModelRenderKey(layer, side);
                 if (key == null || key.baker == null) continue;
                 builder.add(key);
             }
@@ -56,7 +55,7 @@ public class PipeModelCachePluggableCutout {
             this.hash = pluggables.hashCode();
         }
 
-        public ImmutableSet<PluggableModelKeyCutout<?>> getKeys() {
+        public ImmutableSet<PluggableModelKey<?>> getKeys() {
             return pluggables;
         }
 
@@ -70,7 +69,7 @@ public class PipeModelCachePluggableCutout {
             if (this == obj) return true;
             if (obj == null) return false;
             if (getClass() != obj.getClass()) return false;
-            PluggableCutoutKey other = (PluggableCutoutKey) obj;
+            PluggableKey other = (PluggableKey) obj;
             if (!pluggables.equals(other.pluggables)) return false;
             return true;
         }

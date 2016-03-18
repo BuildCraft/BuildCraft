@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,8 +61,11 @@ public class PlugPluggable extends PipePluggable {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ModelKeyPlug getModelRenderKey(EnumFacing side) {
-        return new ModelKeyPlug(side);
+    public ModelKeyPlug getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyPlug(side);
+        }
+        return null;
     }
 
     @Override

@@ -30,13 +30,12 @@ import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.client.model.GatePluggableModel.GateState;
 import buildcraft.transport.gates.ItemGate;
 
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
     public static final GateItemModel INSTANCE = new GateItemModel();
 
-    private final Map<GateState, GateItemModel> map = Maps.newHashMap();
+    private final Map<ModelKeyGate, GateItemModel> map = Maps.newHashMap();
 
     public GateItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format, getPluggableTransforms());
@@ -51,11 +50,11 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
 
     @Override
     public GateItemModel handleItemState(ItemStack stack) {
-        GateState state = getState(stack);
+        ModelKeyGate key = getState(stack);
 
-        if (!map.containsKey(state)) {
+        if (!map.containsKey(key)) {
             List<BakedQuad> quads = Lists.newArrayList();
-            List<MutableQuad> mutableQuads = GatePluggableModel.INSTANCE.renderGate(state, DefaultVertexFormats.ITEM);
+            List<MutableQuad> mutableQuads = GatePluggableModel.INSTANCE.renderGate(key, DefaultVertexFormats.ITEM);
             Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
 
             Matrix4f matScale = new Matrix4f();
@@ -79,18 +78,18 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
                 quad.colouri(0xFF_FF_FF_FF);
                 quads.add(quad.toUnpacked(DefaultVertexFormats.ITEM));
             }
-            map.put(state, new GateItemModel(ImmutableList.copyOf(quads), null, DefaultVertexFormats.ITEM));
+            map.put(key, new GateItemModel(ImmutableList.copyOf(quads), null, DefaultVertexFormats.ITEM));
         }
-        return map.get(state);
+        return map.get(key);
     }
 
-    private GateState getState(ItemStack stack) {
+    private ModelKeyGate getState(ItemStack stack) {
         GateMaterial material = ItemGate.getMaterial(stack);
         GateLogic logic = ItemGate.getLogic(stack);
         Set<IGateExpansion> expansions = ItemGate.getInstalledExpansions(stack);
         Set<IGateStaticRenderState> states = Sets.newHashSet();
         for (IGateExpansion exp : expansions)
             states.add(exp.getRenderState());
-        return new GateState(material, logic, false, states);
+        return new ModelKeyGate(EnumFacing.UP, material, logic, expansions.toArray(new IGateExpansion[0]));
     }
 }

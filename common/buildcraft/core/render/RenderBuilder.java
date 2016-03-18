@@ -15,7 +15,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.builders.TileAbstractBuilder;
 
-public class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvider<B> {
+public abstract class RenderBuilder<B extends TileAbstractBuilder> extends RenderBoxProvider<B> {
     private static final RenderBuildingItems renderItems = new RenderBuildingItems();
 
     @Override

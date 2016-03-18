@@ -6,6 +6,7 @@ package buildcraft.silicon.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
@@ -16,6 +17,8 @@ public class RenderLaserTile extends TileEntitySpecialRenderer<TileLaser> {
 
     @Override
     public void renderTileEntityAt(TileLaser laser, double x, double y, double z, float f, int i) {
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("laser_tile");
         if (laser != null) {
             GL11.glPushMatrix();
             GL11.glTranslated(x, y, z);
@@ -28,5 +31,7 @@ public class RenderLaserTile extends TileEntitySpecialRenderer<TileLaser> {
 
             GL11.glPopMatrix();
         }
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 }

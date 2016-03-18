@@ -9,19 +9,24 @@ import java.util.List;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.gates.GateExpansionModelKey;
+import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
@@ -34,7 +39,9 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite sprite;
     @SideOnly(Side.CLIENT)
-    private IGateStaticRenderState renderState;
+    private RenderState renderState;
+    @SideOnly(Side.CLIENT)
+    protected BCModelKey key;
 
     public GateExpansionBuildcraft(String tag) {
         this.tag = tag;
@@ -60,8 +67,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
         }
     }
 
-    @Override
-    public IGateStaticRenderState getRenderState() {
+    public RenderState getRenderState() {
         if (renderState == null) {
             renderState = new RenderState();
         }
@@ -73,13 +79,45 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
         return 0.03f;
     }
 
-    @SideOnly(Side.CLIENT)
-    private class RenderState extends BakedModelHolder implements IGateStaticRenderState {
-        private final ResourceLocation identifier = new ResourceLocation("buildcrafttransport:gate/expansion/identifier");
-        private List<BakedQuad> transformedQuads;
+    @Override
+    public GateExpansionModelKey<?> getRenderModelKey(EnumWorldBlockLayer layer) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            /* Expansions are stored without state (at least all BC ones are) so we only need to use a single
+             * identifiing key. */
+            if (key == null) key = new BCModelKey(getRenderState());
+            return key;
+        }
+        return null;
+    }
+
+    public static class BCModelKey extends GateExpansionModelKey<BCModelKey> {
+        public BCModelKey(RenderState state) {
+            super(EnumWorldBlockLayer.CUTOUT, state);
+        }
 
         @Override
-        public List<BakedQuad> bake(VertexFormat format) {
+        public int hashCode() {
+            return System.identityHashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj == this;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private class RenderState extends BakedModelHolder implements IExpansionBaker<BCModelKey> {
+        private final ResourceLocation identifier = new ResourceLocation("buildcrafttransport:gate/expansion/identifier");
+        private ImmutableList<BakedQuad> transformedQuads;
+
+        @Override
+        public VertexFormat getVertexFormat() {
+            return DefaultVertexFormats.BLOCK;
+        }
+
+        @Override
+        public ImmutableList<BakedQuad> bake(BCModelKey key) {
             if (transformedQuads == null) {
                 IBakedModel baked = getModelItemLayer(identifier, sprite);
                 List<BakedQuad> quads = baked.getGeneralQuads();
@@ -94,7 +132,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
                     mutable.setTint(0xFF_FF_FF);
                     BCModelHelper.appendBakeQuads(transformedQuads, mutable);
                 }
-                this.transformedQuads = transformedQuads;
+                this.transformedQuads = ImmutableList.copyOf(transformedQuads);
             }
             return transformedQuads;
         }

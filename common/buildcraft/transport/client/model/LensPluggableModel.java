@@ -23,23 +23,18 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
-import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
-import buildcraft.core.lib.client.render.*;
 import buildcraft.core.lib.client.sprite.SubSprite;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.LensPluggable;
 
-public final class LensPluggableModel extends BakedModelHolder implements IPluggableStaticBaker.Translucent {
+public final class LensPluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyLens> {
     public static final LensPluggableModel INSTANCE = new LensPluggableModel();
 
     private static final ResourceLocation cutoutLensLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/lens_cutout.obj");
@@ -57,8 +52,8 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
         LensPluggable lens = new LensPluggable(new ItemStack(lensItem, 1, meta));
         ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
         VertexFormat format = DefaultVertexFormats.ITEM;
-        quads.addAll(INSTANCE.bakeCutout(lens, EnumFacing.EAST, format));
-        quads.addAll(INSTANCE.bakeTransclucent(lens, EnumFacing.EAST, format));
+        quads.addAll(INSTANCE.bakeCutout(lens.isFilter, EnumFacing.EAST, format));
+        quads.addAll(INSTANCE.bakeTransclucent(lens.dyeColor, lens.isFilter, EnumFacing.EAST, format));
         return new PerspAwareModelBase(format, quads.build(), spriteLensCutout, getBlockTransforms());
     }
 
@@ -99,22 +94,34 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
     }
 
     @Override
-    public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face) {
-        LensPluggable lens = (LensPluggable) pluggable;
-        return bakeCutout(lens, face, DefaultVertexFormats.BLOCK);
+    public ImmutableList<BakedQuad> bake(ModelKeyLens key) {
+        if (key instanceof ModelKeyLens.Cutout) {
+            return bakeCutout((ModelKeyLens.Cutout) key);
+        } else if (key instanceof ModelKeyLens.Translucent) {
+            return bakeTranslucent((ModelKeyLens.Translucent) key);
+        } else if (key == null) {
+            throw new NullPointerException("key");
+        } else {
+            throw new IllegalArgumentException("Invalid key type " + key.getClass());
+        }
+    }
+
+    private ImmutableList<BakedQuad> bakeCutout(ModelKeyLens.Cutout key) {
+        return ImmutableList.copyOf(bakeCutout(key.isFilter, key.side, getVertexFormat()));
+    }
+
+    private ImmutableList<BakedQuad> bakeTranslucent(ModelKeyLens.Translucent key) {
+        return ImmutableList.copyOf(bakeTransclucent(key.colour, key.isFilter, key.side, getVertexFormat()));
     }
 
     @Override
-    public List<BakedQuad> bakeTranslucent(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
-            EnumFacing face) {
-        LensPluggable lens = (LensPluggable) pluggable;
-        return bakeTransclucent(lens, face, DefaultVertexFormats.BLOCK);
+    public VertexFormat getVertexFormat() {
+        return DefaultVertexFormats.BLOCK;
     }
 
-    private List<BakedQuad> bakeCutout(LensPluggable lens, EnumFacing face, VertexFormat format) {
-        IModel model = lens.isFilter ? modelCutoutFilter() : modelCutoutLens();
-        TextureAtlasSprite sprite = lens.isFilter ? spriteFilterCutout : spriteLensCutout;
+    private List<BakedQuad> bakeCutout(boolean isFilter, EnumFacing face, VertexFormat format) {
+        IModel model = isFilter ? modelCutoutFilter() : modelCutoutLens();
+        TextureAtlasSprite sprite = isFilter ? spriteFilterCutout : spriteLensCutout;
 
         List<BakedQuad> quads = Lists.newArrayList();
         List<BakedQuad> bakedQuads = renderLens(model, sprite, format);
@@ -128,12 +135,11 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
         return quads;
     }
 
-    private List<BakedQuad> bakeTransclucent(LensPluggable lens, EnumFacing face, VertexFormat format) {
-        EnumDyeColor colour = lens.getColour();
+    private List<BakedQuad> bakeTransclucent(EnumDyeColor colour, boolean isFilter, EnumFacing face, VertexFormat format) {
         TextureAtlasSprite sprite = spriteTranslucent;
         int shade = -1;
         if (colour == null) {
-            if (lens.isFilter) return Collections.emptyList();
+            if (isFilter) return Collections.emptyList();
             sprite = spriteWaterFlow;
         } else {
             shade = ColorUtils.getLightHex(colour);

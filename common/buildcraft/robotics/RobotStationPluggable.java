@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import cofh.api.energy.IEnergyReceiver;
 
@@ -19,10 +20,9 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.robotics.render.RobotStationModel;
 
 import io.netty.buffer.ByteBuf;
 
@@ -123,8 +123,9 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
         return renderState;
     }
 
-    public IPluggableStaticBaker getRenderer() {
-        return RobotStationModel.INSTANCE;
+    @Override
+    public PluggableModelKey<?> getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        return null;
     }
 
     @Override

@@ -2,10 +2,12 @@ package buildcraft.transport;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -13,9 +15,8 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.api.transport.pluggable.PluggableModelKeyCutout;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.client.model.FacadePluggableModel;
+import buildcraft.transport.client.model.ModelKeyFacade;
 
 import io.netty.buffer.ByteBuf;
 
@@ -118,14 +119,13 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public boolean isSolidOnSide(IPipeTile pipe, EnumFacing direction) {
         return !isHollow();
     }
-    
-    @Override
-    public PluggableModelKeyCutout<?> getModelRenderKey(EnumFacing side) {
-        return null;
-    }
 
-    public FacadePluggableModel getRenderer() {
-        return FacadePluggableModel.INSTANCE;
+    @Override
+    public ModelKeyFacade getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyFacade(side, state, isHollow());
+        }
+        return null;
     }
 
     @Override
@@ -149,7 +149,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         if (blockId > 0) {
             block = Block.getBlockById(blockId);
         } else {
-            block = null;
+            block = Blocks.stone;
         }
 
         int flags = data.readUnsignedByte();

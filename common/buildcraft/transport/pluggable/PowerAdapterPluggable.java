@@ -1,20 +1,21 @@
 package buildcraft.transport.pluggable;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.client.model.PowerAdapterModel;
+
+import io.netty.buffer.ByteBuf;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyReceiver {
     private static final int MAX_POWER = 40;
@@ -71,8 +72,9 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyRecei
         return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
-    public IPluggableStaticBaker getRenderer() {
-        return PowerAdapterModel.INSTANCE;
+    @Override
+    public PluggableModelKey<?> getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        return null;
     }
 
     @Override

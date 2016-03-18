@@ -28,8 +28,6 @@ public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRe
 
     @Override
     public void renderTileEntityAt(T tileentity, double x, double y, double z, float f, int anArgument) {
-        Minecraft.getMinecraft().mcProfiler.startSection("box_provider");
-
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GlStateManager.enableCull();
@@ -58,8 +56,6 @@ public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRe
         GL11.glPopMatrix();
         GL11.glPopAttrib();
         GL11.glPopMatrix();
-
-        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private ResourceLocation getTexture(Box.Kind kind) {

@@ -5,15 +5,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.client.model.LensPluggableModel;
+import buildcraft.transport.client.model.ModelKeyLens;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
 import io.netty.buffer.ByteBuf;
@@ -82,8 +83,15 @@ public class LensPluggable extends PipePluggable {
         return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
-    public IPluggableStaticBaker getRenderer() {
-        return LensPluggableModel.INSTANCE;
+    @Override
+    public ModelKeyLens getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+        if (layer == EnumWorldBlockLayer.CUTOUT) {
+            return new ModelKeyLens.Cutout(side, isFilter);
+        } else if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
+            return new ModelKeyLens.Translucent(side, isFilter, dyeColor);
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -11,13 +11,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.builders.render.RenderArchitect;
-import buildcraft.builders.render.RenderBuilderTile;
-import buildcraft.builders.render.RenderConstructionMarker;
-import buildcraft.builders.render.RenderQuarry;
+import buildcraft.builders.render.*;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderVoid;
-import buildcraft.core.render.RenderBuilder;
 
 public class BuilderProxyClient extends BuilderProxy {
     public static TextureAtlasSprite drillTexture;
@@ -33,7 +29,7 @@ public class BuilderProxyClient extends BuilderProxy {
         super.registerBlockRenderers();
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder<TileFiller>());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderFiller());
         ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
         ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
         ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());

@@ -21,17 +21,14 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IPipePluggableState;
-import buildcraft.api.transport.pluggable.IPluggableStaticBaker;
-import buildcraft.api.transport.pluggable.IPipeRenderState;
-import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.api.transport.pluggable.*;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 
-public class PowerAdapterModel extends BakedModelHolder implements IPluggableStaticBaker {
+public class PowerAdapterModel extends BakedModelHolder implements IPluggableModelBaker {
     public static final PowerAdapterModel INSTANCE = new PowerAdapterModel();
 
     private static final ResourceLocation powerAdapterLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/power_adapter.obj");
@@ -60,6 +57,15 @@ public class PowerAdapterModel extends BakedModelHolder implements IPluggableSta
     }
 
     @Override
+    public VertexFormat getVertexFormat() {
+        return DefaultVertexFormats.BLOCK;
+    }
+
+    @Override
+    public ImmutableList bake(PluggableModelKey key) {
+        return null;
+    }
+
     public List<BakedQuad> bakeCutout(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
             EnumFacing face) {
         return bakeCutout(face, DefaultVertexFormats.BLOCK);

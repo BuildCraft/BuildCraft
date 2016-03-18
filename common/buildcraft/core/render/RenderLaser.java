@@ -156,6 +156,9 @@ public class RenderLaser extends Render<EntityLaser> {
             return;
         }
 
+        Minecraft.getMinecraft().mcProfiler.startSection("laser_line");
+        Minecraft.getMinecraft().mcProfiler.startSection("prepare");
+
         GL11.glPushMatrix();
 
         GL11.glTranslated(laser.head.xCoord, laser.head.yCoord, laser.head.zCoord);
@@ -168,7 +171,11 @@ public class RenderLaser extends Render<EntityLaser> {
 
         initScaledBoxes(world);
 
+        Minecraft.getMinecraft().mcProfiler.endStartSection("main_line");
+
         doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
+
+        Minecraft.getMinecraft().mcProfiler.endStartSection("thin_line");
 
         GL11.glPopMatrix();
 
@@ -181,6 +188,9 @@ public class RenderLaser extends Render<EntityLaser> {
         GL11.glVertex3d(laser.head.xCoord, laser.head.yCoord, laser.head.zCoord);
         GL11.glVertex3d(laser.tail.xCoord, laser.tail.yCoord, laser.tail.zCoord);
         GL11.glEnd();
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private static void doRenderLaserLine(double len, int texId) {
