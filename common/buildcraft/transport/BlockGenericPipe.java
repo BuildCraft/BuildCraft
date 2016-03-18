@@ -419,9 +419,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-			if (tile instanceof IPipeTile) {
-				Pipe<?> tpipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+			Pipe<?> tpipe = getPipe(world, x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			if (tpipe != null) {
 				tpipe.scheduleWireUpdate();
 			}
 		}
@@ -1091,9 +1090,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 	@Override
 	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
-		TileEntity tile = world.getTileEntity(i, j, k);
-		if (tile instanceof TileGenericPipe) {
-			Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
+		Pipe<?> pipe = getPipe(world, i, j, k);
+		if (pipe != null) {
 			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 		}
 
