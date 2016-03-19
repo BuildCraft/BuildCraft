@@ -1,5 +1,7 @@
 package buildcraft.transport.pluggable;
 
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -18,23 +20,58 @@ import buildcraft.transport.client.model.ModelKeyPlug;
 import io.netty.buffer.ByteBuf;
 
 public class PlugPluggable extends PipePluggable {
-    public PlugPluggable() {
+    public enum Material {
+        COBBLESTONE(0);
 
+        public final int id;
+        public static final TIntObjectMap<Material> ID_MAP = new TIntObjectHashMap<>();
+
+        Material(int id) {
+            this.id = id;
+        }
+    }
+
+    static {
+        for (Material m : Material.values()) {
+            Material.ID_MAP.put(m.id, m);
+        }
+    }
+
+    private Material material;
+
+    public PlugPluggable() {
+        material = Material.COBBLESTONE;
+    }
+
+    public PlugPluggable(int id) {
+        super();
+        material = Material.ID_MAP.get(id);
+        if (material == null) {
+            material = Material.COBBLESTONE;
+        }
+    }
+
+    public PlugPluggable(Material material) {
+        this.material = material;
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
-
+        nbt.setByte("id", (byte) material.id);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-
+        int id = nbt.hasKey("id") ? nbt.getByte("id") : 0;
+        material = Material.ID_MAP.get(id);
+        if (material == null) {
+            material = Material.COBBLESTONE;
+        }
     }
 
     @Override
     public ItemStack[] getDropItems(IPipeTile pipe) {
-        return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
+        return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem, 1, material.id) };
     }
 
     @Override
@@ -63,23 +100,26 @@ public class PlugPluggable extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public ModelKeyPlug getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
-            return new ModelKeyPlug(side);
+            return new ModelKeyPlug(side, material);
         }
         return null;
     }
 
     @Override
     public void writeData(ByteBuf data) {
-
+        data.writeByte(material.id);
     }
 
     @Override
     public void readData(ByteBuf data) {
-
+        material = Material.ID_MAP.get(data.readByte());
+        if (material == null) {
+            material = Material.COBBLESTONE;
+        }
     }
 
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
-        return false;
+        return ((PlugPluggable) o).material != material;
     }
 }

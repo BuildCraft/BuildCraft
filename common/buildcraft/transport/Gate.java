@@ -4,21 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultiset;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
@@ -34,7 +19,19 @@ import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.statements.ActionValve;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultiset;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public final class Gate implements IGate, ISidedStatementContainer, IRedstoneStatementContainer {
 
@@ -94,15 +91,6 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public void setAction(int position, IStatement action) {
-        // HUGE HACK! TODO - Remove in an API rewrite by adding
-        // ways for actions to fix their state on removal.
-        if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
-            for (EnumFacing side : EnumFacing.VALUES) {
-                pipe.transport.allowInput(side, true);
-                pipe.transport.allowOutput(side, true);
-            }
-        }
-
         if (action != actions[position]) {
             for (int i = 0; i < actionParameters[position].length; i++) {
                 actionParameters[position][i] = null;

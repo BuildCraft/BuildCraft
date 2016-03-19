@@ -4,37 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft;
 
-import java.io.PrintWriter;
-import java.util.LinkedList;
-import java.util.Locale;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.*;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
@@ -71,10 +40,38 @@ import buildcraft.transport.schematics.BptPipeFiltered;
 import buildcraft.transport.schematics.BptPipeRotatable;
 import buildcraft.transport.schematics.SchematicPipe;
 import buildcraft.transport.statements.*;
-import buildcraft.transport.statements.ActionValve.ValveState;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.stripes.*;
+import net.minecraft.block.Block;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import java.io.PrintWriter;
+import java.util.LinkedList;
+import java.util.Locale;
 
 @Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -163,7 +160,6 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static IActionInternal actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
     public static IActionInternal actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
     public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-    public static IActionInternal[] actionValve = new IActionInternal[4];
 
     public static boolean debugPrintFacadeList = false;
     public static boolean usePipeLoss = false;
@@ -249,42 +245,42 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             pipeItemsWood = buildPipe(PipeItemsWood.class, "plankWood", "blockGlassColorless", "plankWood");
             pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "gemEmerald", "blockGlassColorless", "gemEmerald");
-            pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "cobblestone", "blockGlassColorless", "cobblestone");
+            //pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "cobblestone", "blockGlassColorless", "cobblestone");
             pipeItemsStone = buildPipe(PipeItemsStone.class, "stone", "blockGlassColorless", "stone");
-            pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "blockQuartz", "blockGlassColorless", "blockQuartz");
+            //pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "blockQuartz", "blockGlassColorless", "blockQuartz");
             pipeItemsIron = buildPipe(PipeItemsIron.class, "ingotIron", "blockGlassColorless", "ingotIron");
             pipeItemsGold = buildPipe(PipeItemsGold.class, "ingotGold", "blockGlassColorless", "ingotGold");
             pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "gemDiamond", "blockGlassColorless", "gemDiamond");
             pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, Blocks.obsidian, "blockGlassColorless", Blocks.obsidian);
-            pipeItemsLapis = buildPipe(PipeItemsLapis.class, "blockLapis", "blockGlassColorless", "blockLapis");
-            pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "blockLapis", "blockGlassColorless", "gemDiamond");
+            //pipeItemsLapis = buildPipe(PipeItemsLapis.class, "blockLapis", "blockGlassColorless", "blockLapis");
+            //pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "blockLapis", "blockGlassColorless", "gemDiamond");
             pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, Blocks.sandstone, "blockGlassColorless", Blocks.sandstone);
-            pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
-            pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
-            pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
+            //pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
+            //pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
+            //pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
             pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
 
             pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
-            pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
+            //pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
             pipeFluidsStone = buildPipe(PipeFluidsStone.class, pipeWaterproof, pipeItemsStone);
-            pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, pipeWaterproof, pipeItemsQuartz);
+            //pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, pipeWaterproof, pipeItemsQuartz);
             pipeFluidsIron = buildPipe(PipeFluidsIron.class, pipeWaterproof, pipeItemsIron);
             pipeFluidsGold = buildPipe(PipeFluidsGold.class, pipeWaterproof, pipeItemsGold);
             pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, pipeWaterproof, pipeItemsEmerald);
             pipeFluidsDiamond = buildPipe(PipeFluidsDiamond.class, pipeWaterproof, pipeItemsDiamond);
             pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, pipeWaterproof, pipeItemsSandstone);
-            pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, pipeWaterproof, pipeItemsVoid);
+            //pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, pipeWaterproof, pipeItemsVoid);
             pipeFluidsClay = buildPipe(PipeFluidsClay.class, pipeWaterproof, pipeItemsClay);
 
             pipePowerWood = buildPipe(PipePowerWood.class, "dustRedstone", pipeItemsWood);
-            pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "dustRedstone", pipeItemsCobblestone);
+            //pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "dustRedstone", pipeItemsCobblestone);
             pipePowerStone = buildPipe(PipePowerStone.class, "dustRedstone", pipeItemsStone);
-            pipePowerQuartz = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
+            //pipePowerQuartz = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
             pipePowerIron = buildPipe(PipePowerIron.class, "dustRedstone", pipeItemsIron);
             pipePowerGold = buildPipe(PipePowerGold.class, "dustRedstone", pipeItemsGold);
             pipePowerDiamond = buildPipe(PipePowerDiamond.class, "dustRedstone", pipeItemsDiamond);
-            pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
-            pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
+            //pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
+            //pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
             pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
@@ -341,10 +337,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             for (EnumFacing direction : EnumFacing.VALUES) {
                 actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
-            }
-
-            for (ValveState state : ValveState.VALUES) {
-                actionValve[state.ordinal()] = new ActionValve(state);
             }
 
             for (PowerMode limit : PowerMode.VALUES) {

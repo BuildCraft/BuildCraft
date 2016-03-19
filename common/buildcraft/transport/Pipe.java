@@ -20,7 +20,6 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
-import buildcraft.transport.statements.ActionValve.ValveState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -408,10 +407,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
     public LinkedList<IActionInternal> getActions() {
         LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
-
-        for (ValveState state : ValveState.VALUES) {
-            result.add(BuildCraftTransport.actionValve[state.ordinal()]);
-        }
 
         return result;
     }
