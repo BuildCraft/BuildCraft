@@ -75,6 +75,9 @@ public class GatePluggable extends PipePluggable {
 
     @Override
     public void writeData(ByteBuf buf) {
+        isLit = realGate != null ? realGate.isGateActive() : false;
+        isPulsing = realGate != null ? realGate.isGatePulsing() : false;
+
         buf.writeByte(material.ordinal());
         buf.writeByte(logic.ordinal());
         buf.writeBoolean(realGate != null ? realGate.isGateActive() : false);
@@ -103,11 +106,18 @@ public class GatePluggable extends PipePluggable {
         for (int i = 0; i < expansionsSize; i++) {
             expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
         }
+
         recentlyRead = true;
     }
 
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
+        if (realGate != null) {
+            boolean _isLit = realGate != null ? realGate.isGateActive() : false;
+            boolean _isPulsing = realGate != null ? realGate.isGatePulsing() : false;
+            return _isLit != isLit || _isPulsing != isPulsing;
+        }
+
         if (recentlyRead) {
             recentlyRead = false;
             return true;

@@ -31,9 +31,10 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
                 else continue;
             } else if (this.pluggables[i] == null) {
                 isDirty = true;
-            } else if (this.pluggables[i].getClass() != pluggables[i].getClass() || pluggables[i].requiresRenderUpdate(this.pluggables[i])) {
+            } else if (this.pluggables[i].getClass() != pluggables[i].getClass()) {
                 isDirty = true;
-                break;
+            } else {
+                isDirty = true;
             }
         }
         this.pluggables = pluggables;
@@ -71,14 +72,9 @@ public class PipePluggableState implements ISerializable, IPipePluggableState, C
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 if (pluggables[dir.ordinal()] != null) {
                     pluggables[dir.ordinal()].readData(data);
-
-                    if (old != null) {
-                        isDirty = pluggables[dir.ordinal()].requiresRenderUpdate(old);
-                    } else {
-                        isDirty = true;
-                    }
                 }
             } else {
                 pluggables[dir.ordinal()] = null;
