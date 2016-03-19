@@ -138,7 +138,6 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
                     mutable.normalv(normal);
                     float diffuse = MutableQuad.diffuseLight(normal);
                     mutable.colourf(diffuse, diffuse, diffuse, 1);
-                    BCLog.logger.info("Quad = " + mutable);
                     BCModelHelper.appendBakeQuads(quads, format, mutable);
                 }
             }

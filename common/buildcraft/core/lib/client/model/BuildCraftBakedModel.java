@@ -217,6 +217,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         List<MutableQuad> mutableQuads = BCModelHelper.toMutableQuadList(baked, false);
         for (MutableQuad mutable : mutableQuads) {
             mutable.transform(translation);
+            mutable.setTint(-1);
         }
 
         return mutableQuads;
