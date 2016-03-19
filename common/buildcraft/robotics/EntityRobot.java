@@ -395,6 +395,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         return new AxisAlignedBB(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
     }
 
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return getEntityBoundingBox();
+    }
+
     public void setNullBoundingBox() {
         width = 0F;
         height = 0F;
