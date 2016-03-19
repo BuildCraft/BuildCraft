@@ -20,6 +20,16 @@ public class MutableVertex {
     private final float[] uv = new float[2];
     private final float[] light = new float[2];
 
+    public MutableVertex() {}
+
+    public MutableVertex(MutableVertex from) {
+        System.arraycopy(from.position, 0, position, 0, 3);
+        System.arraycopy(from.normal, 0, normal, 0, 3);
+        System.arraycopy(from.colour, 0, colour, 0, 4);
+        System.arraycopy(from.uv, 0, uv, 0, 2);
+        System.arraycopy(from.light, 0, light, 0, 2);
+    }
+
     public void setData(float[][] from, VertexFormat vfFrom) {
         int index = 0;
         for (VertexFormatElement elem : vfFrom.getElements()) {
@@ -77,15 +87,6 @@ public class MutableVertex {
             }
         }
         wr.endVertex();
-    }
-
-    public MutableVertex setAll(MutableVertex from) {
-        positionv(from.position());
-        normalv(from.normal());
-        colourv(from.colourv());
-        texv(from.tex());
-        lightv(from.light());
-        return this;
     }
 
     public MutableVertex positionv(Tuple3f vec) {

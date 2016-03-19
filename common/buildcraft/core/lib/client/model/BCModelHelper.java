@@ -65,7 +65,7 @@ public class BCModelHelper {
 
     public static MutableQuad[] createDoubleFace(EnumFacing face, Tuple3f center, Tuple3f radius, float[] uvs) {
         MutableQuad norm = createFace(face, center, radius, uvs);
-        return new MutableQuad[] { norm, norm.deepClone().invertNormal() };
+        return new MutableQuad[] { norm, new MutableQuad(norm).invertNormal() };
     }
 
     public static List<MutableQuad> toMutableQuadList(IBakedModel model, boolean includeFaces) {

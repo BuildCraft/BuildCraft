@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.MatrixUtils;
@@ -99,8 +101,8 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
         if (modelBaseQuads.isEmpty()) {
             IModel base = modelBase();
             if (base != null) {
-                IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, BuildCraftBakedModel.singleTextureFunction(
-                        baseSprite));
+                Function<ResourceLocation, TextureAtlasSprite> singleTextureFunction = BuildCraftBakedModel.singleTextureFunction(baseSprite);
+                IFlexibleBakedModel baked = base.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, singleTextureFunction);
                 for (BakedQuad quad : baked.getGeneralQuads()) {
                     MutableQuad mutable = MutableQuad.create(quad);
                     modelBaseQuads.add(mutable);
@@ -119,17 +121,24 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
             Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
             for (MutableQuad mutable : baseQuads()) {
-                mutable = mutable.deepClone();
+                mutable = new MutableQuad(mutable);
                 mutable.transform(matrix);
-                mutable.setCalculatedDiffuse();
+                Vector3f normal = mutable.getCalculatedNormal();
+                mutable.normalv(normal);
+                float diffuse = MutableQuad.diffuseLight(normal);
+                mutable.colourf(diffuse, diffuse, diffuse, 1);
                 BCModelHelper.appendBakeQuads(quads, format, mutable);
             }
 
             if (stateQuads != null) {
                 for (MutableQuad mutable : stateQuads) {
-                    mutable = mutable.deepClone();
+                    mutable = new MutableQuad(mutable);
                     mutable.transform(matrix);
-                    mutable.setCalculatedDiffuse();
+                    Vector3f normal = mutable.getCalculatedNormal();
+                    mutable.normalv(normal);
+                    float diffuse = MutableQuad.diffuseLight(normal);
+                    mutable.colourf(diffuse, diffuse, diffuse, 1);
+                    BCLog.logger.info("Quad = " + mutable);
                     BCModelHelper.appendBakeQuads(quads, format, mutable);
                 }
             }

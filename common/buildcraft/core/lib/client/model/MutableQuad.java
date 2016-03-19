@@ -96,12 +96,11 @@ public class MutableQuad {
         }
     }
 
-    public MutableQuad deepClone() {
-        MutableQuad clone = new MutableQuad(tintIndex, face);
-        for (int v = 0; v < 4; v++) {
-            clone.verticies[v].setAll(verticies[v]);
-        }
-        return clone;
+    public MutableQuad(MutableQuad from) {
+        this.tintIndex = from.tintIndex;
+        this.face = from.face;
+        for (int i = 0; i < 4; i++)
+            this.verticies[i] = new MutableVertex(from.verticies[i]);
     }
 
     public MutableQuad setTint(int tint) {

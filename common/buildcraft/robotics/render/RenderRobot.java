@@ -317,6 +317,7 @@ public class RenderRobot extends Render<EntityRobot> {
             /* We always write out very tiny (close) values to the depth buffer. This ensures that we always are above
              * everything else, but we still use depth for rendering ourselves. */
             GL11.glDepthRange(0, 0.001);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
         }
         box.render(factor);
         if (glasses) {

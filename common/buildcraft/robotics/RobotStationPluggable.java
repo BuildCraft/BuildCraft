@@ -144,11 +144,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public void readData(ByteBuf data) {
-        try {
-            this.renderState = EnumRobotStationState.values()[data.readUnsignedByte()];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            this.renderState = EnumRobotStationState.None;
-        }
+        byte num = data.readByte();
+        this.renderState = EnumRobotStationState.values()[(num % 4 + 4) % 4];
     }
 
     @Override
@@ -182,6 +179,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("State: " + getRenderState());
         if (station == null) {
             left.add("RobotStationPluggable: No station found!");
         } else {
