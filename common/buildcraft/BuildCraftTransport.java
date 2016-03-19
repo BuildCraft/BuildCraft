@@ -60,7 +60,7 @@ import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.transport.*;
 import buildcraft.transport.block.BlockPipe;
 import buildcraft.transport.client.model.*;
-import buildcraft.transport.client.render.PipeRendererFluids;
+import buildcraft.transport.client.render.PipeTransportRendererFluids;
 import buildcraft.transport.gates.*;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -764,7 +764,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:pipeBlock");
         event.modelRegistry.putObject(mrl, new PipeBlockModel());
 
-        PipeRendererFluids.INSTANCE.modelBake();
+        PipeTransportRendererFluids.INSTANCE.modelBake();
 
         for (ItemPipe itemPipe : BlockGenericPipe.pipes.keySet()) {
             for (int i = 0; i < 17; i++) {

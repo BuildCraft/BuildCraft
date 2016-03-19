@@ -48,21 +48,20 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
-        try {
-            if (pipeType == IPipeTile.PipeType.ITEM) {
-                PipeRendererItems.renderItemPipe((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
-            } else if (pipeType == IPipeTile.PipeType.FLUID) {
-                PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
-            } else if (pipeType == IPipeTile.PipeType.POWER) {
-                PipeRendererPower.renderPowerPipe((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
-            } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
-        } catch (Throwable t) {
-            BCLog.logger.warn("A crash! Oh no!", t);
-            throw Throwables.propagate(t);
-        } finally {
-            Minecraft.getMinecraft().mcProfiler.endSection();
-            Minecraft.getMinecraft().mcProfiler.endSection();
-            Minecraft.getMinecraft().mcProfiler.endSection();
+        if (pipe.pipe.transport != null) {
+            try {
+                PipeTransportRenderer renderer = PipeTransportRenderer.RENDERER_MAP.get(pipe.pipe.transport.getClass());
+                if (renderer != null) {
+                    renderer.render(pipe.pipe, x, y, z, f);
+                }
+            } catch (Throwable t) {
+                BCLog.logger.warn("A crash! Oh no!", t);
+                throw Throwables.propagate(t);
+            } finally {
+                Minecraft.getMinecraft().mcProfiler.endSection();
+                Minecraft.getMinecraft().mcProfiler.endSection();
+                Minecraft.getMinecraft().mcProfiler.endSection();
+            }
         }
     }
 
@@ -74,6 +73,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
+
         PipeModelCacheWire.cacheAll.renderDisplayList(key);
         GL11.glPopMatrix();
 

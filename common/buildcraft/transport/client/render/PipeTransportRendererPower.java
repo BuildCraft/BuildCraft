@@ -19,12 +19,13 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipeRendererPower {
+public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransportPower> {
     /** The number of pixels the power moves by per millisecond */
     public static final double FLOW_MULTIPLIER = 0.048;
     public static final short POWER_STAGES = PipeTransportPower.POWER_STAGES;
 
-    static void renderPowerPipe(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
+    @Override
+    public void render(Pipe<PipeTransportPower> pipe, double x, double y, double z, float f) {
         PipeTransportPower pow = pipe.transport;
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);

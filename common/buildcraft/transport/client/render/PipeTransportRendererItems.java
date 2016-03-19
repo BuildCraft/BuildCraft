@@ -25,7 +25,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
-public class PipeRendererItems {
+public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransportItems> {
     private static final int MAX_ITEMS_TO_RENDER = 10;
 
     private static final EntityItem dummyEntityItem = new EntityItem(null);
@@ -45,7 +45,8 @@ public class PipeRendererItems {
         };
     }
 
-    static void renderItemPipe(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
+    @Override
+    public void render(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
         GL11.glPushMatrix();
 
         float light = pipe.container.getWorld().getLightBrightness(pipe.container.getPos());

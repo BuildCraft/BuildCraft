@@ -1,11 +1,16 @@
 package buildcraft.transport.client.render;
 
-import java.util.Map;
-
+import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.utils.FluidRenderData;
 import com.google.common.collect.Maps;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,28 +20,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.opengl.GL11;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.client.render.RenderUtils;
-import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.utils.FluidRenderData;
+import java.util.Map;
 
-public class PipeRendererFluids {
+public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTransportFluids> {
     public static final int DISPLAY_STAGES = 100;
     /** The number of pixels the fluid moves by per millisecond */
     public static final double FLOW_MULTIPLIER = 0.016;
 
-    public static final PipeRendererFluids INSTANCE = new PipeRendererFluids();
+    public static final PipeTransportRendererFluids INSTANCE = new PipeTransportRendererFluids();
 
     /** Map of FluidID -> Fluid Render Call Lists */
     private final Map<Integer, DisplayFluidList> fluidLists = Maps.newHashMap();
@@ -81,7 +77,8 @@ public class PipeRendererFluids {
         fluidLists.clear();
     }
 
-    static void renderFluidPipe(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
+    @Override
+    public void render(Pipe<PipeTransportFluids> pipe, double x, double y, double z, float f) {
         PipeTransportFluids trans = pipe.transport;
 
         boolean needsRender = false;
