@@ -222,14 +222,20 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
         // First, find the first set of faces which contains an unclogged one.
         // If it lets you go straight, do so.
+        List<EnumFacing> uncloggedFaces = new ArrayList<>();
         for (EnumSet<EnumFacing> faces : destinations) {
             for (EnumFacing face : faces) {
                 if (!cloggedSides.contains(face)) {
-                    if (faces.contains(item.input) && !cloggedSides.contains(item.input)) {
-                        return item.input;
-                    }
-                    return face;
+                    uncloggedFaces.add(face);
                 }
+            }
+
+            int s = uncloggedFaces.size();
+            if (s > 0) {
+                if (uncloggedFaces.contains(item.input)) {
+                    return item.input;
+                }
+                return uncloggedFaces.get(BuildCraftCore.random.nextInt(s));
             }
         }
 

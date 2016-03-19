@@ -4,11 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import java.util.Locale;
-
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -17,11 +12,11 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.TravelingItem;
+import buildcraft.transport.*;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
+import java.util.Locale;
 
 public class TriggerPipeContents extends BCStatement implements ITriggerInternal {
 
@@ -49,7 +44,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
         switch (kind) {
             case containsItems:
             case containsFluids:
-                return 1;
+                return 3;
             default:
                 return 0;
         }
@@ -67,20 +62,26 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
         }
 
         Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
-        IStatementParameter parameter = parameters[0];
 
         if (pipe.transport instanceof PipeTransportItems) {
             PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
             if (kind == PipeContents.empty) {
                 return transportItems.items.isEmpty();
             } else if (kind == PipeContents.containsItems) {
-                if (parameter != null && parameter.getItemStack() != null) {
-                    for (TravelingItem item : transportItems.items) {
-                        if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
-                            return true;
+                boolean hasFilter = false;
+
+                for (IStatementParameter parameter : parameters) {
+                    if (parameter != null && parameter.getItemStack() != null) {
+                        hasFilter = true;
+                        for (TravelingItem item : transportItems.items) {
+                            if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
+                                return true;
+                            }
                         }
                     }
-                } else {
+                }
+
+                if (!hasFilter) {
                     return !transportItems.items.isEmpty();
                 }
             }
@@ -90,13 +91,21 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
             if (kind == PipeContents.empty) {
                 return transportFluids.fluidType == null;
             } else {
-                if (parameter != null && parameter.getItemStack() != null) {
-                    FluidStack searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+                boolean hasFilter = false;
 
-                    if (searchedFluid != null) {
-                        return transportFluids.fluidType != null && searchedFluid.isFluidEqual(transportFluids.fluidType);
+                for (IStatementParameter parameter : parameters) {
+                    if (parameter != null && parameter.getItemStack() != null) {
+                        hasFilter = true;
+
+                        FluidStack searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+
+                        if (searchedFluid != null) {
+                            return transportFluids.fluidType != null && searchedFluid.isFluidEqual(transportFluids.fluidType);
+                        }
                     }
-                } else {
+                }
+
+                if (!hasFilter) {
                     return transportFluids.fluidType != null;
                 }
             }
