@@ -4,15 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.render;
 
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.robots.IRobotOverlayItem;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.lib.client.render.RenderUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.render.RenderLaser;
-import buildcraft.robotics.EntityRobot;
+import java.util.Date;
+
 import com.mojang.authlib.GameProfile;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -36,11 +33,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.util.Constants.NBT;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Date;
+import buildcraft.BuildCraftRobotics;
+import buildcraft.api.robots.IRobotOverlayItem;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.render.RenderLaser;
+import buildcraft.robotics.EntityRobot;
 
 /** All of this is getting a mega-rewrite for Neptune */
 public class RenderRobot extends Render<EntityRobot> {
@@ -189,7 +193,7 @@ public class RenderRobot extends Render<EntityRobot> {
         GL11.glPopMatrix();
     }
 
-    private boolean isWearingGlasses() {
+    private static boolean isWearingGlasses() {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         ItemStack helmet = player.getCurrentArmor(3);
         if (helmet == null || helmet.getItem() != BuildCraftRobotics.robotGoggles) {
@@ -310,12 +314,14 @@ public class RenderRobot extends Render<EntityRobot> {
         boolean glasses = isWearingGlasses();
         if (glasses) {
             GlStateManager.color(1 - storagePercent, storagePercent, 0);
-            GlStateManager.disableDepth();
+            /* We always write out very tiny (close) values to the depth buffer. This ensures that we always are above
+             * everything else, but we still use depth for rendering ourselves. */
+            GL11.glDepthRange(0, 0.001);
         }
         box.render(factor);
         if (glasses) {
             GlStateManager.color(1, 1, 1);
-            GlStateManager.enableDepth();
+            GL11.glDepthRange(0, 1);
         }
 
         if (!isAsleep && !glasses) {
