@@ -4,15 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes.events;
 
-import java.util.List;
-
+import buildcraft.transport.Pipe;
+import buildcraft.transport.TransportConstants;
+import buildcraft.transport.TravelingItem;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TransportConstants;
-import buildcraft.transport.TravelingItem;
+import java.util.EnumSet;
+import java.util.List;
 
 public abstract class PipeEventItem extends PipeEvent {
 
@@ -59,10 +59,9 @@ public abstract class PipeEventItem extends PipeEvent {
     }
 
     public static class FindDest extends PipeEventItem {
-        public final List<EnumFacing> destinations;
-        public boolean shuffle = true;
+        public final List<EnumSet<EnumFacing>> destinations;
 
-        public FindDest(Pipe<?> pipe, TravelingItem item, List<EnumFacing> destinations) {
+        public FindDest(Pipe<?> pipe, TravelingItem item, List<EnumSet<EnumFacing>> destinations) {
             super(pipe, item);
             this.destinations = destinations;
         }

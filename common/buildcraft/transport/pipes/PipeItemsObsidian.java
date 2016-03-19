@@ -167,9 +167,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                         if (stack != null) {
                             Vec3 pos = Utils.convertMiddle(container.getPos());
                             TravelingItem item = TravelingItem.make(pos, stack);
-                            transport.injectItem(item, openOrientation.getOpposite());
+                            return transport.injectItem(item, openOrientation.getOpposite(), true);
                         }
-                        return true;
                     }
                 }
             }
@@ -179,6 +178,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
     }
 
     public void pullItemIntoPipe(Entity entity, int distance) {
+        // TODO: Add injectItem error handling
+
         if (container.getWorld().isRemote) {
             return;
         }
@@ -235,8 +236,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                     stack);
 
             item.setSpeed((float) speed);
-
-            transport.injectItem(item, orientation);
+            transport.injectItem(item, orientation, true);
         }
     }
 

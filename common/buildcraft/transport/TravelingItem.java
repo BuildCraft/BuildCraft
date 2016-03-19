@@ -83,6 +83,10 @@ public class TravelingItem {
         return serverCache;
     }
 
+    public boolean isMoving() {
+        return !(!toCenter && output == null);
+    }
+
     public void movePosition(Vec3 toAdd) {
         pos = pos.add(toAdd);
     }

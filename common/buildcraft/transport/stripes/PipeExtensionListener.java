@@ -158,6 +158,6 @@ public class PipeExtensionListener {
         Vec3 pos = Utils.convert(transport.container.getPos());
         pos = pos.addVector(0.5, TransportUtils.getPipeFloorOf(itemStack), 0.5);
         TravelingItem newItem = TravelingItem.make(pos, itemStack);
-        transport.injectItem(newItem, direction);
+        transport.injectItem(newItem, direction, true);
     }
 }

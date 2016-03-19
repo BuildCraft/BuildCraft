@@ -4,29 +4,25 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.GuiIds;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IGuiReturnHandler {
 
@@ -95,30 +91,29 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     @Override
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        if (inventory == null) {
+    public int[] getExtractionTargets(IItemHandler handler, int maxItems) {
+        if (handler == null) {
             return null;
         }
 
-        // Handle possible double chests and wrap it in the ISidedInventory interface.
-        ISidedInventory sidedInventory = InventoryWrapper.getWrappedInventory(InvUtils.getInventory(inventory));
-
         if (settings.getFilterMode() == FilterMode.ROUND_ROBIN) {
-            return checkExtractRoundRobin(sidedInventory, doRemove, from);
+            return checkExtractRoundRobin(handler);
         }
 
-        return checkExtractFiltered(sidedInventory, doRemove, from, maxItems);
+        return checkExtractFiltered(handler, maxItems);
     }
 
-    private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        for (int k : inventory.getSlotsForFace(from)) {
-            ItemStack stack = inventory.getStackInSlot(k);
+    private int[] checkExtractFiltered(IItemHandler handler, int maxItems) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
 
             if (stack == null || stack.stackSize <= 0) {
                 continue;
             }
 
-            if (!inventory.canExtractItem(k, stack, from)) {
+            stack = handler.extractItem(i, maxItems, true);
+
+            if (stack == null || stack.stackSize <= 0) {
                 continue;
             }
 
@@ -129,56 +124,37 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
                 continue;
             }
 
-            if (doRemove) {
-                int maxStackSize = stack.stackSize;
-                int stackSize = Math.min(maxStackSize, maxItems);
-                if (stackSize > 0) {
-                    speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
-                    int energyUsed = (int) (stackSize * 10 * speedMultiplier);
-                    battery.useEnergy(energyUsed, energyUsed, false);
-
-                    stack = inventory.decrStackSize(k, stackSize);
-                } else {
-                    return null;
-                }
-            }
-
-            return new ItemStack[] { stack };
+            return new int[] { i };
         }
 
         return null;
     }
 
-    private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-        for (int i : inventory.getSlotsForFace(from)) {
-            ItemStack stack = inventory.getStackInSlot(i);
+    private int[] checkExtractRoundRobin(IItemHandler handler) {
+        ItemStack filter = getCurrentFilter();
 
-            if (stack != null && stack.stackSize > 0) {
-                ItemStack filter = getCurrentFilter();
+        if (filter == null) {
+            return null;
+        }
 
-                if (filter == null) {
-                    return null;
-                }
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack stack = handler.getStackInSlot(i);
 
-                if (!StackHelper.isMatchingItemOrList(filter, stack)) {
-                    continue;
-                }
-
-                if (!inventory.canExtractItem(i, stack, from)) {
-                    continue;
-                }
-
-                if (doRemove) {
-                    // In Round Robin mode, extract only 1 item regardless of power level.
-                    stack = inventory.decrStackSize(i, 1);
-                    incrementFilter();
-                } else {
-                    stack = stack.copy();
-                    stack.stackSize = 1;
-                }
-
-                return new ItemStack[] { stack };
+            if (stack == null || stack.stackSize <= 0) {
+                continue;
             }
+
+            stack = handler.extractItem(i, 1, true);
+
+            if (stack == null || stack.stackSize <= 0) {
+                continue;
+            }
+
+            if (!StackHelper.isMatchingItemOrList(filter, stack)) {
+                continue;
+            }
+
+            return new int[] { i };
         }
 
         return null;

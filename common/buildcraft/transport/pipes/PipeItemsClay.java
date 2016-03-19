@@ -4,29 +4,30 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.LinkedList;
-
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.pipes.events.PipeEventPriority;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftTransport;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.pipes.events.PipeEventPriority;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 public class PipeItemsClay extends Pipe<PipeTransportItems> {
 
     public PipeItemsClay(Item item) {
         super(new PipeTransportItems(), item);
 
-        transport.allowBouncing = true;
+        transport.allowBouncing = false;
     }
 
     @Override
@@ -42,27 +43,35 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
 
     @PipeEventPriority(priority = -200)
     public void eventHandler(PipeEventItem.FindDest event) {
-        LinkedList<EnumFacing> nonPipesList = new LinkedList<EnumFacing>();
-        LinkedList<EnumFacing> pipesList = new LinkedList<EnumFacing>();
+        List<EnumSet<EnumFacing>> newDestinations = new ArrayList<>(event.destinations.size() * 2);
 
-        for (EnumFacing o : event.destinations) {
-            if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
-                if (container.isPipeConnected(o)) {
-                    TileEntity entity = container.getTile(o);
-                    if (entity instanceof IPipeTile) {
-                        pipesList.add(o);
-                    } else {
-                        nonPipesList.add(o);
+        for (EnumSet<EnumFacing> faces : event.destinations) {
+            EnumSet<EnumFacing> nonPipesList = EnumSet.noneOf(EnumFacing.class);
+            EnumSet<EnumFacing> pipesList = EnumSet.noneOf(EnumFacing.class);
+
+            for (EnumFacing o : faces) {
+                if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
+                    if (container.isPipeConnected(o)) {
+                        TileEntity entity = container.getTile(o);
+                        if (entity instanceof IPipeTile) {
+                            pipesList.add(o);
+                        } else {
+                            nonPipesList.add(o);
+                        }
                     }
                 }
+            }
+
+            if (!nonPipesList.isEmpty()) {
+                newDestinations.add(nonPipesList);
+            }
+
+            if (!pipesList.isEmpty()) {
+                newDestinations.add(pipesList);
             }
         }
 
         event.destinations.clear();
-        if (nonPipesList.isEmpty()) {
-            event.destinations.addAll(pipesList);
-        } else {
-            event.destinations.addAll(nonPipesList);
-        }
+        event.destinations.addAll(newDestinations);
     }
 }

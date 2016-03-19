@@ -4,22 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.Collection;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
@@ -27,10 +11,22 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.InventoryWrapper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.*;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
+import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.Collection;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
@@ -133,17 +129,19 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
             if (meta <= 5) {
                 EnumFacing side = EnumFacing.getFront(meta);
                 TileEntity tile = container.getTile(side);
+                IItemHandler handler = InvUtils.getItemHandler(tile, side.getOpposite());
 
-                if (tile instanceof IInventory) {
+                if (handler != null) {
                     int stackSize = 0;
-                    IInventory inventory = (IInventory) tile;
                     int maxItems = maxExtractable();
-                    ItemStack[] extracted = checkExtract(inventory, false, side.getOpposite(), maxItems);
+                    int[] extracted = getExtractionTargets(handler, maxItems);
                     if (extracted != null) {
-                        for (ItemStack s : extracted) {
-                            stackSize += s.stackSize;
+                        for (int s : extracted) {
+                            stackSize += handler.getStackInSlot(s).stackSize;
                         }
                     }
+
+                    stackSize = Math.min(maxItems, stackSize);
 
                     if (battery.getEnergyStored() >= stackSize * 10) {
                         return true;
@@ -179,29 +177,47 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
 
         EnumFacing side = EnumFacing.getFront(meta);
         TileEntity tile = container.getTile(side);
+        IItemHandler handler = InvUtils.getItemHandler(tile, side.getOpposite());
 
-        if (tile instanceof IInventory) {
-            IInventory inventory = (IInventory) tile;
-
-            ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite(), maxItems);
+        if (handler != null) {
+            int[] extracted = getExtractionTargets(handler, maxItems);
             if (extracted == null) {
                 return;
             }
 
             tile.markDirty();
 
-            for (ItemStack stack : extracted) {
-                if (stack == null || stack.stackSize == 0) {
-                    // battery.useEnergy(10, 10, false);
+            for (int slotId : extracted) {
+                ItemStack slot = handler.extractItem(slotId, maxItems, true);
+                if (slot == null || slot.stackSize == 0) {
+                    continue;
+                }
 
+                int stackSize = Math.min(slot.stackSize, maxItems);
+                // TODO: Look into the Speed Multiplier again someday.
+                // speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
+                int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+                if (battery.useEnergy(energyUsed, energyUsed, false) < energyUsed) {
                     continue;
                 }
 
                 Vec3 entPos = Utils.convertMiddle(tile.getPos()).add(Utils.convert(side, -0.6));
-
-                TravelingItem entity = makeItem(entPos, stack);
+                TravelingItem entity = makeItem(entPos, slot);
                 entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
-                transport.injectItem(entity, side.getOpposite());
+
+                if (transport.injectItem(entity, side.getOpposite(), false)) {
+                    slot = handler.extractItem(slotId, maxItems, false);
+                    if (slot == null || slot.stackSize == 0) {
+                        continue;
+                    }
+
+                    entity = makeItem(entPos, slot);
+                    entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
+
+                    if (!transport.injectItem(entity, side.getOpposite(), true)) {
+                        dropItem(slot);
+                    }
+                }
             }
         }
     }
@@ -212,46 +228,29 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
 
     /** Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain
      * cases, the extractable slot depends on the position of the pipe. */
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        IInventory inv = InvUtils.getInventory(inventory);
-        ItemStack result = checkExtractGeneric(inv, doRemove, from, maxItems);
+    public int[] getExtractionTargets(IItemHandler handler, int maxItems) {
+        int result = getExtractionTargetsGeneric(handler, maxItems);
 
-        if (result != null) {
-            return new ItemStack[] { result };
+        if (result >= 0) {
+            return new int[] { result };
         }
 
         return null;
     }
 
-    public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from, maxItems);
-    }
+    public int  getExtractionTargetsGeneric(IItemHandler handler, int maxItems) {
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack slot = handler.getStackInSlot(i);
 
-    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        if (inventory == null) {
-            return null;
-        }
-
-        for (int k : inventory.getSlotsForFace(from)) {
-            ItemStack slot = inventory.getStackInSlot(k);
-
-            if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
-                if (doRemove) {
-                    int maxStackSize = slot.stackSize;
-                    int stackSize = Math.min(maxStackSize, maxItems);
-                    // TODO: Look into the Speed Multiplier again someday.
-                    // speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
-                    int energyUsed = (int) (stackSize * 10 * speedMultiplier);
-                    battery.useEnergy(energyUsed, energyUsed, false);
-
-                    return inventory.decrStackSize(k, stackSize);
-                } else {
-                    return slot;
+            if (slot != null && slot.stackSize > 0) {
+                ItemStack stack = handler.extractItem(i, maxItems, true);
+                if (stack != null) {
+                    return i;
                 }
             }
         }
 
-        return null;
+        return -1;
     }
 
     @Override

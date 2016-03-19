@@ -4,26 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.fluids.IFluidBlock;
-
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
@@ -46,6 +26,23 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
+import cofh.api.energy.IEnergyReceiver;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fluids.IFluidBlock;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyReceiver, IStripesPipe {
     private RFBattery battery = new RFBattery(320 * 50, 640, 0);
@@ -199,13 +196,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     }
 
     @Override
-    public void sendItem(ItemStack stack, EnumFacing direction) {
+    public boolean sendItem(ItemStack stack, EnumFacing direction) {
         Vec3 pos = Utils.convertMiddle(container.getPos()).addVector(0, TransportUtils.getPipeFloorOf(stack) - 0.5, 0);
         pos = pos.add(Utils.convert(direction, 0.25));
 
         TravelingItem newItem = TravelingItem.make(pos, stack);
 
-        transport.injectItem(newItem, direction);
+        return transport.injectItem(newItem, direction, true);
     }
 
     @Override

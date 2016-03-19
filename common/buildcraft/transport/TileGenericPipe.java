@@ -626,19 +626,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from, EnumDyeColor color) {
         if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from) && pipe.inputOpen(from)) {
+            Vec3 itemPos = Utils.convertMiddle(getPos()).add(Utils.convert(from, 0.4));
 
-            if (doAdd) {
-                Vec3 itemPos = Utils.convertMiddle(getPos()).add(Utils.convert(from, 0.4));
+            TravelingItem pipedItem = TravelingItem.make(itemPos, payload);
+            pipedItem.color = color;
 
-                TravelingItem pipedItem = TravelingItem.make(itemPos, payload);
-                if (pipedItem.isCorrupted()) {
-                    return 0;
-                }
-
-                pipedItem.color = color;
-                ((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite());
+            if (((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite(), doAdd)) {
+                return payload.stackSize;
             }
-            return payload.stackSize;
         }
 
         return 0;

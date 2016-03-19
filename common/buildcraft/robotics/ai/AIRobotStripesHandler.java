@@ -83,8 +83,9 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
     }
 
     @Override
-    public void sendItem(ItemStack stack, EnumFacing direction) {
+    public boolean sendItem(ItemStack stack, EnumFacing direction) {
         InvUtils.dropItems(robot.worldObj, stack, Utils.getPos(robot));
+        return true;
     }
 
     @Override

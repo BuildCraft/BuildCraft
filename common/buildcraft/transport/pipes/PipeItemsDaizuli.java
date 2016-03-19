@@ -4,21 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.EnumPipePart;
@@ -35,8 +20,20 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISerializable {
 
@@ -142,11 +139,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
     public void eventHandler(PipeEventItem.FindDest event) {
         EnumFacing output = EnumFacing.getFront(container.getBlockMetadata());
         if (event.item.color == getColor() && event.destinations.contains(output)) {
-            event.destinations.clear();
-            event.destinations.add(output);
+            event.destinations.get(0).clear();
+            event.destinations.get(0).add(output);
             return;
         }
-        event.destinations.remove(output);
+        event.destinations.get(0).remove(output);
     }
 
     public void eventHandler(PipeEventItem.AdjustSpeed event) {

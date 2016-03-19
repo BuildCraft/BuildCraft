@@ -4,28 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.LinkedList;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.GuiIds;
-import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
@@ -33,8 +16,22 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.statements.ActionExtractionPreset;
-
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
+
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
@@ -94,7 +91,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
      * cases, the extractable slot depends on the position of the pipe. */
     
     @Override
-    public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
+    public int[] getExtractionTargets(IItemHandler handler, int maxItems) {
         if (activeFlags.isEmpty()) {
             return null;
         }
@@ -103,49 +100,39 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
             return null;
         }
 
-        IInventory inv = InvUtils.getInventory(inventory);
-        ItemStack result = checkExtractGeneric(inv, doRemove, from, maxItems);
+        int result = getExtractionTargetsGeneric(handler, maxItems);
 
-        if (result != null) {
-            return new ItemStack[] { result };
+        if (result >= 0) {
+            return new int[] { result };
         }
 
         return null;
     }
 
     @Override
-    public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from, int maxItems) {
-        if (inventory == null) {
-            return null;
+    public int getExtractionTargetsGeneric(IItemHandler handler, int maxItems) {
+        if (handler == null) {
+            return -1;
         }
 
         ItemStack filter = getCurrentFilter();
         if (filter == null) {
-            return null;
+            return -1;
         }
 
-        for (int k : inventory.getSlotsForFace(from)) {
-            ItemStack slot = inventory.getStackInSlot(k);
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack slot = handler.extractItem(i, maxItems, true);
 
-            if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
+            if (slot != null && slot.stackSize > 0) {
                 if (!StackHelper.isMatchingItemOrList(slot, filter)) {
                     continue;
                 }
 
-                if (doRemove) {
-                    int maxStackSize = slot.stackSize;
-                    int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
-                    int energyUsed = (int) (stackSize * 10 * speedMultiplier);
-                    battery.useEnergy(energyUsed, energyUsed, false);
-
-                    return inventory.decrStackSize(k, stackSize);
-                } else {
-                    return slot;
-                }
+                return i;
             }
         }
 
-        return null;
+        return -1;
     }
 
     public IInventory getFilters() {

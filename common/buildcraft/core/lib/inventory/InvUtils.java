@@ -4,13 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -21,8 +24,13 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.core.lib.utils.BlockUtils;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public final class InvUtils {
+    private static final boolean DISABLE_INVENTORY_WRAPPERS = false;
 
     /** Deactivate constructor */
     private InvUtils() {}
@@ -198,6 +206,26 @@ public final class InvUtils {
 
             return stack;
         }
+    }
+
+    public static IItemHandler getItemHandler(Object object, EnumFacing orientation) {
+        if (object instanceof TileEntity && ((TileEntity) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
+            return ((TileEntity) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
+        } else if (object instanceof Entity && ((Entity) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
+            return ((Entity) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
+        } else if (object instanceof ItemStack && ((ItemStack) object).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation)) {
+            return ((ItemStack) object).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, orientation);
+        } else if (!DISABLE_INVENTORY_WRAPPERS) {
+            if (object instanceof ISidedInventory) {
+                // TODO: Remove in 1.9
+                return new SidedInvWrapper((ISidedInventory) object, orientation);
+            } else if (object instanceof IInventory) {
+                // TODO: Remove in 1.9
+                return new InvWrapper((IInventory) object);
+            }
+        }
+
+        return null;
     }
 
     /** Ensures that the given inventory is the full inventory, i.e. takes double chests into account.

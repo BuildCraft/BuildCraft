@@ -35,11 +35,7 @@ public class PacketTabletMessage extends Packet {
     public void readData(ByteBuf data) {
         super.readData(data);
         playerId = data.readInt();
-
-        int length = data.readUnsignedShort();
-        byte[] compressed = new byte[length];
-        data.readBytes(compressed);
-        this.tag = NetworkUtils.readNBT(data);;
+        this.tag = NetworkUtils.readNBT(data);
     }
 
     @Override

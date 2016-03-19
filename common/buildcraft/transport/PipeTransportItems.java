@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.tiles.IDebuggable;
@@ -15,7 +16,6 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
-import buildcraft.transport.pipes.bc8.PipeTransportItem_BC8;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import net.minecraft.entity.item.EntityItem;
@@ -30,15 +30,22 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import org.apache.logging.log4j.Level;
 
 import java.util.*;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
-    public static final int MAX_PIPE_STACKS = PipeTransportItem_BC8.MAX_PIPE_STACKS;
-    public static final int MAX_PIPE_ITEMS = PipeTransportItem_BC8.MAX_PIPE_ITEMS;
+    private enum ReceiveType {
+        ALLOWED,
+        CLOGGED,
+        NONE;
+    }
+
+    public static final int MAX_PIPE_STACKS = 32;
     public boolean allowBouncing = false;
     public final TravelerSet items = new TravelerSet(this);
+
+    private static final int DESTINATION_REFRESH_SPEED = 20;
+    private final int REFRESH_OFFSET = BuildCraftCore.random.nextInt(DESTINATION_REFRESH_SPEED);
 
     @Override
     public IPipeTile.PipeType getPipeType() {
@@ -83,55 +90,63 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         item.pos = newPos;
     }
 
-    public void injectItem(TravelingItem item, EnumFacing inputOrientation) {
+    public boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd) {
+        return injectItem(item, inputOrientation, doAdd, false);
+    }
+
+    protected boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd, boolean force) {
         if (item.isCorrupted()) {
             // Safe guard - if for any reason the item is corrupted at this
             // stage, avoid adding it to the pipe to avoid further exceptions.
-            return;
+            return false;
         }
 
-        item.reset();
-        item.input = inputOrientation;
-
-        readjustSpeed(item);
-        readjustPosition(item);
-
-        PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
-        container.pipe.eventBus.handleEvent(event);
-        if (event.cancelled) {
-            return;
-        }
-
-        if (!container.getWorld().isRemote) {
-            item.output = resolveDestination(item);
-        }
-
-        items.add(item);
-
-        if (!container.getWorld().isRemote) {
-            sendTravelerPacket(item, false);
-
-            int itemStackCount = getNumberOfStacks();
-
-            if (itemStackCount >= (MAX_PIPE_STACKS / 2)) {
-                groupEntities();
-                itemStackCount = getNumberOfStacks();
-            }
-
-            if (itemStackCount > MAX_PIPE_STACKS) {
-                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s because it had too many stacks: %d", container.getPos(), items
-                        .size()));
-                destroyPipe();
-                return;
-            }
-
-            int numItems = getNumberOfItems();
-
-            if (numItems > MAX_PIPE_ITEMS) {
-                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s, because it had too many items: %d", container.getPos(), numItems));
-                destroyPipe();
+        if (!force) {
+            for (TravelingItem item1 : items) {
+                if (item1.input != null && item1.input.getAxis() == inputOrientation.getAxis() && !item1.isMoving()) {
+                    return false;
+                }
             }
         }
+
+        if (doAdd) {
+            item.reset();
+            item.input = inputOrientation;
+
+            readjustSpeed(item);
+            readjustPosition(item);
+
+            PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
+            container.pipe.eventBus.handleEvent(event);
+            if (event.cancelled) {
+                return false;
+            }
+        }
+
+        int itemStackCount = getNumberOfStacks();
+
+        if (itemStackCount >= MAX_PIPE_STACKS) {
+            groupEntities();
+            itemStackCount = getNumberOfStacks();
+        }
+
+        if (itemStackCount >= MAX_PIPE_STACKS) {
+            return false;
+        }
+
+        if (doAdd) {
+            if (!container.getWorld().isRemote) {
+                item.output = resolveDestination(item);
+            }
+
+            items.add(item);
+
+            if (!container.getWorld().isRemote) {
+                sendTravelerPacket(item, false);
+            }
+        }
+
+        return true;
     }
 
     private void destroyPipe() {
@@ -172,77 +187,114 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
     }
 
-    public EnumFacing resolveDestination(TravelingItem data) {
-        List<EnumFacing> validDestinations = getPossibleMovements(data);
-
-        if (validDestinations.isEmpty()) {
-            return null;
-        }
-
-        return validDestinations.get(0);
-    }
-
-    /** Returns a list of all possible movements, that is to say adjacent implementers of IPipeEntry or
-     * TileEntityChest. */
-    public List<EnumFacing> getPossibleMovements(TravelingItem item) {
-        LinkedList<EnumFacing> result = new LinkedList<EnumFacing>();
-
+    // TODO: Rewrite to allow putting directions into priority categories on the pipe's side. ;w;
+    public EnumFacing resolveDestination(TravelingItem item) {
         item.blacklist.add(item.input.getOpposite());
 
-        EnumSet<EnumFacing> sides = EnumSet.complementOf(item.blacklist);
-        sides.remove(null);
+        EnumSet<EnumFacing> baseSet = EnumSet.noneOf(EnumFacing.class);
+        EnumSet<EnumFacing> cloggedSides = EnumSet.noneOf(EnumFacing.class);
 
-        for (EnumFacing o : sides) {
-            if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
-                result.add(o);
+        for (EnumFacing o : EnumSet.complementOf(item.blacklist)) {
+            if (container.pipe.outputOpen(o)) {
+                ReceiveType type = canReceivePipeObjects(o, item);
+                if (type != ReceiveType.NONE) {
+                    baseSet.add(o);
+                    if (type == ReceiveType.CLOGGED) {
+                        cloggedSides.add(o);
+                    }
+                }
             }
         }
 
-        PipeEventItem.FindDest event = new PipeEventItem.FindDest(container.pipe, item, result);
+        List<EnumSet<EnumFacing>> destinations = new ArrayList<>(4);
+        destinations.add(baseSet);
+
+        PipeEventItem.FindDest event = new PipeEventItem.FindDest(container.pipe, item, destinations);
         container.pipe.eventBus.handleEvent(event);
 
-        if (allowBouncing && result.isEmpty()) {
-            if (canReceivePipeObjects(item.input.getOpposite(), item)) {
-                result.add(item.input.getOpposite());
+        // Remove empty EnumSets
+        Iterator<EnumSet<EnumFacing>> sets = destinations.iterator();
+        while (sets.hasNext()) {
+            if (sets.next().isEmpty()) {
+                sets.remove();
             }
         }
 
-        if (event.shuffle) {
-            Collections.shuffle(result);
+        // First, find the first set of faces which contains an unclogged one.
+        // If it lets you go straight, do so.
+        for (EnumSet<EnumFacing> faces : destinations) {
+            for (EnumFacing face : faces) {
+                if (!cloggedSides.contains(face)) {
+                    if (faces.contains(item.input) && !cloggedSides.contains(item.input)) {
+                        return item.input;
+                    }
+                    return face;
+                }
+            }
         }
 
-        return result;
+        // If all sides are clogged, check if bouncing can be done.
+        if (allowBouncing) {
+            EnumFacing o = item.input.getOpposite();
+            ReceiveType type = canReceivePipeObjects(o, item);
+            if (type == ReceiveType.ALLOWED) {
+                return o;
+            }
+        }
+
+        // If nothing else works, just return null.
+        return null;
     }
 
-    private boolean canReceivePipeObjects(EnumFacing o, TravelingItem item) {
+    private ReceiveType canReceivePipeObjects(EnumFacing o, TravelingItem item) {
         TileEntity entity = container.getTile(o);
 
         if (!container.isPipeConnected(o)) {
-            return false;
+            return ReceiveType.NONE;
         }
 
         if (entity instanceof IPipeTile) {
             Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
 
-            if (pipe == null || pipe.transport == null) {
-                return false;
+            if (pipe == null || pipe.transport == null || !pipe.inputOpen(o.getOpposite()) || !(pipe.transport instanceof PipeTransportItems)) {
+                return ReceiveType.NONE;
             }
 
-            // return !pipe.pipe.isClosed() && pipe.pipe.transport instanceof PipeTransportItems;
-            return pipe.inputOpen(o.getOpposite()) && pipe.transport instanceof PipeTransportItems;
+            // TODO: OPTIMIZE ME
+            for (TravelingItem item1 : ((PipeTransportItems) pipe.transport).items) {
+                if (item1.input != null && item1.input.getAxis() == o.getAxis() && !item1.isMoving()) {
+                    return ReceiveType.CLOGGED;
+                }
+            }
+
+            return ReceiveType.ALLOWED;
         } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
             ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
-            if (transactor != null && transactor.add(item.getItemStack(), false).stackSize > 0) {
-                return true;
+            if (transactor != null) {
+                return transactor.add(item.getItemStack(), false).stackSize > 0 ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
             }
         }
 
-        return false;
+        return ReceiveType.NONE;
     }
 
     @Override
     public void updateEntity() {
         moveSolids();
+    }
+
+    private void refreshDestination(TravelingItem item, boolean force) {
+        if (!getWorld().isRemote) {
+            if (force || ((getWorld().getTotalWorldTime() + REFRESH_OFFSET) % DESTINATION_REFRESH_SPEED) == 0) {
+                if (item.output == null || canReceivePipeObjects(item.output, item) == ReceiveType.NONE) {
+                    EnumFacing output = resolveDestination(item);
+                    if (output != item.output) {
+                        item.output = output;
+                        sendTravelerPacket(item, false);
+                    }
+                }
+            }
+        }
     }
 
     private void moveSolids() {
@@ -256,7 +308,12 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             }
 
             EnumFacing face = item.toCenter ? item.input : item.output;
-            item.movePosition(Utils.convert(face, item.getSpeed()));
+
+            if (!item.isMoving()) {
+                refreshDestination(item, false);
+            } else {
+                item.movePosition(Utils.convert(face, item.getSpeed()));
+            }
 
             if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
                 if (item.isCorrupted()) {
@@ -266,18 +323,12 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
                 item.toCenter = false;
 
-                // Reajusting to the middle
+                // Readjusting to the middle
                 item.pos = Utils.convert(container.getPos()).add(new Vec3(0.5, TransportUtils.getPipeFloorOf(item.getItemStack()), 0.5));
+                refreshDestination(item, true);
 
-                if (item.output == null) {
-                    if (items.scheduleRemoval(item)) {
-                        dropItem(item);
-                    }
-                } else {
-                    PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
-                    container.pipe.eventBus.handleEvent(event);
-                }
-
+                PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
+                container.pipe.eventBus.handleEvent(event);
             } else if (!item.toCenter && endReached(item)) {
                 if (item.isCorrupted()) {
                     items.remove(item);
@@ -312,8 +363,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         if (tile instanceof IPipeTile) {
             Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
             if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems) {
-                ((PipeTransportItems) pipe.transport).injectItem(item, item.output);
-                return true;
+                return ((PipeTransportItems) pipe.transport).injectItem(item, item.output, true, true);
             }
         }
         return false;
@@ -569,7 +619,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("PipeTransportItems");
-        left.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS + " (" + getNumberOfItems() + "/" + MAX_PIPE_ITEMS + ")");
+        left.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS);
         for (TravelingItem item : items) {
             left.add("");
             left.add("  - " + item.itemStack);
