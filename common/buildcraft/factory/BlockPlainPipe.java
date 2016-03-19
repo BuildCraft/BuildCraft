@@ -46,6 +46,16 @@ public class BlockPlainPipe extends BlockBuildCraftBase {
     }
 
     @Override
+    public boolean isFullBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
+        return false;
+    }
+
+    @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
         list.add(new ItemStack(this));
     }
