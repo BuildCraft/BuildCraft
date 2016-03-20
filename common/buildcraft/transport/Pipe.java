@@ -51,7 +51,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     private boolean initialized = false;
     private boolean scheduleWireUpdate;
 
-    private ArrayList<ActionState> actionStates = new ArrayList<ActionState>();
+    private ArrayList<ActionState> actionStates = new ArrayList<>();
 
     public Pipe(T transport, Item item) {
         this.transport = transport;
@@ -220,7 +220,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
                 propagateSignalState(c, 255);
             }
         } else {
-            List<Pipe<?>> pipes = new ArrayList<Pipe<?>>();
+            List<Pipe<?>> pipes = new ArrayList<>();
             int maxStrength = 0;
 
             for (EnumFacing dir : EnumFacing.values()) {
@@ -389,7 +389,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     }
 
     public ArrayList<ItemStack> computeItemDrop() {
-        ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> result = new ArrayList<>();
 
         for (PipeWire pipeWire : PipeWire.VALUES) {
             if (wireSet[pipeWire.ordinal()]) {
@@ -407,7 +407,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     }
 
     public LinkedList<IActionInternal> getActions() {
-        LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
+        LinkedList<IActionInternal> result = new LinkedList<>();
 
         for (ValveState state : ValveState.VALUES) {
             result.add(BuildCraftTransport.actionValve[state.ordinal()]);

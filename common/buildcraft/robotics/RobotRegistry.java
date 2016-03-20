@@ -25,15 +25,15 @@ import buildcraft.api.robots.*;
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
     protected World world;
-    protected final HashMap<StationIndex, DockingStation> stations = new HashMap<StationIndex, DockingStation>();
+    protected final HashMap<StationIndex, DockingStation> stations = new HashMap<>();
 
     private long nextRobotID = Long.MIN_VALUE;
 
-    private final LongHashMap robotsLoaded = new LongHashMap();
-    private final HashSet<EntityRobot> robotsLoadedSet = new HashSet<EntityRobot>();
-    private final HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
-    private final LongHashMap resourcesTakenByRobot = new LongHashMap();
-    private final LongHashMap stationsTakenByRobot = new LongHashMap();
+    private final LongHashMap<EntityRobot> robotsLoaded = new LongHashMap<>();
+    private final HashSet<EntityRobot> robotsLoadedSet = new HashSet<>();
+    private final HashMap<ResourceId, Long> resourcesTaken = new HashMap<>();
+    private final LongHashMap<HashSet<ResourceId>> resourcesTakenByRobot = new LongHashMap<>();
+    private final LongHashMap<HashSet<StationIndex>> stationsTakenByRobot = new LongHashMap<>();
 
     public RobotRegistry(String id) {
         super(id);
@@ -63,11 +63,11 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     }
 
     private HashSet<ResourceId> getResourcesTakenByRobot(long robotId) {
-        return (HashSet<ResourceId>) resourcesTakenByRobot.getValueByKey(robotId);
+        return resourcesTakenByRobot.getValueByKey(robotId);
     }
 
     private HashSet<StationIndex> getStationsTakenByRobot(long robotId) {
-        return (HashSet<StationIndex>) stationsTakenByRobot.getValueByKey(robotId);
+        return stationsTakenByRobot.getValueByKey(robotId);
     }
 
     private void addRobotLoaded(EntityRobot robot) {
@@ -99,7 +99,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     @Override
     public EntityRobot getLoadedRobot(long id) {
         if (robotsLoaded.containsItem(id)) {
-            return (EntityRobot) robotsLoaded.getValueByKey(id);
+            return robotsLoaded.getValueByKey(id);
         } else {
             return null;
         }
@@ -118,7 +118,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
         long robotId = resourcesTaken.get(resourceId);
 
-        if (robotsLoaded.containsItem(robotId) && !((EntityRobot) robotsLoaded.getValueByKey(robotId)).isDead) {
+        if (robotsLoaded.containsItem(robotId) && !robotsLoaded.getValueByKey(robotId).isDead) {
             return robotId;
         } else {
             // If the robot is either not loaded or dead, the resource is not
@@ -135,7 +135,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
         if (robotId == EntityRobotBase.NULL_ROBOT_ID || !robotsLoaded.containsItem(robotId)) {
             return null;
         } else {
-            return (EntityRobot) robotsLoaded.getValueByKey(robotId);
+            return robotsLoaded.getValueByKey(robotId);
         }
     }
 
@@ -379,12 +379,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload e) {
         if (e.world == this.world) {
-            for (EntityRobot robot : new ArrayList<EntityRobot>(robotsLoadedSet)) {
+            for (EntityRobot robot : new ArrayList<>(robotsLoadedSet)) {
                 if (!e.world.loadedEntityList.contains(robot)) {
                     robot.onChunkUnload();
                 }
             }
-            for (DockingStation station : new ArrayList<DockingStation>(stations.values())) {
+            for (DockingStation station : new ArrayList<>(stations.values())) {
                 if (world.isAirBlock(station.getPos())) {
                     station.onChunkUnload();
                 }

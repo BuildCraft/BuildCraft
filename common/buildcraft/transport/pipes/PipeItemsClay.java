@@ -42,8 +42,8 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
 
     @PipeEventPriority(priority = -200)
     public void eventHandler(PipeEventItem.FindDest event) {
-        LinkedList<EnumFacing> nonPipesList = new LinkedList<EnumFacing>();
-        LinkedList<EnumFacing> pipesList = new LinkedList<EnumFacing>();
+        LinkedList<EnumFacing> nonPipesList = new LinkedList<>();
+        LinkedList<EnumFacing> pipesList = new LinkedList<>();
 
         for (EnumFacing o : event.destinations) {
             if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {

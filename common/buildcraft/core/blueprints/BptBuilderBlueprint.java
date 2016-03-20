@@ -37,14 +37,14 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
-    protected HashSet<Integer> builtEntities = new HashSet<Integer>();
-    protected HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>> buildList = new HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>>();
+    protected HashSet<Integer> builtEntities = new HashSet<>();
+    protected HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>> buildList = new HashMap<>();
     protected int[] buildStageOccurences;
 
-    private ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
+    private ArrayList<RequirementItemStack> neededItems = new ArrayList<>();
 
-    private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
-    private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
+    private LinkedList<BuildingSlotEntity> entityList = new LinkedList<>();
+    private LinkedList<BuildingSlot> postProcessing = new LinkedList<>();
     private BuildingSlotMapIterator iterator;
     private IndexRequirementMap requirementMap = new IndexRequirementMap();
 
@@ -100,8 +100,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 throw BCLog.logger.throwing(aioobe);
             }
 
-            LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-            LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
+            LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<>();
+            LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<>();
 
             for (BlockPos bptOffset : Utils.getAllInBox(bptMin, bptMax, getOrder())) {
                 BlockPos pointWorldOffset = worldOffset.add(bptOffset);
@@ -172,7 +172,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 if (b.mode == Mode.ClearIfInvalid) {
                     context.world.setBlockToAir(b.pos);
                 } else if (!b.schematic.doNotBuild()) {
-                    b.stackConsumed = new LinkedList<ItemStack>();
+                    b.stackConsumed = new LinkedList<>();
 
                     try {
                         for (ItemStack stk : b.getRequirements(context)) {
@@ -192,7 +192,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
         }
 
         for (BuildingSlotEntity e : entityList) {
-            e.stackConsumed = new LinkedList<ItemStack>();
+            e.stackConsumed = new LinkedList<>();
 
             try {
                 for (ItemStack stk : e.getRequirements(context)) {
@@ -462,10 +462,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
     }
 
     public boolean checkRequirements(TileAbstractBuilder builder, Schematic slot) {
-        LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
+        LinkedList<ItemStack> tmpReq = new LinkedList<>();
 
         try {
-            LinkedList<ItemStack> req = new LinkedList<ItemStack>();
+            LinkedList<ItemStack> req = new LinkedList<>();
 
             slot.getRequirementsForPlacement(context, req);
 
@@ -480,7 +480,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             BCLog.logger.throwing(t);
         }
 
-        LinkedList<ItemStack> stacksUsed = new LinkedList<ItemStack>();
+        LinkedList<ItemStack> stacksUsed = new LinkedList<>();
 
         if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
             for (ItemStack s : tmpReq) {
@@ -541,7 +541,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             return;
         }
 
-        LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
+        LinkedList<ItemStack> tmpReq = new LinkedList<>();
 
         try {
             for (ItemStack stk : slot.getRequirements(context)) {
@@ -626,7 +626,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
     protected void onRemoveBuildingSlotBlock(BuildingSlotBlock slot) {
         buildStageOccurences[slot.buildStage]--;
-        List<ItemStack> stacks = new ArrayList<ItemStack>();
+        List<ItemStack> stacks = new ArrayList<>();
 
         try {
             stacks = slot.getRequirements(context);
@@ -636,7 +636,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             BCLog.logger.throwing(t);
         }
 
-        HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
+        HashMap<StackKey, Integer> computeStacks = new HashMap<>();
 
         for (ItemStack stack : stacks) {
             if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
@@ -698,7 +698,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
     private void recomputeNeededItems() {
         neededItems.clear();
 
-        HashMap<StackKey, Integer> computeStacks = new HashMap<StackKey, Integer>();
+        HashMap<StackKey, Integer> computeStacks = new HashMap<>();
 
         for (List<BuildingSlotBlock> lb : buildList.values()) {
             for (BuildingSlotBlock slot : lb) {
@@ -706,7 +706,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                     continue;
                 }
 
-                List<ItemStack> stacks = new ArrayList<ItemStack>();
+                List<ItemStack> stacks = new ArrayList<>();
 
                 try {
                     stacks = slot.getRequirements(context);
@@ -736,7 +736,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
         }
 
         for (BuildingSlotEntity slot : entityList) {
-            LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+            LinkedList<ItemStack> stacks = new LinkedList<>();
 
             try {
                 stacks = slot.getRequirements(context);

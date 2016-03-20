@@ -185,7 +185,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     /** Returns a list of all possible movements, that is to say adjacent implementers of IPipeEntry or
      * TileEntityChest. */
     public List<EnumFacing> getPossibleMovements(TravelingItem item) {
-        LinkedList<EnumFacing> result = new LinkedList<EnumFacing>();
+        LinkedList<EnumFacing> result = new LinkedList<>();
 
         item.blacklist.add(item.input.getOpposite());
 
@@ -549,7 +549,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     public List<ItemStack> getDroppedItems() {
         groupEntities();
 
-        ArrayList<ItemStack> itemsDropped = new ArrayList<ItemStack>(items.size());
+        ArrayList<ItemStack> itemsDropped = new ArrayList<>(items.size());
 
         for (TravelingItem item : items) {
             if (!item.isCorrupted()) {

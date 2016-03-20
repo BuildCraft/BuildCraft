@@ -25,7 +25,7 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
     private BlockPos blockFound;
-    private ArrayList<IBlockState> blockFilter = new ArrayList<IBlockState>();
+    private ArrayList<IBlockState> blockFilter = new ArrayList<>();
 
     public BoardRobotGenericSearchBlock(EntityRobotBase iRobot) {
         super(iRobot);

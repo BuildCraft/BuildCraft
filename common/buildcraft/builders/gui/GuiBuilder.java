@@ -82,7 +82,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
         for (int i = 0; i < builder.fluidTanks.length; i++) {
             int left = guiLeft + 179 + 18 * i;
             if (par1 >= left && par2 >= top && par1 < (left + 16) && par2 < (left + 47)) {
-                List<String> fluidTip = new ArrayList<String>();
+                List<String> fluidTip = new ArrayList<>();
                 Tank tank = builder.fluidTanks[i];
                 if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                     fluidTip.add(tank.getFluid().getLocalizedName());

@@ -51,7 +51,7 @@ public final class BlockUtils {
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(
                 world).get());
 
-        ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> returnList = new ArrayList<>();
         for (ItemStack s : dropsList) {
             if (world.rand.nextFloat() <= dropChance) {
                 returnList.add(s);
@@ -66,7 +66,7 @@ public final class BlockUtils {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan) {
-        List<ItemStack> items = new ArrayList<ItemStack>();
+        List<ItemStack> items = new ArrayList<>();
 
         if (breakBlock(world, pos, items)) {
             for (ItemStack item : items) {

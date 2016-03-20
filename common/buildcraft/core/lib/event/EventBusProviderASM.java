@@ -32,7 +32,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
 
     @Override
     public IEventBus<T> newBus() {
-        return new EventBusASM<T>(this);
+        return new EventBusASM<>(this);
     }
 
     public EventProviderASM<T> getProviderFor(Class<?> clazz) {
@@ -74,7 +74,7 @@ public class EventBusProviderASM<T> implements IEventBusProvider<T> {
             }
             providers.add(generateSingleProvider(meth, par));
         }
-        return new EventProviderASM<T>(providers);
+        return new EventProviderASM<>(providers);
     }
 
     private IEventHandlerProvider<T> generateSingleProvider(Method meth, Class<?> parClass) {

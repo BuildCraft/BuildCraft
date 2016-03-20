@@ -23,7 +23,7 @@ public class RecipeManager<T> implements IRecipeManager<T> {
 
     @Override
     public void addRecipe(String id, int energyCost, int craftingDelay, T output, Object... input) {
-        recipes.put(id, new FlexibleRecipe<T>(id, output, energyCost, craftingDelay, input));
+        recipes.put(id, new FlexibleRecipe<>(id, output, energyCost, craftingDelay, input));
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.google.common.collect.ForwardingList;
 
 public class ToolTip extends ForwardingList<ToolTipLine> {
 
-    private final List<ToolTipLine> delegate = new ArrayList<ToolTipLine>();
+    private final List<ToolTipLine> delegate = new ArrayList<>();
     private final long delay;
     private long mouseOverStart;
 

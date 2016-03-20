@@ -12,7 +12,7 @@ import buildcraft.api.statements.IStatement;
 /** Created by asie on 1/24/15. */
 public abstract class StatementSlot extends AdvancedSlot {
     public int slot;
-    public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();
+    public ArrayList<StatementParameterSlot> parameters = new ArrayList<>();
 
     public StatementSlot(GuiAdvancedInterface gui, int x, int y, int slot) {
         super(gui, x, y);

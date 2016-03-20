@@ -13,7 +13,7 @@ import buildcraft.api.blueprints.SchematicTile;
 
 public class BptPipeExtension {
 
-    private static final HashMap<Item, BptPipeExtension> bptPipeExtensionRegistry = new HashMap<Item, BptPipeExtension>();
+    private static final HashMap<Item, BptPipeExtension> bptPipeExtensionRegistry = new HashMap<>();
 
     public BptPipeExtension(Item i) {
         bptPipeExtensionRegistry.put(i, this);

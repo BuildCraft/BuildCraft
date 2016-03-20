@@ -31,7 +31,7 @@ import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlueprintBase {
 
-    public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
+    public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<>();
 
     public BlockPos anchor = Utils.POS_ZERO;
     public BlockPos size = Utils.POS_ONE;

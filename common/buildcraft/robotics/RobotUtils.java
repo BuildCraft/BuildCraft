@@ -23,7 +23,7 @@ public final class RobotUtils {
     }
 
     public static List<DockingStation> getStations(Object tile) {
-        ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
+        ArrayList<DockingStation> stations = new ArrayList<>();
 
         if (tile instanceof IDockingStationProvider) {
             DockingStation station = ((IDockingStationProvider) tile).getStation();

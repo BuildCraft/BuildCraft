@@ -26,7 +26,7 @@ public class SchematicFree extends SchematicBlock {
 
     @Override
     public List<ItemStack> getStacksToDisplay(List<ItemStack> stackConsumed) {
-        List<ItemStack> displayStacks = new ArrayList<ItemStack>();
+        List<ItemStack> displayStacks = new ArrayList<>();
         displayStacks.add(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state)));
         return displayStacks;
     }

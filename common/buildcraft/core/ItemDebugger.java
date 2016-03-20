@@ -28,7 +28,7 @@ public class ItemDebugger extends ItemBuildCraft {
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IDebuggable) {
-            ArrayList<String> info = new ArrayList<String>();
+            ArrayList<String> info = new ArrayList<>();
             String effSide = FMLCommonHandler.instance().getEffectiveSide().name().substring(0, 1) + ":";
             ((IDebuggable) tile).getDebugInfo(info, info, side);
             for (String s : info) {

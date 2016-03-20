@@ -94,7 +94,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
     }
 
     private List<ItemStack> getExpansions() {
-        List<ItemStack> expansions = new ArrayList<ItemStack>();
+        List<ItemStack> expansions = new ArrayList<>();
         for (int i = 1; i < 9; i++) {
             if (getStackInSlot(i) != null) {
                 expansions.add(getStackInSlot(i));

@@ -93,7 +93,7 @@ public final class TransportSiliconRecipes {
     @Optional.Method(modid = "BuildCraft|Silicon")
     private static void addGateRecipe(String materialName, int energyCost, GateDefinition.GateMaterial material, EnumRedstoneChipset chipset,
             PipeWire... pipeWire) {
-        List<ItemStack> temp = new ArrayList<ItemStack>();
+        List<ItemStack> temp = new ArrayList<>();
         temp.add(chipset.getStack());
         for (PipeWire wire : pipeWire) {
             temp.add(wire.getStack());

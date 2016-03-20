@@ -20,7 +20,9 @@ import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.transport.*;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.PipeModelCacheWire;
 import buildcraft.transport.client.model.PipeModelCacheWire.PipeWireKey;
 
@@ -45,8 +47,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
         renderPluggables(pipe, x, y, z);
         Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
-
-        IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         if (pipe.pipe.transport != null) {
             try {

@@ -126,7 +126,7 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
     }
 
     public static Set<IGateExpansion> getInstalledExpansions(ItemStack stack) {
-        Set<IGateExpansion> expansions = new HashSet<IGateExpansion>();
+        Set<IGateExpansion> expansions = new HashSet<>();
         NBTTagCompound nbt = getNBT(stack);
 
         if (nbt == null) {
@@ -226,7 +226,7 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 
     public static ArrayList<ItemStack> getAllGates() {
         if (allGates == null) {
-            allGates = new ArrayList<ItemStack>();
+            allGates = new ArrayList<>();
             for (GateDefinition.GateMaterial m : GateDefinition.GateMaterial.VALUES) {
                 for (GateDefinition.GateLogic l : GateDefinition.GateLogic.VALUES) {
                     if (m == GateMaterial.REDSTONE && l == GateLogic.OR) {

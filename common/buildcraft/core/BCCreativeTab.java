@@ -13,7 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class BCCreativeTab extends CreativeTabs {
-    private static final Map<String, BCCreativeTab> tabs = new HashMap<String, BCCreativeTab>();
+    private static final Map<String, BCCreativeTab> tabs = new HashMap<>();
 
     private ItemStack icon;
 

@@ -12,7 +12,7 @@ import buildcraft.core.tablet.TabletServer;
 public enum TabletManagerServer {
     INSTANCE;
 
-    private HashMap<EntityPlayer, TabletThread> threads = new HashMap<EntityPlayer, TabletThread>();
+    private HashMap<EntityPlayer, TabletThread> threads = new HashMap<>();
 
     public TabletServer get(EntityPlayer player) {
         if (!threads.containsKey(player)) {

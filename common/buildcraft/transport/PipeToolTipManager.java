@@ -20,7 +20,7 @@ import buildcraft.core.lib.utils.BCStringUtils;
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {
 
-    private static final Map<Class<? extends Pipe<?>>, String> toolTips = new HashMap<Class<? extends Pipe<?>>, String>();
+    private static final Map<Class<? extends Pipe<?>>, String> toolTips = new HashMap<>();
 
     static {
         if (!BuildCraftCore.hidePowerNumbers && !BuildCraftTransport.usePipeLoss) {
@@ -54,7 +54,7 @@ public final class PipeToolTipManager {
     }
 
     public static List<String> getToolTip(Class<? extends Pipe<?>> pipe, boolean advanced) {
-        List<String> tips = new ArrayList<String>();
+        List<String> tips = new ArrayList<>();
         addTipToList("tip." + pipe.getSimpleName(), tips);
 
         String tip = toolTips.get(pipe);

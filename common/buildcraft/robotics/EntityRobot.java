@@ -111,7 +111,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public long lastUpdateTime = 0;
 
     private DockingStation currentDockingStation;
-    private List<ItemStack> wearables = new ArrayList<ItemStack>();
+    private List<ItemStack> wearables = new ArrayList<>();
 
     private boolean needsUpdate = false;
     private ItemStack[] inv = new ItemStack[4];
@@ -119,7 +119,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
     private ResourceLocation texture;
 
-    private WeakHashMap<Entity, Long> unreachableEntities = new WeakHashMap<Entity, Long>();
+    private WeakHashMap<Entity, Long> unreachableEntities = new WeakHashMap<>();
 
     private NBTTagList stackRequestNBT;
 
@@ -1256,7 +1256,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     private List<ItemStack> getDrops() {
-        List<ItemStack> drops = new ArrayList<ItemStack>();
+        List<ItemStack> drops = new ArrayList<>();
         drops.add(ItemRobot.createRobotStack(board.getNBTHandler(), battery.getEnergyStored()));
         if (itemInUse != null) {
             drops.add(itemInUse);

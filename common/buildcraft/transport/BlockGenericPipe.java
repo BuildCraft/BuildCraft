@@ -194,7 +194,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
         state = super.getActualState(state, access, pos);
         TileEntity tile = access.getTileEntity(pos);
-        if (tile == null | !(tile instanceof TileGenericPipe)) {
+        if (tile == null || !(tile instanceof TileGenericPipe)) {
             return state;
         }
         TileGenericPipe pipe = (TileGenericPipe) tile;

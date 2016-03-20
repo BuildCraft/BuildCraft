@@ -52,8 +52,8 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 
     @Override
     public List<ItemStack> generateExampleOutput() {
-        ArrayList<ItemStack> list = new ArrayList<ItemStack>();
-        ArrayList<IGateExpansion> exps = new ArrayList<IGateExpansion>();
+        ArrayList<ItemStack> list = new ArrayList<>();
+        ArrayList<IGateExpansion> exps = new ArrayList<>();
         int combinations = recipes.size();
         for (IGateExpansion exp : recipes.keySet()) {
             exps.add(exp);
@@ -76,8 +76,8 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 
     @Override
     public List<List<ItemStack>> generateExampleExpansions() {
-        ArrayList<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
-        ArrayList<ItemStack> list2 = new ArrayList<ItemStack>();
+        ArrayList<List<ItemStack>> list = new ArrayList<>();
+        ArrayList<ItemStack> list2 = new ArrayList<>();
         list2.addAll(recipes.values());
         list.add(list2);
         return list;

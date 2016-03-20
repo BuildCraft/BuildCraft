@@ -58,7 +58,7 @@ public final class Utils {
     public static final XorShift128Random RANDOM = new XorShift128Random();
     public static final Random ACTUAL_RANDOM = new Random();
 
-    private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALUES));
+    private static final List<EnumFacing> directions = new ArrayList<>(Arrays.asList(EnumFacing.VALUES));
     private static final Map<Axis, Map<Axis, Axis>> axisOtherMap;
 
     static {
@@ -130,8 +130,8 @@ public final class Utils {
      * around. Will make sure that the location from which the items are coming from (identified by the from parameter)
      * isn't used again so that entities doesn't go backwards. Returns true if successful, false otherwise. */
     public static int addToRandomInjectableAround(World world, BlockPos pos, EnumFacing from, ItemStack stack) {
-        List<IInjectable> possiblePipes = new ArrayList<IInjectable>();
-        List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
+        List<IInjectable> possiblePipes = new ArrayList<>();
+        List<EnumFacing> pipeDirections = new ArrayList<>();
 
         for (EnumFacing side : EnumFacing.VALUES) {
             if (side.getOpposite() == from) {

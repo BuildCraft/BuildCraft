@@ -86,7 +86,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             if (robot.worldObj.getWorldInfo().getGameType() != WorldSettings.GameType.CREATIVE) {
                 requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild.getContext());
             } else {
-                requirementsToLookFor = new LinkedList<ItemStack>();
+                requirementsToLookFor = new LinkedList<>();
             }
 
             if (requirementsToLookFor == null) {

@@ -45,7 +45,7 @@ public class RoboticsProxyClient extends RoboticsProxy {
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         event.map.registerSprite(EntityRobot.ROBOT_BASE);
-        for (RedstoneBoardNBT board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+        for (RedstoneBoardNBT<?> board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             if (board instanceof RedstoneBoardRobotNBT) {
                 RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
                 ResourceLocation texture = robotBoard.getRobotTexture();
@@ -65,7 +65,7 @@ public class RoboticsProxyClient extends RoboticsProxy {
                 defaultRobotModel = ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", EntityRobot.ROBOT_BASE.toString()))
                         .bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
 
-                for (RedstoneBoardNBT board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+                for (RedstoneBoardNBT<?> board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
                     if (board instanceof RedstoneBoardRobotNBT) {
                         RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
                         ResourceLocation texture = robotBoard.getRobotTexture();

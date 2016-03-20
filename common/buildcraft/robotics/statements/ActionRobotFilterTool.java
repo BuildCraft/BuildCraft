@@ -50,7 +50,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
     }
 
     public static Collection<ItemStack> getGateFilterStacks(DockingStation station) {
-        ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> result = new ArrayList<>();
 
         for (StatementSlot slot : station.getActiveActions()) {
             if (slot.statement instanceof ActionRobotFilterTool) {

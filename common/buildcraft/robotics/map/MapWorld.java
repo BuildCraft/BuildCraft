@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import gnu.trove.map.hash.TLongLongHashMap;
-import gnu.trove.set.hash.TLongHashSet;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
@@ -19,15 +16,18 @@ import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.core.lib.utils.NBTUtils;
 
+import gnu.trove.map.hash.TLongLongHashMap;
+import gnu.trove.set.hash.TLongHashSet;
+
 public class MapWorld {
-    private final LongHashMap regionMap;
-    private final HashMap<Chunk, Integer> timeToUpdate = new HashMap<Chunk, Integer>();
+    private final LongHashMap<MapRegion> regionMap;
+    private final HashMap<Chunk, Integer> timeToUpdate = new HashMap<>();
     private final TLongLongHashMap regionUpdateTime;
     private final TLongHashSet updatedChunks;
     private final File location;
 
     public MapWorld(World world, File location) {
-        regionMap = new LongHashMap();
+        regionMap = new LongHashMap<>();
         regionUpdateTime = new TLongLongHashMap();
         updatedChunks = new TLongHashSet();
 
@@ -45,15 +45,14 @@ public class MapWorld {
 
     private MapRegion getRegion(int x, int z) {
         long id = MapUtils.getIDFromCoords(x, z);
-        MapRegion region = (MapRegion) regionMap.getValueByKey(id);
+        MapRegion region = regionMap.getValueByKey(id);
         if (region == null) {
             region = new MapRegion(x, z);
 
             // Check in the location first
             File target = new File(location, "r" + x + "," + z + ".nbt");
             if (target.exists()) {
-                try {
-                    FileInputStream f = new FileInputStream(target);
+                try (FileInputStream f = new FileInputStream(target)) {
                     byte[] data = new byte[(int) target.length()];
                     f.read(data);
                     f.close();
@@ -90,7 +89,7 @@ public class MapWorld {
         }
 
         for (long id : chunkList) {
-            MapRegion region = (MapRegion) regionMap.getValueByKey(id);
+            MapRegion region = regionMap.getValueByKey(id);
             if (region == null) {
                 continue;
             }
@@ -100,8 +99,7 @@ public class MapWorld {
             byte[] data = NBTUtils.save(output);
             File file = new File(location, "r" + MapUtils.getXFromID(id) + "," + MapUtils.getZFromID(id) + ".nbt");
 
-            try {
-                FileOutputStream f = new FileOutputStream(file);
+            try (FileOutputStream f = new FileOutputStream(file)) {
                 f.write(data);
                 f.close();
             } catch (IOException e) {
@@ -118,7 +116,7 @@ public class MapWorld {
     public void tick() {
         if (timeToUpdate.size() > 0) {
             synchronized (timeToUpdate) {
-                Set<Chunk> chunks = new HashSet<Chunk>();
+                Set<Chunk> chunks = new HashSet<>();
                 chunks.addAll(timeToUpdate.keySet());
                 for (Chunk c : chunks) {
                     int v = timeToUpdate.get(c);

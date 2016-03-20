@@ -21,7 +21,7 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotDelivery extends RedstoneBoardRobot {
 
-    private ArrayList<ItemStack> deliveryBlacklist = new ArrayList<ItemStack>();
+    private ArrayList<ItemStack> deliveryBlacklist = new ArrayList<>();
 
     private StackRequest currentRequest = null;
 

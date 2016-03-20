@@ -89,7 +89,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
         NBTTagCompound cpt = getNBT(stack);
         RedstoneBoardRobotNBT boardNBT = getRobotNBT(cpt);
 

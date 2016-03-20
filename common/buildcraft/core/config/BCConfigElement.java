@@ -27,7 +27,7 @@ public class BCConfigElement<T> extends ConfigElement {
     @Override
     public List<IConfigElement> getChildElements() {
         if (!isProp) {
-            List<IConfigElement> elements = new ArrayList<IConfigElement>();
+            List<IConfigElement> elements = new ArrayList<>();
             Iterator<ConfigCategory> ccI = cat.getChildren().iterator();
             Iterator<Property> pI = cat.getOrderedValues().iterator();
 
@@ -37,7 +37,7 @@ public class BCConfigElement<T> extends ConfigElement {
                     continue;
                 }
 
-                ConfigElement temp = new BCConfigElement<Object>(child);
+                ConfigElement temp = new BCConfigElement<>(child);
                 if (temp.showInGui()) {
                     elements.add(temp);
                 }

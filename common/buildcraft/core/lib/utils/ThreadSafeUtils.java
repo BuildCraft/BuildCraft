@@ -7,7 +7,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 public final class ThreadSafeUtils {
-    private static final ThreadLocal<Chunk> lastChunk = new ThreadLocal<Chunk>();
+    private static final ThreadLocal<Chunk> lastChunk = new ThreadLocal<>();
 
     private ThreadSafeUtils() {
 

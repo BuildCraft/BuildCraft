@@ -60,33 +60,8 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
         return 0.725;
     }
 
-    // @Override
-    // public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
-    // AxisAlignedBB[] aabbs = getBoxes(wrd, pos, wrd.getBlockState(pos));
-    // MovingObjectPosition closest = null;
-    // for (AxisAlignedBB aabb : aabbs) {
-    // MovingObjectPosition mop = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).calculateIntercept(origin, direction);
-    // if (mop != null) {
-    // if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
-    // closest = mop;
-    // } else {
-    // closest = mop;
-    // }
-    // }
-    // }
-    // if (closest != null) {
-    // closest.hitVec = Utils.convertMiddle(pos);
-    //
-    // // closest.blockX = x;
-    // // closest.blockY = y;
-    // // closest.blockZ = z;
-    // }
-    // return closest;
-    // }
-
     @Override
-    @SuppressWarnings("unchecked")
-    public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity ent) {
+    public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity ent) {
         AxisAlignedBB[] aabbs = getBoxes(wrd, pos, state);
         for (AxisAlignedBB aabb : aabbs) {
             AxisAlignedBB aabbTmp = aabb.offset(pos.getX(), pos.getY(), pos.getZ());

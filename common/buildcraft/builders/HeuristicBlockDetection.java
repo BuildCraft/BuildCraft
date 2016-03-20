@@ -20,9 +20,9 @@ public final class HeuristicBlockDetection {
     }
 
     public static void start() {
-        Iterator i = Block.blockRegistry.iterator();
+        Iterator<Block> i = Block.blockRegistry.iterator();
         while (i.hasNext()) {
-            Block block = (Block) i.next();
+            Block block = i.next();
             if (block == null || block == Blocks.air) {
                 continue;
             }

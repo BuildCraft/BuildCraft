@@ -377,9 +377,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
             IStatement changed = null;
 
-            if (isShiftKeyDown()) {
-                changed = null;
-            } else {
+            if (!isShiftKeyDown()) {
                 if (triggerSlot.getStatement() == null) {
                     if (k == 0) {
                         changed = container.getFirstTrigger();
@@ -393,7 +391,6 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                         IStatement trigger = it.next();
 
                         if (!it.hasNext()) {
-                            changed = null;
                             break;
                         }
 
@@ -423,9 +420,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
             IStatement changed = null;
 
-            if (isShiftKeyDown()) {
-                changed = null;
-            } else {
+            if (!isShiftKeyDown()) {
                 if (actionSlot.getStatement() == null) {
                     if (k == 0) {
                         changed = container.getFirstAction();
@@ -440,7 +435,6 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                         IStatement action = it.next();
 
                         if (!it.hasNext()) {
-                            changed = null;
                             break;
                         }
 
@@ -554,18 +548,18 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int eventType) {
         super.mouseReleased(mouseX, mouseY, eventType);
-        if (index != -1) {
+        if (index >= 0) {
             int i = index;
             index = -1;
-            IStatement changeTo = null;
+            IStatement changeTo;
             Iterator<IStatement> it;
             if (trigger) it = container.getTriggerIterator(false);
             else it = container.getActionIterator(false);
 
-            while (i >= 0) {
+            do {
                 changeTo = it.next();
                 i--;
-            }
+            } while (i >= 0);
 
             AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
             if (slot == null) return;

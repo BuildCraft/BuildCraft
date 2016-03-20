@@ -48,7 +48,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
     }
 
     public static Collection<ItemStack> getGateFilterStacks(DockingStation station) {
-        ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> result = new ArrayList<>();
 
         for (StatementSlot slot : station.getActiveActions()) {
             if (slot.statement instanceof ActionRobotFilter) {

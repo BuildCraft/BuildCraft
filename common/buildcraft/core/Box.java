@@ -114,7 +114,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public List<BlockPos> getBlocksInArea() {
-        List<BlockPos> blocks = new ArrayList<BlockPos>();
+        List<BlockPos> blocks = new ArrayList<>();
 
         // Add {1,1,1} to make this return all values inside the box
 

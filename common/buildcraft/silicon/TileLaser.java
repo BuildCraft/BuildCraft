@@ -160,7 +160,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
             min = min.offset(face, -5);
         }
 
-        List<ILaserTarget> targets = new LinkedList<ILaserTarget>();
+        List<ILaserTarget> targets = new LinkedList<>();
         for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
             if (BlockUtils.getBlockState(worldObj, pos).getBlock() instanceof ILaserTargetBlock) {
                 TileEntity tile = worldObj.getTileEntity(pos);

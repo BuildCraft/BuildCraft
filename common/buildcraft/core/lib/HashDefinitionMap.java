@@ -32,7 +32,7 @@ public class HashDefinitionMap<I extends Item, D extends ObjectDefinition> imple
     private final Set<Triple<String, I, D>> elementSet, unmodifiableSet;
 
     public static <I extends Item, D extends ObjectDefinition> HashDefinitionMap<I, D> create() {
-        return new HashDefinitionMap<I, D>();
+        return new HashDefinitionMap<>();
     }
 
     public HashDefinitionMap() {

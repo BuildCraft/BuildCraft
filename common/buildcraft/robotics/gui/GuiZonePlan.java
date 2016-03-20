@@ -331,8 +331,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         uploadMap();
         refreshSelectedArea();
 
-        container.inventorySlots = new LinkedList<Slot>();
-        buttonList = new LinkedList<GuiButton>();
+        container.inventorySlots = new LinkedList<>();
+        buttonList = new LinkedList<>();
     }
 
     private void toWindowed() {

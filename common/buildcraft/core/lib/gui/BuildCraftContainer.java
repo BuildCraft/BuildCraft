@@ -29,7 +29,7 @@ import buildcraft.core.lib.network.PacketGuiWidget;
 public abstract class BuildCraftContainer extends Container {
 
     private final EntityPlayer player;
-    private List<Widget> widgets = new ArrayList<Widget>();
+    private List<Widget> widgets = new ArrayList<>();
     private int inventorySize;
 
     public BuildCraftContainer(EntityPlayer player, int inventorySize) {

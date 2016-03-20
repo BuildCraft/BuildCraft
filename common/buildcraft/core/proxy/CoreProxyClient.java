@@ -160,8 +160,8 @@ public class CoreProxyClient extends CoreProxy {
         }
     }
 
-    private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<Block>();
-    private LinkedList<Item> itemsToRegisterRenderersFor = new LinkedList<Item>();
+    private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<>();
+    private LinkedList<Item> itemsToRegisterRenderersFor = new LinkedList<>();
 
     @Override
     public void postRegisterBlock(Block block) {

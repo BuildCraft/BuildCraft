@@ -44,7 +44,7 @@ public class AIRobotHarvest extends AIRobot {
                 terminate();
                 return;
             }
-            List<ItemStack> drops = new ArrayList<ItemStack>();
+            List<ItemStack> drops = new ArrayList<>();
             if (!CropManager.harvestCrop(robot.worldObj, blockFound, drops)) {
                 setSuccess(false);
                 terminate();

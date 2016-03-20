@@ -16,8 +16,8 @@ public class LensFilterHandler {
     @PipeEventPriority(priority = -100)
     public void eventHandler(PipeEventItem.FindDest event) {
         IPipeTile container = event.pipe.getTile();
-        LinkedList<EnumFacing> correctColored = new LinkedList<EnumFacing>();
-        LinkedList<EnumFacing> notColored = new LinkedList<EnumFacing>();
+        LinkedList<EnumFacing> correctColored = new LinkedList<>();
+        LinkedList<EnumFacing> notColored = new LinkedList<>();
         boolean encounteredColor = false;
         EnumDyeColor myColor = event.item.color;
 

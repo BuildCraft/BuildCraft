@@ -69,7 +69,7 @@ public final class TabletFont {
     private boolean isBold;
     private boolean isItalic;
     private int pointSize, maxW, maxH, ascent, descent;
-    private TIntObjectMap<Glyph> glyphs = new TIntObjectHashMap<Glyph>();
+    private TIntObjectMap<Glyph> glyphs = new TIntObjectHashMap<>();
 
     public TabletFont(File file) throws Exception {
         this(new FileInputStream(file));

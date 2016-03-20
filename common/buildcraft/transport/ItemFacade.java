@@ -160,10 +160,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
     }
 
-    public static final ArrayList<ItemStack> allFacades = new ArrayList<ItemStack>();
-    public static final ArrayList<ItemStack> allHollowFacades = new ArrayList<ItemStack>();
-    public static final ArrayList<String> allFacadeIDs = new ArrayList<String>();
-    public static final ArrayList<String> blacklistedFacades = new ArrayList<String>();
+    public static final ArrayList<ItemStack> allFacades = new ArrayList<>();
+    public static final ArrayList<ItemStack> allHollowFacades = new ArrayList<>();
+    public static final ArrayList<String> allFacadeIDs = new ArrayList<>();
+    public static final ArrayList<String> blacklistedFacades = new ArrayList<>();
 
     private static final Block NULL_BLOCK = null;
     private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
@@ -251,7 +251,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 itemList.add(stack);
             }
         } else {
-            List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
+            List<ItemStack> hollowFacades = new ArrayList<>();
             for (Block b : PREVIEW_FACADES) {
                 if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
                     ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));

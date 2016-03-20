@@ -14,7 +14,7 @@ import buildcraft.api.filler.IFillerRegistry;
 
 public class FillerRegistry implements IFillerRegistry {
 
-    private TreeMap<String, IFillerPattern> patterns = new TreeMap<String, IFillerPattern>();
+    private TreeMap<String, IFillerPattern> patterns = new TreeMap<>();
 
     @Override
     public void addPattern(IFillerPattern pattern) {

@@ -23,7 +23,7 @@ public class DefaultActionProvider implements IActionProvider {
 
     @Override
     public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
-        LinkedList<IActionInternal> res = new LinkedList<IActionInternal>();
+        LinkedList<IActionInternal> res = new LinkedList<>();
 
         if (container instanceof IRedstoneStatementContainer) {
             res.add(BuildCraftCore.actionRedstone);
@@ -34,7 +34,7 @@ public class DefaultActionProvider implements IActionProvider {
 
     @Override
     public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
-        LinkedList<IActionExternal> res = new LinkedList<IActionExternal>();
+        LinkedList<IActionExternal> res = new LinkedList<>();
 
         try {
             if (tile instanceof IControllable) {

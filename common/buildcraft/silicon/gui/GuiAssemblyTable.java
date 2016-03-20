@@ -107,7 +107,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
     }
 
     public void updateRecipes() {
-        Set<String> addedRecipes = new HashSet<String>();
+        Set<String> addedRecipes = new HashSet<>();
         List<CraftingResult<ItemStack>> potentialRecipes = table.getPotentialOutputs();
         Iterator<CraftingResult<ItemStack>> cur = potentialRecipes.iterator();
         Collection<String> plannedIcons = table.plannedOutputIcons.keySet();

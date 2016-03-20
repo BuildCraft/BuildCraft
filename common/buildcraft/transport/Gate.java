@@ -53,7 +53,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     public IStatementParameter[][] actionParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
     public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
-    public ArrayList<StatementSlot> activeActions = new ArrayList<StatementSlot>();
+    public ArrayList<StatementSlot> activeActions = new ArrayList<>();
 
     public byte broadcastSignal, prevBroadcastSignal;
     public int redstoneOutput = 0;
@@ -568,7 +568,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public List<IStatement> getAllValidTriggers() {
-        ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
+        ArrayList<IStatement> allTriggers = new ArrayList<>(64);
         allTriggers.addAll(StatementManager.getInternalTriggers(this));
 
         for (EnumFacing o : EnumFacing.VALUES) {
@@ -593,7 +593,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public List<IStatement> getAllValidActions() {
-        ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
+        ArrayList<IStatement> allActions = new ArrayList<>(64);
         allActions.addAll(StatementManager.getInternalActions(this));
 
         for (EnumFacing o : EnumFacing.VALUES) {

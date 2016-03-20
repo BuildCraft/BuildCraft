@@ -22,7 +22,7 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 
 public final class InterModComms {
-    private static final Set<IMCHandler> handlers = new HashSet<IMCHandler>();
+    private static final Set<IMCHandler> handlers = new HashSet<>();
 
     /** Deactivate constructor */
     private InterModComms() {}
@@ -77,7 +77,7 @@ public final class InterModComms {
                 failed = true;
             } else {
                 NBTTagList list = (NBTTagList) recipe.getTag("input");
-                List<ItemStack> input = new ArrayList<ItemStack>();
+                List<ItemStack> input = new ArrayList<>();
                 for (int i = 0; i < list.tagCount(); i++) {
                     ItemStack is = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
                     if (is != null) {

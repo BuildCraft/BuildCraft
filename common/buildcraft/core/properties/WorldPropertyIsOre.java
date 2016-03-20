@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class WorldPropertyIsOre extends WorldProperty {
-    private final HashSet<Integer> ores = new HashSet<Integer>();
+    private final HashSet<Integer> ores = new HashSet<>();
     private final int harvestLevel;
 
     public WorldPropertyIsOre(int harvestLevel) {
@@ -63,7 +63,7 @@ public class WorldPropertyIsOre extends WorldProperty {
                 return block.getHarvestLevel(state) <= harvestLevel;
             }
 
-            List<ItemStack> toCheck = new ArrayList<ItemStack>();
+            List<ItemStack> toCheck = new ArrayList<>();
             toCheck.add(new ItemStack(block, 1, block.getMetaFromState(state)));
 
             if (block.hasTileEntity(state) && blockAccess instanceof World) {
