@@ -114,20 +114,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             }
         }
 
-        if (doAdd) {
-            item.reset();
-            item.input = inputOrientation;
-
-            readjustSpeed(item);
-            readjustPosition(item);
-
-            PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
-            container.pipe.eventBus.handleEvent(event);
-            if (event.cancelled) {
-                return false;
-            }
-        }
-
         int itemStackCount = getNumberOfStacks();
 
         if (itemStackCount >= MAX_PIPE_STACKS) {
@@ -140,6 +126,18 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         if (doAdd) {
+            item.reset();
+            item.input = inputOrientation;
+
+            readjustSpeed(item);
+            readjustPosition(item);
+
+            PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
+            container.pipe.eventBus.handleEvent(event);
+            if (event.cancelled) {
+                return false;
+            }
+
             if (!container.getWorld().isRemote) {
                 item.output = resolveDestination(item);
             }

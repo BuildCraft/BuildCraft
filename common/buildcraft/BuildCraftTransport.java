@@ -118,6 +118,7 @@ import buildcraft.transport.network.PacketPipeTransportItemStack;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.network.PacketPowerUpdate;
+import buildcraft.transport.pipes.PipeFluidsAndesite;
 import buildcraft.transport.pipes.PipeFluidsClay;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -126,6 +127,7 @@ import buildcraft.transport.pipes.PipeFluidsIron;
 import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsWood;
+import buildcraft.transport.pipes.PipeItemsAndesite;
 import buildcraft.transport.pipes.PipeItemsClay;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
@@ -216,13 +218,13 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static Item pipeItemsWood;
     public static Item pipeItemsEmerald;
     public static Item pipeItemsStone;
-    public static Item pipeItemsCobblestone;
+    public static Item pipeItemsAndesite;
+    public static Item pipeItemsDiorite;
+    public static Item pipeItemsGranite;
     public static Item pipeItemsIron;
-    public static Item pipeItemsQuartz;
     public static Item pipeItemsGold;
     public static Item pipeItemsDiamond;
     public static Item pipeItemsObsidian;
-    public static Item pipeItemsLapis;
     public static Item pipeItemsDaizuli;
     public static Item pipeItemsVoid;
     public static Item pipeItemsSandstone;
@@ -230,25 +232,21 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static Item pipeItemsStripes;
     public static Item pipeItemsClay;
     public static Item pipeFluidsWood;
-    public static Item pipeFluidsCobblestone;
     public static Item pipeFluidsStone;
-    public static Item pipeFluidsQuartz;
+    public static Item pipeFluidsAndesite;
+    public static Item pipeFluidsDiorite;
+    public static Item pipeFluidsGranite;
     public static Item pipeFluidsIron;
     public static Item pipeFluidsGold;
-    public static Item pipeFluidsVoid;
     public static Item pipeFluidsSandstone;
     public static Item pipeFluidsEmerald;
     public static Item pipeFluidsDiamond;
     public static Item pipeFluidsClay;
     public static Item pipePowerWood;
-    public static Item pipePowerCobblestone;
     public static Item pipePowerStone;
-    public static Item pipePowerQuartz;
     public static Item pipePowerIron;
     public static Item pipePowerGold;
     public static Item pipePowerDiamond;
-    public static Item pipePowerEmerald;
-    public static Item pipePowerSandstone;
 
     public static String[] facadeBlacklist;
 
@@ -352,10 +350,13 @@ public class BuildCraftTransport extends BuildCraftMod {
             genericPipeBlock = (BlockGenericPipe) CompatHooks.INSTANCE.getBlock(BlockGenericPipe.class);
             BCRegistry.INSTANCE.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class, true);
 
+            ItemStack andesite = new ItemStack(Blocks.stone, 1, 5);
+
             pipeItemsWood = buildPipe(PipeItemsWood.class, "plankWood", "blockGlassColorless", "plankWood");
             pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "gemEmerald", "blockGlassColorless", "gemEmerald");
             //pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "cobblestone", "blockGlassColorless", "cobblestone");
             pipeItemsStone = buildPipe(PipeItemsStone.class, "stone", "blockGlassColorless", "stone");
+            pipeItemsAndesite = buildPipe(PipeItemsAndesite.class, andesite, "blockGlassColorless", andesite);
             //pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "blockQuartz", "blockGlassColorless", "blockQuartz");
             pipeItemsIron = buildPipe(PipeItemsIron.class, "ingotIron", "blockGlassColorless", "ingotIron");
             pipeItemsGold = buildPipe(PipeItemsGold.class, "ingotGold", "blockGlassColorless", "ingotGold");
@@ -372,6 +373,7 @@ public class BuildCraftTransport extends BuildCraftMod {
             pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
             //pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
             pipeFluidsStone = buildPipe(PipeFluidsStone.class, pipeWaterproof, pipeItemsStone);
+            pipeFluidsAndesite = buildPipe(PipeFluidsAndesite.class, pipeWaterproof, pipeItemsAndesite);
             //pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, pipeWaterproof, pipeItemsQuartz);
             pipeFluidsIron = buildPipe(PipeFluidsIron.class, pipeWaterproof, pipeItemsIron);
             pipeFluidsGold = buildPipe(PipeFluidsGold.class, pipeWaterproof, pipeItemsGold);

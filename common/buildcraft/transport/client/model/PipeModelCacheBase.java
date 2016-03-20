@@ -31,7 +31,7 @@ import buildcraft.transport.PipeRenderState;
 import javax.vecmath.Tuple3f;
 
 public class PipeModelCacheBase {
-    private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.67");
+    private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
 
     static final IModelCache<PipeBaseCutoutKey> cacheCutout;
     static final IModelCache<PipeBaseTransclucentKey> cacheTranslucent;
