@@ -99,6 +99,24 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         return injectItem(item, inputOrientation, doAdd, false);
     }
 
+    // TODO: Refactor me?
+    protected boolean canInjectItems(EnumFacing inputOrientation) {
+        int itemStackCount = getNumberOfStacks();
+
+        if (itemStackCount >= MAX_PIPE_STACKS) {
+            return false;
+        }
+
+        // TODO: OPTIMIZE ME
+        for (TravelingItem item1 : items) {
+            if (item1.input != null && item1.input.getAxis() == inputOrientation.getAxis() && !item1.isMoving()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd, boolean force) {
         if (item.isCorrupted()) {
             // Safe guard - if for any reason the item is corrupted at this
@@ -106,22 +124,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             return false;
         }
 
-        if (!force) {
-            for (TravelingItem item1 : items) {
-                if (item1.input != null && item1.input.getAxis() == inputOrientation.getAxis() && !item1.isMoving()) {
-                    return false;
-                }
-            }
-        }
-
-        int itemStackCount = getNumberOfStacks();
-
-        if (itemStackCount >= MAX_PIPE_STACKS) {
-            groupEntities();
-            itemStackCount = getNumberOfStacks();
-        }
-
-        if (itemStackCount >= MAX_PIPE_STACKS) {
+        if (!force && !canInjectItems(inputOrientation)) {
             return false;
         }
 
@@ -146,6 +149,10 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
             if (!container.getWorld().isRemote) {
                 sendTravelerPacket(item, false);
+            }
+
+            if (getNumberOfStacks() >= MAX_PIPE_STACKS) {
+                groupEntities();
             }
         }
 
@@ -269,14 +276,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 return ReceiveType.NONE;
             }
 
-            // TODO: OPTIMIZE ME
-            for (TravelingItem item1 : ((PipeTransportItems) pipe.transport).items) {
-                if (item1.input != null && item1.input.getAxis() == o.getAxis() && !item1.isMoving()) {
-                    return ReceiveType.CLOGGED;
-                }
-            }
-
-            return ReceiveType.ALLOWED;
+            return ((PipeTransportItems) pipe.transport).canInjectItems(o.getOpposite()) ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
         } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
             ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
             if (transactor != null) {
@@ -638,14 +638,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("PipeTransportItems");
+        if (getNumberOfStacks() > MAX_PIPE_STACKS) {
+            left.add("[Clogged]");
+        }
         left.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS);
         for (TravelingItem item : items) {
             left.add("");
             left.add("  - " + item.itemStack);
-            left.add("    - pos = " + item.pos);
-            left.add("    - middle = " + middleReached(item));
-            left.add("    - end = " + endReached(item));
-            left.add("    - out of boounds = " + outOfBounds(item));
+            left.add("    - " + item.toString());
         }
     }
 }

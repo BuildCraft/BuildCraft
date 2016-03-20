@@ -29,7 +29,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketFluidUpdate;
-import buildcraft.transport.pipes.PipeFluidsAndesite;
+import buildcraft.transport.pipes.PipeFluidsDiorite;
 import buildcraft.transport.pipes.PipeFluidsClay;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -665,7 +665,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
         fluidCapacities.put(PipeFluidsSandstone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsStone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsAndesite.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsDiorite.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 
         fluidCapacities.put(PipeFluidsClay.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);

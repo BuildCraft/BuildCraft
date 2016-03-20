@@ -63,8 +63,6 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 
     public PipeItemsDaizuli(Item item) {
         super(new PipeTransportItems(), item);
-
-        transport.allowBouncing = true;
     }
 
     public EnumDyeColor getColor() {

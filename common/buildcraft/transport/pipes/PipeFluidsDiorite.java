@@ -9,13 +9,13 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.transport.PipeIconProvider;
 
-public class PipeFluidsAndesite extends PipeFluidsStone {
-    public PipeFluidsAndesite(Item item) {
+public class PipeFluidsDiorite extends PipeFluidsStone {
+    public PipeFluidsDiorite(Item item) {
         super(item);
     }
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        return PipeIconProvider.TYPE.PipeFluidsAndesite.ordinal();
+        return PipeIconProvider.TYPE.PipeFluidsDiorite.ordinal();
     }
 }
