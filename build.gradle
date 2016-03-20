@@ -32,6 +32,9 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
+if (System.getenv("BUILD_NUMBER") != null)
+    config.mod_version += "-${System.getenv("BUILD_NUMBER")}"
+
 version = config.mod_version
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
