@@ -300,7 +300,9 @@ public class TravelingItem {
 
     @Override
     public String toString() {
-        return "TravelingItem: " + id;
+        return "TravelingItem{id=" + id + ",pos=" + (pos != null ? pos.toString() : "null")
+                + ",dir=" + (input != null ? input : "?") + "->" + (output != null ? output : "?")
+                + (color != null ? (",color=" + color) : "") + "}";
     }
 
     public static class InsertionHandler {

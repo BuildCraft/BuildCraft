@@ -30,6 +30,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.network.PacketPipeSyncRequest;
 import buildcraft.transport.pluggable.PlugPluggable;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
@@ -589,6 +590,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             pipe.initialize();
         }
 
+        if (getWorld().isRemote) {
+            PacketPipeSyncRequest packet = new PacketPipeSyncRequest(this);
+            BuildCraftTransport.instance.sendToServer(packet);
+        }
+
         initialized = true;
     }
 
@@ -654,10 +660,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         updateCoreState();
 
         PacketTileState packet = new PacketTileState(this);
-
-        if (pipe != null && pipe.transport != null) {
-            pipe.transport.sendDescriptionPacket();
-        }
 
         packet.addStateForSerialization((byte) 0, coreState);
         packet.addStateForSerialization((byte) 1, renderState);

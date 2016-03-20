@@ -15,6 +15,7 @@ import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 import com.google.common.collect.EnumMultiset;
 import com.google.common.collect.Multiset;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
@@ -478,13 +479,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         fluidType = type;
     }
 
-    /** Initializes client */
     @Override
-    public void sendDescriptionPacket() {
-        super.sendDescriptionPacket();
-
+    public void synchronizeNetwork(EntityPlayer player) {
         PacketFluidUpdate update = computeFluidUpdate(true, true);
-        BuildCraftTransport.instance.sendToPlayers(update, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+        BuildCraftTransport.instance.sendToPlayer(player, update);
     }
 
     public FluidStack getStack(EnumFacing direction) {

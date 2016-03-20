@@ -25,7 +25,7 @@ public class PacketPipeTransportTraveler extends Packet {
     public BlockPos pos;
 
     private TravelingItem item;
-    private boolean forceStackRefresh;
+    private boolean forceStackRefresh, toCenter;
     private int entityId;
     private EnumFacing input;
     private EnumFacing output;
@@ -53,7 +53,7 @@ public class PacketPipeTransportTraveler extends Packet {
         int out = item.output == null ? 6 : item.output.ordinal();
         int in = item.input == null ? 6 : item.input.ordinal();
 
-        byte flags = (byte) ((out & 7) | ((in & 7) << 3) | (forceStackRefresh ? 64 : 0));
+        byte flags = (byte) ((out & 7) | ((in & 7) << 3) | (forceStackRefresh ? 64 : 0) | (item.toCenter ? 128 : 0));
         data.writeByte(flags);
 
         data.writeByte(item.color != null ? item.color.ordinal() : -1);
@@ -93,7 +93,12 @@ public class PacketPipeTransportTraveler extends Packet {
 
         this.speed = data.readFloat();
 
-        this.forceStackRefresh = (flags & 0x40) > 0;
+        this.forceStackRefresh = (flags & 0x40) != 0;
+        this.toCenter = (flags & 0x80) != 0;
+    }
+
+    public boolean getToCenter() {
+        return toCenter;
     }
 
     public int getTravelingEntityId() {

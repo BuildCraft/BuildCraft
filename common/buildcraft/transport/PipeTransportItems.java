@@ -19,6 +19,7 @@ import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -31,7 +32,10 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
     private enum ReceiveType {
@@ -501,7 +505,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             item = TravelingItem.make(packet.getTravelingEntityId());
         }
 
-        if (item.getContainer() != container) {
+        if (item.getContainer() != container || !items.contains(item)) {
             items.add(item);
         }
 
@@ -513,7 +517,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
         item.setSpeed(packet.getSpeed());
 
-        item.toCenter = true;
+        item.toCenter = packet.getToCenter();
         item.input = packet.getInputOrientation();
         item.output = packet.getOutputOrientation();
         item.color = packet.getColor();
@@ -599,6 +603,16 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         items.clear();
+    }
+
+    @Override
+    public void synchronizeNetwork(EntityPlayer player) {
+        for (TravelingItem item : items) {
+            if (!item.isMoving()) {
+                PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(container, item, false);
+                BuildCraftTransport.instance.sendToPlayer(player, packet);
+            }
+        }
     }
 
     @Override

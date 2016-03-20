@@ -19,6 +19,7 @@ import buildcraft.core.lib.event.IEventBusProvider;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.network.PacketPipeSyncRequest;
 import buildcraft.transport.pipes.events.PipeEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

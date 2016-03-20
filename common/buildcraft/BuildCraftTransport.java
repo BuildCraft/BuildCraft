@@ -375,6 +375,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         MinecraftForge.EVENT_BUS.register(this);
 
         transportChannelHandler.registerPacketType(PacketFluidUpdate.class);
+        transportChannelHandler.registerPacketType(PacketPipeSyncRequest.class);
         transportChannelHandler.registerPacketType(PacketPipeTransportItemStack.class);
         transportChannelHandler.registerPacketType(PacketPipeTransportItemStackRequest.class);
         transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class);
