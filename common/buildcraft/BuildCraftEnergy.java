@@ -179,7 +179,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
-        if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
+        if (!Loader.isModLoaded("BuildCraft|Factory")) {
             oil = new FluidDefinition("oil", 800, 10000, true);
             oil.block.setLightOpacity(8);
             oil.fluid.setColour(0x50_50_50, 0x05_05_05);
@@ -221,7 +221,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         } else {
             oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
 
-            if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
+            if (!Loader.isModLoaded("BuildCraft|Factory")) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
                 oil.block.setFlammable(canOilBurn).setDense(isOilDense);
@@ -296,7 +296,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.oil.combustion.energyOutput").getInt();
         int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.get("general", "fuel.fuel.combustion.energyOutput").getInt();
 
-        if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
+        if (!Loader.isModLoaded("BuildCraft|Factory")) {
             BuildcraftFuelRegistry.fuel.addFuel(oil.fluid, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
             BuildcraftFuelRegistry.fuel.addFuel(fuel.fluid, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
         }
@@ -415,7 +415,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelBakeEvent event) {
         FluidDefinition[] arr = { oil, fuel, redPlasma };
-        if (Loader.isModLoaded("BuildCraft|Factory") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Factory")) {
             arr[0] = null;
             arr[1] = null;
         }
@@ -435,7 +435,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @SideOnly(Side.CLIENT)
     public void textureStitchPre(TextureStitchEvent.Pre event) {
         FluidDefinition[] arr = { oil, fuel, redPlasma };
-        if (Loader.isModLoaded("BuildCraft|Factory") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Factory")) {
             arr[0] = null;
             arr[1] = null;
         }

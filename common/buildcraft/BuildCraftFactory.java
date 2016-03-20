@@ -158,7 +158,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
         BCRegistry.INSTANCE.registerBlock(chuteBlock.setUnlocalizedName("blockChute"), false);
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             energyHeaterBlock = (BlockEnergyHeater) CompatHooks.INSTANCE.getBlock(BlockEnergyHeater.class);
             BCRegistry.INSTANCE.registerBlock(energyHeaterBlock.setUnlocalizedName("blockEnergyHeater"), false);
 
@@ -219,7 +219,7 @@ public class BuildCraftFactory extends BuildCraftMod {
                 ? tankBlock : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
         }
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             // Complex refining
             if (distillerBlock != null) {
                 BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(distillerBlock), "gpi", "ptd", "gpi", 'i', "gearIron", 't', tankBlock != null
@@ -256,7 +256,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
     private static void loadTransportRefiningRecipes() {
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftTransport.pipeWaterproof, 8), "PP", "PP", 'P', new ItemStack(plasticSheetItem));
-        // BuildCraftTransport.loadComplexRefiningRecipes();
+        BuildCraftTransport.loadComplexRefiningRecipes();
     }
 
     @Mod.EventHandler
@@ -275,7 +275,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileHeatExchange.class, "buildcraft.factory.TileHeatExchange");
         BCRegistry.INSTANCE.registerTileEntity(TileDistiller.class, "buildcraft.factory.TileDistiller");
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.init();
         }
 
@@ -382,7 +382,7 @@ public class BuildCraftFactory extends BuildCraftMod {
                     }
                 }
 
-                if (domain.contains("buildcraft") && Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+                if (domain.contains("buildcraft") && Loader.isModLoaded("BuildCraft|Energy")) {
                     String what = "nothing";
                     String type = mapping.type.name().toLowerCase(Locale.ROOT);
                     if (path.contains("_")) continue;
@@ -433,7 +433,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         FactoryProxyClient.pumpTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/pump/tube"));
         ChuteRenderModel.sideTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/chute/side"));
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.textureStitchPre(evt);
         }
     }
@@ -455,7 +455,7 @@ public class BuildCraftFactory extends BuildCraftMod {
             event.modelRegistry.putObject(mrl, ChuteRenderModel.create(model));
         }
 
-        if (Loader.isModLoaded("BuildCraft|Energy") && BuildCraftCore.DEVELOPER_MODE) {
+        if (Loader.isModLoaded("BuildCraft|Energy")) {
             ComplexRefiningManager.registerModels(event);
         }
     }
