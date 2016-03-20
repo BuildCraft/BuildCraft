@@ -1,5 +1,7 @@
 package buildcraft.transport;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -8,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
-
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.transport.IPipe;
@@ -17,8 +18,6 @@ import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.client.model.ModelKeyFacade;
-
-import io.netty.buffer.ByteBuf;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public ItemFacade.FacadeState[] states;

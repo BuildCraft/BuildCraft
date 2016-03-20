@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-
 import net.minecraftforge.common.ISpecialArmor;
 
 import buildcraft.core.BCCreativeTab;

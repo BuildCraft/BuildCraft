@@ -1,14 +1,15 @@
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlock;
+import java.util.List;
+
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-import java.util.List;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.SchematicBlock;
 
 /**
  * Created by asie on 3/11/16.

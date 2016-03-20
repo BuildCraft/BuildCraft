@@ -1,7 +1,9 @@
 package buildcraft.core.lib.network.base;
 
-import net.minecraft.network.INetHandler;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
+import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -14,9 +16,6 @@ import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.NetworkStatRecorder.EnumOpType;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.proxy.CoreProxy;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 public final class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
     private static boolean recordStats = false;

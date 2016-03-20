@@ -2,8 +2,6 @@ package buildcraft.core;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

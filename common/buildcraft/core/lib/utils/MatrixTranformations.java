@@ -4,9 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import javax.vecmath.Matrix4f;
-
 import net.minecraft.util.EnumFacing;
+
+import javax.vecmath.Matrix4f;
 
 /** Use {@link Matrix4f} goddammit! */
 @Deprecated

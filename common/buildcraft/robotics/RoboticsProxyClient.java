@@ -4,13 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.boards.RedstoneBoardNBT;
-import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BCLog;
-import buildcraft.robotics.render.*;
+import java.util.HashMap;
+import java.util.Map;
 import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -30,8 +27,16 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.HashMap;
-import java.util.Map;
+import buildcraft.BuildCraftRobotics;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BCLog;
+import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
+import buildcraft.robotics.render.RenderRobot;
+import buildcraft.robotics.render.RenderZonePlan;
+import buildcraft.robotics.render.RobotItemModel;
+import buildcraft.robotics.render.RobotStationModel;
 
 public class RoboticsProxyClient extends RoboticsProxy {
     public static Map<String, IBakedModel> robotModel = new HashMap<>();

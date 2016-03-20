@@ -7,19 +7,20 @@ package buildcraft.core.lib.fluids;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import com.google.common.collect.ForwardingList;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import io.netty.buffer.ByteBuf;
 
 /** Provides a simple way to save+load and send+recieve data for any number of tanks. This also attempts to fill all of
  * the tanks one by one via the {@link #fill(EnumFacing, FluidStack, boolean)} and

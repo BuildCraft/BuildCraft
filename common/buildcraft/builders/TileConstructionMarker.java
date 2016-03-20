@@ -6,6 +6,7 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -13,14 +14,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
-import buildcraft.core.blueprints.*;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.BptBuilderBase;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.internal.IBoxProvider;
@@ -32,8 +36,6 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 

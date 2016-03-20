@@ -3,7 +3,6 @@ package buildcraft.core.lib.world;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.state.IBlockState;

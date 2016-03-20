@@ -1,16 +1,9 @@
 package buildcraft.transport.client.render;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
-import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.client.render.RenderUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.utils.FluidRenderData;
+import java.util.Map;
 import com.google.common.collect.Maps;
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,9 +16,17 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Map;
+import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
+import buildcraft.core.lib.client.render.RenderResizableCuboid;
+import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTransportFluids> {
     public static final int DISPLAY_STAGES = 100;

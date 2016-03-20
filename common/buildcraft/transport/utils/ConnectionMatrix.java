@@ -4,11 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.utils;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.IConnectionMatrix;
-
-import io.netty.buffer.ByteBuf;
 
 public class ConnectionMatrix implements IConnectionMatrix {
     private int mask = 0;

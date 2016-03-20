@@ -6,7 +6,6 @@ package buildcraft.core.lib.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;

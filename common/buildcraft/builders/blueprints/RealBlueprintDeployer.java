@@ -13,7 +13,11 @@ import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.builders.LibraryDatabase;
-import buildcraft.core.blueprints.*;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.BptBuilderBlueprint;
+import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 

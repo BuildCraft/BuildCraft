@@ -1,9 +1,10 @@
 package buildcraft.transport.client.model;
 
-import java.util.*;
-
-import javax.vecmath.Tuple3f;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
@@ -26,6 +27,8 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
+
+import javax.vecmath.Tuple3f;
 
 public class PipeModelCacheBase {
     private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.67");

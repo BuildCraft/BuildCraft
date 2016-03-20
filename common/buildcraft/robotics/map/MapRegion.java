@@ -5,8 +5,6 @@ import net.minecraft.util.IntHashMap;
 
 import buildcraft.api.core.INBTStoreable;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 public class MapRegion implements INBTStoreable {
     private final IntHashMap chunks = new IntHashMap();
     private final int x, z;

@@ -5,7 +5,6 @@
 package buildcraft.silicon;
 
 import java.util.List;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.inventory.IInventory;
@@ -13,17 +12,16 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class TileProgrammingTable extends TileLaserTableBase implements IInventory, ISidedInventory, ICommandReceiver {
     public static final int WIDTH = 6;

@@ -6,7 +6,6 @@ package buildcraft.core.lib.engines;
 
 import java.util.Map;
 import java.util.Random;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
@@ -16,11 +15,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 
 import buildcraft.api.enums.EnumEnergyStage;

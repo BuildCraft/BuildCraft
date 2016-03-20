@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network.command;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-
-import io.netty.buffer.ByteBuf;
 
 public class CommandTargetContainer extends CommandTarget {
     @Override

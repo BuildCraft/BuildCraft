@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -11,8 +13,6 @@ import net.minecraft.world.World;
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 

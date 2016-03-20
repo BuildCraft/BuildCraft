@@ -6,6 +6,8 @@ package buildcraft.core.lib.network;
 
 import java.util.LinkedList;
 import java.util.List;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -13,9 +15,6 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class PacketTileState extends PacketCoordinates {
 

@@ -4,9 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import buildcraft.silicon.render.RenderLaserTile;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+
+import buildcraft.silicon.render.RenderLaserTile;
 
 public class SiliconProxyClient extends SiliconProxy {
     @Override

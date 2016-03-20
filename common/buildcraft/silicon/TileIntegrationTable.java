@@ -6,6 +6,7 @@ package buildcraft.silicon;
 
 import java.util.ArrayList;
 import java.util.List;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,11 +17,9 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
     public static final int SLOT_OUTPUT = 9;

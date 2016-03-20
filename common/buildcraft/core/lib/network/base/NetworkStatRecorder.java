@@ -2,25 +2,21 @@ package buildcraft.core.lib.network.base;
 
 import java.util.EnumMap;
 import java.util.Map;
-
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.network.PacketUpdate;
 import buildcraft.core.lib.network.command.PacketCommand;
-
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
 
 public class NetworkStatRecorder {
     static final Map<String, Integer> lengthMap = Maps.newHashMap();

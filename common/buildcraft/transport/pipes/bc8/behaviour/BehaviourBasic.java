@@ -1,6 +1,7 @@
 package buildcraft.transport.pipes.bc8.behaviour;
 
 import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -11,8 +12,6 @@ import buildcraft.api.transport.pipe_bc8.PipeBehaviour_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.transport.pipes.bc8.behaviour.BehaviourFactoryBasic.EnumListStatus;
-
-import io.netty.buffer.ByteBuf;
 
 public class BehaviourBasic extends PipeBehaviour_BC8 {
     public final ImmutableList<PipeDefinition_BC8> connectionList;

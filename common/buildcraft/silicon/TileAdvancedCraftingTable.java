@@ -4,20 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.api.power.ILaserTarget;
-import buildcraft.core.lib.inventory.*;
-import buildcraft.core.lib.inventory.filters.CraftingFilter;
-import buildcraft.core.lib.network.PacketSlotChange;
-import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.core.lib.utils.CraftingUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.proxy.CoreProxy;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,10 +25,23 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.api.power.ILaserTarget;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InventoryCopy;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.InventoryMapper;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.inventory.filters.CraftingFilter;
+import buildcraft.core.lib.network.PacketSlotChange;
+import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.CraftingUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory, PacketSlotChange.ITile {
 

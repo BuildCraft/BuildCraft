@@ -1,10 +1,7 @@
 package buildcraft.robotics.render;
 
-import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.robotics.ItemRobot;
-import buildcraft.robotics.RoboticsProxyClient;
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -12,6 +9,11 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ISmartItemModel;
+
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.robotics.ItemRobot;
+import buildcraft.robotics.RoboticsProxyClient;
 
 public class RobotItemModel extends BuildCraftBakedModel implements ISmartItemModel {
     protected RobotItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {

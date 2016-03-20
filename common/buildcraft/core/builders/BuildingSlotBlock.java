@@ -18,11 +18,17 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.blueprints.*;
+import buildcraft.api.blueprints.BuildingPermission;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
+import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
+import buildcraft.api.blueprints.SchematicFactory;
+import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.IndexRequirementMap;
 import buildcraft.core.lib.utils.BlockUtils;

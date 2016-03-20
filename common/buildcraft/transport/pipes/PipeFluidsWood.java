@@ -5,12 +5,12 @@
 package buildcraft.transport.pipes;
 
 import java.util.List;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -18,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IIconProvider;
@@ -28,8 +27,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyReceiver, ISerializable, IDebuggable {
     private static final int ENERGY_MULTIPLIER = 50;

@@ -4,22 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.ISerializable;
-import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IControllable.Mode;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.TileBuffer;
-import buildcraft.core.lib.network.PacketTileUpdate;
-import buildcraft.core.lib.network.base.Packet;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
+import java.util.HashSet;
+import org.apache.commons.lang3.StringUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -34,16 +23,33 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashSet;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.ISerializable;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IControllable.Mode;
+import buildcraft.core.DefaultProps;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.network.PacketTileUpdate;
+import buildcraft.core.lib.network.base.Packet;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the

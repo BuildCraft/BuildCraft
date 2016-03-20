@@ -6,9 +6,7 @@ package buildcraft;
 
 import java.util.Locale;
 import java.util.Set;
-
 import com.google.common.base.Throwables;
-
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -20,7 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IModel;
@@ -34,7 +31,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -61,7 +62,12 @@ import buildcraft.core.lib.fluids.FluidDefinition;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.energy.*;
+import buildcraft.energy.EnergyGuiHandler;
+import buildcraft.energy.EnergyProxy;
+import buildcraft.energy.IMCHandlerEnergy;
+import buildcraft.energy.TileEngineCreative;
+import buildcraft.energy.TileEngineIron;
+import buildcraft.energy.TileEngineStone;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 import buildcraft.energy.statements.EnergyStatementProvider;

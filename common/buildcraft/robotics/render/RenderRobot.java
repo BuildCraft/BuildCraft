@@ -5,9 +5,7 @@
 package buildcraft.robotics.render;
 
 import java.util.Date;
-
 import com.mojang.authlib.GameProfile;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -33,7 +31,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.util.Constants.NBT;
 

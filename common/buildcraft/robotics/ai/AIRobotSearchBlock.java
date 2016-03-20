@@ -10,7 +10,13 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
-import buildcraft.core.lib.utils.*;
+import buildcraft.core.lib.utils.BlockScannerExpanding;
+import buildcraft.core.lib.utils.BlockScannerRandom;
+import buildcraft.core.lib.utils.BlockScannerZoneRandom;
+import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.core.lib.utils.IterableAlgorithmRunner;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.PathFindingSearch;
 
 public class AIRobotSearchBlock extends AIRobot {
 

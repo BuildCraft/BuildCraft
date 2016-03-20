@@ -8,11 +8,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.core.GuiIds;
-import buildcraft.factory.gui.*;
+import buildcraft.factory.gui.ContainerAutoWorkbench;
+import buildcraft.factory.gui.ContainerChute;
+import buildcraft.factory.gui.ContainerDistiller;
+import buildcraft.factory.gui.ContainerEnergyHeater;
+import buildcraft.factory.gui.ContainerHeatExchange;
+import buildcraft.factory.gui.ContainerRefinery;
+import buildcraft.factory.gui.GuiAutoCrafting;
+import buildcraft.factory.gui.GuiChute;
+import buildcraft.factory.gui.GuiDistiller;
+import buildcraft.factory.gui.GuiEnergyHeater;
+import buildcraft.factory.gui.GuiHeatExchanger;
+import buildcraft.factory.gui.GuiRefinery;
 import buildcraft.factory.tile.TileDistiller;
 import buildcraft.factory.tile.TileEnergyHeater;
 import buildcraft.factory.tile.TileHeatExchange;

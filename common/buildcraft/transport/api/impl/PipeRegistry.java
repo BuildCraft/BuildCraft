@@ -1,7 +1,6 @@
 package buildcraft.transport.api.impl;
 
 import java.util.Set;
-
 import org.apache.commons.lang3.tuple.Triple;
 
 import net.minecraft.item.Item;

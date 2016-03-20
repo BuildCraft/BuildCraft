@@ -2,7 +2,6 @@ package buildcraft.core;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.Optional;
 
 import buildcraft.BuildCraftCore;

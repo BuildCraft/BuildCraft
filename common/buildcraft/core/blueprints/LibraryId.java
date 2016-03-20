@@ -7,15 +7,13 @@ package buildcraft.core.blueprints;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
 import org.apache.commons.lang3.ArrayUtils;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NetworkUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public final class LibraryId implements Comparable<LibraryId>, ISerializable {
     public static final char BPT_SEP_CHARACTER = '-';

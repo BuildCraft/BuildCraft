@@ -4,16 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.core.GuiIds;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.transport.*;
-import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.pipes.events.PipeEventPriority;
+import java.util.EnumSet;
+import java.util.Iterator;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -24,8 +18,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.EnumSet;
-import java.util.Iterator;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.core.GuiIds;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.IDiamondPipe;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.pipes.events.PipeEventPriority;
 
 public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamondPipe {
     private class SimpleFilterInventory extends SimpleInventory {

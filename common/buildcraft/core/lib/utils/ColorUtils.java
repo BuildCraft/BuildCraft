@@ -8,7 +8,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 public final class ColorUtils {

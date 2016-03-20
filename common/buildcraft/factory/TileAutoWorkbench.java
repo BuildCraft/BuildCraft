@@ -4,19 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import buildcraft.api.core.IInvSlot;
-import buildcraft.api.power.IRedstoneEngine;
-import buildcraft.api.power.IRedstoneEngineReceiver;
-import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.gui.ContainerDummy;
-import buildcraft.core.lib.inventory.*;
-import buildcraft.core.lib.utils.CraftingUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.proxy.CoreProxy;
+import java.lang.ref.WeakReference;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +19,21 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 
-import java.lang.ref.WeakReference;
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.power.IRedstoneEngine;
+import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.gui.ContainerDummy;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InventoryConcatenator;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.CraftingUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
     public static final int SLOT_RESULT = 9;

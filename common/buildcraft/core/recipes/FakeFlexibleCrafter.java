@@ -1,7 +1,6 @@
 package buildcraft.core.recipes;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.recipes.IFlexibleCrafter;

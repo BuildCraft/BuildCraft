@@ -4,11 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.Utils;
+import java.util.EnumSet;
+import java.util.Map;
 import com.google.common.collect.MapMaker;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -19,8 +18,10 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.EnumSet;
-import java.util.Map;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TravelingItem {
 

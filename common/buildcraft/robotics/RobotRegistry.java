@@ -5,7 +5,11 @@
 package buildcraft.robotics;
 
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,13 +18,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.robots.*;
+import buildcraft.api.robots.DockingStation;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.IRobotRegistry;
+import buildcraft.api.robots.ResourceId;
+import buildcraft.api.robots.RobotManager;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 

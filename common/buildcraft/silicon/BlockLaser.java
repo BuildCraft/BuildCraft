@@ -6,7 +6,6 @@ package buildcraft.silicon;
 
 import java.util.EnumMap;
 import java.util.List;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.material.Material;

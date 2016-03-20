@@ -1,9 +1,6 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
-
-import org.apache.commons.lang3.mutable.Mutable;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;

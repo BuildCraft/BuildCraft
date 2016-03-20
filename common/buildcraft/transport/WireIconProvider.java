@@ -6,7 +6,6 @@ package buildcraft.transport;
 
 import java.util.Locale;
 import java.util.Map;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

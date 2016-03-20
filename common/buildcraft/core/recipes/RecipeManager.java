@@ -6,7 +6,6 @@ package buildcraft.core.recipes;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 

@@ -9,7 +9,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsWood extends WorldProperty {

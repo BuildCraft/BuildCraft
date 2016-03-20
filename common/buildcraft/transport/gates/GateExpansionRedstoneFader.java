@@ -9,11 +9,11 @@ import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.BuildCraftTransport;
 
 public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
 

@@ -5,17 +5,17 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.builders.TileArchitect;
 import buildcraft.BuildCraftCore;
+import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -24,10 +24,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.BCStringUtils;
-
-import io.netty.buffer.ByteBuf;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
 

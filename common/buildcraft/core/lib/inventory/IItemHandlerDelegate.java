@@ -1,7 +1,6 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandler;
 
 public interface IItemHandlerDelegate {

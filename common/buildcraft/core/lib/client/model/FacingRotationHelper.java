@@ -1,7 +1,6 @@
 package buildcraft.core.lib.client.model;
 
 import java.util.EnumMap;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.util.EnumFacing;

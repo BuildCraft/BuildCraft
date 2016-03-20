@@ -5,11 +5,7 @@
 package buildcraft.core.lib.client.render;
 
 import java.util.Map;
-
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.Maps;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,6 +14,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
 import buildcraft.core.lib.utils.Utils;
+
+import javax.vecmath.Vector3f;
 
 public enum RenderUtils {
     INSTANCE;

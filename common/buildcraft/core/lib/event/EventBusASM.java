@@ -1,7 +1,6 @@
 package buildcraft.core.lib.event;
 
 import java.util.Collection;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;

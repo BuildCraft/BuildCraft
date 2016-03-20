@@ -4,6 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
+import java.util.Locale;
+
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -12,11 +17,11 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.*;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
-import java.util.Locale;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.PipeTransportPower;
+import buildcraft.transport.TravelingItem;
 
 public class TriggerPipeContents extends BCStatement implements ITriggerInternal {
 

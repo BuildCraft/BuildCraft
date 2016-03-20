@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.google.common.base.Predicate;
 
 import net.minecraftforge.fluids.FluidStack;

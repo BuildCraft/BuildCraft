@@ -7,7 +7,20 @@ package buildcraft.transport;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
-import buildcraft.transport.pipes.*;
+import buildcraft.transport.pipes.PipeFluidsCobblestone;
+import buildcraft.transport.pipes.PipeFluidsEmerald;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
+import buildcraft.transport.pipes.PipeFluidsStone;
+import buildcraft.transport.pipes.PipeFluidsWood;
+import buildcraft.transport.pipes.PipeItemsCobblestone;
+import buildcraft.transport.pipes.PipeItemsEmerald;
+import buildcraft.transport.pipes.PipeItemsEmzuli;
+import buildcraft.transport.pipes.PipeItemsObsidian;
+import buildcraft.transport.pipes.PipeItemsQuartz;
+import buildcraft.transport.pipes.PipeItemsStone;
+import buildcraft.transport.pipes.PipeItemsWood;
+import buildcraft.transport.pipes.PipePowerEmerald;
+import buildcraft.transport.pipes.PipePowerWood;
 
 /** Controls whether one type of pipe can connect to another. */
 public final class PipeConnectionBans {

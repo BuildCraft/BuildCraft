@@ -5,7 +5,6 @@
 package buildcraft.core.blueprints;
 
 import java.util.BitSet;
-
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.state.IBlockState;
@@ -21,18 +20,25 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.*;
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
-import buildcraft.core.builders.*;
+import buildcraft.core.builders.BuildingItem;
+import buildcraft.core.builders.BuildingSlot;
+import buildcraft.core.builders.BuildingSlotBlock;
+import buildcraft.core.builders.IBuildingItemsProvider;
+import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;

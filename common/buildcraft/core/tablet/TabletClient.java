@@ -2,7 +2,6 @@ package buildcraft.core.tablet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;

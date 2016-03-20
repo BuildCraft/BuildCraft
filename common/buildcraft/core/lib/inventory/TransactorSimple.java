@@ -4,14 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
-import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.IStackFilter;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
 
 public class TransactorSimple extends Transactor {
     protected IInventory inventory;

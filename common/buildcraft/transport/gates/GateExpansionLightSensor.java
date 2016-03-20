@@ -7,11 +7,9 @@ package buildcraft.transport.gates;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.GateExpansionModelKey;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.ITriggerInternal;
 

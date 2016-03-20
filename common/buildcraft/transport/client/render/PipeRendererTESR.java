@@ -5,7 +5,6 @@
 package buildcraft.transport.client.render;
 
 import com.google.common.base.Throwables;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -20,7 +19,8 @@ import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.transport.*;
+import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.PipeModelCacheWire;
 import buildcraft.transport.client.model.PipeModelCacheWire.PipeWireKey;
 

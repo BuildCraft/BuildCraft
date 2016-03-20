@@ -1,5 +1,7 @@
 package buildcraft.transport.pluggable;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -8,15 +10,12 @@ import net.minecraft.util.EnumWorldBlockLayer;
 
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.client.model.ModelKeyPowerAdapter;
-
-import io.netty.buffer.ByteBuf;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyReceiver {
     private static final int MAX_POWER = 40;

@@ -4,19 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.core.GuiIds;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.network.IGuiReturnHandler;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.TravelingItem;
-import buildcraft.transport.statements.ActionExtractionPreset;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.LinkedList;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -29,9 +21,18 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.LinkedList;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumColor;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.core.GuiIds;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.network.IGuiReturnHandler;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.TravelingItem;
+import buildcraft.transport.statements.ActionExtractionPreset;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 

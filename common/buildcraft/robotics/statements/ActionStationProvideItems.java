@@ -7,7 +7,11 @@ package buildcraft.robotics.statements;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.robots.DockingStation;
-import buildcraft.api.statements.*;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;

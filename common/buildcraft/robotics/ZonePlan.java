@@ -7,19 +7,17 @@ package buildcraft.robotics;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
-
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
-
-import io.netty.buffer.ByteBuf;
 
 public class ZonePlan implements IZone, ISerializable {
     private final HashMap<ChunkCoordIntPair, ZoneChunk> chunkMapping = new HashMap<ChunkCoordIntPair, ZoneChunk>();

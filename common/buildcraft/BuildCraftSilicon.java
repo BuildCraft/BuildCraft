@@ -11,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -30,8 +29,19 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
-import buildcraft.silicon.*;
+import buildcraft.silicon.BlockLaser;
+import buildcraft.silicon.BlockLaserTable;
+import buildcraft.silicon.ItemLaserTable;
+import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
+import buildcraft.silicon.SiliconGuiHandler;
+import buildcraft.silicon.SiliconProxy;
+import buildcraft.silicon.TileAdvancedCraftingTable;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileChargingTable;
+import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.TileLaser;
+import buildcraft.silicon.TileProgrammingTable;
 
 @Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
         dependencies = DefaultProps.DEPENDENCY_CORE)

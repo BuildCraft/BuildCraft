@@ -1,7 +1,6 @@
 package buildcraft.core.blueprints;
 
 import java.util.Set;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 

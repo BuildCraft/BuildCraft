@@ -1,22 +1,27 @@
 package buildcraft.transport.pipes.bc8.behaviour;
 
 import com.google.common.eventbus.Subscribe;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.transport.pipe_bc8.*;
+import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
+import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
 import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
+import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableFluid;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
+import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeBehaviour_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.AttemptCreate;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventInteract_BC8;
@@ -24,8 +29,6 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver {
     private static final int ENERGY_EXTRACT_SINGLE = 20;

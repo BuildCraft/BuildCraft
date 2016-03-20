@@ -7,7 +7,6 @@ package buildcraft.robotics.gui;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;

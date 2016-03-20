@@ -5,15 +5,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+
+import javax.imageio.ImageIO;
 
 public class SpriteBuilder {
     private final String name;

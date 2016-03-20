@@ -4,15 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes.events;
 
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TransportConstants;
-import buildcraft.transport.TravelingItem;
+import java.util.EnumSet;
+import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import java.util.EnumSet;
-import java.util.List;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.TransportConstants;
+import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {
 

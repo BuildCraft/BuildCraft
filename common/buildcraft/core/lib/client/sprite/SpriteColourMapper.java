@@ -3,9 +3,6 @@ package buildcraft.core.lib.client.sprite;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import com.google.common.base.Throwables;
 
 import net.minecraft.client.Minecraft;
@@ -20,6 +17,8 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.fluids.FluidDefinition.BCFluid;
+
+import javax.imageio.ImageIO;
 
 public class SpriteColourMapper extends TextureAtlasSprite {
     private final ResourceLocation from;

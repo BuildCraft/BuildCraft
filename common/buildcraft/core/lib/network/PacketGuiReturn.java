@@ -4,6 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -12,9 +15,6 @@ import net.minecraft.world.World;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.network.base.Packet;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 // TODO: Rename to PacketGuiUpdate
 public class PacketGuiReturn extends Packet {

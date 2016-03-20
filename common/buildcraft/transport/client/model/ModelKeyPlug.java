@@ -1,12 +1,12 @@
 package buildcraft.transport.client.model;
 
-import buildcraft.transport.pluggable.PlugPluggable;
+import java.util.Arrays;
+
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
-import java.util.Arrays;
+import buildcraft.transport.pluggable.PlugPluggable;
 
 public class ModelKeyPlug extends PluggableModelKey<ModelKeyPlug> {
     public final PlugPluggable.Material material;

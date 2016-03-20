@@ -4,7 +4,6 @@ import java.util.function.BiFunction;
 import java.util.function.ToIntFunction;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.items.IItemHandler;
 
 public class ItemHandlerDelegate implements IItemHandler {

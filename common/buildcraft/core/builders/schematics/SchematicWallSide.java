@@ -5,7 +5,6 @@
 package buildcraft.core.builders.schematics;
 
 import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.BlockPos;

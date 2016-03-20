@@ -3,7 +3,6 @@ package buildcraft.builders;
 import java.util.List;
 
 import net.minecraft.util.EnumChatFormatting;
-
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

@@ -5,7 +5,6 @@
 package buildcraft.core.lib.client.sprite;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

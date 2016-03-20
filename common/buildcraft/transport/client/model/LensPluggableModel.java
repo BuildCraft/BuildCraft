@@ -2,9 +2,6 @@ package buildcraft.transport.client.model;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -17,7 +14,6 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -33,6 +29,8 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.LensPluggable;
+
+import javax.vecmath.Matrix4f;
 
 public final class LensPluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyLens> {
     public static final LensPluggableModel INSTANCE = new LensPluggableModel();

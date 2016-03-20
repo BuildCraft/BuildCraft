@@ -4,11 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import buildcraft.BuildCraftSilicon;
-import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.block.BlockBuildCraft;
+import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,7 +22,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import buildcraft.BuildCraftSilicon;
+import buildcraft.api.enums.EnumLaserTableType;
+import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
     public static final int TABLE_MAX = EnumLaserTableType.values().length;

@@ -4,8 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.utils.BitSetUtils;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,9 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.utils.BitSetUtils;
 
 public abstract class PipeTransport {
     public TileGenericPipe container;

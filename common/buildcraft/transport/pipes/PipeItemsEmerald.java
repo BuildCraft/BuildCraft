@@ -4,16 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.ISerializable;
-import buildcraft.core.GuiIds;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.network.IGuiReturnHandler;
-import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.PipeIconProvider;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -23,6 +15,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.ISerializable;
+import buildcraft.core.GuiIds;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.network.IGuiReturnHandler;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IGuiReturnHandler {
 

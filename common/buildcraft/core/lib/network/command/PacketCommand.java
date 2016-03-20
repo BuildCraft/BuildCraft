@@ -5,16 +5,14 @@
 package buildcraft.core.lib.network.command;
 
 import java.util.ArrayList;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketCommand extends Packet {
     public static final ArrayList<CommandTarget> targets;

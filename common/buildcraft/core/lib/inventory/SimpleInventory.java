@@ -5,7 +5,6 @@
 package buildcraft.core.lib.inventory;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +15,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.INBTStoreable;

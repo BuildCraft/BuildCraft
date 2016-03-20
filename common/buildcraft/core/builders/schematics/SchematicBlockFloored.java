@@ -1,11 +1,12 @@
 package buildcraft.core.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import java.util.Set;
 import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.util.BlockPos;
 
-import java.util.Set;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicBlockFloored extends SchematicBlock {
     @Override

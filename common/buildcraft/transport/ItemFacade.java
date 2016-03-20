@@ -6,9 +6,7 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.block.Block;
@@ -26,7 +24,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;

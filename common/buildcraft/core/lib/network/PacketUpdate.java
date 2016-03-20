@@ -4,11 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
-import buildcraft.api.core.ISerializable;
-import buildcraft.core.lib.network.base.Packet;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import buildcraft.api.core.ISerializable;
+import buildcraft.core.lib.network.base.Packet;
 
 public abstract class PacketUpdate extends Packet {
     public ISerializable payload;

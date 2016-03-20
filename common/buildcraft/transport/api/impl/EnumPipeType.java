@@ -1,7 +1,6 @@
 package buildcraft.transport.api.impl;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
 
 import buildcraft.api.transport.pipe_bc8.IPipeListener;

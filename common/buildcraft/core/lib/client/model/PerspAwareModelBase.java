@@ -2,12 +2,8 @@ package buildcraft.core.lib.client.model;
 
 import java.util.Collections;
 import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -16,10 +12,11 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.TRSRTransformation;
+
+import javax.vecmath.Matrix4f;
 
 public class PerspAwareModelBase implements IPerspectiveAwareModel {
     private final VertexFormat format;

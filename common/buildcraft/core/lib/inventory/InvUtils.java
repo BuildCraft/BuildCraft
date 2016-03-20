@@ -18,16 +18,15 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.Constants;
-
-import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.IStackFilter;
-import buildcraft.core.lib.utils.BlockUtils;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IStackFilter;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public final class InvUtils {
     private static final boolean DISABLE_INVENTORY_WRAPPERS = false;

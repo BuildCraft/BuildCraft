@@ -10,6 +10,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import buildcraft.core.lib.network.base.NetworkStatRecorder.EnumOpType;
+import buildcraft.core.lib.network.base.NetworkStatRecorder.PacketSource;
+import buildcraft.core.lib.network.base.NetworkStatRecorder.PacketStats;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,13 +25,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import buildcraft.core.lib.network.base.NetworkStatRecorder.EnumOpType;
-import buildcraft.core.lib.network.base.NetworkStatRecorder.PacketSource;
-import buildcraft.core.lib.network.base.NetworkStatRecorder.PacketStats;
 
 public class StatisticsFrame extends JFrame implements TreeSelectionListener {
     private static final long serialVersionUID = -6012472823876988075L;

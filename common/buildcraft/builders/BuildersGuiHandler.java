@@ -8,10 +8,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-import buildcraft.builders.gui.*;
+import buildcraft.builders.gui.ContainerArchitect;
+import buildcraft.builders.gui.ContainerBlueprintLibrary;
+import buildcraft.builders.gui.ContainerBuilder;
+import buildcraft.builders.gui.ContainerFiller;
+import buildcraft.builders.gui.GuiArchitect;
+import buildcraft.builders.gui.GuiBlueprintLibrary;
+import buildcraft.builders.gui.GuiBuilder;
+import buildcraft.builders.gui.GuiFiller;
 import buildcraft.core.GuiIds;
 
 public class BuildersGuiHandler implements IGuiHandler {

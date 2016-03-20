@@ -1,9 +1,10 @@
 package buildcraft.transport.client.model;
 
-import java.util.*;
-
-import javax.vecmath.Vector3f;
-
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -18,9 +19,17 @@ import net.minecraft.util.Vec3;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.client.model.*;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.IModelCache;
+import buildcraft.core.lib.client.model.ModelCache;
+import buildcraft.core.lib.client.model.ModelCacheBuilder;
+import buildcraft.core.lib.client.model.ModelCacheMultipleSame;
+import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeRenderState;
+
+import javax.vecmath.Vector3f;
 
 public class PipeModelCacheWire {
     public static final IModelCache<PipeWireKey> cacheAll;

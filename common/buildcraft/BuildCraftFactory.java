@@ -5,7 +5,6 @@
 package buildcraft;
 
 import java.util.Locale;
-
 import com.google.common.base.Throwables;
 
 import net.minecraft.block.Block;
@@ -18,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -50,7 +48,25 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
-import buildcraft.factory.*;
+import buildcraft.factory.BlockAutoWorkbench;
+import buildcraft.factory.BlockChute;
+import buildcraft.factory.BlockFloodGate;
+import buildcraft.factory.BlockMiningWell;
+import buildcraft.factory.BlockPlainPipe;
+import buildcraft.factory.BlockPump;
+import buildcraft.factory.BlockRefinery;
+import buildcraft.factory.BlockTank;
+import buildcraft.factory.FactoryGuiHandler;
+import buildcraft.factory.FactoryProxy;
+import buildcraft.factory.FactoryProxyClient;
+import buildcraft.factory.PumpDimensionList;
+import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.factory.TileChute;
+import buildcraft.factory.TileFloodGate;
+import buildcraft.factory.TileMiningWell;
+import buildcraft.factory.TilePump;
+import buildcraft.factory.TileRefinery;
+import buildcraft.factory.TileTank;
 import buildcraft.factory.blocks.BlockDistiller;
 import buildcraft.factory.blocks.BlockEnergyHeater;
 import buildcraft.factory.blocks.BlockHeatExchange;

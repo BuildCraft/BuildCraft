@@ -7,11 +7,14 @@ package buildcraft.builders;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.builders.render.*;
+import buildcraft.builders.render.RenderArchitect;
+import buildcraft.builders.render.RenderBuilderTile;
+import buildcraft.builders.render.RenderConstructionMarker;
+import buildcraft.builders.render.RenderFiller;
+import buildcraft.builders.render.RenderQuarry;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderVoid;
 

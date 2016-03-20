@@ -4,20 +4,17 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
-import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.StackKey;
-import buildcraft.core.builders.*;
-import buildcraft.core.builders.BuildingSlotBlock.Mode;
-import buildcraft.core.lib.inventory.InventoryCopy;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map.Entry;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -33,8 +30,25 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.*;
-import java.util.Map.Entry;
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.Schematic;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.StackKey;
+import buildcraft.core.builders.BuilderItemMetaPair;
+import buildcraft.core.builders.BuildingSlot;
+import buildcraft.core.builders.BuildingSlotBlock;
+import buildcraft.core.builders.BuildingSlotBlock.Mode;
+import buildcraft.core.builders.BuildingSlotEntity;
+import buildcraft.core.builders.IBuildingItemsProvider;
+import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.lib.inventory.InventoryCopy;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
     protected HashSet<Integer> builtEntities = new HashSet<Integer>();

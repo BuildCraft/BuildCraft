@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -27,8 +26,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
-import buildcraft.core.lib.utils.RevolvingList;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.RevolvingList;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {

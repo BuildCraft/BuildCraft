@@ -1,14 +1,15 @@
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicEntity;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicEntity;
 
 public class SchematicArmorStand extends SchematicEntity {
 	@Override

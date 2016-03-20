@@ -1,8 +1,8 @@
 package buildcraft.core;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.BCStringUtils;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -12,8 +12,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.BCStringUtils;
 
 @Deprecated
 public class ItemDebugger extends ItemBuildCraft {

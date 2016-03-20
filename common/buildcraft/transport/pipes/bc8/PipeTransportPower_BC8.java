@@ -1,5 +1,7 @@
 package buildcraft.transport.pipes.bc8;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTBase;
 
 import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
@@ -8,8 +10,6 @@ import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.AttemptCreate;
 import buildcraft.transport.api.impl.EnumPipeType;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipeTransportPower_BC8 implements IPipeListener {
     public final IPipe_BC8 pipe;

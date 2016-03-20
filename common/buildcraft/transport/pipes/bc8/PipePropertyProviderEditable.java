@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import com.google.common.collect.Maps;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipePropertyProviderEditable implements IPipePropertyProviderEditable {
     private final Map<IPipePropertyValue<?>, Object> values = Maps.newHashMap();

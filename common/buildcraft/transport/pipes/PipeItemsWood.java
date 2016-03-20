@@ -4,17 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.*;
-import buildcraft.transport.statements.ActionSingleEnergyPulse;
-import cofh.api.energy.IEnergyReceiver;
+import java.util.Collection;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -26,7 +17,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Collection;
+import cofh.api.energy.IEnergyReceiver;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportConstants;
+import buildcraft.transport.TravelingItem;
+import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     protected RFBattery battery = new RFBattery(2560, 80, 0);

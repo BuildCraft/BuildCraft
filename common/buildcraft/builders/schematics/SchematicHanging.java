@@ -4,9 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.core.lib.utils.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.init.Items;
@@ -16,6 +13,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
+
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicEntity;
+import buildcraft.core.lib.utils.Utils;
 
 public class SchematicHanging extends SchematicEntity {
 

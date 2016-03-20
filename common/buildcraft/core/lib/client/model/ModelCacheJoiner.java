@@ -2,7 +2,6 @@ package buildcraft.core.lib.client.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.WorldRenderer;

@@ -6,6 +6,7 @@ package buildcraft.builders.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -28,8 +29,6 @@ import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.BCStringUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 

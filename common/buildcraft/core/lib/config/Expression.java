@@ -3,7 +3,6 @@ package buildcraft.core.lib.config;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import com.google.common.collect.Maps;
 
 import buildcraft.core.lib.config.ExpressionCompiler.Node;

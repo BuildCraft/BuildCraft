@@ -1,9 +1,6 @@
 package buildcraft.transport.client.model;
 
 import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -14,7 +11,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -26,6 +22,8 @@ import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
+
+import javax.vecmath.Matrix4f;
 
 public class PlugPluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyPlug> {
     public static final PlugPluggableModel INSTANCE = new PlugPluggableModel();

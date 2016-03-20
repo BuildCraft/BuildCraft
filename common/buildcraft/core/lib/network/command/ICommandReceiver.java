@@ -4,9 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network.command;
 
-import net.minecraftforge.fml.relauncher.Side;
-
 import io.netty.buffer.ByteBuf;
+
+import net.minecraftforge.fml.relauncher.Side;
 
 public interface ICommandReceiver {
     void receiveCommand(String command, Side side, Object sender, ByteBuf stream);

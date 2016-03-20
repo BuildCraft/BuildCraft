@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import java.util.BitSet;
 import java.util.Random;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -13,8 +14,6 @@ import net.minecraft.util.BlockPos;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class ZoneChunk implements ISerializable {
 

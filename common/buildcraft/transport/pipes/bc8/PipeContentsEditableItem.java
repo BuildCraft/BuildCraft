@@ -1,5 +1,7 @@
 package buildcraft.transport.pipes.bc8;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,8 +11,6 @@ import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
 import buildcraft.core.lib.utils.NBTUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     private final IPipePropertyProviderEditable propertyProvider;

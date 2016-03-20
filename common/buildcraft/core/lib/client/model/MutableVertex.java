@@ -4,14 +4,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.vecmath.*;
-
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 
 import buildcraft.api.core.BCLog;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point2f;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple2f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 
 public class MutableVertex {
     private final float[] position = new float[3];

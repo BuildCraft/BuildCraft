@@ -1,8 +1,8 @@
 package buildcraft.transport.utils;
 
-import net.minecraft.util.EnumFacing;
-
 import io.netty.buffer.ByteBuf;
+
+import net.minecraft.util.EnumFacing;
 
 public class TextureMatrix {
     private final int[] iconIndexes = new int[7];

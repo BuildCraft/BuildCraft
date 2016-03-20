@@ -3,10 +3,6 @@ package buildcraft.robotics.render;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -20,18 +16,23 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.client.model.*;
+import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 public class RobotStationModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyStation> {
     public static final RobotStationModel INSTANCE = new RobotStationModel();

@@ -1,13 +1,12 @@
 package buildcraft.core.lib.block;
 
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.enums.*;
-import buildcraft.api.properties.BuildCraftExtendedProperty;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.core.BCCreativeTab;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -16,17 +15,29 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.api.enums.EnumDecoratedBlock;
+import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumFillerPattern;
+import buildcraft.api.enums.EnumLaserTableType;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftExtendedProperty;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.core.BCCreativeTab;
 
 public abstract class BlockBuildCraftBase extends Block {
 

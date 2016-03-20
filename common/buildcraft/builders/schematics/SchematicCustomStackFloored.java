@@ -1,12 +1,13 @@
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.core.builders.schematics.SchematicCustomStack;
+import java.util.Set;
 import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
-import java.util.Set;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.core.builders.schematics.SchematicCustomStack;
 
 /**
  * Created by asie on 3/14/16.

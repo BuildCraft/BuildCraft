@@ -5,10 +5,6 @@
 package buildcraft.transport.gates;
 
 import java.util.List;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -20,7 +16,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,6 +27,9 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.BCStringUtils;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 

@@ -4,12 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
-import buildcraft.api.core.IStackFilter;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.core.IStackFilter;
 
 public class TransactorItemHandler extends Transactor {
 

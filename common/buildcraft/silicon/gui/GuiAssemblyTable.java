@@ -4,8 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.gui;
 
-import java.util.*;
-
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;

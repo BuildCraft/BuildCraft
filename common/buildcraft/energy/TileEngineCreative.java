@@ -4,12 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.util.FakePlayer;
 
 import buildcraft.BuildCraftCore;
@@ -19,8 +20,6 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.BCStringUtils;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileEngineCreative extends TileEngineBase {
     private PowerMode powerMode = PowerMode.M2;

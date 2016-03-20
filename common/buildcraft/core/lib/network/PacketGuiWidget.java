@@ -4,14 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.base.Packet;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketGuiWidget extends Packet {
     private byte windowId, widgetId;

@@ -1,5 +1,16 @@
 package buildcraft.robotics;
 
+import java.util.List;
+
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
@@ -19,16 +30,6 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.PipeItemsWood;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import net.minecraftforge.fluids.IFluidHandler;
-
-import java.util.List;
 
 public class DockingStationPipe extends DockingStation implements IRequestProvider {
 

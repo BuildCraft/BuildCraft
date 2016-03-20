@@ -1,9 +1,6 @@
 package buildcraft.factory.render;
 
 import java.util.List;
-
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -16,6 +13,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
 import buildcraft.core.lib.client.model.MutableQuad;
+
+import javax.vecmath.Vector3f;
 
 public class ChuteRenderModel extends BuildCraftBakedModel {
     public static TextureAtlasSprite sideTexture = null;

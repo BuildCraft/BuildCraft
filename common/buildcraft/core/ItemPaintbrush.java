@@ -4,11 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import buildcraft.api.blocks.IColorRemovable;
-import buildcraft.api.core.EnumColor;
-import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +19,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import buildcraft.api.blocks.IColorRemovable;
+import buildcraft.api.core.EnumColor;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemPaintbrush extends ItemBuildCraft {
     private static final int MAX_DAMAGE = 63;

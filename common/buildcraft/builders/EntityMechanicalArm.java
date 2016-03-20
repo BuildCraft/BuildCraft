@@ -4,18 +4,17 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import buildcraft.core.lib.EntityResizableCuboid;
-
-import io.netty.buffer.ByteBuf;
 
 public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpawnData {
 

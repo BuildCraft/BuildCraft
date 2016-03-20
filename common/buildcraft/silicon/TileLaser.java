@@ -6,6 +6,7 @@ package buildcraft.silicon;
 
 import java.util.LinkedList;
 import java.util.List;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,8 +29,6 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 

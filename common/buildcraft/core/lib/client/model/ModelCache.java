@@ -3,13 +3,11 @@ package buildcraft.core.lib.client.model;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;

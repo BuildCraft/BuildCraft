@@ -1,5 +1,7 @@
 package buildcraft.transport.pluggable;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,11 +15,8 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.client.model.LensPluggableModel;
 import buildcraft.transport.client.model.ModelKeyLens;
 import buildcraft.transport.pipes.events.PipeEventItem;
-
-import io.netty.buffer.ByteBuf;
 
 public class LensPluggable extends PipePluggable {
     public EnumDyeColor dyeColor;

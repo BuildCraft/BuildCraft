@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.properties.BuildCraftProperties;

@@ -5,7 +5,6 @@
 package buildcraft.core.lib.utils;
 
 import java.text.DecimalFormat;
-
 import com.google.common.base.Splitter;
 
 import net.minecraft.util.BlockPos;

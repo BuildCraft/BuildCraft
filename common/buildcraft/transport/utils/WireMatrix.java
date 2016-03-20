@@ -5,12 +5,11 @@
 package buildcraft.transport.utils;
 
 import java.util.BitSet;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeWire;
-
-import io.netty.buffer.ByteBuf;
 
 public class WireMatrix {
     private final BitSet hasWire = new BitSet(PipeWire.values().length);

@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,8 +19,6 @@ import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public static class TileWrapper implements ISerializable {

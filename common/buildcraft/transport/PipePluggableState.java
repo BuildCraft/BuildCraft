@@ -1,5 +1,7 @@
 package buildcraft.transport;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.ISerializable;
@@ -8,8 +10,6 @@ import buildcraft.api.transport.pluggable.IConnectionMatrix;
 import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.utils.ConnectionMatrix;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipePluggableState implements ISerializable, IPipePluggableState, Comparable<PipePluggableState> {
     private PipePluggable[] pluggables = new PipePluggable[6];

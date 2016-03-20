@@ -1,14 +1,19 @@
 package buildcraft.transport.pipes.bc8;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTBase;
 
-import buildcraft.api.transport.pipe_bc8.*;
+import buildcraft.api.transport.pipe_bc8.BCPipeEventHandler;
+import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
+import buildcraft.api.transport.pipe_bc8.IPipeContents;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
+import buildcraft.api.transport.pipe_bc8.IPipeListener;
+import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
+import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.transport.PipeTransportItems;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipeTransportItem_BC8 implements IPipeListener {
     public static final int MAX_PIPE_STACKS = 64;

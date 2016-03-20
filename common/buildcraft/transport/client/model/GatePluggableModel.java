@@ -1,16 +1,9 @@
 package buildcraft.transport.client.model;
 
-import buildcraft.api.gates.GateExpansionModelKey;
-import buildcraft.api.gates.IExpansionBaker;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
-import buildcraft.core.lib.utils.MatrixUtils;
+import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -21,8 +14,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
+import buildcraft.api.gates.GateExpansionModelKey;
+import buildcraft.api.gates.IExpansionBaker;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
+import buildcraft.api.transport.pluggable.IPluggableModelBaker;
+import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.utils.MatrixUtils;
+
 import javax.vecmath.Matrix4f;
-import java.util.List;
 
 public final class GatePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyGate>, IPipePluggableDynamicRenderer {
     private static final ResourceLocation mainLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_main.obj");

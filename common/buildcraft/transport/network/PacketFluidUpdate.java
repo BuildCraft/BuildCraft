@@ -5,11 +5,11 @@
 package buildcraft.transport.network;
 
 import java.util.BitSet;
+import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -19,8 +19,6 @@ import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketFluidUpdate extends PacketCoordinates {
     public FluidRenderData renderCache = new FluidRenderData();

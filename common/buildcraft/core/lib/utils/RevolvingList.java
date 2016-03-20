@@ -7,7 +7,6 @@ package buildcraft.core.lib.utils;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
-
 import com.google.common.collect.ForwardingCollection;
 
 public class RevolvingList<T> extends ForwardingCollection<T> {

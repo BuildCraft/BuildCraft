@@ -4,6 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.properties;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -13,10 +17,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class WorldPropertyIsOre extends WorldProperty {
     private final HashSet<Integer> ores = new HashSet<Integer>();

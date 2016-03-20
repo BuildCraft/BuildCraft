@@ -1,7 +1,6 @@
 package buildcraft.robotics.render;
 
 import java.util.HashMap;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.material.MapColor;

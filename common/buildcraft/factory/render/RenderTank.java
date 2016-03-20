@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.client.render.FluidRenderer;

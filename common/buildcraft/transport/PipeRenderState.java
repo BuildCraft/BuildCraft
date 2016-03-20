@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.ISerializable;
@@ -12,8 +14,6 @@ import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
-
-import io.netty.buffer.ByteBuf;
 
 public class PipeRenderState implements ISerializable, IPipeRenderState, Comparable<PipeRenderState> {
     public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();

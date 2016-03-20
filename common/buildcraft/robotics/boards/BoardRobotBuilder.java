@@ -21,7 +21,11 @@ import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.robotics.ai.*;
+import buildcraft.robotics.ai.AIRobotDisposeItems;
+import buildcraft.robotics.ai.AIRobotGotoBlock;
+import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
+import buildcraft.robotics.ai.AIRobotRecharge;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
 

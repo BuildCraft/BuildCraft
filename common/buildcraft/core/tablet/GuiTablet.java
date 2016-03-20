@@ -1,7 +1,6 @@
 package buildcraft.core.tablet;
 
 import java.util.Date;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 

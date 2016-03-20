@@ -5,7 +5,6 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;

@@ -4,12 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
-import java.util.List;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicIgnoreState extends SchematicBlock {
     @Override

@@ -1,15 +1,12 @@
 package buildcraft.transport.client.model;
 
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
-import buildcraft.core.lib.utils.MatrixUtils;
-import buildcraft.transport.gates.GateDefinition.GateLogic;
-import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.gates.ItemGate;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -20,11 +17,16 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ISmartItemModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.gates.GateDefinition.GateLogic;
+import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.ItemGate;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
     public static final GateItemModel INSTANCE = new GateItemModel();

@@ -1,17 +1,18 @@
 package buildcraft.transport;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 import buildcraft.transport.pluggable.LensPluggable;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
 
 public class LensFilterHandler {
     @PipeEventPriority(priority = -100)

@@ -15,10 +15,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.blueprints.*;
+import buildcraft.api.blueprints.BuildingPermission;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.blueprints.MappingNotFoundException;
+import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;

@@ -7,7 +7,6 @@ package buildcraft.transport.recipes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import com.google.common.collect.BiMap;
 
 import net.minecraft.item.ItemStack;

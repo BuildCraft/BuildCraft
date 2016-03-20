@@ -10,7 +10,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import buildcraft.api.robots.*;
+import buildcraft.api.robots.DockingStation;
+import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.IRobotRegistry;
+import buildcraft.api.robots.ResourceId;
+import buildcraft.api.robots.ResourceIdRequest;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class StackRequest {

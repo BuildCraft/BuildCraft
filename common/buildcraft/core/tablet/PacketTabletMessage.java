@@ -1,5 +1,7 @@
 package buildcraft.core.tablet;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,8 +12,6 @@ import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
-
-import io.netty.buffer.ByteBuf;
 
 public class PacketTabletMessage extends Packet {
     private NBTTagCompound tag;

@@ -1,11 +1,12 @@
 package buildcraft.transport.network;
 
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.network.PacketCoordinates;
-import buildcraft.transport.Pipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.network.PacketCoordinates;
+import buildcraft.transport.Pipe;
 
 public class PacketPipeSyncRequest extends PacketCoordinates {
 	public PacketPipeSyncRequest() {

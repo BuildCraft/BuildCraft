@@ -6,7 +6,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.lib.utils.ColorUtils;

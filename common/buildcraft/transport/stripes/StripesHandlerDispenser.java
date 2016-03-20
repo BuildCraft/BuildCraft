@@ -1,7 +1,6 @@
 package buildcraft.transport.stripes;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.BlockDispenser;

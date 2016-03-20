@@ -5,7 +5,6 @@
 package buildcraft.transport;
 
 import java.util.Map;
-
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -13,7 +12,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

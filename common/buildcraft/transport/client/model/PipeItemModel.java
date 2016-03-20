@@ -1,7 +1,6 @@
 package buildcraft.transport.client.model;
 
 import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 

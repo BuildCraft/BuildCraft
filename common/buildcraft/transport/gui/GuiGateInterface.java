@@ -7,7 +7,6 @@ package buildcraft.transport.gui;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 

@@ -4,9 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.core.builders.schematics.SchematicBlockFloored;
+import java.util.List;
+
 import net.minecraft.block.BlockRail;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRailBase.EnumRailDirection;
@@ -15,7 +14,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
-import java.util.List;
+import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
 public class SchematicRail extends SchematicBlockFloored {
     private static final IBlockState defaultDirection = Blocks.rail.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);

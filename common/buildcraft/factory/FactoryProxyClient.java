@@ -4,10 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import buildcraft.BuildCraftFactory;
-import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.factory.render.RenderRefinery;
-import buildcraft.factory.render.RenderTank;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -16,6 +12,11 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+
+import buildcraft.BuildCraftFactory;
+import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.factory.render.RenderRefinery;
+import buildcraft.factory.render.RenderTank;
 
 public class FactoryProxyClient extends FactoryProxy {
     public static TextureAtlasSprite pumpTexture;

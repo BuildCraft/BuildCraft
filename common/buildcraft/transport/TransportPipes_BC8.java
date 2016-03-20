@@ -2,7 +2,6 @@ package buildcraft.transport;
 
 import java.util.List;
 import java.util.Locale;
-
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
@@ -12,7 +11,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.BuildCraftTransport;
@@ -21,7 +19,6 @@ import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeDefinition_BC8;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BCRegistry;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.api.impl.EnumPipeType;
 import buildcraft.transport.pipes.bc8.EnumPipeMaterial;
 import buildcraft.transport.pipes.bc8.behaviour.BehaviourFactoryBasic;

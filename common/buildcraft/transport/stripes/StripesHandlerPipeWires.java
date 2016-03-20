@@ -11,8 +11,8 @@ import net.minecraft.world.World;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.ItemPipeWire;
+import buildcraft.transport.TileGenericPipe;
 
 public class StripesHandlerPipeWires implements IStripesHandler {
     @Override

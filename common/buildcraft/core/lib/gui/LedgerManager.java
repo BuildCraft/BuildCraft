@@ -2,7 +2,6 @@ package buildcraft.core.lib.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 
 import buildcraft.core.lib.utils.SessionVars;

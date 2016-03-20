@@ -4,11 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
-import buildcraft.api.blueprints.IBuilderContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+
+import buildcraft.api.blueprints.IBuilderContext;
 
 public class SchematicBanner extends SchematicSignLike {
     public SchematicBanner(boolean isWall) {

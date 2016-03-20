@@ -5,7 +5,6 @@
 package buildcraft.silicon.gui;
 
 import java.util.Iterator;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;

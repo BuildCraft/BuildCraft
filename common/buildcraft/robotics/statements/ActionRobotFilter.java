@@ -8,15 +8,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.DockingStation;
-import buildcraft.api.statements.*;
-import buildcraft.core.lib.inventory.filters.*;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.core.lib.inventory.filters.ArrayFluidFilter;
+import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
+import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
+import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
+import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 

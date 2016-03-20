@@ -7,9 +7,7 @@ package buildcraft.core.lib.client.render;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.google.common.collect.Maps;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;
@@ -17,7 +15,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
-
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
