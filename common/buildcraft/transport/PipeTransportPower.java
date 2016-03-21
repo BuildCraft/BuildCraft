@@ -4,6 +4,20 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
+
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -13,22 +27,11 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.AverageDouble;
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.*;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<>();
@@ -37,6 +40,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
     private static final int OVERLOAD_TICKS = 60;
     public static final short POWER_STAGES = 1 << 6;
+
+    public AverageDouble[] displayPowerAverage = new AverageDouble[6];
 
     public short[] displayPower = new short[6];
     public short[] displayFlow = new short[6];
@@ -72,6 +77,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         for (int i = 0; i < 6; ++i) {
             powerQuery[i] = 0;
             powerAverage[i] = new AverageInt(10);
+            displayPowerAverage[i] = new AverageDouble(10);
         }
     }
 
@@ -182,6 +188,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     @Override
     public void updateEntity() {
         if (container.getWorld().isRemote) {
+            for (int i = 0; i < 6; i++) {
+                displayPowerAverage[i].tick(displayPower[i]);
+            }
             return;
         }
 

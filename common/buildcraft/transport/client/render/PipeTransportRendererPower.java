@@ -37,11 +37,12 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
         // Used for the centre rendering
-        short centerPower = 0;
-        short[] power = pow.displayPower;
+        double centerPower = 0;
+        double[] power = new double[6];
         short[] flow = pow.displayFlow;
         for (int i = 0; i < 6; i++) {
-            short d = power[i];
+            power[i] = pow.displayPowerAverage[i].getAverage();
+            double d = power[i];
             if (d > centerPower) {
                 centerPower = d;
             }
@@ -93,13 +94,13 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         GL11.glPopMatrix();
     }
 
-    private static void renderSidePower(EnumFacing face, short stage, double flow, short centerStage) {
+    private static void renderSidePower(EnumFacing face, double stage, double flow, double centerStage) {
         if (stage <= 0) {
             return;
         }
 
-        double width = 0.5 * stage / (double) POWER_STAGES;
-        double centerRadius = 0.25 * centerStage / (double) POWER_STAGES;
+        double width = 0.5 * stage / POWER_STAGES;
+        double centerRadius = 0.25 * centerStage / POWER_STAGES;
 
         Vec3 center = Utils.VEC_HALF.add(Utils.convert(face, 0.25 + centerRadius / 2d));
 
@@ -132,11 +133,11 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         GL11.glPopMatrix();
     }
 
-    private static void renderCenterPower(short stage, Vec3 centerFlow) {
+    private static void renderCenterPower(double stage, Vec3 centerFlow) {
         if (stage <= 0) {
             return;
         }
-        double width = 0.5 * stage / (double) POWER_STAGES;
+        double width = 0.5 * stage / POWER_STAGES;
 
         Vec3 size = new Vec3(width, width, width);
         Vec3 pos = Utils.VEC_HALF;
