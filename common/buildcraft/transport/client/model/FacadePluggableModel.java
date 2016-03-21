@@ -25,10 +25,12 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.PipeIconProvider;
 
 public final class FacadePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyFacade> {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
     private static final ResourceLocation filledLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_filled.obj");
+    private static final ResourceLocation connectorLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/plug.obj");
     public static final FacadePluggableModel INSTANCE = new FacadePluggableModel();
 
     private FacadePluggableModel() {
@@ -41,6 +43,10 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
     public IModel modelFilled() {
         return getModelOBJ(filledLoc);
+    }
+
+    public IModel modelConnector() {
+        return getModelOBJ(connectorLoc);
     }
 
     @Override
@@ -58,6 +64,8 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
         // FIXME: Use the model bisector to cut a model down + squish one side down so it looks right
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
 
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+
         IModel model;
         if (hollow) {
             model = modelHollow();
@@ -67,7 +75,18 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
         if (model != null) {
             IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, format, singleTextureFunction(sprite));
-            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+            for (BakedQuad quad : baked.getGeneralQuads()) {
+                MutableQuad mutable = MutableQuad.create(quad);
+                mutable.transform(matrix);
+                mutable.setCalculatedDiffuse();
+                BCModelHelper.appendBakeQuads(quads, mutable);
+            }
+        }
+
+        if (!hollow) {
+            IModel connector = modelConnector();
+            TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
+            IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));
             for (BakedQuad quad : baked.getGeneralQuads()) {
                 MutableQuad mutable = MutableQuad.create(quad);
                 mutable.transform(matrix);
