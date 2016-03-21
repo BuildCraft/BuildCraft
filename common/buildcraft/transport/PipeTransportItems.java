@@ -252,9 +252,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         // If all sides are clogged, check if bouncing can be done.
         if (allowBouncing) {
             EnumFacing o = item.input.getOpposite();
-            ReceiveType type = canReceivePipeObjects(o, item);
-            if (type == ReceiveType.ALLOWED) {
-                return o;
+            if (container.pipe.outputOpen(o)) {
+                ReceiveType type = canReceivePipeObjects(o, item);
+                if (type == ReceiveType.ALLOWED) {
+                    return o;
+                }
             }
         }
 
