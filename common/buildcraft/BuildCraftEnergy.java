@@ -180,7 +180,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
         if (!Loader.isModLoaded("BuildCraft|Factory")) {
-            oil = new FluidDefinition("oil", 800, 10000, true);
+            oil = new FluidDefinition("oil", 800, 10000);
             oil.block.setLightOpacity(8);
             oil.fluid.setColour(0x50_50_50, 0x05_05_05);
             oil.block.setFlammability(0);
@@ -189,7 +189,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
                     ConfigManager.RestartRequirement.NONE);
 
-            fuel = new FluidDefinition("fuel", 1000, 1000, true);
+            fuel = new FluidDefinition("fuel", 1000, 1000);
             fuel.block.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
             fuel.fluid.setColour(0xFF_FF_30, 0xE4_CF_00);
 
@@ -199,7 +199,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         if (BuildCraftCore.DEVELOPER_MODE) {
-            redPlasma = new FluidDefinition("redplasma", 10000, 10000, false);
+            redPlasma = new FluidDefinition("redplasma", 10000, 10000);
+            redPlasma.fluid.setColour(0xDE_DE_DE, 0x50_00_00);
             redPlasma.fluid.setLuminosity(30);
             redPlasma.block.setFlammable(false).setParticleColor(0.9F, 0, 0);
         }

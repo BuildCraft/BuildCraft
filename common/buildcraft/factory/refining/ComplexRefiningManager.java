@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.ModelRotation;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IModel;
@@ -110,11 +111,8 @@ public class ComplexRefiningManager {
         int tempAdjustedViscocity = baseViscocity * (5 - heat) / 5;
         int boilAdjustedDensity = density * (heat >= boilPoint ? -1 : 1);
 
-        // Special case for now.
-        boolean bucket = true;// name.equals("oil") || name.equals("fuel");
-
-        FluidDefinition def = new FluidDefinition(fullName, fullName, boilAdjustedDensity, tempAdjustedViscocity, bucket, 0xFF_00_00_00
-            | texColourLight, 0xFF_00_00_00 | texColourDark);
+        FluidDefinition def = new FluidDefinition(fullName, fullName, boilAdjustedDensity, tempAdjustedViscocity, 0xFF_00_00_00 | texColourLight,
+                0xFF_00_00_00 | texColourDark);
         if (def.bucket != null && heat != 0) {
             def.bucket.setCreativeTab(null);
         }

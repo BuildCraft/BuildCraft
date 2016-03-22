@@ -27,12 +27,11 @@ public class FluidDefinition {
     public final MaterialBuildCraftLiquid material;
     public final ItemBucketBuildcraft bucket;
 
-    public FluidDefinition(String fluidName, int density, int viscocity, boolean createBucket) {
-        this(fluidName, fluidName, density, viscocity, createBucket, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
+    public FluidDefinition(String fluidName, int density, int viscocity) {
+        this(fluidName, fluidName, density, viscocity, 0xFF_FF_FF_FF, 0xFF_FF_FF_FF);
     }
 
-    public FluidDefinition(String fluidName, String textureSuffix, int density, int viscocity, boolean createBucket, int colourLight,
-            int colourDark) {
+    public FluidDefinition(String fluidName, String textureSuffix, int density, int viscocity, int colourLight, int colourDark) {
         // Fluid itself
         String modid = Loader.instance().activeModContainer().getModId();
         String fluidTextureBase = modid.toLowerCase(Locale.ROOT).replace("|", "") + ":blocks/fluids/" + textureSuffix;

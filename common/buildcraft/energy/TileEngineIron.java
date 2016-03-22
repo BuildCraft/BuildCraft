@@ -10,13 +10,10 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+
+import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.StackKey;
@@ -37,21 +34,23 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.statements.IBlockDefaultTriggers;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IBlockDefaultTriggers {
-    public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
-    public static float HEAT_PER_RF = 0.00023F;
-    public static float COOLDOWN_RATE = 0.05F;
-    public static int MAX_COOLANT_PER_TICK = 40;
+    public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;
+    public static final float HEAT_PER_RF = 0.00023F;
+    public static final float COOLDOWN_RATE = 0.05F;
+    public static final int MAX_COOLANT_PER_TICK = 40;
 
-    public Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this, this::isValidFuel);
-    public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this, this::isValidCoolant);
-    public Tank tankResidue = new Tank("tankResidue", MAX_LIQUID, this, this::isResidue);
+    public final Tank tankFuel = new Tank("tankFuel", MAX_LIQUID, this, this::isValidFuel);
+    public final Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this, this::isValidCoolant);
+    public final Tank tankResidue = new Tank("tankResidue", MAX_LIQUID, this, this::isResidue);
 
     private double burnTime = 0;
     private float coolingBuffer = 0.0f;
     private int tankFuelAmountCache = 0;
     private int tankCoolantAmountCache = 0;
+    private int tankResidueAmountCache = 0;
+    private double residueAmount = 0;
 
-    private TankManager<Tank> tankManager = new TankManager<>();
+    private final TankManager<Tank> tankManager = new TankManager<>();
     private IFuel currentFuel;
     private int penaltyCooling = 0;
     private boolean lastPowered = false;
@@ -194,6 +193,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         FluidStack fuel = this.tankFuel.getFluid();
         if (currentFuel == null && fuel != null) {
             currentFuel = BuildcraftFuelRegistry.fuel.getFuel(fuel.getFluid());
+            residueAmount = 0;
         }
 
         if (currentFuel == null) {
@@ -213,8 +213,21 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                             tankFuel.setFluid(null);
                         }
                         burnTime += currentFuel.getTotalBurningTime() / (double) FluidContainerRegistry.BUCKET_VOLUME;
+
+                        // If we also produce residue then put it out too
+                        if (currentFuel instanceof IDirtyFuel) {
+                            IDirtyFuel dirtyFuel = (IDirtyFuel) currentFuel;
+                            residueAmount += dirtyFuel.getResidue().amount / (double) FluidContainerRegistry.BUCKET_VOLUME;
+                            if (residueAmount >= 1) {
+                                int residue = MathHelper.floor_double(residueAmount);
+                                FluidStack residueFluid = dirtyFuel.getResidue().copy();
+                                residueFluid.amount = residue;
+                                residueAmount -= tankResidue.fill(residueFluid, true);
+                            }
+                        }
                     } else {
                         currentFuel = null;
+                        residueAmount = 0;
                         return;
                     }
                 }
@@ -355,27 +368,46 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                     tankCoolant.setFluid(null);
                 }
                 break;
-            // Fluid Fuel amount
+            // Fluid Residue ID
             case 17:
+                if (FluidRegistry.getFluid(value) != null) {
+                    tankResidue.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankResidueAmountCache));
+                } else {
+                    tankResidue.setFluid(null);
+                }
+                break;
+            // Fluid Fuel amount
+            case 18:
                 tankFuelAmountCache = value;
                 if (tankFuel.getFluid() != null) {
                     tankFuel.getFluid().amount = value;
                 }
                 break;
             // Fluid Coolant amount
-            case 18:
+            case 19:
                 tankCoolantAmountCache = value;
                 if (tankCoolant.getFluid() != null) {
                     tankCoolant.getFluid().amount = value;
                 }
                 break;
+            // Fluid Residue amount
+            case 20:
+                tankResidueAmountCache = value;
+                if (tankResidue.getFluid() != null) {
+                    tankResidue.getFluid().amount = value;
+                }
+                break;
             // Fluid Fuel color
-            case 19:
+            case 21:
                 tankFuel.colorRenderCache = value;
                 break;
             // Fluid Coolant color
-            case 20:
+            case 22:
                 tankCoolant.colorRenderCache = value;
+                break;
+            // Fluid Residue color
+            case 23:
+                tankResidue.colorRenderCache = value;
                 break;
         }
     }
@@ -387,10 +419,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                 .getFluid().getFluid().getID() : 0);
         iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null && tankCoolant.getFluid().getFluid() != null ? tankCoolant
                 .getFluid().getFluid().getID() : 0);
-        iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
-        iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
-        iCrafting.sendProgressBarUpdate(containerEngine, 19, tankFuel.colorRenderCache);
-        iCrafting.sendProgressBarUpdate(containerEngine, 20, tankCoolant.colorRenderCache);
+        iCrafting.sendProgressBarUpdate(containerEngine, 17, tankResidue.getFluid() != null && tankResidue.getFluid().getFluid() != null ? tankResidue
+                .getFluid().getFluid().getID() : 0);
+
+        iCrafting.sendProgressBarUpdate(containerEngine, 18, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
+        iCrafting.sendProgressBarUpdate(containerEngine, 19, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
+        iCrafting.sendProgressBarUpdate(containerEngine, 20, tankResidue.getFluid() != null ? tankResidue.getFluid().amount : 0);
+
+        iCrafting.sendProgressBarUpdate(containerEngine, 21, tankFuel.colorRenderCache);
+        iCrafting.sendProgressBarUpdate(containerEngine, 22, tankCoolant.colorRenderCache);
+        iCrafting.sendProgressBarUpdate(containerEngine, 23, tankResidue.colorRenderCache);
     }
 
     @Override
@@ -401,7 +439,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     /* ITANKCONTAINER */
     @Override
     public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-        return tankFuel.drain(maxDrain, doDrain);
+        return tankResidue.drain(maxDrain, doDrain);
     }
 
     @Override
@@ -414,6 +452,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         }
         if (tankFuel.getFluidType() == resource.getFluid()) {
             return tankFuel.drain(resource.amount, doDrain);
+        }
+        if (tankResidue.getFluidType() == resource.getFluid()) {
+            return tankResidue.drain(resource.amount, doDrain);
         }
         return null;
     }
@@ -438,6 +479,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
                 currentFuel = BuildcraftFuelRegistry.fuel.getFuel(tankFuel.getFluid().getFluid());
             }
             return filled;
+        } else if (isResidue(resource)) {
+            return tankResidue.fill(resource, doFill);
         } else {
             return 0;
         }
@@ -452,6 +495,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     private boolean isResidue(FluidStack fluid) {
+        // If this is the client then we don't have a current fuel- just trust the server that its correct
+        if (worldObj != null && worldObj.isRemote) return true;
         if (currentFuel == null) return false;
         if (currentFuel instanceof IDirtyFuel) {
             return fluid.isFluidEqual(((IDirtyFuel) currentFuel).getResidue());
@@ -462,7 +507,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     @Override
     public boolean canFill(EnumFacing from, Fluid fluid) {
         return from != orientation && fluid != null && (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null || BuildcraftFuelRegistry.fuel
-                .getFuel(fluid) != null);
+                .getFuel(fluid) != null) || isResidue(new FluidStack(fluid, 1));
     }
 
     @Override
