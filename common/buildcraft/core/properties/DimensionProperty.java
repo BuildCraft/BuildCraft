@@ -16,7 +16,7 @@ import net.minecraft.world.chunk.Chunk;
 
 public class DimensionProperty implements IWorldAccess {
 
-    private final LongHashMap chunkMapping = new LongHashMap();
+    private final LongHashMap<ChunkProperty> chunkMapping = new LongHashMap<>();
     private final World world;
     private final int worldHeight;
     private final WorldProperty worldProperty;
@@ -40,7 +40,7 @@ public class DimensionProperty implements IWorldAccess {
                 chunkMapping.add(chunkId, property);
                 load(world.getChunkFromChunkCoords(xChunk, zChunk), property);
             } else {
-                property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+                property = chunkMapping.getValueByKey(chunkId);
             }
 
             return property.get(pos.getX() & 0xF, pos.getY(), pos.getZ() & 0xF);
@@ -73,7 +73,7 @@ public class DimensionProperty implements IWorldAccess {
             long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 
             if (chunkMapping.containsItem(chunkId)) {
-                ChunkProperty property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+                ChunkProperty property = chunkMapping.getValueByKey(chunkId);
                 IBlockState state = world.getBlockState(pos);
 
                 boolean prop = worldProperty.get(world, state, pos);

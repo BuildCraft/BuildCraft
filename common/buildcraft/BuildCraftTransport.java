@@ -279,7 +279,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     public static PipeExtensionListener pipeExtensionListener;
 
-    private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
+    private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<>();
     private static ChannelHandler transportChannelHandler;
 
     public PipeIconProvider pipeIconProvider = new PipeIconProvider();

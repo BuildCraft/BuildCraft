@@ -22,7 +22,7 @@ import buildcraft.robotics.RobotUtils;
 public class RobotsTriggerProvider implements ITriggerProvider {
     @Override
     public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
+        LinkedList<ITriggerInternal> result = new LinkedList<>();
         List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
         if (stations.size() > 0) {

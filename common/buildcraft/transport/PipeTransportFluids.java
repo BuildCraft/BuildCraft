@@ -46,7 +46,7 @@ import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
-    public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
+    public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<>();
 
     /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the
      * same volume. */

@@ -66,9 +66,9 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
     }
 
     private static final EventHandlerCompare COMPARATOR = new EventHandlerCompare();
-    private static final HashSet<Object> globalHandlers = new HashSet<Object>();
+    private static final HashSet<Object> globalHandlers = new HashSet<>();
 
-    private final HashSet<Object> registeredHandlers = new HashSet<Object>();
+    private final HashSet<Object> registeredHandlers = new HashSet<>();
     private final HashMap<Object, Map<Method, Class<? extends PipeEvent>>> handlerMethods = Maps.newHashMap();
     private final HashMap<Class<? extends PipeEvent>, List<EventHandler>> eventHandlers = Maps.newHashMap();
 
@@ -96,7 +96,7 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
         }
 
         registeredHandlers.add(handler);
-        Map<Method, Class<? extends PipeEvent>> methods = new HashMap<Method, Class<? extends PipeEvent>>();
+        Map<Method, Class<? extends PipeEvent>> methods = new HashMap<>();
 
         for (Method m : handler.getClass().getDeclaredMethods()) {
             if ("eventHandler".equals(m.getName())) {

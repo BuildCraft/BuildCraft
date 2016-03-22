@@ -36,14 +36,14 @@ public abstract class BuildingSlot {
     public void postProcessing(IBuilderContext context) {}
 
     public List<ItemStack> getRequirements(IBuilderContext context) {
-        return new ArrayList<ItemStack>();
+        return new ArrayList<>();
     }
 
     public abstract Vec3 getDestination();
 
     public void addStackConsumed(ItemStack stack) {
         if (stackConsumed == null) {
-            stackConsumed = new LinkedList<ItemStack>();
+            stackConsumed = new LinkedList<>();
         }
 
         stackConsumed.add(stack);

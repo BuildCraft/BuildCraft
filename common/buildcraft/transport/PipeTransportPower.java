@@ -17,6 +17,7 @@ import net.minecraft.util.Vec3;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -26,6 +27,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.AverageDouble;
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -40,12 +42,14 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
-    public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
-    public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
+    public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<>();
+    public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<>();
     private static int MAX_POWER = 0;
 
     private static final int OVERLOAD_TICKS = 60;
     public static final short POWER_STAGES = 1 << 6;
+
+    public AverageDouble[] displayPowerAverage = new AverageDouble[6];
 
     public short[] displayPower = new short[6];
     public short[] displayFlow = new short[6];
@@ -81,6 +85,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         for (int i = 0; i < 6; ++i) {
             powerQuery[i] = 0;
             powerAverage[i] = new AverageInt(10);
+            displayPowerAverage[i] = new AverageDouble(10);
         }
     }
 
@@ -191,6 +196,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     @Override
     public void updateEntity() {
         if (container.getWorld().isRemote) {
+            for (int i = 0; i < 6; i++) {
+                displayPowerAverage[i].tick(displayPower[i]);
+            }
             return;
         }
 

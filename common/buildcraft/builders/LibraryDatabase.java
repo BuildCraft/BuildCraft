@@ -41,7 +41,7 @@ public class LibraryDatabase {
             outputDir.mkdirs();
         }
 
-        inputDirs = new ArrayList<File>();
+        inputDirs = new ArrayList<>();
 
         for (int i = 0; i < inputPaths.length; ++i) {
             File inputDir = new File(inputPaths[i]);

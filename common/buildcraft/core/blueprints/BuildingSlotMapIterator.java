@@ -22,7 +22,7 @@ public class BuildingSlotMapIterator {
     public static int MAX_PER_ITEM = 512;
     private final BptBuilderBlueprint builderBlueprint;
     private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slotMap;
-    private final Set<BuilderItemMetaPair> availablePairs = new HashSet<BuilderItemMetaPair>();
+    private final Set<BuilderItemMetaPair> availablePairs = new HashSet<>();
     private final int[] buildStageOccurences;
     private final boolean isCreative;
     private Iterator<BuilderItemMetaPair> keyIterator;

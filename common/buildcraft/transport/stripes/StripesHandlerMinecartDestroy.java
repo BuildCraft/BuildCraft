@@ -41,7 +41,7 @@ public class StripesHandlerMinecartDestroy implements IStripesHandler {
             return false;
         }
 
-        List<EntityMinecart> minecarts = new LinkedList<EntityMinecart>();
+        List<EntityMinecart> minecarts = new LinkedList<>();
         for (Object entityObj : entities) {
             if (entityObj instanceof EntityMinecart) {
                 minecarts.add((EntityMinecart) entityObj);

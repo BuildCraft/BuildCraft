@@ -20,8 +20,8 @@ import buildcraft.api.fuels.ISolidCoolant;
 public final class CoolantManager implements ICoolantManager {
     public static final CoolantManager INSTANCE = new CoolantManager();
 
-    private final List<ICoolant> coolants = new LinkedList<ICoolant>();
-    private final List<ISolidCoolant> solidCoolants = new LinkedList<ISolidCoolant>();
+    private final List<ICoolant> coolants = new LinkedList<>();
+    private final List<ISolidCoolant> solidCoolants = new LinkedList<>();
 
     private CoolantManager() {}
 

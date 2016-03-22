@@ -33,7 +33,7 @@ import buildcraft.core.lib.utils.BCStringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 
-    public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
+    public static final Map<String, FillerPattern> patterns = new TreeMap<>();
     public final EnumFillerPattern type;
     private final String tag;
     private final ResourceLocation location;

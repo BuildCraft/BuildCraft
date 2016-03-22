@@ -27,7 +27,7 @@ public class EnergyStatementProvider implements ITriggerProvider {
 
     @Override
     public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
+        LinkedList<ITriggerExternal> triggers = new LinkedList<>();
 
         if (tile instanceof TileEngineBase) {
             triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);

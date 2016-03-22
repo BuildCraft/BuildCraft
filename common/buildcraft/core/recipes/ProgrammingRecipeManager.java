@@ -10,7 +10,7 @@ import buildcraft.api.recipes.IProgrammingRecipeManager;
 
 public class ProgrammingRecipeManager implements IProgrammingRecipeManager {
     public static final ProgrammingRecipeManager INSTANCE = new ProgrammingRecipeManager();
-    private final HashMap<String, IProgrammingRecipe> recipes = new HashMap<String, IProgrammingRecipe>();
+    private final HashMap<String, IProgrammingRecipe> recipes = new HashMap<>();
 
     @Override
     public void addRecipe(IProgrammingRecipe recipe) {

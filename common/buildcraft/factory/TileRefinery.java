@@ -47,7 +47,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     public SingleUseTank[] tanks = { new SingleUseTank("tank1", FLUID_PER_SLOT, this), new SingleUseTank("tank2", FLUID_PER_SLOT, this) };
 
     public SingleUseTank result = new SingleUseTank("result", FLUID_PER_SLOT, this);
-    public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tanks[0], tanks[1], result);
+    public TankManager<SingleUseTank> tankManager = new TankManager<>(tanks[0], tanks[1], result);
     public float animationSpeed = 1;
     private short animationStage = 0;
     // TODO (PASS 1): Change this to either not be deprecated, or something else?

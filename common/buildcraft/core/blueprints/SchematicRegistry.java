@@ -27,15 +27,15 @@ public final class SchematicRegistry implements ISchematicRegistry {
 
     public static SchematicRegistry INSTANCE = new SchematicRegistry();
     private static final HashMap<Class<? extends Schematic>, Constructor<?>> emptyConstructorMap =
-        new HashMap<Class<? extends Schematic>, Constructor<?>>();
+        new HashMap<>();
 
-    public final HashMap<String, SchematicConstructor> schematicBlocks = new HashMap<String, SchematicConstructor>();
+    public final HashMap<String, SchematicConstructor> schematicBlocks = new HashMap<>();
 
     public final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities =
-        new HashMap<Class<? extends Entity>, SchematicConstructor>();
+        new HashMap<>();
 
-    private final HashSet<String> modsForbidden = new HashSet<String>();
-    private final HashSet<String> blocksForbidden = new HashSet<String>();
+    private final HashSet<String> modsForbidden = new HashSet<>();
+    private final HashSet<String> blocksForbidden = new HashSet<>();
 
     private SchematicRegistry() {}
 

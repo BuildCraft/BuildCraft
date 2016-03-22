@@ -43,14 +43,14 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
     IInventory playerIInventory;
     private final IPipe pipe;
     private Gate gate;
-    private final NavigableSet<IStatement> potentialTriggers = new TreeSet<IStatement>(new Comparator<IStatement>() {
+    private final NavigableSet<IStatement> potentialTriggers = new TreeSet<>(new Comparator<IStatement>() {
         @Override
         public int compare(IStatement o1, IStatement o2) {
             return o1.getUniqueTag().compareTo(o2.getUniqueTag());
         }
     });
 
-    private final NavigableSet<IStatement> potentialActions = new TreeSet<IStatement>(new Comparator<IStatement>() {
+    private final NavigableSet<IStatement> potentialActions = new TreeSet<>(new Comparator<IStatement>() {
         @Override
         public int compare(IStatement o1, IStatement o2) {
             return o1.getUniqueTag().compareTo(o2.getUniqueTag());

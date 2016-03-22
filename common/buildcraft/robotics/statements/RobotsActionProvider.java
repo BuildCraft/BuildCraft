@@ -25,7 +25,7 @@ public class RobotsActionProvider implements IActionProvider {
 
     @Override
     public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
-        LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
+        LinkedList<IActionInternal> result = new LinkedList<>();
         TileEntity tile = container.getTile();
 
         if (!(tile instanceof IPipeTile)) {

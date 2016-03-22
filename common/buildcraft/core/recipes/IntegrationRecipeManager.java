@@ -12,7 +12,7 @@ import buildcraft.api.recipes.IIntegrationRecipeManager;
 
 public class IntegrationRecipeManager implements IIntegrationRecipeManager {
     public static final IntegrationRecipeManager INSTANCE = new IntegrationRecipeManager();
-    private List<IIntegrationRecipe> integrationRecipes = new LinkedList<IIntegrationRecipe>();
+    private List<IIntegrationRecipe> integrationRecipes = new LinkedList<>();
 
     @Override
     public void addRecipe(IIntegrationRecipe recipe) {

@@ -25,8 +25,8 @@ public class TransactorSimple extends Transactor {
 
     @Override
     public int inject(ItemStack stack, boolean doAdd) {
-        List<IInvSlot> filledSlots = new ArrayList<IInvSlot>(inventory.getSizeInventory());
-        List<IInvSlot> emptySlots = new ArrayList<IInvSlot>(inventory.getSizeInventory());
+        List<IInvSlot> filledSlots = new ArrayList<>(inventory.getSizeInventory());
+        List<IInvSlot> emptySlots = new ArrayList<>(inventory.getSizeInventory());
         for (IInvSlot slot : InventoryIterator.getIterable(inventory, orientation)) {
             if (slot.canPutStackInSlot(stack)) {
                 if (slot.getStackInSlot() == null) {

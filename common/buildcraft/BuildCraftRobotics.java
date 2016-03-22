@@ -445,7 +445,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {
         if (restartType == ConfigManager.RestartRequirement.GAME) {
 
-            blacklistedRobots = new ArrayList<String>();
+            blacklistedRobots = new ArrayList<>();
             blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general", "boards.blacklist").getStringList()));
             reloadConfig(ConfigManager.RestartRequirement.WORLD);
         } else if (restartType == ConfigManager.RestartRequirement.WORLD) {

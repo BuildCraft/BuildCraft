@@ -24,15 +24,15 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 
     @Override
     public List<ItemStack> generateExampleInput() {
-        ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> example = new ArrayList<>();
         example.add(ItemRobot.createRobotStack(RedstoneBoardRegistry.instance.getEmptyRobotBoard(), 0));
         return example;
     }
 
     @Override
     public List<List<ItemStack>> generateExampleExpansions() {
-        ArrayList<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
-        ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+        ArrayList<List<ItemStack>> list = new ArrayList<>();
+        ArrayList<ItemStack> example = new ArrayList<>();
         for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
             nbt.createBoard(NBTUtils.getItemData(stack));
@@ -44,7 +44,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 
     @Override
     public List<ItemStack> generateExampleOutput() {
-        ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> example = new ArrayList<>();
         for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             example.add(ItemRobot.createRobotStack((RedstoneBoardRobotNBT) nbt, 0));
         }

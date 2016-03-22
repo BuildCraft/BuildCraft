@@ -2,7 +2,6 @@ package buildcraft.transport.gates;
 
 import java.util.Objects;
 import java.util.Set;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +10,10 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
+
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -24,6 +26,8 @@ import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.GatePluggableModel;
 import buildcraft.transport.client.model.ModelKeyGate;
+
+import io.netty.buffer.ByteBuf;
 
 public class GatePluggable extends PipePluggable {
     public GateDefinition.GateMaterial material;
@@ -237,6 +241,7 @@ public class GatePluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelKeyGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             return new ModelKeyGate(side, material, logic, isLit, expansions);
@@ -245,6 +250,7 @@ public class GatePluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IPipePluggableDynamicRenderer getDynamicRenderer() {
         return GatePluggableModel.INSTANCE;
     }

@@ -38,7 +38,7 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
         if (exampleInputs != null && exampleInputs.get() != null) {
             return exampleInputs.get();
         }
-        exampleInputs = new SoftReference<List<ItemStack>>(generateExampleInput());
+        exampleInputs = new SoftReference<>(generateExampleInput());
         return exampleInputs.get();
     }
 
@@ -47,7 +47,7 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
         if (exampleExpansions != null && exampleExpansions.get() != null) {
             return exampleExpansions.get();
         }
-        exampleExpansions = new SoftReference<List<List<ItemStack>>>(generateExampleExpansions());
+        exampleExpansions = new SoftReference<>(generateExampleExpansions());
         return exampleExpansions.get();
     }
 
@@ -56,7 +56,7 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
         if (exampleOutputs != null && exampleOutputs.get() != null) {
             return exampleOutputs.get();
         }
-        exampleOutputs = new SoftReference<List<ItemStack>>(generateExampleOutput());
+        exampleOutputs = new SoftReference<>(generateExampleOutput());
         return exampleOutputs.get();
     }
 

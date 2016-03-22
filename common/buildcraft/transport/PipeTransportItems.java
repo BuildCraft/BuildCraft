@@ -620,7 +620,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     public List<ItemStack> getDroppedItems() {
         groupEntities();
 
-        ArrayList<ItemStack> itemsDropped = new ArrayList<ItemStack>(items.size());
+        ArrayList<ItemStack> itemsDropped = new ArrayList<>(items.size());
 
         for (TravelingItem item : items) {
             if (!item.isCorrupted()) {

@@ -28,10 +28,10 @@ public abstract class SubCommand implements IModCommand {
     }
 
     private final String name;
-    private final List<String> aliases = new ArrayList<String>();
+    private final List<String> aliases = new ArrayList<>();
     private PermLevel permLevel = PermLevel.EVERYONE;
     private IModCommand parent;
-    private final SortedSet<SubCommand> children = new TreeSet<SubCommand>(new Comparator<SubCommand>() {
+    private final SortedSet<SubCommand> children = new TreeSet<>(new Comparator<SubCommand>() {
 
         @Override
         public int compare(SubCommand o1, SubCommand o2) {

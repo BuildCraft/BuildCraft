@@ -34,12 +34,12 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
     public String currentRecipeId = "";
     public IFlexibleRecipe<ItemStack> currentRecipe;
-    public HashMap<String, CraftingResult<ItemStack>> plannedOutputIcons = new HashMap<String, CraftingResult<ItemStack>>();
-    private HashSet<String> plannedOutput = new HashSet<String>();
+    public HashMap<String, CraftingResult<ItemStack>> plannedOutputIcons = new HashMap<>();
+    private HashSet<String> plannedOutput = new HashSet<>();
     private boolean queuedNetworkUpdate = false;
 
     public List<CraftingResult<ItemStack>> getPotentialOutputs() {
-        List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
+        List<CraftingResult<ItemStack>> result = new LinkedList<>();
 
         for (IFlexibleRecipe<ItemStack> recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
             CraftingResult<ItemStack> r = recipe.craft(this, true);
@@ -139,7 +139,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
                     // !! HACK !! TODO !! HACK !!
                     Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
                     if (out instanceof ItemStack) {
-                        result = new CraftingResult<ItemStack>();
+                        result = new CraftingResult<>();
                         result.crafted = (ItemStack) out;
                         result.recipe = recipe;
                         plannedOutputIcons.put(s, result);

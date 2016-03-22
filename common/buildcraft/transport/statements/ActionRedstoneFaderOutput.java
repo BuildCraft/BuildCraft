@@ -4,11 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.ActionRedstoneOutput;
 
-public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
+public class ActionRedstoneFaderOutput extends ActionRedstoneOutput {
 
     public final int level;
 

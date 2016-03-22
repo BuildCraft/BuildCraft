@@ -104,7 +104,7 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
     private class PaintWidget extends ButtonWidget {
 
         private final int slot;
-        private RevolvingList<EnumColor> colors = new RevolvingList<EnumColor>();
+        private RevolvingList<EnumColor> colors = new RevolvingList<>();
 
         private ToolTip toolTip = new ToolTip(500) {
             @Override

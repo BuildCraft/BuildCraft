@@ -16,7 +16,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public class BCBoardNBT extends RedstoneBoardRobotNBT {
-    public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<String, BCBoardNBT>();
+    public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<>();
     private final ResourceLocation texture;
     private final String id, upperName, boardType;
     private final Constructor<? extends RedstoneBoardRobot> boardInit;

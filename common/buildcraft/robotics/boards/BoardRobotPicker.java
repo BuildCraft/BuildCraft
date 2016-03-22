@@ -17,7 +17,7 @@ import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
-    public static Set<Integer> targettedItems = new HashSet<Integer>();
+    public static Set<Integer> targettedItems = new HashSet<>();
 
     public BoardRobotPicker(EntityRobotBase iRobot) {
         super(iRobot);

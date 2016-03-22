@@ -17,7 +17,7 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class StripesHandlerUse implements IStripesHandler {
-    public static final List<Item> items = new ArrayList<Item>();
+    public static final List<Item> items = new ArrayList<>();
 
     @Override
     public StripesHandlerType getType() {

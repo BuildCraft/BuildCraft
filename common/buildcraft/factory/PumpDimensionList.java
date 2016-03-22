@@ -17,7 +17,7 @@ public class PumpDimensionList {
 
     public PumpDimensionList(String string) {
 
-        entries = new LinkedList<Entry>();
+        entries = new LinkedList<>();
 
         for (String entryString : string.trim().split(",")) {
 
@@ -55,7 +55,7 @@ public class PumpDimensionList {
             entries.add(0, e);
         }
 
-        entries = new ArrayList<Entry>(entries);
+        entries = new ArrayList<>(entries);
     }
 
     private class Entry {

@@ -33,7 +33,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider, IBuildingItemsProvider,
         ICommandReceiver {
 
-    public LinkedList<LaserData> pathLasers = new LinkedList<LaserData>();
+    public LinkedList<LaserData> pathLasers = new LinkedList<>();
 
     public Set<BuildingItem> buildersInAction = Sets.newConcurrentHashSet();
 

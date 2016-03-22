@@ -20,11 +20,11 @@ public final class MultiButtonController<T extends IMultiButtonState> {
     }
 
     public static <T extends IMultiButtonState> MultiButtonController<T> getController(int startState, T... validStates) {
-        return new MultiButtonController<T>(startState, validStates);
+        return new MultiButtonController<>(startState, validStates);
     }
 
     public MultiButtonController<?> copy() {
-        return new MultiButtonController<T>(currentState, validStates.clone());
+        return new MultiButtonController<>(currentState, validStates.clone());
     }
 
     public T[] getValidStates() {

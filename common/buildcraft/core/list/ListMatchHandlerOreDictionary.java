@@ -99,12 +99,12 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     @Override
     public List<ItemStack> getClientExamples(Type type, ItemStack stack) {
         int[] oreIds = OreDictionary.getOreIDs(stack);
-        List<ItemStack> stacks = new ArrayList<ItemStack>();
+        List<ItemStack> stacks = new ArrayList<>();
 
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                List<ItemStack> tempStack = new ArrayList<ItemStack>();
+                List<ItemStack> tempStack = new ArrayList<>();
                 stack.getItem().getSubItems(stack.getItem(), CreativeTabs.tabMisc, tempStack);
                 for (ItemStack is : tempStack) {
                     if (is.getItem() == stack.getItem()) {
@@ -137,7 +137,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
 
-        List<ItemStack> wildcard = new ArrayList<ItemStack>();
+        List<ItemStack> wildcard = new ArrayList<>();
 
         for (ItemStack is : stacks) {
             if (is != null && is.getItemDamage() == OreDictionary.WILDCARD_VALUE && is.getHasSubtypes()) {
@@ -145,7 +145,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             }
         }
         for (ItemStack is : wildcard) {
-            List<ItemStack> wll = new ArrayList<ItemStack>();
+            List<ItemStack> wll = new ArrayList<>();
             is.getItem().getSubItems(is.getItem(), CreativeTabs.tabMisc, wll);
             if (wll.size() > 0) {
                 stacks.remove(is);

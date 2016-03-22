@@ -5,6 +5,7 @@
 package buildcraft.transport.client.render;
 
 import com.google.common.base.Throwables;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,6 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
@@ -45,8 +45,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
         renderPluggables(pipe, x, y, z);
         Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
-
-        IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         if (pipe.pipe.transport != null) {
             try {

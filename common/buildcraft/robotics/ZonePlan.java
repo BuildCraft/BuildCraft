@@ -20,7 +20,7 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
 
 public class ZonePlan implements IZone, ISerializable {
-    private final HashMap<ChunkCoordIntPair, ZoneChunk> chunkMapping = new HashMap<ChunkCoordIntPair, ZoneChunk>();
+    private final HashMap<ChunkCoordIntPair, ZoneChunk> chunkMapping = new HashMap<>();
 
     public boolean get(int x, int z) {
         int xChunk = x >> 4;

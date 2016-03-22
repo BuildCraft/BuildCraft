@@ -134,10 +134,10 @@ public final class ListHandler {
         }
 
         public List<ItemStack> getExamples() {
-            List<ItemStack> stackList = new ArrayList<ItemStack>();
+            List<ItemStack> stackList = new ArrayList<>();
             if (stacks[0] != null) {
                 List<ListMatchHandler> handlers = ListRegistry.getHandlers();
-                List<ListMatchHandler> handlersCustom = new ArrayList<ListMatchHandler>();
+                List<ListMatchHandler> handlersCustom = new ArrayList<>();
                 ListMatchHandler.Type type = getSortingType();
                 for (ListMatchHandler h : handlers) {
                     if (h.isValidSource(type, stacks[0])) {
@@ -153,7 +153,7 @@ public final class ListHandler {
                     for (Object o : Item.itemRegistry) {
                         if (o != null && o instanceof Item) {
                             Item i = (Item) o;
-                            List<ItemStack> examples = new ArrayList<ItemStack>();
+                            List<ItemStack> examples = new ArrayList<>();
                             i.getSubItems(i, CreativeTabs.tabMisc, examples);
                             for (ItemStack s : examples) {
                                 for (ListMatchHandler mh : handlersCustom) {

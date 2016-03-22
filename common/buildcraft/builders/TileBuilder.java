@@ -80,7 +80,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this)
         //@formatter:on
     };
-    public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
+    public TankManager<Tank> fluidTank = new TankManager<>(fluidTanks);
 
     private SafeTimeTracker networkUpdateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor / 2);
     private boolean shouldUpdateRequirements;
@@ -266,7 +266,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     }
 
     public void createLasersForPath() {
-        pathLasers = new LinkedList<LaserData>();
+        pathLasers = new LinkedList<>();
         BlockPos previous = null;
 
         for (BlockPos b : path) {
@@ -487,7 +487,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         type = EnumBlueprintType.getType(getStackInSlot(0));
 
         if (nbttagcompound.hasKey("path")) {
-            path = new LinkedList<BlockPos>();
+            path = new LinkedList<>();
             NBTTagList list = nbttagcompound.getTagList("path", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < list.tagCount(); ++i) {
@@ -618,7 +618,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                 requiredToBuild = null;
             } else if ("setItemRequirements".equals(command)) {
                 int size = stream.readUnsignedMedium();
-                requiredToBuild = new ArrayList<RequirementItemStack>();
+                requiredToBuild = new ArrayList<>();
                 for (int i = 0; i < size; i++) {
                     int itemId = stream.readUnsignedShort();
                     int itemDamage = stream.readShort();
@@ -655,7 +655,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
     private Packet getItemRequirementsPacket(List<RequirementItemStack> itemsIn) {
         if (itemsIn != null) {
-            final List<RequirementItemStack> items = new ArrayList<RequirementItemStack>();
+            final List<RequirementItemStack> items = new ArrayList<>();
             items.addAll(itemsIn);
 
             return new PacketCommand(this, "setItemRequirements", new CommandWriter() {

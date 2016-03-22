@@ -39,7 +39,7 @@ import buildcraft.core.lib.utils.Utils;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
-    public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
+    public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<>();
 
     public EnumFacing direction = null;
 
@@ -50,7 +50,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     public BptBuilderBase bluePrintBuilder;
     public BptContext bptContext;
 
-    private ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+    private ArrayList<BuildingItem> buildersInAction = new ArrayList<>();
     private NBTTagCompound initNBT;
 
     @Override

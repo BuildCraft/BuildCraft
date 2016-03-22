@@ -25,7 +25,7 @@ public class RecursiveBlueprintBuilder {
     private BlueprintBase blueprint;
     private RecursiveBlueprintBuilder current;
     private int nextSubBlueprint = 0;
-    private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
+    private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<>();
     private BlockPos pos;
     private EnumFacing dir;
     private World world;

@@ -21,7 +21,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     public static final int PATH_ITERATIONS = 1000;
 
-    private static final HashMap<Integer, HashSet<BlockPos>> reservations = new HashMap<Integer, HashSet<BlockPos>>();
+    private static final HashMap<Integer, HashSet<BlockPos>> reservations = new HashMap<>();
 
     private World world;
     private BlockPos start;
@@ -44,7 +44,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
         zone = iZone;
         blockIter = iBlockIter;
 
-        pathFinders = new LinkedList<PathFinding>();
+        pathFinders = new LinkedList<>();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
     }
 
     public void iteratePathFind(int itNumber) {
-        for (PathFinding pathFinding : new ArrayList<PathFinding>(pathFinders)) {
+        for (PathFinding pathFinding : new ArrayList<>(pathFinders)) {
             pathFinding.iterate(itNumber / pathFinders.size());
             if (pathFinding.isDone()) {
                 LinkedList<BlockPos> path = pathFinding.getResult();
@@ -134,7 +134,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
                 return pathFinding.getResult();
             }
         }
-        return new LinkedList<BlockPos>();
+        return new LinkedList<>();
     }
 
     public BlockPos getResultTarget() {

@@ -16,7 +16,7 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 
 public class StripesHandlerRightClick implements IStripesHandler {
-    public static final List<Item> items = new ArrayList<Item>();
+    public static final List<Item> items = new ArrayList<>();
 
     @Override
     public StripesHandlerType getType() {

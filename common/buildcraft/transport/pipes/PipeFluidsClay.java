@@ -42,8 +42,8 @@ public class PipeFluidsClay extends Pipe<PipeTransportFluids> {
     }
 
     public void eventHandler(PipeEventFluid.FindDest event) {
-        Set<EnumFacing> machineDirs = new HashSet<EnumFacing>();
-        Set<EnumFacing> pipeDirs = new HashSet<EnumFacing>();
+        Set<EnumFacing> machineDirs = new HashSet<>();
+        Set<EnumFacing> pipeDirs = new HashSet<>();
 
         for (EnumFacing dir : event.destinations) {
             if (container.isPipeConnected(dir)) {

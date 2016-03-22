@@ -11,7 +11,7 @@ import com.google.common.collect.ForwardingCollection;
 
 public class RevolvingList<T> extends ForwardingCollection<T> {
 
-    private Deque<T> list = new LinkedList<T>();
+    private Deque<T> list = new LinkedList<>();
 
     public RevolvingList() {}
 

@@ -47,7 +47,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
     private EntityResizableCuboid tube;
-    private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
+    private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private double tubeY = Double.NaN;
     private int aimY = 0;
 
@@ -234,7 +234,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
 
         if (pumpQueue == null) {
-            pumpQueue = new LinkedList<BlockPos>();
+            pumpQueue = new LinkedList<>();
             pumpLayerQueues.put(layer, pumpQueue);
         }
 
@@ -258,8 +258,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
             return;
         }
 
-        Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
-        Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
+        Set<BlockPos> visitedBlocks = new HashSet<>();
+        Deque<BlockPos> fluidsFound = new LinkedList<>();
 
         queueForPumping(pos, visitedBlocks, fluidsFound, pumpingFluid);
 
@@ -267,7 +267,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
         while (!fluidsFound.isEmpty()) {
             Deque<BlockPos> fluidsToExpand = fluidsFound;
-            fluidsFound = new LinkedList<BlockPos>();
+            fluidsFound = new LinkedList<>();
 
             for (BlockPos index : fluidsToExpand) {
                 queueForPumping(index.up(), visitedBlocks, fluidsFound, pumpingFluid);

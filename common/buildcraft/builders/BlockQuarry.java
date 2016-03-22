@@ -72,7 +72,7 @@ public class BlockQuarry extends BlockBuildCraft {
     @Override
     public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         if (BuildCraftBuilders.quarryOneTimeUse) {
-            return new ArrayList<ItemStack>();
+            return new ArrayList<>();
         }
         return super.getDrops(world, pos, state, fortune);
     }

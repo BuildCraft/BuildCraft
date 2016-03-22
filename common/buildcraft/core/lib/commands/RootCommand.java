@@ -16,8 +16,8 @@ import net.minecraft.command.ICommandSender;
 
 public class RootCommand extends CommandBase implements IModCommand {
     public final String name;
-    private final List<String> aliases = new ArrayList<String>();
-    private final SortedSet<SubCommand> children = new TreeSet<SubCommand>(new Comparator<SubCommand>() {
+    private final List<String> aliases = new ArrayList<>();
+    private final SortedSet<SubCommand> children = new TreeSet<>(new Comparator<SubCommand>() {
         @Override
         public int compare(SubCommand o1, SubCommand o2) {
             return o1.compareTo(o2);

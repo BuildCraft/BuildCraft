@@ -1,6 +1,7 @@
 package buildcraft.transport.client.model;
 
 import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.EnumFacing;

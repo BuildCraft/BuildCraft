@@ -55,7 +55,7 @@ public final class CraftingUtils {
                 newDamage = 0;
             }
 
-            List<ItemStack> ingredients = new ArrayList<ItemStack>(2);
+            List<ItemStack> ingredients = new ArrayList<>(2);
             ingredients.add(item1);
             ingredients.add(item2);
 

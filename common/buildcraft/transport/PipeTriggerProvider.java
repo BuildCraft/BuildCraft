@@ -18,7 +18,7 @@ import buildcraft.transport.statements.TriggerPipeContents;
 public class PipeTriggerProvider implements ITriggerProvider {
     @Override
     public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
+        LinkedList<ITriggerInternal> result = new LinkedList<>();
         Pipe<?> pipe = null;
         TileEntity tile = container.getTile();
 
@@ -57,7 +57,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 
     @Override
     public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
+        LinkedList<ITriggerExternal> result = new LinkedList<>();
 
         return result;
     }

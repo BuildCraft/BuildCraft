@@ -89,7 +89,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
     }
 
     private Collection<StackRequest> getAvailableRequests(DockingStation station) {
-        List<StackRequest> result = new ArrayList<StackRequest>();
+        List<StackRequest> result = new ArrayList<>();
 
         IRequestProvider provider = station.getRequestProvider();
         if (provider == null) {

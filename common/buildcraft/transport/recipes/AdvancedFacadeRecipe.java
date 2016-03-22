@@ -35,9 +35,9 @@ public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
 
     @Override
     public List<List<ItemStack>> generateExampleExpansions() {
-        List<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
+        List<List<ItemStack>> list = new ArrayList<>();
         list.add(ItemFacade.allFacades);
-        List<ItemStack> pipeWires = new ArrayList<ItemStack>();
+        List<ItemStack> pipeWires = new ArrayList<>();
         for (PipeWire wire : PipeWire.values()) {
             pipeWires.add(wire.getStack());
         }

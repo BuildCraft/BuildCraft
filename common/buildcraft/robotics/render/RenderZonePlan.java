@@ -11,7 +11,7 @@ import buildcraft.robotics.TileZonePlan;
 
 public class RenderZonePlan extends TileEntitySpecialRenderer<TileZonePlan> {
     private static final float Z_OFFSET = 2049 / 2048.0F;
-    private static final HashMap<TileZonePlan, DynamicTextureBC> TEXTURES = new HashMap<TileZonePlan, DynamicTextureBC>();
+    private static final HashMap<TileZonePlan, DynamicTextureBC> TEXTURES = new HashMap<>();
 
     @Override
     public void renderTileEntityAt(TileZonePlan zonePlan, double tx, double ty, double tz, float partialTicks, int arg) {

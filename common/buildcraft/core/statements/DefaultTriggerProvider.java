@@ -24,7 +24,7 @@ import buildcraft.api.tiles.IHasWork;
 public class DefaultTriggerProvider implements ITriggerProvider {
     @Override
     public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
+        LinkedList<ITriggerExternal> res = new LinkedList<>();
 
         boolean blockInventoryTriggers = false;
         boolean blockFluidHandlerTriggers = false;
@@ -77,7 +77,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 
     @Override
     public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> res = new LinkedList<ITriggerInternal>();
+        LinkedList<ITriggerInternal> res = new LinkedList<>();
 
         if (container instanceof IRedstoneStatementContainer) {
             res.add(BuildCraftCore.triggerRedstoneActive);

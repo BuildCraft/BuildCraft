@@ -22,8 +22,8 @@ public class TransactorItemHandler extends Transactor {
 
     @Override
     public int inject(ItemStack stack, boolean doAdd) {
-        List<Integer> filledSlots = new ArrayList<Integer>(handler.getSlots());
-        List<Integer> emptySlots = new ArrayList<Integer>(handler.getSlots());
+        List<Integer> filledSlots = new ArrayList<>(handler.getSlots());
+        List<Integer> emptySlots = new ArrayList<>(handler.getSlots());
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack simulated = handler.insertItem(i, stack, true);
             if (simulated == null || simulated.stackSize < stack.stackSize) {

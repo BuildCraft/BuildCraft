@@ -313,8 +313,7 @@ public abstract class BlockBuildCraftBase extends Block {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity par7Entity) {
+    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity par7Entity) {
         if (!isCollidable()) {
             return;
         } else {

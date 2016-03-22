@@ -111,7 +111,7 @@ public abstract class PipeTransport {
     public void dropContents() {}
 
     public List<ItemStack> getDroppedItems() {
-        return new ArrayList<ItemStack>();
+        return new ArrayList<>();
     }
 
     public void synchronizeNetwork(EntityPlayer player) {}

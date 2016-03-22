@@ -146,7 +146,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
     }
 
     private boolean suckItem(int distance) {
-        AxisAlignedBB box = getSuckingBox(getOpenOrientation(), distance);
+        EnumFacing openOrientation = getOpenOrientation();
+        if (openOrientation == null) {
+            return false;
+        }
+        AxisAlignedBB box = getSuckingBox(openOrientation, distance);
 
         if (box == null) {
             return false;
@@ -163,7 +167,6 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             if (distance == 1 && entity instanceof EntityMinecart && entity instanceof IInventory) {
                 EntityMinecart cart = (EntityMinecart) entity;
                 if (!cart.isDead) {
-                    EnumFacing openOrientation = getOpenOrientation();
                     ITransactor trans = Transactor.getTransactorFor(cart, openOrientation);
                     ItemStack stack = trans.remove(StackFilter.ALL, false);
 
