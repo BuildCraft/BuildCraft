@@ -20,6 +20,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Objects;
 import java.util.Set;
@@ -236,6 +238,7 @@ public class GatePluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelKeyGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             return new ModelKeyGate(side, material, logic, isLit, expansions);
@@ -244,6 +247,7 @@ public class GatePluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public IPipePluggableDynamicRenderer getDynamicRenderer() {
         return GatePluggableModel.INSTANCE;
     }

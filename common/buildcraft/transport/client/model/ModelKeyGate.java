@@ -1,15 +1,17 @@
 package buildcraft.transport.client.model;
 
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableSet;
+
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+
 import buildcraft.api.gates.GateExpansionModelKey;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-
-import java.util.Objects;
 
 public class ModelKeyGate extends PluggableModelKey<ModelKeyGate> {
     public final GateMaterial material;
