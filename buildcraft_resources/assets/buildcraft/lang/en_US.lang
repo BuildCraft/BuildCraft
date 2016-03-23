@@ -57,10 +57,10 @@ chat.pipe.power.iron.level.20=Very Low
 chat.pipe.power.iron.level.40=Low
 chat.pipe.power.iron.level.80=Medium-Low
 chat.pipe.power.iron.level.160=Medium
-chat.pipe.power.iron.level.320=High
-chat.pipe.power.iron.level.640=Very High
-chat.pipe.power.iron.level.1280=Full Capacity
-
+chat.pipe.power.iron.level.320=Medium-High
+chat.pipe.power.iron.level.640=High
+chat.pipe.power.iron.level.1280=Very High
+chat.pipe.power.iron.level.2560=Full Capacity
 color.clear=Clear
 
 color.black=Black
@@ -514,7 +514,7 @@ tip.PipeItemsSandstone=Only connects to other pipes
 tip.PipeItemsVoid=Destroys items
 tip.PipeItemsWood=Extraction pipe
 tip.PipePowerEmerald=Power Input Pipe
-tip.PipePowerIron=Selectable Limiter Pipe
+tip.PipePowerDiamond=Selectable Limiter Pipe
 tip.PipePowerSandstone=Only connects to other pipes
 tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
@@ -536,7 +536,7 @@ tip.shift.PipeItemsDaizuli=Sneak-click to change color
 tip.shift.PipeItemsEmzuli=Set extraction preset filters in GUI\nA preset can paint extracted items\nSwitch extraction presets via gates
 tip.shift.PipeItemsLapis=Sneak-click to change color
 tip.shift.PipeItemsObsidian=Power with an engine\nMore power - greater distance
-tip.shift.PipePowerIron=Change the limit with a wrench or gates
+tip.shift.PipePowerDiamond=Change the limit with a wrench or gates
 
 tip.PipeItemsEmerald.whitelist=Whitelist
 tip.PipeItemsEmerald.blacklist=Blacklist

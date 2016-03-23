@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.transport.pipes.PipePowerWood;
 
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {
@@ -25,6 +26,10 @@ public final class PipeToolTipManager {
     static {
         if (!BuildCraftCore.hidePowerNumbers && !BuildCraftTransport.usePipeLoss) {
             for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
+                if (PipePowerWood.class.isAssignableFrom(pipe.getKey())) {
+                    continue;
+                }
+
                 PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d RF/t", pipe.getValue()));
             }
         }

@@ -8,7 +8,9 @@ public enum PowerMode {
     M16(160),
     M32(320),
     M64(640),
-    M128(1280);
+    M128(1280),
+    M256(2560);
+
     public static final PowerMode[] VALUES = values();
     public final int maxPower;
 
@@ -28,7 +30,7 @@ public enum PowerMode {
 
     public static PowerMode fromId(int id) {
         if (id < 0 || id >= VALUES.length) {
-            return M128;
+            return M256;
         }
         return VALUES[id];
     }
