@@ -25,6 +25,7 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IGuiReturnHandler {
 
@@ -70,6 +71,21 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 
         standardIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Standard.ordinal();
         solidIconIndex = PipeIconProvider.TYPE.PipeItemsEmerald_Solid.ordinal();
+    }
+
+    public void eventHandler(PipeEventItem.Entered event) {
+        int meta = container.getBlockMetadata();
+
+        if (meta <= 5) {
+            EnumFacing side = EnumFacing.getFront(meta);
+            if (event.item.input == side) {
+                return; // Item is backtracking
+            }
+        }
+
+        if (!matchesFilter(event.item.getItemStack())) {
+            event.cancelled = true;
+        }
     }
 
     @Override
@@ -119,10 +135,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
                 continue;
             }
 
-            boolean matches = isFiltered(stack);
-            boolean isBlackList = settings.getFilterMode() == FilterMode.BLACK_LIST;
+            boolean matches = matchesFilter(stack);
 
-            if ((isBlackList && matches) || (!isBlackList && !matches)) {
+            if (!matches) {
                 continue;
             }
 
@@ -162,12 +177,17 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
         return null;
     }
 
-    private boolean isFiltered(ItemStack stack) {
+    public boolean matchesFilter(ItemStack stack) {
+        boolean isFilter = inFilterList(stack);
+        return settings.getFilterMode() == FilterMode.BLACK_LIST ? !isFilter : isFilter;
+    }
+
+    private boolean inFilterList(ItemStack stack) {
         for (int i = 0; i < filters.getSizeInventory(); i++) {
             ItemStack filter = filters.getStackInSlot(i);
 
             if (filter == null) {
-                return false;
+                continue;
             }
 
             if (StackHelper.isMatchingItemOrList(filter, stack)) {
