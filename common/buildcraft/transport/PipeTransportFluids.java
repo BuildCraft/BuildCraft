@@ -50,7 +50,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the
      * same volume. */
-    public static int MAX_TRAVEL_DELAY = 12;
+    public static final int MAX_TRAVEL_DELAY = 12;
     public static short INPUT_TTL = 60; // 100
     public static short OUTPUT_TTL = 80; // 80
     public static short OUTPUT_COOLDOWN = 30; // 30
@@ -191,7 +191,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
         capacity = 25 * Math.min(1000, BuildCraftTransport.pipeFluidsBaseFlowRate);
         flowRate = fluidCapacities.get(pipeClass);
-        travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / BuildCraftTransport.pipeFluidsBaseFlowRate)), 1, MAX_TRAVEL_DELAY);
     }
 
     @Override
@@ -492,8 +491,26 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
         return null;
     }
 
+    private void setTravelDelay(int travelDelay) {
+        int oldTravelDelay = this.travelDelay;
+        this.travelDelay = travelDelay;
+
+        if (oldTravelDelay > travelDelay) {
+            for (int i = 0; i < 7; i++) {
+                for (int j = travelDelay; j < oldTravelDelay; j++) {
+                    sections[i].incoming[j] = 0;
+                }
+            }
+        }
+    }
+
     private void setFluidType(FluidStack type) {
         fluidType = type;
+        if (fluidType != null && fluidType.getFluid() != null) {
+            setTravelDelay(MathUtils.clamp(fluidType.getFluid().getViscosity() / 500, 1, Math.min(MAX_TRAVEL_DELAY, capacity / flowRate)));
+        } else {
+            setTravelDelay(MAX_TRAVEL_DELAY);
+        }
     }
 
     @Override
