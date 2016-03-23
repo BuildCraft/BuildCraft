@@ -2,23 +2,40 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics.ai;
+package buildcraft.robotics.ai.path;
 
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.PathFinding;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.robotics.ai.AIRobotGoto;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
+    public static AIRobot newSearchAndGotoBlock(EntityRobotBase robot, BlockPos pos) {
+        return new AIRobotGotoBlock(robot, pos);
+    }
+
+    public static AIRobot newSearchAndGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
+        return new AIRobotGotoBlock(robot, pos, iMaxDistance);
+    }
+
+    public static AIRobot newFollowPath(EntityRobotBase robot, LinkedList<BlockPos> iPath) {
+        // new smaller class + shortcut
+        return new AIRobotFollowPath(robot, iPath);
+        // This class- deals with everything!
+        // return new AIRobotGotoBlock(robot, iPath);
+    }
 
     private PathFinding pathSearch;
     private IterableAlgorithmRunner pathSearchJob;
@@ -33,17 +50,17 @@ public class AIRobotGotoBlock extends AIRobotGoto {
         super(iRobot);
     }
 
-    public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos) {
+    private AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos) {
         this(robot);
         finalPos = pos;
     }
 
-    public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
+    private AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
         this(robot, pos);
         maxDistance = iMaxDistance;
     }
 
-    public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockPos> iPath) {
+    private AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockPos> iPath) {
         this(robot);
         path = iPath;
         finalPos = path.getLast();

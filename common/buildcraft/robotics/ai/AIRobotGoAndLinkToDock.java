@@ -13,6 +13,7 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class AIRobotGoAndLinkToDock extends AIRobot {
 
@@ -34,7 +35,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
             terminate();
         } else {
             if (station != null && station.takeAsMain(robot)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, station.getPos().offset(station.side(), 2)));
+                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, station.getPos().offset(station.side(), 2)));
             } else {
                 setSuccess(false);
                 terminate();

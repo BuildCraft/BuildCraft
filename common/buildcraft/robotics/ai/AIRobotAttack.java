@@ -11,6 +11,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class AIRobotAttack extends AIRobot {
 
@@ -48,7 +49,7 @@ public class AIRobotAttack extends AIRobot {
         }
 
         if (robot.getDistanceToEntity(target) > 2.0) {
-            startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target)));
+            startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, Utils.getPos(target)));
             robot.setItemActive(false);
 
             return;

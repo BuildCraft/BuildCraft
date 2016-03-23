@@ -5,6 +5,7 @@
 package buildcraft.robotics;
 
 import java.util.List;
+
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,6 +27,7 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.robotics.path.MiniChunkCache;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
     public ItemRedstoneBoard() {
@@ -93,5 +97,12 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, 1, new ModelResourceLocation(type, "inventory"));
             ModelBakery.addVariantName(this, type);
         }
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!world.isRemote) MiniChunkCache.requestGraph(world, player.getPosition());
+
+        return super.onItemRightClick(stack, world, player);
     }
 }

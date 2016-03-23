@@ -3,8 +3,6 @@ package buildcraft.robotics.path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.google.common.util.concurrent.Futures;
@@ -12,47 +10,62 @@ import com.google.common.util.concurrent.Futures;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.core.lib.BCWorkerThreads;
+
 public class MiniChunkCache {
-    static final Executor WORKER_THREAD_POOL;
-
-    static {
-        int availableProcessors = Runtime.getRuntime().availableProcessors();
-        if (availableProcessors <= 3) {
-            WORKER_THREAD_POOL = Executors.newSingleThreadExecutor();
-        } else {
-            // Got a fast processor? You shall have fast robots.
-            WORKER_THREAD_POOL = Executors.newFixedThreadPool(2);
-        }
-    }
-
     private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
 
     public final int dimId;
-    private final Map<BlockPos, MiniChunkGraph> miniChunkCache = new ConcurrentHashMap<>();
+    private final Map<BlockPos, MiniChunkGraph> cache = new ConcurrentHashMap<>();
+    final Map<BlockPos, MiniChunkCalculationData> tempData = new ConcurrentHashMap<>();
 
-    public MiniChunkCache(int dimId) {
+    private MiniChunkCache(int dimId) {
         this.dimId = dimId;
     }
 
-    void putGraph(BlockPos min, MiniChunkGraph graph) {
-        miniChunkCache.put(min, graph);
+    public static Future<MiniChunkGraph> requestGraph(World world, BlockPos pos) {
+        int dimId = world.provider.getDimensionId();
+        if (!worldCaches.containsKey(dimId)) {
+            worldCaches.put(dimId, new MiniChunkCache(dimId));
+        }
+        return worldCaches.get(dimId).requestGraphImpl(world, pos);
     }
 
-    public Future<MiniChunkGraph> requestGraph(World world, BlockPos pos) {
+    public static MiniChunkGraph getGraphIfExists(World world, BlockPos pos) {
+        int dimId = world.provider.getDimensionId();
+        if (!worldCaches.containsKey(dimId)) {
+            worldCaches.put(dimId, new MiniChunkCache(dimId));
+        }
+        return worldCaches.get(dimId).getGraphIfExistsImpl(pos);
+
+    }
+
+    void putGraph(BlockPos min, MiniChunkGraph graph) {
+        cache.put(min, graph);
+    }
+
+    Future<MiniChunkGraph> requestGraphImpl(World world, BlockPos pos) {
         pos = convertToMin(pos);
-        MiniChunkGraph existing = miniChunkCache.get(pos);
+        MiniChunkGraph existing = cache.get(pos);
         if (existing != null) {
             return Futures.immediateCheckedFuture(existing);
         }
-        MiniChunkCalculationData data = new MiniChunkCalculationData(this, pos);
-        // Fill the data (from the world) in a separate thread
-        WORKER_THREAD_POOL.execute(new MiniChunkFiller(world, data));
-        return data.futureResult;
+        if (!world.isBlockLoaded(pos)) return Futures.immediateFailedFuture(new Throwable("The block " + pos + " is not loaded!"));
+        synchronized (this) {
+            if (tempData.containsKey(pos)) {
+                return tempData.get(pos).futureResult;
+            }
+            MiniChunkCalculationData data = new MiniChunkCalculationData(this, pos);
+            tempData.put(pos, data);
+            // Fill the data (from the world) in the thread pool
+            BCWorkerThreads.execute(new TaskMiniChunkFiller(world, data));
+            return data.futureResult;
+        }
     }
 
-    public MiniChunkGraph getGraph(BlockPos pos) {
+    MiniChunkGraph getGraphIfExistsImpl(BlockPos pos) {
         pos = convertToMin(pos);
-        return miniChunkCache.get(pos);
+        return cache.get(pos);
     }
 
     private static BlockPos convertToMin(BlockPos pos) {

@@ -15,6 +15,7 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class AIRobotGotoStation extends AIRobot {
 
@@ -44,7 +45,7 @@ public class AIRobotGotoStation extends AIRobot {
             terminate();
         } else {
             if (station.take(robot)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, station.getPos().offset(stationSide)));
+                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, station.getPos().offset(stationSide)));
             } else {
                 terminate();
             }

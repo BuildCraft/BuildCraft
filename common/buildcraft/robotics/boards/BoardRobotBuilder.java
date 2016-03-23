@@ -22,10 +22,10 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.ai.AIRobotDisposeItems;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotRecharge;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
 
@@ -122,7 +122,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             if (!hasEnoughEnergy()) {
                 startDelegateAI(new AIRobotRecharge(robot));
             } else {
-                startDelegateAI(new AIRobotGotoBlock(robot, Utils.convertFloor(currentBuildingSlot.getDestination()), 8));
+                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, Utils.convertFloor(currentBuildingSlot.getDestination()), 8));
             }
             // TODO: take into account cases where the robot can't reach the
             // destination - go to work on another block

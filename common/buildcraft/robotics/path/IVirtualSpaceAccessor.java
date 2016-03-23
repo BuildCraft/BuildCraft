@@ -13,20 +13,17 @@ public interface IVirtualSpaceAccessor<K> {
      * be connected to each other, or you will get strange results. */
     double exactCostBetween(IVirtualPoint<K> a, IVirtualPoint<K> b);
 
-    boolean canSee(IVirtualPoint<K> a, IVirtualPoint<K> b);
-
     public interface IVirtualPoint<K> {
         Set<? extends IVirtualPoint<K>> getConnected();
 
-        IVirtualSpaceAccessor<K> getAccessor();
+        IVirtualSpaceAccessor<K> getSpace();
 
         K getPoint();
     }
 
-    public interface IVirtualVolume<S, V> extends IVirtualPoint<V> {
-        @Override
-        Set<? extends IVirtualVolume<S, V>> getConnected();
+    public interface IVirtualDestination<K> {
+        boolean isDestination(IVirtualPoint<K> point);
 
-        Set<? extends IVirtualPoint<S>> getContained();
+        double heuristicCostToDestination(IVirtualPoint<K> from);
     }
 }

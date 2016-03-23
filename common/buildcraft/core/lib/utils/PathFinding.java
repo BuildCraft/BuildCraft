@@ -63,8 +63,9 @@ public class PathFinding implements IIterableAlgorithm {
     }
 
     @Override
-    public void iterate() {
+    public boolean iterate() {
         iterate(PATH_ITERATIONS);
+        return isDone();
     }
 
     public void iterate(int itNumber) {
@@ -88,7 +89,6 @@ public class PathFinding implements IIterableAlgorithm {
         }
     }
 
-    @Override
     public boolean isDone() {
         return nextIteration == null;
     }

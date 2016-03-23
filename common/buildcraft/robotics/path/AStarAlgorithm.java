@@ -2,14 +2,15 @@ package buildcraft.robotics.path;
 
 import java.util.*;
 
+import buildcraft.robotics.path.IVirtualSpaceAccessor.IVirtualDestination;
 import buildcraft.robotics.path.IVirtualSpaceAccessor.IVirtualPoint;
 
-/** Provides the A-Star pathfinding algorithm. The agent is NOT kept, so you will need to construct a new object
- * whenever the */
+/** Provides the A-Star pathfinding algorithm. */
 public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
     public final IVirtualSpaceAccessor<K> accessor;
 
-    private final IVirtualPoint<K> start, end;
+    private final IVirtualPoint<K> start;
+    private final IVirtualDestination<K> destination;
     // TODO Public-> private
     public final Set<IVirtualPoint<K>> closedSet = new HashSet<>();
     public final Set<IVirtualPoint<K>> openSet = new HashSet<>();
@@ -23,7 +24,7 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
         this.accessor = accessor;
 
         this.start = accessor.getPoint(agent.getCurrentPos());
-        this.end = accessor.getPoint(agent.getDestination());
+        this.destination = agent.getDestination();
 
         openSet.add(start);
 
@@ -31,7 +32,7 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
         fScore = new HashMapWithDefault<>(new Double(Double.POSITIVE_INFINITY));
 
         gScore.put(start, 0.0);
-        fScore.put(start, accessor.heuristicCostBetween(start, end));
+        fScore.put(start, destination.heuristicCostToDestination(start));
     }
 
     @Override
@@ -40,17 +41,17 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
     }
 
     @Override
-    public K destination() {
-        return end.getPoint();
+    public IVirtualDestination<K> destination() {
+        return destination;
     }
 
     @Override
     public boolean iterate() {
         IVirtualPoint<K> current = getLowestValue(openSet, fScore);
         if (current == null) return true;
-        if (current == end) {
+        if (destination.isDestination(current)) {
             totalPath.clear();
-            totalPath.addAll(reconstructPath(cameFrom, end));
+            totalPath.addAll(reconstructPath(cameFrom, current));
             return true;
         }
         openSet.remove(current);
@@ -68,7 +69,7 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
 
             cameFrom.put(neighbour, current);
             gScore.put(neighbour, tentativeGScore);
-            fScore.put(neighbour, tentativeGScore + accessor.heuristicCostBetween(neighbour, end));
+            fScore.put(neighbour, tentativeGScore + destination.heuristicCostToDestination(neighbour));
         }
         return false;
     }
@@ -100,28 +101,6 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
     }
 
     @Override
-    public AStarAlgorithm<K> reset(IAgent<K> agent) {
-        IVirtualPoint<K> start = accessor.getPoint(agent.getCurrentPos());
-        IVirtualPoint<K> end = accessor.getPoint(agent.getDestination());
-
-        if (start.equals(this.start) && end.equals(this.end)) {
-            totalPath.clear();
-
-            openSet.clear();
-            openSet.add(start);
-
-            gScore.clear();
-            fScore.clear();
-
-            gScore.put(start, 0.0);
-            fScore.put(start, accessor.heuristicCostBetween(start, end));
-            return this;
-        }
-
-        return new AStarAlgorithm<>(accessor, agent);
-    }
-
-    @Override
     public List<K> nextPoints() {
         if (totalPath.isEmpty()) return null;
         return totalPath;
@@ -130,10 +109,5 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
     @Override
     public IVirtualSpaceAccessor<K> space() {
         return accessor;
-    }
-
-    @Override
-    public IAlgorthmFactory<K> factory() {
-        return AStarAlgorithm::new;
     }
 }

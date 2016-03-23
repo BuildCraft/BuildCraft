@@ -13,6 +13,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.TransactorSimple;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 import buildcraft.robotics.boards.BoardRobotPicker;
 
 public class AIRobotFetchItem extends AIRobot {
@@ -133,7 +134,7 @@ public class AIRobotFetchItem extends AIRobot {
             BoardRobotPicker.targettedItems.add(target.getEntityId());
             if (Math.floor(target.posX) != Math.floor(robot.posX) || Math.floor(target.posY) != Math.floor(robot.posY) || Math.floor(
                     target.posZ) != Math.floor(robot.posZ)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target)));
+                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, Utils.getPos(target)));
             }
         } else {
             // No item was found, terminate this AI

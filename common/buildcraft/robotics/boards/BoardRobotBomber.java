@@ -19,11 +19,11 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotLoad;
 import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {
 
@@ -72,7 +72,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             if (ai.success()) {
                 AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-                startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.add(0, flyingHeight, 0)));
+                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, aiFind.blockFound.add(0, flyingHeight, 0)));
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }

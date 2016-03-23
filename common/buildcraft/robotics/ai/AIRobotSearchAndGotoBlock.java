@@ -12,6 +12,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.robotics.ai.path.AIRobotGotoBlock;
 
 public class AIRobotSearchAndGotoBlock extends AIRobot {
 
@@ -54,7 +55,7 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
                 AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
                 if (searchAI.takeResource()) {
                     blockFound = searchAI.blockFound;
-                    startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+                    startDelegateAI(AIRobotGotoBlock.newFollowPath(robot, searchAI.path));
                 } else {
                     terminate();
                 }

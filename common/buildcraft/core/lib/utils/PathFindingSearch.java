@@ -48,11 +48,12 @@ public class PathFindingSearch implements IIterableAlgorithm {
     }
 
     @Override
-    public void iterate() {
+    public boolean iterate() {
         if (pathFinders.size() < 5 && blockIter.hasNext()) {
             iterateSearch(PATH_ITERATIONS * 10);
         }
         iteratePathFind(PATH_ITERATIONS);
+        return isDone();
     }
 
     private void iterateSearch(int itNumber) {
@@ -118,7 +119,6 @@ public class PathFindingSearch implements IIterableAlgorithm {
         }
     }
 
-    @Override
     public boolean isDone() {
         for (PathFinding pathFinding : pathFinders) {
             if (pathFinding.isDone()) {

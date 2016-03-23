@@ -6,8 +6,10 @@ package buildcraft.core.lib.utils;
 
 public interface IIterableAlgorithm {
 
-    void iterate();
-
-    boolean isDone();
+    /** Iterates this algorithm. What this actually means is up to the algorithm itself, but usually only 1000
+     * iterations will be called, so balance around that.
+     * 
+     * @return True if it has completed */
+    boolean iterate();
 
 }

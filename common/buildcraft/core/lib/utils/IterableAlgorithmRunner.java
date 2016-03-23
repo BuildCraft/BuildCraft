@@ -29,16 +29,16 @@ public class IterableAlgorithmRunner extends Thread {
     public void run() {
         try {
             for (int i = 0; i < maxIterations; ++i) {
-                if (isTerminated() || pathFinding.isDone()) {
+                if (isTerminated()) {
                     break;
                 }
 
                 long startTime = new Date().getTime();
 
-                pathFinding.iterate();
+                if (pathFinding.iterate()) break;
 
                 long elapsedTime = new Date().getTime() - startTime;
-                int timeToWait = (int) MathUtils.clamp((int) Math.ceil(elapsedTime * 1.5), 1, 500);
+                int timeToWait = MathUtils.clamp((int) Math.ceil(elapsedTime * 1.5), 1, 500);
                 sleep(timeToWait);
             }
         } catch (Throwable t) {
