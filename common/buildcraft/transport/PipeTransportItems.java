@@ -83,7 +83,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     private void readjustPosition(TravelingItem item) {
-        item.pos = MathUtils.clamp(item.pos - 1.0f, 0.01f, 0.99f);
+        item.pos = MathUtils.clamp(item.pos - 1.0f, 0, 1);
     }
 
     public boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd) {

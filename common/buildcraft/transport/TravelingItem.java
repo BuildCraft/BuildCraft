@@ -297,19 +297,19 @@ public class TravelingItem {
                 + (color != null ? (",color=" + color) : "") + "}";
     }
 
-    public Vec3 getRelativePos() {
+    public Vec3 getRelativePos(float offset) {
         EnumFacing dir = toCenter ? input : output;
         float floor = (itemStack == null ? CoreConstants.PIPE_MIN_POS : TransportUtils.getPipeFloorOf(itemStack));
         if (dir == null) {
             return new Vec3(0.5F, floor, 0.5F);
         } else {
-            float offset = pos - 0.5F;
-            return new Vec3(0.5F + dir.getFrontOffsetX() * offset, floor + dir.getFrontOffsetY() * offset, 0.5F + dir.getFrontOffsetZ() * offset);
+            float multiplier = pos + offset - 0.5F;
+            return new Vec3(0.5F + dir.getFrontOffsetX() * multiplier, floor + dir.getFrontOffsetY() * multiplier, 0.5F + dir.getFrontOffsetZ() * multiplier);
         }
     }
 
     public Vec3 getPos() {
-        return new Vec3(getContainer().getPos()).add(getRelativePos());
+        return new Vec3(getContainer().getPos()).add(getRelativePos(0.0F));
     }
 
     private float xyzToPos(Vec3 xyz, EnumFacing facing, boolean beforeCenter) {

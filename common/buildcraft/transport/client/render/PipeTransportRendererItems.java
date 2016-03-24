@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 
 import buildcraft.BuildCraftTransport;
@@ -19,7 +18,6 @@ import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -61,11 +59,9 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
                 continue;
             }
 
-            EnumFacing face = item.toCenter ? item.input : item.output;
-            Vec3 motion = Utils.convert(face, item.getSpeed() * f);
-            Vec3 vpos = item.getRelativePos();
+            Vec3 vpos = item.getRelativePos(f * item.getSpeed());
 
-            doRenderItem(item, x + vpos.xCoord + motion.xCoord, y + vpos.yCoord + motion.yCoord, z + vpos.zCoord + motion.zCoord, light, item.color);
+            doRenderItem(item, x + vpos.xCoord, y + vpos.yCoord, z + vpos.zCoord, light, item.color);
             count++;
         }
 

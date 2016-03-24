@@ -8,6 +8,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
@@ -83,6 +85,7 @@ public class LensPluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelKeyLens getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             return new ModelKeyLens.Cutout(side, isFilter);
