@@ -57,7 +57,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
                 break;
             }
 
-            if (item == null) {
+            if (item == null || item.getContainer() != pipe.container) {
                 continue;
             }
 
