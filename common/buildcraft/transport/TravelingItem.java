@@ -19,9 +19,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.transport.utils.TransportUtils;
 
 public class TravelingItem {
 
@@ -297,11 +299,12 @@ public class TravelingItem {
 
     public Vec3 getRelativePos() {
         EnumFacing dir = toCenter ? input : output;
+        float floor = (itemStack == null ? CoreConstants.PIPE_MIN_POS : TransportUtils.getPipeFloorOf(itemStack));
         if (dir == null) {
-            return new Vec3(0.5F, 0.5F, 0.5F);
+            return new Vec3(0.5F, floor, 0.5F);
         } else {
-            float offset = toCenter ? pos - 0.5F : pos - 0.5F;
-            return new Vec3(0.5F + dir.getFrontOffsetX() * offset, 0.25F + dir.getFrontOffsetY() * offset, 0.5F + dir.getFrontOffsetZ() * offset);
+            float offset = pos - 0.5F;
+            return new Vec3(0.5F + dir.getFrontOffsetX() * offset, floor + dir.getFrontOffsetY() * offset, 0.5F + dir.getFrontOffsetZ() * offset);
         }
     }
 

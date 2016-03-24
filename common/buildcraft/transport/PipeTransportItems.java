@@ -311,8 +311,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 continue;
             }
 
-            EnumFacing face = item.toCenter ? item.input : item.output;
-
             if (!item.isMoving()) {
                 refreshDestination(item, false);
             } else {
