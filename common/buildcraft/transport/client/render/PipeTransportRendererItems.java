@@ -57,15 +57,15 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
                 break;
             }
 
-            if (item == null || item.pos == null) {
+            if (item == null) {
                 continue;
             }
 
             EnumFacing face = item.toCenter ? item.input : item.output;
             Vec3 motion = Utils.convert(face, item.getSpeed() * f);
+            Vec3 vpos = item.getRelativePos();
 
-            doRenderItem(item, x + item.pos.xCoord - pipe.container.getPos().getX() + motion.xCoord, y + item.pos.yCoord - pipe.container.getPos()
-                    .getY() + motion.yCoord, z + item.pos.zCoord - pipe.container.getPos().getZ() + motion.zCoord, light, item.color);
+            doRenderItem(item, x + vpos.xCoord + motion.xCoord, y + vpos.yCoord + motion.yCoord, z + vpos.zCoord + motion.zCoord, light, item.color);
             count++;
         }
 

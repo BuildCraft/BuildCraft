@@ -18,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -32,11 +31,11 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
     private enum ReceiveType {
@@ -84,15 +83,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     private void readjustPosition(TravelingItem item) {
-        Vec3 middle = Utils.convertMiddle(container.getPos());
-        Vec3 littleBitBelow0Point5 = new Vec3(0.49, 0.49, 0.49);
-        Vec3 newPos = Utils.clamp(item.pos, middle.subtract(littleBitBelow0Point5), middle.add(littleBitBelow0Point5));
-
-        if (item.input.getAxis() != Axis.Y) {
-            newPos = new Vec3(newPos.xCoord, container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack()), newPos.zCoord);
-        }
-
-        item.pos = newPos;
+        item.pos = MathUtils.clamp(item.pos - 1.0f, 0.01f, 0.99f);
     }
 
     public boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd) {
@@ -164,9 +155,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         container.getWorld().setBlockToAir(container.getPos());
     }
 
-    /** Bounces the item back into the pipe without changing the items map.
+    /**
+     * Bounces the item back into the pipe without changing the items map.
      *
-     * @param item */
+     * @param item
+     */
     protected void reverseItem(TravelingItem item) {
         if (item.isCorrupted()) {
             // Safe guard - if for any reason the item is corrupted at this
@@ -323,7 +316,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             if (!item.isMoving()) {
                 refreshDestination(item, false);
             } else {
-                item.movePosition(Utils.convert(face, item.getSpeed()));
+                item.move(item.getSpeed());
             }
 
             if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
@@ -335,11 +328,15 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 item.toCenter = false;
 
                 // Readjusting to the middle
-                item.pos = Utils.convert(container.getPos()).add(new Vec3(0.5, TransportUtils.getPipeFloorOf(item.getItemStack()), 0.5));
+                item.pos = 0.5F;
                 refreshDestination(item, true);
 
                 PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
                 container.pipe.eventBus.handleEvent(event);
+
+                if (item.output == null) {
+                    item.speed = TransportConstants.PIPE_MIN_SPEED;
+                }
             } else if (!item.toCenter && endReached(item)) {
                 if (item.isCorrupted()) {
                     items.remove(item);
@@ -431,24 +428,16 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     protected boolean middleReached(TravelingItem item) {
         float middleLimit = item.getSpeed() * 1.01F;
-        return Math.abs(container.getPos().getX() + 0.5 - item.pos.xCoord) < middleLimit
-                && Math.abs(container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.pos.yCoord) < middleLimit
-                && Math.abs(container.getPos().getZ() + 0.5 - item.pos.zCoord) < middleLimit;
-        }
+        return Math.abs(item.pos - 0.5F) < middleLimit;
+    }
+
 
     protected boolean endReached(TravelingItem item) {
-        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 0.65;
-        // return item.pos.xCoord > container.getPos().getX() + 1 || item.pos.xCoord < container.x() || item.pos.yCoord
-        // > container.y() + 1
-        // || item.pos.yCoord < container.y() || item.pos.zCoord > container.z() + 1 || item.pos.zCoord < container.z();
+        return item.pos > 1.15F;
     }
 
     protected boolean outOfBounds(TravelingItem item) {
-        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 1;
-        // return item.pos.xCoord > container.x() + 2 || item.pos.xCoord < container.x() - 1 || item.pos.yCoord >
-        // container.y() + 2
-        // || item.pos.yCoord < container.y() - 1 || item.pos.zCoord > container.z() + 2 || item.pos.zCoord <
-        // container.z() - 1;
+        return item.pos > 1.5F || item.pos < -0.5F;
     }
 
     public Vec3 getPosition() {

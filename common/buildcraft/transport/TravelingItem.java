@@ -32,9 +32,9 @@ public class TravelingItem {
 
     public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
-    public Vec3 pos;
     public final int id;
     public boolean toCenter = true;
+    public float pos;
     public EnumDyeColor color;
     public EnumFacing input = null;
     public EnumFacing output = null;
@@ -64,7 +64,7 @@ public class TravelingItem {
         return make(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
     }
 
-    public static TravelingItem make(Vec3 pos, ItemStack stack) {
+    public static TravelingItem make(float pos, ItemStack stack) {
         TravelingItem item = make();
         item.pos = pos;
         item.itemStack = stack.copy();
@@ -88,8 +88,8 @@ public class TravelingItem {
         return !(!toCenter && output == null);
     }
 
-    public void movePosition(Vec3 toAdd) {
-        pos = pos.add(toAdd);
+    public void move(float amount) {
+        pos += amount;
     }
 
     public float getSpeed() {
@@ -147,14 +147,21 @@ public class TravelingItem {
 
     /* SAVING & LOADING */
     public void readFromNBT(NBTTagCompound data) {
-        pos = new Vec3(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
+        toCenter = data.getBoolean("toCenter");
+
+        input = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
+        output = NBTUtils.readEnum(data.getTag("output"), EnumFacing.class);
+
+        if (data.hasKey("pos")) {
+            pos = data.getFloat("pos");
+        } else if (data.hasKey("x")) {
+            pos = xyzToPos(new Vec3(data.getDouble("x"), data.getDouble("y"), data.getDouble("z")), toCenter ? input : output, toCenter);
+        } else {
+            pos = 0.5F;
+        }
 
         setSpeed(data.getFloat("speed"));
         setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
-
-        toCenter = data.getBoolean("toCenter");
-        input = NBTUtils.readEnum(data.getTag("input"), EnumFacing.class);
-        output = NBTUtils.readEnum(data.getTag("output"), EnumFacing.class);
 
         byte c = data.getByte("color");
         if (c != -1) {
@@ -167,9 +174,7 @@ public class TravelingItem {
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        data.setDouble("x", pos.xCoord);
-        data.setDouble("y", pos.yCoord);
-        data.setDouble("z", pos.zCoord);
+        data.setFloat("pos", pos);
         data.setFloat("speed", getSpeed());
         NBTTagCompound itemStackTag = new NBTTagCompound();
         getItemStack().writeToNBT(itemStackTag);
@@ -193,8 +198,9 @@ public class TravelingItem {
             }
 
             Vec3 motion = Utils.convert(output, 0.1 + getSpeed() * 2D);
+            Vec3 vpos = getPos();
 
-            EntityItem entity = new EntityItem(container.getWorld(), pos.xCoord, pos.yCoord, pos.zCoord, getItemStack());
+            EntityItem entity = new EntityItem(container.getWorld(), vpos.xCoord, vpos.yCoord, vpos.zCoord, getItemStack());
             entity.lifespan = BuildCraftCore.itemLifespan * 20;
             entity.setDefaultPickupDelay();
 
@@ -205,23 +211,6 @@ public class TravelingItem {
             return entity;
         }
         return null;
-    }
-
-    public float getEntityBrightness(float f) {
-        // int i = MathHelper.floor_double(xCoord);
-        // int j = MathHelper.floor_double(zCoord);
-
-        // Ok... is this a nether checking thing?
-        // And why would you want this?
-        // Being removed unless testing requires it
-        // if (container != null && !container.getWorld().isAirBlock(new BlockPos(i, 64, j))) {
-
-        double d = 2 / 3D;
-        // int k = MathHelper.floor_double(pos.yCoord + d);
-        return container.getWorld().getLightBrightness(Utils.convertFloor(pos.addVector(0, d, 0)));
-        // } else {
-        // return 0.0F;
-        // }
     }
 
     public boolean isCorrupted() {
@@ -301,9 +290,58 @@ public class TravelingItem {
 
     @Override
     public String toString() {
-        return "TravelingItem{id=" + id + ",pos=" + (pos != null ? pos.toString() : "null")
+        return "TravelingItem{id=" + id + ",pos=" + String.format("%.02f", pos)
                 + ",dir=" + (input != null ? input : "?") + "->" + (output != null ? output : "?")
                 + (color != null ? (",color=" + color) : "") + "}";
+    }
+
+    public Vec3 getRelativePos() {
+        EnumFacing dir = toCenter ? input : output;
+        if (dir == null) {
+            return new Vec3(0.5F, 0.5F, 0.5F);
+        } else {
+            float offset = toCenter ? pos - 0.5F : pos - 0.5F;
+            return new Vec3(0.5F + dir.getFrontOffsetX() * offset, 0.25F + dir.getFrontOffsetY() * offset, 0.5F + dir.getFrontOffsetZ() * offset);
+        }
+    }
+
+    public Vec3 getPos() {
+        return new Vec3(getContainer().getPos()).add(getRelativePos());
+    }
+
+    private float xyzToPos(Vec3 xyz, EnumFacing facing, boolean beforeCenter) {
+        float v = 0.0f;
+
+        if (facing != null) {
+            switch (facing.getAxis()) {
+                case X:
+                    v = (float) Math.abs(xyz.xCoord % 1) - 0.5F;
+                    break;
+                case Y:
+                    v = (float) Math.abs(xyz.yCoord % 1) - 0.5F;
+                    break;
+                case Z:
+                    v = (float) Math.abs(xyz.zCoord % 1) - 0.5F;
+                    break;
+            }
+        } else {
+            if (xyz.xCoord != 0.5 || xyz.zCoord != 0.5) {
+                // hackishly fix pipe flooring
+                xyz = new Vec3(xyz.xCoord, 0.5, xyz.zCoord);
+            }
+
+            v = (float) (Math.abs((xyz.xCoord % 1) - 0.5F) + Math.abs((xyz.yCoord % 1) - 0.5F) + Math.abs((xyz.zCoord % 1) - 0.5F));
+        }
+
+        if (v < 0.0f) {
+            v += 0.5f;
+        }
+
+        if (beforeCenter) {
+            return v - 0.5F;
+        } else {
+            return v + 0.5F;
+        }
     }
 
     public static class InsertionHandler {

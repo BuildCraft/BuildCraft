@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
@@ -79,7 +78,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
     }
 
     @Override
-    protected TravelingItem makeItem(Vec3 pos, ItemStack stack) {
+    protected TravelingItem makeItem(float pos, ItemStack stack) {
         TravelingItem item = super.makeItem(pos, stack);
         int color = slotColors[currentFilter % filterCount];
         if (color > 0) {

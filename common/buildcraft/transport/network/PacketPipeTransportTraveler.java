@@ -11,11 +11,9 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.network.base.Packet;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
@@ -30,13 +28,14 @@ public class PacketPipeTransportTraveler extends Packet {
     private EnumFacing input;
     private EnumFacing output;
     private EnumDyeColor color;
-    private Vec3 itemPos;
+    private float itemPos;
     private float speed;
 
     public PacketPipeTransportTraveler() {}
 
     public PacketPipeTransportTraveler(TileEntity tile, TravelingItem item, boolean forceStackRefresh) {
         super(tile.getWorld());
+        this.pos = tile.getPos();
         this.item = item;
         this.forceStackRefresh = forceStackRefresh;
     }
@@ -44,9 +43,11 @@ public class PacketPipeTransportTraveler extends Packet {
     @Override
     public void writeData(ByteBuf data) {
         super.writeData(data);
-        data.writeFloat((float) item.pos.xCoord);
-        data.writeFloat((float) item.pos.yCoord);
-        data.writeFloat((float) item.pos.zCoord);
+        data.writeInt(pos.getX());
+        data.writeInt(pos.getY());
+        data.writeInt(pos.getZ());
+
+        data.writeFloat(item.pos);
 
         data.writeShort(item.id);
 
@@ -64,9 +65,8 @@ public class PacketPipeTransportTraveler extends Packet {
     @Override
     public void readData(ByteBuf data) {
         super.readData(data);
-        itemPos = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
-
-        pos = Utils.convertFloor(itemPos);
+        pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
+        itemPos = data.readFloat();
 
         this.entityId = data.readShort();
 
@@ -117,7 +117,7 @@ public class PacketPipeTransportTraveler extends Packet {
         return color;
     }
 
-    public Vec3 getItemPos() {
+    public float getItemPos() {
         return itemPos;
     }
 

@@ -41,8 +41,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 
         @Override
         public int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumDyeColor color) {
-            Vec3 vec = Utils.convertMiddle(getPos()).add(Utils.convert(side, 0.2));
-            TravelingItem item = TravelingItem.make(vec, stack);
+            TravelingItem item = TravelingItem.make(0.3f, stack);
 
             if (((PipeTransportItems) ((Pipe<?>) getPipe().getPipe()).transport).injectItem(item, from, doAdd)) {
                 return stack.stackSize;

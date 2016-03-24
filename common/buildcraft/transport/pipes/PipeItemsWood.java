@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -25,7 +24,6 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -206,8 +204,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
                     continue;
                 }
 
-                Vec3 entPos = Utils.convertMiddle(tile.getPos()).add(Utils.convert(side, -0.6));
-                TravelingItem entity = makeItem(entPos, slot);
+                TravelingItem entity = makeItem(-0.1f, slot);
                 entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
 
                 if (transport.injectItem(entity, side.getOpposite(), false)) {
@@ -216,7 +213,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
                         continue;
                     }
 
-                    entity = makeItem(entPos, slot);
+                    entity = makeItem(-0.1f, slot);
                     entity.setSpeed(TransportConstants.PIPE_DEFAULT_SPEED);
 
                     if (!transport.injectItem(entity, side.getOpposite(), true)) {
@@ -227,7 +224,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyRe
         }
     }
 
-    protected TravelingItem makeItem(Vec3 pos, ItemStack stack) {
+    protected TravelingItem makeItem(float pos, ItemStack stack) {
         return TravelingItem.make(pos, stack);
     }
 

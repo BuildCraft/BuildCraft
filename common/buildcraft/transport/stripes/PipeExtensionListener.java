@@ -27,7 +27,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.utils.TransportUtils;
 
 public class PipeExtensionListener {
     private class PipeExtensionRequest {
@@ -156,9 +155,7 @@ public class PipeExtensionListener {
     }
 
     private void sendItem(PipeTransportItems transport, ItemStack itemStack, EnumFacing direction) {
-        Vec3 pos = Utils.convert(transport.container.getPos());
-        pos = pos.addVector(0.5, TransportUtils.getPipeFloorOf(itemStack), 0.5);
-        TravelingItem newItem = TravelingItem.make(pos, itemStack);
+        TravelingItem newItem = TravelingItem.make(0.1f, itemStack);
         transport.injectItem(newItem, direction, true);
     }
 }

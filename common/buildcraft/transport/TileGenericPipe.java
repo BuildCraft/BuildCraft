@@ -25,7 +25,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -643,9 +642,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from, EnumDyeColor color) {
         if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from) && pipe.inputOpen(from)) {
-            Vec3 itemPos = Utils.convertMiddle(getPos()).add(Utils.convert(from, 0.4));
-
-            TravelingItem pipedItem = TravelingItem.make(itemPos, payload);
+            TravelingItem pipedItem = TravelingItem.make(0.1f, payload);
             pipedItem.color = color;
 
             if (((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite(), doAdd)) {

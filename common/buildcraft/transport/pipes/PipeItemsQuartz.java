@@ -35,6 +35,6 @@ public class PipeItemsQuartz extends Pipe<PipeTransportItems> {
     }
 
     public void eventHandler(PipeEventItem.AdjustSpeed event) {
-        event.slowdownAmount /= 4;
+        event.slowdownAmount /= 2;
     }
 }

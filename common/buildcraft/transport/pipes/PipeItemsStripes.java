@@ -43,7 +43,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
-import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyReceiver, IStripesPipe {
     private RFBattery battery = new RFBattery(320 * 50, 640, 0);
@@ -198,10 +197,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public boolean sendItem(ItemStack stack, EnumFacing direction) {
-        Vec3 pos = Utils.convertMiddle(container.getPos()).addVector(0, TransportUtils.getPipeFloorOf(stack) - 0.5, 0);
-        pos = pos.add(Utils.convert(direction, 0.25));
-
-        TravelingItem newItem = TravelingItem.make(pos, stack);
+        TravelingItem newItem = TravelingItem.make(0.25f, stack);
 
         return transport.injectItem(newItem, direction, true);
     }

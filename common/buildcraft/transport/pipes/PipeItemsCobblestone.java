@@ -14,6 +14,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.pipes.events.PipeEventItem;
 
 public class PipeItemsCobblestone extends Pipe<PipeTransportItems> {
 
@@ -30,5 +31,9 @@ public class PipeItemsCobblestone extends Pipe<PipeTransportItems> {
     @Override
     public int getIconIndex(EnumFacing direction) {
         return PipeIconProvider.TYPE.PipeItemsCobbleStone.ordinal();
+    }
+
+    public void eventHandler(PipeEventItem.AdjustSpeed event) {
+        event.slowdownAmount *= 2;
     }
 }

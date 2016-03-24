@@ -32,8 +32,4 @@ public class PipeItemsStone extends Pipe<PipeTransportItems> {
     public int getIconIndex(EnumFacing direction) {
         return PipeIconProvider.TYPE.PipeItemsStone.ordinal();
     }
-
-    public void eventHandler(PipeEventItem.AdjustSpeed event) {
-        event.slowdownAmount /= 2;
-    }
 }

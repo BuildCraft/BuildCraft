@@ -36,7 +36,6 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyReceiver {
     private final RFBattery battery = new RFBattery(2560, 640, 0);
@@ -173,8 +172,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                     if (stack != null && battery.useEnergy(10, 10, false) > 0) {
                         stack = trans.remove(StackFilter.ALL, true);
                         if (stack != null) {
-                            Vec3 pos = Utils.convertMiddle(container.getPos());
-                            TravelingItem item = TravelingItem.make(pos, stack);
+                            TravelingItem item = TravelingItem.make(0.5f, stack);
                             return transport.injectItem(item, openOrientation.getOpposite(), true);
                         }
                     }
@@ -240,8 +238,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                 return;
             }
 
-            TravelingItem item = TravelingItem.make(Utils.convert(container.getPos()).addVector(0.5, TransportUtils.getPipeFloorOf(stack), 0.5),
-                    stack);
+            TravelingItem item = TravelingItem.make(0.5f, stack);
 
             item.setSpeed((float) speed);
             transport.injectItem(item, orientation, true);
