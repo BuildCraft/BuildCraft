@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockQuartz;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -483,13 +484,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         public boolean matches(InventoryCrafting inventorycrafting, World world) {
             Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
 
-            return facade != null && facade[0] != null && ((Block[]) facade[0]).length == 1;
+            return facade != null && facade[0] != null && ((IBlockState[]) facade[0]).length == 1;
         }
 
         @Override
         public ItemStack getCraftingResult(InventoryCrafting inventorycrafting) {
             Object[] facade = getFacadeBlockFromCraftingGrid(inventorycrafting);
-            if (facade == null || ((Block[]) facade[0]).length != 1) return null;
+            if (facade == null || ((IBlockState[]) facade[0]).length != 1) return null;
 
             IBlockState block = ((IBlockState[]) facade[0])[0];
             ItemStack originalFacade = (ItemStack) facade[1];
@@ -518,33 +519,23 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             return null;
         }
 
-        private ItemStack getNextFacadeItemStack(IBlockState block, ItemStack originalFacade) {
-            // TODO (PASS 2): Find out what this did, and re-create it
-            // int blockMeta = getMetaValuesForFacade(originalFacade)[0];
-            // int stackMeta = blockMeta;
+        private ItemStack getNextFacadeItemStack(IBlockState state, ItemStack originalFacade) {
+            // TODO: Add an API for me!
+            IBlockState newState = state;
+            if (newState.getPropertyNames().contains(BlockQuartz.VARIANT)) {
+                BlockQuartz.EnumType type = newState.getValue(BlockQuartz.VARIANT);
+                if ("lines".equals(type.toString())) {
+                    newState = newState.withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.byMetadata(((type.getMetadata() - 1) % 3) + 2));
+                }
+            } else {
+                for (net.minecraft.block.properties.IProperty<?> prop : state.getProperties().keySet()) {
+                    if (prop.getName().equals("axis")) {
+                        newState = newState.cycleProperty(prop);
+                    }
+                }
+            }
 
-            // switch (block.getRenderType()) {
-            // case 31:
-            // if ((blockMeta & 0xC) == 0) {
-            // // Meta | 4 = true
-            // stackMeta = (blockMeta & 0x3) | 4;
-            // } else if ((blockMeta & 0x8) == 0) {
-            // // Meta | 8 = true
-            // stackMeta = (blockMeta & 0x3) | 8;
-            // } else if ((blockMeta & 0x4) == 0) {
-            // stackMeta = blockMeta & 0x3;
-            // }
-            // break;
-            // case 39:
-            // if (blockMeta >= 2 && blockMeta < 4) {
-            // stackMeta = blockMeta + 1;
-            // } else if (blockMeta == 4) {
-            // stackMeta = 2;
-            // }
-            // break;
-            // }
-
-            return getFacadeForBlock(block);
+            return getFacadeForBlock(newState);
         }
 
         @Override
