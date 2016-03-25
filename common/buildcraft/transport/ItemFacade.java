@@ -5,8 +5,9 @@
 package buildcraft.transport;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import com.google.common.base.Strings;
+import java.util.Set;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.block.Block;
@@ -26,15 +27,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -46,6 +45,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.world.FakeBlockAccessSingleBlock;
 import buildcraft.core.proxy.CoreProxy;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
@@ -157,16 +157,15 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
     }
 
-    public static final ArrayList<ItemStack> allFacades = new ArrayList<>();
-    public static final ArrayList<ItemStack> allHollowFacades = new ArrayList<>();
-    public static final ArrayList<String> allFacadeIDs = new ArrayList<>();
-    public static final ArrayList<String> blacklistedFacades = new ArrayList<>();
+    public static final ArrayList<ItemStack> allStacks = new ArrayList<>();
 
+    private static final HashSet<IBlockState> blacklistedFacades = new HashSet<>();
+    private static final HashSet<IBlockState> whitelistedFacades = new HashSet<>();
     private static final Block NULL_BLOCK = null;
     private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
-
     private static final Block[] PREVIEW_FACADES = new Block[] { Blocks.planks, Blocks.stonebrick, Blocks.glass };
-    private static int RANDOM_FACADE_ID = -1;
+
+    private static ArrayList<ItemStack> previewStacks;
 
     public ItemFacade() {
         super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
@@ -236,122 +235,108 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         return s;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+    public static List<IBlockState> getAllFacades() {
+        List<IBlockState> stacks = new ArrayList<>();
+
+        for (Block b : Block.blockRegistry) {
+            for (int i = 0; i < 16; i++) {
+                try {
+                    IBlockState state = b.getStateFromMeta(i);
+                    if (isValidFacade(state)) {
+                        stacks.add(state);
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
+        return stacks;
+    }
+
+    public static boolean isValidFacade(IBlockState state) {
+        if (blacklistedFacades.contains(state)) {
+            return false;
+        }
+
+        if (whitelistedFacades.contains(state)) {
+            return true;
+        }
+
+        Block block = state.getBlock();
+
+        if (block instanceof IFluidBlock || block.hasTileEntity(state)) {
+            return false;
+        }
+
+        block.setBlockBoundsBasedOnState(new FakeBlockAccessSingleBlock(state), BlockPos.ORIGIN);
+
+        if (block.getBlockBoundsMinX() != 0.0D || block.getBlockBoundsMinY() != 0.0D || block.getBlockBoundsMinZ() != 0.0D) {
+            return false;
+        }
+
+        if (block.getBlockBoundsMaxX() != 1.0D || block.getBlockBoundsMaxY() != 1.0D || block.getBlockBoundsMaxZ() != 1.0D) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean isTransparentFacade(IBlockState state) {
+        Block block = state.getBlock();
+
+        return !block.isVisuallyOpaque() && !block.isOpaqueCube();
+    }
+
+    private static void generateFacadeStacks() {
+        HashSet<IBlockState> states = new HashSet<>();
+
+        for (Block b : Block.blockRegistry) {
+            for (int i = 0; i < 16; i++) {
+                try {
+                    Item item = Item.getItemFromBlock(b);
+                    if (item != null) {
+                        IBlockState state = b.getStateFromMeta(i);
+                        if (!states.contains(state) && isValidFacade(state)) {
+                            states.add(state);
+                            allStacks.add(BuildCraftTransport.facadeItem.getFacadeForBlock(state));
+                        }
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
         if (BuildCraftTransport.showAllFacadesCreative) {
-            for (ItemStack stack : allFacades) {
-                itemList.add(stack);
-            }
-            for (ItemStack stack : allHollowFacades) {
-                itemList.add(stack);
-            }
+            previewStacks = allStacks;
         } else {
+            previewStacks = new ArrayList<>();
+
             List<ItemStack> hollowFacades = new ArrayList<>();
             for (Block b : PREVIEW_FACADES) {
-                if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
-                    ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));
-                    itemList.add(facade);
+                if (isValidFacade(b.getDefaultState()) && !blacklistedFacades.contains(b.getDefaultState())) {
+                    ItemStack facade = BuildCraftTransport.facadeItem.getFacadeForBlock(b.getDefaultState());
+                    previewStacks.add(facade);
                     FacadeState state = getFacadeStates(facade)[0];
                     hollowFacades.add(getFacade(new FacadeState(state.state, state.wire, true)));
                 }
             }
-            if (RANDOM_FACADE_ID < 0) {
-                RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
-            }
-            itemList.add(allFacades.get(RANDOM_FACADE_ID));
-            itemList.addAll(hollowFacades);
-            itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
+            previewStacks.addAll(hollowFacades);
         }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+        itemList.addAll(previewStacks);
     }
 
     public void initialize() {
-        for (Object o : Block.blockRegistry) {
-            Block b = (Block) o;
-
-            if (!isBlockValidForFacade(b)) {
-                continue;
-            }
-
-            Item item = Item.getItemFromBlock(b);
-
-            if (item == null) {
-                continue;
-            }
-
-            if (isBlockBlacklisted(b)) {
-                continue;
-            }
-
-            registerValidFacades(b, item);
-        }
-    }
-
-    private void registerValidFacades(Block block, Item item) {
-        ArrayList<ItemStack> stacks = new ArrayList<>(16);
-        try {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-                for (CreativeTabs ct : item.getCreativeTabs()) {
-                    block.getSubBlocks(item, ct, stacks);
-                }
-            } else {
-                for (int i = 0; i < 16; i++) {
-                    stacks.add(new ItemStack(item, 1, i));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (ItemStack stack : stacks) {
-            try {
-                if (block.hasTileEntity(block.getDefaultState())) continue;
-
-                // Check if all of these functions work correctly.
-                // If an exception is fired, or null is returned, this generally means that
-                // this block is invalid.
-                try {
-                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) continue;
-                } catch (Throwable t) {
-                    continue;
-                }
-
-                addFacade(stack);
-            } catch (IndexOutOfBoundsException e) {
-
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
-    }
-
-    private static boolean isBlockBlacklisted(Block block) {
-        String blockName = Utils.getNameForBlock(block);
-
-        if (blockName == null) return true;
-
-        // Blocks blacklisted by mods should always be treated as blacklisted
-        for (String blacklistedBlock : blacklistedFacades)
-            if (blockName.equals(blacklistedBlock)) return true;
-
-        // Blocks blacklisted by config should depend on the config settings
-        for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) return true
-                ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
-        }
-
-        return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
-    }
-
-    private static boolean isBlockValidForFacade(Block block) {
-        try {
-            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(block.getDefaultState())) return false;
-            if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) return false;
-            if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) return false;
-
-            return true;
-        } catch (Throwable ignored) {
-            return false;
+        for (String s : BuildCraftTransport.facadeBlacklist) {
+            // TODO: Add state support?
+            blacklistFacade(Block.getBlockFromName(s));
         }
     }
 
@@ -419,50 +404,77 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         return true;
     }
 
-    public void addFacade(ItemStack itemStack) {
-        if (itemStack.stackSize == 0) itemStack.stackSize = 1;
+    public void initializeRecipes() {
+        generateFacadeStacks();
 
-        Block block = Block.getBlockFromItem(itemStack.getItem());
-        if (block == null) return;
+        Set<IBlockState> states = new HashSet<>();
 
-        String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
+        for (Block b : Block.blockRegistry) {
+            for (int i = 0; i < 16; i++) {
+                try {
+                    IBlockState state = b.getStateFromMeta(i);
+                    if (!states.contains(state) && isValidFacade(state)) {
+                        states.add(state);
 
-        ItemStack facade = getFacadeForBlock(block.getStateFromMeta(itemStack.getItemDamage()));
+                        ItemStack itemStack = new ItemStack(state.getBlock(), 1, state.getBlock().damageDropped(state));
 
-        if (!allFacadeIDs.contains(recipeId)) {
-            allFacadeIDs.add(recipeId);
-            allFacades.add(facade);
+                        ItemStack facade = getFacadeForBlock(state);
+                        ItemStack facade6 = facade.copy();
+                        facade6.stackSize = 6;
 
-            ItemStack facade6 = facade.copy();
-            facade6.stackSize = 6;
+                        FacadeState fstate = getFacadeStates(facade6)[0];
+                        ItemStack facadeHollow = getFacade(new FacadeState(fstate.state, fstate.wire, true));
 
-            FacadeState state = getFacadeStates(facade6)[0];
-            ItemStack facadeHollow = getFacade(new FacadeState(state.state, state.wire, true));
+                        ItemStack facade6Hollow = facadeHollow.copy();
+                        facade6Hollow.stackSize = 6;
 
-            allHollowFacades.add(facadeHollow);
+                        if (!Loader.isModLoaded("BuildCraft|Silicon") || BuildCraftTransport.facadeForceNonLaserRecipe) {
+                            GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+                            GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+                        } else {
+                            // TODO: Make the Assembly Table variant a dynamic recipe handler to save RAM
 
-            ItemStack facade6Hollow = facadeHollow.copy();
-            facade6Hollow.stackSize = 6;
+                            String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(state.getBlock()) + "#" + itemStack.getItemDamage() + "}";
 
-            // 3 Structurepipes + this block makes 6 facades
-            if (Loader.isModLoaded("BuildCraft|Silicon") && !BuildCraftTransport.facadeForceNonLaserRecipe) {
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone,
-                        3), itemStack);
+                            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone,
+                                    3), itemStack);
 
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
-                        BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+                            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
+                                    BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
-                BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
-            } else {
-                GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
-                GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+                            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
+                            BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
+                        }
+                    }
+                } catch (Exception e) {
+
+                }
             }
         }
     }
 
-    public static void blacklistFacade(String blockName) {
-        if (!blacklistedFacades.contains(blockName)) blacklistedFacades.add(blockName);
+    public static void whitelistFacade(IBlockState state) {
+         whitelistedFacades.add(state);
+    }
+
+    public static void whitelistFacade(Block block) {
+        if (block != null) {
+            for (IBlockState state : block.getBlockState().getValidStates()) {
+                whitelistFacade(state);
+            }
+        }
+    }
+
+    public static void blacklistFacade(IBlockState state) {
+        blacklistedFacades.add(state);
+    }
+
+    public static void blacklistFacade(Block block) {
+        if (block != null) {
+            for (IBlockState state : block.getBlockState().getValidStates()) {
+                blacklistFacade(state);
+            }
+        }
     }
 
     public class FacadeRecipe implements IRecipe {

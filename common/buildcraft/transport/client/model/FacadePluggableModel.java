@@ -21,6 +21,7 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 
 import javax.vecmath.Matrix4f;
@@ -81,7 +82,7 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
             }
         }
 
-        if (!hollow) {
+        if (!hollow && !ItemFacade.isTransparentFacade(state)) {
             IModel connector = modelConnector();
             TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
             IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));

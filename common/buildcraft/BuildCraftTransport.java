@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -141,9 +142,9 @@ import buildcraft.transport.pipes.PipeItemsObsidian;
 import buildcraft.transport.pipes.PipeItemsSandstone;
 import buildcraft.transport.pipes.PipeItemsStone;
 import buildcraft.transport.pipes.PipeItemsWood;
-import buildcraft.transport.pipes.PipePowerIron;
-import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerDiamond;
+import buildcraft.transport.pipes.PipePowerGold;
+import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
@@ -200,7 +201,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     public static float pipeDurability;
     public static int pipeFluidsBaseFlowRate;
-    public static boolean facadeTreatBlacklistAsWhitelist;
     public static boolean additionalWaterproofingRecipe;
     public static boolean facadeForceNonLaserRecipe;
     public static boolean showAllFacadesCreative;
@@ -333,8 +333,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 					Block.blockRegistry.getNameForObject(Blocks.sponge).toString()
 					//@formatter:on
             }, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklistAsWhitelist", false,
-                    "Should the blacklist be treated as a whitelist instead?", ConfigManager.RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false,
                     "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
 
@@ -598,15 +596,14 @@ public class BuildCraftTransport extends BuildCraftMod {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         facadeItem.initialize();
+        facadeItem.initializeRecipes();
 
         if (debugPrintFacadeList) {
             try {
                 PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
-                writer.println("*** REGISTERED FACADES ***");
-                for (ItemStack stack : ItemFacade.allFacades) {
-                    if (facadeItem.getBlockStatesForFacade(stack).length > 0) {
-                        writer.println(facadeItem.getBlockStatesForFacade(stack)[0]);
-                    }
+                writer.println("*** VALID FACADE BLOCKS ***");
+                for (IBlockState state : ItemFacade.getAllFacades()) {
+                    writer.println(state.toString());
                 }
                 writer.close();
             } catch (Exception e) {
@@ -623,7 +620,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {
         if (restartType == ConfigManager.RestartRequirement.GAME) {
-            facadeTreatBlacklistAsWhitelist = BuildCraftCore.mainConfigManager.get("general.pipes.facadeBlacklistAsWhitelist").getBoolean();
             facadeBlacklist = BuildCraftCore.mainConfigManager.get("general.pipes.facadeBlacklist").getStringList();
             gateCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.gateCostMultiplier").getDouble();
             additionalWaterproofingRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.slimeballWaterproofRecipe").getBoolean();

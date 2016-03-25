@@ -368,6 +368,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
             BuildCraftCore.mainConfiguration.save();
         }
 
+        FMLInterModComms.sendMessage("BuildCraft|Transport", "blacklist-facade", new ItemStack(frameBlock, 1, -1));
+
         MinecraftForge.EVENT_BUS.register(this);
 
         StatementManager.registerActionProvider(new BuildersActionProvider());
