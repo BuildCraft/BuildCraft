@@ -72,11 +72,11 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             if (ai.success()) {
                 AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, aiFind.blockFound.add(0, flyingHeight, 0)));
+                startDelegateAI(AIRobotGotoBlock.newGotoBlock(robot, aiFind.blockFound.add(0, flyingHeight, 0)));
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }
-        } else if (ai instanceof AIRobotGotoBlock) {
+        } else if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (ai.success()) {
                 ITransactor t = Transactor.getTransactorFor(robot, null);
                 ItemStack stack = t.remove(TNT_FILTER, true);

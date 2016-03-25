@@ -67,7 +67,7 @@ public class AIRobotFetchItem extends AIRobot {
 
     @Override
     public void delegateAIEnded(AIRobot ai) {
-        if (ai instanceof AIRobotGotoBlock) {
+        if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (target == null) {
                 // This would happen after a load. As we reached the item
                 // location already, just consider that the item is not there
@@ -134,7 +134,7 @@ public class AIRobotFetchItem extends AIRobot {
             BoardRobotPicker.targettedItems.add(target.getEntityId());
             if (Math.floor(target.posX) != Math.floor(robot.posX) || Math.floor(target.posY) != Math.floor(robot.posY) || Math.floor(
                     target.posZ) != Math.floor(robot.posZ)) {
-                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, Utils.getPos(target)));
+                startDelegateAI(AIRobotGotoBlock.newGotoBlock(robot, Utils.getPos(target)));
             }
         } else {
             // No item was found, terminate this AI

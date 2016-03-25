@@ -62,7 +62,7 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
             } else {
                 terminate();
             }
-        } else if (ai instanceof AIRobotGotoBlock) {
+        } else if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (!ai.success()) {
                 releaseBlockFound();
             }

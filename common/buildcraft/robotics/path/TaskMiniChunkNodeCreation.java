@@ -19,7 +19,7 @@ public class TaskMiniChunkNodeCreation implements Runnable {
             createNodes();
             data.step(CalculationStep.CREATING_NODES, CalculationStep.HAS_NODES);
         }
-        BCWorkerThreads.execute(new TaskMiniChunkJoiner(data));
+        BCWorkerThreads.executeWorkTask(new TaskMiniChunkJoiner(data));
     }
 
     private void createNodes() {

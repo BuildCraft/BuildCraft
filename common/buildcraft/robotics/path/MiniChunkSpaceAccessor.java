@@ -41,7 +41,8 @@ public class MiniChunkSpaceAccessor extends AbstractSpaceAccessor<MiniChunkNode>
         public Set<IVirtualPoint<MiniChunkNode>> getConnected() {
             if (connected == null) {
                 connected = new HashSet<>();
-                for (MiniChunkNode other : node.connected) {
+                node.requestAllConnected(world);
+                for (MiniChunkNode other : node.getConnected()) {
                     connected.add(MiniChunkSpaceAccessor.this.getPoint(other));
                 }
             }

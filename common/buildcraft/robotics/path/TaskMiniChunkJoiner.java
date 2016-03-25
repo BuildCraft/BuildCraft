@@ -7,7 +7,7 @@ import buildcraft.robotics.path.MiniChunkCalculationData.CalculationStep;
 import buildcraft.robotics.path.MiniChunkGraph.MiniChunkNode;
 
 public class TaskMiniChunkJoiner implements Runnable {
-    private final static BlockPos[][] corners = { // Packed array
+    public static final BlockPos[][] corners = { // Packed array
         { new BlockPos(0, 0, 0), new BlockPos(15, 0, 15) },// DOWN (-Y)
         { new BlockPos(0, 15, 0), new BlockPos(15, 15, 15) },// UP (+Y)
         { new BlockPos(0, 0, 0), new BlockPos(15, 15, 0) },// NORTH (-Z)
@@ -61,7 +61,7 @@ public class TaskMiniChunkJoiner implements Runnable {
         }
     }
 
-    private static BlockPos wrap(BlockPos pos) {
+    public static BlockPos wrap(BlockPos pos) {
         int x = (pos.getX() % 16 + 16) % 16;
         int y = (pos.getY() % 16 + 16) % 16;
         int z = (pos.getZ() % 16 + 16) % 16;

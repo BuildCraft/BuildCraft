@@ -31,7 +31,7 @@ public class AIRobotAttack extends AIRobot {
 
     @Override
     public void preempt(AIRobot ai) {
-        if (ai instanceof AIRobotGotoBlock) {
+        if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             // target may become null in the event of a load. In that case, just
             // go to the expected location.
             if (target != null && robot.getDistanceToEntity(target) <= 2.0) {
@@ -49,7 +49,7 @@ public class AIRobotAttack extends AIRobot {
         }
 
         if (robot.getDistanceToEntity(target) > 2.0) {
-            startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, Utils.getPos(target)));
+            startDelegateAI(AIRobotGotoBlock.newGotoBlock(robot, Utils.getPos(target)));
             robot.setItemActive(false);
 
             return;
@@ -71,7 +71,7 @@ public class AIRobotAttack extends AIRobot {
 
     @Override
     public void delegateAIEnded(AIRobot ai) {
-        if (ai instanceof AIRobotGotoBlock) {
+        if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (!ai.success()) {
                 robot.unreachableEntityDetected(target);
             }

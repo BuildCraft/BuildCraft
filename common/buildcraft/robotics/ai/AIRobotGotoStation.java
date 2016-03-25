@@ -45,7 +45,7 @@ public class AIRobotGotoStation extends AIRobot {
             terminate();
         } else {
             if (station.take(robot)) {
-                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, station.getPos().offset(stationSide)));
+                startDelegateAI(AIRobotGotoBlock.newGotoBlock(robot, station.getPos().offset(stationSide)));
             } else {
                 terminate();
             }
@@ -58,7 +58,7 @@ public class AIRobotGotoStation extends AIRobot {
 
         if (station == null) {
             terminate();
-        } else if (ai instanceof AIRobotGotoBlock) {
+        } else if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (ai.success()) {
                 startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(stationIndex).add(Utils.convert(stationSide, 0.5))));
             } else {

@@ -20,10 +20,15 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.PathFinding;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.ai.AIRobotGoto;
+import buildcraft.robotics.path.BlockPosDestination;
 
+@Deprecated
 public class AIRobotGotoBlock extends AIRobotGoto {
-    public static AIRobot newSearchAndGotoBlock(EntityRobotBase robot, BlockPos pos) {
-        return new AIRobotGotoBlock(robot, pos);
+    public static AIRobot newGotoBlock(EntityRobotBase robot, BlockPos pos) {
+        // if (robot.getPosition().distanceSq(pos) < 40 * 40) {
+        return new AIRobotFindAndFollowPath(robot, new BlockPosDestination(pos, pos));
+        // }
+        // return new AIRobotGotoBlock(robot, pos);
     }
 
     public static AIRobot newSearchAndGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
@@ -35,6 +40,11 @@ public class AIRobotGotoBlock extends AIRobotGoto {
         return new AIRobotFollowPath(robot, iPath);
         // This class- deals with everything!
         // return new AIRobotGotoBlock(robot, iPath);
+    }
+
+    public static boolean isAIGotoBlock(AIRobot ai) {
+        // Basically a method to check if it is one of the classes returned from the above methods
+        return ai instanceof AIRobotGotoBlock || ai instanceof AIRobotFollowPath || ai instanceof AIRobotFindAndFollowPath;
     }
 
     private PathFinding pathSearch;
@@ -82,8 +92,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
         }
 
         if (path == null && pathSearch == null) {
-            pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX), (int) Math.floor(robot.posY), (int) Math.floor(
-                    robot.posZ)), finalPos, maxDistance);
+            pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX), (int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), finalPos, maxDistance);
 
             pathSearchJob = new IterableAlgorithmRunner(pathSearch, 50);
             pathSearchJob.start();

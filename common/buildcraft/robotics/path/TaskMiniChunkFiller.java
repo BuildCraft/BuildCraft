@@ -29,7 +29,7 @@ public class TaskMiniChunkFiller implements Runnable {
             fill();
             data.step(CalculationStep.FILLING, CalculationStep.FILLED);
         }
-        BCWorkerThreads.execute(new TaskMiniChunkAnalyser(data));
+        BCWorkerThreads.executeWorkTask(new TaskMiniChunkAnalyser(data));
     }
 
     private void fill() {

@@ -23,7 +23,7 @@ public class WorldAccessor extends AbstractSpaceAccessor<BlockPos> {
 
     @Override
     public double exactCostBetween(IVirtualPoint<BlockPos> a, IVirtualPoint<BlockPos> b) {
-        return exactCostOf(b.getPoint());
+        return (exactCostOf(a.getPoint()) + exactCostOf(b.getPoint())) / 2;
     }
 
     private double exactCostOf(BlockPos pos) {

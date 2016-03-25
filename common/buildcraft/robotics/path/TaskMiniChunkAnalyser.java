@@ -25,7 +25,7 @@ public class TaskMiniChunkAnalyser implements Runnable {
             analyse();
             data.step(CalculationStep.ANALYSING, CalculationStep.ANALYSED);
         }
-        BCWorkerThreads.execute(new TaskMiniChunkNodeCreation(data));
+        BCWorkerThreads.executeWorkTask(new TaskMiniChunkNodeCreation(data));
     }
 
     private void analyse() {

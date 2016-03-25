@@ -3,8 +3,10 @@ package buildcraft.robotics.path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.Futures;
 
 import net.minecraft.util.BlockPos;
@@ -37,7 +39,14 @@ public class MiniChunkCache {
             worldCaches.put(dimId, new MiniChunkCache(dimId));
         }
         return worldCaches.get(dimId).getGraphIfExistsImpl(pos);
+    }
 
+    public static MiniChunkGraph requestAndWait(World world, BlockPos pos) {
+        try {
+            return requestGraph(world, pos).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     void putGraph(BlockPos min, MiniChunkGraph graph) {
@@ -58,7 +67,7 @@ public class MiniChunkCache {
             MiniChunkCalculationData data = new MiniChunkCalculationData(this, pos);
             tempData.put(pos, data);
             // Fill the data (from the world) in the thread pool
-            BCWorkerThreads.execute(new TaskMiniChunkFiller(world, data));
+            BCWorkerThreads.executeWorkTask(new TaskMiniChunkFiller(world, data));
             return data.futureResult;
         }
     }

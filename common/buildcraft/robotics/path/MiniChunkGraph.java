@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 public class MiniChunkGraph {
     public enum ChunkType {
@@ -37,8 +38,16 @@ public class MiniChunkGraph {
         this.nodes = nodes.build();
     }
 
+    public MiniChunkNode getFor(BlockPos pos) {
+        BlockPos normalised = pos.subtract(min);
+        if (!TaskMiniChunkAnalyser.isValid(normalised)) throw new IllegalArgumentException("The position " + normalised + " was invalid! (from " + pos + ")");
+        int id = graphArray[normalised.getX()][normalised.getY()][normalised.getZ()];
+        if (id >= 0) return nodes.get(id);
+        throw new IllegalArgumentException("The position " + normalised + " had no graph! (gId = " + id + ")");
+    }
+
     public class MiniChunkNode {
-        final int id;
+        public final int id;
         final Set<MiniChunkNode> connected = Sets.newIdentityHashSet();
 
         public MiniChunkNode(int id) {
@@ -66,6 +75,19 @@ public class MiniChunkGraph {
 
         public MiniChunkGraph getParent() {
             return MiniChunkGraph.this;
+        }
+
+        public void requestAllConnected(World world) {
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (!neighbours.containsKey(face)) {
+                    MiniChunkCache.requestGraph(world, min.offset(face, 16));
+                }
+            }
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (!neighbours.containsKey(face)) {
+                    MiniChunkCache.requestAndWait(world, min.offset(face, 16));
+                }
+            }
         }
     }
 }

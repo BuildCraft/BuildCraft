@@ -35,7 +35,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
             terminate();
         } else {
             if (station != null && station.takeAsMain(robot)) {
-                startDelegateAI(AIRobotGotoBlock.newSearchAndGotoBlock(robot, station.getPos().offset(station.side(), 2)));
+                startDelegateAI(AIRobotGotoBlock.newGotoBlock(robot, station.getPos().offset(station.side(), 2)));
             } else {
                 setSuccess(false);
                 terminate();
@@ -45,7 +45,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 
     @Override
     public void delegateAIEnded(AIRobot ai) {
-        if (ai instanceof AIRobotGotoBlock) {
+        if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (ai.success()) {
                 startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(station.getPos()).add(Utils.convert(station.side(), 0.5))));
             } else {

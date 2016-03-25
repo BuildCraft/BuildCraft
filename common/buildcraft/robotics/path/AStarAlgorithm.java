@@ -11,10 +11,10 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
 
     private final IVirtualPoint<K> start;
     private final IVirtualDestination<K> destination;
-    // TODO Public-> private
-    public final Set<IVirtualPoint<K>> closedSet = new HashSet<>();
-    public final Set<IVirtualPoint<K>> openSet = new HashSet<>();
-    public final Map<IVirtualPoint<K>, IVirtualPoint<K>> cameFrom = new HashMap<>();
+
+    private final Set<IVirtualPoint<K>> closedSet = new HashSet<>();
+    private final Set<IVirtualPoint<K>> openSet = new HashSet<>();
+    private final Map<IVirtualPoint<K>, IVirtualPoint<K>> cameFrom = new HashMap<>();
     private final List<K> totalPath = new ArrayList<>();
 
     final Map<IVirtualPoint<K>, Double> gScore;
@@ -45,44 +45,60 @@ public class AStarAlgorithm<K> implements IPathfindingAlgorithm<K> {
         return destination;
     }
 
+    private IVirtualPoint<K> current = null;
+    private Iterator<? extends IVirtualPoint<K>> currentNeighbours;
+
     @Override
     public boolean iterate() {
-        IVirtualPoint<K> current = getLowestValue(openSet, fScore);
-        if (current == null) return true;
-        if (destination.isDestination(current)) {
-            totalPath.clear();
-            totalPath.addAll(reconstructPath(cameFrom, current));
-            return true;
+        if (current == null) {
+            current = getLowestValue(openSet, fScore);
+            if (current == null) return true;
+            if (destination.isDestination(current)) {
+                totalPath.clear();
+                totalPath.addAll(reconstructPath(cameFrom, current));
+                return true;
+            }
+            openSet.remove(current);
+            closedSet.add(current);
+            currentNeighbours = current.getConnected().iterator();
         }
-        openSet.remove(current);
-        closedSet.add(current);
-        for (IVirtualPoint<K> neighbour : current.getConnected()) {
+
+        if (currentNeighbours.hasNext()) {
+            IVirtualPoint<K> neighbour = currentNeighbours.next();
             if (closedSet.contains(neighbour)) {
-                continue;
+                return false;
             }
             double tentativeGScore = gScore.get(current) + accessor.exactCostBetween(current, neighbour);
             if (!openSet.contains(neighbour)) {
                 openSet.add(neighbour);
             } else if (tentativeGScore >= gScore.get(neighbour)) {
-                continue;
+                return false;
             }
 
             cameFrom.put(neighbour, current);
             gScore.put(neighbour, tentativeGScore);
             fScore.put(neighbour, tentativeGScore + destination.heuristicCostToDestination(neighbour));
+        } else {
+            current = null;
         }
         return false;
     }
 
     private static <K> List<K> reconstructPath(Map<IVirtualPoint<K>, IVirtualPoint<K>> cameFrom, IVirtualPoint<K> current) {
-        List<K> totalPath = new ArrayList<>();
-        totalPath.add(current.getPoint());
+        List<K> endToStart = new ArrayList<>();
+        endToStart.add(current.getPoint());
 
         while (true) {
             current = cameFrom.get(current);
-            if (current == null || totalPath.contains(current)) return totalPath;
-            totalPath.add(current.getPoint());
+            if (current == null || endToStart.contains(current)) break;
+            endToStart.add(current.getPoint());
         }
+
+        List<K> startToEnd = new ArrayList<>();
+        for (int i = endToStart.size() - 1; i >= 0; i--) {
+            startToEnd.add(endToStart.get(i));
+        }
+        return startToEnd;
     }
 
     private static <K> IVirtualPoint<K> getLowestValue(Set<IVirtualPoint<K>> set, Map<IVirtualPoint<K>, Double> map) {

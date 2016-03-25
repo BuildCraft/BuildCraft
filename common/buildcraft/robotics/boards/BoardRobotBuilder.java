@@ -137,7 +137,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }
-        } else if (ai instanceof AIRobotGotoBlock) {
+        } else if (AIRobotGotoBlock.isAIGotoBlock(ai)) {
             if (markerToBuild == null || markerToBuild.bluePrintBuilder == null) {
                 // defensive code, in case of a wrong load from NBT
                 return;

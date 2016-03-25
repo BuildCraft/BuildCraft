@@ -10,6 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -30,14 +31,24 @@ public class AIRobotFollowPath extends AIRobotGoto {
         this(robot);
         this.path = new LinkedList<>(path);
         lastBlockInPath = this.path.getLast();
+        BCLog.logger.info("Path: [" + this.path.getFirst() + " -> " + this.path.getLast() + "]");
         setNextInPath();
     }
 
     @Override
-    public void update() {
-        if (path == null) terminate();
+    public void start() {
+        robot.undock();
+        BCLog.logger.info("Start AIFollowPath");
+    }
 
-        if (path != null && next != null) {
+    @Override
+    public void update() {
+        if (path == null) {
+            setSuccess(false);
+            terminate();
+        }
+
+        if (next != null) {
             double distance = robot.getDistance(next.xCoord, next.yCoord, next.zCoord);
 
             if (!robot.isMoving() || distance > prevDistance) {
@@ -56,20 +67,36 @@ public class AIRobotFollowPath extends AIRobotGoto {
                     lastShortcutAttempt = now;
                 }
             }
+        } else if (path.size() == 0) {
+            robot.motionX = 0;
+            robot.motionY = 0;
+            robot.motionZ = 0;
 
-            if (path != null && path.size() == 0) {
-                robot.motionX = 0;
-                robot.motionY = 0;
-                robot.motionZ = 0;
-
-                if (lastBlockInPath != null) {
+            boolean isClose;
+            if (lastBlockInPath == null) {
+                isClose = false;
+            } else {
+                isClose = robot.getPosition().distanceSq(lastBlockInPath) < 3;
+                if (isClose) {
                     robot.posX = lastBlockInPath.getX() + 0.5F;
                     robot.posY = lastBlockInPath.getY() + 0.5F;
                     robot.posZ = lastBlockInPath.getZ() + 0.5F;
                 }
-                terminate();
             }
+            setSuccess(isClose);
+            terminate();
+        } else {
+            setSuccess(false);
+            terminate();
         }
+    }
+
+    @Override
+    public void end() {
+        robot.motionX = 0;
+        robot.motionY = 0;
+        robot.motionZ = 0;
+        BCLog.logger.info("End AIFollowPath");
     }
 
     private void tryToShortcutPath() {
@@ -83,6 +110,7 @@ public class AIRobotFollowPath extends AIRobotGoto {
 
             BlockPos next = path.getFirst();
             if (isFirst || BuildCraftAPI.isSoftBlock(robot.worldObj, next)) {
+                BCLog.logger.info("Next dest: " + next);
                 setDestination(robot, Utils.convertMiddle(next));
                 prevDistance = Double.MAX_VALUE;
                 robot.aimItemAt(next);
@@ -90,7 +118,15 @@ public class AIRobotFollowPath extends AIRobotGoto {
                 // Path invalid!
                 path = null;
             }
+        } else {
+            BCLog.logger.info("No dest!");
+            next = null;
         }
+    }
+
+    @Override
+    public boolean canLoadFromNBT() {
+        return true;
     }
 
     @Override
