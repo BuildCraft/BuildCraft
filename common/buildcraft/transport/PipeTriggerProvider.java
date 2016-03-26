@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
@@ -16,9 +17,10 @@ import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.transport.statements.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {
+
     @Override
-    public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> result = new LinkedList<>();
+    public void addInternalTriggers(Collection<ITriggerInternal> result, IStatementContainer container) {
+
         Pipe<?> pipe = null;
         TileEntity tile = container.getTile();
 
@@ -27,11 +29,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
         }
 
         if (pipe == null) {
-            return result;
-        }
-
-        if (container instanceof Gate) {
-            ((Gate) container).addTriggers(result);
+            return;
         }
 
         switch (((TileGenericPipe) tile).getPipeType()) {
@@ -52,13 +50,14 @@ public class PipeTriggerProvider implements ITriggerProvider {
             case STRUCTURE:
                 break;
         }
-        return result;
+
+        if (container instanceof Gate) {
+            ((Gate) container).addTriggers(result);
+        }
     }
 
     @Override
-    public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> result = new LinkedList<>();
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, EnumFacing side, TileEntity tile) {
 
-        return result;
     }
 }

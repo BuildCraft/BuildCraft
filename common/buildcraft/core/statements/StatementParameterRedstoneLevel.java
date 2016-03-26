@@ -23,8 +23,9 @@ import buildcraft.api.statements.StatementMouseClick;
 
 public class StatementParameterRedstoneLevel implements IStatementParameter {
     private static TextureAtlasSprite[] sprites;
-    public int level = 0;
-    public int minLevel = 0, maxLevel = 15;
+
+    public int level;
+    private int minLevel, maxLevel;
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -36,10 +37,15 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     public StatementParameterRedstoneLevel() {
-
+        this(0, 0, 15);
     }
 
     public StatementParameterRedstoneLevel(int min, int max) {
+        this(0, min, max);
+    }
+
+    public StatementParameterRedstoneLevel(int def, int min, int max) {
+        level = def;
         minLevel = min;
         maxLevel = max;
     }

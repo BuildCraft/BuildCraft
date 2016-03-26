@@ -264,6 +264,7 @@ gate.trigger.inventorylevel.below=Contains < %d%%
 gate.trigger.machine.done=Work Done
 gate.trigger.machine.scheduled=Has Work
 gate.trigger.redstone.input.active=Redstone Signal On
+gate.trigger.redstone.input.equal=Redstone Signal Equal
 gate.trigger.redstone.input.inactive=Redstone Signal Off
 gate.trigger.redstone.input.greater=Redstone Signal Greater Than
 gate.trigger.redstone.input.less=Redstone Signal Less Than

@@ -47,8 +47,8 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
-        if (parameters != null && parameters.length >= 1 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly) {
-            return ((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn;
+        if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParameterRedstoneGateSideOnly) {
+            return ((StatementParameterRedstoneGateSideOnly) parameters[getRGSOSlot()]).isOn;
         }
 
         return false;
@@ -61,11 +61,13 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
             if (source instanceof ISidedStatementContainer && isSideOnly(parameters)) {
                 side = ((ISidedStatementContainer) source).getSide();
             }
-            ((IRedstoneStatementContainer) source).setRedstoneOutput(side, getSignalLevel());
+            ((IRedstoneStatementContainer) source).setRedstoneOutput(side, getSignalLevel(parameters));
         }
     }
 
-    protected int getSignalLevel() {
+    protected int getRGSOSlot() { return 0; }
+
+    protected int getSignalLevel(IStatementParameter[] parameters) {
         return 15;
     }
 }

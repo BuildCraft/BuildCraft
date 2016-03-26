@@ -5,7 +5,6 @@
 package buildcraft.robotics.statements;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
@@ -24,12 +23,11 @@ import buildcraft.robotics.RobotUtils;
 public class RobotsActionProvider implements IActionProvider {
 
     @Override
-    public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
-        LinkedList<IActionInternal> result = new LinkedList<>();
+    public void addInternalActions(Collection<IActionInternal> result, IStatementContainer container) {
         TileEntity tile = container.getTile();
 
         if (!(tile instanceof IPipeTile)) {
-            return result;
+            return;
         }
 
         IPipeTile pipeTile = (IPipeTile) tile;
@@ -37,7 +35,7 @@ public class RobotsActionProvider implements IActionProvider {
         List<DockingStation> stations = RobotUtils.getStations(pipeTile);
 
         if (stations.size() == 0) {
-            return result;
+            return;
         }
 
         result.add(BuildCraftRobotics.actionRobotGotoStation);
@@ -71,13 +69,10 @@ public class RobotsActionProvider implements IActionProvider {
                 result.add(BuildCraftRobotics.actionStationMachineRequestItems);
             }
         }
-
-        return result;
     }
 
     @Override
-    public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
-        return null;
-    }
+    public void addExternalActions(Collection<IActionExternal> actions, EnumFacing side, TileEntity tile) {
 
+    }
 }

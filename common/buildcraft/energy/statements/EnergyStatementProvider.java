@@ -5,7 +5,6 @@
 package buildcraft.energy.statements;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,14 +20,12 @@ import buildcraft.energy.TileEngineIron;
 public class EnergyStatementProvider implements ITriggerProvider {
 
     @Override
-    public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        return null;
+    public void addInternalTriggers(Collection<ITriggerInternal> triggers, IStatementContainer container) {
+
     }
 
     @Override
-    public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> triggers = new LinkedList<>();
-
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, EnumFacing side, TileEntity tile) {
         if (tile instanceof TileEngineBase) {
             triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
             triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
@@ -44,8 +41,5 @@ public class EnergyStatementProvider implements ITriggerProvider {
             triggers.add(BuildCraftEnergy.triggerFuelBelow25);
             triggers.add(BuildCraftEnergy.triggerFuelBelow50);
         }
-
-        return triggers;
     }
-
 }

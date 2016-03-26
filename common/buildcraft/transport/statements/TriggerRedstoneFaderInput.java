@@ -14,18 +14,34 @@ import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.statements.StatementParameterRedstoneLevel;
 import buildcraft.transport.TileGenericPipe;
 
-public class TriggerRedstoneComparedInput extends BCStatement implements ITriggerInternal {
-    public final boolean less;
+public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerInternal {
+    public static enum Mode {
+        LESS,
+        EQUAL,
+        GREATER;
 
-    public TriggerRedstoneComparedInput(boolean less) {
-        super("buildcraft:redstone.input." + (less ? "less" : "greater"));
-        setBuildCraftLocation("core", "triggers/trigger_redstoneinput_" + (less ? "less" : "greater"));
-        this.less = less;
+        private final String key;
+
+        Mode() {
+            key = name().toLowerCase();
+        }
+
+        public String key() {
+            return key;
+        }
+    }
+
+    public final Mode mode;
+
+    public TriggerRedstoneFaderInput(Mode mode) {
+        super("buildcraft:redstone.input." + mode.key());
+        setBuildCraftLocation("core", "triggers/trigger_redstoneinput_" + mode.key());
+        this.mode = mode;
     }
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.redstone.input." + (less ? "less" : "greater"));
+        return BCStringUtils.localize("gate.trigger.redstone.input." + mode.key());
     }
 
     @Override
@@ -44,7 +60,15 @@ public class TriggerRedstoneComparedInput extends BCStatement implements ITrigge
             inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
         }
 
-        return less ? inputLevel < level : inputLevel > level;
+        switch (mode) {
+            case LESS:
+                return inputLevel < level;
+            case EQUAL:
+            default:
+                return inputLevel == level;
+            case GREATER:
+                return inputLevel > level;
+        }
     }
 
     @Override
@@ -52,7 +76,7 @@ public class TriggerRedstoneComparedInput extends BCStatement implements ITrigge
         IStatementParameter param = null;
 
         if (index == 0) {
-            param = new StatementParameterRedstoneLevel(less ? 1 : 0, less ? 15 : 14);
+            param = new StatementParameterRedstoneLevel((mode == Mode.LESS) ? 1 : 0, (mode == Mode.GREATER) ? 14 : 15);
         } else if (index == 1) {
             param = new StatementParameterRedstoneGateSideOnly();
         }

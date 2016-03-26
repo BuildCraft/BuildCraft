@@ -163,6 +163,7 @@ import buildcraft.transport.statements.ActionParameterSignal;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.statements.ActionPowerLimiter;
+import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionSignalOutput;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 import buildcraft.transport.statements.TriggerClockTimer;
@@ -172,7 +173,7 @@ import buildcraft.transport.statements.TriggerParameterSignal;
 import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.statements.TriggerPipeSignal;
-import buildcraft.transport.statements.TriggerRedstoneComparedInput;
+import buildcraft.transport.statements.TriggerRedstoneFaderInput;
 import buildcraft.transport.stripes.PipeExtensionListener;
 import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
@@ -258,7 +259,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static ITriggerInternal[] triggerPipeWireActive = new ITriggerInternal[PipeWire.values().length];
     public static ITriggerInternal[] triggerPipeWireInactive = new ITriggerInternal[PipeWire.values().length];
     public static ITriggerInternal[] triggerTimer = new ITriggerInternal[TriggerClockTimer.Time.VALUES.length];
-    public static ITriggerInternal[] triggerRedstoneFader = new ITriggerInternal[2];
+    public static ITriggerInternal[] triggerRedstoneFader = new ITriggerInternal[3];
+    public static IActionInternal actionRedstoneFader;
     public static IActionInternal[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
     public static IActionInternal actionEnergyPulser = new ActionEnergyPulsar();
     public static IActionInternal actionSingleEnergyPulse = new ActionSingleEnergyPulse();
@@ -443,8 +445,10 @@ public class BuildCraftTransport extends BuildCraftMod {
                 triggerTimer[time.ordinal()] = new TriggerClockTimer(time);
             }
 
-            triggerRedstoneFader[0] = new TriggerRedstoneComparedInput(false);
-            triggerRedstoneFader[1] = new TriggerRedstoneComparedInput(true);
+            triggerRedstoneFader[0] = new TriggerRedstoneFaderInput(TriggerRedstoneFaderInput.Mode.LESS);
+            triggerRedstoneFader[1] = new TriggerRedstoneFaderInput(TriggerRedstoneFaderInput.Mode.EQUAL);
+            triggerRedstoneFader[2] = new TriggerRedstoneFaderInput(TriggerRedstoneFaderInput.Mode.GREATER);
+            actionRedstoneFader = new ActionRedstoneFaderOutput();
 
             for (EnumDyeColor color : EnumDyeColor.values()) {
                 actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
@@ -534,8 +538,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         StatementManager.registerParameterClass(TriggerParameterSignal.class);
         StatementManager.registerParameterClass(ActionParameterSignal.class);
-        StatementManager.registerTriggerProvider(new PipeTriggerProvider());
-        StatementManager.registerActionProvider(new PipeActionProvider());
 
         // Item use stripes handlers
         PipeManager.registerStripesHandler(new StripesHandlerRightClick(), -32768);
@@ -612,6 +614,10 @@ public class BuildCraftTransport extends BuildCraftMod {
         ListRegistry.itemClassAsType.add(ItemGate.class);
         ListRegistry.itemClassAsType.add(ItemFacade.class);
         ListRegistry.itemClassAsType.add(ItemPipeWire.class);
+
+        // Must be registered last to let Gate Expansions override existing statements
+        StatementManager.registerTriggerProvider(new PipeTriggerProvider());
+        StatementManager.registerActionProvider(new PipeActionProvider());
     }
 
     public void reloadConfig(ConfigManager.RestartRequirement restartType) {

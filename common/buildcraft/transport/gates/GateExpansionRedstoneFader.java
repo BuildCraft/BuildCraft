@@ -5,10 +5,11 @@
 package buildcraft.transport.gates;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraft.tileentity.TileEntity;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
@@ -40,14 +41,18 @@ public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft im
         }
 
         @Override
-        public void addTriggers(List<ITriggerInternal> list) {
+        public void addTriggers(Collection<ITriggerInternal> list) {
             super.addTriggers(list);
+            list.remove(BuildCraftCore.triggerRedstoneActive);
+            list.remove(BuildCraftCore.triggerRedstoneInactive);
             list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneFader));
         }
 
         @Override
-        public void addActions(List<IActionInternal> list) {
+        public void addActions(Collection<IActionInternal> list) {
             super.addActions(list);
+            list.remove(BuildCraftCore.actionRedstone);
+            list.add(BuildCraftTransport.actionRedstoneFader);
         }
     }
 }

@@ -6,6 +6,7 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -553,7 +554,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // TRIGGERS
-    public void addTriggers(List<ITriggerInternal> list) {
+    public void addTriggers(Collection<ITriggerInternal> list) {
         for (PipeWire wire : PipeWire.VALUES) {
             if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
                 list.add(BuildCraftTransport.triggerPipeWireActive[wire.ordinal()]);
@@ -579,7 +580,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // ACTIONS
-    public void addActions(List<IActionInternal> list) {
+    public void addActions(Collection<IActionInternal> list) {
         for (PipeWire wire : PipeWire.VALUES) {
             if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
                 list.add(BuildCraftTransport.actionPipeWire[wire.ordinal()]);
@@ -644,6 +645,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     @Override
     public IPipe getPipe() {
         return pipe;
+    }
+
+    @Override
+    public Collection<IGateExpansion> getExpansions() {
+        return expansions.keySet();
     }
 
     @Override

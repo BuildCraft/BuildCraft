@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
-import java.util.LinkedList;
+import java.util.Collection;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -22,9 +22,22 @@ import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
+
     @Override
-    public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        LinkedList<ITriggerExternal> res = new LinkedList<>();
+    public void addInternalTriggers(Collection<ITriggerInternal> res, IStatementContainer container) {
+        if (container instanceof IRedstoneStatementContainer) {
+            res.add(BuildCraftCore.triggerRedstoneActive);
+            res.add(BuildCraftCore.triggerRedstoneInactive);
+        }
+
+        if (TriggerEnergy.isTriggeringPipe(container.getTile()) || TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
+            res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
+            res.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
+        }
+    }
+
+    @Override
+    public void addExternalTriggers(Collection<ITriggerExternal> res, EnumFacing side, TileEntity tile) {
 
         boolean blockInventoryTriggers = false;
         boolean blockFluidHandlerTriggers = false;
@@ -71,24 +84,5 @@ public class DefaultTriggerProvider implements ITriggerProvider {
             res.add(BuildCraftCore.triggerMachineActive);
             res.add(BuildCraftCore.triggerMachineInactive);
         }
-
-        return res;
-    }
-
-    @Override
-    public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> res = new LinkedList<>();
-
-        if (container instanceof IRedstoneStatementContainer) {
-            res.add(BuildCraftCore.triggerRedstoneActive);
-            res.add(BuildCraftCore.triggerRedstoneInactive);
-        }
-
-        if (TriggerEnergy.isTriggeringPipe(container.getTile()) || TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
-            res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
-            res.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
-        }
-
-        return res;
     }
 }
