@@ -9,12 +9,24 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 public class ModelKeyFacade extends PluggableModelKey<ModelKeyFacade> {
+    public static class Cutout extends ModelKeyFacade {
+        public Cutout(EnumFacing side, IBlockState state, boolean hollow) {
+            super(EnumWorldBlockLayer.CUTOUT, side, state, hollow);
+        }
+    }
+
+    public static class Transparent extends ModelKeyFacade {
+        public Transparent(EnumFacing side, IBlockState state, boolean hollow) {
+            super(EnumWorldBlockLayer.SOLID, side, state, hollow);
+        }
+    }
+
     public final boolean hollow;
     public final IBlockState state;
     private final int hash;
 
-    public ModelKeyFacade(EnumFacing side, IBlockState state, boolean hollow) {
-        super(EnumWorldBlockLayer.CUTOUT, FacadePluggableModel.INSTANCE, side);
+    public ModelKeyFacade(EnumWorldBlockLayer layer, EnumFacing side, IBlockState state, boolean hollow) {
+        super(layer, FacadePluggableModel.INSTANCE, side);
         this.hollow = hollow;
         this.state = state;
         hash = Arrays.hashCode(new int[] { super.hashCode(), state.hashCode(), Boolean.hashCode(hollow) });

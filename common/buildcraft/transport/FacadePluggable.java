@@ -122,8 +122,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
     @Override
     public ModelKeyFacade getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
-        if (layer == EnumWorldBlockLayer.CUTOUT) {
-            return new ModelKeyFacade(side, state, isHollow());
+        if (layer == EnumWorldBlockLayer.CUTOUT || layer == EnumWorldBlockLayer.TRANSLUCENT) {
+            return new ModelKeyFacade(layer, side, state, isHollow());
         }
         return null;
     }
