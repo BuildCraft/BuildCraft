@@ -660,11 +660,14 @@ public class BuildCraftCore extends BuildCraftMod {
             String location = "buildcraftcore:items/paintbrush/" + color.name().toLowerCase(Locale.ROOT);
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
+
         EnumColor.registerSprites(array);
         PatternParameterCenter.registerSprites(evt.map);
         PatternParameterHollow.registerSprites(evt.map);
         PatternParameterXZDir.registerSprites(evt.map);
         PatternParameterYDir.registerSprites(evt.map);
+        StatementParameterDirection.registerIcons(evt.map);
+        StatementParameterRedstoneGateSideOnly.registerIcons(evt.map);
     }
 
     @SubscribeEvent

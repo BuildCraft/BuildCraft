@@ -6,13 +6,12 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.base.Strings;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockQuartz;
+import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +26,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -254,7 +252,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         } else {
             List<ItemStack> hollowFacades = new ArrayList<>();
             for (Block b : PREVIEW_FACADES) {
-                if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
+                if (isBlockValidForFacade(b.getStateFromMeta(0)) && !isBlockBlacklisted(b)) {
                     ItemStack facade = getFacadeForBlock(b.getStateFromMeta(0));
                     itemList.add(facade);
                     FacadeState state = getFacadeStates(facade)[0];
@@ -273,10 +271,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     public void initialize() {
         for (Object o : Block.blockRegistry) {
             Block b = (Block) o;
-
-            if (!isBlockValidForFacade(b)) {
-                continue;
-            }
 
             Item item = Item.getItemFromBlock(b);
 
@@ -301,7 +295,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 }
             } else {
                 for (int i = 0; i < 16; i++) {
-                    stacks.add(new ItemStack(item, 1, i));
+                    try {
+                        IBlockState state = block.getStateFromMeta(i);
+                        stacks.add(new ItemStack(item, 1, i));
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         } catch (Exception e) {
@@ -347,9 +346,22 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
     }
 
-    private static boolean isBlockValidForFacade(Block block) {
+    public static boolean isTransparentFacade(IBlockState state) {
+        Block block = state.getBlock();
+        return !block.isVisuallyOpaque() && !block.isOpaqueCube();
+    }
+
+    private static boolean isBlockValidForFacade(IBlockState state) {
         try {
-            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(block.getDefaultState())) return false;
+            Block block = state.getBlock();
+
+            // HACK: Improved facade validation will only come in 8.0, so for now we simply
+            // whitelist stained glass to keep compatibility.
+            if (block instanceof BlockStainedGlass) {
+                return true;
+            }
+
+            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(state)) return false;
             if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) return false;
             if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) return false;
 
@@ -429,9 +441,16 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         Block block = Block.getBlockFromItem(itemStack.getItem());
         if (block == null) return;
 
+        IBlockState bstate = block.getStateFromMeta(itemStack.getItemDamage());
+        if (!isBlockValidForFacade(bstate)) {
+            return;
+        }
+
         String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
 
-        ItemStack facade = getFacadeForBlock(block.getStateFromMeta(itemStack.getItemDamage()));
+        ItemStack facade = getFacadeForBlock(bstate);
+        ItemStack realStack = itemStack.copy();
+        realStack.setItemDamage(block.damageDropped(bstate));
 
         if (!allFacadeIDs.contains(recipeId)) {
             allFacadeIDs.add(recipeId);
@@ -459,8 +478,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
             } else {
-                GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
-                GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+                GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', realStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+                GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', realStack, 's', BuildCraftTransport.pipeStructureCobblestone);
             }
         }
     }

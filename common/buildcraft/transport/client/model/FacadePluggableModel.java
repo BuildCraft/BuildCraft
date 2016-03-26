@@ -1,9 +1,6 @@
 package buildcraft.transport.client.model;
 
 import java.util.List;
-
-import javax.vecmath.Matrix4f;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -17,7 +14,6 @@ import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
@@ -26,7 +22,10 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
+
+import javax.vecmath.Matrix4f;
 
 public final class FacadePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyFacade> {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
@@ -62,11 +61,25 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
     public List<BakedQuad> bake(EnumWorldBlockLayer layer, EnumFacing face, boolean hollow, IBlockState state, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+
         if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
             if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT)) {
                 return quads;
             }
         } else {
+            if (!hollow && !ItemFacade.isTransparentFacade(state)) {
+                IModel connector = modelConnector();
+                TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
+                IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));
+                for (BakedQuad quad : baked.getGeneralQuads()) {
+                    MutableQuad mutable = MutableQuad.create(quad);
+                    mutable.transform(matrix);
+                    mutable.setCalculatedDiffuse();
+                    BCModelHelper.appendBakeQuads(quads, mutable);
+                }
+            }
+
             if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.SOLID)
                     && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT)
                     && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT_MIPPED)) {
@@ -76,8 +89,6 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
         // FIXME: Use the model bisector to cut a model down + squish one side down so it looks right
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
-
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
         IModel model;
         if (hollow) {
@@ -96,17 +107,6 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
             }
         }
 
-        if (!hollow) {
-            IModel connector = modelConnector();
-            TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
-            IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));
-            for (BakedQuad quad : baked.getGeneralQuads()) {
-                MutableQuad mutable = MutableQuad.create(quad);
-                mutable.transform(matrix);
-                mutable.setCalculatedDiffuse();
-                BCModelHelper.appendBakeQuads(quads, mutable);
-            }
-        }
         return quads;
     }
 }

@@ -236,7 +236,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
                     NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
                     triggerParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
-                    triggerParameters[i][j].readFromNBT(cpt);
+                    if (triggerParameters[i][j] != null) {
+                        triggerParameters[i][j].readFromNBT(cpt);
+                    }
                 }
             }
 
@@ -244,7 +246,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
                     NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
                     actionParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
-                    actionParameters[i][j].readFromNBT(cpt);
+                    if (actionParameters[i][j] != null) {
+                        actionParameters[i][j].readFromNBT(cpt);
+                    }
                 }
             }
         }

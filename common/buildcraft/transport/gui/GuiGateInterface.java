@@ -268,7 +268,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 if (statement.isDefined()) {
                     if (!paramSlot.isAllowed()) {
                         drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, 176, 0, 18, 18);
-                    } else if (paramSlot.isRequired() && paramSlot.getItemStack() == null) {
+                    } else if (paramSlot.isRequired() && paramSlot.getParameter() == null) {
                         drawTexturedModalRect(guiLeft + slot.x - 1, guiTop + slot.y - 1, 176, 22, 18, 18);
                     }
                 } else {
@@ -463,7 +463,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
             StatementSlot statement = paramSlot.statementSlot;
 
-            if (statement.isDefined() && statement.getStatement().maxParameters() != 0) {
+            if (statement.isDefined() && statement.getStatement().maxParameters() > paramSlot.slot) {
                 IStatementParameter param = paramSlot.getParameter();
 
                 if (param == null) {
