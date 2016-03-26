@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
@@ -55,11 +56,23 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
     @Override
     public ImmutableList<BakedQuad> bake(ModelKeyFacade key) {
-        return ImmutableList.copyOf(bakeCutout(key.side, key.hollow, key.state, getVertexFormat()));
+        return ImmutableList.copyOf(bake(key.layer, key.side, key.hollow, key.state, getVertexFormat()));
     }
 
-    public List<BakedQuad> bakeCutout(EnumFacing face, boolean hollow, IBlockState state, VertexFormat format) {
+    public List<BakedQuad> bake(EnumWorldBlockLayer layer, EnumFacing face, boolean hollow, IBlockState state, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
+        if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
+            if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT)) {
+                return quads;
+            }
+        } else {
+            if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.SOLID)
+                    && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT)
+                    && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT_MIPPED)) {
+                return quads;
+            }
+        }
+
         // FIXME: Use the model bisector to cut a model down + squish one side down so it looks right
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
 
