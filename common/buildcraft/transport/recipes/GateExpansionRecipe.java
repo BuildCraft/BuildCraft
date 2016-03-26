@@ -37,7 +37,6 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
             return true;
         }
         for (ItemStack s : recipes.values()) {
-            System.out.println(s.toString());
             if (StackHelper.isMatchingItem(s, expansion, true, true)) {
                 IGateExpansion exp = recipes.inverse().get(s);
                 if (exp != null) {
