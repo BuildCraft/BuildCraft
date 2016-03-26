@@ -735,6 +735,7 @@ public class BuildCraftCore extends BuildCraftMod {
             String location = "buildcraftcore:items/paintbrush/" + color.name().toLowerCase(Locale.ROOT);
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
+
         EnumColor.registerSprites(array);
     }
 

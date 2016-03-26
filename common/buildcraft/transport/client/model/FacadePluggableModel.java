@@ -61,11 +61,25 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
     public List<BakedQuad> bake(EnumWorldBlockLayer layer, EnumFacing face, boolean hollow, IBlockState state, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
+        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+
         if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
             if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT)) {
                 return quads;
             }
         } else {
+            if (!hollow && !ItemFacade.isTransparentFacade(state)) {
+                IModel connector = modelConnector();
+                TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
+                IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));
+                for (BakedQuad quad : baked.getGeneralQuads()) {
+                    MutableQuad mutable = MutableQuad.create(quad);
+                    mutable.transform(matrix);
+                    mutable.setCalculatedDiffuse();
+                    BCModelHelper.appendBakeQuads(quads, mutable);
+                }
+            }
+
             if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.SOLID)
                     && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT)
                     && !state.getBlock().canRenderInLayer(EnumWorldBlockLayer.CUTOUT_MIPPED)) {
@@ -75,8 +89,6 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
         // FIXME: Use the model bisector to cut a model down + squish one side down so it looks right
         final TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state);
-
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
 
         IModel model;
         if (hollow) {
@@ -95,17 +107,6 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
             }
         }
 
-        if (!hollow && !ItemFacade.isTransparentFacade(state)) {
-            IModel connector = modelConnector();
-            TextureAtlasSprite structure = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
-            IFlexibleBakedModel baked = connector.bake(ModelRotation.X0_Y0, format, singleTextureFunction(structure));
-            for (BakedQuad quad : baked.getGeneralQuads()) {
-                MutableQuad mutable = MutableQuad.create(quad);
-                mutable.transform(matrix);
-                mutable.setCalculatedDiffuse();
-                BCModelHelper.appendBakeQuads(quads, mutable);
-            }
-        }
         return quads;
     }
 }

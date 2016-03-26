@@ -17,6 +17,7 @@ import buildcraft.core.lib.utils.BCStringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements IStatementParameter {
 
+    @SideOnly(Side.CLIENT)
     private static TextureAtlasSprite icon;
 
     public boolean isOn = false;

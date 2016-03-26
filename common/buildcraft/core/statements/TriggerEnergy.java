@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;

@@ -26,6 +26,7 @@ import buildcraft.core.lib.utils.BCStringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {
 
+    @SideOnly(Side.CLIENT)
     private static TextureAtlasSprite[] sprites;
 
     public EnumFacing direction = null;
