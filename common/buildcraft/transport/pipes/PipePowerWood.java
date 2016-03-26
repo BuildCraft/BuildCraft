@@ -111,7 +111,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
                 if (source instanceof IEnergyProvider) {
                     int energyExtracted = battery.addEnergy(0, ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
                             false);
-                    ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyExtracted, true);
+                    ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyExtracted, false);
                 }
             }
         }
