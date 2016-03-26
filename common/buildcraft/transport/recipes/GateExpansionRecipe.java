@@ -38,7 +38,12 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
         }
         for (ItemStack s : recipes.values()) {
             if (StackHelper.isMatchingItem(s, expansion, true, true)) {
-                return true;
+                IGateExpansion exp = recipes.inverse().get(expansion);
+                if (exp.canAddToGate(ItemGate.getMaterial(input).numTriggerParameters, ItemGate.getMaterial(input).numActionParameters)) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         return false;

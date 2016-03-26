@@ -11,38 +11,40 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.StatementParameterRedstoneLevel;
 import buildcraft.transport.TileGenericPipe;
 
-public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerInternal {
+public class TriggerRedstoneComparedInput extends BCStatement implements ITriggerInternal {
+    public final boolean less;
 
-    public final int level;
-
-    public TriggerRedstoneFaderInput(int level) {
-        super(String.format("buildcraft:redtone.input.%02d", level));
-        setBuildCraftLocation("transport", String.format("triggers/redstone_%02d", level));
-        this.level = level;
+    public TriggerRedstoneComparedInput(boolean less) {
+        super("buildcraft:redstone.input." + (less ? "less" : "greater"));
+        setBuildCraftLocation("core", "triggers/trigger_redstoneinput_" + (less ? "less" : "greater"));
+        this.less = less;
     }
 
     @Override
     public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.redstone.input.level"), level);
+        return BCStringUtils.localize("gate.trigger.redstone.input." + (less ? "less" : "greater"));
     }
 
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-        if (!(container instanceof IGate)) {
+        if (!(container instanceof IGate) || parameters.length < 1 || !(parameters[0] instanceof StatementParameterRedstoneLevel)) {
             return false;
         }
+
+        int level = ((StatementParameterRedstoneLevel) parameters[0]).level;
 
         IGate gate = (IGate) container;
         TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
         int inputLevel = tile.redstoneInput;
-        if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly
-            && ((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn) {
+        if (parameters.length > 1 && parameters[1] instanceof StatementParameterRedstoneGateSideOnly
+            && ((StatementParameterRedstoneGateSideOnly) parameters[1]).isOn) {
             inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
         }
 
-        return inputLevel == level;
+        return less ? inputLevel < level : inputLevel > level;
     }
 
     @Override
@@ -50,6 +52,8 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
         IStatementParameter param = null;
 
         if (index == 0) {
+            param = new StatementParameterRedstoneLevel(less ? 1 : 0, less ? 15 : 14);
+        } else if (index == 1) {
             param = new StatementParameterRedstoneGateSideOnly();
         }
 
@@ -58,6 +62,11 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 
     @Override
     public int maxParameters() {
+        return 2;
+    }
+
+    @Override
+    public int minParameters() {
         return 1;
     }
 }

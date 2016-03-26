@@ -9,12 +9,11 @@ import java.util.TreeMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,7 +45,6 @@ public abstract class FillerPattern implements IFillerPattern {
         this.type = type;
         patterns.put(getUniqueTag(), this);
         location = new ResourceLocation("buildcraftcore:filler/patterns/" + tag);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -153,10 +151,9 @@ public abstract class FillerPattern implements IFillerPattern {
         return x >= 0 && y >= 0 && z >= 0 && x < bpt.size.getX() && y < bpt.size.getY() && z < bpt.size.getZ();
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void stitchTextures(TextureStitchEvent.Pre event) {
-        sprite = event.map.registerSprite(location);
+    @Override
+    public void registerIcons(TextureMap map) {
+        sprite = map.registerSprite(location);
     }
 
     @Override

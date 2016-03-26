@@ -1,8 +1,13 @@
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -61,10 +66,11 @@ public class StatementParameterRedstoneGateSideOnly implements IStatementParamet
         return "buildcraft:redstoneGateSideOnly";
     }
 
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-    // icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
-    // }
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(TextureMap iconRegister) {
+        icon = iconRegister.registerSprite(new ResourceLocation("buildcraftcore", "triggers/redstone_gate_side_only"));
+    }
 
     @Override
     public IStatementParameter rotateLeft() {

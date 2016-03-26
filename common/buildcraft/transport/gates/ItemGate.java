@@ -189,12 +189,18 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
                 }
 
                 itemList.add(makeGateItem(material, logic));
+                ItemStack stackAllExpansion = makeGateItem(material, logic);
 
                 for (IGateExpansion exp : GateExpansions.getExpansions()) {
-                    ItemStack stackExpansion = makeGateItem(material, logic);
-                    addGateExpansion(stackExpansion, exp);
-                    itemList.add(stackExpansion);
+                    if (exp.canAddToGate(material.numTriggerParameters, material.numActionParameters)) {
+                        ItemStack stackExpansion = makeGateItem(material, logic);
+                        addGateExpansion(stackExpansion, exp);
+                        addGateExpansion(stackAllExpansion, exp);
+                        itemList.add(stackExpansion);
+                    }
                 }
+
+                itemList.add(stackAllExpansion);
             }
         }
     }

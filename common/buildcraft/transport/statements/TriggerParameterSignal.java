@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -121,24 +120,18 @@ public class TriggerParameterSignal implements IStatementParameter {
         return "buildcraft:pipeWireTrigger";
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public static void registerIcons(TextureStitchEvent.Pre event) {
+    public void registerIcons(TextureMap map) {
         icons = new TextureAtlasSprite[8];
-        TextureMap map = event.map;
-        icons[0] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_red_inactive");
-        icons[1] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_blue_inactive");
-        icons[2] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_green_inactive");
-        icons[3] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_yellow_inactive");
-        icons[4] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_red_active");
-        icons[5] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_blue_active");
-        icons[6] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_green_active");
-        icons[7] = getOrRegister(map, "buildcrafttransport:triggers/trigger_pipesignal_yellow_active");
-    }
-
-    private static TextureAtlasSprite getOrRegister(TextureMap map, String location) {
-        TextureAtlasSprite sprite = map.getTextureExtry(location);
-        if (sprite == null) sprite = map.registerSprite(new ResourceLocation(location));
-        return sprite;
+        icons[0] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_red_inactive"));
+        icons[1] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_blue_inactive"));
+        icons[2] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_green_inactive"));
+        icons[3] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_yellow_inactive"));
+        icons[4] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_red_active"));
+        icons[5] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_blue_active"));
+        icons[6] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_green_active"));
+        icons[7] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_yellow_active"));
     }
 
     @Override

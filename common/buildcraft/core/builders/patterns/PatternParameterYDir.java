@@ -28,8 +28,9 @@ public class PatternParameterYDir implements IStatementParameter {
         this.up = up;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public static void registerSprites(TextureMap map) {
+    public void registerIcons(TextureMap map) {
         spriteUp = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/stairs_ascend"));
         spriteDown = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/stairs_descend"));
     }

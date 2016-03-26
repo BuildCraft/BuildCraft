@@ -56,6 +56,11 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
     }
 
     @Override
+    public boolean canAddToGate(int numTriggerParameters, int numActionParameters) {
+        return true;
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
     public void textureStitch(TextureMap map) {
         sprite = map.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_expansion_" + tag));

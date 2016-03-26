@@ -77,6 +77,11 @@ public abstract class GuiBuildCraft extends GuiContainer {
         super.drawGradientRect(left, top, right, bottom, startColor, endColor);
     }
 
+    @Override
+    public void drawTexturedModalRect(int xCoord, int yCoord, TextureAtlasSprite textureSprite, int widthIn, int heightIn) {
+        super.drawTexturedModalRect(xCoord, yCoord, textureSprite != null ? textureSprite : Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite(), widthIn, heightIn);
+    }
+
     /** Draws the screen and all the components in it. */
     @Override
     public void drawScreen(int mouseX, int mouseY, float par3) {

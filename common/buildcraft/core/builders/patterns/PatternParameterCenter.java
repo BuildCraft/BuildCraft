@@ -22,7 +22,9 @@ public class PatternParameterCenter implements IStatementParameter {
 
     private int direction;
 
-    public static void registerSprites(TextureMap map) {
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(TextureMap map) {
         sprites = new TextureAtlasSprite[9];
         for (int i = 0; i < 9; i++) {
             sprites[i] = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/center_" + i));

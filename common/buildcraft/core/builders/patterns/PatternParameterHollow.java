@@ -29,8 +29,9 @@ public class PatternParameterHollow implements IStatementParameter {
         this.filled = !hollow;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public static void registerSprites(TextureMap map) {
+    public void registerIcons(TextureMap map) {
         iconFilled = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/filled"));
         iconHollow = map.registerSprite(new ResourceLocation("buildcraftcore:filler/parameters/hollow"));
     }

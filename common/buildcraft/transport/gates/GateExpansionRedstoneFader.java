@@ -28,6 +28,11 @@ public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft im
         return new GateExpansionControllerRedstoneFader(pipeTile);
     }
 
+    @Override
+    public boolean canAddToGate(int numTriggerParameters, int numActionParameters) {
+        return numTriggerParameters >= 1 || numActionParameters >= 1;
+    }
+
     private class GateExpansionControllerRedstoneFader extends GateExpansionController {
 
         public GateExpansionControllerRedstoneFader(TileEntity pipeTile) {
@@ -37,13 +42,12 @@ public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft im
         @Override
         public void addTriggers(List<ITriggerInternal> list) {
             super.addTriggers(list);
-            list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneLevel));
+            list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneFader));
         }
 
         @Override
         public void addActions(List<IActionInternal> list) {
             super.addActions(list);
-            list.addAll(Arrays.asList(BuildCraftTransport.actionRedstoneLevel));
         }
     }
 }
