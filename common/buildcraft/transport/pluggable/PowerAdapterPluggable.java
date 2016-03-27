@@ -6,6 +6,9 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 
@@ -74,6 +77,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyRecei
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public PluggableModelKey<?> getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             return new ModelKeyPowerAdapter(side);

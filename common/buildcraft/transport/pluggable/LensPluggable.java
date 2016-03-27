@@ -7,13 +7,15 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.client.model.LensPluggableModel;
 import buildcraft.transport.client.model.ModelKeyLens;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
@@ -84,6 +86,7 @@ public class LensPluggable extends PipePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelKeyLens getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
             return new ModelKeyLens.Cutout(side, isFilter);

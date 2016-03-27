@@ -4,6 +4,38 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.List;
+
+import com.google.common.base.Throwables;
+
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.World;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -31,38 +63,12 @@ import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
-import com.google.common.base.Throwables;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.Level;
 
-import java.util.List;
-
-public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile,
-        ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable, IEnergyProvider {
+public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable,
+        IEnergyProvider {
 
     public boolean initialized = false;
     public final PipeRenderState renderState = new PipeRenderState();
@@ -257,11 +263,18 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             nbt.setString("pipeId", coreState.pipeId);
         } else {
             ResourceLocation loc = pipe != null ? Item.itemRegistry.getNameForObject(pipe.item) : null;
+            String errData = "data=[";
+            errData += "item=" + pipe.item;
+            errData += "class=" + (pipe.item == null ? "null" : pipe.item.getClass());
+            errData += ", id=" + Item.itemRegistry.getIDForObject(pipe.item);
+            errData += ", loc=" + loc;
+            errData += "]";
             if (loc == null) {
-                BCLog.logger.error("A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!");
+                String errLine = "A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!";
+                BCLog.logger.error(errLine + errData);
             } else {
-                BCLog.logger.warn("A BuildCraft pipe @ " + pos.toString()
-                    + " did not have pipe ID, but did have a valid item. Not a fatal error, but please report nonetheless.");
+                String errLine = "A BuildCraft pipe @ " + pos.toString() + " did not have pipe ID, but did have a valid item. Not a fatal error, but please report nonetheless.";
+                BCLog.logger.warn(errLine + errData);
                 nbt.setString("pipeId", loc.toString());
             }
         }
@@ -306,12 +319,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             else coreState.pipeId = loc.toString();
         }
 
-        Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
-        if (item instanceof ItemPipe) {
-            pipe = BlockGenericPipe.createPipe((ItemPipe) item);
-        } else {
-            BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
-            pipe = null;
+        if (!StringUtils.isNullOrEmpty(coreState.pipeId)) {
+            Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
+            if (item instanceof ItemPipe) {
+                pipe = BlockGenericPipe.createPipe((ItemPipe) item);
+            } else {
+                BCLog.logger.warn(item + " was not an instanceof ItemPipe!" + coreState.pipeId);
+                pipe = null;
+            }
         }
 
         bindPipe();
@@ -706,8 +721,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 BCLog.logger.warn("Recieved a packet with a different type that expected (" + nbt.getString("net-type") + ")");
             }
         } catch (Throwable t) {
-            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data")
-                + "\")", t);
+            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data") + "\")", t);
         }
     }
 
@@ -762,8 +776,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     protected boolean canPipeConnect_internal(TileEntity with, EnumFacing side) {
         if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
             if (with instanceof IPipeConnection) {
-                IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side
-                        .getOpposite());
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
                 if (override != IPipeConnection.ConnectOverride.DEFAULT) {
                     return override == IPipeConnection.ConnectOverride.CONNECT;
                 }
@@ -831,8 +844,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (pluggable instanceof IPipeConnection) {
             IPipe neighborPipe = getNeighborPipe(side);
             if (neighborPipe != null) {
-                IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(neighborPipe.getTile().getPipeType(),
-                        side);
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(neighborPipe.getTile().getPipeType(), side);
                 if (override == IPipeConnection.ConnectOverride.CONNECT) {
                     return true;
                 } else if (override == IPipeConnection.ConnectOverride.DISCONNECT) {
