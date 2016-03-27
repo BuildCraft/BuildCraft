@@ -21,18 +21,6 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BCLog;
 
 public final class NBTUtils {
-    public static final int BYTE = 1;
-    public static final int SHORT = 2;
-    public static final int INT = 3;
-    public static final int LONG = 4;
-    public static final int FLOAT = 5;
-    public static final int DOUBLE = 6;
-    public static final int BYTE_ARRAY = 7;
-    public static final int STRING = 8;
-    public static final int LIST = 9;
-    public static final int COMPOUND = 10;
-    public static final int INT_ARRAY = 11;
-
     /** Deactivate constructor */
     private NBTUtils() {
 
@@ -98,11 +86,11 @@ public final class NBTUtils {
     public static BlockPos readBlockPos(NBTBase base) {
         if (base == null) return null;
         switch (base.getId()) {
-            case INT_ARRAY: {
+            case Constants.NBT.TAG_INT_ARRAY: {
                 int[] array = ((NBTTagIntArray) base).getIntArray();
                 return new BlockPos(array[0], array[1], array[2]);
             }
-            case COMPOUND: {
+            case Constants.NBT.TAG_COMPOUND: {
                 NBTTagCompound nbt = (NBTTagCompound) base;
                 BlockPos pos = BlockPos.ORIGIN;
                 if (nbt.hasKey("i")) {
@@ -118,8 +106,7 @@ public final class NBTUtils {
                 } else if (nbt.hasKey("pos")) {
                     return readBlockPos(nbt.getTag("pos"));
                 } else {
-                    BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")",
-                            new Throwable());
+                    BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")", new Throwable());
                 }
                 return pos;
             }
@@ -137,7 +124,7 @@ public final class NBTUtils {
     }
 
     public static Vec3 readVec3(NBTTagCompound nbt, String tagName) {
-        return readVec3(nbt.getTagList(tagName, DOUBLE));
+        return readVec3(nbt.getTagList(tagName, Constants.NBT.TAG_DOUBLE));
     }
 
     public static Vec3 readVec3(NBTTagList list) {
