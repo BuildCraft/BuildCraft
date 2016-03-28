@@ -10,6 +10,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -121,6 +123,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelKeyFacade getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT || layer == EnumWorldBlockLayer.TRANSLUCENT) {
             return new ModelKeyFacade(layer, side, state, isHollow());
