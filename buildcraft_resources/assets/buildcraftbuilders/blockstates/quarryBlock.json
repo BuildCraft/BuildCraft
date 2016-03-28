@@ -11,7 +11,7 @@
         	"east":  { },
         	"south": { "y": 90 },
         	"west":  { "y": 180 },
-        	"north": { y": 270 }
+        	"north": { "y": 270 }
         },
         "led_done": {
         	"true":  { "submodel":"buildcraftbuilders:quarry/led_active_on" },
