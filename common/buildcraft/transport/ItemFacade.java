@@ -5,6 +5,7 @@
 package buildcraft.transport;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
@@ -288,8 +290,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
     private void registerValidFacades(Block block, Item item) {
         ArrayList<ItemStack> stacks = new ArrayList<>(16);
+        HashSet<IBlockState> states = new HashSet<>();
         try {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 for (CreativeTabs ct : item.getCreativeTabs()) {
                     block.getSubBlocks(item, ct, stacks);
                 }
@@ -297,7 +300,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 for (int i = 0; i < 16; i++) {
                     try {
                         IBlockState state = block.getStateFromMeta(i);
-                        stacks.add(new ItemStack(item, 1, i));
+                        if (state != null && !states.contains(state)) {
+                            states.add(state);
+                            stacks.add(new ItemStack(item, 1, i));
+                        }
                     } catch (Exception e) {
 
                     }
