@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.recipes.IAssemblyRecipeManager;
@@ -16,7 +19,7 @@ import buildcraft.api.recipes.IFlexibleRecipe;
 public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
     public static final AssemblyRecipeManager INSTANCE = new AssemblyRecipeManager();
-    private Map<String, IFlexibleRecipe<ItemStack>> assemblyRecipes = new HashMap<>();
+    private BiMap<String, IFlexibleRecipe<ItemStack>> assemblyRecipes = HashBiMap.create();
 
     @Override
     public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
