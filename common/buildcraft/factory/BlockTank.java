@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.block.TileBuildCraft;
 
 public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection {
     private static final boolean DEBUG_MODE = false;
@@ -35,7 +36,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile != null && tile instanceof TileTank) {
+        if (tile != null && tile instanceof TileBuildCraft) {
             TileTank tank = (TileTank) tile;
             tank.onBlockBreak();
         }
@@ -45,12 +46,12 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
 
         super.breakBlock(world, pos, state);
 
-        if (tileAbove instanceof TileTank) {
+        if (tileAbove instanceof TileBuildCraft) {
             ((TileTank) tileAbove).updateComparators();
             world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(JOINED_BELOW, false));
         }
 
-        if (tileBelow instanceof TileTank) {
+        if (tileBelow instanceof TileBuildCraft) {
             ((TileTank) tileBelow).updateComparators();
         }
     }
@@ -98,7 +99,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
         if (current != null) {
             TileEntity tile = world.getTileEntity(pos);
 
-            if (tile instanceof TileTank) {
+            if (tile instanceof TileBuildCraft) {
                 TileTank tank = (TileTank) tile;
 
                 if (FluidUtil.interactWithTank(current, entityplayer, tank, side)) {
@@ -190,7 +191,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
         } else if (DEBUG_MODE) {
             TileEntity tile = world.getTileEntity(pos);
 
-            if (tile instanceof TileTank) {
+            if (tile instanceof TileBuildCraft) {
                 TileTank tank = (TileTank) tile;
                 if (tank.getTankInfo(null)[0].fluid != null) {
                     entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(null)[0].fluid.amount + " mB"));
@@ -214,7 +215,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
 
-        if (tile instanceof TileTank) {
+        if (tile instanceof TileBuildCraft) {
             TileTank tank = (TileTank) tile;
             return tank.getFluidLightLevel();
         }
@@ -231,7 +232,7 @@ public class BlockTank extends BlockBuildCraft implements ICustomPipeConnection 
     public int getComparatorInputOverride(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
 
-        if (tile instanceof TileTank) {
+        if (tile instanceof TileBuildCraft) {
             TileTank tank = (TileTank) tile;
             return tank.getComparatorInputOverride();
         }
