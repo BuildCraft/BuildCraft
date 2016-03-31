@@ -66,8 +66,8 @@ import buildcraft.transport.client.render.PipeTransportRendererFluids;
 import buildcraft.transport.gates.*;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.ic2.BlockIc2Transformer;
-import buildcraft.transport.ic2.ItemIc2Transformer;
+import buildcraft.transport.transformer.BlockTransformer;
+import buildcraft.transport.transformer.ItemTransformer;
 import buildcraft.transport.gates.GateExpansionLightSensor;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
@@ -228,7 +228,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public PipeIconProvider pipeIconProvider = new PipeIconProvider();
     public WireIconProvider wireIconProvider = new WireIconProvider();
 
-    public static BlockIc2Transformer ic2compattransformeroflols;
+    public static BlockTransformer ic2compattransformeroflols;
 
     private static class PipeRecipe {
         boolean isShapeless = false; // pipe recipes come shaped and unshaped.
@@ -389,10 +389,10 @@ public class BuildCraftTransport extends BuildCraftMod {
             gateCopier = new ItemGateCopier();
             BCRegistry.INSTANCE.registerItem(gateCopier, false);
 
-            ic2compattransformeroflols = new BlockIc2Transformer(Material.iron);
-            ic2compattransformeroflols.setRegistryName("transformer.ic2");
-            ic2compattransformeroflols.setUnlocalizedName("buildcraft.block.transformer.ic2");
-            BCRegistry.INSTANCE.registerBlock(ic2compattransformeroflols, ItemIc2Transformer.class, true);
+            ic2compattransformeroflols = new BlockTransformer(Material.iron);
+            ic2compattransformeroflols.setRegistryName("transformer");
+            ic2compattransformeroflols.setUnlocalizedName("buildcraft.block.transformer");
+            BCRegistry.INSTANCE.registerBlock(ic2compattransformeroflols, ItemTransformer.class, true);
 
             for (PipeContents kind : PipeContents.values()) {
                 triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);

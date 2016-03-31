@@ -68,6 +68,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     private boolean needsInit = true;
 
     private int[] powerQuery = new int[6];
+    private int energyInput = 0;
 
     private long currentDate;
     private double[] internalPower = new double[6];
@@ -288,11 +289,14 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-        if (highestPower > maxPowerReal) {
+        if (energyInput > maxPowerReal) {
+            System.out.println(energyInput);
             overload++;
         } else {
             overload = 0;
         }
+
+        energyInput = 0;
 
         // Compute the tiles requesting energy that are not power pipes
         for (EnumFacing dir : EnumFacing.VALUES) {
@@ -434,6 +438,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         }
 
         dbgEnergyInput[side] += val;
+        energyInput += val;
 
         return val;
     }
