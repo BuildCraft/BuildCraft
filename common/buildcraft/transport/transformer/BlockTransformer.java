@@ -66,19 +66,15 @@ public class BlockTransformer extends Block implements ITileEntityProvider {
         }
         return false;
     }
-
+    
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        IBlockState current = getStateFromMeta(meta);
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         EnumFacing player_facing = placer.getHorizontalFacing().getOpposite();
-        System.out.println(meta + " -> " + current);
         System.out.println(player_facing.name());
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof TileTransformer) {
             ((TileTransformer) tile).setFacing(player_facing);
         }
-
-        return current;
     }
 
     @Override
