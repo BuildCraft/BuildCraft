@@ -24,7 +24,7 @@ public final class PipeToolTipManager {
     private static final Map<Class<? extends Pipe<?>>, String> toolTips = new HashMap<>();
 
     static {
-        if (!BuildCraftCore.hidePowerNumbers && !BuildCraftTransport.usePipeLoss) {
+        if (!BuildCraftCore.hidePowerNumbers) {
             for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerMaximums.entrySet()) {
                 if (PipePowerWood.class.isAssignableFrom(pipe.getKey())) {
                     continue;
