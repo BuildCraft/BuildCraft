@@ -1,4 +1,4 @@
-package buildcraft.transport.ic2;
+package buildcraft.transport.transformer;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,13 +24,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BCCreativeTab;
 
-public class BlockIc2Transformer extends Block implements ITileEntityProvider {
+public class BlockTransformer extends Block implements ITileEntityProvider {
     public enum EnumVoltage implements IStringSerializable {
         LOW_MEDIUM,
         MEDIUM_HIGH,
         HIGH_EXTREME;
 
-        private static final EnumVoltage[] VALUES = values();
+        public static final EnumVoltage[] VALUES = values();
 
         @Override
         public String getName() {
@@ -38,30 +39,46 @@ public class BlockIc2Transformer extends Block implements ITileEntityProvider {
     }
 
     public static final PropertyEnum<EnumVoltage> VOLTAGE = PropertyEnum.create("voltage", EnumVoltage.class);
-    public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
+    public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.VALUES);
 
-    public BlockIc2Transformer(Material material) {
+    public BlockTransformer(Material material) {
         super(material);
         setCreativeTab(BCCreativeTab.get("main"));
         setDefaultState(getDefaultState().withProperty(VOLTAGE, EnumVoltage.LOW_MEDIUM).withProperty(DIRECTION, EnumFacing.EAST));
+    }
 
-        for (EnumVoltage v : EnumVoltage.VALUES) {
-            for (EnumFacing f : EnumFacing.HORIZONTALS) {
-                IBlockState state = getDefaultState().withProperty(VOLTAGE, v).withProperty(DIRECTION, f);
-                int meta = getMetaFromState(state);
-                System.out.println(meta + " = " + state);
-                IBlockState other = getStateFromMeta(meta);
-                System.out.println("  -> " + other);
-            }
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof TileTransformer) {
+            return state.withProperty(DIRECTION, ((TileTransformer) tile).getFacing());
+        } else {
+            return state;
         }
+    }
+
+    @Override
+    public boolean rotateBlock(World worldIn, BlockPos pos, EnumFacing axis) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof TileTransformer) {
+            ((TileTransformer) tile).rotateFacing(axis);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         IBlockState current = getStateFromMeta(meta);
-        EnumFacing player_facing = placer.getHorizontalFacing();
+        EnumFacing player_facing = placer.getHorizontalFacing().getOpposite();
         System.out.println(meta + " -> " + current);
-        return current.withProperty(DIRECTION, player_facing);
+        System.out.println(player_facing.name());
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof TileTransformer) {
+            ((TileTransformer) tile).setFacing(player_facing);
+        }
+
+        return current;
     }
 
     @Override
@@ -79,22 +96,16 @@ public class BlockIc2Transformer extends Block implements ITileEntityProvider {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int v = (state.getValue(VOLTAGE).ordinal() << 2);
-        int f = state.getValue(DIRECTION).getHorizontalIndex();
-        return v + f;
+        return state.getValue(VOLTAGE).ordinal();
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        EnumVoltage v = EnumVoltage.VALUES[(meta >> 2) & 3];
-        EnumFacing f = EnumFacing.getHorizontal(meta & 3);
-        return getDefaultState().withProperty(VOLTAGE, v).withProperty(DIRECTION, f);
+        return getDefaultState().withProperty(VOLTAGE, EnumVoltage.VALUES[meta % 3]);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        IBlockState state = getStateFromMeta(meta);
-        EnumVoltage volts = state.getValue(VOLTAGE);
-        return new TileIc2Transformer(world, volts);
+        return new TileTransformer(world);
     }
 }

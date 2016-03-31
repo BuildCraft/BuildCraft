@@ -1,0 +1,21 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"buildcrafttransport:transformer_cube"
+    },
+    "variants": {
+        "voltage": {
+            "low_medium":   { "textures": { "front":"buildcrafttransport:blocks/transformer_wood_large", "all":"buildcrafttransport:blocks/transformer_wood_small" } },
+            "medium_high":  { "textures": { "front":"buildcrafttransport:blocks/transformer_iron_large", "all":"buildcrafttransport:blocks/transformer_iron_small" } },
+            "high_extreme": { "textures": { "front":"buildcrafttransport:blocks/transformer_gold_large", "all":"buildcrafttransport:blocks/transformer_gold_small" } }
+        },
+        "facing": {
+            "east":  { "y":270 },
+            "west":  { "y":90 },
+            "north": { "y":180 },
+            "south": { "y":0 },
+            "up": { "x":90 },
+            "down": { "x":270 }
+        }
+    }
+}

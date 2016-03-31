@@ -4,9 +4,9 @@
         "particle": "#all",
         "down": "#all",
         "up": "#all",
-        "north": "#front",
+        "north": "#all",
         "east": "#all",
-        "south": "#all",
+        "south": "#front",
         "west": "#all"
     }
 }

@@ -1,4 +1,4 @@
-package buildcraft.transport.ic2;
+package buildcraft.transport.transformer;
 
 import java.util.Locale;
 
@@ -7,10 +7,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.transport.ic2.BlockIc2Transformer.EnumVoltage;
+import buildcraft.transport.transformer.BlockTransformer.EnumVoltage;
 
-public class ItemIc2Transformer extends ItemBlock {
-    public ItemIc2Transformer(Block block) {
+public class ItemTransformer extends ItemBlock {
+    public ItemTransformer(Block block) {
         super(block);
         setHasSubtypes(true);
     }
@@ -19,7 +19,7 @@ public class ItemIc2Transformer extends ItemBlock {
     public String getUnlocalizedName(ItemStack stack) {
         int meta = stack.getItemDamage();
         IBlockState state = block.getStateFromMeta(meta);
-        EnumVoltage volts = state.getValue(BlockIc2Transformer.VOLTAGE);
+        EnumVoltage volts = state.getValue(BlockTransformer.VOLTAGE);
         return super.getUnlocalizedName() + "." + volts.getName().toLowerCase(Locale.ROOT);
     }
     

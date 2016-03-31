@@ -95,6 +95,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
         }
 
         if (allowExtraction) {
+        //if (true) {
             allowExtraction = false;
 
             int energyMaxExtract = Math.min(transport.maxPower, battery.getMaxEnergyStored() - battery.getEnergyStored());
@@ -128,6 +129,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
                 battery.setEnergy(battery.getEnergyStored() - (int) transport.receiveEnergy(o, energyToRemove));
             }
         }
+
+        battery.setEnergy(0);
 
         lastRequestedEnergy = requestedEnergy;
         requestedEnergy = 0;
