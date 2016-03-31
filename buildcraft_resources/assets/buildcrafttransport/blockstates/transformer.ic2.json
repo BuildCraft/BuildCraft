@@ -1,0 +1,20 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"buildcrafttransport:transformer_cube"
+    },
+    "variants": {
+        "voltage": {
+            "low_medium":   { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } },
+            "medium_high":  { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } },
+            "high_extreme": { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } }
+        },
+        "facing": {
+            "east":  { "y":0 },
+            "west":  { "y":180 },
+            "north": { "y":90 },
+            "south": { "y":270 }
+            
+        }
+    }
+}
