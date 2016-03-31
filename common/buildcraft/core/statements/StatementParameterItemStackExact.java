@@ -3,6 +3,7 @@ package buildcraft.core.statements;
 import java.util.Objects;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -109,6 +110,11 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         return this;
+    }
+
+    @Override
+    public void registerIcons(TextureMap map) {
+
     }
 
     @Override

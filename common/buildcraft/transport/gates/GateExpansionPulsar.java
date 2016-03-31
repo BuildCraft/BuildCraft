@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -70,7 +70,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
         }
 
         @Override
-        public void addActions(List<IActionInternal> list) {
+        public void addActions(Collection<IActionInternal> list) {
             super.addActions(list);
             list.add(BuildCraftTransport.actionEnergyPulser);
             list.add(BuildCraftTransport.actionSingleEnergyPulse);

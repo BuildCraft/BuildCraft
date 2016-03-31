@@ -168,6 +168,7 @@ import buildcraft.core.statements.DefaultTriggerProvider;
 import buildcraft.core.statements.StatementParameterDirection;
 import buildcraft.core.statements.StatementParameterItemStackExact;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.StatementParameterRedstoneLevel;
 import buildcraft.core.statements.TriggerEnergy;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
@@ -457,14 +458,11 @@ public class BuildCraftCore extends BuildCraftMod {
                 "buildcraft|core:achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(engineBlock, 1, 0),
                 BuildCraftCore.woodenGearAchievement));
 
-        // BuildCraft 6.1.4 and below - migration only
-        StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
-        StatementManager.registerParameterClass("buildcraft:stackAction", StatementParameterItemStack.class);
-
         StatementManager.registerParameterClass(StatementParameterItemStack.class);
         StatementManager.registerParameterClass(StatementParameterItemStackExact.class);
         StatementManager.registerParameterClass(StatementParameterDirection.class);
         StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
+        StatementManager.registerParameterClass(StatementParameterRedstoneLevel.class);
         StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
         StatementManager.registerActionProvider(new DefaultActionProvider());
 
@@ -730,17 +728,15 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Pre evt) {
+        StatementManager.registerIcons(evt.map);
         CoreIconProvider.registerSprites(evt.map);
         TextureAtlasSprite[] array = new TextureAtlasSprite[16];
         for (EnumColor color : EnumColor.values()) {
             String location = "buildcraftcore:items/paintbrush/" + color.name().toLowerCase(Locale.ROOT);
             array[color.ordinal()] = evt.map.registerSprite(new ResourceLocation(location));
         }
+
         EnumColor.registerSprites(array);
-        PatternParameterCenter.registerSprites(evt.map);
-        PatternParameterHollow.registerSprites(evt.map);
-        PatternParameterXZDir.registerSprites(evt.map);
-        PatternParameterYDir.registerSprites(evt.map);
     }
 
     @SubscribeEvent

@@ -4,26 +4,49 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.ActionRedstoneOutput;
+import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.StatementParameterRedstoneLevel;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput {
-
-    public final int level;
-
-    public ActionRedstoneFaderOutput(int level) {
-        super(String.format("buildcraft:redstone.output.%02d", level));
-        setBuildCraftLocation("transport", String.format("triggers/redstone_%02d", level));
-        this.level = level;
+    public ActionRedstoneFaderOutput() {
+        super("buildcraft:redstone.output.analog");
+        setBuildCraftLocation("core", "triggers/action_redstoneoutput");
     }
 
     @Override
-    public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.redstone.input.level"), level);
+    protected int getRGSOSlot() { return 1; }
+
+    @Override
+    protected int getSignalLevel(IStatementParameter[] parameters) {
+        if (parameters.length >= 1 && (parameters[0] instanceof StatementParameterRedstoneLevel)) {
+            return ((StatementParameterRedstoneLevel) parameters[0]).level;
+        }
+
+        return 15;
     }
 
     @Override
-    protected int getSignalLevel() {
-        return level;
+    public IStatementParameter createParameter(int index) {
+        IStatementParameter param = null;
+
+        if (index == 0) {
+            param = new StatementParameterRedstoneLevel(15, 1, 15);
+        } else if (index == 1) {
+            param = new StatementParameterRedstoneGateSideOnly();
+        }
+
+        return param;
+    }
+
+    @Override
+    public int maxParameters() {
+        return 2;
+    }
+
+    @Override
+    public int minParameters() {
+        return 1;
     }
 }

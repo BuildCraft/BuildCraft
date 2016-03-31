@@ -5,13 +5,11 @@
 package buildcraft.core.statements;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
@@ -22,32 +20,20 @@ import buildcraft.api.tiles.IControllable;
 public class DefaultActionProvider implements IActionProvider {
 
     @Override
-    public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
-        LinkedList<IActionInternal> res = new LinkedList<>();
-
+    public void addInternalActions(Collection<IActionInternal> res, IStatementContainer container) {
         if (container instanceof IRedstoneStatementContainer) {
             res.add(BuildCraftCore.actionRedstone);
         }
-
-        return res;
     }
 
     @Override
-    public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
-        LinkedList<IActionExternal> res = new LinkedList<>();
-
-        try {
-            if (tile instanceof IControllable) {
-                for (IControllable.Mode mode : IControllable.Mode.values()) {
-                    if (mode != IControllable.Mode.Unknown && ((IControllable) tile).acceptsControlMode(mode)) {
-                        res.add(BuildCraftCore.actionControl[mode.ordinal()]);
-                    }
+    public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
+        if (tile instanceof IControllable) {
+            for (IControllable.Mode mode : IControllable.Mode.values()) {
+                if (mode != IControllable.Mode.Unknown && ((IControllable) tile).acceptsControlMode(mode)) {
+                    res.add(BuildCraftCore.actionControl[mode.ordinal()]);
                 }
             }
-        } catch (Throwable error) {
-            BCLog.logger.error("Outdated API detected, please update your mods!");
         }
-
-        return res;
     }
 }

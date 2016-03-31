@@ -6,7 +6,6 @@ package buildcraft.builders.statements;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -24,13 +23,12 @@ public class BuildersActionProvider implements IActionProvider {
     private final HashMap<String, ActionFiller> actionMap = new HashMap<>();
 
     @Override
-    public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
-        return null;
+    public void addInternalActions(Collection<IActionInternal> actions, IStatementContainer container) {
+
     }
 
     @Override
-    public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
-        LinkedList<IActionExternal> actions = new LinkedList<>();
+    public void addExternalActions(Collection<IActionExternal> actions, EnumFacing side, TileEntity tile) {
         if (tile instanceof TileFiller) {
             for (IFillerPattern p : FillerManager.registry.getPatterns()) {
                 if (p instanceof FillerPattern) {
@@ -42,6 +40,5 @@ public class BuildersActionProvider implements IActionProvider {
                 }
             }
         }
-        return actions;
     }
 }

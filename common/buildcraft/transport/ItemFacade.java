@@ -189,6 +189,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
     }
 
+    public static boolean isTransparentFacade(IBlockState state) {
+        Block block = state.getBlock();
+        return !block.isVisuallyOpaque() && !block.isOpaqueCube();
+    }
+
     @Override
     public String getUnlocalizedName(ItemStack itemstack) {
         return "item.Facade";
@@ -247,7 +252,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                         stacks.add(state);
                     }
                 } catch (Exception e) {
-
                 }
             }
         }
@@ -281,12 +285,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         return true;
-    }
-
-    public static boolean isTransparentFacade(IBlockState state) {
-        Block block = state.getBlock();
-
-        return !block.isVisuallyOpaque() && !block.isOpaqueCube();
     }
 
     private static void generateFacadeStacks() {

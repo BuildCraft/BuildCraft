@@ -6,6 +6,7 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -235,7 +236,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
                     NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
                     triggerParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
-                    triggerParameters[i][j].readFromNBT(cpt);
+                    if (triggerParameters[i][j] != null) {
+                        triggerParameters[i][j].readFromNBT(cpt);
+                    }
                 }
             }
 
@@ -243,7 +246,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
                     NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
                     actionParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
-                    actionParameters[i][j].readFromNBT(cpt);
+                    if (actionParameters[i][j] != null) {
+                        actionParameters[i][j].readFromNBT(cpt);
+                    }
                 }
             }
         }
@@ -553,7 +558,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // TRIGGERS
-    public void addTriggers(List<ITriggerInternal> list) {
+    public void addTriggers(Collection<ITriggerInternal> list) {
         for (PipeWire wire : PipeWire.VALUES) {
             if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
                 list.add(BuildCraftTransport.triggerPipeWireActive[wire.ordinal()]);
@@ -579,7 +584,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // ACTIONS
-    public void addActions(List<IActionInternal> list) {
+    public void addActions(Collection<IActionInternal> list) {
         for (PipeWire wire : PipeWire.VALUES) {
             if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
                 list.add(BuildCraftTransport.actionPipeWire[wire.ordinal()]);
@@ -644,6 +649,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     @Override
     public IPipe getPipe() {
         return pipe;
+    }
+
+    @Override
+    public Collection<IGateExpansion> getExpansions() {
+        return expansions.keySet();
     }
 
     @Override

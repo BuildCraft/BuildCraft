@@ -34,6 +34,7 @@ import buildcraft.transport.pipes.PipeFluidsDiorite;
 import buildcraft.transport.pipes.PipeFluidsClay;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
+import buildcraft.transport.pipes.PipeFluidsGlass;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsGranite;
 import buildcraft.transport.pipes.PipeFluidsIron;
@@ -695,6 +696,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
         fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+
+        fluidCapacities.put(PipeFluidsGlass.class, 25 * BuildCraftTransport.pipeFluidsBaseFlowRate);
     }
 
     @Override

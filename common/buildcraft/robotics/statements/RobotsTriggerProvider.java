@@ -5,7 +5,6 @@
 package buildcraft.robotics.statements;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
@@ -20,9 +19,9 @@ import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.robotics.RobotUtils;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
+
     @Override
-    public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-        LinkedList<ITriggerInternal> result = new LinkedList<>();
+    public void addInternalTriggers(Collection<ITriggerInternal> result, IStatementContainer container) {
         List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
         if (stations.size() > 0) {
@@ -31,12 +30,10 @@ public class RobotsTriggerProvider implements ITriggerProvider {
             result.add(BuildCraftRobotics.triggerRobotLinked);
             result.add(BuildCraftRobotics.triggerRobotReserved);
         }
-
-        return result;
     }
 
     @Override
-    public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
-        return null;
+    public void addExternalTriggers(Collection<ITriggerExternal> triggers, EnumFacing side, TileEntity tile) {
+
     }
 }

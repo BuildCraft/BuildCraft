@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraft.tileentity.TileEntity;
 
@@ -75,7 +75,7 @@ public final class GateExpansionTimer extends GateExpansionBuildcraft implements
         }
 
         @Override
-        public void addTriggers(List<ITriggerInternal> list) {
+        public void addTriggers(Collection<ITriggerInternal> list) {
             super.addTriggers(list);
             for (Time time : TriggerClockTimer.Time.VALUES) {
                 list.add(BuildCraftTransport.triggerTimer[time.ordinal()]);

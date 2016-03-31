@@ -14,6 +14,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -23,12 +26,15 @@ import buildcraft.core.lib.utils.BCStringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {
 
+    @SideOnly(Side.CLIENT)
     private static TextureAtlasSprite[] sprites;
 
     public EnumFacing direction = null;
 
-    public static void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[5];
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(TextureMap map) {
+        sprites = new TextureAtlasSprite[6];
         sprites[0] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_down"));
         sprites[1] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_up"));
         sprites[2] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/trigger_dir_north"));

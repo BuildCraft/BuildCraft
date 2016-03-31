@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraft.tileentity.TileEntity;
 
@@ -39,7 +39,7 @@ public final class GateExpansionLightSensor extends GateExpansionBuildcraft impl
         }
 
         @Override
-        public void addTriggers(List<ITriggerInternal> list) {
+        public void addTriggers(Collection<ITriggerInternal> list) {
             super.addTriggers(list);
             list.add(BuildCraftTransport.triggerLightSensorBright);
             list.add(BuildCraftTransport.triggerLightSensorDark);
