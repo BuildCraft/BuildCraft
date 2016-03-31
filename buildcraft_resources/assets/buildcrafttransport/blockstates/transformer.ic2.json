@@ -5,15 +5,15 @@
     },
     "variants": {
         "voltage": {
-            "low_medium":   { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } },
-            "medium_high":  { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } },
-            "high_extreme": { textures: { "front":"transformer_iron_small", "all":"transformer_iron_large" } }
+            "low_medium":   { textures: { "front":"buildcrafttransport:blocks/ic2/transformer_wood_small", "all":"buildcrafttransport:blocks/ic2/transformer_wood_large" } },
+            "medium_high":  { textures: { "front":"buildcrafttransport:blocks/ic2/transformer_iron_small", "all":"buildcrafttransport:blocks/ic2/transformer_iron_large" } },
+            "high_extreme": { textures: { "front":"buildcrafttransport:blocks/ic2/transformer_gold_small", "all":"buildcrafttransport:blocks/ic2/transformer_gold_large" } }
         },
         "facing": {
-            "east":  { "y":0 },
-            "west":  { "y":180 },
-            "north": { "y":90 },
-            "south": { "y":270 }
+            "east":  { "y":270 },
+            "west":  { "y":90 },
+            "north": { "y":180 },
+            "south": { "y":0 }
             
         }
     }
