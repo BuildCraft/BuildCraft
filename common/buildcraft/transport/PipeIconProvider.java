@@ -88,6 +88,7 @@ public class PipeIconProvider implements IIconProvider {
         PipeItemsGranite("granite_item"),
         PipeItemsDiorite("diorite_item"),
         PipeItemsAndesite("andesite_item"),
+        PipeItemsGlass("glass_item"),
         PipeItemsQuartz("quartz_item"),
         PipeItemsClay("clay_item"),
         PipeItemsVoid("void_item"),
@@ -103,6 +104,7 @@ public class PipeIconProvider implements IIconProvider {
         PipeFluidsGranite("granite_fluid"),
         PipeFluidsDiorite("diorite_fluid"),
         PipeFluidsAndesite("andesite_fluid"),
+        PipeFluidsGlass("glass_fluid"),
         PipeFluidsGold("gold_fluid"),
         PipeFluidsIron_Standard("iron_fluid_clear"),
         PipeFluidsIron_Solid("iron_fluid_filled"),
@@ -124,6 +126,7 @@ public class PipeIconProvider implements IIconProvider {
         PipePowerGold("gold_power"),
         PipePowerQuartz("quartz_power"),
         PipePowerStone("stone_power"),
+        PipePowerGlass("glass_power"),
         PipePowerSandstone("sandstone_power"),
         PipePowerCobblestone("cobblestone_power"),
         //

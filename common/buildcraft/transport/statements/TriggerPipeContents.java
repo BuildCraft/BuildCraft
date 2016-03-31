@@ -119,7 +119,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
             switch (kind) {
                 case empty:
-                    for (short s : transportPower.displayPower) {
+                    for (int s : transportPower.displayPower) {
                         if (s > 0) {
                             return false;
                         }
@@ -127,7 +127,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
                     return true;
                 case containsEnergy:
-                    for (short s : transportPower.displayPower) {
+                    for (int s : transportPower.displayPower) {
                         if (s > 0) {
                             return true;
                         }
