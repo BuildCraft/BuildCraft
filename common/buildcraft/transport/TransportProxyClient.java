@@ -4,13 +4,22 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.client.render.FluidRenderer;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.client.model.FacadeItemModel;
 import buildcraft.transport.client.model.FacadePluggableModel;
 import buildcraft.transport.client.model.GateItemModel;
@@ -38,6 +47,16 @@ public class TransportProxyClient extends TransportProxy {
     @Override
     public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
         // FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+    }
+
+    @Override
+    public void preInit() {
+        super.preInit();
+
+        Item transformer = Item.getItemFromBlock(BuildCraftTransport.ic2compattransformeroflols);
+        ModelLoader.setCustomModelResourceLocation(transformer, 0, new ModelResourceLocation("buildcrafttransport:transformer", "facing=east,voltage=low_medium"));
+        ModelLoader.setCustomModelResourceLocation(transformer, 1, new ModelResourceLocation("buildcrafttransport:transformer", "facing=east,voltage=medium_high"));
+        ModelLoader.setCustomModelResourceLocation(transformer, 2, new ModelResourceLocation("buildcrafttransport:transformer", "facing=east,voltage=high_extreme"));
     }
 
     @Override

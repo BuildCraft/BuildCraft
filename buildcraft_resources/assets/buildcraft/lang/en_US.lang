@@ -445,6 +445,10 @@ itemGroup.buildcraft.pipes=BuildCraft Pipes
 itemGroup.buildcraft.facades=BuildCraft Facades
 itemGroup.buildcraft.gates=BuildCraft Gates
 
+tile.buildcraft.block.transformer.low_medium.name=Wooden Transformer
+tile.buildcraft.block.transformer.medium_high.name=Iron Transformer
+tile.buildcraft.block.transformer.high_extreme.name=Gold Transformer
+
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table
 tile.assemblyWorkbenchBlock.name=Advanced Crafting Table

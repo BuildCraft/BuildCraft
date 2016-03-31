@@ -319,19 +319,6 @@ public class BuildCraftTransport extends BuildCraftMod {
             //pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
             pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
 
-            for (int i = 0; i < 17; i++) {
-                Object glass;
-
-                if (i == 0) {
-                    glass = "blockGlassColorless";
-                } else {
-                    glass = "blockGlass" + EnumColor.fromId(15 - (i - 1)).getName();
-                }
-
-                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(pipeItemsGlass, 8, i), "d d", "rgr", "d d", 'd', Items.diamond, 'r', Items.redstone, 'g', glass));
-                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(pipeItemsGlass, 8, i), "drd", " g ", "drd", 'd', Items.diamond, 'r', Items.redstone, 'g', glass));
-            }
-
             pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
             // pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
             pipeFluidsStone = buildPipe(PipeFluidsStone.class, pipeWaterproof, pipeItemsStone);
@@ -430,6 +417,8 @@ public class BuildCraftTransport extends BuildCraftMod {
         } finally {
             BuildCraftCore.mainConfiguration.save();
         }
+
+        TransportProxy.proxy.preInit();
 
         InterModComms.registerHandler(new IMCHandlerTransport());
         if (NEPTUNE_TESTING) {
@@ -654,6 +643,24 @@ public class BuildCraftTransport extends BuildCraftMod {
     }
 
     public static void loadRecipes() {
+        for (int i = 0; i < 17; i++) {
+            Object glass;
+
+            if (i == 0) {
+                glass = "blockGlassColorless";
+            } else {
+                glass = "blockGlass" + EnumColor.fromId(15 - (i - 1)).getName();
+            }
+
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(pipeItemsGlass, 8, i), "d d", "rgr", "d d", 'd', Items.diamond, 'r', Items.redstone, 'g', glass));
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(pipeItemsGlass, 8, i), "drd", " g ", "drd", 'd', Items.diamond, 'r', Items.redstone, 'g', glass));
+        }
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ic2compattransformeroflols, 1, 0), "mrm", "gpg", "mrm", 'm', "plankWood", 'g', "gearWood", 'r', Items.redstone, 'p', Blocks.piston));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ic2compattransformeroflols, 1, 1), "mrm", "gpg", "mrm", 'm', "ingotIron", 'g', "gearIron", 'r', Items.redstone, 'p', Blocks.piston));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ic2compattransformeroflols, 1, 2), "mrm", "gpg", "mrm", 'm', "ingotGold", 'g', "gearGold", 'r', Items.redstone, 'p', Blocks.piston));
+
+
         // Add base recipe for pipe waterproof.
         GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
         if (additionalWaterproofingRecipe) {

@@ -75,7 +75,6 @@ public class TileTransformer extends TileEntity implements ITickable, IEnergyHan
             IEnergyReceiver[] receivers = new IEnergyReceiver[6];
             int[] pulls = new int[6];
             int totalPull = 0;
-            int countPull = 0;
 
             for (EnumFacing side : EnumFacing.VALUES) {
                 if (isExtractionSide(side)) {
@@ -85,17 +84,16 @@ public class TileTransformer extends TileEntity implements ITickable, IEnergyHan
                         int p = ((IEnergyReceiver) tile).receiveEnergy(side.getOpposite(), getExtractionPower(), true);
                         pulls[side.ordinal()] = p;
                         totalPull += p;
-                        if (p > 0) {
-                            countPull++;
-                        }
                     }
                 }
             }
 
+            int oldPower = power;
             for (EnumFacing side : EnumFacing.VALUES) {
                 if (pulls[side.ordinal()] > 0) {
-                    int p = getExtractionPower() * countPull * pulls[side.ordinal()] / totalPull;
+                    int p = oldPower * pulls[side.ordinal()] / totalPull;
                     p = Math.min(p, Math.min(getExtractionPower(), power));
+                    System.out.println(p);
                     power -= receivers[side.ordinal()].receiveEnergy(side.getOpposite(), p, false);
                 }
             }

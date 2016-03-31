@@ -37,4 +37,7 @@ public class TransportProxy {
     public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {}
 
     public void clearDisplayList(int displayList) {}
+
+    public void preInit() {
+    }
 }
