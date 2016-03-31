@@ -9,18 +9,16 @@ import java.util.LinkedList;
 import java.util.Locale;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemMinecart;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -28,14 +26,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -60,134 +52,32 @@ import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BCRegistry;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.PowerMode;
+import buildcraft.core.*;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.base.ChannelHandler;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.transport.BlockFilteredBuffer;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.FacadePluggable;
-import buildcraft.transport.IDiamondPipe;
-import buildcraft.transport.IMCHandlerTransport;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.ItemGateCopier;
-import buildcraft.transport.ItemPipe;
-import buildcraft.transport.ItemPipeWire;
-import buildcraft.transport.LensFilterHandler;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeActionProvider;
-import buildcraft.transport.PipeColoringRecipe;
-import buildcraft.transport.PipeEventBus;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTriggerProvider;
-import buildcraft.transport.TileFilteredBuffer;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TransportGuiHandler;
-import buildcraft.transport.TransportPipes_BC8;
-import buildcraft.transport.TransportProxy;
-import buildcraft.transport.TransportSiliconRecipes;
-import buildcraft.transport.WireIconProvider;
+import buildcraft.transport.*;
 import buildcraft.transport.block.BlockPipe;
-import buildcraft.transport.client.model.FacadeItemModel;
-import buildcraft.transport.client.model.GateItemModel;
-import buildcraft.transport.client.model.LensPluggableModel;
-import buildcraft.transport.client.model.ModelPowerAdapter;
-import buildcraft.transport.client.model.PipeBlockModel;
-import buildcraft.transport.client.model.PipeItemModel;
-import buildcraft.transport.client.model.PlugPluggableModel;
+import buildcraft.transport.client.model.*;
 import buildcraft.transport.client.render.PipeTransportRendererFluids;
-import buildcraft.transport.gates.GateDefinition;
+import buildcraft.transport.gates.*;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
-import buildcraft.transport.gates.GateExpansionLightSensor;
-import buildcraft.transport.gates.GateExpansionPulsar;
-import buildcraft.transport.gates.GateExpansionRedstoneFader;
-import buildcraft.transport.gates.GateExpansionTimer;
-import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.network.PacketFluidUpdate;
-import buildcraft.transport.network.PacketPipeSyncRequest;
-import buildcraft.transport.network.PacketPipeTransportItemStack;
-import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
-import buildcraft.transport.network.PacketPipeTransportTraveler;
-import buildcraft.transport.network.PacketPowerUpdate;
-import buildcraft.transport.pipes.PipeFluidsAndesite;
-import buildcraft.transport.pipes.PipeFluidsClay;
-import buildcraft.transport.pipes.PipeFluidsDiamond;
-import buildcraft.transport.pipes.PipeFluidsDiorite;
-import buildcraft.transport.pipes.PipeFluidsEmerald;
-import buildcraft.transport.pipes.PipeFluidsGold;
-import buildcraft.transport.pipes.PipeFluidsGranite;
-import buildcraft.transport.pipes.PipeFluidsIron;
-import buildcraft.transport.pipes.PipeFluidsSandstone;
-import buildcraft.transport.pipes.PipeFluidsStone;
-import buildcraft.transport.pipes.PipeFluidsWood;
-import buildcraft.transport.pipes.PipeItemsAndesite;
-import buildcraft.transport.pipes.PipeItemsClay;
-import buildcraft.transport.pipes.PipeItemsDiamond;
-import buildcraft.transport.pipes.PipeItemsDiorite;
-import buildcraft.transport.pipes.PipeItemsEmerald;
-import buildcraft.transport.pipes.PipeItemsGold;
-import buildcraft.transport.pipes.PipeItemsGranite;
-import buildcraft.transport.pipes.PipeItemsIron;
-import buildcraft.transport.pipes.PipeItemsObsidian;
-import buildcraft.transport.pipes.PipeItemsSandstone;
-import buildcraft.transport.pipes.PipeItemsStone;
-import buildcraft.transport.pipes.PipeItemsWood;
-import buildcraft.transport.pipes.PipePowerDiamond;
-import buildcraft.transport.pipes.PipePowerGold;
-import buildcraft.transport.pipes.PipePowerIron;
-import buildcraft.transport.pipes.PipePowerStone;
-import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.pipes.PipeStructureCobblestone;
-import buildcraft.transport.pluggable.ItemLens;
-import buildcraft.transport.pluggable.ItemPlug;
-import buildcraft.transport.pluggable.ItemPowerAdapter;
-import buildcraft.transport.pluggable.LensPluggable;
-import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.transport.pluggable.PowerAdapterPluggable;
+import buildcraft.transport.ic2.BlockIc2Transformer;
+import buildcraft.transport.ic2.ItemIc2Transformer;
+import buildcraft.transport.network.*;
+import buildcraft.transport.pipes.*;
+import buildcraft.transport.pluggable.*;
 import buildcraft.transport.schematics.BptPipeFiltered;
 import buildcraft.transport.schematics.BptPipeRotatable;
 import buildcraft.transport.schematics.SchematicPipe;
-import buildcraft.transport.statements.ActionEnergyPulsar;
-import buildcraft.transport.statements.ActionExtractionPreset;
-import buildcraft.transport.statements.ActionParameterSignal;
-import buildcraft.transport.statements.ActionPipeColor;
-import buildcraft.transport.statements.ActionPipeDirection;
-import buildcraft.transport.statements.ActionPowerLimiter;
-import buildcraft.transport.statements.ActionRedstoneFaderOutput;
-import buildcraft.transport.statements.ActionSignalOutput;
-import buildcraft.transport.statements.ActionSingleEnergyPulse;
-import buildcraft.transport.statements.TriggerClockTimer;
+import buildcraft.transport.statements.*;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
-import buildcraft.transport.statements.TriggerLightSensor;
-import buildcraft.transport.statements.TriggerParameterSignal;
-import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
-import buildcraft.transport.statements.TriggerPipeSignal;
-import buildcraft.transport.statements.TriggerRedstoneFaderInput;
-import buildcraft.transport.stripes.PipeExtensionListener;
-import buildcraft.transport.stripes.StripesHandlerArrow;
-import buildcraft.transport.stripes.StripesHandlerBucket;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
-import buildcraft.transport.stripes.StripesHandlerEntityInteract;
-import buildcraft.transport.stripes.StripesHandlerHoe;
-import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
-import buildcraft.transport.stripes.StripesHandlerPipeWires;
-import buildcraft.transport.stripes.StripesHandlerPipes;
-import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
-import buildcraft.transport.stripes.StripesHandlerPlant;
-import buildcraft.transport.stripes.StripesHandlerRightClick;
-import buildcraft.transport.stripes.StripesHandlerShears;
-import buildcraft.transport.stripes.StripesHandlerUse;
+import buildcraft.transport.stripes.*;
 
 @Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -285,6 +175,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     public PipeIconProvider pipeIconProvider = new PipeIconProvider();
     public WireIconProvider wireIconProvider = new WireIconProvider();
 
+    public static BlockIc2Transformer ic2compattransformeroflols;
+
     private static class PipeRecipe {
         boolean isShapeless = false; // pipe recipes come shaped and unshaped.
         ItemStack result;
@@ -302,21 +194,15 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         try {
-            BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false,
-                    "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
+            BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false, "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
 
-            BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?",
-                    ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE,
-                    "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME).setMinValue(1).setMaxValue(40);
-            BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.",
-                    ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register("general.pipes.facadeShowAllInCreative", true,
-                    "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false,
-                    "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?",
-                    ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?", ConfigManager.RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME).setMinValue(1).setMaxValue(
+                    40);
+            BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.facadeShowAllInCreative", true, "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
                 //@formatter:off
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame).toString(),
@@ -333,8 +219,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 					Block.blockRegistry.getNameForObject(Blocks.sponge).toString()
 					//@formatter:on
             }, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false,
-                    "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false, "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -358,48 +243,49 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             pipeItemsWood = buildPipe(PipeItemsWood.class, "plankWood", "blockGlassColorless", "plankWood");
             pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "gemEmerald", "blockGlassColorless", "gemEmerald");
-            //pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "cobblestone", "blockGlassColorless", "cobblestone");
+            // pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "cobblestone", "blockGlassColorless",
+            // "cobblestone");
             pipeItemsStone = buildPipe(PipeItemsStone.class, "stone", "blockGlassColorless", "stone");
             pipeItemsGranite = buildPipe(PipeItemsGranite.class, granite, "blockGlassColorless", granite);
             pipeItemsDiorite = buildPipe(PipeItemsDiorite.class, diorite, "blockGlassColorless", diorite);
             pipeItemsAndesite = buildPipe(PipeItemsAndesite.class, andesite, "blockGlassColorless", andesite);
-            //pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "blockQuartz", "blockGlassColorless", "blockQuartz");
+            // pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "blockQuartz", "blockGlassColorless", "blockQuartz");
             pipeItemsIron = buildPipe(PipeItemsIron.class, "ingotIron", "blockGlassColorless", "ingotIron");
             pipeItemsGold = buildPipe(PipeItemsGold.class, "ingotGold", "blockGlassColorless", "ingotGold");
             pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "gemDiamond", "blockGlassColorless", "gemDiamond");
             pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, Blocks.obsidian, "blockGlassColorless", Blocks.obsidian);
-            //pipeItemsLapis = buildPipe(PipeItemsLapis.class, "blockLapis", "blockGlassColorless", "blockLapis");
-            //pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "blockLapis", "blockGlassColorless", "gemDiamond");
+            // pipeItemsLapis = buildPipe(PipeItemsLapis.class, "blockLapis", "blockGlassColorless", "blockLapis");
+            // pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "blockLapis", "blockGlassColorless", "gemDiamond");
             pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, Blocks.sandstone, "blockGlassColorless", Blocks.sandstone);
-            //pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
-            //pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
-            //pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
+            // pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
+            // pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
+            // pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
             pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
 
             pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
-            //pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
+            // pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
             pipeFluidsStone = buildPipe(PipeFluidsStone.class, pipeWaterproof, pipeItemsStone);
             pipeFluidsAndesite = buildPipe(PipeFluidsAndesite.class, pipeWaterproof, pipeItemsAndesite);
             pipeFluidsDiorite = buildPipe(PipeFluidsDiorite.class, pipeWaterproof, pipeItemsDiorite);
             pipeFluidsGranite = buildPipe(PipeFluidsGranite.class, pipeWaterproof, pipeItemsGranite);
-            //pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, pipeWaterproof, pipeItemsQuartz);
+            // pipeFluidsQuartz = buildPipe(PipeFluidsQuartz.class, pipeWaterproof, pipeItemsQuartz);
             pipeFluidsIron = buildPipe(PipeFluidsIron.class, pipeWaterproof, pipeItemsIron);
             pipeFluidsGold = buildPipe(PipeFluidsGold.class, pipeWaterproof, pipeItemsGold);
             pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, pipeWaterproof, pipeItemsEmerald);
             pipeFluidsDiamond = buildPipe(PipeFluidsDiamond.class, pipeWaterproof, pipeItemsDiamond);
             pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, pipeWaterproof, pipeItemsSandstone);
-            //pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, pipeWaterproof, pipeItemsVoid);
+            // pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, pipeWaterproof, pipeItemsVoid);
             pipeFluidsClay = buildPipe(PipeFluidsClay.class, pipeWaterproof, pipeItemsClay);
 
             pipePowerWood = buildPipe(PipePowerWood.class, "dustRedstone", pipeItemsWood);
-            //pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "dustRedstone", pipeItemsCobblestone);
+            // pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "dustRedstone", pipeItemsCobblestone);
             pipePowerStone = buildPipe(PipePowerStone.class, "dustRedstone", pipeItemsStone);
-            //pipePowerQuartz = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
+            // pipePowerQuartz = buildPipe(PipePowerQuartz.class, "dustRedstone", pipeItemsQuartz);
             pipePowerIron = buildPipe(PipePowerIron.class, "dustRedstone", pipeItemsIron);
             pipePowerGold = buildPipe(PipePowerGold.class, "dustRedstone", pipeItemsGold);
             pipePowerDiamond = buildPipe(PipePowerDiamond.class, "dustRedstone", pipeItemsDiamond);
-            //pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
-            //pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
+            // pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
+            // pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
             pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
@@ -430,6 +316,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             gateCopier = new ItemGateCopier();
             BCRegistry.INSTANCE.registerItem(gateCopier, false);
+
+            ic2compattransformeroflols = new BlockIc2Transformer(Material.iron);
+            ic2compattransformeroflols.setRegistryName("transformer.ic2");
+            ic2compattransformeroflols.setUnlocalizedName("buildcraft.block.transformer.ic2");
+            BCRegistry.INSTANCE.registerBlock(ic2compattransformeroflols, ItemIc2Transformer.class, true);
 
             for (PipeContents kind : PipeContents.values()) {
                 triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
@@ -712,8 +603,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         GameRegistry.addRecipe(new PipeColoringRecipe());
         RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1), "wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-                BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p', Blocks.piston);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1), "wdw", "wcw", "wpw", 'w', "plankWood", 'd', BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p', Blocks.piston);
 
         // Facade turning helper
         GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -721,8 +611,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
         // Pipe Plug
         GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), new ItemStack(pipeStructureCobblestone));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(powerAdapterItem, 4), "scs", "sbs", "sas", 's', pipeStructureCobblestone, 'a',
-                Items.redstone, 'b', "gearStone", 'c', "ingotGold"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(powerAdapterItem, 4), "scs", "sbs", "sas", 's', pipeStructureCobblestone, 'a', Items.redstone, 'b', "gearStone", 'c', "ingotGold"));
 
         if (Loader.isModLoaded("BuildCraft|Silicon")) {
             TransportSiliconRecipes.loadSiliconRecipes();
@@ -737,10 +626,8 @@ public class BuildCraftTransport extends BuildCraftMod {
             // Lenses, Filters
             for (int i = 0; i < 16; i++) {
                 String dye = ColorUtils.getOreDictionaryName(15 - i);
-                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i), "OSO", "SGS", "OSO", 'O', "ingotIron", 'S', dye, 'G',
-                        "blockGlass"));
-                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16), "OSO", "SGS", "OSO", 'O', Blocks.iron_bars, 'S', dye,
-                        'G', "blockGlass"));
+                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i), "OSO", "SGS", "OSO", 'O', "ingotIron", 'S', dye, 'G', "blockGlass"));
+                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16), "OSO", "SGS", "OSO", 'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"));
             }
         }
     }
@@ -860,8 +747,7 @@ public class BuildCraftTransport extends BuildCraftMod {
                 }
             }
 
-            if (mapping.resourceLocation.getResourceDomain().equals("BuildCraft|Transport") && mapping.name.toLowerCase(Locale.ROOT).contains(
-                    "pipe")) {
+            if (mapping.resourceLocation.getResourceDomain().equals("BuildCraft|Transport") && mapping.name.toLowerCase(Locale.ROOT).contains("pipe")) {
                 mapping.remap(Item.itemRegistry.getObject(new ResourceLocation(mapping.name.replace("item.", ""))));
                 BCLog.logger.info("          - remapped pipe");
             }
