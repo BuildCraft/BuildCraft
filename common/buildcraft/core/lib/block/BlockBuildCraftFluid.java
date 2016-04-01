@@ -20,6 +20,7 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -61,11 +62,6 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         }
     }
 
-    // @Override
-    // public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
-    // return true;
-    // }
-
     @Override
     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
         if (materialIn == Material.water) return Boolean.TRUE;
@@ -73,8 +69,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     }
 
     @Override
-    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn,
-            boolean testingHead) {
+    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
         if (materialIn == Material.water) return Boolean.TRUE;
         return null;
     }
@@ -126,8 +121,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.randomDisplayTick(world, pos, state, rand);
 
-        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock()
-                .getMaterial().blocksMovement()) {
+        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
             double px = pos.getX() + rand.nextFloat();
             double py = pos.getY() - 1.05D;
@@ -171,8 +165,8 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         return false;
     }
 
-    @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.TRANSLUCENT;
-    }
+//    @Override
+//    public EnumWorldBlockLayer getBlockLayer() {
+//        return EnumWorldBlockLayer.CUTOUT;
+//    }
 }
