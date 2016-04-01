@@ -6,9 +6,7 @@ import java.util.Set;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.BCWorkerThreads;
-import buildcraft.robotics.path.MiniChunkCalculationData.CalculationStep;
 
 public class TaskMiniChunkAnalyser implements Runnable {
     private final MiniChunkCalculationData data;
@@ -21,9 +19,7 @@ public class TaskMiniChunkAnalyser implements Runnable {
     @Override
     public void run() {
         synchronized (data) {
-            data.step(CalculationStep.FILLED, CalculationStep.ANALYSING);
             analyse();
-            data.step(CalculationStep.ANALYSING, CalculationStep.ANALYSED);
         }
         BCWorkerThreads.executeWorkTask(new TaskMiniChunkNodeCreation(data));
     }
@@ -35,7 +31,6 @@ public class TaskMiniChunkAnalyser implements Runnable {
             analyseImpl(p);
         }
         data.numNodes = id;
-        BCLog.logger.info(data.min + " [analyser] Nodes: " + data.numNodes);
     }
 
     private void analyseImpl(BlockPos from) {

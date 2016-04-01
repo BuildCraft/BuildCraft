@@ -1,8 +1,6 @@
 package buildcraft.robotics.path;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.BCWorkerThreads;
-import buildcraft.robotics.path.MiniChunkCalculationData.CalculationStep;
 import buildcraft.robotics.path.MiniChunkGraph.ChunkType;
 
 public class TaskMiniChunkNodeCreation implements Runnable {
@@ -15,9 +13,7 @@ public class TaskMiniChunkNodeCreation implements Runnable {
     @Override
     public void run() {
         synchronized (data) {
-            data.step(CalculationStep.ANALYSED, CalculationStep.CREATING_NODES);
             createNodes();
-            data.step(CalculationStep.CREATING_NODES, CalculationStep.HAS_NODES);
         }
         BCWorkerThreads.executeWorkTask(new TaskMiniChunkJoiner(data));
     }
@@ -39,7 +35,5 @@ public class TaskMiniChunkNodeCreation implements Runnable {
 
         data.graph = new MiniChunkGraph(data.min, type, data.expenseArray, graphArray, data.numNodes);
         data.cache.putGraph(data.min, data.graph);
-
-        BCLog.logger.info(data.min + " [node-creation] Type: " + type);
     }
 }

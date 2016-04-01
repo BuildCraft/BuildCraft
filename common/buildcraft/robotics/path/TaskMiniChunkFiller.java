@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.BCWorkerThreads;
-import buildcraft.robotics.path.MiniChunkCalculationData.CalculationStep;
 
 public class TaskMiniChunkFiller implements Runnable {
     public static final int EXPENSE_AIR = 1;
@@ -25,9 +24,7 @@ public class TaskMiniChunkFiller implements Runnable {
     @Override
     public void run() {
         synchronized (data) {
-            data.step(CalculationStep.REQUESTED, CalculationStep.FILLING);
             fill();
-            data.step(CalculationStep.FILLING, CalculationStep.FILLED);
         }
         BCWorkerThreads.executeWorkTask(new TaskMiniChunkAnalyser(data));
     }

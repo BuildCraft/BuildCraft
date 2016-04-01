@@ -3,7 +3,6 @@ package buildcraft.robotics.path;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.robotics.path.MiniChunkCalculationData.CalculationStep;
 import buildcraft.robotics.path.MiniChunkGraph.MiniChunkNode;
 
 public class TaskMiniChunkJoiner implements Runnable {
@@ -25,9 +24,7 @@ public class TaskMiniChunkJoiner implements Runnable {
     @Override
     public void run() {
         synchronized (data) {
-            data.step(CalculationStep.HAS_NODES, CalculationStep.JOINING_AROUND);
             join();
-            data.step(CalculationStep.JOINING_AROUND, CalculationStep.COMPLETE);
         }
         data.futureResult.complete(data.graph);
     }
