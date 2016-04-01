@@ -9,6 +9,8 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -45,6 +47,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     public static final int MAX_PIPE_STACKS = 32;
+    public static final int MAX_PIPE_ITEMS = 1024;
     public boolean allowBouncing = false;
     public final TravelerSet items = new TravelerSet(this);
 
@@ -87,35 +90,9 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     public boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd) {
-        return injectItem(item, inputOrientation, doAdd, false);
-    }
-
-    // TODO: Refactor me?
-    protected boolean canInjectItems(EnumFacing inputOrientation) {
-        int itemStackCount = getNumberOfStacks();
-
-        if (itemStackCount >= MAX_PIPE_STACKS) {
-            return false;
-        }
-
-        // TODO: OPTIMIZE ME
-        for (TravelingItem item1 : items) {
-            if (item1.input != null && item1.input.getAxis() == inputOrientation.getAxis() && !item1.isMoving()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected boolean injectItem(TravelingItem item, EnumFacing inputOrientation, boolean doAdd, boolean force) {
         if (item.isCorrupted()) {
             // Safe guard - if for any reason the item is corrupted at this
             // stage, avoid adding it to the pipe to avoid further exceptions.
-            return false;
-        }
-
-        if (!force && !canInjectItems(inputOrientation)) {
             return false;
         }
 
@@ -140,10 +117,27 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
             if (!container.getWorld().isRemote) {
                 sendTravelerPacket(item, false);
-            }
 
-            if (getNumberOfStacks() >= MAX_PIPE_STACKS) {
-                groupEntities();
+                int itemStackCount = getNumberOfStacks();
+
+                if (itemStackCount >= (MAX_PIPE_STACKS / 2)) {
+                    groupEntities();
+                    itemStackCount = getNumberOfStacks();
+                }
+
+                if (itemStackCount > MAX_PIPE_STACKS) {
+                    BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s because it had too many stacks: %d", container.getPos(), items
+                            .size()));
+                    destroyPipe();
+                    return true;
+                }
+
+                int numItems = getNumberOfItems();
+
+                if (numItems > MAX_PIPE_ITEMS) {
+                    BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s, because it had too many items: %d", container.getPos(), numItems));
+                    destroyPipe();
+                }
             }
         }
 
@@ -235,9 +229,9 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
             int s = uncloggedFaces.size();
             if (s > 0) {
-                if (uncloggedFaces.contains(item.input)) {
+                /* if (uncloggedFaces.contains(item.input)) { // prefer straight routes
                     return item.input;
-                }
+                } */
                 return uncloggedFaces.get(BuildCraftCore.random.nextInt(s));
             }
         }
@@ -271,11 +265,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 return ReceiveType.NONE;
             }
 
-            return ((PipeTransportItems) pipe.transport).canInjectItems(o.getOpposite()) ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
+            return ReceiveType.ALLOWED;
         } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
             ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
             if (transactor != null) {
-                return transactor.add(item.getItemStack(), false).stackSize > 0 ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
+                return ReceiveType.ALLOWED;
             }
         }
 
@@ -311,11 +305,10 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 continue;
             }
 
-            if (!item.isMoving()) {
+            /* if (!item.isMoving()) {
                 refreshDestination(item, false);
-            } else {
-                item.move(item.getSpeed());
-            }
+            } else { */
+            item.move(item.getSpeed());
 
             if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
                 if (item.isCorrupted()) {
@@ -329,11 +322,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 item.pos = 0.5F;
                 refreshDestination(item, true);
 
-                PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
-                container.pipe.eventBus.handleEvent(event);
-
                 if (item.output == null) {
-                    item.speed = TransportConstants.PIPE_MIN_SPEED;
+                    if (items.scheduleRemoval(item)) {
+                        dropItem(item);
+                    }
+                } else {
+                    PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
+                    container.pipe.eventBus.handleEvent(event);
                 }
             } else if (!item.toCenter && endReached(item)) {
                 if (item.isCorrupted()) {
@@ -369,7 +364,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         if (tile instanceof IPipeTile) {
             Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
             if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems) {
-                return ((PipeTransportItems) pipe.transport).injectItem(item, item.output, true, true);
+                return ((PipeTransportItems) pipe.transport).injectItem(item, item.output, true);
             }
         }
         return false;
