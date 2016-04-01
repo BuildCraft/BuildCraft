@@ -35,7 +35,7 @@ public final class TileBuffer {
         tile = null;
         state = null;
 
-        // if (!loadUnloaded && world.isAirBlock(pos)) {
+        // if (!loadUnloaded && !world.isBlockLoaded(pos)) {
         // return;
         // }
 
@@ -92,7 +92,7 @@ public final class TileBuffer {
         // return true;
         // }
 
-        return !world.isAirBlock(pos);
+        return world.isBlockLoaded(pos);
     }
 
     public static TileBuffer[] makeBuffer(World world, BlockPos pos, boolean loadUnloaded) {

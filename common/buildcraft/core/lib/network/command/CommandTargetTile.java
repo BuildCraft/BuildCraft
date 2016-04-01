@@ -31,7 +31,7 @@ public class CommandTargetTile extends CommandTarget {
         int posY = data.readInt();
         int posZ = data.readInt();
         BlockPos pos = new BlockPos(posX, posY, posZ);
-        if (!world.isAirBlock(pos)) {
+        if (world.isBlockLoaded(pos)) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof ICommandReceiver) {
                 return (ICommandReceiver) tile;

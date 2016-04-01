@@ -24,7 +24,7 @@ public class FactoryGuiHandler implements IGuiHandler {
 
         BlockPos pos = new BlockPos(x, y, z);
 
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 
@@ -82,7 +82,7 @@ public class FactoryGuiHandler implements IGuiHandler {
 
         BlockPos pos = new BlockPos(x, y, z);
 
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 

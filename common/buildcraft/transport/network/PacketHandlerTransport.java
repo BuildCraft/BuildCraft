@@ -87,7 +87,7 @@ public class PacketHandlerTransport {// extends PacketHandler {
      * @param y
      * @param z */
     private TileGenericPipe getPipe(World world, BlockPos pos) {
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 

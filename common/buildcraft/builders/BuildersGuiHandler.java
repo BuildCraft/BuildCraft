@@ -19,7 +19,7 @@ public class BuildersGuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 
@@ -59,7 +59,7 @@ public class BuildersGuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return null;
         }
 
