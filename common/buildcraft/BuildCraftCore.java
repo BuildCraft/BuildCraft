@@ -78,6 +78,7 @@ import buildcraft.core.command.SubCommandOp;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
+import buildcraft.core.lib.DebuggingTools;
 import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.config.FileConfigManager;
@@ -449,6 +450,8 @@ public class BuildCraftCore extends BuildCraftMod {
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
         ListRegistry.itemClassAsType.add(ItemFood.class);
+
+        DebuggingTools.init();
     }
 
     @Mod.EventHandler

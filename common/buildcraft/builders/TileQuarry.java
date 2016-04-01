@@ -694,11 +694,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         setStage(Stage.values()[flags & 0x07]);
         movingHorizontally = (flags & 0x10) != 0;
         movingVertically = (flags & 0x20) != 0;
-        int newLedState = stream.readUnsignedByte();
-        if (newLedState != ledState) {
-            ledState = newLedState;
-            worldObj.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
-        }
+        ledState = stream.readUnsignedByte();
 
         createUtilsIfNeeded();
 

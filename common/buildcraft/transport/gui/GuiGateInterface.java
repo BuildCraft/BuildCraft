@@ -25,6 +25,7 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.config.DetailedConfigOption;
+import buildcraft.core.lib.config.OverridableConfigOption;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
@@ -37,12 +38,12 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 public class GuiGateInterface extends GuiAdvancedInterface {
     // Options are public so that JEI compat can see them
     /** Options for the maximum number of pickables. Min is 1. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new DetailedConfigOption("gui.gate.picker.triggers.wide", "6");
-    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new DetailedConfigOption("gui.gate.picker.actions.wide", "6");
+    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new OverridableConfigOption("gui.gate", "picker.triggers.wide", "6");
+    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new OverridableConfigOption("gui.gate", "picker.actions.wide", "6");
 
     /** Options for the y-start positions of the lists. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new DetailedConfigOption("gui.gate.picker.triggers.y", "8");
-    public static final DetailedConfigOption OPTION_ACTIONS_Y = new DetailedConfigOption("gui.gate.picker.actions.y", "8");
+    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new OverridableConfigOption("gui.gate", "picker.triggers.y", "8");
+    public static final DetailedConfigOption OPTION_ACTIONS_Y = new OverridableConfigOption("gui.gate", "picker.actions.y", "8");
 
     IInventory playerInventory;
     private final ContainerGateInterface container;
@@ -256,8 +257,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 if (container.actionsState[((TriggerSlot) slot).slot] != ActionActiveState.Deactivated) {
                     mc.renderEngine.bindTexture(texture);
 
-                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth ? 9
-                        : 18, 4);
+                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
                 }
             } else if (slot instanceof StatementParameterSlot) {
                 StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
@@ -471,8 +471,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 }
 
                 if (param != null) {
-                    param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k,
-                            isShiftKeyDown()));
+                    param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k, isShiftKeyDown()));
                     paramSlot.setParameter(param, true);
                 }
             }
