@@ -510,9 +510,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         
         powerMaximums.put(PipePowerWood.class, MAX_POWER);
         powerMaximums.put(PipePowerStone.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerMaximums.put(PipePowerIron.class, 8 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerMaximums.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerMaximums.put(PipePowerDiamond.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerMaximums.put(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerMaximums.put(PipePowerGold.class, 64 * TransportConstants.PIPE_POWER_BASE_CAP);
+        powerMaximums.put(PipePowerDiamond.class, 64 * TransportConstants.PIPE_POWER_BASE_CAP);
         powerMaximums.put(PipePowerGlass.class, 1024 * TransportConstants.PIPE_POWER_BASE_CAP);
 
         // Pipe, How much RF/b the pipe loses

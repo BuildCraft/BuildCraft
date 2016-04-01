@@ -146,7 +146,7 @@ public class TileTransformer extends TileEntity implements ITickable, IEnergyHan
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (!isExtractionSide(from)) {
-            int delta = Math.min(getMaxEnergyStored(from) - getEnergyStored(from), maxReceive);
+            int delta = Math.min(getMaxEnergyStored(from) - getEnergyStored(from), Math.min(getInsertionPower(), maxReceive));
             if (!simulate) {
                 power += delta;
             }
