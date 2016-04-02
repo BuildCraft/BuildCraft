@@ -129,6 +129,8 @@ public class PipeIconProvider implements IIconProvider {
         PipePowerEmerald_Standard("emerald_power_clear"),
         PipePowerEmerald_Solid("emerald_power_filled"),
         //
+        PipePowerIron_Standard("iron_power_clear"),
+        PipePowerIron_Solid("iron_power_filled"),
         PipePowerIronM2("iron_power_m2"),
         PipePowerIronM4("iron_power_m4"),
         PipePowerIronM8("iron_power_m8"),
