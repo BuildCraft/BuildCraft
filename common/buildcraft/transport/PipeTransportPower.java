@@ -35,7 +35,7 @@ import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.*;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
-    public static enum LossMode {
+    public enum LossMode {
         LOSSLESS,
         PERCENTAGE,
         ABSOLUTE;
