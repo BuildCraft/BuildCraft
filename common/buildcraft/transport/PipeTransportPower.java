@@ -29,13 +29,24 @@ import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.AverageDouble;
 import buildcraft.core.lib.utils.AverageInt;
+import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.*;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
+    public static enum LossMode {
+        LOSSLESS,
+        PERCENTAGE,
+        ABSOLUTE;
+    }
+
     public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<>();
     public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<>();
+    public static final Map<Class<? extends Pipe<?>>, Float> powerLosses = new HashMap<>();
+    public static LossMode lossMode = LossMode.LOSSLESS;
+    public static boolean canExplode = false;
+
     private static int MAX_POWER = 0;
 
     private static final int OVERLOAD_TICKS = 60;
@@ -49,6 +60,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public double[] internalNextPower = new double[6];
     public int overload;
     public int maxPower = 80;
+    public int powerLimit = Integer.MAX_VALUE;
     public float powerResistance;
 
     public int[] dbgEnergyInput = new int[6];
@@ -62,6 +74,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     private boolean needsInit = true;
 
     private int[] powerQuery = new int[6];
+    private int energyInputTick = 0;
 
     private long currentDate;
     private double[] internalPower = new double[6];
@@ -87,11 +100,20 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
-        if (BuildCraftTransport.usePipeLoss) {
-            maxPower = 10240;
-            powerResistance = powerResistances.get(pipeClass);
-        } else {
-            maxPower = powerCapacities.get(pipeClass);
+        maxPower = powerCapacities.get(pipeClass);
+
+        switch (lossMode) {
+            case PERCENTAGE:
+                powerResistance = powerResistances.get(pipeClass);
+                break;
+            case ABSOLUTE:
+                powerResistance = powerLosses.get(pipeClass);
+                break;
+        }
+
+        if (canExplode) {
+            powerLimit = maxPower;
+            maxPower = MAX_POWER;
         }
     }
 
@@ -194,6 +216,13 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             return;
         }
 
+        if (PipeTransportPower.canExplode) {
+            if (overload >= 3) {
+                destroyPipe();
+                return;
+            }
+        }
+
         step();
 
         init();
@@ -274,13 +303,23 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-        overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
-        if (overload < 0) {
-            overload = 0;
+        if (PipeTransportPower.canExplode) {
+            if (energyInputTick > powerLimit || overload > 0) {
+                overload++;
+            } else {
+                overload = 0;
+            }
+        } else {
+            overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
+            if (overload < 0) {
+                overload = 0;
+            }
+            if (overload > OVERLOAD_TICKS) {
+                overload = OVERLOAD_TICKS;
+            }
         }
-        if (overload > OVERLOAD_TICKS) {
-            overload = OVERLOAD_TICKS;
-        }
+
+        energyInputTick = 0;
 
         // Compute the tiles requesting energy that are not power pipes
         for (EnumFacing dir : EnumFacing.VALUES) {
@@ -403,10 +442,19 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             return 0;
         }
 
-        if (BuildCraftTransport.usePipeLoss) {
-            internalNextPower[side] += val * (1.0F - powerResistance);
-        } else {
-            internalNextPower[side] += val;
+        switch (lossMode) {
+            case LOSSLESS:
+                internalNextPower[side] += val;
+                break;
+            case PERCENTAGE:
+                internalNextPower[side] += val * (1.0F - powerResistance);
+                break;
+            case ABSOLUTE:
+                if (val < powerResistance) {
+                    return 0;
+                }
+                internalNextPower[side] += val - powerResistance;
+                break;
         }
 
         if (internalNextPower[side] > maxPower) {
@@ -418,6 +466,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         }
 
         dbgEnergyInput[side] += val;
+        energyInputTick += val;
 
         return val;
     }
@@ -481,27 +530,55 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         return false;
     }
 
-    static {
-        powerCapacities.put(PipePowerCobblestone.class, 1 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerStone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerWood.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerSandstone.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerQuartz.class, 8 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
-        powerCapacities.put(PipePowerDiamond.class, 48 * TransportConstants.PIPE_POWER_BASE_CAP);
-        MAX_POWER = 48 * TransportConstants.PIPE_POWER_BASE_CAP;
+    public static void setPowerCapacity(Class<? extends Pipe<?>> pipe, int capacity) {
+        powerCapacities.put(pipe, capacity);
+        int mp = 0;
+        for (int p : powerCapacities.values()) {
+            if (p > mp) {
+                mp = p;
+            }
+        }
+        MAX_POWER = mp;
+    }
 
-        powerResistances.put(PipePowerCobblestone.class, 0.05F);
-        powerResistances.put(PipePowerStone.class, 0.025F);
-        powerResistances.put(PipePowerWood.class, 0.0F);
-        powerResistances.put(PipePowerSandstone.class, 0.0125F);
-        powerResistances.put(PipePowerQuartz.class, 0.0125F);
-        powerResistances.put(PipePowerIron.class, 0.0125F);
-        powerResistances.put(PipePowerGold.class, 0.003125F);
-        powerResistances.put(PipePowerEmerald.class, 0.0F);
-        powerResistances.put(PipePowerDiamond.class, 0.0F);
+    public static void setPowerResistance(Class<? extends Pipe<?>> pipe, float resistance) {
+        powerResistances.put(pipe, resistance);
+    }
+
+    public static void setPowerLoss(Class<? extends Pipe<?>> pipe, float loss) {
+        powerLosses.put(pipe, loss);
+    }
+
+    static {
+        setPowerCapacity(PipePowerCobblestone.class, 1 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerStone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerSandstone.class, 2 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerWood.class, 4 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerQuartz.class, 8 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerIron.class, 16 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerGold.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerEmerald.class, 32 * TransportConstants.PIPE_POWER_BASE_CAP);
+        setPowerCapacity(PipePowerDiamond.class, 64 * TransportConstants.PIPE_POWER_BASE_CAP);
+
+        setPowerResistance(PipePowerCobblestone.class, 0.05F);
+        setPowerResistance(PipePowerStone.class, 0.025F);
+        setPowerResistance(PipePowerWood.class, 0.0F);
+        setPowerResistance(PipePowerSandstone.class, 0.0125F);
+        setPowerResistance(PipePowerQuartz.class, 0.0125F);
+        setPowerResistance(PipePowerIron.class, 0.0125F);
+        setPowerResistance(PipePowerGold.class, 0.003125F);
+        setPowerResistance(PipePowerEmerald.class, 0.0F);
+        setPowerResistance(PipePowerDiamond.class, 0.0F);
+
+        setPowerLoss(PipePowerCobblestone.class, 0.25F);
+        setPowerLoss(PipePowerStone.class, 0.25F);
+        setPowerLoss(PipePowerSandstone.class, 0.2F);
+        setPowerLoss(PipePowerWood.class, 0F);
+        setPowerLoss(PipePowerQuartz.class, 2F);
+        setPowerLoss(PipePowerIron.class, 2F);
+        setPowerLoss(PipePowerGold.class, 4F);
+        setPowerLoss(PipePowerEmerald.class, 0F);
+        setPowerLoss(PipePowerDiamond.class, 0.5F);
     }
 
     @Override

@@ -131,6 +131,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
             }
         }
 
+        if (PipeTransportPower.canExplode) {
+            battery.setEnergy(0);
+        }
+
         lastRequestedEnergy = requestedEnergy;
         requestedEnergy = 0;
     }

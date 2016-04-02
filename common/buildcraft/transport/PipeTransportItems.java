@@ -134,11 +134,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
     }
 
-    private void destroyPipe() {
-        BlockUtils.explodeBlock(container.getWorld(), container.getPos());
-        container.getWorld().setBlockToAir(container.getPos());
-    }
-
     /** Bounces the item back into the pipe without changing the items map.
      *
      * @param item */
