@@ -18,6 +18,7 @@ out
 build
 .gradle
 modules
+libs
 
 #runtime
 run
