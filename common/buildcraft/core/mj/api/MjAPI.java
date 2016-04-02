@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -8,7 +8,7 @@ import buildcraft.api.APIHelper;
 public class MjAPI {
     @CapabilityInject(IMjMachine.class)
     public static final Capability<IMjMachine> CAP_MACHINE = null;
-    public static final IMjNetwork NET_INSTANCE = APIHelper.getInstance("alexiil.mc.mod.buildcraft.mj.net.MjNetwork", IMjNetwork.class, Void.INSTANCE);
+    public static final IMjNetwork NET_INSTANCE = APIHelper.getInstance("buildcraft.core.mj.net.MjNetwork", IMjNetwork.class, Void.INSTANCE);
 
     // Void instance of the network if BC isn't loaded.
     private enum Void implements IMjNetwork {

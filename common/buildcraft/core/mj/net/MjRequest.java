@@ -1,7 +1,7 @@
-package alexiil.mc.mod.buildcraft.mj.net;
+package buildcraft.core.mj.net;
 
-import alexiil.mc.mod.buildcraft.mj.api.IMjMachineConsumer;
-import alexiil.mc.mod.buildcraft.mj.api.IMjRequest;
+import buildcraft.core.mj.api.IMjMachineConsumer;
+import buildcraft.core.mj.api.IMjRequest;
 
 public class MjRequest implements IMjRequest {
     private final int milliWatts;

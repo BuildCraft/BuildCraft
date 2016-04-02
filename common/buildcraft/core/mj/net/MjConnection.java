@@ -1,11 +1,11 @@
-package alexiil.mc.mod.buildcraft.mj.net;
+package buildcraft.core.mj.net;
 
 import com.google.common.collect.ImmutableList;
 
-import alexiil.mc.mod.buildcraft.mj.api.IMjConnection;
-import alexiil.mc.mod.buildcraft.mj.api.IMjMachine;
-import alexiil.mc.mod.buildcraft.mj.api.IMjMachineConsumer;
-import alexiil.mc.mod.buildcraft.mj.api.IMjMachineProducer;
+import buildcraft.core.mj.api.IMjConnection;
+import buildcraft.core.mj.api.IMjMachine;
+import buildcraft.core.mj.api.IMjMachineConsumer;
+import buildcraft.core.mj.api.IMjMachineProducer;
 
 public class MjConnection implements IMjConnection {
     private final IMjMachineProducer producer;

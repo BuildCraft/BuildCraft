@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 import java.util.Set;
 
@@ -16,7 +16,7 @@ public interface IMjMachine {
      * been found, but before it is setup.
      * 
      * @param connection
-     * @return True to allow the connection to setup and build, false if you don't want to allow poer to flow from any
+     * @return True to allow the connection to setup and build, false if you don't want to allow power to flow from any
      *         of the connections. */
     boolean onConnectionCreate(IMjConnection connection);
 

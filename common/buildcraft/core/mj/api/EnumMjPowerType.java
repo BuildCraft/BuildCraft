@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 public enum EnumMjPowerType {
     /** Low power that is used to power only very simple automata (extraction from chests for example). Usually only

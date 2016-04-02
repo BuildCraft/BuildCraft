@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 import java.util.List;
 

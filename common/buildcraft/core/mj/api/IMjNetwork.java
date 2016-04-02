@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 /** @date Created on 2 Apr 2016 by AlexIIL */
 public interface IMjNetwork {

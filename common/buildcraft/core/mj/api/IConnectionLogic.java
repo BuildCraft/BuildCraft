@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
+package buildcraft.core.mj.api;
 
 import java.util.Collection;
 
@@ -7,12 +7,10 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-/** Provides logic to check what this can connect TO, and send power TO.
- * 
- * @date Created on 2 Apr 2016 by AlexIIL */
+/** Provides logic to check what this can connect to. */
 public interface IConnectionLogic {
-    /** Gets all of the possible machines that this can connect to. You don't have to check that they are valid, the
-     * power network will do that for you.
+    /** Gets all of the possible machines that this can connect to. You don't have to check that they are valid (or even
+     * exist), the power network will do that for you.
      * 
      * @param identifier The current machine to check from. Passed in to allow for enum types.
      * @return A collection of all connectable machines. null represents no connections. This collection will only be
@@ -44,6 +42,5 @@ public interface IConnectionLogic {
             if (face == null) return null;
             return ImmutableList.of(new MjMachineIdentifier(identifier.dimension, identifier.pos.offset(face), face.getOpposite()));
         }
-
     }
 }

@@ -1,6 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.api;
-
-import javax.annotation.Nonnull;
+package buildcraft.core.mj.api;
 
 public interface IMjRequest {
     int getMilliWatts();

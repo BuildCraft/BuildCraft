@@ -1,4 +1,4 @@
-package alexiil.mc.mod.buildcraft.mj.net;
+package buildcraft.core.mj.net;
 
 import java.util.Deque;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.minecraft.world.World;
 
-import alexiil.mc.mod.buildcraft.mj.api.*;
+import buildcraft.core.mj.api.*;
 
 public enum MjNetwork implements IMjNetwork {
     INSTANCE;
@@ -70,7 +70,7 @@ public enum MjNetwork implements IMjNetwork {
     public void tick(World world) {
         if (world.isRemote) return;
         for (IMjRequest pending : pendingRequests) {
-
+//            IMj
         }
 
         activeConnections.removeAll(brokenConnections);
