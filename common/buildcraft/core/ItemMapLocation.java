@@ -24,9 +24,9 @@ import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.robotics.ZonePlan;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
@@ -93,8 +93,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9,
-            float par10) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
         if (world.isRemote) {
             return false;
         }
@@ -138,22 +137,11 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
     @Override
     public IBox getBox(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
         switch (type) {
             case AREA: {
-                int xMin = cpt.getInteger("xMin");
-                int yMin = cpt.getInteger("yMin");
-                int zMin = cpt.getInteger("zMin");
-                BlockPos min = new BlockPos(xMin, yMin, zMin);
-
-                int xMax = cpt.getInteger("xMax");
-                int yMax = cpt.getInteger("yMax");
-                int zMax = cpt.getInteger("zMax");
-                BlockPos max = new BlockPos(xMax, yMax, zMax);
-
-                return new Box(min, max);
+                return getAreaBox(item);
             }
             case SPOT: {
                 return getPointBox(item);
@@ -162,6 +150,21 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 return null;
             }
         }
+    }
+
+    public static IBox getAreaBox(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        int xMin = cpt.getInteger("xMin");
+        int yMin = cpt.getInteger("yMin");
+        int zMin = cpt.getInteger("zMin");
+        BlockPos min = new BlockPos(xMin, yMin, zMin);
+
+        int xMax = cpt.getInteger("xMax");
+        int yMax = cpt.getInteger("yMax");
+        int zMax = cpt.getInteger("zMax");
+        BlockPos max = new BlockPos(xMax, yMax, zMax);
+
+        return new Box(min, max);
     }
 
     public static IBox getPointBox(ItemStack item) {
@@ -182,6 +185,11 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 return null;
             }
         }
+    }
+
+    public static EnumFacing getPointFace(ItemStack stack) {
+        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        return EnumFacing.VALUES[cpt.getByte("side")];
     }
 
     @Override

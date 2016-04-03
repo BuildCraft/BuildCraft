@@ -38,6 +38,7 @@ import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -47,6 +48,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.TileMarker;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.client.BuildCraftStateMapper;
+import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.config.DetailedConfigOption;
@@ -94,8 +96,9 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void init() {
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(
-                DetailedConfigOption.ReloadListener.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
+
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
