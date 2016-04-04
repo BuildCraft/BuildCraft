@@ -45,7 +45,7 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -55,7 +55,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
 public abstract class TileBuildCraft extends TileEntity implements IEnergyProvider, IEnergyReceiver, ISerializable, ITickable, IAdditionalDataTile {
-    protected TileBuffer[] cache;
+    protected BlockTileCache[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<>();
     protected IControllable.Mode mode;
     private boolean sendNetworkUpdate = false;
@@ -370,7 +370,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     public IBlockState getBlockState(EnumFacing side) {
         throwNullWorldCrash();
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, pos, false);
+            cache = BlockTileCache.makeCache(worldObj, pos, false);
         }
         return cache[side.ordinal()].getBlockState();
     }
@@ -378,7 +378,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     public TileEntity getTile(EnumFacing side) {
         throwNullWorldCrash();
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, pos, false);
+            cache = BlockTileCache.makeCache(worldObj, pos, false);
         }
         return cache[side.ordinal()].getTile();
     }

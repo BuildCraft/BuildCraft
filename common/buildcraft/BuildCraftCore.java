@@ -76,31 +76,7 @@ import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.statements.ActionFiller;
-import buildcraft.core.AchievementManager;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BCRegistry;
-import buildcraft.core.BCStatCollector;
-import buildcraft.core.BlockDecoration;
-import buildcraft.core.BlockEngine;
-import buildcraft.core.BlockMarker;
-import buildcraft.core.BlockPathMarker;
-import buildcraft.core.BlockSpring;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.CoreGuiHandler;
-import buildcraft.core.CoreSiliconRecipes;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.ItemDebugger;
-import buildcraft.core.ItemList;
-import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemPaintbrush;
-import buildcraft.core.ItemSpring;
-import buildcraft.core.ItemWrench;
-import buildcraft.core.SchematicEngine;
-import buildcraft.core.SpringPopulate;
-import buildcraft.core.TickHandlerCore;
-import buildcraft.core.TileEngineWood;
-import buildcraft.core.TilePathMarker;
+import buildcraft.core.*;
 import buildcraft.core.blueprints.BuildingSlotMapIterator;
 import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
@@ -182,6 +158,8 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
+import a.buildcraft.lib.AchievementPageManager;
+
 @Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
         dependencies = "required-after:Forge@[11.15.1.1764,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
         updateJSON = DefaultProps.UPDATE_JSON)
@@ -259,7 +237,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public static boolean miningAllowPlayerProtectedBlocks = false;
     public static float miningMultiplier;
 
-    public static AchievementManager achievementManager;
+    public static AchievementPageManager achievementManager;
 
     public static Achievement woodenGearAchievement;
     public static Achievement stoneGearAchievement;
@@ -439,7 +417,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, handler = new PacketHandler());
 
-        achievementManager = new AchievementManager("BuildCraft");
+        achievementManager = new AchievementPageManager("BuildCraft");
         MinecraftForge.EVENT_BUS.register(achievementManager);
 
         woodenGearAchievement = achievementManager.registerAchievement(new Achievement("buildcraft|core:achievement.woodenGear",

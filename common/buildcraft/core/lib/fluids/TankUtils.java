@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.inventory.InvUtils;
 
 public final class TankUtils {
@@ -85,7 +85,7 @@ public final class TankUtils {
         return fluid.getBlock();
     }
 
-    public static void pushFluidToConsumers(IFluidTank tank, int flowCap, TileBuffer[] tileBuffer) {
+    public static void pushFluidToConsumers(IFluidTank tank, int flowCap, BlockTileCache[] tileBuffer) {
         int amountToPush = flowCap;
         for (EnumFacing side : EnumFacing.VALUES) {
             FluidStack fluidStack = tank.drain(amountToPush, false);

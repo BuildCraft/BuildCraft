@@ -58,7 +58,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.PacketTileState;
@@ -95,7 +95,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     protected boolean attachPluggables = false;
     protected SideProperties sideProperties = new SideProperties();
 
-    private TileBuffer[] tileBuffer;
+    private BlockTileCache[] tileBuffer;
     private int glassColor = -1;
 
     public static class CoreState implements ISerializable, Comparable<CoreState> {
@@ -725,16 +725,16 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     }
 
-    public TileBuffer[] getTileCache() {
+    public BlockTileCache[] getTileCache() {
         if (tileBuffer == null && pipe != null) {
-            tileBuffer = TileBuffer.makeBuffer(worldObj, getPos(), pipe.transport.delveIntoUnloadedChunks());
+            tileBuffer = BlockTileCache.makeCache(worldObj, getPos(), pipe.transport.delveIntoUnloadedChunks());
         }
         return tileBuffer;
     }
 
     @Override
     public void blockCreated(EnumFacing from, Block block, TileEntity tile) {
-        TileBuffer[] cache = getTileCache();
+        BlockTileCache[] cache = getTileCache();
         if (cache != null) {
             cache[from.getOpposite().ordinal()].set(block.getDefaultState(), tile);
         }
@@ -742,7 +742,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public Block getBlock(EnumFacing to) {
-        TileBuffer[] cache = getTileCache();
+        BlockTileCache[] cache = getTileCache();
         if (cache != null) {
             return cache[to.ordinal()].getBlockState().getBlock();
         } else {
@@ -756,7 +756,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public TileEntity getTile(EnumFacing to, boolean forceUpdate) {
-        TileBuffer[] cache = getTileCache();
+        BlockTileCache[] cache = getTileCache();
         if (cache != null) {
             return cache[to.ordinal()].getTile(forceUpdate);
         } else {
@@ -855,7 +855,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     protected void computeConnection(EnumFacing side) {
-        TileBuffer[] cache = getTileCache();
+        BlockTileCache[] cache = getTileCache();
         if (cache == null) {
             return;
         }

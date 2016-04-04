@@ -14,7 +14,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicIron {
@@ -56,7 +56,7 @@ public abstract class PipeLogicIron {
             return true;
         }
 
-        TileBuffer[] tileBuffer = pipe.container.getTileCache();
+        BlockTileCache[] tileBuffer = pipe.container.getTileCache();
 
         if (tileBuffer == null) {
             return true;

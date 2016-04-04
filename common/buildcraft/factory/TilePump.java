@@ -32,7 +32,7 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.SingleUseTank;
 import buildcraft.core.lib.fluids.TankUtils;
@@ -162,7 +162,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
     private void pushToConsumers() {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, pos, false);
+            cache = BlockTileCache.makeCache(worldObj, pos, false);
         }
 
         TankUtils.pushFluidToConsumers(tank, 400, cache);

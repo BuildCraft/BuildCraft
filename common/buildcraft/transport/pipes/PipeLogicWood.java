@@ -12,7 +12,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 
@@ -73,7 +73,7 @@ public abstract class PipeLogicWood {
     }
 
     private boolean isValidFacing(EnumFacing side) {
-        TileBuffer[] tileBuffer = pipe.container.getTileCache();
+        BlockTileCache[] tileBuffer = pipe.container.getTileCache();
         if (tileBuffer == null) {
             return false;
         }
