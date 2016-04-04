@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -98,7 +99,9 @@ public class CoreProxyClient extends CoreProxy {
     public void init() {
         MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
 
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
+        IResourceManager resourceManager = Minecraft.getMinecraft().getResourceManager();
+        IReloadableResourceManager reloadable = (IReloadableResourceManager) resourceManager;
+        reloadable.registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
