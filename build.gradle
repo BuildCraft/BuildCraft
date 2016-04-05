@@ -73,6 +73,8 @@ sourceSets {
     main {
         java {
             srcDir "common"
+            srcDir "d_lp1"
+            srcDir "d_lp2"
             // exclude 'some exclusion'
             // include 'some inclusion'
         }
