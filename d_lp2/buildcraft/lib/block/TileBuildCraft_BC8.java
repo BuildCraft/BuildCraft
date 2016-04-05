@@ -15,4 +15,8 @@ public abstract class TileBuildCraft_BC8 extends TileEntity {
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
         return oldState.getBlock() != newState.getBlock();
     }
+
+    public void redrawBlock() {
+        if (hasWorldObj()) worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+    }
 }

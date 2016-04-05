@@ -15,7 +15,7 @@ public interface IConnectionLogic {
      * @param identifier The current machine to check from. Passed in to allow for enum types.
      * @return A collection of all connectable machines. null represents no connections. This collection will only be
      *         iterated, never mutated. */
-    Collection<MjMachineIdentifier> getConnectableMachines(MjMachineIdentifier identifier);
+    Iterable<MjMachineIdentifier> getConnectableMachines(MjMachineIdentifier identifier);
 
     /** @date Created on 2 Apr 2016 by AlexIIL */
     public enum AllSidesLogic implements IConnectionLogic {

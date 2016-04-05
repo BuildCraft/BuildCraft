@@ -22,6 +22,9 @@ public interface IMjNetwork {
      * setup properly after loading from disk. */
     boolean connectionExists(IMjConnection connection);
 
+    /** Breaks this connection */
+    void breakConnection(IMjConnection connection);
+
     /** Checks to see if the given request still exists in the network. (eitehr its searching for
      * 
      * @param request

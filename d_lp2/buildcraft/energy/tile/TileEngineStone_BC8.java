@@ -8,9 +8,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.EnumMjPowerType;
 import buildcraft.api.mj.IMjMachineProducer;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.mj.helpers.MjSimpleProducer;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     public static final int MILLIWATTS_PROVIDED = 1000;
@@ -20,8 +22,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private double beingUsed = 1;
 
     @Override
-    protected IMjMachineProducer createProducer() {
-        return new EngineProducer(EnumMjPowerType.THINK_OF_NAME);
+    protected MjSimpleProducer createProducer() {
+        return new EngineProducer(EnumMjPowerType.LAPITRONIC);
     }
 
     @Override
@@ -40,6 +42,11 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
+    public EnumEnergyStage getEnergyStage() {
+        return EnumEnergyStage.BLUE;
+    }
+
+    @Override
     public boolean hasMoreFuel() {
         return ticksLeft > 0 || GameRegistry.getFuelValue(itemHandler.extractItem(0, 1, true)) > 0;
     }
@@ -52,6 +59,16 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     @Override
     public void setCurrentUsed(int milliwatts) {
         beingUsed = milliwatts / (double) MILLIWATTS_PROVIDED;
+    }
+
+    @Override
+    protected boolean canCarryOver(TileEngineBase_BC8 engine) {
+        return engine instanceof TileEngineStone_BC8;
+    }
+
+    @Override
+    public int getMaxEngineCarryDist() {
+        return 2;
     }
 
     @Override

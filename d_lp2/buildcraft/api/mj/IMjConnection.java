@@ -11,8 +11,7 @@ public interface IMjConnection {
 
     IMjMachineConsumer getConsumer();
 
-    /** Breaks this connection. Immediately notifies the producer, consumer and all conductors that this is no longer
-     * active, and power stops being transfered. */
+    /** A quick way to call {@link IMjNetwork#breakConnection(IMjConnection)} */
     void breakConnection();
 
     /** @return the amount of milliwatts that goes into this connection from the producer. */

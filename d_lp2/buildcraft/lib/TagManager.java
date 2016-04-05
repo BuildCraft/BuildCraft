@@ -133,10 +133,14 @@ public class TagManager {
         registerTag("item.list").reg("buildcraftcore:list").locale("listItem").oldReg("listItem").tab("buildcraft.main");
         registerTag("item.map.location").reg("buildcraftcore:map_location").locale("mapLocationItem").oldReg("mapLocationItem").tab("buildcraft.main");
         // BC Core Blocks
+        registerTag("block.engine.bc").reg("buildcraftcore:engine").locale("engineBlock").oldReg("engineBlock").tab("buildcraft.main");
+        registerTag("block.engine.bc.wood").locale("engineBlockWood");
+        registerTag("block.engine.bc.stone").locale("engineBlockStone");
+        registerTag("block.engine.bc.iron").locale("engineBlockIron");
+        registerTag("block.engine.bc.creative").locale("engineBlockCreative");
         // BC Builders Items
         // BC Builders Blocks
         // BC Energy Items
         // BC Energy Blocks
-        registerTag("block.engine.stone").reg("buildcraftenergy:engine_stone").locale("");
     }
 }

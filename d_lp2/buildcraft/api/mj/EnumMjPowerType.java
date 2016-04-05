@@ -6,9 +6,9 @@ public enum EnumMjPowerType {
      * it. */
     REDSTONE,
     /** Medium power that is used for most machines that require big complex tasks being done (filling, quarrying,
-     * building.) Usually 1-60 watts of power. Generally can be transported over medium distances (a sane distance
-     * is up to 100 blocks) */
-    THINK_OF_NAME,
+     * building.) Usually 1-60 watts of power. Generally can be transported over medium distances (a sane distance is up
+     * to 100 blocks) */
+    LAPITRONIC,
     /** High power used for expensive, but delicate tasks (creating an iron chipset or programming a robot board).
      * Generally can only be transfered over short distance. */
     LASER

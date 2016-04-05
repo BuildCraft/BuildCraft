@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
 
 import buildcraft.core.BCRegistry;
+import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.MigrationManager;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
@@ -25,6 +26,7 @@ public class BlockBuildCraftBase_BC8 extends Block {
         this.id = id;
         setUnlocalizedName(TagManager.getTag(id, EnumTagType.UNLOCALIZED_NAME));
         setRegistryName(TagManager.getTag(id, EnumTagType.REGISTRY_NAME));
+        setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
     }
 
     public static <B extends BlockBuildCraftBase_BC8> B register(B block) {

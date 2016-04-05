@@ -21,11 +21,11 @@ public class ItemBuildCraft_BC8 extends Item {
     /** The tag used to identify this in the {@link TagManager} */
     public final String id;
 
-    public ItemBuildCraft_BC8(String tag) {
-        this.id = tag;
-        setUnlocalizedName(TagManager.getTag(tag, EnumTagType.UNLOCALIZED_NAME));
-        setRegistryName(TagManager.getTag(tag, EnumTagType.REGISTRY_NAME));
-        setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(tag, EnumTagType.CREATIVE_TAB)));
+    public ItemBuildCraft_BC8(String id) {
+        this.id = id;
+        setUnlocalizedName(TagManager.getTag(id, EnumTagType.UNLOCALIZED_NAME));
+        setRegistryName(TagManager.getTag(id, EnumTagType.REGISTRY_NAME));
+        setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
     }
 
     public static <I extends ItemBuildCraft_BC8> I register(I item) {

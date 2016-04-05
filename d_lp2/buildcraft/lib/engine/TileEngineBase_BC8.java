@@ -19,8 +19,8 @@ import buildcraft.lib.block.TileBuildCraft_BC8;
 import buildcraft.lib.mj.helpers.MjSimpleProducer;
 
 public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {
-    protected final IMjMachineProducer mjProducer = createProducer();
-    private EnumFacing currentDirection;
+    protected final MjSimpleProducer mjProducer = createProducer();
+    private EnumFacing currentDirection = EnumFacing.UP;
     // Keep a buffer of what tiles are infront of us.
     protected final BlockTileCache[] infrontBuffer = new BlockTileCache[getMaxEngineCarryDist()];
     // refreshed from above, but is guaranteed to be non-null and the correct length.
@@ -31,7 +31,7 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
         remakeTileCaches();
     }
 
-    protected abstract IMjMachineProducer createProducer();
+    protected abstract MjSimpleProducer createProducer();
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -70,6 +70,7 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
             }
         }
         enginesInFront = Arrays.copyOf(engines, num);
+        mjProducer.tick();
     }
 
     private void remakeTileCaches() {
@@ -97,6 +98,10 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
 
     public EnumFacing getCurrentDirection() {
         return currentDirection;
+    }
+
+    public boolean hasRedstoneSignal() {
+        return worldObj.isBlockPowered(getPos());
     }
 
     public abstract EnumEnergyStage getEnergyStage();
@@ -152,7 +157,7 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
 
         @Override
         public int getMaxCurrentlySuppliable() {
-            if (!hasMoreFuel()) return 0;
+            if (!hasRedstoneSignal() || !hasMoreFuel()) return 0;
             return TileEngineBase_BC8.this.getMaxCurrentlySuppliable();
         }
     }

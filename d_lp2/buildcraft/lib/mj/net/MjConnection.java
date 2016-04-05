@@ -2,10 +2,7 @@ package buildcraft.lib.mj.net;
 
 import com.google.common.collect.ImmutableList;
 
-import buildcraft.api.mj.IMjConnection;
-import buildcraft.api.mj.IMjMachine;
-import buildcraft.api.mj.IMjMachineConsumer;
-import buildcraft.api.mj.IMjMachineProducer;
+import buildcraft.api.mj.*;
 
 public class MjConnection implements IMjConnection {
     private final IMjMachineProducer producer;
@@ -24,22 +21,22 @@ public class MjConnection implements IMjConnection {
 
     @Override
     public IMjMachineProducer getProducer() {
-        return null;
+        return producer;
     }
 
     @Override
     public ImmutableList<IMjMachine> getConductors() {
-        return null;
+        return transporters;
     }
 
     @Override
     public IMjMachineConsumer getConsumer() {
-        return null;
+        return consumer;
     }
 
     @Override
     public void breakConnection() {
-
+        MjAPI.NET_INSTANCE.breakConnection(this);
     }
 
     @Override

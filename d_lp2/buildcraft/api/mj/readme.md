@@ -1,9 +1,9 @@
 # BC MJ power network usage
 
 ## Basic ideas
-MJ is referred throughout as "watts" as the transmitted unit is never used directly- you say that you will provide X watts for as long as possible. Because a normal usage value is "1 Watt" we use milliWatts instead, which is 1/1000 of a watt.
+MJ is referred throughout mostly as "watts" as it is transmitted in deltas rather than the raw values- you say that you will provide X watts for as long as possible. Because a normal usage value is "1 Watt" we use milliWatts instead, which is 1/1000 of a watt.
 
-MJ is not storable. You should convert it to EU before storing it (say for robots or tools). The conversion should be lossy, and the base conversion rate is 1 Watt in 1 tick is equivilent to *TODO* EU. You are encouraged to convert to and from at no higher than 50% efficiency (BC itself converts to at 20% efficiency).
+Storing MJ should generally be done in 
 
 It is fine however to store *small* amounts of MJ inside of machines if they are doing tasks that take longer than a single tick. You should not be able to store it and extract it later though, and you should empty the buffer after all incoming connections are broken.
 
@@ -14,7 +14,7 @@ Redstone:
   - Generally should amounts up to 100 milli watts of power
   - Should only be transferable over small contained distances (across 1 block)
 
-Normal (*TODO Think Of Name*):
+Lapitronic (*TODO Think Of Name*):
   - Used for big complex tasks (like quarrying or building)
   - Generally should be amounts between 1 and 40 watts of power
   - Should be transferable over medium distances (up to about 100 blocks)

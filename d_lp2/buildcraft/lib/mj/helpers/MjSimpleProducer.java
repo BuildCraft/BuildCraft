@@ -51,7 +51,20 @@ public abstract class MjSimpleProducer extends MjSimpleMachine implements IMjMac
         if (!canUpdate()) return;
         if (milliWattsRemovedLast != milliWattsRemovedCache) {
             milliWattsRemovedLast = milliWattsRemovedCache;
-            setCurrentUsed(milliWattsRemovedCache);
+            int maxSuppliable = getMaxCurrentlySuppliable();
+            if (maxSuppliable < milliWattsRemovedCache) {
+                // Uh-oh, we are using up too much power. Perhaps the producer just ran out of fuel.
+                int supplied = 0;
+                List<IMjConnection> connections = new ArrayList<>(powerRemovingConnections);
+                for (IMjConnection connection : connections) {
+                    supplied += connection.milliWattsIn();
+                    if (supplied > maxSuppliable) {
+                        connection.breakConnection();
+                    }
+                }
+            } else {
+                setCurrentUsed(milliWattsRemovedCache);
+            }
         }
     }
 

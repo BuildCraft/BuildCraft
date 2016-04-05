@@ -8,9 +8,10 @@ public interface IMjMachine {
     IConnectionLogic getConnectionLogic();
 
     /** @return A set of identifiers that will find this machine in the world. This is used as a key to find this
-     *         machine so you should return the same key every time, and */
+     *         machine so you should return the same key every time. If this is empty then you will never be connected
+     *         to anything in the network. */
     Set<MjMachineIdentifier> getIdentifiers();
-    
+
     /** Creates a connection that will deliver power either to, through or from you. This connection isn't transferring
      * power to the destination yet, but it should be flowing out from the producer. This is after a path for power has
      * been found, but before it is setup.
