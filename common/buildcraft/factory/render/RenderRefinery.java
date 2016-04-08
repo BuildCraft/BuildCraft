@@ -18,6 +18,7 @@ import net.minecraft.util.Vec3;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.lib.client.render.FluidRenderer;
 import buildcraft.core.lib.client.render.RenderUtils;
@@ -81,7 +82,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             anim = tile.getAnimationStage();
 
             IBlockState state = tile.getWorld().getBlockState(tile.getPos());
-            EnumFacing face = state.getValue(BuildCraftProperties.BLOCK_FACING);
+            EnumFacing face = state.getBlock() == BuildCraftFactory.refineryBlock ? state.getValue(BuildCraftProperties.BLOCK_FACING) : EnumFacing.EAST;
 
             while (face != EnumFacing.EAST) {
                 face = face.rotateY();
