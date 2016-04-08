@@ -46,6 +46,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -79,6 +80,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.lib.DebuggingTools;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.config.FileConfigManager;
@@ -92,6 +94,7 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.list.*;
+import buildcraft.core.network.EntityIds;
 import buildcraft.core.properties.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -357,6 +360,8 @@ public class BuildCraftCore extends BuildCraftMod {
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         BuildCraftAPI.proxy = CoreProxy.proxy;
+
+        EntityRegistry.registerModEntity(EntityResizableCuboid.class, "bcResizCuboid", EntityIds.RESIZABLE_CUBOID, instance, 0, 100, false);
 
         ChannelHandler coreChannelHandler = new ChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
