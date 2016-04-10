@@ -15,10 +15,10 @@ import net.minecraftforge.common.capabilities.Capability;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.*;
+import buildcraft.api.mj.helpers.MjSimpleProducer;
 import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.data.DataTemplate;
-import buildcraft.lib.mj.helpers.MjSimpleProducer;
 import buildcraft.lib.tile.TileBuildCraft_BC8;
 
 public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {

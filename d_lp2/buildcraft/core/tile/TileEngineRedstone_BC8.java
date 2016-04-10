@@ -4,11 +4,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.EnumMjPowerType;
+import buildcraft.api.mj.helpers.MjSimpleProducer;
 import buildcraft.core.lib.utils.AverageDouble;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.data.DataTemplate;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.mj.helpers.MjSimpleProducer;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // TODO: Fix these numbers as they are probably completely wrong

@@ -89,7 +89,7 @@ public class FakeWorld extends World {
     }
 
     @Override
-    protected int getRenderDistanceChunks() {
-        return 10;
+    protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
+        return false;
     }
 }

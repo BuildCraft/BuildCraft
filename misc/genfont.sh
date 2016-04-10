@@ -1,8 +1,8 @@
 #!/bin/sh
 cd ..
-tools/mkfont -r 0-383,1024-1119 \
- -o buildcraft_resources/assets/buildcraftcore/tablet/11.pf2 \
--s 11 /usr/share/fonts/TTF/DejaVuSans.ttf
-tools/mkfont -r 0-383,1024-1119 \
- -o buildcraft_resources/assets/buildcraftcore/tablet/16.pf2 \
--s 16 /usr/share/fonts/TTF/DejaVuSans.ttf
+# Location to font file. Different on different systems.
+font_location="$1"
+for i in 11 13 16 18 22
+do
+    grub-mkfont -r 0-383,1024-1119 -o buildcraft_resources/assets/buildcraftcore/guide/font/$i.pf2 -s i $font_location/DejaVuSans.ttf
+done

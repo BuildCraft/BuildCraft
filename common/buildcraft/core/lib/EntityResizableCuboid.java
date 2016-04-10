@@ -10,10 +10,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -100,7 +101,7 @@ public class EntityResizableCuboid extends Entity {
     @Override
     public void setPosition(double d, double d1, double d2) {
         super.setPosition(d, d1, d2);
-        this.setEntityBoundingBox(AxisAlignedBB.fromBounds(posX, posY, posZ, posX + xSize, posY + ySize, posZ + zSize));
+        this.setEntityBoundingBox(new AxisAlignedBB(posX, posY, posZ, posX + xSize, posY + ySize, posZ + zSize));
     }
 
     @Override

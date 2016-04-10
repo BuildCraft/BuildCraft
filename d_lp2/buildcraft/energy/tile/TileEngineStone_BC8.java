@@ -10,9 +10,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.EnumMjPowerType;
-import buildcraft.api.mj.IMjMachineProducer;
+import buildcraft.api.mj.helpers.MjSimpleProducer;
 import buildcraft.lib.engine.TileEngineBase_BC8;
-import buildcraft.lib.mj.helpers.MjSimpleProducer;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     public static final int MILLIWATTS_PROVIDED = 1000;
@@ -20,6 +19,10 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private ItemStack currentFuel;
     private double ticksLeft = 0;
     private double beingUsed = 1;
+
+    public TileEngineStone_BC8() {
+        super(1);// All details are known
+    }
 
     @Override
     protected MjSimpleProducer createProducer() {

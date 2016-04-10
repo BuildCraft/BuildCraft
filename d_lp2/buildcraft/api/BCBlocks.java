@@ -13,6 +13,7 @@ import buildcraft.api.core.BCLog;
  * module is not installed) then they will be null. This is the equivalent of {@link Blocks} */
 public class BCBlocks {
     // BC Core
+    public static final Block coreDecorated;
     public static final Block coreEngineRedstone;
 
     // BC Builders
@@ -35,6 +36,7 @@ public class BCBlocks {
             throw new RuntimeException("Accessed BC blocks too early! You can only use them from init onwards!");
         }
         String core = "core";
+        coreDecorated = getRegisteredBlock(core, "decorated");
         coreEngineRedstone = getRegisteredBlock(core, "engine_redstone");
 
         String energy = "energy";
