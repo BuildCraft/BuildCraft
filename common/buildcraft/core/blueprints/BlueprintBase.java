@@ -10,10 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
@@ -74,14 +74,14 @@ public abstract class BlueprintBase {
         contents[pos.getX()][pos.getY()][pos.getZ()] = schematic;
     }
 
-    public void translateToBlueprint(Vec3 transform) {
+    public void translateToBlueprint(Vec3d transform) {
         for (SchematicBlockBase[][] arr2 : contents)
             for (SchematicBlockBase[] arr1 : arr2)
                 for (SchematicBlockBase content : arr1)
                     if (content != null) content.translateToBlueprint(transform);
     }
 
-    public void translateToWorld(Vec3 transform) {
+    public void translateToWorld(Vec3d transform) {
         for (SchematicBlockBase[][] arr2 : contents)
             for (SchematicBlockBase[] arr1 : arr2)
                 for (SchematicBlockBase content : arr1)
@@ -113,8 +113,8 @@ public abstract class BlueprintBase {
 
             if (dir.getAxis() != Axis.Y) dir = dir.rotateY();
 
-            Vec3 pos = new Vec3(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
-            Vec3 rotated = context.rotatePositionLeft(pos);
+            Vec3d pos = new Vec3d(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
+            Vec3d rotated = context.rotatePositionLeft(pos);
 
             sub.setInteger("x", (int) rotated.xCoord);
             sub.setInteger("z", (int) rotated.zCoord);
@@ -267,7 +267,7 @@ public abstract class BlueprintBase {
             }
         }
 
-        Vec3 transform = Utils.convert(pos).subtract(new Vec3(anchor));
+        Vec3d transform = Utils.convert(pos).subtract(new Vec3d(anchor));
 
         translateToWorld(transform);
 

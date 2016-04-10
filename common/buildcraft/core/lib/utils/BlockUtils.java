@@ -15,11 +15,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -46,7 +48,7 @@ public final class BlockUtils {
     public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block == null || block.isAir(world, pos)) {
+        if (block == null || block.isAir(state, world, pos)) {
             return null;
         }
 
@@ -97,7 +99,7 @@ public final class BlockUtils {
         }
 
         state.getBlock().onBlockHarvested(world, pos, state, player);
-        state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos));
+        state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), tool);
         world.setBlockToAir(pos);
 
         return true;
@@ -107,7 +109,7 @@ public final class BlockUtils {
         EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
         int i = 0;
 
-        while (player.getHeldItem() != tool && i < 9) {
+        while (player.getHeldItemMainhand() != tool && i < 9) {
             if (i > 0) {
                 player.inventory.setInventorySlotContents(i - 1, null);
             }
@@ -156,7 +158,7 @@ public final class BlockUtils {
         if (state == null) return true;
 
         Block block = state.getBlock();
-        if (block == null || block.isAir(world, pos)) {
+        if (block == null || block.isAir(state, world, pos)) {
             return true;
         }
 
@@ -177,14 +179,15 @@ public final class BlockUtils {
     }
 
     public static float getBlockHardnessMining(World world, BlockPos pos, Block b) {
+        IBlockState state = world.getBlockState(pos);
         if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
-            float relativeHardness = b.getPlayerRelativeBlockHardness(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, pos);
+            float relativeHardness = b.getPlayerRelativeBlockHardness(state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, pos);
             if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
                                             // is < 0.0F.
                 return -1.0F;
             }
         }
-        return b.getBlockHardness(world, pos);
+        return b.getBlockHardness(state, world, pos);
     }
 
     public static boolean isUnbreakableBlock(World world, BlockPos pos, Block b) {
@@ -201,7 +204,7 @@ public final class BlockUtils {
 
     /** Returns true if a block cannot be harvested without a tool. */
     public static boolean isToughBlock(World world, BlockPos pos) {
-        return !world.getBlockState(pos).getBlock().getMaterial().isToolNotRequired();
+        return !world.getBlockState(pos).getMaterial().isToolNotRequired();
     }
 
     public static boolean isFullFluidBlock(World world, BlockPos pos) {
@@ -280,14 +283,15 @@ public final class BlockUtils {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
+                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
                         null));
             }
         }
     }
 
     public static int computeBlockBreakEnergy(World world, BlockPos pos) {
-        float hardness = world.getBlockState(pos).getBlock().getBlockHardness(world, pos);
+        IBlockState state = world.getBlockState(pos);
+        float hardness = state.getBlock().getBlockHardness(state, world, pos);
         return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier * ((hardness + 1) * 2));
     }
 
@@ -347,10 +351,10 @@ public final class BlockUtils {
     // }
 
     public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos, EnumFacing direction) {
-        boolean done = stack.getItem().onItemUseFirst(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F);
+        boolean done = stack.getItem().onItemUseFirst(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;
 
         if (!done) {
-            done = stack.getItem().onItemUse(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F);
+            done = stack.getItem().onItemUse(stack, player, world, pos, EnumHand.MAIN_HAND, direction, 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS;
         }
         return done;
     }

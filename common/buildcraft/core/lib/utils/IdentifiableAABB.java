@@ -1,7 +1,7 @@
 package buildcraft.core.lib.utils;
 
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 
 public class IdentifiableAABB<T> extends AxisAlignedBB {
     public final T identifier;
@@ -10,7 +10,7 @@ public class IdentifiableAABB<T> extends AxisAlignedBB {
         this(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, identifier);
     }
 
-    public IdentifiableAABB(Vec3 min, Vec3 max, T identifier) {
+    public IdentifiableAABB(Vec3d min, Vec3d max, T identifier) {
         this(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord, identifier);
     }
 

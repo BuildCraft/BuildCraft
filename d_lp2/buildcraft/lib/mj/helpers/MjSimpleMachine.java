@@ -31,7 +31,7 @@ public abstract class MjSimpleMachine implements IMjMachine {
     /** You should only call this if the tile has a world object. */
     private void initIdentifiers() {
         ImmutableSet.Builder<MjMachineIdentifier> idents = ImmutableSet.builder();
-        int dim = tile.getWorld().provider.getDimensionId();
+        int dim = tile.getWorld().provider.getDimension();
         if (availableFaces == null || availableFaces.length == 0) {
             idents.add(new MjMachineIdentifier(dim, tile.getPos(), null));
         } else {

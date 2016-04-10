@@ -5,7 +5,7 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.Utils;
@@ -14,13 +14,13 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 
     private double prevDistance = Double.MAX_VALUE;
 
-    private Vec3 pos;
+    private Vec3d pos;
 
     public AIRobotStraightMoveTo(EntityRobotBase iRobot) {
         super(iRobot);
     }
 
-    public AIRobotStraightMoveTo(EntityRobotBase iRobot, Vec3 pos) {
+    public AIRobotStraightMoveTo(EntityRobotBase iRobot, Vec3d pos) {
         this(iRobot);
         this.pos = pos;
         robot.aimItemAt(Utils.convertFloor(pos));
@@ -73,7 +73,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
             float x = nbt.getFloat("x");
             float y = nbt.getFloat("y");
             float z = nbt.getFloat("z");
-            pos = new Vec3(x, y, z);
+            pos = new Vec3d(x, y, z);
         }
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -39,7 +39,7 @@ public abstract class BuildingSlot {
         return new ArrayList<>();
     }
 
-    public abstract Vec3 getDestination();
+    public abstract Vec3d getDestination();
 
     public void addStackConsumed(ItemStack stack) {
         if (stackConsumed == null) {

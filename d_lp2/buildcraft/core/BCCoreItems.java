@@ -1,6 +1,5 @@
 package buildcraft.core;
 
-import buildcraft.core.*;
 import buildcraft.lib.MigrationManager;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 

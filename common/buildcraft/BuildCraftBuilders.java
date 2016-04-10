@@ -28,7 +28,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -269,8 +269,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
-        if ("BuildCraftCore".equals(event.modID)) {
-            reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+        if ("BuildCraftCore".equals(event.getModID())) {
+            reloadConfig(event.isWorldRunning() ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
         }
     }
 
@@ -653,7 +653,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Pre evt) {
-        TextureMap terrainTextures = evt.map;
+        TextureMap terrainTextures = evt.getMap();
         BuilderProxyClient.drillTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill"));
         BuilderProxyClient.drillHeadTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill_head"));
     }

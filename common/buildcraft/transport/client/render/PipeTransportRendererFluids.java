@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -199,8 +199,8 @@ public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTrans
 
         EnumFacing positive = Utils.convertPositive(connect);
 
-        Vec3 size = new Vec3(width, 0.5, width).subtract(Utils.convert(positive, 0.25));
-        Vec3 position = new Vec3(0.5, 0.5, 0.5).add(Utils.convert(connect, 0.375));
+        Vec3d size = new Vec3d(width, 0.5, width).subtract(Utils.convert(positive, 0.25));
+        Vec3d position = new Vec3d(0.5, 0.5, 0.5).add(Utils.convert(connect, 0.375));
         position = position.subtract(Utils.multiply(size, 0.5));
 
         // The position is not correct!
@@ -310,8 +310,8 @@ public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTrans
 
                 EnumFacing pos = connect.getAxisDirection() == AxisDirection.POSITIVE ? connect : connect.getOpposite();
 
-                Vec3 size = new Vec3(width, 0.5, width).subtract(Utils.convert(pos, 0.25));
-                Vec3 position = new Vec3(0.5, 0.5, 0.5).add(Utils.convert(connect, 0.375));
+                Vec3d size = new Vec3d(width, 0.5, width).subtract(Utils.convert(pos, 0.25));
+                Vec3d position = new Vec3d(0.5, 0.5, 0.5).add(Utils.convert(connect, 0.375));
                 position = position.subtract(Utils.multiply(size, 0.5));
 
                 // The position is not correct!

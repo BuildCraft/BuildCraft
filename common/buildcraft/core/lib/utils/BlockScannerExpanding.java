@@ -2,7 +2,7 @@ package buildcraft.core.lib.utils;
 
 import java.util.Iterator;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class BlockScannerExpanding implements Iterable<BlockPos> {
 

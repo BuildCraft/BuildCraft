@@ -6,9 +6,9 @@ package buildcraft.builders.blueprints;
 
 import java.io.File;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
@@ -55,7 +55,7 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
             }
         }
 
-        Vec3 transform = Utils.convert(pos).subtract(Utils.convert(bpt.anchor));
+        Vec3d transform = Utils.convert(pos).subtract(Utils.convert(bpt.anchor));
 
         bpt.translateToWorld(transform);
 

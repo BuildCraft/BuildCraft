@@ -1,9 +1,9 @@
 package buildcraft.transport.client.shader;
 
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 public class FluidPositionInfoBuilder {
-    Vec3 min, max, point, direction;
+    Vec3d min, max, point, direction;
     boolean visible, moves;
     float textureIndex;
     long startMoving, endMoving;
@@ -18,22 +18,22 @@ public class FluidPositionInfoBuilder {
         // Empty builder.
     }
 
-    public FluidPositionInfoBuilder setMin(Vec3 min) {
+    public FluidPositionInfoBuilder setMin(Vec3d min) {
         this.min = min;
         return this;
     }
 
-    public FluidPositionInfoBuilder setMax(Vec3 max) {
+    public FluidPositionInfoBuilder setMax(Vec3d max) {
         this.max = max;
         return this;
     }
 
-    public FluidPositionInfoBuilder setPoint(Vec3 point) {
+    public FluidPositionInfoBuilder setPoint(Vec3d point) {
         this.point = point;
         return this;
     }
 
-    public FluidPositionInfoBuilder setDirection(Vec3 direction) {
+    public FluidPositionInfoBuilder setDirection(Vec3d direction) {
         this.direction = direction;
         return this;
     }

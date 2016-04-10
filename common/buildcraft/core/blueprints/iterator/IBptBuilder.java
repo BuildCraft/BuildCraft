@@ -2,7 +2,7 @@ package buildcraft.core.blueprints.iterator;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.INBTLoadable_BC8;
 import buildcraft.core.Box;

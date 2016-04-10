@@ -15,9 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidBlock;
 
@@ -67,7 +67,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
             }
 
             if (o != EnumPipePart.CENTER) {
-                Vec3 vec = Utils.convert(container.getPos()).add(Utils.convert(o.face));
+                Vec3d vec = Utils.convert(container.getPos()).add(Utils.convert(o.face));
                 BlockPos veci = Utils.convertFloor(vec);
 
                 if (!BlockUtils.isUnbreakableBlock(getWorld(), Utils.convertFloor(vec))) {
@@ -121,7 +121,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
             direction = event.direction;
         }
 
-        Vec3 p = Utils.convert(container.getPos()).add(Utils.convert(direction));
+        Vec3d p = Utils.convert(container.getPos()).add(Utils.convert(direction));
 
         ItemStack stack = event.entity.getEntityItem();
         EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), Utils.convertFloor(p)).get();
@@ -166,7 +166,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public void dropItem(ItemStack itemStack, EnumFacing direction) {
-        Vec3 p = Utils.convert(container.getPos()).add(Utils.convert(direction));
+        Vec3d p = Utils.convert(container.getPos()).add(Utils.convert(direction));
         InvUtils.dropItems(getWorld(), itemStack, Utils.convertFloor(p));
     }
 

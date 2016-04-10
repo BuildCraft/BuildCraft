@@ -6,9 +6,9 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
@@ -31,7 +31,7 @@ public class StripesHandlerUse implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Vec3 target = Utils.convert(pos).add(Utils.convert(direction));
+        Vec3d target = Utils.convert(pos).add(Utils.convert(direction));
 
         if (BlockUtils.useItemOnBlock(world, player, stack, Utils.convertFloor(target), direction.getOpposite())) {
             if (stack.stackSize > 0) {

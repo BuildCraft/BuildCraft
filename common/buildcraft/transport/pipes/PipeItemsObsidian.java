@@ -17,7 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -73,8 +73,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
         if (orientation == null) {
             return null;
         }
-        Vec3 p1 = Utils.convert(container.getPos()).add(Utils.VEC_HALF);
-        Vec3 p2 = p1;
+        Vec3d p1 = Utils.convert(container.getPos()).add(Utils.VEC_HALF);
+        Vec3d p2 = p1;
 
         switch (orientation) {
             case EAST:
@@ -123,8 +123,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                 break;
         }
 
-        Vec3 min = Utils.min(p1, p2);
-        Vec3 max = Utils.max(p1, p2);
+        Vec3d min = Utils.min(p1, p2);
+        Vec3d max = Utils.max(p1, p2);
 
         return new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
     }

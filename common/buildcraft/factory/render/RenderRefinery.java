@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -25,7 +25,7 @@ import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
 
-    private static final Vec3 TANK_SIZE = new Vec3(0.5, 1, 0.5);
+    private static final Vec3d TANK_SIZE = new Vec3d(0.5, 1, 0.5);
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refinery/refinery.png");
     private static final float pixel = (float) (1.0 / 16.0);
     private final ModelRenderer tank;

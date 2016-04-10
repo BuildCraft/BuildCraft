@@ -1,8 +1,12 @@
 package buildcraft.core.tile;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.EnumMjPowerType;
 import buildcraft.core.lib.utils.AverageDouble;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.data.DataTemplate;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 import buildcraft.lib.mj.helpers.MjSimpleProducer;
 
@@ -10,13 +14,54 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // TODO: Fix these numbers as they are probably completely wrong
     public static final int[] MILLIWATTS_PROVIDED = { 35, 50, 75, 100, 0 };
 
+    protected static final DataTemplate TEMPLATE_REDSTONE;
+
+    static {
+        TEMPLATE_REDSTONE = TileEngineBase_BC8.TEMPLATE_BASE.toBuilder()//
+                .addEnum("stage", EnumEnergyStage.class)//
+                .build();
+    }
+
     private EnumEnergyStage stage = EnumEnergyStage.BLUE;
     private AverageDouble powerAvg = new AverageDouble(10);
     private long lastChange = 0;
 
+    public TileEngineRedstone_BC8() {
+        this(1);
+    }
+
+    protected TileEngineRedstone_BC8(int saveStages) {
+        super(saveStages);
+    }
+
     @Override
     protected MjSimpleProducer createProducer() {
         return new EngineProducer(EnumMjPowerType.REDSTONE);
+    }
+
+    @Override
+    public DataTemplate getTemplateFor(int stage) {
+        if (stage == 0) return TEMPLATE_REDSTONE;
+        return super.getTemplateFor(stage);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(int stage) {
+        NBTTagCompound nbt = super.writeToNBT(stage);
+        if (stage == 0) {
+            nbt.setTag("stage", NBTUtils.writeEnum(this.stage));
+            nbt.setTag("average", powerAvg.serializeNBT());
+        }
+        return nbt;
+    }
+
+    @Override
+    public void readFromNBT(int stage, NBTTagCompound nbt) {
+        super.readFromNBT(stage, nbt);
+        if (stage == 0) {
+            this.stage = NBTUtils.readEnum(nbt.getTag("stage"), EnumEnergyStage.class);
+            powerAvg.deserializeNBT(nbt.getCompoundTag("average"));
+        }
     }
 
     @Override
@@ -36,8 +81,13 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public void setCurrentUsed(int milliwatts) {
-        double beingUsed = milliwatts / (double) getMaxCurrentlySuppliable();
-        powerAvg.push(beingUsed * 2);
+        int supply = getMaxCurrentlySuppliable();
+        if (supply == 0) {
+            powerAvg.push(0);
+        } else {
+            double beingUsed = milliwatts / (double) supply;
+            powerAvg.push(beingUsed * 2);
+        }
     }
 
     @Override

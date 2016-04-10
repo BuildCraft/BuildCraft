@@ -8,8 +8,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,9 +42,9 @@ public class ItemBuildCraft extends Item implements IModelRegister {
         this.passSneakClick = passClick;
         return this;
     }
-
+    
     @Override
-    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return passSneakClick;
     }
 

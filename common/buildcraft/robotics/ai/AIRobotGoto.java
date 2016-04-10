@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -12,13 +12,13 @@ import buildcraft.core.lib.utils.Utils;
 
 public abstract class AIRobotGoto extends AIRobot {
 
-    protected Vec3 next, dir;
+    protected Vec3d next, dir;
 
     public AIRobotGoto(EntityRobotBase iRobot) {
         super(iRobot);
     }
 
-    protected void setDestination(EntityRobotBase robot, Vec3 dest) {
+    protected void setDestination(EntityRobotBase robot, Vec3d dest) {
         next = dest;
         dir = next.subtract(robot.posX, robot.posY, robot.posZ);
 
@@ -27,7 +27,7 @@ public abstract class AIRobotGoto extends AIRobot {
         if (magnitude != 0) {
             dir = Utils.multiply(dir, 1 / magnitude);
         } else {
-            dir = new Vec3(0, 0, 0);
+            dir = new Vec3d(0, 0, 0);
         }
 
         robot.motionX = dir.xCoord / 10f;

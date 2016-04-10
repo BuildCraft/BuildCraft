@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 import buildcraft.core.client.CoreIconProvider;
 
@@ -34,7 +34,7 @@ public abstract class AdvancedSlot {
     }
 
     public final void drawTooltip(GuiAdvancedInterface gui, int x, int y) {
-        String s = StatCollector.translateToLocal(getDescription());
+        String s = I18n.translateToLocal(getDescription());
 
         if (s != null) {
             gui.drawTooltip(s, x, y);

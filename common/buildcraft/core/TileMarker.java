@@ -9,8 +9,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftCore;
@@ -136,8 +136,8 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public Origin origin = new Origin();
     public boolean showSignals = false;
 
-    private Vec3 initVectO;
-    private Vec3[] initVect;
+    private Vec3d initVectO;
+    private Vec3d[] initVect;
     public LaserData[] lasers;
     public LaserData[] signals;
 
@@ -152,10 +152,10 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         signals = null;
         if (showSignals) {
             signals = new LaserData[6];
-            Vec3 cPos = Utils.convert(pos);
+            Vec3d cPos = Utils.convert(pos);
             int rangePlus = DefaultProps.MARKER_RANGE + 1;
             int rangeMinus = DefaultProps.MARKER_RANGE - 1;
-            Vec3 offset = Utils.VEC_HALF;
+            Vec3d offset = Utils.VEC_HALF;
             if (!origin.isSet() || !origin.vect[0].isSet()) {
                 signals[0] = new LaserData(cPos.add(offset), cPos.add(offset).addVector(rangeMinus, 0, 0));
                 signals[1] = new LaserData(cPos.add(offset).addVector(-rangePlus, 0, 0), cPos.add(offset));
@@ -408,12 +408,12 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         super.readFromNBT(nbttagcompound);
 
         if (nbttagcompound.hasKey("vectO")) {
-            initVectO = NBTUtils.readVec3(nbttagcompound, "vectO");
-            initVect = new Vec3[3];
+            initVectO = NBTUtils.readVec3d(nbttagcompound, "vectO");
+            initVect = new Vec3d[3];
 
             for (int i = 0; i < 3; ++i) {
                 if (nbttagcompound.hasKey("vect" + i)) {
-                    initVect[i] = NBTUtils.readVec3(nbttagcompound, "vect" + i);
+                    initVect[i] = NBTUtils.readVec3d(nbttagcompound, "vect" + i);
                 }
             }
         }
@@ -424,11 +424,11 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         super.writeToNBT(nbt);
 
         if (origin.isSet() && origin.vectO.getMarker(worldObj) == this) {
-            nbt.setTag("vectO", NBTUtils.writeVec3(Utils.convert(origin.vectO.getMarker(worldObj).pos)));
+            nbt.setTag("vectO", NBTUtils.writeVec3d(Utils.convert(origin.vectO.getMarker(worldObj).pos)));
 
             for (int i = 0; i < 3; ++i) {
                 if (origin.vect[i].isSet()) {
-                    nbt.setTag("vect" + i, NBTUtils.writeVec3(Utils.convert(origin.vect[i].getPos())));
+                    nbt.setTag("vect" + i, NBTUtils.writeVec3d(Utils.convert(origin.vect[i].getPos())));
                 }
             }
         }

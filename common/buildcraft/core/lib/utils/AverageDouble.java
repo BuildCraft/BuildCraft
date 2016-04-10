@@ -4,7 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-public class AverageDouble {
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.common.util.INBTSerializable;
+
+import buildcraft.lib.utils.NBTUtils_BC8;
+
+public class AverageDouble implements INBTSerializable<NBTTagCompound> {
     private double[] data;
     private int pos, precise;
     private double averageRaw, tickValue;
@@ -45,5 +51,25 @@ public class AverageDouble {
 
     public void push(double value) {
         tickValue += value;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("pos", pos);
+        nbt.setInteger("precise", precise);
+        nbt.setDouble("averageRaw", averageRaw);
+        nbt.setDouble("tickValue", tickValue);
+        nbt.setTag("data", NBTUtils_BC8.writeDoubleArray(data));
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        precise = MathUtils.clamp(nbt.getInteger("precise"), 1, Short.MAX_VALUE);
+        pos = MathUtils.clamp(nbt.getInteger("pos"), 0, precise);
+        averageRaw = nbt.getDouble("averageRaw");
+        tickValue = nbt.getDouble("tickValue");
+        data = NBTUtils_BC8.readDoubleArray(nbt.getTag("data"), precise);
     }
 }

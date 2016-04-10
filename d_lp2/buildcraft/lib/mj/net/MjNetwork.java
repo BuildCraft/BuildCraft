@@ -24,9 +24,9 @@ public enum MjNetwork implements IMjNetwork {
     private Deque<IMjMachine> removedMachines;
     /** Keep a queue of pending requests. */
     private Deque<IMjRequest> pendingRequests;
-    private Deque<IMjConnection> brokenConnections;
+    private Deque<MjConnection> brokenConnections;
     /** Remember ALL active connections, so that we can save+load them from disk properly. */
-    private List<IMjConnection> activeConnections;
+    private List<MjConnection> activeConnections;
 
     private MjNetwork() {
         machineCache = new ConcurrentHashMap<>();
@@ -86,8 +86,7 @@ public enum MjNetwork implements IMjNetwork {
         return req;
     }
 
-    @Override
-    public void breakConnection(IMjConnection connection) {
+    public void breakConnection(MjConnection connection) {
         brokenConnections.add(connection);
     }
 
@@ -98,11 +97,13 @@ public enum MjNetwork implements IMjNetwork {
         }
 
         activeConnections.removeAll(brokenConnections);
-        for (IMjConnection broken : brokenConnections) {
-            broken.getProducer().onConnectionBroken(broken);
-            broken.getConsumer().onConnectionBroken(broken);
-            for (IMjMachine machine : broken.getConductors()) {
-                machine.onConnectionBroken(broken);
+        for (MjConnection broken : brokenConnections) {
+            if (broken.dimension == world.provider.getDimension()) {
+                broken.getProducer().onConnectionBroken(broken);
+                for (IMjMachine machine : broken.getConductors()) {
+                    machine.onConnectionBroken(broken);
+                }
+                broken.getConsumer().onConnectionBroken(broken);
             }
         }
         brokenConnections.clear();

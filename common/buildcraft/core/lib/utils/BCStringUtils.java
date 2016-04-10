@@ -5,12 +5,13 @@
 package buildcraft.core.lib.utils;
 
 import java.text.DecimalFormat;
+
 import com.google.common.base.Splitter;
 
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.StatCollector;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.translation.I18n;
 
 public final class BCStringUtils {
 
@@ -22,11 +23,11 @@ public final class BCStringUtils {
     private BCStringUtils() {}
 
     public static String localize(String key) {
-        return StatCollector.translateToLocal(key);
+        return I18n.translateToLocal(key);
     }
 
     public static boolean canLocalize(String key) {
-        return StatCollector.canTranslate(key);
+        return I18n.canTranslate(key);
     }
 
     public static String blockPosToShortString(BlockPos pos) {
@@ -45,7 +46,7 @@ public final class BCStringUtils {
     }
 
     // Displaying objects
-    public static String vec3ToDispString(Vec3 vec) {
+    public static String vec3ToDispString(Vec3d vec) {
         if (vec == null) return "null";
         StringBuilder builder = new StringBuilder();
         builder.append(displayDecimalFormat.format(vec.xCoord));

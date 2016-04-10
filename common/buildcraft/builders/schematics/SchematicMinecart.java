@@ -9,7 +9,7 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
@@ -23,20 +23,20 @@ public class SchematicMinecart extends SchematicEntity {
     }
 
     @Override
-    public void translateToBlueprint(Vec3 transform) {
+    public void translateToBlueprint(Vec3d transform) {
         super.translateToBlueprint(transform);
 
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0) - 0.5, nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2) - 0.5);
+        Vec3d pos = new Vec3d(nbttaglist.getDoubleAt(0) - 0.5, nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2) - 0.5);
         entityNBT.setTag("Pos", this.newDoubleNBTList(pos.xCoord, pos.yCoord, pos.zCoord));
     }
 
     @Override
-    public void translateToWorld(Vec3 transform) {
+    public void translateToWorld(Vec3d transform) {
         super.translateToWorld(transform);
 
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0) + 0.5, nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2) + 0.5);
+        Vec3d pos = new Vec3d(nbttaglist.getDoubleAt(0) + 0.5, nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2) + 0.5);
         entityNBT.setTag("Pos", this.newDoubleNBTList(pos.xCoord, pos.yCoord, pos.zCoord));
     }
 
@@ -51,12 +51,12 @@ public class SchematicMinecart extends SchematicEntity {
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Vec3 newPosition = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3d newPosition = new Vec3d(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;
 
-            Vec3 existingPositon = new Vec3(e.posX, e.posY, e.posZ);
+            Vec3d existingPositon = new Vec3d(e.posX, e.posY, e.posZ);
 
             if (e instanceof EntityMinecart) {
                 if (existingPositon.distanceTo(newPosition) < 0.1F) {

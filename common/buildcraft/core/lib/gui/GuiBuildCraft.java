@@ -11,10 +11,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -169,17 +166,17 @@ public abstract class GuiBuildCraft extends GuiContainer {
     // The magic is here
     private void drawCutIcon(TextureAtlasSprite icon, int x, int y, int width, int height, int cut) {
         Tessellator tess = Tessellator.getInstance();
-        WorldRenderer wr = tess.getWorldRenderer();
-        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        vertexUV(wr, x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
-        vertexUV(wr, x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
-        vertexUV(wr, x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
-        vertexUV(wr, x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
+        VertexBuffer vb = tess.getBuffer();
+        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        vertexUV(vb, x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
+        vertexUV(vb, x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
+        vertexUV(vb, x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
+        vertexUV(vb, x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
         tess.draw();
     }
 
-    private static void vertexUV(WorldRenderer wr, double x, double y, double z, double u, double v) {
-        wr.pos(x, y, z).tex(u, v).endVertex();;
+    private static void vertexUV(VertexBuffer vb, double x, double y, double z, double u, double v) {
+        vb.pos(x, y, z).tex(u, v).endVertex();
     }
 
     @Override

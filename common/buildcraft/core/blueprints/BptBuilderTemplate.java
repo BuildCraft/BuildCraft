@@ -7,7 +7,7 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 

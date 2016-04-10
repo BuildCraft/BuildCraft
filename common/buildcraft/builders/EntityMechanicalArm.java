@@ -9,8 +9,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -22,7 +22,7 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 
     private double armSizeX;
     private double armSizeZ;
-    private Vec3 root, head;
+    private Vec3d root, head;
 
     /** Public for the renderer */
     public EntityResizableCuboid xArm, yArm, zArm, headEntity;
@@ -33,7 +33,7 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
         noClip = true;
     }
 
-    public EntityMechanicalArm(World world, Vec3 root, double width, double height, TileQuarry parent) {
+    public EntityMechanicalArm(World world, Vec3d root, double width, double height, TileQuarry parent) {
         this(world);
         setPositionAndRotation(parent.getPos().getX(), parent.getPos().getY(), parent.getPos().getZ(), 0, 0);
         this.motionX = 0.0;
@@ -47,7 +47,7 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
         updatePosition();
     }
 
-    public void setHead(Vec3 vec) {
+    public void setHead(Vec3d vec) {
         this.head = vec;
     }
 
@@ -81,7 +81,7 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
         double xRoot = nbttagcompound.getDouble("xRoot");
         double yRoot = nbttagcompound.getDouble("yRoot");
         double zRoot = nbttagcompound.getDouble("zRoot");
-        root = new Vec3(xRoot, yRoot, zRoot);
+        root = new Vec3d(xRoot, yRoot, zRoot);
         armSizeX = nbttagcompound.getDouble("armSizeX");
         armSizeZ = nbttagcompound.getDouble("armSizeZ");
         setArmSize(armSizeX, armSizeZ);
@@ -99,7 +99,7 @@ public class EntityMechanicalArm extends Entity implements IEntityAdditionalSpaw
 
     @Override
     public void readSpawnData(ByteBuf buffer) {
-        root = new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+        root = new Vec3d(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
         armSizeX = buffer.readDouble();
         armSizeZ = buffer.readDouble();
         setArmSize(armSizeX, armSizeZ);

@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class EntityLaser extends Entity {
@@ -49,18 +49,18 @@ public class EntityLaser extends Entity {
     }
 
     public EntityLaser(World world) {
-        this(world, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
+        this(world, new Vec3d(0, 0, 0), new Vec3d(0, 0, 0));
     }
 
-    public EntityLaser(World world, Vec3 head, Vec3 tail) {
+    public EntityLaser(World world, Vec3d head, Vec3d tail) {
         this(world, head, tail, LASER_RED);
     }
 
-    public EntityLaser(World world, Vec3 head, Vec3 tail, LaserKind kind) {
+    public EntityLaser(World world, Vec3d head, Vec3d tail, LaserKind kind) {
         this(world, head, tail, getTextureFromLaserKind(kind));
     }
 
-    public EntityLaser(World world, Vec3 head, Vec3 tail, ResourceLocation laserTexture) {
+    public EntityLaser(World world, Vec3d head, Vec3d tail, ResourceLocation laserTexture) {
         super(world);
 
         data.head = head;
@@ -127,7 +127,7 @@ public class EntityLaser extends Entity {
         dataWatcher.updateObject(NETWORK_VISIBLE, (byte) (data.isVisible ? 1 : 0));
     }
 
-    public void setPositions(Vec3 head, Vec3 tail) {
+    public void setPositions(Vec3d head, Vec3d tail) {
         data.head = head;
         data.tail = tail;
 
@@ -167,12 +167,12 @@ public class EntityLaser extends Entity {
         double headX = nbt.getDouble("headX");
         double headY = nbt.getDouble("headZ");
         double headZ = nbt.getDouble("headY");
-        data.head = new Vec3(headX, headY, headZ);
+        data.head = new Vec3d(headX, headY, headZ);
 
         double tailX = nbt.getDouble("tailX");
         double tailY = nbt.getDouble("tailZ");
         double tailZ = nbt.getDouble("tailY");
-        data.tail = new Vec3(tailX, tailY, tailZ);
+        data.tail = new Vec3d(tailX, tailY, tailZ);
     }
 
     @Override
@@ -187,8 +187,8 @@ public class EntityLaser extends Entity {
     }
 
     // Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
-    public Vec3 renderOffset() {
-        return new Vec3(0.5, 0.5, 0.5);
+    public Vec3d renderOffset() {
+        return new Vec3d(0.5, 0.5, 0.5);
     }
 
     @Override

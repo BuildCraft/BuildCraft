@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
@@ -110,7 +110,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
         }
 
         if (laser == null && direction != null) {
-            Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
+            Vec3d point5 = new Vec3d(0.5, 0.5, 0.5);
             laser = new LaserData();
             laser.head = Utils.convert(pos).add(point5);
             laser.tail = laser.head.add(Utils.convert(direction, 0.5));

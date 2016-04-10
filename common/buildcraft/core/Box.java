@@ -12,9 +12,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3di;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
@@ -110,7 +110,7 @@ public class Box implements IBox, ISerializable {
         initializeCenter(center, Utils.vec3i(size));
     }
 
-    public void initializeCenter(BlockPos center, Vec3i size) {
+    public void initializeCenter(BlockPos center, Vec3di size) {
         extendToEncompassBoth(center.subtract(size), center.add(size));
     }
 
@@ -130,7 +130,7 @@ public class Box implements IBox, ISerializable {
     @Override
     public Box expand(int amount) {
         if (!isInitialized()) return this;
-        Vec3i am = Utils.vec3i(amount);
+        Vec3di am = Utils.vec3i(amount);
         setMin(min().subtract(am));
         setMax(max().add(am));
         return this;
@@ -142,7 +142,7 @@ public class Box implements IBox, ISerializable {
     }
 
     @Override
-    public boolean contains(Vec3 p) {
+    public boolean contains(Vec3d p) {
         AxisAlignedBB bb = getBoundingBox();
         if (p.xCoord < bb.minX || p.xCoord >= bb.maxX) return false;
         if (p.yCoord < bb.minY || p.yCoord >= bb.maxY) return false;
@@ -173,7 +173,7 @@ public class Box implements IBox, ISerializable {
         return Utils.convertFloor(centerExact());
     }
 
-    public Vec3 centerExact() {
+    public Vec3d centerExact() {
         return Utils.convert(min()).add(Utils.multiply(Utils.convert(size()), 0.5));
     }
 
@@ -212,13 +212,13 @@ public class Box implements IBox, ISerializable {
         return this;
     }
 
-    /** IMPORTANT: Use {@link #contains(Vec3)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3)} as the
+    /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3d)} as the
      * logic is different! */
     public AxisAlignedBB getBoundingBox() {
         return new AxisAlignedBB(min, max.add(Utils.POS_ONE));
     }
 
-    public Box extendToEncompass(Vec3 toBeContained) {
+    public Box extendToEncompass(Vec3d toBeContained) {
         setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
         setMin(Utils.min(min, Utils.convertCeiling(toBeContained)));
         return this;

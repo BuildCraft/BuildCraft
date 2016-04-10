@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
@@ -18,7 +18,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
-    private static final Vec3 TANK_SIZE = new Vec3(0.75, 1, 0.75);
+    private static final Vec3d TANK_SIZE = new Vec3d(0.75, 1, 0.75);
 
     @Override
     public void renderTileEntityAt(TileTank tank, double x, double y, double z, float f, int minusOne) {

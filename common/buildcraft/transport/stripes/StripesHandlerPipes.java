@@ -6,9 +6,9 @@ package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -41,7 +41,7 @@ public class StripesHandlerPipes implements IStripesHandler {
             return false;
         }
 
-        Vec3 p = Utils.convert(pos).add(Utils.convert(direction, -1));
+        Vec3d p = Utils.convert(pos).add(Utils.convert(direction, -1));
         BlockPos pi = Utils.convertFloor(p);
 
         Pipe<?> pipe = BlockGenericPipe.createPipe((ItemPipe) stack.getItem());

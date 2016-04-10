@@ -4,7 +4,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.builders.schematics.SchematicCustomStack;

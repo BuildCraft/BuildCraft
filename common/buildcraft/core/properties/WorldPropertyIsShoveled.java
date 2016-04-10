@@ -13,7 +13,7 @@ import net.minecraft.block.BlockGravel;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsShoveled extends WorldProperty {

@@ -12,7 +12,7 @@ import java.util.Map;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
@@ -78,7 +78,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
     /** Used at the client to show flow properly */
     public double[] clientDisplayFlow = new double[6];
-    public Vec3 clientDisplayFlowCentre = Utils.VEC_ZERO;
+    public Vec3d clientDisplayFlowCentre = Utils.VEC_ZERO;
     public long clientLastDisplayTime = 0;
 
     public PipeTransportPower() {

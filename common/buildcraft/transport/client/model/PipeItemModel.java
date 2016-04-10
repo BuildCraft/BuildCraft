@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.model.BCModelHelper;
@@ -37,12 +37,12 @@ public class PipeItemModel extends BuildCraftBakedModel {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }
 
-        Vec3 center = Utils.VEC_HALF;
-        Vec3 radius = new Vec3(0.25, 0.5, 0.25);
+        Vec3d center = Utils.VEC_HALF;
+        Vec3d radius = new Vec3d(0.25, 0.5, 0.25);
 
         EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
         cuboid.texture = sprite;
-        cuboid.setTextureOffset(new Vec3(4, 0, 4));
+        cuboid.setTextureOffset(new Vec3d(4, 0, 4));
         cuboid.setPosition(center.subtract(radius));
         cuboid.setSize(Utils.multiply(radius, 2));
 
@@ -61,9 +61,9 @@ public class PipeItemModel extends BuildCraftBakedModel {
         // Set up the colour
         if (colorIndex != 0) {
             // Very sligthly smaller
-            radius = new Vec3(0.249, 0.499, 0.249);
+            radius = new Vec3d(0.249, 0.499, 0.249);
             cuboid = new EntityResizableCuboid(null);
-            cuboid.setTextureOffset(new Vec3(4, 0, 4));
+            cuboid.setTextureOffset(new Vec3d(4, 0, 4));
             cuboid.texture = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
             cuboid.setPosition(center.subtract(radius));
             cuboid.setSize(Utils.multiply(radius, 2));

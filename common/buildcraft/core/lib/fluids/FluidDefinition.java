@@ -7,7 +7,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -65,11 +66,11 @@ public class FluidDefinition {
 
     @SideOnly(Side.CLIENT)
     public void textureStitchPre(TextureStitchEvent.Pre event) {
-        TextureAtlasSprite still = event.map.getTextureExtry(fluid.getStill().toString());
-        if (still == null) event.map.registerSprite(fluid.getStill());
+        TextureAtlasSprite still = event.getMap().getTextureExtry(fluid.getStill().toString());
+        if (still == null) event.getMap().registerSprite(fluid.getStill());
 
-        TextureAtlasSprite flow = event.map.getTextureExtry(fluid.getFlowing().toString());
-        if (flow == null) event.map.registerSprite(fluid.getFlowing());
+        TextureAtlasSprite flow = event.getMap().getTextureExtry(fluid.getFlowing().toString());
+        if (flow == null) event.getMap().registerSprite(fluid.getFlowing());
     }
 
     public static class BCFluid extends Fluid {
@@ -85,7 +86,7 @@ public class FluidDefinition {
         public String getLocalizedName(FluidStack stack) {
             if (heat <= 0 && !isHeatable()) return super.getLocalizedName(stack);
             String name = super.getLocalizedName(stack);
-            String heatString = StatCollector.translateToLocalFormatted("buildcraft.fluid.heat_" + heat);
+            String heatString = I18n.translateToLocalFormatted("buildcraft.fluid.heat_" + heat);
             return name + heatString;
         }
 

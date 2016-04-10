@@ -7,9 +7,9 @@ package buildcraft.builders.blueprints;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftBuilders;
@@ -150,7 +150,7 @@ public class RecursiveBlueprintReader {
             if (blockScanner.blocksLeft() == 0) {
                 writingBlueprint.readEntitiesFromWorld(writingContext, architect);
 
-                Vec3 transform = Utils.VEC_ZERO.subtract(Utils.convert(writingContext.surroundingBox().min()));
+                Vec3d transform = Utils.VEC_ZERO.subtract(Utils.convert(writingContext.surroundingBox().min()));
 
                 writingBlueprint.translateToBlueprint(transform);
 

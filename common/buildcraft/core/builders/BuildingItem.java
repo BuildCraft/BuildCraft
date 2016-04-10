@@ -15,9 +15,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
@@ -36,7 +36,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     public static int ITEMS_SPACE = 2;
 
-    public Vec3 origin, destination;
+    public Vec3d origin, destination;
     public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<>();
 
     public boolean isDone = false;
@@ -48,13 +48,13 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     private float lifetimeDisplay = 0;
     private float maxLifetime = 0;
     private boolean initialized = false;
-    private Vec3 velocity;
+    private Vec3d velocity;
     private double maxHeight;
     private float lifetime = 0;
 
     public void initialize() {
         if (!initialized) {
-            Vec3 vec = destination.subtract(origin);
+            Vec3d vec = destination.subtract(origin);
             double size = vec.lengthVector();
 
             maxLifetime = (float) size * 4;
@@ -69,22 +69,22 @@ public class BuildingItem implements IBuildingItem, ISerializable {
             // travel for the object. It really follows a sinus, but we compute
             // the size of a triangle for simplification.
 
-            // Vec3 middle = new Vec3();
+            // Vec3d middle = new Vec3d();
             // middle.x = (destination.x + origin.x) / 2;
             // middle.y = (destination.y + origin.y) / 2;
             // middle.z = (destination.z + origin.z) / 2;
             //
-            // Vec3 top = new Vec3();
+            // Vec3d top = new Vec3d();
             // top.x = middle.x;
             // top.y = middle.y + maxHeight;
             // top.z = middle.z;
             //
-            // Vec3 originToTop = new Vec3();
+            // Vec3d originToTop = new Vec3d();
             // originToTop.x = top.x - origin.x;
             // originToTop.y = top.y - origin.y;
             // originToTop.z = top.z - origin.z;
             //
-            // Vec3 destinationToTop = new Vec3();
+            // Vec3d destinationToTop = new Vec3d();
             // destinationToTop.x = destination.x - origin.x;
             // destinationToTop.y = destination.y - origin.y;
             // destinationToTop.z = destination.z - origin.z;
@@ -115,8 +115,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
         }
     }
 
-    public Vec3 getDisplayPosition(float time) {
-        Vec3 pos = origin.add(Utils.multiply(velocity, time));
+    public Vec3d getDisplayPosition(float time) {
+        Vec3d pos = origin.add(Utils.multiply(velocity, time));
         return pos.addVector(0, MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight, 0);
     }
 
@@ -204,8 +204,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("origin", NBTUtils.writeVec3(origin));
-        nbt.setTag("destination", NBTUtils.writeVec3(destination));
+        nbt.setTag("origin", NBTUtils.writeVec3d(origin));
+        nbt.setTag("destination", NBTUtils.writeVec3d(destination));
         nbt.setFloat("lifetime", lifetime);
 
         NBTTagList items = new NBTTagList();
@@ -238,8 +238,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
-        origin = NBTUtils.readVec3(nbt, "origin");
-        destination = NBTUtils.readVec3(nbt, "destination");
+        origin = NBTUtils.readVec3d(nbt, "origin");
+        destination = NBTUtils.readVec3d(nbt, "destination");
         lifetime = nbt.getFloat("lifetime");
 
         NBTTagList items = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
@@ -277,8 +277,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     @Override
     public void readData(ByteBuf stream) {
-        origin = NetworkUtils.readVec3(stream);
-        destination = NetworkUtils.readVec3(stream);
+        origin = NetworkUtils.readVec3d(stream);
+        destination = NetworkUtils.readVec3d(stream);
         lifetime = stream.readFloat();
         stacksToDisplay.clear();
         int size = stream.readUnsignedShort();
@@ -291,8 +291,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     @Override
     public void writeData(ByteBuf stream) {
-        NetworkUtils.writeVec3(stream, origin);
-        NetworkUtils.writeVec3(stream, destination);
+        NetworkUtils.writeVec3d(stream, origin);
+        NetworkUtils.writeVec3d(stream, destination);
         stream.writeFloat(lifetime);
         stream.writeShort(stacksToDisplay.size());
         for (StackAtPosition s : stacksToDisplay) {

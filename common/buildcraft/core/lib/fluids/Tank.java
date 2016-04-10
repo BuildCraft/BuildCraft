@@ -9,7 +9,8 @@ import java.util.function.Predicate;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
+
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -112,7 +113,7 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         toolTip.clear();
         int amount = 0;
         if (getFluid() != null && getFluid().amount > 0) {
-            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()), EnumChatFormatting.WHITE);
+            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()), TextFormatting.WHITE);
             fluidName.setSpacing(2);
             toolTip.add(fluidName);
             amount = getFluid().amount;

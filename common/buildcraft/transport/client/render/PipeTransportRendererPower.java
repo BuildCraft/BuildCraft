@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
@@ -102,10 +102,10 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         double width = 0.5 * stage / POWER_STAGES;
         double centerRadius = 0.25 * centerStage / POWER_STAGES;
 
-        Vec3 center = Utils.VEC_HALF.add(Utils.convert(face, 0.25 + centerRadius / 2d));
+        Vec3d center = Utils.VEC_HALF.add(Utils.convert(face, 0.25 + centerRadius / 2d));
 
         face = Utils.convertPositive(face);
-        Vec3 size = Utils.VEC_ONE.subtract(Utils.convert(face));
+        Vec3d size = Utils.VEC_ONE.subtract(Utils.convert(face));
         size = Utils.multiply(size, width);
         size = size.add(Utils.convert(face, 0.5 - centerRadius));
 
@@ -117,7 +117,7 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         double offsetNonFlow = 0;// 8 - textureWidth / 2;
         double offsetFlow = flow;
 
-        Vec3 textureOffset = new Vec3(offsetNonFlow, offsetNonFlow, offsetNonFlow);
+        Vec3d textureOffset = new Vec3d(offsetNonFlow, offsetNonFlow, offsetNonFlow);
         textureOffset = textureOffset.add(Utils.convert(face, -offsetNonFlow));
         textureOffset = textureOffset.add(Utils.convert(face, offsetFlow));
 
@@ -133,14 +133,14 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
         GL11.glPopMatrix();
     }
 
-    private static void renderCenterPower(double stage, Vec3 centerFlow) {
+    private static void renderCenterPower(double stage, Vec3d centerFlow) {
         if (stage <= 0) {
             return;
         }
         double width = 0.5 * stage / POWER_STAGES;
 
-        Vec3 size = new Vec3(width, width, width);
-        Vec3 pos = Utils.VEC_HALF;
+        Vec3d size = new Vec3d(width, width, width);
+        Vec3d pos = Utils.VEC_HALF;
 
         EntityResizableCuboid erc = new EntityResizableCuboid(null);
         erc.setSize(size);

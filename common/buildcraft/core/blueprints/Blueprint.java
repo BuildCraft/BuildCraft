@@ -17,10 +17,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -57,7 +57,7 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    public void translateToBlueprint(Vec3 transform) {
+    public void translateToBlueprint(Vec3d transform) {
         super.translateToBlueprint(transform);
 
         for (SchematicEntity e : entities) {
@@ -66,7 +66,7 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    public void translateToWorld(Vec3 transform) {
+    public void translateToWorld(Vec3d transform) {
         super.translateToWorld(transform);
 
         for (SchematicEntity e : entities) {
@@ -132,12 +132,12 @@ public class Blueprint extends BlueprintBase {
     public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
         BptContext bptContext = (BptContext) context;
         // Should this be used somewhere?
-        Vec3 transform = new Vec3(0, 0, 0).subtract(Utils.convert(context.surroundingBox().min()));
+        Vec3d transform = new Vec3d(0, 0, 0).subtract(Utils.convert(context.surroundingBox().min()));
 
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;
 
-            if (context.surroundingBox().contains(new Vec3(e.posX, e.posY, e.posZ))) {
+            if (context.surroundingBox().contains(new Vec3d(e.posX, e.posY, e.posZ))) {
                 SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(e.getClass());
 
                 if (s != null) {

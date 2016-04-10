@@ -5,28 +5,40 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.*;
 import buildcraft.core.lib.BlockTileCache;
-import buildcraft.lib.block.TileBuildCraft_BC8;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.data.DataTemplate;
 import buildcraft.lib.mj.helpers.MjSimpleProducer;
+import buildcraft.lib.tile.TileBuildCraft_BC8;
 
 public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {
+    protected static final DataTemplate TEMPLATE_BASE;
+
+    static {
+        TEMPLATE_BASE = new DataTemplate.Builder()//
+                .addEnum("direction", EnumFacing.class)//
+                .build();
+    }
+
     protected final MjSimpleProducer mjProducer = createProducer();
     private EnumFacing currentDirection = EnumFacing.UP;
     // Keep a buffer of what tiles are infront of us.
     protected final BlockTileCache[] infrontBuffer = new BlockTileCache[getMaxEngineCarryDist()];
-    // refreshed from above, but is guaranteed to be non-null and the correct length.
+    // refreshed from above, but is guaranteed to be non-null and contain non-null.
     private TileEngineBase_BC8[] enginesInFront = new TileEngineBase_BC8[0];
 
-    public TileEngineBase_BC8() {
+    public TileEngineBase_BC8(int stages) {
+        super(stages);
         // Just make sure
         remakeTileCaches();
     }
@@ -43,6 +55,24 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == MjAPI.CAP_MACHINE && facing == getCurrentDirection()) return (T) mjProducer;
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public DataTemplate getTemplateFor(int stage) {
+        if (stage == 0) return TEMPLATE_BASE;
+        return null;
+    }
+
+    @Override
+    public void readFromNBT(int stage, NBTTagCompound nbt) {
+        currentDirection = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(int stage) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("direction", NBTUtils.writeEnum(currentDirection));
+        return nbt;
     }
 
     @Override

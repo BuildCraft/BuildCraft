@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
@@ -91,24 +92,23 @@ public abstract class BuildCraftContainer extends Container {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         for (Widget widget : widgets) {
-            for (ICrafting player : (List<ICrafting>) crafters) {
+            for (ICrafting player : crafters) {
                 widget.updateWidget(player);
             }
         }
     }
-
+    
     @Override
-    public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
+    public ItemStack slotClick(int slotNum, int mouseButton, ClickType clickType, EntityPlayer player) {
         Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
         if (slot instanceof IPhantomSlot) {
-            return slotClickPhantom(slot, mouseButton, modifier, player);
+            return slotClickPhantom(slot, mouseButton, clickType, player);
         }
-        return super.slotClick(slotNum, mouseButton, modifier, player);
+        return super.slotClick(slotNum, mouseButton, clickType, player);
     }
 
-    private ItemStack slotClickPhantom(Slot slot, int mouseButton, int modifier, EntityPlayer player) {
+    private ItemStack slotClickPhantom(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
         ItemStack stack = null;
-
         if (mouseButton == 2) {
             if (((IPhantomSlot) slot).canAdjust()) {
                 slot.putStack(null);
@@ -125,29 +125,29 @@ public abstract class BuildCraftContainer extends Container {
 
             if (stackSlot == null) {
                 if (stackHeld != null && slot.isItemValid(stackHeld)) {
-                    fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
+                    fillPhantomSlot(slot, stackHeld, mouseButton, clickType);
                 }
             } else if (stackHeld == null) {
-                adjustPhantomSlot(slot, mouseButton, modifier);
+                adjustPhantomSlot(slot, mouseButton, clickType);
                 slot.onPickupFromSlot(player, playerInv.getItemStack());
             } else if (slot.isItemValid(stackHeld)) {
                 if (StackHelper.canStacksMerge(stackSlot, stackHeld)) {
-                    adjustPhantomSlot(slot, mouseButton, modifier);
+                    adjustPhantomSlot(slot, mouseButton, clickType);
                 } else {
-                    fillPhantomSlot(slot, stackHeld, mouseButton, modifier);
+                    fillPhantomSlot(slot, stackHeld, mouseButton, clickType);
                 }
             }
         }
         return stack;
     }
 
-    protected void adjustPhantomSlot(Slot slot, int mouseButton, int modifier) {
+    protected void adjustPhantomSlot(Slot slot, int mouseButton, ClickType clickType) {
         if (!((IPhantomSlot) slot).canAdjust()) {
             return;
         }
         ItemStack stackSlot = slot.getStack();
         int stackSize;
-        if (modifier == 1) {
+        if (clickType == ClickType.QUICK_MOVE || clickType == ClickType.PICKUP_ALL) {// modifier == 1
             stackSize = mouseButton == 0 ? (stackSlot.stackSize + 1) / 2 : stackSlot.stackSize * 2;
         } else {
             stackSize = mouseButton == 0 ? stackSlot.stackSize - 1 : stackSlot.stackSize + 1;
@@ -164,7 +164,7 @@ public abstract class BuildCraftContainer extends Container {
         }
     }
 
-    protected void fillPhantomSlot(Slot slot, ItemStack stackHeld, int mouseButton, int modifier) {
+    protected void fillPhantomSlot(Slot slot, ItemStack stackHeld, int mouseButton, ClickType clickType) {
         if (!((IPhantomSlot) slot).canAdjust()) {
             return;
         }
@@ -182,7 +182,7 @@ public abstract class BuildCraftContainer extends Container {
         boolean changed = false;
         if (stackToShift.isStackable()) {
             for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
-                Slot slot = (Slot) inventorySlots.get(slotIndex);
+                Slot slot = inventorySlots.get(slotIndex);
                 ItemStack stackInSlot = slot.getStack();
                 if (stackInSlot != null && StackHelper.canStacksMerge(stackInSlot, stackToShift)) {
                     int resultingStackSize = stackInSlot.stackSize + stackToShift.stackSize;
@@ -203,7 +203,7 @@ public abstract class BuildCraftContainer extends Container {
         }
         if (stackToShift.stackSize > 0) {
             for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
-                Slot slot = (Slot) inventorySlots.get(slotIndex);
+                Slot slot = inventorySlots.get(slotIndex);
                 ItemStack stackInSlot = slot.getStack();
                 if (stackInSlot == null) {
                     int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
@@ -221,7 +221,7 @@ public abstract class BuildCraftContainer extends Container {
 
     private boolean tryShiftItem(ItemStack stackToShift, int numSlots) {
         for (int machineIndex = 0; machineIndex < numSlots - 9 * 4; machineIndex++) {
-            Slot slot = (Slot) inventorySlots.get(machineIndex);
+            Slot slot = inventorySlots.get(machineIndex);
             if (slot instanceof SlotBase && !((SlotBase) slot).canShift()) {
                 continue;
             }
@@ -241,7 +241,7 @@ public abstract class BuildCraftContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
         ItemStack originalStack = null;
-        Slot slot = (Slot) inventorySlots.get(slotIndex);
+        Slot slot = inventorySlots.get(slotIndex);
         int numSlots = inventorySlots.size();
         if (slot != null && slot.getHasStack()) {
             ItemStack stackInSlot = slot.getStack();

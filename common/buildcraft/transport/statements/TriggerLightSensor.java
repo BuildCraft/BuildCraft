@@ -1,7 +1,7 @@
 package buildcraft.transport.statements;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -28,7 +28,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         TileEntity tile = source.getTile();
-        Vec3 pos = Utils.convert(tile.getPos()).add(Utils.convert(((ISidedStatementContainer) source).getSide()));
+        Vec3d pos = Utils.convert(tile.getPos()).add(Utils.convert(((ISidedStatementContainer) source).getSide()));
 
         // TODO (PASS 1): Is this is right method (#getLight)
         int lightLevel = tile.getWorld().getLight(Utils.convertFloor(pos));

@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.tooltips;
 
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 
 public class ToolTipLine {
 
@@ -17,7 +17,7 @@ public class ToolTipLine {
         this.color = color;
     }
     
-    public ToolTipLine(String text, EnumChatFormatting colour) {
+    public ToolTipLine(String text, TextFormatting colour) {
         this(text, colour.getColorIndex());
     }
 

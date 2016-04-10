@@ -11,8 +11,8 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.util.Constants;
 
@@ -113,7 +113,7 @@ public class ZonePlan implements IZone, ISerializable {
     }
 
     @Override
-    public boolean contains(Vec3 point) {
+    public boolean contains(Vec3d point) {
         int xBlock = (int) Math.floor(point.xCoord);
         int zBlock = (int) Math.floor(point.zCoord);
 

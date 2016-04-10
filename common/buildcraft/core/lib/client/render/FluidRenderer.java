@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -34,10 +34,10 @@ public final class FluidRenderer {
     }
 
     public static final int DISPLAY_STAGES = 100;
-    public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
-    private final Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
-    private final Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
-    private final Map<Fluid, Map<Vec3, int[]>> frozenRenderCache = Maps.newHashMap();
+    public static final Vec3d BLOCK_SIZE = new Vec3d(0.98, 0.98, 0.98);
+    private final Map<Fluid, Map<Vec3d, int[]>> flowingRenderCache = Maps.newHashMap();
+    private final Map<Fluid, Map<Vec3d, int[]>> stillRenderCache = Maps.newHashMap();
+    private final Map<Fluid, Map<Vec3d, int[]>> frozenRenderCache = Maps.newHashMap();
     private final Map<FluidType, Map<Fluid, TextureAtlasSprite>> textureMap = Maps.newHashMap();
 
     private static TextureAtlasSprite missingIcon = null;
@@ -125,7 +125,7 @@ public final class FluidRenderer {
     }
 
     /** Note that this does NOT implement caching. */
-    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, FluidType type, Vec3 size, EnumFacing side) {
+    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, FluidType type, Vec3d size, EnumFacing side) {
         if (fluidStack == null) {
             return null;
         }
@@ -157,7 +157,7 @@ public final class FluidRenderer {
         return lists;
     }
 
-    public static int[] getFluidDisplayLists(FluidStack fluidStack, FluidType type, Vec3 size) {
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, FluidType type, Vec3d size) {
         if (fluidStack == null) {
             return null;
         }
@@ -165,9 +165,9 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        Map<Fluid, Map<Vec3, int[]>> cache = type == FluidType.FLOWING ? INSTANCE.flowingRenderCache : (type == FluidType.STILL
+        Map<Fluid, Map<Vec3d, int[]>> cache = type == FluidType.FLOWING ? INSTANCE.flowingRenderCache : (type == FluidType.STILL
             ? INSTANCE.stillRenderCache : INSTANCE.frozenRenderCache);
-        Map<Vec3, int[]> displayLists = cache.get(fluid);
+        Map<Vec3d, int[]> displayLists = cache.get(fluid);
         int[] displayList;
         if (displayLists != null) {
             displayList = displayLists.get(size);

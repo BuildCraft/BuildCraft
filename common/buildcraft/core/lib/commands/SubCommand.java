@@ -13,7 +13,7 @@ import java.util.TreeSet;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class SubCommand implements IModCommand {
     public enum PermLevel {

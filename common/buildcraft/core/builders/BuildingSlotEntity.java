@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -33,9 +33,9 @@ public class BuildingSlotEntity extends BuildingSlot {
     }
 
     @Override
-    public Vec3 getDestination() {
+    public Vec3d getDestination() {
         NBTTagList nbttaglist = schematic.entityNBT.getTagList("Pos", 6);
-        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3d pos = new Vec3d(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
         return pos;
     }

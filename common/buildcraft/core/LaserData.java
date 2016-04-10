@@ -7,15 +7,15 @@ package buildcraft.core;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 
 public class LaserData implements ISerializable {
-    public Vec3 head = new Vec3(0, 0, 0);
-    public Vec3 tail = new Vec3(0, 0, 0);
+    public Vec3d head = new Vec3d(0, 0, 0);
+    public Vec3d tail = new Vec3d(0, 0, 0);
     public boolean isVisible = true;
     public boolean isGlowing = false;
 
@@ -33,13 +33,13 @@ public class LaserData implements ISerializable {
 
     }
 
-    public LaserData(Vec3 tail, Vec3 head) {
+    public LaserData(Vec3d tail, Vec3d head) {
         this.tail = tail;
         this.head = head;
     }
 
     public void update() {
-        Vec3 delta = head.subtract(tail);
+        Vec3d delta = head.subtract(tail);
         double dx = delta.xCoord;
         double dy = delta.yCoord;
         double dz = delta.zCoord;
@@ -55,21 +55,21 @@ public class LaserData implements ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setTag("head", NBTUtils.writeVec3(head));
-        nbt.setTag("tail", NBTUtils.writeVec3(tail));
+        nbt.setTag("head", NBTUtils.writeVec3d(head));
+        nbt.setTag("tail", NBTUtils.writeVec3d(tail));
         nbt.setBoolean("isVisible", isVisible);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        head = NBTUtils.readVec3(nbt, "head");
-        tail = NBTUtils.readVec3(nbt, "tail");
+        head = NBTUtils.readVec3d(nbt, "head");
+        tail = NBTUtils.readVec3d(nbt, "tail");
         isVisible = nbt.getBoolean("isVisible");
     }
 
     @Override
     public void readData(ByteBuf stream) {
-        head = NetworkUtils.readVec3(stream);
-        tail = NetworkUtils.readVec3(stream);
+        head = NetworkUtils.readVec3d(stream);
+        tail = NetworkUtils.readVec3d(stream);
         int flags = stream.readUnsignedByte();
         isVisible = (flags & 1) != 0;
         isGlowing = (flags & 2) != 0;
@@ -77,8 +77,8 @@ public class LaserData implements ISerializable {
 
     @Override
     public void writeData(ByteBuf stream) {
-        NetworkUtils.writeVec3(stream, head);
-        NetworkUtils.writeVec3(stream, tail);
+        NetworkUtils.writeVec3d(stream, head);
+        NetworkUtils.writeVec3d(stream, tail);
         int flags = (isVisible ? 1 : 0) | (isGlowing ? 2 : 0);
         stream.writeByte(flags);
     }

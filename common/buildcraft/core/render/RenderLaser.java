@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.core.EntityLaser;
@@ -79,8 +79,8 @@ public class RenderLaser extends Render<EntityLaser> {
 
                     float diff = (float) (Math.cos(i / 20F * 2 * Math.PI) * range / 2F);
 
-                    cuboid.setPosition(new Vec3(0, -maxSize / 2f - diff, -maxSize / 2f - diff));
-                    cuboid.setSize(new Vec3(STEP, maxSize / 2f - diff, maxSize / 2f - diff));
+                    cuboid.setPosition(new Vec3d(0, -maxSize / 2f - diff, -maxSize / 2f - diff));
+                    cuboid.setSize(new Vec3d(STEP, maxSize / 2f - diff, maxSize / 2f - diff));
 
                     RenderResizableCuboid.INSTANCE.renderCube(cuboid);
 
@@ -100,7 +100,7 @@ public class RenderLaser extends Render<EntityLaser> {
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GlStateManager.disableLighting();
 
-        Vec3 offset = laser.renderOffset();
+        Vec3d offset = laser.renderOffset();
         GL11.glTranslated(offset.xCoord, offset.yCoord, offset.zCoord);
         GL11.glTranslated(x - laser.data.head.xCoord, y - laser.data.head.yCoord, z - laser.data.head.zCoord);
 

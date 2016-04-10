@@ -11,11 +11,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
@@ -208,8 +208,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
                 break;
         }
 
-        Vec3 head = Utils.convertMiddle(getPos()).addVector(px, py, pz);
-        Vec3 tail = Utils.convert(((TileEntity) laserTarget).getPos());
+        Vec3d head = Utils.convertMiddle(getPos()).addVector(px, py, pz);
+        Vec3d tail = Utils.convert(((TileEntity) laserTarget).getPos());
         tail = tail.addVector(0.475 + (worldObj.rand.nextDouble() - 0.5) / 5d, 9 / 16d, 0.475 + (worldObj.rand.nextDouble() - 0.5) / 5d);
 
         laser.head = head;

@@ -14,7 +14,7 @@ import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils;
@@ -32,22 +32,22 @@ public class UtilsTester {
     }
 
     // @Test
-    public void testVec3() {
+    public void testVec3d() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testVec3i() {
+    public void testVec3di() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testVec3f() {
+    public void testVec3df() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testConvertVec3i() {
+    public void testConvertVec3di() {
         fail("Not yet implemented");
     }
 
@@ -82,7 +82,7 @@ public class UtilsTester {
     }
 
     // @Test
-    public void testConvertFloorVec3() {
+    public void testConvertFloorVec3d() {
         fail("Not yet implemented");
     }
 
@@ -137,12 +137,12 @@ public class UtilsTester {
     }
 
     // @Test
-    public void testMinVec3Vec3() {
+    public void testMinVec3dVec3d() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testMaxVec3Vec3() {
+    public void testMaxVec3dVec3d() {
         fail("Not yet implemented");
     }
 
@@ -152,12 +152,12 @@ public class UtilsTester {
     }
 
     // @Test
-    public void testWithValueVec3AxisDouble() {
+    public void testWithValueVec3dAxisDouble() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testGetValueVec3Axis() {
+    public void testGetValueVec3dAxis() {
         fail("Not yet implemented");
     }
 
@@ -192,12 +192,12 @@ public class UtilsTester {
     }
 
     // @Test
-    public void testGetMinForFaceEnumFacingVec3Vec3() {
+    public void testGetMinForFaceEnumFacingVec3dVec3d() {
         fail("Not yet implemented");
     }
 
     // @Test
-    public void testGetMaxForFaceEnumFacingVec3Vec3() {
+    public void testGetMaxForFaceEnumFacingVec3dVec3d() {
         fail("Not yet implemented");
     }
 

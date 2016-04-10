@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -111,9 +111,9 @@ public class BuildCraftMod implements IBuildCraftMod {
     class LocationSendRequest extends SendRequest {
         final int dimensionId;
         final int maxDistance;
-        final Vec3 pos;
+        final Vec3d pos;
 
-        LocationSendRequest(Packet packet, int dimensionId, Vec3 pos, int distance) {
+        LocationSendRequest(Packet packet, int dimensionId, Vec3d pos, int distance) {
             super(packet);
             this.dimensionId = dimensionId;
             this.pos = pos;

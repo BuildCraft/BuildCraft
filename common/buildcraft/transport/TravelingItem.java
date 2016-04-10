@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -157,7 +157,7 @@ public class TravelingItem {
         if (data.hasKey("pos")) {
             pos = data.getFloat("pos");
         } else if (data.hasKey("x")) {
-            pos = xyzToPos(new Vec3(data.getDouble("x"), data.getDouble("y"), data.getDouble("z")), toCenter ? input : output, toCenter);
+            pos = xyzToPos(new Vec3d(data.getDouble("x"), data.getDouble("y"), data.getDouble("z")), toCenter ? input : output, toCenter);
         } else {
             pos = 0.5F;
         }
@@ -199,8 +199,8 @@ public class TravelingItem {
                 return null;
             }
 
-            Vec3 motion = Utils.convert(output, 0.1 + getSpeed() * 2D);
-            Vec3 vpos = getPos();
+            Vec3d motion = Utils.convert(output, 0.1 + getSpeed() * 2D);
+            Vec3d vpos = getPos();
 
             EntityItem entity = new EntityItem(container.getWorld(), vpos.xCoord, vpos.yCoord, vpos.zCoord, getItemStack());
             entity.lifespan = BuildCraftCore.itemLifespan * 20;
@@ -297,22 +297,22 @@ public class TravelingItem {
                 + (color != null ? (",color=" + color) : "") + "}";
     }
 
-    public Vec3 getRelativePos(float offset) {
+    public Vec3d getRelativePos(float offset) {
         EnumFacing dir = toCenter ? input : output;
         float floor = (itemStack == null ? CoreConstants.PIPE_MIN_POS : TransportUtils.getPipeFloorOf(itemStack));
         if (dir == null) {
-            return new Vec3(0.5F, floor, 0.5F);
+            return new Vec3d(0.5F, floor, 0.5F);
         } else {
             float multiplier = pos + offset - 0.5F;
-            return new Vec3(0.5F + dir.getFrontOffsetX() * multiplier, floor + dir.getFrontOffsetY() * multiplier, 0.5F + dir.getFrontOffsetZ() * multiplier);
+            return new Vec3d(0.5F + dir.getFrontOffsetX() * multiplier, floor + dir.getFrontOffsetY() * multiplier, 0.5F + dir.getFrontOffsetZ() * multiplier);
         }
     }
 
-    public Vec3 getPos() {
-        return new Vec3(getContainer().getPos()).add(getRelativePos(0.0F));
+    public Vec3d getPos() {
+        return new Vec3d(getContainer().getPos()).add(getRelativePos(0.0F));
     }
 
-    private float xyzToPos(Vec3 xyz, EnumFacing facing, boolean beforeCenter) {
+    private float xyzToPos(Vec3d xyz, EnumFacing facing, boolean beforeCenter) {
         float v = 0.0f;
 
         if (facing != null) {
@@ -330,7 +330,7 @@ public class TravelingItem {
         } else {
             if (xyz.xCoord != 0.5 || xyz.zCoord != 0.5) {
                 // hackishly fix pipe flooring
-                xyz = new Vec3(xyz.xCoord, 0.5, xyz.zCoord);
+                xyz = new Vec3d(xyz.xCoord, 0.5, xyz.zCoord);
             }
 
             v = (float) (Math.abs((xyz.xCoord % 1) - 0.5F) + Math.abs((xyz.yCoord % 1) - 0.5F) + Math.abs((xyz.zCoord % 1) - 0.5F));

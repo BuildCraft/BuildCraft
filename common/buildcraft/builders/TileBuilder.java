@@ -17,9 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -271,7 +271,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
         for (BlockPos b : path) {
             if (previous != null) {
-                Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
+                Vec3d point5 = new Vec3d(0.5, 0.5, 0.5);
                 LaserData laser = new LaserData(Utils.convert(previous).add(point5), Utils.convert(b).add(point5));
 
                 pathLasers.add(laser);

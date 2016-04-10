@@ -5,7 +5,7 @@
 package buildcraft.builders.blueprints;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface IBlueprintBuilderAgent {
 

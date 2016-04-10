@@ -3,9 +3,9 @@ package buildcraft.transport.stripes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
@@ -30,7 +30,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
         int pipesToTry = 8;
         int pipeWireColor = stack.getItemDamage();
 
-        Vec3 p = Utils.convert(pos);
+        Vec3d p = Utils.convert(pos);
 
         while (pipesToTry > 0) {
             p = p.add(Utils.convert(direction, -1));

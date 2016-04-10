@@ -14,10 +14,10 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -148,7 +148,7 @@ public class FluidShaderRenderer {
         PipeFluidPart other = otherHist == null ? null : otherHist.map.get(face.getOpposite());
 
         int ordinal = face.ordinal();
-        Vec3 pipeEnd = Utils.convertMiddle(pos).add(Utils.convert(face, trans.container.renderState.customConnections[ordinal] + 0.5));
+        Vec3d pipeEnd = Utils.convertMiddle(pos).add(Utils.convert(face, trans.container.renderState.customConnections[ordinal] + 0.5));
 
         /* Not connected to another pipe and the fluid is not in the centre */
         if (centre.amount == 0 && other == null) {
@@ -177,7 +177,7 @@ public class FluidShaderRenderer {
                 builder.setSprite(sprite);
                 builder.setExpires(tick + 110);
 
-                Vec3 axisBasedOffset = new Vec3(0, face.getAxis() == Axis.Y ? 0 : 0.125, 0);
+                Vec3d axisBasedOffset = new Vec3d(0, face.getAxis() == Axis.Y ? 0 : 0.125, 0);
 
                 FluidPositionInfoBuilder posBuilder = new FluidPositionInfoBuilder();
                 posBuilder.setMin(pipeEnd.subtract(Utils.convertExcept(face, 0.25)));
@@ -188,7 +188,7 @@ public class FluidShaderRenderer {
                 posBuilder.setMoves(false);
                 builder.setPositionA(posBuilder.build());
 
-                Vec3 pipeMiddle = Utils.convertMiddle(pos).add(Utils.convert(face, 0.25));
+                Vec3d pipeMiddle = Utils.convertMiddle(pos).add(Utils.convert(face, 0.25));
                 posBuilder.setMin(pipeMiddle.subtract(Utils.convertExcept(face, 0.25)));
                 posBuilder.setMax(pipeMiddle.add(Utils.convertExcept(face, 0.25)));
                 posBuilder.setPoint(Utils.convertMiddle(pos).add(Utils.convert(face, 0.125)).subtract(axisBasedOffset));
@@ -225,7 +225,7 @@ public class FluidShaderRenderer {
     public void renderAll(float partialTicks) {
         long tick = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
         EntityPlayerSP clientPlayer = Minecraft.getMinecraft().thePlayer;
-        Vec3 pos = Utils.getInterpolatedVec(clientPlayer, partialTicks);
+        Vec3d pos = Utils.getInterpolatedVec(clientPlayer, partialTicks);
 
         GL11.glPushMatrix();
         RenderUtils.translate(Utils.multiply(pos, -1));

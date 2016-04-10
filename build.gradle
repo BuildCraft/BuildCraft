@@ -51,7 +51,7 @@ dependencies {
 }
 
 minecraft {
-    version = config.mc_version + "-" + config.forge_version
+    version = config.mc_version + "-" + config.forge_version + "-" + config.mc_version
     runDir = "run"
 
     // the mappings can be changed at any time, and must be in the following format.

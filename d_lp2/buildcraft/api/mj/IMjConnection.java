@@ -11,7 +11,7 @@ public interface IMjConnection {
 
     IMjMachineConsumer getConsumer();
 
-    /** A quick way to call {@link IMjNetwork#breakConnection(IMjConnection)} */
+    /** Breaks the connection. This will notify the network to remove all */
     void breakConnection();
 
     /** @return the amount of milliwatts that goes into this connection from the producer. */

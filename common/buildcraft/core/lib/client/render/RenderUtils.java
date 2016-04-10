@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.utils.Utils;
 
@@ -20,14 +20,14 @@ import javax.vecmath.Vector3f;
 public enum RenderUtils {
     INSTANCE;
 
-    private final Map<EnumFacing, Vec3> rotations = Maps.newEnumMap(EnumFacing.class);
+    private final Map<EnumFacing, Vec3d> rotations = Maps.newEnumMap(EnumFacing.class);
 
     private RenderUtils() {
         rotations.put(EnumFacing.UP, Utils.VEC_ZERO);
-        rotations.put(EnumFacing.DOWN, new Vec3(180, 0, 0));
+        rotations.put(EnumFacing.DOWN, new Vec3d(180, 0, 0));
         EnumFacing face = EnumFacing.SOUTH;
         for (int a = 0; a < 360; a += 90) {
-            rotations.put(face, new Vec3(90, 0, a));
+            rotations.put(face, new Vec3d(90, 0, a));
             face = face.rotateY();
         }
     }
@@ -45,27 +45,27 @@ public enum RenderUtils {
         GlStateManager.color(red, green, blue, alpha);
     }
 
-    public static void setWorldRendererRGB(WorldRenderer wr, Vec3 color) {
+    public static void setWorldRendererRGB(WorldRenderer wr, Vec3d color) {
         wr.color((float) color.xCoord, (float) color.yCoord, (float) color.zCoord, 1f);
     }
 
-    public static void addWorldRendererVertex(WorldRenderer wr, Vec3 vertex) {
+    public static void addWorldRendererVertex(WorldRenderer wr, Vec3d vertex) {
         wr.pos(vertex.xCoord, vertex.yCoord, vertex.zCoord);
     }
 
-    public static void putWorldRendererColorMultiplier(WorldRenderer wr, Vec3 color, int index) {
+    public static void putWorldRendererColorMultiplier(WorldRenderer wr, Vec3d color, int index) {
         wr.putColorMultiplier((float) color.xCoord, (float) color.yCoord, (float) color.zCoord, index);
     }
 
-    public static void translate(Vec3 vector) {
+    public static void translate(Vec3d vector) {
         GL11.glTranslated(vector.xCoord, vector.yCoord, vector.zCoord);
     }
 
-    public static void vertex3d(Vec3 vec) {
+    public static void vertex3d(Vec3d vec) {
         GL11.glVertex3d(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
-    public static void vertex3f(Vec3 vec) {
+    public static void vertex3f(Vec3d vec) {
         vertex3f(Utils.convertFloat(vec));
     }
 
@@ -78,7 +78,7 @@ public enum RenderUtils {
         rotate(INSTANCE.rotations.get(face));
     }
 
-    public static void rotate(Vec3 rotation) {
+    public static void rotate(Vec3d rotation) {
         GL11.glRotated(rotation.xCoord, 1, 0, 0);
         GL11.glRotated(rotation.yCoord, 0, 1, 0);
         GL11.glRotated(rotation.zCoord, 0, 0, 1);

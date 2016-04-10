@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.items.IItemCustomPipeRender;
@@ -59,7 +59,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
                 continue;
             }
 
-            Vec3 vpos = item.getRelativePos(f * item.getSpeed());
+            Vec3d vpos = item.getRelativePos(f * item.getSpeed());
 
             doRenderItem(item, x + vpos.xCoord, y + vpos.yCoord, z + vpos.zCoord, light, item.color);
             count++;

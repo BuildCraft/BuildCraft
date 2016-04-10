@@ -7,7 +7,7 @@ package buildcraft.core.builders.schematics;
 import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;

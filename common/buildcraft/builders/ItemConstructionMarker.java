@@ -11,9 +11,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -48,7 +48,7 @@ public class ItemConstructionMarker extends ItemBlock {
             TileEntity tile1 = world.getTileEntity(new BlockPos(ox, oy, oz));
 
             // TODO (CHECK) is this right?
-            if (!(new Vec3(ox, oy, oz).squareDistanceTo(Utils.convert(pos)) > 64)) {
+            if (!(new Vec3d(ox, oy, oz).squareDistanceTo(Utils.convert(pos)) > 64)) {
                 return;
             }
 

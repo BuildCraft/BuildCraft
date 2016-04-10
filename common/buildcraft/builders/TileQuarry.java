@@ -20,12 +20,12 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -81,7 +81,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     /** The box of what will be mined. Goes from y=0 to the very top layer of the mining box */
     private Box miningBox = new Box();
     private BlockPos target = BlockPos.ORIGIN;
-    private Vec3 headPos = Utils.VEC_ZERO;
+    private Vec3d headPos = Utils.VEC_ZERO;
     private double speed = 0.03;
     private Stage stage = Stage.BUILDING;
     private boolean movingHorizontally;
@@ -152,7 +152,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     private void createArm() {
-        Vec3 vec = Utils.convert(box.min()).add(Utils.vec3(CoreConstants.PIPE_MAX_POS));
+        Vec3d vec = Utils.convert(box.min()).add(Utils.vec3(CoreConstants.PIPE_MAX_POS));
         vec = vec.add(Utils.convert(EnumFacing.UP, box.size().getY() - 1.5));
 
         double width = box.size().getX() - 2 + CoreConstants.PIPE_MIN_POS * 2;
@@ -454,7 +454,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         double headPosX = nbttagcompound.getDouble("headPosX");
         double headPosY = nbttagcompound.getDouble("headPosY");
         double headPosZ = nbttagcompound.getDouble("headPosZ");
-        headPos = new Vec3(headPosX, headPosY, headPosZ);
+        headPos = new Vec3d(headPosX, headPosY, headPosZ);
 
         // The rest of load has to be done upon initialize.
         initNBT = (NBTTagCompound) nbttagcompound.getCompoundTag("bpt").copy();
@@ -688,7 +688,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         double headPosX = stream.readDouble();
         double headPosY = stream.readDouble();
         double headPosZ = stream.readDouble();
-        headPos = new Vec3(headPosX, headPosY, headPosZ);
+        headPos = new Vec3d(headPosX, headPosY, headPosZ);
 
         speed = stream.readFloat();
         headTrajectory = stream.readFloat();
@@ -848,7 +848,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     private void setHead(double x, double y, double z) {
-        headPos = new Vec3(x, y, z);
+        headPos = new Vec3d(x, y, z);
     }
 
     private double[] getHead() {

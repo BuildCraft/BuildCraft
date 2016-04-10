@@ -1,6 +1,6 @@
 package buildcraft.core.blueprints.iterator;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlockBase;

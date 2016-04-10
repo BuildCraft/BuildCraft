@@ -9,7 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
@@ -38,10 +38,10 @@ public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        String unloc = StatCollector.translateToLocal(fluid.getUnlocalizedName());
+        String unloc = I18n.translateToLocal(fluid.getUnlocalizedName());
         String s = "buildcraft.fluid.heat_" + fluid.getHeatValue();
-        String heatString = StatCollector.translateToLocal(s);
+        String heatString = I18n.translateToLocal(s);
         if (s.equals(heatString) || !fluid.isHeatable()) heatString = "";
-        return unloc + " " + StatCollector.translateToLocal("item.bucket.name") + heatString;
+        return unloc + " " + I18n.translateToLocal("item.bucket.name") + heatString;
     }
 }

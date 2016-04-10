@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
@@ -35,7 +35,7 @@ public class PipeModelCacheWire {
     public static final IModelCache<PipeWireKey> cacheAll;
     public static final ModelCache<PipeWireKeySingle> cacheSingle;
 
-    private static EnumMap<PipeWire, Vec3> wirePosMap = Maps.newEnumMap(PipeWire.class);
+    private static EnumMap<PipeWire, Vec3d> wirePosMap = Maps.newEnumMap(PipeWire.class);
     private static EnumMap<PipeWire, AxisDirection[]> wireDirectionMap = Maps.newEnumMap(PipeWire.class);
     private static final double WIRE_WIDTH = 0.05;
     // Offset all wires very slightly out of the pipe
@@ -61,7 +61,7 @@ public class PipeModelCacheWire {
         cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
     }
 
-    private static Vec3 getOffset(PipeWire wire) {
+    private static Vec3d getOffset(PipeWire wire) {
         double min = CoreConstants.PIPE_MIN_POS - WIRE_WIDTH;
         double max = CoreConstants.PIPE_MAX_POS;
 
@@ -76,13 +76,13 @@ public class PipeModelCacheWire {
             axisPos[i] = axis[i] == AxisDirection.POSITIVE;
         }
 
-        Vec3 base = new Vec3(axisPos[0] ? max : min, axisPos[1] ? max : min, axisPos[2] ? max : min);
+        Vec3d base = new Vec3d(axisPos[0] ? max : min, axisPos[1] ? max : min, axisPos[2] ? max : min);
         return base.addVector(axisPos[0] ? inset : offset, axisPos[1] ? inset : offset, axisPos[2] ? inset : offset);
     }
 
     private static ImmutableList<MutableQuad> generate(PipeWireKeySingle key) {
         PipeWire wire = key.type;
-        Vec3 pos = wirePosMap.get(wire);
+        Vec3d pos = wirePosMap.get(wire);
 
         boolean isLit = key.on;
         // BCLog.logger.info("generate[" + wire + ", " + isLit + ", " + key.connections + "]");
@@ -91,8 +91,8 @@ public class PipeModelCacheWire {
 
         List<MutableQuad> unprocessed = new ArrayList<>();
 
-        Vec3 center = pos;
-        Vec3 centerSize = new Vec3(WIRE_WIDTH, WIRE_WIDTH, WIRE_WIDTH);
+        Vec3d center = pos;
+        Vec3d centerSize = new Vec3d(WIRE_WIDTH, WIRE_WIDTH, WIRE_WIDTH);
         AxisDirection[] directions = wireDirectionMap.get(wire);
         int numFaces = 0;
 
@@ -105,8 +105,8 @@ public class PipeModelCacheWire {
                     numFaces++;
                 }
                 numFaces++;
-                Vec3 start = pos;
-                Vec3 end = pos.add(centerSize);
+                Vec3d start = pos;
+                Vec3d end = pos.add(centerSize);
                 if (positive) {
                     start = Utils.withValue(start, axis, Utils.getValue(start, axis) + WIRE_WIDTH);
                     end = Utils.withValue(end, axis, 1);
@@ -126,8 +126,8 @@ public class PipeModelCacheWire {
                 if (anyOther) {
                     continue;
                 }
-                Vec3 start = pos;
-                Vec3 end = pos.add(centerSize);
+                Vec3d start = pos;
+                Vec3d end = pos.add(centerSize);
                 if (positive) {
                     start = Utils.withValue(start, axis, Utils.getValue(start, axis) + WIRE_WIDTH);
                     end = Utils.withValue(end, axis, CoreConstants.PIPE_MAX_POS);
@@ -135,7 +135,7 @@ public class PipeModelCacheWire {
                     start = Utils.withValue(start, axis, CoreConstants.PIPE_MIN_POS);
                     end = Utils.withValue(end, axis, Utils.getValue(end, axis) - WIRE_WIDTH);
                 }
-                Vec3 size = end.subtract(start);
+                Vec3d size = end.subtract(start);
                 if (size.lengthVector() > WIRE_WIDTH * 2) {
                     renderCuboid(unprocessed, start, size, sprite);
                 }
@@ -157,8 +157,8 @@ public class PipeModelCacheWire {
         return builder.build();
     }
 
-    private static void renderCuboid(List<MutableQuad> quads, Vec3 min, Vec3 size, TextureAtlasSprite sprite) {
-        Vec3 radius = Utils.multiply(size, 0.5);
+    private static void renderCuboid(List<MutableQuad> quads, Vec3d min, Vec3d size, TextureAtlasSprite sprite) {
+        Vec3d radius = Utils.multiply(size, 0.5);
         Vector3f radiusF = Utils.convertFloat(radius);
         Vector3f center = Utils.convertFloat(min.add(radius));
         for (EnumFacing face : EnumFacing.values()) {

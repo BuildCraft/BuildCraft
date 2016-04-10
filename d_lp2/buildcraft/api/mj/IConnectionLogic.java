@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 /** Provides logic to check what this can connect to. */

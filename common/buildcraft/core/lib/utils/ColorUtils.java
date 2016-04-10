@@ -7,7 +7,8 @@ package buildcraft.core.lib.utils;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 public final class ColorUtils {
@@ -103,6 +104,6 @@ public final class ColorUtils {
     }
 
     public static String localize(EnumDyeColor color) {
-        return StatCollector.translateToLocal(color.getUnlocalizedName());
+        return I18n.translateToLocal(color.getUnlocalizedName());
     }
 }

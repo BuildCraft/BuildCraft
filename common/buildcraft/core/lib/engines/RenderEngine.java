@@ -15,9 +15,9 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -99,10 +99,10 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
             progress = 1 - progress;
         }
         progress *= 2;
-        final Vec3 coord = Utils.convert(pos);
+        final Vec3d coord = Utils.convert(pos);
         IBlockLocation locationFormula = new IBlockLocation() {
             @Override
-            public Vec3 transformToWorld(Vec3 vec) {
+            public Vec3d transformToWorld(Vec3d vec) {
                 return coord;
             }
         };
@@ -134,12 +134,12 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
 
         EntityResizableCuboid chamberCuboid = new EntityResizableCuboid(getWorld());
         chamberCuboid.texture = spriteChamber;
-        chamberCuboid.setTextureOffset(new Vec3(3, 0, 3));
+        chamberCuboid.setTextureOffset(new Vec3d(3, 0, 3));
 
-        Vec3 chamberSize = Utils.divide(new Vec3(10, progress * 8, 10), 16);
+        Vec3d chamberSize = Utils.divide(new Vec3d(10, progress * 8, 10), 16);
         chamberCuboid.setSize(chamberSize);
 
-        Vec3 chamberOffset = Utils.divide(new Vec3(3, 4, 3), 16);
+        Vec3d chamberOffset = Utils.divide(new Vec3d(3, 4, 3), 16);
 
         RenderUtils.translate(chamberOffset);
         RenderResizableCuboid.INSTANCE.renderCube(chamberCuboid, EnumShadeArgument.FACE_LIGHT, locationFormula, faceFormula);
@@ -150,10 +150,10 @@ public class RenderEngine extends TileEntitySpecialRenderer<TileEngineBase> {
         boxCuboid.makeClient();
         boxCuboid.textures[EnumFacing.UP.ordinal()] = spriteBoxTop.get(type);
         boxCuboid.textures[EnumFacing.DOWN.ordinal()] = spriteBoxTop.get(type);
-        Vec3 boxSize = Utils.divide(new Vec3(16, 4, 16), 16);
+        Vec3d boxSize = Utils.divide(new Vec3d(16, 4, 16), 16);
         boxCuboid.setSize(boxSize);
 
-        Vec3 boxOffset = new Vec3(0, 4 / 16d + progress / 2, 0);
+        Vec3d boxOffset = new Vec3d(0, 4 / 16d + progress / 2, 0);
 
         RenderUtils.translate(boxOffset);
         RenderResizableCuboid.INSTANCE.renderCube(boxCuboid, EnumShadeArgument.FACE_LIGHT, locationFormula, faceFormula);

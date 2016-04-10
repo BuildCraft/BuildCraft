@@ -8,9 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
@@ -33,7 +33,7 @@ public class Template extends BlueprintBase {
 
     @Override
     public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
-        Vec3 nPos = Utils.convert(pos).subtract(Utils.convert(context.surroundingBox().min()));
+        Vec3d nPos = Utils.convert(pos).subtract(Utils.convert(context.surroundingBox().min()));
 
         if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
             set(Utils.convertFloor(nPos), new SchematicMask(true));

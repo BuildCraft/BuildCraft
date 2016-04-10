@@ -5,7 +5,7 @@
 package buildcraft.robotics;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.DockingStation;

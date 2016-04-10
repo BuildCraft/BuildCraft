@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -108,28 +108,28 @@ public class EntityResizableCuboid extends Entity {
         setPosition(posX + d, posY + d1, posZ + d2);
     }
 
-    public void setSize(Vec3 size) {
+    public void setSize(Vec3d size) {
         xSize = size.xCoord;
         ySize = size.yCoord;
         zSize = size.zCoord;
     }
 
     @SideOnly(Side.CLIENT)
-    public void setTextureOffset(Vec3 offset) {
+    public void setTextureOffset(Vec3d offset) {
         textureOffsetX = offset.xCoord;
         textureOffsetY = offset.yCoord;
         textureOffsetZ = offset.zCoord;
     }
 
     @SideOnly(Side.CLIENT)
-    public void setTextureStart(Vec3 start) {
+    public void setTextureStart(Vec3d start) {
         textureStartX = start.xCoord;
         textureStartY = start.yCoord;
         textureStartZ = start.zCoord;
     }
 
     @SideOnly(Side.CLIENT)
-    public void setTextureSize(Vec3 size) {
+    public void setTextureSize(Vec3d size) {
         textureSizeX = size.xCoord;
         textureSizeY = size.yCoord;
         textureSizeZ = size.zCoord;
@@ -163,7 +163,7 @@ public class EntityResizableCuboid extends Entity {
         return brightness > 0 ? brightness : super.getBrightnessForRender(par1);
     }
 
-    public void setPosition(Vec3 vec) {
+    public void setPosition(Vec3d vec) {
         setPosition(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 }

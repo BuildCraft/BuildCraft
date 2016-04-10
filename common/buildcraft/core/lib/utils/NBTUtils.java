@@ -10,22 +10,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.*;
 import net.minecraft.nbt.NBTBase.NBTPrimitive;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagIntArray;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagLong;
-import net.minecraft.nbt.NBTTagShort;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
@@ -128,8 +118,7 @@ public final class NBTUtils {
                 } else if (nbt.hasKey("pos")) {
                     return readBlockPos(nbt.getTag("pos"));
                 } else {
-                    BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")",
-                            new Throwable());
+                    BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")", new Throwable());
                 }
                 return pos;
             }
@@ -138,7 +127,7 @@ public final class NBTUtils {
         return BlockPos.ORIGIN;
     }
 
-    public static NBTTagList writeVec3(Vec3 vec3) {
+    public static NBTTagList writeVec3d(Vec3d vec3) {
         NBTTagList list = new NBTTagList();
         list.appendTag(new NBTTagDouble(vec3.xCoord));
         list.appendTag(new NBTTagDouble(vec3.yCoord));
@@ -146,12 +135,19 @@ public final class NBTUtils {
         return list;
     }
 
-    public static Vec3 readVec3(NBTTagCompound nbt, String tagName) {
-        return readVec3(nbt.getTagList(tagName, DOUBLE));
+    public static Vec3d readVec3d(NBTBase nbt) {
+        if (nbt instanceof NBTTagList) {
+            return readVec3d((NBTTagList) nbt);
+        }
+        return new Vec3d(0, 0, 0);
     }
 
-    public static Vec3 readVec3(NBTTagList list) {
-        return new Vec3(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
+    public static Vec3d readVec3d(NBTTagCompound nbt, String tagName) {
+        return readVec3d(nbt.getTagList(tagName, DOUBLE));
+    }
+
+    public static Vec3d readVec3d(NBTTagList list) {
+        return new Vec3d(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
     }
 
     private static final String NULL_ENUM_STRING = "_NULL";

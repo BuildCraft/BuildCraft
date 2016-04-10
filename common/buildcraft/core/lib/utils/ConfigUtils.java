@@ -29,7 +29,7 @@ public class ConfigUtils {
 
     public boolean get(String tag, boolean defaultValue, boolean reset, String comment) {
         Property prop = config.get(cat, tag, defaultValue);
-        prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
+        prop.setComment(COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX);
 
         boolean ret = parseBoolean(prop, defaultValue);
 
@@ -42,13 +42,13 @@ public class ConfigUtils {
 
     public int get(String tag, int defaultValue, String comment) {
         Property prop = config.get(cat, tag, defaultValue);
-        prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
+        prop.setComment(COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX);
         return parseInteger(prop, defaultValue);
     }
 
     public int get(String tag, int min, int defaultValue, int max, String comment) {
         Property prop = config.get(cat, tag, defaultValue);
-        prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
+        prop.setComment(COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX);
         int parsed = parseInteger(prop, defaultValue);
         int clamped = Math.max(parsed, min);
         clamped = Math.min(clamped, max);
@@ -60,7 +60,7 @@ public class ConfigUtils {
 
     public float get(String tag, float min, float defaultValue, float max, String comment) {
         Property prop = config.get(cat, tag, defaultValue);
-        prop.comment = COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX;
+        prop.setComment(COMMENT_PREFIX + comment.replace("{t}", tag) + COMMENT_SUFFIX);
         double parsed = parseDouble(prop, defaultValue);
         double clamped = Math.max(parsed, min);
         clamped = Math.min(clamped, max);

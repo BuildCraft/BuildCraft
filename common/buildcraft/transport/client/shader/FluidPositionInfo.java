@@ -2,10 +2,10 @@ package buildcraft.transport.client.shader;
 
 import java.nio.FloatBuffer;
 
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 public class FluidPositionInfo {
-    public final Vec3 min, max, point, direction;
+    public final Vec3d min, max, point, direction;
     public final boolean visible, moves;
     public final float textureIndex;
     public final long startMoving, endMoving;
@@ -32,7 +32,7 @@ public class FluidPositionInfo {
         return buffer;
     }
 
-    private float[] asArray(Vec3 vec) {
+    private float[] asArray(Vec3d vec) {
         return new float[] { (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord };
     }
 }

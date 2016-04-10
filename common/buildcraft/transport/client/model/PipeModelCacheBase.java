@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -116,7 +116,7 @@ public class PipeModelCacheBase {
     }
 
     private static void renderPipeCenterFace(float[] uvs, EnumFacing face, boolean smaller, List<MutableQuad> mutable, List<MutableQuad> mutableIn) {
-        Vec3 radius = Utils.vec3(0.25);
+        Vec3d radius = Utils.vec3(0.25);
         if (smaller) {
             double smallerValue = Utils.getValue(radius, face.getAxis()) - 0.01f;
             radius = Utils.withValue(radius, face.getAxis(), smallerValue);
@@ -131,21 +131,21 @@ public class PipeModelCacheBase {
 
     private static void renderPipeConnection(float extension, EnumFacing face, TextureAtlasSprite sprite, boolean smaller, List<MutableQuad> mutable,
             List<MutableQuad> mutableIn) {
-        Vec3 actualCenter = Utils.convert(face, 0.25 + extension / 2).add(Utils.VEC_HALF);
+        Vec3d actualCenter = Utils.convert(face, 0.25 + extension / 2).add(Utils.VEC_HALF);
 
         EnumFacing positive = Utils.convertPositive(face);
 
-        Vec3 actualSize = Utils.convert(positive, extension);
+        Vec3d actualSize = Utils.convert(positive, extension);
         actualSize = actualSize.add(Utils.convertExcept(positive, 0.5));
 
         if (smaller) {
             // Decrease the entire size
-            Vec3 allSmaller = actualSize.subtract(Utils.vec3(0.02));
+            Vec3d allSmaller = actualSize.subtract(Utils.vec3(0.02));
             // Increase the size of axis the connection is in.
             actualSize = allSmaller.add(Utils.convert(positive, 0.02));
         }
 
-        Vec3 pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
+        Vec3d pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
 
         EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
         cuboid.texture = sprite;

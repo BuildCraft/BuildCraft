@@ -10,9 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
@@ -92,7 +92,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Vec3 origin = Utils.convert(pos).add(Utils.convert(direction, -1));
+        Vec3d origin = Utils.convert(pos).add(Utils.convert(direction, -1));
 
         IBlockSource source = new Source(world, Utils.convertFloor(origin), direction);
         IBehaviorDispenseItem behaviour = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(stack.getItem());

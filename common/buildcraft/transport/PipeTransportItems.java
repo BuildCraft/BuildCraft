@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -438,7 +438,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         return item.pos > 1.5F || item.pos < -0.5F;
     }
 
-    public Vec3 getPosition() {
+    public Vec3d getPosition() {
         return Utils.convert(container.getPos());
     }
 

@@ -9,10 +9,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -60,7 +60,7 @@ public class PipeExtensionListener {
             HashSet<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimensionId());
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
-                Vec3 target = Utils.convert(r.pos);
+                Vec3d target = Utils.convert(r.pos);
 
                 boolean retract = r.stack.getItem() == BuildCraftTransport.pipeItemsVoid;
                 List<ItemStack> removedPipeStacks = null;

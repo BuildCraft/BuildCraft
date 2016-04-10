@@ -6,7 +6,7 @@ package buildcraft.core.properties;
 
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsFarmland extends WorldProperty {

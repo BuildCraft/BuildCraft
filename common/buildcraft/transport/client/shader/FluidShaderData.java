@@ -1,7 +1,7 @@
 package buildcraft.transport.client.shader;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,8 +52,8 @@ public class FluidShaderData {
         }
 
         // TODO: Make this respect direction, and move on a curve (Changing the direction as appropriate)
-        Vec3 diff = positionB.point.subtract(positionA.point);
-        Vec3 offset = Utils.multiply(diff, 1 - position);
+        Vec3d diff = positionB.point.subtract(positionA.point);
+        Vec3d offset = Utils.multiply(diff, 1 - position);
 
         FluidPositionInfoBuilder builder = new FluidPositionInfoBuilder(positionB);
         builder.setMin(builder.min.add(offset));
