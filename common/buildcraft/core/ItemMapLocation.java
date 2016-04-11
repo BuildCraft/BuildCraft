@@ -98,11 +98,19 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
             return false;
         }
 
+        ItemStack modified = stack;
+
+        if (stack.stackSize > 1) {
+            modified = stack.copy();
+            stack.stackSize--;
+            modified.stackSize = 1;
+        }
+
         TileEntity tile = world.getTileEntity(pos);
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtils.getItemData(modified);
 
         if (tile instanceof IPathProvider) {
-            MapLocationType.PATH.setToStack(stack);
+            MapLocationType.PATH.setToStack(modified);
 
             NBTTagList pathNBT = new NBTTagList();
 
@@ -112,7 +120,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
             cpt.setTag("path", pathNBT);
         } else if (tile instanceof IAreaProvider) {
-            MapLocationType.AREA.setToStack(stack);
+            MapLocationType.AREA.setToStack(modified);
 
             IAreaProvider areaTile = (IAreaProvider) tile;
 
@@ -124,12 +132,20 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
             cpt.setInteger("zMax", areaTile.max().getZ());
 
         } else {
-            MapLocationType.SPOT.setToStack(stack);
+            MapLocationType.SPOT.setToStack(modified);
 
             cpt.setByte("side", (byte) side.getIndex());
             cpt.setInteger("x", pos.getX());
             cpt.setInteger("y", pos.getY());
             cpt.setInteger("z", pos.getZ());
+        }
+
+        if (stack != modified) {
+            if (!player.inventory.addItemStackToInventory(modified)) {
+                player.dropItem(modified, false, true);
+            } else {
+                player.inventoryContainer.detectAndSendChanges();
+            }
         }
 
         return true;
