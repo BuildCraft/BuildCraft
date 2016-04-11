@@ -19,7 +19,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
-    private static final Vec3 TANK_SIZE = new Vec3(0.75, 1, 0.75);
+    private static final Vec3 TANK_SIZE = new Vec3(0.74, 1, 0.74);
 
     @Override
     public void renderTileEntityAt(TileTank tank, double x, double y, double z, float f, int minusOne) {
@@ -52,8 +52,9 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         RenderUtils.setGLColorFromIntPlusAlpha(color);
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-        GL11.glScalef(0.999F, 0.999F, 0.999F);
-        GL11.glTranslatef(-0.375F, -0.5F, -0.375F);
+        // float scale = 0.95f;
+        // GL11.glScalef(scale, scale, scale);
+        GL11.glTranslatef(-0.370F, -0.5F, -0.370F);
 
         int listIndex = (int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1));
 
