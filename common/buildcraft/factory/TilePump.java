@@ -10,8 +10,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import net.minecraftforge.fluids.*;
 
@@ -20,6 +22,7 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
@@ -39,7 +42,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
     public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
-    private EntityResizableCuboid tube;
+    public EntityResizableCuboid tube;
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private double tubeY = Double.NaN;
     private int aimY = 0;
@@ -282,8 +285,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public void queueForPumping(BlockPos pos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
         BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
-            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
-                * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
                 return;
             }
 
@@ -402,6 +404,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
             tube.setPosition(pos.getX() + CoreConstants.PIPE_MIN_POS, tubeY, pos.getZ() + CoreConstants.PIPE_MIN_POS);
         }
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        if (getPos() == null) return null;
+        return new Box(this).extendToEncompass(Utils.withValue(getPos(), Axis.Y, 0)).getBoundingBox();
     }
 
     @Override

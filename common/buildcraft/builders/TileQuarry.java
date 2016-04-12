@@ -60,8 +60,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable,
-        IDebuggable {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable, IDebuggable {
 
     private static enum Stage {
         BUILDING,
@@ -107,8 +106,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     public TileQuarry() {
         box.kind = Kind.STRIPES;
-        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000
-            * BuildCraftCore.miningMultiplier), 0));
+        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000 * BuildCraftCore.miningMultiplier), 0));
     }
 
     public void createUtilsIfNeeded() {
@@ -501,8 +499,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private boolean isQuarriableBlock(BlockPos pos) {
         IBlockState state = worldObj.getBlockState(pos);
         Block block = state.getBlock();
-        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid)
-            && !(block instanceof IFluidBlock);
+        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
     }
 
     @Override
@@ -585,8 +582,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
             if (placedBy != null) {
-                placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall", xSize, zSize, chunkTicket != null
-                    ? chunkTicket.getMaxChunkListDepth() : 0));
+                placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall", xSize, zSize, chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
             }
 
             a = new DefaultAreaProvider(pos, pos.add(new BlockPos(10, 4, 10)));
@@ -878,8 +874,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos()
-                    .getZ(), chunks.size()));
+            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos().getZ(), chunks.size()));
         }
     }
 
@@ -892,7 +887,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public AxisAlignedBB getRenderBoundingBox() {
         // return Utils.boundingBox(Utils.vec3(-100000d), Utils.vec3(100000d));
         if (getPos() == null) return null;
-        return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
+        return new Box(this).extendToEncompass(box).extendToEncompass(miningBox).getBoundingBox();
     }
 
     @Override
