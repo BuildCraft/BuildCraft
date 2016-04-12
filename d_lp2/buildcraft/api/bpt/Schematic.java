@@ -45,7 +45,7 @@ public abstract class Schematic {
      * @return A collection of all the tasks you need doing to complete the schematic. */
     public abstract Iterable<IBptTask> createTasks(IBuilder builder, BuildStage stage);
 
-    /** Called when one of the tasks you returned from {@link #createTasks(IBuilder, BuildStage)} has completed its
+    /** Called when all of the tasks you returned from {@link #createTasks(IBuilder, BuildStage)} have completed their
      * actions. */
-    public abstract void onTaskComplete(IBuilder builder, BuildStage stage, IBptTask task);
+    public abstract void onTasksComplete(IBuilder builder, BuildStage stage);
 }

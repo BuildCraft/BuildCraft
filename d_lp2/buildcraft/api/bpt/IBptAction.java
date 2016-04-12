@@ -1,13 +1,7 @@
 package buildcraft.api.bpt;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import buildcraft.api.IUniqueWriter;
 
-public interface IBptAction {
-    /** Gets the name to identify this when reading and writing to disk. */
-    ResourceLocation getRegistryName();
-
+public interface IBptAction extends IUniqueWriter {
     void run(IBuilder builder);
-
-    NBTTagCompound serializeNBT();
 }

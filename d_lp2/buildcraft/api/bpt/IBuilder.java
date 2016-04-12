@@ -14,9 +14,11 @@ public interface IBuilder {
 
     ImmutableSet<BptPermissions> getPermissions();
 
-    void startBlockBuilding(BlockPos pos, ItemStack display, int delay);
+    /** @return The number of ticks the animation will take */
+    int startBlockBuilding(BlockPos pos, ItemStack display, int delay);
 
-    void startEntityBuilding(Vec3d target, ItemStack display, int delay);
+    /** @return The number of ticks the animation will take */
+    int startEntityBuilding(Vec3d target, ItemStack display, int delay);
 
-    void addAction(IBptAction action);
+    void addAction(IBptAction action, int delay);
 }

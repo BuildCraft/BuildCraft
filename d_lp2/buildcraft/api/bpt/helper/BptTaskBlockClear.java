@@ -1,8 +1,10 @@
 package buildcraft.api.bpt.helper;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -33,6 +35,10 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
         this.pos = pos;
     }
 
+    public BptTaskBlockClear(NBTTagCompound nbt) {
+
+    }
+
     @Override
     public boolean isDone() {
         return builder.getWorld().isAirBlock(pos);
@@ -45,8 +51,9 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
 
     @Override
     protected void onRecievePower(int mJSoFar) {
+        int time = 0;
         for (int i = 0; i < ticks; i += 2)
-            builder.startBlockBuilding(pos, stack, i);
-        builder.addAction(ticks, new ActionSetBlockState());
+            time = builder.startBlockBuilding(pos, stack, i);
+        builder.addAction(new ActionSetBlockState(Blocks.air.getDefaultState(), pos), time + ticks);
     }
 }

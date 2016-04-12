@@ -1,12 +1,14 @@
 package buildcraft.api.mj.helpers.task;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 /** Represents a task that only requires a set amount of power, and
  * 
  * @date Created on 10 Apr 2016 by AlexIIL */
 public abstract class MjTaskOnce implements IMjTask {
     private final int milliJoules, ticks, watts;
     private final boolean allAtOnce;
-    private int recievedJoules = 0;
+    private int receivedJoules = 0;
 
     public MjTaskOnce(int milliJoules, int ticks, boolean allAtOnce) {
         this.milliJoules = milliJoules;
@@ -15,19 +17,38 @@ public abstract class MjTaskOnce implements IMjTask {
         watts = milliJoules / Math.max(1, ticks);
     }
 
+    public MjTaskOnce(NBTTagCompound nbt) {
+        this.milliJoules = nbt.getInteger("milliJoules");
+        this.ticks = nbt.getInteger("ticks");
+        this.watts = nbt.getInteger("watts");
+        this.allAtOnce = nbt.getBoolean("allAtOnce");
+        this.receivedJoules = nbt.getInteger("receivedJoules");
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("milliJoules", milliJoules);
+        nbt.setInteger("ticks", ticks);
+        nbt.setInteger("watts", watts);
+        nbt.setBoolean("allAtOnce", allAtOnce);
+        nbt.setInteger("receivedJoules", receivedJoules);
+        return nbt;
+    }
+
     @Override
     public int requiredMilliWatts() {
-        return recievedJoules >= milliJoules ? 0 : watts;
+        return receivedJoules >= milliJoules ? 0 : watts;
     }
 
     @Override
     public final void tick(boolean isGettingPower) {
         if (isGettingPower) {
-            recievedJoules += watts / 20;
+            receivedJoules += watts / 20;
             if (!allAtOnce) {
-                onRecievePower(recievedJoules);
-            } else if (recievedJoules >= milliJoules) {
-                onRecievePower(recievedJoules);
+                onRecievePower(receivedJoules);
+            } else if (receivedJoules >= milliJoules) {
+                onRecievePower(receivedJoules);
             }
         }
     }

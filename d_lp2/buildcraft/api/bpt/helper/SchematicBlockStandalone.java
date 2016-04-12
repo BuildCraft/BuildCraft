@@ -36,5 +36,5 @@ public class SchematicBlockStandalone extends SchematicBlock {
     }
 
     @Override
-    public void onTaskComplete(IBuilder builder, BuildStage stage, IBptTask task) {}
+    public void onTasksComplete(IBuilder builder, BuildStage stage) {}
 }

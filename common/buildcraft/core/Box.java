@@ -7,14 +7,13 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3di;
+import net.minecraft.util.math.Vec3i;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
@@ -23,6 +22,8 @@ import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox, ISerializable {
@@ -110,17 +111,14 @@ public class Box implements IBox, ISerializable {
         initializeCenter(center, Utils.vec3i(size));
     }
 
-    public void initializeCenter(BlockPos center, Vec3di size) {
+    public void initializeCenter(BlockPos center, Vec3i size) {
         extendToEncompassBoth(center.subtract(size), center.add(size));
     }
 
     public List<BlockPos> getBlocksInArea() {
         List<BlockPos> blocks = new ArrayList<>();
 
-        // Add {1,1,1} to make this return all values inside the box
-
-        // TODO: THE ABOVE MIGHT BE WRONG!
-        for (BlockPos pos : BlockPos.getAllInBox(min, max.add(Utils.POS_ONE))) {
+        for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
             blocks.add(pos);
         }
 
@@ -130,7 +128,7 @@ public class Box implements IBox, ISerializable {
     @Override
     public Box expand(int amount) {
         if (!isInitialized()) return this;
-        Vec3di am = Utils.vec3i(amount);
+        Vec3i am = Utils.vec3i(amount);
         setMin(min().subtract(am));
         setMax(max().add(am));
         return this;
