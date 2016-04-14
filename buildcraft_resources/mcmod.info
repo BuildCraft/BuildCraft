@@ -106,7 +106,7 @@
   "name": "BC Robotics",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
+  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Robotics Component)",
   "credits": "Created by SpaceToad",
   "logoFile": "assets/buildcraft/logo.png",
   "url": "http://www.mod-buildcraft.com/",
