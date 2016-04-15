@@ -8,9 +8,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import buildcraft.api._mj.EnumMjPowerType;
+import buildcraft.api._mj.helpers.MjSimpleProducer;
 import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.mj.EnumMjPowerType;
-import buildcraft.api.mj.helpers.MjSimpleProducer;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
@@ -22,11 +22,6 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     public TileEngineStone_BC8() {
         super(1);// All details are known
-    }
-
-    @Override
-    protected MjSimpleProducer createProducer() {
-        return new EngineProducer(EnumMjPowerType.LAPITRONIC);
     }
 
     @Override
@@ -47,21 +42,6 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     @Override
     public EnumEnergyStage getEnergyStage() {
         return EnumEnergyStage.BLUE;
-    }
-
-    @Override
-    public boolean hasMoreFuel() {
-        return ticksLeft > 0 || GameRegistry.getFuelValue(itemHandler.extractItem(0, 1, true)) > 0;
-    }
-
-    @Override
-    public int getMaxCurrentlySuppliable() {
-        return MILLIWATTS_PROVIDED;
-    }
-
-    @Override
-    public void setCurrentUsed(int milliwatts) {
-        beingUsed = milliwatts / (double) MILLIWATTS_PROVIDED;
     }
 
     @Override

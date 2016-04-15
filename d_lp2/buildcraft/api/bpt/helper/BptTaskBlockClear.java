@@ -5,19 +5,22 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.BCBlocks;
+import buildcraft.api._mj.helpers.task.MjTaskOnce;
 import buildcraft.api.bpt.IBptTask;
+import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
-import buildcraft.api.mj.helpers.task.MjTaskOnce;
 
 public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_clear");
     private static final ItemStack stack = new ItemStack(Item.getItemFromBlock(BCBlocks.coreDecorated));
-    private final int ticks;
     private final IBuilder builder;
     private final BlockPos pos;
+    private final int ticks;
 
     public static BptTaskBlockClear create(IBuilder builder, BlockPos offset) {
         BlockPos pos = builder.getPos().add(offset);
@@ -30,13 +33,31 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
 
     private BptTaskBlockClear(int milliJoules, int ticks, IBuilder builder, BlockPos pos) {
         super(milliJoules, ticks, true);
-        this.ticks = ticks;
         this.builder = builder;
+        this.ticks = ticks;
         this.pos = pos;
     }
 
-    public BptTaskBlockClear(NBTTagCompound nbt) {
+    @Override
+    public ResourceLocation getRegistryName() {
+        return ID;
+    }
 
+    public BptTaskBlockClear(NBTTagCompound nbt, IBuilder builder) {
+        super(nbt.getCompoundTag("super"));
+        this.builder = builder;
+        this.ticks = nbt.getInteger("ticks");
+        int[] pos = nbt.getIntArray("pos");
+        this.pos = new BlockPos(pos[0], pos[1], pos[2]);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("super", super.serializeNBT());
+        nbt.setInteger("ticks", ticks);
+        nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
+        return nbt;
     }
 
     @Override
@@ -45,15 +66,19 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
     }
 
     @Override
-    public boolean isReadyYet() {
-        return true;
-    }
-
-    @Override
     protected void onRecievePower(int mJSoFar) {
         int time = 0;
         for (int i = 0; i < ticks; i += 2)
             time = builder.startBlockBuilding(pos, stack, i);
         builder.addAction(new ActionSetBlockState(Blocks.air.getDefaultState(), pos), time + ticks);
+    }
+
+    public enum Deserializer implements IBptTaskDeserializer {
+        INSTANCE;
+
+        @Override
+        public IBptTask deserializeNBT(NBTTagCompound nbt, IBuilder builder) {
+            return new BptTaskBlockClear(nbt, builder);
+        }
     }
 }

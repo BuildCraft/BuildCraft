@@ -5,14 +5,37 @@ import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
 
-public class BlueprintAPI {
-    private static final Map<ResourceLocation, IBptActionDeserializer> deserializers = new HashMap<>();
+import buildcraft.api.IUniqueReader;
+import buildcraft.api.bpt.helper.ActionSetBlockState;
+import buildcraft.api.bpt.helper.BptTaskBlockClear;
+import buildcraft.api.bpt.helper.BptTaskBlockStandalone;
 
-    public static void registerDeserializer(ResourceLocation identifier, IBptActionDeserializer deserializer) {
-        deserializers.put(identifier, deserializer);
+public class BlueprintAPI {
+    private static final Map<ResourceLocation, IBptTaskDeserializer> taskDeserializers = new HashMap<>();
+    private static final Map<ResourceLocation, IUniqueReader<IBptAction>> actionDeserializers = new HashMap<>();
+
+    public static void registerTaskDeserializer(ResourceLocation identifier, IBptTaskDeserializer deserializer) {
+        taskDeserializers.put(identifier, deserializer);
     }
 
-    public static IBptActionDeserializer getDeserializer(ResourceLocation identifier) {
-        return deserializers.get(identifier);
+    public static IBptTaskDeserializer getTaskDeserializer(ResourceLocation identifier) {
+        return taskDeserializers.get(identifier);
+    }
+
+    public static void registerActionDeserializer(ResourceLocation identifier, IUniqueReader<IBptAction> deserializer) {
+        actionDeserializers.put(identifier, deserializer);
+    }
+
+    public static IUniqueReader<IBptAction> getActionDeserializer(ResourceLocation identifier) {
+        return actionDeserializers.get(identifier);
+    }
+
+    static {
+        // Default task deserializers
+        registerTaskDeserializer(BptTaskBlockStandalone.ID, BptTaskBlockStandalone.Deserializer.INSTANCE);
+        registerTaskDeserializer(BptTaskBlockClear.ID, BptTaskBlockClear.Deserializer.INSTANCE);
+
+        // Default action deserializers
+        registerActionDeserializer(ActionSetBlockState.ID, ActionSetBlockState.Deserializer.INSTANCE);
     }
 }

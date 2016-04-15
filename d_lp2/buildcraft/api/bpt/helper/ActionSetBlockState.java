@@ -6,11 +6,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
+import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilder;
 
 public class ActionSetBlockState implements IBptAction {
-    public static final ResourceLocation REG_NAME = new ResourceLocation("buildcraftapi", "set_block_state");
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi", "set_block_state");
     private final IBlockState state;
     private final BlockPos pos;
 
@@ -30,7 +31,7 @@ public class ActionSetBlockState implements IBptAction {
 
     @Override
     public ResourceLocation getRegistryName() {
-        return REG_NAME;
+        return ID;
     }
 
     @Override
@@ -45,5 +46,14 @@ public class ActionSetBlockState implements IBptAction {
         nbt.setByte("meta", (byte) state.getBlock().getMetaFromState(state));
         nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
         return nbt;
+    }
+
+    public enum Deserializer implements IUniqueReader<IBptAction> {
+        INSTANCE;
+
+        @Override
+        public IBptAction deserialize(NBTTagCompound nbt) {
+            return new ActionSetBlockState(nbt);
+        }
     }
 }

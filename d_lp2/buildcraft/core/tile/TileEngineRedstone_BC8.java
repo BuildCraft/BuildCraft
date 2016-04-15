@@ -3,8 +3,6 @@ package buildcraft.core.tile;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.mj.EnumMjPowerType;
-import buildcraft.api.mj.helpers.MjSimpleProducer;
 import buildcraft.core.lib.utils.AverageDouble;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.data.DataTemplate;
@@ -35,11 +33,6 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     }
 
     @Override
-    protected MjSimpleProducer createProducer() {
-        return new EngineProducer(EnumMjPowerType.REDSTONE);
-    }
-
-    @Override
     public DataTemplate getTemplateFor(int stage) {
         if (stage == 0) return TEMPLATE_REDSTONE;
         return super.getTemplateFor(stage);
@@ -63,31 +56,15 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
             powerAvg.deserializeNBT(nbt.getCompoundTag("average"));
         }
     }
+    
+    @Override
+    protected void sendPower(int power) {
+        
+    }
 
     @Override
     public EnumEnergyStage getEnergyStage() {
         return stage;
-    }
-
-    @Override
-    public boolean hasMoreFuel() {
-        return true;// We always have more fuel
-    }
-
-    @Override
-    public int getMaxCurrentlySuppliable() {
-        return MILLIWATTS_PROVIDED[stage.ordinal()];
-    }
-
-    @Override
-    public void setCurrentUsed(int milliwatts) {
-        int supply = getMaxCurrentlySuppliable();
-        if (supply == 0) {
-            powerAvg.push(0);
-        } else {
-            double beingUsed = milliwatts / (double) supply;
-            powerAvg.push(beingUsed * 2);
-        }
     }
 
     @Override
