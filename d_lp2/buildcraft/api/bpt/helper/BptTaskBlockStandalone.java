@@ -8,12 +8,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api._mj.helpers.task.MjTaskOnce;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
 
-public class BptTaskBlockStandalone extends MjTaskOnce implements IBptTask {
+public class BptTaskBlockStandalone extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_standalone");
     private final IBuilder builder;
     private final BlockPos pos;
@@ -28,7 +27,7 @@ public class BptTaskBlockStandalone extends MjTaskOnce implements IBptTask {
     }
 
     public BptTaskBlockStandalone(IBuilder builder, BlockPos offset, IBlockState state, ItemStack display) {
-        super(500, 1, true);
+        super(500);
         this.builder = builder;
         this.pos = builder.getPos().add(offset);
         this.state = state;
@@ -40,7 +39,7 @@ public class BptTaskBlockStandalone extends MjTaskOnce implements IBptTask {
         this.builder = builder;
         int[] pos = nbt.getIntArray("pos");
         this.pos = new BlockPos(pos[0], pos[1], pos[2]);
-        Block block = Block.blockRegistry.getObject(new ResourceLocation(nbt.getString("block")));
+        Block block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
         int meta = nbt.getInteger("meta");
         state = block.getStateFromMeta(meta);
         display = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("display"));
@@ -63,8 +62,8 @@ public class BptTaskBlockStandalone extends MjTaskOnce implements IBptTask {
     }
 
     @Override
-    public int requiredMilliWatts() {
-        return builder.getWorld().isAirBlock(pos) ? super.requiredMilliWatts() : 0;
+    public boolean isReady() {
+        return builder.getWorld().isAirBlock(pos);
     }
 
     @Override
@@ -73,9 +72,9 @@ public class BptTaskBlockStandalone extends MjTaskOnce implements IBptTask {
     }
 
     @Override
-    protected void onRecievePower(int mJSoFar) {
+    protected void onReceiveFullPower() {
         int time = builder.startBlockBuilding(pos, display, 0);
-        builder.addAction(new ActionSetBlockState(state, pos), time);
+        builder.addAction(new BptActionSetBlockState(state, pos), time);
     }
 
     public enum Deserializer implements IBptTaskDeserializer {

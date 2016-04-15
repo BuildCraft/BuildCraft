@@ -6,15 +6,17 @@ package buildcraft.robotics;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IModel;
@@ -32,11 +34,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
-import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
-import buildcraft.robotics.render.RenderRobot;
-import buildcraft.robotics.render.RenderZonePlan;
-import buildcraft.robotics.render.RobotItemModel;
-import buildcraft.robotics.render.RobotStationModel;
+import buildcraft.robotics.render.*;
 
 public class RoboticsProxyClient extends RoboticsProxy {
     public static Map<String, IBakedModel> robotModel = new HashMap<>();
@@ -44,17 +42,17 @@ public class RoboticsProxyClient extends RoboticsProxy {
 
     @SubscribeEvent
     public void onPostBake(ModelBakeEvent event) {
-        event.modelRegistry.putObject(new ModelResourceLocation("buildcraftrobotics:robot", "inventory"), RobotItemModel.create());
+        event.getModelRegistry().putObject(new ModelResourceLocation("buildcraftrobotics:robot", "inventory"), RobotItemModel.create());
     }
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Pre event) {
-        event.map.registerSprite(EntityRobot.ROBOT_BASE);
+        event.getMap().registerSprite(EntityRobot.ROBOT_BASE);
         for (RedstoneBoardNBT<?> board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             if (board instanceof RedstoneBoardRobotNBT) {
                 RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
                 ResourceLocation texture = robotBoard.getRobotTexture();
-                event.map.registerSprite(texture);
+                event.getMap().registerSprite(texture);
             }
         }
     }
@@ -67,17 +65,13 @@ public class RoboticsProxyClient extends RoboticsProxy {
 
             IModel robotModelBase = ModelLoaderRegistry.getModel(new ResourceLocation("buildcraftrobotics:robot"));
             if (robotModelBase instanceof IRetexturableModel) {
-                defaultRobotModel = ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", EntityRobot.ROBOT_BASE.toString()))
-                        .bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+                defaultRobotModel = ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", EntityRobot.ROBOT_BASE.toString())).bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
 
                 for (RedstoneBoardNBT<?> board : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
                     if (board instanceof RedstoneBoardRobotNBT) {
                         RedstoneBoardRobotNBT robotBoard = (RedstoneBoardRobotNBT) board;
                         ResourceLocation texture = robotBoard.getRobotTexture();
-                        robotModel.put(board.getID(),
-                                ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", texture.toString()))
-                                        .bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter())
-                        );
+                        robotModel.put(board.getID(), ((IRetexturableModel) robotModelBase).retexture(ImmutableMap.of("all", texture.toString())).bake(robotModelBase.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
                     }
                 }
             } else {

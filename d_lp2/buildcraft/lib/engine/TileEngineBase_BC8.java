@@ -21,6 +21,8 @@ import buildcraft.lib.tile.TileBuildCraft_BC8;
 
 public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {
     protected static final DataTemplate TEMPLATE_BASE;
+    /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
+    private static final int[] PULSE_FREQUENCIES = { 60, 45, 35, 25, 15, 50 };
 
     static {
         TEMPLATE_BASE = new DataTemplate.Builder()//
@@ -106,7 +108,7 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
         if (pulseStage >= 1) {
             pulseStage--;
         }
-        if (pulseStage > 0.7) {
+        if (pulseStage > 0.8) {
             float multiplier = 1 - pulseStage;
             int power = MathHelper.floor_float(multiplier * milliJoulesHeld);
             milliJoulesHeld -= power;
@@ -124,10 +126,9 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
     }
 
     protected void sendPower(int power) {
-        if (receiverBuffer != null) {
-            if (receiverBuffer.receivePower(power, false)) return;
+        if (receiverBuffer == null || !receiverBuffer.receivePower(power, false)) {
+            MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, power);
         }
-        MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, power);
     }
 
     public EnumFacing getCurrentDirection() {
@@ -139,13 +140,15 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
     }
 
     protected void addPower(int milliJoules) {
-
+        milliJoulesHeld += milliJoules;
     }
 
     public abstract EnumEnergyStage getEnergyStage();
 
     /** @return The frequency of the power pulse, in ticks. */
-    public abstract int getPulseFrequency();
+    public int getPulseFrequency() {
+        return PULSE_FREQUENCIES[getEnergyStage().ordinal()];
+    }
 
     /** @return How many engines this engine can carry its power output over. This only carries over engines infront
      *         that are facing the same direction. */

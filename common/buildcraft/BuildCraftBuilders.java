@@ -142,8 +142,8 @@ import buildcraft.core.builders.schematics.SchematicTreatAsOther;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 
-@Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
-        dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
+//        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Builders")
@@ -404,7 +404,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.nether_wart, SchematicSeeds.class, Items.nether_wart);
 
         schemes.registerSchematicBlock(Blocks.torch, SchematicBlock.class);
-        schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicBlock.class);
+        schemes.registerSchematicBlock(Blocks.REDSTONE_TORCH, SchematicBlock.class);
         schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicBlock.class);
 
         schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicBlock.class);
@@ -423,7 +423,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         schemes.registerSchematicBlock(Blocks.furnace, SchematicTile.class);
         schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicTile.class);
-        schemes.registerSchematicBlock(Blocks.chest, SchematicTile.class);
+        schemes.registerSchematicBlock(Blocks.CHEST, SchematicTile.class);
         schemes.registerSchematicBlock(Blocks.dispenser, SchematicTile.class);
         schemes.registerSchematicBlock(Blocks.dropper, SchematicTile.class);
 
@@ -442,7 +442,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         schemes.registerSchematicBlock(Blocks.gravel, SchematicGravel.class);
 
-        schemes.registerSchematicBlock(Blocks.redstone_wire, SchematicRedstoneWire.class, new ItemStack(Items.redstone));
+        schemes.registerSchematicBlock(Blocks.redstone_wire, SchematicRedstoneWire.class, new ItemStack(Items.REDSTONE));
         schemes.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
         schemes.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
@@ -479,13 +479,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(Blocks.acacia_stairs, SchematicStandalone.class);
         schemes.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStandalone.class);
 
-        schemes.registerSchematicBlock(Blocks.acacia_door, SchematicDoor.class, new ItemStack(Items.acacia_door));
-        schemes.registerSchematicBlock(Blocks.birch_door, SchematicDoor.class, new ItemStack(Items.birch_door));
-        schemes.registerSchematicBlock(Blocks.dark_oak_door, SchematicDoor.class, new ItemStack(Items.dark_oak_door));
-        schemes.registerSchematicBlock(Blocks.jungle_door, SchematicDoor.class, new ItemStack(Items.jungle_door));
-        schemes.registerSchematicBlock(Blocks.oak_door, SchematicDoor.class, new ItemStack(Items.oak_door));
-        schemes.registerSchematicBlock(Blocks.spruce_door, SchematicDoor.class, new ItemStack(Items.spruce_door));
-        schemes.registerSchematicBlock(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
+        schemes.registerSchematicBlock(Blocks.ACACIA_DOOR, SchematicDoor.class, new ItemStack(Items.ACACIA_DOOR));
+        schemes.registerSchematicBlock(Blocks.BIRCH_DOOR, SchematicDoor.class, new ItemStack(Items.BIRCH_DOOR));
+        schemes.registerSchematicBlock(Blocks.DARK_OAK_DOOR, SchematicDoor.class, new ItemStack(Items.DARK_OAK_DOOR));
+        schemes.registerSchematicBlock(Blocks.JUNGLE_DOOR, SchematicDoor.class, new ItemStack(Items.JUNGLE_DOOR));
+        schemes.registerSchematicBlock(Blocks.OAK_DOOR, SchematicDoor.class, new ItemStack(Items.OAK_DOOR));
+        schemes.registerSchematicBlock(Blocks.SPRUCE_DOOR, SchematicDoor.class, new ItemStack(Items.SPRUCE_DOOR));
+        schemes.registerSchematicBlock(Blocks.IRON_DOOR, SchematicDoor.class, new ItemStack(Items.IRON_DOOR));
 
         schemes.registerSchematicBlock(Blocks.bed, SchematicBed.class);
 
@@ -611,27 +611,27 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     public static void loadRecipes() {
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(quarryBlock), "ipi", "gig", "dDd", 'i', "gearIron", 'p', "dustRedstone", 'g', "gearGold",
-                'd', "gearDiamond", 'D', Items.diamond_pickaxe);
+                'd', "gearDiamond", 'D', Items.DIAMOND_PICKAXE);
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i', "dyeBlack", 'p', Items.paper);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i', "dyeBlack", 'p', Items.PAPER);
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i', "gemLapis", 'p', Items.paper);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i', "gemLapis", 'p', Items.PAPER);
 
         if (constructionMarkerBlock != null) {
-            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l', "gearGold", 'r', Blocks.redstone_torch);
+            BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l', "gearGold", 'r', Blocks.REDSTONE_TORCH);
         }
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
+                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearGold", 'C', Blocks.CHEST);
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
+                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', Blocks.CHEST);
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem, 1));
+                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem, 1));
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B', new ItemStack(blueprintItem), 'b',
-                Blocks.bookshelf, 'i', "ingotIron", 'g', "gearIron", 'r', Items.redstone);
+                Blocks.BOOKSHELF, 'i', "ingotIron", 'g', "gearIron", 'r', Items.REDSTONE);
     }
 
     @Mod.EventHandler

@@ -8,10 +8,13 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatCrafting;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
+
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public enum BCStatCollector {
     INSTANCE;
@@ -30,7 +33,7 @@ public enum BCStatCollector {
         String statName = toStatName(item);
         StatCrafting mineBlock = createCrafting("stat.mineBlock", statName, new ItemStack(block));
 
-        StatList.objectMineStats.add(mineBlock);
+        StatList.MINE_BLOCK_STATS.add(mineBlock);
         INSTANCE.blockMined.put(block, mineBlock);
 
         registerStats(item);
@@ -42,7 +45,7 @@ public enum BCStatCollector {
         StatCrafting craft = createCrafting("stat.craftItem", statName, new ItemStack(item));
 
         if (!(item instanceof ItemBlock)) {
-            StatList.itemStats.add(used);
+            StatList.USE_ITEM_STATS.add(used);
         }
 
         INSTANCE.itemUsed.put(item, used);
@@ -50,24 +53,26 @@ public enum BCStatCollector {
     }
 
     public static StatCrafting createCrafting(String start, String statName, ItemStack stack) {
-        Object[] translation = { stack.getChatComponent() };
-        StatCrafting stat = new StatCrafting(start + ".", statName, new ChatComponentTranslation(start, translation), stack.getItem());
+        Object[] translation = { stack.getTextComponent() };
+        StatCrafting stat = new StatCrafting(start + ".", statName, new TextComponentTranslation(start, translation), stack.getItem());
         stat.registerStat();
         return stat;
     }
 
     private static String toStatName(Item item) {
-        ResourceLocation resourcelocation = Item.itemRegistry.getNameForObject(item);
+        ResourceLocation resourcelocation = Item.REGISTRY.getNameForObject(item);
         return resourcelocation != null ? resourcelocation.toString().replace(':', '.') : null;
     }
 
     public void serverStarting() {
+        StatBase[] objUse = ObfuscationReflectionHelper.getPrivateValue(StatList.class, null, "OBJECT_USE_STATS", "");
         /* We know that the registry has been frozen at this point so it is safe to fill up the arrays */
         for (Entry<Item, StatCrafting> crafted : itemUsed.entrySet()) {
-            StatList.objectUseStats[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
+                objUse[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
         }
+        StatBase[] objCraft = ObfuscationReflectionHelper.getPrivateValue(StatList.class, null, "OBJECT_CRAFT_STATS", "");
         for (Entry<Item, StatCrafting> crafted : itemCrafted.entrySet()) {
-            StatList.objectCraftStats[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
+            objCraft[Item.getIdFromItem(crafted.getKey())] = crafted.getValue();
         }
     }
 }

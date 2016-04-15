@@ -30,9 +30,9 @@ public class AchievementPageManager {
 			Item item = achievement.theItemStack.getItem();
 			if (item instanceof ItemBlock) {
 				Block block = ((ItemBlock) item).getBlock();
-				registered = Block.blockRegistry.getNameForObject(block) != null;
+				registered = Block.REGISTRY.getNameForObject(block) != null;
 			} else {
-				registered = Item.itemRegistry.getNameForObject(item) != null;
+				registered = Item.REGISTRY.getNameForObject(item) != null;
 			}
 			if (registered) {
 				page.getAchievements().add(achievement);

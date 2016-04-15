@@ -10,12 +10,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.BCBlocks;
-import buildcraft.api._mj.helpers.task.MjTaskOnce;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
 
-public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
+public class BptTaskBlockClear extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_clear");
     private static final ItemStack stack = new ItemStack(Item.getItemFromBlock(BCBlocks.coreDecorated));
     private final IBuilder builder;
@@ -32,15 +31,10 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
     }
 
     private BptTaskBlockClear(int milliJoules, int ticks, IBuilder builder, BlockPos pos) {
-        super(milliJoules, ticks, true);
+        super(milliJoules);
         this.builder = builder;
         this.ticks = ticks;
         this.pos = pos;
-    }
-
-    @Override
-    public ResourceLocation getRegistryName() {
-        return ID;
     }
 
     public BptTaskBlockClear(NBTTagCompound nbt, IBuilder builder) {
@@ -61,16 +55,28 @@ public class BptTaskBlockClear extends MjTaskOnce implements IBptTask {
     }
 
     @Override
+    public ResourceLocation getRegistryName() {
+        return ID;
+    }
+
+    @Override
     public boolean isDone() {
         return builder.getWorld().isAirBlock(pos);
     }
 
     @Override
-    protected void onRecievePower(int mJSoFar) {
+    public boolean isReady() {
+        return !isDone();
+    }
+
+    @Override
+    protected void onReceiveFullPower() {
         int time = 0;
-        for (int i = 0; i < ticks; i += 2)
+        for (int i = 0; i < ticks; i += 2) {
             time = builder.startBlockBuilding(pos, stack, i);
-        builder.addAction(new ActionSetBlockState(Blocks.air.getDefaultState(), pos), time + ticks);
+            builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) ticks, pos), time + ticks);
+        }
+        builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos), time + ticks + 1);
     }
 
     public enum Deserializer implements IBptTaskDeserializer {

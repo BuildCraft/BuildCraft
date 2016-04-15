@@ -8,17 +8,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import buildcraft.api._mj.EnumMjPowerType;
-import buildcraft.api._mj.helpers.MjSimpleProducer;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
-    public static final int MILLIWATTS_PROVIDED = 1000;
+    public static final int MILLIWATTS_PER_TICK = 1000;
     private final ItemStackHandler itemHandler = new ItemStackHandler(1);
     private ItemStack currentFuel;
-    private double ticksLeft = 0;
-    private double beingUsed = 1;
+    private int ticksLeft = 0;
 
     public TileEngineStone_BC8() {
         super(1);// All details are known
@@ -58,7 +55,8 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     public void update() {
         if (cannotUpdate()) return;
         if (ticksLeft > 0) {
-            ticksLeft -= beingUsed;
+            ticksLeft--;
+            addPower(MILLIWATTS_PER_TICK);
         }
         if (ticksLeft <= 0) {
             ItemStack potentialFuel = itemHandler.extractItem(0, 1, true);

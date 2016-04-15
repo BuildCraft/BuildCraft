@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -42,9 +43,9 @@ public class FactoryProxyClient extends FactoryProxy {
 
         if (BuildCraftFactory.refineryBlock != null) {
             ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
-         }
+        }
 
-        OBJLoader.instance.addDomain("buildcraftfactory");
+        OBJLoader.INSTANCE.addDomain("buildcraftfactory");
     }
 
     @Override

@@ -319,16 +319,16 @@ public final class BlockUtils {
     public static IBlockState getBlockState(World world, BlockPos pos, boolean force) {
         if (!force) {
             if (pos.getY() < 0 || pos.getY() >= world.getHeight()) {
-                return Blocks.air.getDefaultState();
+                return Blocks.AIR.getDefaultState();
             }
             Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getBlockState(pos) : Blocks.air.getDefaultState();
+            return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
         } else {
             if (pos.getY() < 0 || pos.getY() > 255) {
-                return Blocks.air.getDefaultState();
+                return Blocks.AIR.getDefaultState();
             }
             Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
-            return chunk != null ? chunk.getBlockState(pos) : Blocks.air.getDefaultState();
+            return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
         }
     }
 

@@ -92,7 +92,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
                         if (slot == null) {
                             slot = new SchematicBlock();
-                            slot.state = Blocks.air.getDefaultState();
+                            slot.state = Blocks.AIR.getDefaultState();
                         }
 
                         if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {

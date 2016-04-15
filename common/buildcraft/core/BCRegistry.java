@@ -4,8 +4,9 @@ import java.io.File;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -33,26 +34,27 @@ public final class BCRegistry {
     }
 
     public boolean registerBlock(Block block, boolean forced) {
-        return registerBlock(block, ItemBlockBuildCraft.class, forced);
+        return registerBlock(block, new ItemBlockBuildCraft(block), forced);
     }
 
-    public boolean registerBlock(Block block, Class<? extends ItemBlock> item, boolean forced) {
-        String name = block.getRegistryName();
-        if (name == null || name.isEmpty()) name = block.getUnlocalizedName().replace("tile.", "");
-        if (forced || regCfg.get("blocks", name, true).getBoolean()) {
-            GameRegistry.registerBlock(block, item, name);
+    public boolean registerBlock(Block block, Item item, boolean forced) {
+        ResourceLocation name = block.getRegistryName();
+        if (name == null) throw new IllegalArgumentException("Tried to register a block without specifing its registry name!");
+        if (forced || regCfg.get("blocks", name.getResourcePath(), true).getBoolean()) {
+            GameRegistry.register(block);
             BCStatCollector.registerStats(block);
             CoreProxy.proxy.postRegisterBlock(block);
+            registerItem(item, true);
             return true;
         }
         return false;
     }
 
     public boolean registerItem(Item item, boolean forced) {
-        String name = item.getRegistryName();
-        if (name == null || name.isEmpty()) name = item.getUnlocalizedName().replace("item.", "");
-        if (forced || regCfg.get("items", name, true).getBoolean()) {
-            GameRegistry.registerItem(item, name);
+        ResourceLocation name = item.getRegistryName();
+        if (name == null) throw new IllegalArgumentException("Tried to register an item without specifing its registry name!");
+        if (forced || regCfg.get("items", name.getResourcePath(), true).getBoolean()) {
+            GameRegistry.register(item);
             BCStatCollector.registerStats(item);
             CoreProxy.proxy.postRegisterItem(item);
             return true;

@@ -47,7 +47,7 @@ public class BCBlocks {
 
     private static Block getRegisteredBlock(String module, String regName) {
         String modid = "buildcraft" + module;
-        Block block = Block.blockRegistry.getObject(new ResourceLocation(modid, regName));
+        Block block = Block.REGISTRY.getObject(new ResourceLocation(modid, regName));
         if (block != null) {
             return block;
         }

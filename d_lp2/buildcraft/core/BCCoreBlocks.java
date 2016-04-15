@@ -16,8 +16,7 @@ public class BCCoreBlocks {
     public static BlockPathMarker markerPath;
 
     public static void preInit() {
-        engine = BlockBuildCraftBase_BC8.register(new BlockEngine_BC8(Material.iron, "block.engine.bc"), ItemEngine_BC8.class);
-        // engine = registerEngine("engine");
+        engine = BlockBuildCraftBase_BC8.register(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8<EnumEngineType>::new);
 
         engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
     }

@@ -29,7 +29,7 @@ public class CreativeTabManager {
     }
 
     private static class CreativeTabBC extends CreativeTabs {
-        private Item item = Items.comparator;
+        private Item item = Items.COMPARATOR; // Temp.
 
         public CreativeTabBC(String name) {
             super(name);

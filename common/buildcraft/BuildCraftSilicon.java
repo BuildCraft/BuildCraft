@@ -43,8 +43,8 @@ import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.TileProgrammingTable;
 
-@Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
-        dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
+//        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")
     public static BuildCraftSilicon instance;

@@ -22,6 +22,7 @@ public class BCItems {
     public static final Item coreGearIron;
     public static final Item coreGearGold;
     public static final Item coreGearDiamond;
+    public static final Item coreGuide;
 
     // BC Builders
     public static final Item buildersBlueprint;
@@ -66,6 +67,7 @@ public class BCItems {
         coreGearIron = getRegisteredItem(core, "gear_iron");
         coreGearGold = getRegisteredItem(core, "gear_gold");
         coreGearDiamond = getRegisteredItem(core, "gear_diamond");
+        coreGuide  = getRegisteredItem(core, "guide");
         // builders
         final String builders = "builders";
         buildersBlueprint = getRegisteredItem(builders, "blueprint");
@@ -96,7 +98,7 @@ public class BCItems {
 
     private static Item getRegisteredItem(String module, String regName) {
         String modid = "buildcraft" + module;
-        Item item = Item.itemRegistry.getObject(new ResourceLocation(modid, regName));
+        Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, regName));
         if (item != null) {
             return item;
         }

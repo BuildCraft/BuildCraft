@@ -29,22 +29,13 @@ public class ItemBuildCraft_BC8 extends Item {
     }
 
     public static <I extends ItemBuildCraft_BC8> I register(I item) {
-        return register(item, false, null);
+        return register(item, false);
     }
 
     public static <I extends ItemBuildCraft_BC8> I register(I item, boolean force) {
-        return register(item, force, null);
-    }
-
-    public static <I extends ItemBuildCraft_BC8> I register(I item, Consumer<I> postRegister) {
-        return register(item, false, postRegister);
-    }
-
-    public static <I extends ItemBuildCraft_BC8> I register(I item, boolean force, Consumer<I> postRegister) {
         if (BCRegistry.INSTANCE.registerItem(item, force)) {
             registeredItems.add(item);
             MigrationManager.INSTANCE.addItemMigration(item, TagManager.getMultiTag(item.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
-            if (postRegister != null) postRegister.accept(item);
             return item;
         }
         return null;

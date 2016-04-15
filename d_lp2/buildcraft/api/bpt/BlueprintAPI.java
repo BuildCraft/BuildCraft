@@ -6,7 +6,8 @@ import java.util.Map;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.IUniqueReader;
-import buildcraft.api.bpt.helper.ActionSetBlockState;
+import buildcraft.api.bpt.helper.BptActionPartiallyBreakBlock;
+import buildcraft.api.bpt.helper.BptActionSetBlockState;
 import buildcraft.api.bpt.helper.BptTaskBlockClear;
 import buildcraft.api.bpt.helper.BptTaskBlockStandalone;
 
@@ -36,6 +37,7 @@ public class BlueprintAPI {
         registerTaskDeserializer(BptTaskBlockClear.ID, BptTaskBlockClear.Deserializer.INSTANCE);
 
         // Default action deserializers
-        registerActionDeserializer(ActionSetBlockState.ID, ActionSetBlockState.Deserializer.INSTANCE);
+        registerActionDeserializer(BptActionSetBlockState.ID, BptActionSetBlockState.Deserializer.INSTANCE);
+        registerActionDeserializer(BptActionPartiallyBreakBlock.ID, BptActionPartiallyBreakBlock.Deserializer.INSTANCE);
     }
 }

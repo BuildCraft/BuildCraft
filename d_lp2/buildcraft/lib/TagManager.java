@@ -13,8 +13,8 @@ public class TagManager {
     public static Item getItem(String id) {
         String regTag = getTag(id, EnumTagType.REGISTRY_NAME);
         ResourceLocation loc = new ResourceLocation(regTag);
-        if (Item.itemRegistry.containsKey(loc)) {
-            return Item.itemRegistry.getObject(loc);
+        if (Item.REGISTRY.containsKey(loc)) {
+            return Item.REGISTRY.getObject(loc);
         } else {
             return null;
         }

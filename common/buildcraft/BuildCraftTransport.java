@@ -189,7 +189,7 @@ import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
 import buildcraft.transport.stripes.StripesHandlerUse;
 
-@Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(version = DefaultProps.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
     /** Neptune pipes! */
     // Test against this being a dev environment by checking if the version is a real one or not. (It is automatically

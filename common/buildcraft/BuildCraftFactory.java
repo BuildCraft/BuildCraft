@@ -81,8 +81,8 @@ import buildcraft.factory.tile.TileDistiller;
 import buildcraft.factory.tile.TileEnergyHeater;
 import buildcraft.factory.tile.TileHeatExchange;
 
-@Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
-        dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
+//@Mod(name = "BuildCraft Factory", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
+//        dependencies = DefaultProps.DEPENDENCY_CORE + ";after:BuildCraft|Energy")
 public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Factory")

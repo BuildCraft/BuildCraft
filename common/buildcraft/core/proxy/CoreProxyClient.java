@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -19,9 +20,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -92,8 +94,7 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void init() {
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(
-                DetailedConfigOption.ReloadListener.INSTANCE);
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
@@ -184,7 +185,7 @@ public class CoreProxyClient extends CoreProxy {
     @Override
     public <T extends TileEntity> T getServerTile(T source) {
         if (BuildCraftCore.useServerDataOnClient && Minecraft.getMinecraft().isSingleplayer() && source.getWorld().isRemote) {
-            WorldServer w = DimensionManager.getWorld(source.getWorld().provider.getDimensionId());
+            WorldServer w = DimensionManager.getWorld(source.getWorld().provider.getDimension());
             if (w != null && w.getChunkProvider() != null) {
                 Chunk c = w.getChunkFromBlockCoords(source.getPos());
                 if (c != null) {
