@@ -1,6 +1,8 @@
 package buildcraft.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.SidedProxy;
@@ -24,5 +26,13 @@ public class CoreProxy implements IGuiHandler {
         return null;
     }
 
+    public void postRegisterItem(Item item) {}
+
+    public void postRegisterBlock(Block block) {}
+    
+    public void fmlPreInit() {}
+
     public void fmlInit() {}
+
+    public void fmlPostInit() {}
 }

@@ -183,9 +183,10 @@ public class TagManager {
         registerTag("item.gear.iron").reg("gear_iron").locale("ironGearItem").oreDict("gearIron").oldReg("ironGearItem").model("gears/iron");
         registerTag("item.gear.gold").reg("gear_gold").locale("goldGearItem").oreDict("gearGold").oldReg("goldGearItem").model("gears/gold");
         registerTag("item.gear.diamond").reg("gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").model("gears/diamond");
-        registerTag("item.list").reg("list").locale("listItem").oldReg("listItem");
-        registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem");
+        registerTag("item.list").reg("list").locale("listItem").oldReg("listItem").model("list");
+        registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem").model("map_location");
         registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
+        registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         // BC Core Blocks
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");

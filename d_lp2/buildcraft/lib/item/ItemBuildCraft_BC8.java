@@ -7,18 +7,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.BCRegistry;
-import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.MigrationManager;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemBuildCraft_BC8 extends Item {
     private static List<ItemBuildCraft_BC8> registeredItems = new ArrayList<>();
@@ -55,20 +58,35 @@ public class ItemBuildCraft_BC8 extends Item {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void registerModel() {
-        registerModel(this, 0, TagManager.getTag(id, EnumTagType.MODEL_LOCATION));
+    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+        addVariant(variants, 0, "");
     }
 
-    public static void registerModel(Item item, int meta, String type) {
-        ModelResourceLocation mrl = new ModelResourceLocation(type, "inventory");
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, mrl);
-        ModelBakery.registerItemVariants(item, mrl);
+    public void addVariant(TIntObjectHashMap<ModelResourceLocation> variants, int meta, String suffix) {
+        String tag = TagManager.getTag(id, EnumTagType.MODEL_LOCATION);
+        variants.put(meta, new ModelResourceLocation(tag + suffix, "inventory"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public final void postRegisterClient() {
+        TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
+        addModelVariants(variants);
+        for (ModelResourceLocation variant : variants.values(new ModelResourceLocation[variants.size()])) {
+            BCLog.logger.info("[pre][" + getRegistryName() + "] Registering a variant " + variant);
+            ModelBakery.registerItemVariants(this, new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()));
+        }
     }
 
     @SideOnly(Side.CLIENT)
     public static void fmlInitClient() {
         for (ItemBuildCraft_BC8 item : registeredItems) {
-            item.registerModel();
+            TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
+            item.addModelVariants(variants);
+            for (int meta : variants.keys()) {
+                ModelResourceLocation mrl = variants.get(meta);
+                BCLog.logger.info("[init][" + item.getRegistryName() + "] Registering a variant " + meta + " -> " + mrl);
+                Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, mrl);
+            }
         }
     }
 }

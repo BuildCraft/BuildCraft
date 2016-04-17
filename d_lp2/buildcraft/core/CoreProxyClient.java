@@ -1,6 +1,7 @@
 package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 import buildcraft.lib.guide.GuiGuide;
@@ -14,6 +15,14 @@ public class CoreProxyClient extends CoreProxy {
             return new GuiGuide();
         }
         return null;
+    }
+    
+    @Override
+    public void postRegisterItem(Item item) {
+        if (item instanceof ItemBuildCraft_BC8) {
+            ItemBuildCraft_BC8 itemBc = (ItemBuildCraft_BC8) item;
+            itemBc.postRegisterClient();
+        }
     }
 
     @Override

@@ -210,7 +210,8 @@ public class MarkdownLoader extends LocationLoader {
         if (args.length == 2) return stack;
 
         try {
-            stack.setItemDamage(Integer.parseInt(args[2]));
+            int meta = Integer.parseInt(args[2]);
+            stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }

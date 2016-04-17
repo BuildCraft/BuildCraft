@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.CreativeTabManager;
-import buildcraft.lib.guide.GuideManager;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 
 @Mod(modid = "buildcraftcore", name = "BuildCraft|Core", version = BCMisc.VERSION)
@@ -36,17 +35,20 @@ public class BuildCraftCore {
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
 
-        // CreativeTabManager.setItem("buildcraft.main", BCCoreItems.wrench);
+        CreativeTabManager.setItem("buildcraft.main", BCCoreItems.wrench);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, CoreProxy.getProxy());
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        ItemBuildCraft_BC8.fmlInit();
         CoreProxy.getProxy().fmlInit();
+        ItemBuildCraft_BC8.fmlInit();
+
         BCCoreRecipes.init();
         BCAchievements.init();
+
+        CustomRotationHandlers.init();
     }
 
     @Mod.EventHandler
