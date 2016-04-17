@@ -6,6 +6,8 @@ import java.util.Deque;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Queues;
 
+import org.lwjgl.util.glu.PartialDisk;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -79,21 +81,19 @@ public class GuiGuide extends GuiScreen {
     private static final int PEN_HIDDEN_BOX_X_MAX = PAGE_LEFT.width + PEN_HIDDEN_WIDTH / 2;
     private static final int PEN_HIDDEN_BOX_Y_MAX = 0;
 
-    private static final float PEN_HOVER_TIME = 0.5f;
-    private static final float BOOK_OPEN_TIME = 2f;
+    private static final float PEN_HOVER_TIME = 9f;
+    private static final float BOOK_OPEN_TIME = 20f;
 
     private boolean isOpen = false, isEditing = false;
     private boolean isOpening = false;
 
     /** Float between -90 and 90} */
-    private float openingAngle = -90;
+    private float openingAngleLast = -90, openingAngleNext = -90;
 
     /** Float between {@link #PEN_HIDDEN_HEIGHT_MIN} and {@link #PEN_HIDDEN_HEIGHT_MAX} */
-    private float hoverStage = 0;
+    private float hoverStageLast = 0, hoverStageNext = 0;
     private boolean isOverHover = false;
 
-    /** How long since the last {@link #drawScreen(int, int, float)} was called in seconds */
-    private float diff = 0;
     private int minX, minY;
     /** The current mouse positions. Used by the GuideFontRenderer */
     public int mouseX, mouseY;
@@ -123,17 +123,47 @@ public class GuiGuide extends GuiScreen {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (isOpen) {
+            // Calculate pen hover position
+            float hoverDiff = (PEN_HIDDEN_HEIGHT_MAX - PEN_HIDDEN_HEIGHT_MIN) / PEN_HOVER_TIME;
+            hoverStageLast = hoverStageNext;
+            if (hoverStageNext > PEN_HIDDEN_HEIGHT_MAX) {
+                hoverStageNext -= hoverDiff * 5;
+            } else if (isOverHover) {
+                hoverStageNext += hoverDiff;
+                if (hoverStageNext > PEN_HIDDEN_HEIGHT_MAX) {
+                    hoverStageNext = PEN_HIDDEN_HEIGHT_MAX;
+                }
+            } else {
+                if (hoverStageNext > PEN_HIDDEN_HEIGHT_MIN) {
+                    hoverStageNext -= hoverDiff;
+                }
+                if (hoverStageNext < PEN_HIDDEN_HEIGHT_MIN) {
+                    hoverStageNext = PEN_HIDDEN_HEIGHT_MIN;
+                }
+            }
+        } else if (isOpening) {
+            openingAngleLast = openingAngleNext;
+            openingAngleNext += 180 / BOOK_OPEN_TIME;
+        }
+        if (currentPage != null) {
+            currentPage.tick();
+        }
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        diff = partialTicks / 20f;
         minX = (width - BOOK_DOUBLE_WIDTH) / 2;
         minY = (height - BOOK_DOUBLE_HEIGHT) / 2;
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         try {
             if (isOpen) {
-                drawOpen();
+                drawOpen(partialTicks);
             } else if (isOpening) {
-                drawOpening();
+                drawOpening(partialTicks);
             } else {
                 drawCover();
             }
@@ -156,11 +186,11 @@ public class GuiGuide extends GuiScreen {
         BOOK_COVER.draw(minX, minY);
     }
 
-    private void drawOpening() {
+    private void drawOpening(float partialTicks) {
         minX = (width - BOOK_COVER.width) / 2;
         minY = (height - BOOK_COVER.height) / 2;
 
-        openingAngle += (diff / BOOK_OPEN_TIME) * 180;
+        float openingAngle = openingAngleLast * (1 - partialTicks) + openingAngleNext * partialTicks;
         float sin = MathHelper.sin((float) (openingAngle * Math.PI / 180));
         if (sin < 0) {
             sin *= -1;
@@ -216,7 +246,7 @@ public class GuiGuide extends GuiScreen {
         }
     }
 
-    private void drawOpen() {
+    private void drawOpen(float partialTicks) {
         // Draw the pages
         mc.renderEngine.bindTexture(LEFT_PAGE);
         PAGE_LEFT.draw(minX, minY);
@@ -229,7 +259,6 @@ public class GuiGuide extends GuiScreen {
         // Now draw the actual contents of the book
         tooltipStack = null;
         currentPage.setSpecifics(currentFont, mouseX, mouseY);
-        currentPage.tick(diff);
         currentPage.renderFirstPage(minX + PAGE_LEFT_TEXT.x, minY + PAGE_LEFT_TEXT.y, PAGE_LEFT_TEXT.width, PAGE_LEFT_TEXT.height);
         currentPage.renderSecondPage(minX + PAGE_LEFT.width + PAGE_RIGHT_TEXT.x, minY + PAGE_RIGHT_TEXT.y, PAGE_RIGHT_TEXT.width, PAGE_RIGHT_TEXT.height);
 
@@ -257,24 +286,7 @@ public class GuiGuide extends GuiScreen {
                 PEN_ANGLED.draw(mouseX - 2, mouseY - PEN_ANGLED.height - 2);
             }
         } else {
-            // Calculate pen hover position
-            float hoverDiff = (diff / PEN_HOVER_TIME) * (PEN_HIDDEN_HEIGHT_MAX - PEN_HIDDEN_HEIGHT_MIN);
-            if (hoverStage > PEN_HIDDEN_HEIGHT_MAX) {
-                hoverStage -= hoverDiff * 5;
-            } else if (isOverHover) {
-                hoverStage += hoverDiff;
-                if (hoverStage > PEN_HIDDEN_HEIGHT_MAX) {
-                    hoverStage = PEN_HIDDEN_HEIGHT_MAX;
-                }
-            } else {
-                if (hoverStage > PEN_HIDDEN_HEIGHT_MIN) {
-                    hoverStage -= hoverDiff;
-                }
-                if (hoverStage < PEN_HIDDEN_HEIGHT_MIN) {
-                    hoverStage = PEN_HIDDEN_HEIGHT_MIN;
-                }
-            }
-            int height = (int) hoverStage;
+            int height = (int) (hoverStageLast * (1- partialTicks) + hoverStageNext * partialTicks);
 
             // Draw pen
             mc.renderEngine.bindTexture(ICONS);
@@ -308,7 +320,7 @@ public class GuiGuide extends GuiScreen {
                 if (isOverHover) {
                     isEditing = !isEditing;
                     if (!isEditing) {
-                        hoverStage = PEN_UP.height;
+                        hoverStageNext = PEN_UP.height;
                     }
                 }
             } else {
@@ -324,6 +336,6 @@ public class GuiGuide extends GuiScreen {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return true;
+        return false;
     }
 }

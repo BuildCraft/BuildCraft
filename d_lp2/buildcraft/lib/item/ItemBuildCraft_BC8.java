@@ -2,13 +2,18 @@ package buildcraft.lib.item;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.core.BCRegistry;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.MigrationManager;
 import buildcraft.lib.TagManager;
@@ -46,6 +51,24 @@ public class ItemBuildCraft_BC8 extends Item {
             if (TagManager.hasTag(item.id, EnumTagType.OREDICT_NAME)) {
                 OreDictionary.registerOre(TagManager.getTag(item.id, EnumTagType.OREDICT_NAME), item);
             }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void registerModel() {
+        registerModel(this, 0, TagManager.getTag(id, EnumTagType.MODEL_LOCATION));
+    }
+
+    public static void registerModel(Item item, int meta, String type) {
+        ModelResourceLocation mrl = new ModelResourceLocation(type, "inventory");
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, mrl);
+        ModelBakery.registerItemVariants(item, mrl);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void fmlInitClient() {
+        for (ItemBuildCraft_BC8 item : registeredItems) {
+            item.registerModel();
         }
     }
 }

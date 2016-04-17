@@ -1,30 +1,31 @@
 package buildcraft.core.lib.client.model;
 
 import java.util.List;
+
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
+
 import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 import buildcraft.core.lib.utils.MatrixUtils;
-
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 
 public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int U_MIN = 0;
@@ -46,8 +47,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int ARRAY_SIZE = 7;
 
     @SuppressWarnings("deprecation")
-    public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format,
-            ImmutableMap<TransformType, TRSRTransformation> transforms) {
+    public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> transforms) {
         super(format, quads, particle, transforms);
     }
 
@@ -61,8 +61,8 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
         // Copied from ForgeBlockStateV1
-        builder.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16),
-                TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)), new Vector3f(0.375f, 0.375f, 0.375f), null)));
+        builder.put(TransformType.THIRD_PERSON, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16), TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170)), new Vector3f(0.375f, 0.375f,
+                0.375f), null)));
 
         // Gui
         {
@@ -108,8 +108,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         {
             // Magic Quat4f from ForgeBlockModelV1
             Quat4f rotation = TRSRTransformation.quatFromYXZDegrees(new Vector3f(10, -45, 170));
-            TRSRTransformation trsr = new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16), rotation, new Vector3f(0.375f, 0.375f, 0.375f),
-                    null);
+            TRSRTransformation trsr = new TRSRTransformation(new Vector3f(0, 1.5f / 16, -2.75f / 16), rotation, new Vector3f(0.375f, 0.375f, 0.375f), null);
             trsr = TRSRTransformation.blockCenterToCorner(trsr);
 
             Matrix4f trsrMatrix = trsr.getMatrix();
@@ -196,7 +195,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         final ImmutableList<ResourceLocation> locations = builder.build();
 
         ItemLayerModel model = new ItemLayerModel(locations);
-        IFlexibleBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, new Function<ResourceLocation, TextureAtlasSprite>() {
+        IBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, new Function<ResourceLocation, TextureAtlasSprite>() {
             @Override
             public TextureAtlasSprite apply(ResourceLocation input) {
                 return sprites.get(locations.indexOf(input));

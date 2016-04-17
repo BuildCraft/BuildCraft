@@ -34,7 +34,7 @@ public abstract class GuidePageBase extends GuidePart {
         return index;
     }
 
-    public void tick(float elapsedTime) {}
+    public void tick() {}
 
     @Override
     public final PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {

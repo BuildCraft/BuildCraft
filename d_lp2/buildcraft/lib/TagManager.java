@@ -1,6 +1,7 @@
 package buildcraft.lib;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -52,6 +53,7 @@ public class TagManager {
         OREDICT_NAME,
         REGISTRY_NAME,
         CREATIVE_TAB,
+        MODEL_LOCATION,
     }
 
     public enum EnumTagTypeMulti {
@@ -72,6 +74,10 @@ public class TagManager {
         public String getSingleTag(EnumTagType type) {
             if (!tags.containsKey(type)) throw new IllegalArgumentException("Unknown tag type " + type + " for the entry " + id);
             return tags.get(type);
+        }
+
+        public boolean hasSingleTag(EnumTagType type) {
+            return tags.containsKey(type);
         }
 
         public String[] getMultiTag(EnumTagTypeMulti type) {
@@ -101,6 +107,10 @@ public class TagManager {
             return setSingleTag(EnumTagType.CREATIVE_TAB, creativeTab);
         }
 
+        public TagEntry model(String modelLocation) {
+            return setSingleTag(EnumTagType.MODEL_LOCATION, modelLocation);
+        }
+
         public TagEntry addMultiTag(EnumTagTypeMulti type, String... tags) {
             if (!this.tags.containsKey(type)) {
                 this.multiTags.put(type, new LinkedList<>());
@@ -119,28 +129,82 @@ public class TagManager {
     public static TagEntry registerTag(String id) {
         TagEntry entry = new TagEntry(id);
         idsToEntry.put(id, entry);
+        for (List<TagEntry> list : batchTasks) {
+            list.add(entry);
+        }
         return entry;
     }
 
+    private static final Deque<List<TagEntry>> batchTasks = new ArrayDeque<>();
+
+    public static void startBatch() {
+        batchTasks.push(new ArrayList<>());
+    }
+
+    public static void endBatch(Consumer<TagEntry> consumer) {
+        batchTasks.pop().forEach(consumer);
+    }
+
+    public static Consumer<TagEntry> prependTag(EnumTagType type, String prefix) {
+        return tag -> {
+            if (tag.hasSingleTag(type)) {
+                tag.setSingleTag(type, prefix + tag.getSingleTag(type));
+            }
+        };
+    }
+
+    public static Consumer<TagEntry> prependTags(String prefix, EnumTagType... tags) {
+        Consumer<TagEntry> consumer = tag -> {};
+        for (EnumTagType type : tags) {
+            consumer = consumer.andThen(prependTag(type, prefix));
+        }
+        return consumer;
+    }
+
+    public static Consumer<TagEntry> set(EnumTagType type, String value) {
+        return tag -> tag.setSingleTag(type, value);
+    }
+
+    public static Consumer<TagEntry> setTab(String creativeTab) {
+        return tag -> {
+            if (tag.hasSingleTag(EnumTagType.REGISTRY_NAME) && !tag.hasSingleTag(EnumTagType.CREATIVE_TAB)) {
+                tag.tab(creativeTab);
+            }
+        };
+    }
+
     static {
+        startBatch();// BC
+        startBatch();// core
         // BC Core Items
-        registerTag("item.wrench").reg("buildcraftcore:wrench").locale("wrenchItem").oldReg("wrenchItem").tab("buildcraft.main");
-        registerTag("item.gear.wood").reg("buildcraftcore:gear_wood").locale("woodenGearItem").oreDict("gearWood").oldReg("woodenGearItem").tab("buildcraft.main");
-        registerTag("item.gear.stone").reg("buildcraftcore:gear_stone").locale("stoneGearItem").oreDict("gearStone").oldReg("stoneGearItem").tab("buildcraft.main");
-        registerTag("item.gear.iron").reg("buildcraftcore:gear_iron").locale("ironGearItem").oreDict("gearIron").oldReg("ironGearItem").tab("buildcraft.main");
-        registerTag("item.gear.gold").reg("buildcraftcore:gear_gold").locale("goldGearItem").oreDict("gearGold").oldReg("goldGearItem").tab("buildcraft.main");
-        registerTag("item.gear.diamond").reg("buildcraftcore:gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").tab("buildcraft.main");
-        registerTag("item.list").reg("buildcraftcore:list").locale("listItem").oldReg("listItem").tab("buildcraft.main");
-        registerTag("item.map.location").reg("buildcraftcore:map_location").locale("mapLocationItem").oldReg("mapLocationItem").tab("buildcraft.main");
+        registerTag("item.wrench").reg("wrench").locale("wrenchItem").oldReg("wrenchItem").model("wrench");
+        registerTag("item.gear.wood").reg("gear_wood").locale("woodenGearItem").oreDict("gearWood").oldReg("woodenGearItem").model("gears/wood");
+        registerTag("item.gear.stone").reg("gear_stone").locale("stoneGearItem").oreDict("gearStone").oldReg("stoneGearItem").model("gears/stone");
+        registerTag("item.gear.iron").reg("gear_iron").locale("ironGearItem").oreDict("gearIron").oldReg("ironGearItem").model("gears/iron");
+        registerTag("item.gear.gold").reg("gear_gold").locale("goldGearItem").oreDict("gearGold").oldReg("goldGearItem").model("gears/gold");
+        registerTag("item.gear.diamond").reg("gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").model("gears/diamond");
+        registerTag("item.list").reg("list").locale("listItem").oldReg("listItem");
+        registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem");
+        registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
         // BC Core Blocks
-        registerTag("block.engine.bc").reg("buildcraftcore:engine").locale("engineBlock").oldReg("engineBlock").tab("buildcraft.main");
+        registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");
         registerTag("block.engine.bc.stone").locale("engineBlockStone");
         registerTag("block.engine.bc.iron").locale("engineBlockIron");
         registerTag("block.engine.bc.creative").locale("engineBlockCreative");
+
+        endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
+        startBatch();// builders
+
         // BC Builders Items
         // BC Builders Blocks
+
+        endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
         // BC Energy Items
         // BC Energy Blocks
+
+        endBatch(prependTags("buildcraft", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(setTab("buildcraft.main")));
     }
 }

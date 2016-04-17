@@ -43,7 +43,6 @@ public final class BCRegistry {
         if (forced || regCfg.get("blocks", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(block);
             BCStatCollector.registerStats(block);
-            CoreProxy.proxy.postRegisterBlock(block);
             registerItem(item, true);
             return true;
         }
@@ -56,7 +55,6 @@ public final class BCRegistry {
         if (forced || regCfg.get("items", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(item);
             BCStatCollector.registerStats(item);
-            CoreProxy.proxy.postRegisterItem(item);
             return true;
         }
         return false;

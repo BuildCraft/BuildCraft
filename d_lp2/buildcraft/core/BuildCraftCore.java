@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.CreativeTabManager;
+import buildcraft.lib.guide.GuideManager;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 
 @Mod(modid = "buildcraftcore", name = "BuildCraft|Core", version = BCMisc.VERSION)
@@ -43,6 +44,7 @@ public class BuildCraftCore {
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
         ItemBuildCraft_BC8.fmlInit();
+        CoreProxy.getProxy().fmlInit();
         BCCoreRecipes.init();
         BCAchievements.init();
     }

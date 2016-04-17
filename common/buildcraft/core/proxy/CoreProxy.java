@@ -28,7 +28,7 @@ import buildcraft.api.core.ICoreProxy;
 
 public class CoreProxy implements ICoreProxy {
 
-    @SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
+//    @SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
     public static CoreProxy proxy;
 
     /* BUILDCRAFT PLAYER */

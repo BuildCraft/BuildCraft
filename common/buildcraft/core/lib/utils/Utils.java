@@ -339,7 +339,7 @@ public final class Utils {
     }
 
     public static String getNameForItem(Item item) {
-        Object obj = Item.itemRegistry.getNameForObject(item);
+        Object obj = Item.REGISTRY.getNameForObject(item);
         if (obj == null) {
             return null;
         }
@@ -347,7 +347,7 @@ public final class Utils {
     }
 
     public static String getNameForBlock(Block block) {
-        Object obj = Block.blockRegistry.getNameForObject(block);
+        Object obj = Block.REGISTRY.getNameForObject(block);
         if (obj == null) {
             return null;
         }
@@ -355,7 +355,7 @@ public final class Utils {
     }
 
     public static String getModSpecificNameForBlock(Block block) {
-        Object obj = Block.blockRegistry.getNameForObject(block);
+        Object obj = Block.REGISTRY.getNameForObject(block);
         if (obj == null) {
             return null;
         }
@@ -363,7 +363,7 @@ public final class Utils {
     }
 
     public static String getModSpecificNameForItem(Item item) {
-        Object obj = Item.itemRegistry.getNameForObject(item);
+        Object obj = Item.REGISTRY.getNameForObject(item);
         if (obj == null) {
             return null;
         }
