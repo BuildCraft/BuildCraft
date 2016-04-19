@@ -25,7 +25,7 @@ import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.PacketGuiWidget;
-import buildcraft.lib.contaienr.BCContainer_BC8;
+import buildcraft.lib.container.BCContainer_BC8;
 
 public abstract class BuildCraftContainer extends BCContainer_BC8 {
 

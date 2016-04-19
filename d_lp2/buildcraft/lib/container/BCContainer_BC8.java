@@ -1,4 +1,4 @@
-package buildcraft.lib.contaienr;
+package buildcraft.lib.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

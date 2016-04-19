@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.LibProxy;
-import buildcraft.lib.contaienr.BCContainer_BC8;
+import buildcraft.lib.container.BCContainer_BC8;
 
 public class CommandTargetContainer implements ICommandTarget {
     private final BCContainer_BC8 container;

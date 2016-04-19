@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.contaienr.BCContainer_BC8;
+import buildcraft.lib.container.BCContainer_BC8;
 import buildcraft.lib.net.command.*;
 
 import io.netty.buffer.ByteBuf;
