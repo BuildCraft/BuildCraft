@@ -30,6 +30,7 @@ import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.base.PacketHandler;
 import buildcraft.core.lib.utils.Utils;
 
+@Deprecated
 public class BuildCraftMod implements IBuildCraftMod {
     private static final Executor packetSender;
 

@@ -14,7 +14,6 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -26,16 +25,16 @@ import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.PacketGuiWidget;
+import buildcraft.lib.contaienr.BCContainer_BC8;
 
-public abstract class BuildCraftContainer extends Container {
+public abstract class BuildCraftContainer extends BCContainer_BC8 {
 
-    private final EntityPlayer player;
     private List<Widget> widgets = new ArrayList<>();
     private int inventorySize;
 
     public BuildCraftContainer(EntityPlayer player, int inventorySize) {
+        super(player);
         this.inventorySize = inventorySize;
-        this.player = player;
     }
 
     public EntityPlayer getPlayer() {
@@ -92,12 +91,12 @@ public abstract class BuildCraftContainer extends Container {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         for (Widget widget : widgets) {
-            for (ICrafting player : crafters) {
+            for (ICrafting player : listeners) {
                 widget.updateWidget(player);
             }
         }
     }
-    
+
     @Override
     public ItemStack slotClick(int slotNum, int mouseButton, ClickType clickType, EntityPlayer player) {
         Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);

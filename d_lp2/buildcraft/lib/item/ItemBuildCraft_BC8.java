@@ -7,16 +7,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.core.BCRegistry;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.MigrationManager;
+import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
@@ -24,6 +24,8 @@ import buildcraft.lib.TagManager.EnumTagTypeMulti;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemBuildCraft_BC8 extends Item {
+    private static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.item");
+
     private static List<ItemBuildCraft_BC8> registeredItems = new ArrayList<>();
 
     /** The tag used to identify this in the {@link TagManager} */
@@ -41,7 +43,7 @@ public class ItemBuildCraft_BC8 extends Item {
     }
 
     public static <I extends ItemBuildCraft_BC8> I register(I item, boolean force) {
-        if (BCRegistry.INSTANCE.registerItem(item, force)) {
+        if (RegistryHelper.registerItem(item, force)) {
             registeredItems.add(item);
             MigrationManager.INSTANCE.addItemMigration(item, TagManager.getMultiTag(item.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
             return item;
@@ -57,6 +59,9 @@ public class ItemBuildCraft_BC8 extends Item {
         }
     }
 
+    /** Sets up all of the model information for this item. This is called multiple times, and you *must* make sure that
+     * you add all the same values each time. Use {@link #addVariant(TIntObjectHashMap, int, String)} to help get
+     * everything correct. */
     @SideOnly(Side.CLIENT)
     protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         addVariant(variants, 0, "");
@@ -72,8 +77,10 @@ public class ItemBuildCraft_BC8 extends Item {
         TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
         addModelVariants(variants);
         for (ModelResourceLocation variant : variants.values(new ModelResourceLocation[variants.size()])) {
-            BCLog.logger.info("[pre][" + getRegistryName() + "] Registering a variant " + variant);
-            ModelBakery.registerItemVariants(this, new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()));
+            if (DEBUG) {
+                BCLog.logger.info("[lib.item][" + getRegistryName() + "] Registering a variant " + variant);
+            }
+            ModelBakery.registerItemVariants(this, variant);
         }
     }
 
@@ -84,7 +91,9 @@ public class ItemBuildCraft_BC8 extends Item {
             item.addModelVariants(variants);
             for (int meta : variants.keys()) {
                 ModelResourceLocation mrl = variants.get(meta);
-                BCLog.logger.info("[init][" + item.getRegistryName() + "] Registering a variant " + meta + " -> " + mrl);
+                if (DEBUG) {
+                    BCLog.logger.info("[lib.item][" + item.getRegistryName() + "] Registering a variant " + meta + " -> " + mrl);
+                }
                 Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, mrl);
             }
         }

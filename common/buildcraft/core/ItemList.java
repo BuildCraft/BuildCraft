@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,8 +21,9 @@ import buildcraft.api.items.IList;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.list.ListHandler;
+import buildcraft.lib.list.ListHandler;
 
+@Deprecated
 public class ItemList extends ItemBuildCraft implements IList {
     public ItemList() {
         super();

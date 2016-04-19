@@ -28,9 +28,9 @@ public final class FluidUtils {
                 if (b != null) {
                     if (b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
                         return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
-                    } else if (b == Blocks.lava) {
+                    } else if (b == Blocks.LAVA) {
                         return new FluidStack(FluidRegistry.getFluid("lava"), 1000);
-                    } else if (b == Blocks.water) {
+                    } else if (b == Blocks.WATER) {
                         return new FluidStack(FluidRegistry.getFluid("water"), 1000);
                     }
                 }

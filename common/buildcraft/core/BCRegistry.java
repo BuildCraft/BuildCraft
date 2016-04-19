@@ -12,10 +12,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import buildcraft.core.lib.items.ItemBlockBuildCraft;
 import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.LibProxy;
+import buildcraft.lib.block.BlockBuildCraftBase_BC8;
+import buildcraft.lib.item.ItemBuildCraftBlock_BC8;
 
+@Deprecated
 public final class BCRegistry {
     public static final BCRegistry INSTANCE = new BCRegistry();
     private Configuration regCfg;
@@ -32,8 +35,8 @@ public final class BCRegistry {
         regCfg = new Configuration(f);
     }
 
-    public boolean registerBlock(Block block, boolean forced) {
-        return registerBlock(block, new ItemBlockBuildCraft(block), forced);
+    public boolean registerBlock(BlockBuildCraftBase_BC8 block, boolean forced) {
+        return registerBlock(block, new ItemBuildCraftBlock_BC8(block), forced);
     }
 
     public boolean registerBlock(Block block, Item item, boolean forced) {
@@ -41,8 +44,7 @@ public final class BCRegistry {
         if (name == null) throw new IllegalArgumentException("Tried to register a block without specifing its registry name!");
         if (forced || regCfg.get("blocks", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(block);
-            BCStatCollector.registerStats(block);
-            CoreProxy.getProxy().postRegisterBlock(block);
+            LibProxy.getProxy().postRegisterBlock(block);
             registerItem(item, true);
             return true;
         }
@@ -54,8 +56,7 @@ public final class BCRegistry {
         if (name == null) throw new IllegalArgumentException("Tried to register an item without specifing its registry name!");
         if (forced || regCfg.get("items", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(item);
-            BCStatCollector.registerStats(item);
-            CoreProxy.getProxy().postRegisterItem(item);
+            LibProxy.getProxy().postRegisterItem(item);
             return true;
         }
         return false;

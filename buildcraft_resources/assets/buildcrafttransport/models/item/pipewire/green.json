@@ -1,5 +1,5 @@
 {
-    "parent": "buildcraftcore:item/buildcraft_base",
+    "parent": "item/generated",
     "textures": {
         "layer0": "buildcrafttransport:items/pipewire/green"
     }

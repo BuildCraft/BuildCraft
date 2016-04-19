@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import java.util.Arrays;
+
 import net.minecraft.item.EnumDyeColor;
 
 public class ColourUtil {
@@ -43,5 +45,9 @@ public class ColourUtil {
 
     public static int getLightHex(EnumDyeColor colour) {
         return LIGHT_HEX[colour.getDyeDamage()];
+    }
+
+    public static String[] getNameArray() {
+        return Arrays.copyOf(NAMES, NAMES.length);
     }
 }

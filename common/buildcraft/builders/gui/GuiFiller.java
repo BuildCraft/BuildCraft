@@ -23,7 +23,6 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.client.CoreIconProvider;
-import buildcraft.core.lib.config.OverridableConfigOption;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.GuiTools;
@@ -38,6 +37,7 @@ import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.config.OverridableConfigOption;
 
 public class GuiFiller extends GuiAdvancedInterface {
     class FillerParameterSlot extends StatementParameterSlot {

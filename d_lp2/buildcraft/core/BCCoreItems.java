@@ -1,6 +1,7 @@
 package buildcraft.core;
 
 import buildcraft.core.item.ItemGuide;
+import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.core.item.ItemWrench_BC8;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
@@ -14,6 +15,7 @@ public class BCCoreItems {
     public static ItemGuide guide;
     public static ItemPaintbrush_BC8 paintbrush;
     public static ItemWrench_BC8 wrench;
+    public static ItemList_BC8 list;
 
     public static void preInit() {
         gearWood = ItemBuildCraft_BC8.register(new ItemBuildCraft_BC8("item.gear.wood"));
@@ -24,5 +26,6 @@ public class BCCoreItems {
         guide = ItemBuildCraft_BC8.register(new ItemGuide("item.guide"));
         paintbrush = ItemBuildCraft_BC8.register(new ItemPaintbrush_BC8("item.paintbrush"));
         wrench = ItemBuildCraft_BC8.register(new ItemWrench_BC8("item.wrench"));
+        list = ItemBuildCraft_BC8.register(new ItemList_BC8("item.list"));
     }
 }

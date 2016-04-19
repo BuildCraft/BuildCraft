@@ -58,7 +58,7 @@ public abstract class AdvancedSlot {
     }
 
     public ResourceLocation getTexture() {
-        return TextureMap.locationBlocksTexture;
+        return TextureMap.LOCATION_BLOCKS_TEXTURE;
     }
 
     public ItemStack getItemStack() {
@@ -75,7 +75,7 @@ public abstract class AdvancedSlot {
         Minecraft mc = Minecraft.getMinecraft();
 
         if (drawBackround) {
-            mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             gui.drawTexturedModalRect(cornerX + x - 12, cornerY + y - 12, CoreIconProvider.SLOT.getSprite(), 32, 32);
             // gui.drawTexturedModalRect(cornerX + x - 1, cornerY + y - 1, 0, 0, 18, 18);
         }

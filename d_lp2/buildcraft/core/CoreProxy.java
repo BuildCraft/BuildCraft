@@ -1,12 +1,12 @@
 package buildcraft.core;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+
+import buildcraft.core.list.ContainerList;
 
 public class CoreProxy implements IGuiHandler {
     @SidedProxy(serverSide = "buildcraft.core.CoreProxy", clientSide = "buildcraft.core.CoreProxyClient")
@@ -18,6 +18,9 @@ public class CoreProxy implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        if (ID == CoreGuis.LIST.ordinal()) {
+            return new ContainerList(player);
+        }
         return null;
     }
 
@@ -26,10 +29,6 @@ public class CoreProxy implements IGuiHandler {
         return null;
     }
 
-    public void postRegisterItem(Item item) {}
-
-    public void postRegisterBlock(Block block) {}
-    
     public void fmlPreInit() {}
 
     public void fmlInit() {}

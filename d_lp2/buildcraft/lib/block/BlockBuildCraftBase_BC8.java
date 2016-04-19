@@ -6,15 +6,14 @@ import java.util.function.Function;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 
-import buildcraft.core.BCRegistry;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.MigrationManager;
+import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.item.ItemBuildCraftBlock_BC8;
 
 public class BlockBuildCraftBase_BC8 extends Block {
     private static List<BlockBuildCraftBase_BC8> registeredBlocks = new ArrayList<>();
@@ -31,21 +30,23 @@ public class BlockBuildCraftBase_BC8 extends Block {
     }
 
     public static <B extends BlockBuildCraftBase_BC8> B register(B block) {
-        return register(block, false, ItemBlock::new);
+        return register(block, false, ItemBuildCraftBlock_BC8::new);
     }
 
     public static <B extends BlockBuildCraftBase_BC8> B register(B block, boolean force) {
-        return register(block, force, ItemBlock::new);
+        return register(block, force, ItemBuildCraftBlock_BC8::new);
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block, Function<B, Item> itemBlockConstructor) {
+    public static <B extends BlockBuildCraftBase_BC8> B register(B block, Function<B, ItemBuildCraftBlock_BC8> itemBlockConstructor) {
         return register(block, false, itemBlockConstructor);
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block, boolean force, Function<B, Item> itemBlockConstructor) {
-        if (BCRegistry.INSTANCE.registerBlock(block, itemBlockConstructor.apply(block).setRegistryName(block.getRegistryName()), force)) {
+    public static <B extends BlockBuildCraftBase_BC8> B register(B block, boolean force, Function<B, ItemBuildCraftBlock_BC8> itemBlockConstructor) {
+        if (RegistryHelper.registerBlock(block, force)) {
             registeredBlocks.add(block);
             MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
+            ItemBuildCraftBlock_BC8 item = itemBlockConstructor.apply(block);
+            RegistryHelper.registerItem(item, true);
             return block;
         }
         return null;

@@ -2,7 +2,7 @@
 	"formatVersion": 1,
 	"uid": "buildcraft",
 	"repo": "github.BuildCraft",
-	"modId": "BuildCraft|Core",
+	"modId": "buildcraftcore",
 	"name": "BuildCraft",
 	"nemname": "BuildCraft",
 	"description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",

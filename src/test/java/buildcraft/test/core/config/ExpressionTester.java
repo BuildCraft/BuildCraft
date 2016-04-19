@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import buildcraft.core.lib.config.Expression;
-import buildcraft.core.lib.config.ExpressionCompiler;
-import buildcraft.core.lib.config.ExpressionCompiler.InvalidExpressionException;
+import buildcraft.lib.expression.ExpressionCompiler;
+import buildcraft.lib.expression.Expression;
+import buildcraft.lib.expression.ExpressionCompiler.InvalidExpressionException;
 
 public class ExpressionTester {
 
@@ -59,16 +59,16 @@ public class ExpressionTester {
     // bakeAndCallDouble("subtract(1, 3)", -2, functions);
     // }
 
-    private static void bakeAndCallDouble(String function, double def) {
+    private static void bakeAndCallDouble(String function, long def) {
         bakeAndCallDouble(function, def, null);
     }
 
-    private static void bakeAndCallDouble(String function, double expected, Map<String, Expression> functions) {
+    private static void bakeAndCallDouble(String function, long expected, Map<String, Expression> functions) {
         System.out.println("Testing " + function + ", expecting " + expected);
         try {
             Expression func = ExpressionCompiler.compileExpression(function, functions);
-            double got = func.evaluate();
-            assertEquals(expected, got, Math.ulp(expected) * 2);
+            long got = func.evaluate();
+            assertEquals(expected, got);
         } catch (InvalidExpressionException iee) {
             throw new AssertionError(iee);
         }

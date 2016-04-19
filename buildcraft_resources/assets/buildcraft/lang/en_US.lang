@@ -361,8 +361,7 @@ item.blueprint.no_build=No Building
 item.blueprint.incomplete=Incomplete
 item.mapLocation.name=Map Location
 item.gateCopier.name=Gate Copier
-item.plasticSheet.singular.name=Plastic Sheet
-item.plasticSheet.plural.name=Plastic Sheets
+item.plasticSheet.name=Plastic Sheet
 
 item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
 item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe

@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.config.DetailedConfigOption;
+import buildcraft.lib.config.DetailedConfigOption;
 
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a
  * configurable time period, and up to a maximum number. */

@@ -7,11 +7,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
 /** Stores all of BuildCraft's items, from all of its modules. If any of them have been disabled by the user (or it the
  * module is not installed) then they will be null. This is the equivalent of {@link Items} */
 public class BCItems {
+    private static final boolean DEBUG = BCDebugging.shouldDebugLog("api.items");
+
     // BC Core
     public static final Item coreWrench;
     public static final Item coreList;
@@ -67,7 +70,7 @@ public class BCItems {
         coreGearIron = getRegisteredItem(core, "gear_iron");
         coreGearGold = getRegisteredItem(core, "gear_gold");
         coreGearDiamond = getRegisteredItem(core, "gear_diamond");
-        coreGuide  = getRegisteredItem(core, "guide");
+        coreGuide = getRegisteredItem(core, "guide");
         // builders
         final String builders = "builders";
         buildersBlueprint = getRegisteredItem(builders, "blueprint");
@@ -100,12 +103,19 @@ public class BCItems {
         String modid = "buildcraft" + module;
         Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, regName));
         if (item != null) {
+            if (DEBUG) {
+                BCLog.logger.info("[item-api Found the item " + regName + " from the module " + module);
+            }
             return item;
         }
-        if (Loader.isModLoaded(modid)) {
-            // Only info because the item might have been disabled by the user
-            BCLog.logger.info("[item-api] Did not find the item " + regName + " dispite the appropriate mod being loaded (" + modid + ")");
+        if (DEBUG) {
+            if (Loader.isModLoaded(modid)) {
+                BCLog.logger.info("[item-api] Did not find the item " + regName + " dispite the appropriate mod being loaded (" + modid + ")");
+            } else {
+                BCLog.logger.info("[item-api] Did not find the item " + regName + " probable because the mod is not loaded (" + modid + ")");
+            }
         }
+
         return null;
     }
 }

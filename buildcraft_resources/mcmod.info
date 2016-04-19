@@ -1,6 +1,6 @@
 [
 {
-  "modid": "BuildCraft|Core",
+  "modid": "buildcraftcore",
   "name": "BuildCraft",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -17,7 +17,7 @@
   ]
 },
 {
-  "modid": "BuildCraft|Builders",
+  "modid": "buildcraftbuilders",
   "name": "BC Builders",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -27,14 +27,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Energy",
+  "modid": "buildcraftenergy",
   "name": "BC Energy",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -44,14 +44,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Factory",
+  "modid": "buildcraftfactory",
   "name": "BC Factory",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -61,14 +61,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Silicon",
+  "modid": "buildcraftfactory",
   "name": "BC Silicon",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -78,14 +78,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Transport",
+  "modid": "buildcrafttransport",
   "name": "BC Transport",
   "version": "${version}",
   "mcversion": "${mcversion}",
@@ -95,24 +95,24 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Robotics",
+  "modid": "buildcraftrobotics",
   "name": "BC Robotics",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
+  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Robotics Component)",
   "credits": "Created by SpaceToad",
   "logoFile": "assets/buildcraft/logo.png",
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "buildcraftcore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"

@@ -6,6 +6,7 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -13,19 +14,16 @@ import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-import buildcraft.BuildCraftMod;
-
 public class ConfigManager implements IModGuiFactory {
     public static Configuration config;
-    private final BuildCraftMod mod;
 
     public static class GuiConfigManager extends GuiConfig {
         public GuiConfigManager(GuiScreen parentScreen) {
-            super(parentScreen, new ArrayList<IConfigElement>(), "BuildCraft|Core", "config", false, false, I18n.format("config.buildcraft"));
+            super(parentScreen, new ArrayList<IConfigElement>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
 
             for (String s : config.getCategoryNames()) {
                 if (!s.contains(".")) {
-                    configElements.add(new BCConfigElement<>(config.getCategory(s)));
+                    configElements.add(new BCConfigElement(config.getCategory(s)));
                 }
             }
         }
@@ -38,38 +36,33 @@ public class ConfigManager implements IModGuiFactory {
     }
 
     /** Needed for forge IModGuiFactory */
-    public ConfigManager() {
-        mod = null;
-    }
+    public ConfigManager() {}
 
-    public ConfigManager(Configuration c, BuildCraftMod mod) {
+    public static void setConfig(Configuration c) {
         config = c;
-        this.mod = mod;
     }
 
-    public ConfigCategory getCat(String name) {
+    public static ConfigCategory getCat(String name) {
         return config.getCategory(name);
     }
 
-    public Property get(String iName) {
+    public static Property get(String iName) {
         int sep = iName.lastIndexOf(".");
         return get(iName.substring(0, sep), iName.substring(sep + 1));
     }
 
-    public Property get(String catName, String propName) {
+    public static Property get(String catName, String propName) {
         ConfigCategory c = config.getCategory(catName);
         return c.get(propName);
     }
 
-    private Property create(String s, Object o) {
+    private static Property create(String s, Object o) {
         Property p;
         if (o instanceof Integer) {
             p = new Property(s, o.toString(), Property.Type.INTEGER);
         } else if (o instanceof String) {
             p = new Property(s, (String) o, Property.Type.STRING);
         } else if (o instanceof Double || o instanceof Float) {
-            p = new Property(s, o.toString(), Property.Type.DOUBLE);
-        } else if (o instanceof Float) {
             p = new Property(s, o.toString(), Property.Type.DOUBLE);
         } else if (o instanceof Boolean) {
             p = new Property(s, o.toString(), Property.Type.BOOLEAN);
@@ -81,7 +74,7 @@ public class ConfigManager implements IModGuiFactory {
         return p;
     }
 
-    public Property register(String catName, String propName, Object property, String comment, RestartRequirement restartRequirement) {
+    public static Property register(String catName, String propName, Object property, String comment, RestartRequirement restartRequirement) {
         ConfigCategory c = config.getCategory(catName);
         ConfigCategory parent = c;
         while (parent != null) {
@@ -95,16 +88,15 @@ public class ConfigManager implements IModGuiFactory {
             p = create(propName, property);
             c.put(propName, p);
         }
-        p.comment = comment;
+        p.setComment(comment);
         RestartRequirement r = restartRequirement;
         p.setLanguageKey("config." + catName + "." + propName);
         p.setRequiresWorldRestart(r == RestartRequirement.WORLD);
         p.setRequiresMcRestart(r == RestartRequirement.GAME);
-        mod.putOption(catName + "." + propName, p);
         return p;
     }
 
-    public Property register(String name, Object property, String comment, RestartRequirement restartRequirement) {
+    public static Property register(String name, Object property, String comment, RestartRequirement restartRequirement) {
         String prefix = name.substring(0, name.lastIndexOf("."));
         String suffix = name.substring(name.lastIndexOf(".") + 1);
 

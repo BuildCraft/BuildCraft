@@ -24,9 +24,10 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.SidedProxy;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.ICoreProxy;
+import buildcraft.api.core.IBCFakePlayer;
 
-public class CoreProxy implements ICoreProxy {
+@Deprecated
+public class CoreProxy implements IBCFakePlayer {
 
 //    @SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
     public static CoreProxy proxy;

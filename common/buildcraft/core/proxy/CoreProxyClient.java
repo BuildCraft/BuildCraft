@@ -49,7 +49,6 @@ import buildcraft.core.TilePathMarker;
 import buildcraft.core.client.BuildCraftStateMapper;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.config.DetailedConfigOption;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.ICustomStateMapper;
@@ -58,6 +57,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderMarker;
 import buildcraft.core.render.RenderPathMarker;
+import buildcraft.lib.config.DetailedConfigOption;
 
 public class CoreProxyClient extends CoreProxy {
 

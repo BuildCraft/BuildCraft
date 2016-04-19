@@ -7,7 +7,11 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
 /** Stores several types of "tag" (strings) for BuildCraft. A central place for all of them to init in. Refer to the
- * "static" block for all of the tag ID's */
+ * "static" block for all of the tag ID's
+ * 
+ * You are free to add your own tags (say for addons) but it is recommended that you include your addon name somewhere
+ * near the start - we don't want name clashes between addons or an addon and BC itself. If you want more types of tags
+ * keys then just make an issue for it, and it will probably be added. */
 public class TagManager {
     private static final Map<String, TagEntry> idsToEntry = new HashMap<>();
 
@@ -20,6 +24,8 @@ public class TagManager {
             return null;
         }
     }
+
+    // getBlock?
 
     public static String getTag(String id, EnumTagType type) {
         if (idsToEntry.containsKey(id)) {
@@ -47,6 +53,8 @@ public class TagManager {
             throw new IllegalArgumentException("Unknown id " + id);
         }
     }
+
+    // hasMultiTag?
 
     public enum EnumTagType {
         UNLOCALIZED_NAME,
@@ -135,6 +143,12 @@ public class TagManager {
         return entry;
     }
 
+    // #########################
+    //
+    // Batching repetitive tags
+    //
+    // #########################
+
     private static final Deque<List<TagEntry>> batchTasks = new ArrayDeque<>();
 
     public static void startBatch() {
@@ -173,6 +187,12 @@ public class TagManager {
         };
     }
 
+    // #########################
+    //
+    // BuildCraft definitions
+    //
+    // #########################
+
     static {
         startBatch();// BC
         startBatch();// core
@@ -183,7 +203,7 @@ public class TagManager {
         registerTag("item.gear.iron").reg("gear_iron").locale("ironGearItem").oreDict("gearIron").oldReg("ironGearItem").model("gears/iron");
         registerTag("item.gear.gold").reg("gear_gold").locale("goldGearItem").oreDict("gearGold").oldReg("goldGearItem").model("gears/gold");
         registerTag("item.gear.diamond").reg("gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").model("gears/diamond");
-        registerTag("item.list").reg("list").locale("listItem").oldReg("listItem").model("list");
+        registerTag("item.list").reg("list").locale("list").oldReg("listItem").model("list_");
         registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem").model("map_location");
         registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
@@ -197,14 +217,26 @@ public class TagManager {
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// builders
-
         // BC Builders Items
         // BC Builders Blocks
 
         endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
-        // BC Energy Items
-        // BC Energy Blocks
+        startBatch();// factory
+        // BC Factory Items
+        registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
+        registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
+        // BC Factory Blocks
+        registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
+
+        endBatch(prependTags("factory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
+        startBatch();// transport
+        // BC Transport Items
+        registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
+        // BC Transport Blocks
+
+        endBatch(prependTags("transport:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         endBatch(prependTags("buildcraft", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(setTab("buildcraft.main")));
     }

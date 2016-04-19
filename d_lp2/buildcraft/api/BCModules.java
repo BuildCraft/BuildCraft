@@ -26,14 +26,14 @@ public enum BCModules {
         this.modid = "buildcraft" + name().toLowerCase(Locale.ROOT);
     }
 
-    public static void init() {}
-
-    public String getModID() {
-        return modid;
-    }
+    public static void fmlPreInit() {}
 
     public boolean isLoaded() {
         return Loader.isModLoaded(modid);
+    }
+
+    public String getModId() {
+        return modid;
     }
 
     static {

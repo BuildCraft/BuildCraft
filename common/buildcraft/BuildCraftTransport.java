@@ -694,7 +694,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
     public static void loadRecipes() {
         // Add base recipe for pipe waterproof.
-        GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
+        GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.DYE, 1, 2));
         if (additionalWaterproofingRecipe) {
             GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball));
         }

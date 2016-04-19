@@ -6,6 +6,10 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
@@ -41,12 +45,12 @@ public class BCCoreRecipes {
         if (BCCoreItems.paintbrush != null) {
             Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL, 1, 0), 'i', Items.STRING };
             ItemStack cleanPaintbrush = new ItemStack(BCCoreItems.paintbrush);
-            BCRegistry.INSTANCE.addCraftingRecipe(cleanPaintbrush, input);
+            GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
                 ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
                 ItemStack out = brush.save(null);
-                BCRegistry.INSTANCE.addShapelessRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour));
+                GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
             }
         }
 
@@ -58,13 +62,13 @@ public class BCCoreRecipes {
             if (gear == null) continue;
             Object inner = i == 0 ? null : TagManager.getTag("item.gear." + gears[i - 1], EnumTagType.OREDICT_NAME);
             Object outer = outers[i];
+            Object[] arr;
             if (inner == null) {
-                Object[] arr = { " o ", "o o", " o ", 'o', outer };
-                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(gear), arr);
+                arr = new Object[] { " o ", "o o", " o ", 'o', outer };
             } else {
-                Object[] arr = { " o ", "oio", " o ", 'o', outer, 'i', inner };
-                BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(gear), arr);
+                arr = new Object[] { " o ", "oio", " o ", 'o', outer, 'i', inner };
             }
+            GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(gear), arr));
         }
     }
 }
