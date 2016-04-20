@@ -204,7 +204,7 @@ public class TagManager {
         registerTag("item.gear.gold").reg("gear_gold").locale("goldGearItem").oreDict("gearGold").oldReg("goldGearItem").model("gears/gold");
         registerTag("item.gear.diamond").reg("gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").model("gears/diamond");
         registerTag("item.list").reg("list").locale("list").oldReg("listItem").model("list_");
-        registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem").model("map_location");
+        registerTag("item.map.location").reg("map_location").locale("mapLocationItem").oldReg("mapLocationItem").model("map_location/");
         registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         // BC Core Blocks

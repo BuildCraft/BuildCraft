@@ -17,6 +17,23 @@
   ]
 },
 {
+  "modid": "buildcraftlib",
+  "name": "BuildCraft Lib",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "description": "Library mod used by buildcraft.",
+  "credits": "Created by SpaceToad",
+  "logoFile": "assets/buildcraft/logo.png",
+  "url": "http://www.mod-buildcraft.com/",
+  "updateUrl": "",
+  "authorList": [ "SpaceToad", "BuildCraft Team" ],
+  "parent":"buildcraftcore",
+  "screenshots": [],
+  "dependencies": [
+     "mod_MinecraftForge"
+  ]
+},
+{
   "modid": "buildcraftbuilders",
   "name": "BC Builders",
   "version": "${version}",

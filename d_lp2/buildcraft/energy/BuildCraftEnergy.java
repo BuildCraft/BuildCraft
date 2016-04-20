@@ -5,11 +5,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import buildcraft.core.BCMisc;
 import buildcraft.core.BuildCraftCore;
+import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftEnergy.MODID, name = "BuildCraft|Energy", dependencies = "required-after:buildcraftcore", version = BCMisc.VERSION)
+@Mod(modid = BuildCraftEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
 public class BuildCraftEnergy {
     public static final String MODID = "buildcraftenergy";
 

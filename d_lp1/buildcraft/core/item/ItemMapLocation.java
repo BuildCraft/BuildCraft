@@ -2,35 +2,44 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core;
+package buildcraft.core.item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
-import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.robotics.ZonePlan;
 
-public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
-    public ItemMapLocation() {
-        super(BCCreativeTab.get("main"));
+import gnu.trove.map.hash.TIntObjectHashMap;
+
+public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation {
+    public ItemMapLocation(String id) {
+        super(id);
         setHasSubtypes(true);
     }
 
@@ -40,9 +49,15 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, @SuppressWarnings("rawtypes") List list, boolean advanced) {
-        @SuppressWarnings("unchecked")
-        List<String> strings = list;
+    @SideOnly(Side.CLIENT)
+    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+        for (MapLocationType type : MapLocationType.values()) {
+            addVariant(variants, type.meta, type.name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
         NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
         if (cpt.hasKey("name")) {
@@ -92,10 +107,9 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9,
-            float par10) {
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
-            return false;
+            return EnumActionResult.PASS;
         }
 
         TileEntity tile = world.getTileEntity(pos);
@@ -132,7 +146,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
             cpt.setInteger("z", pos.getZ());
         }
 
-        return true;
+        return EnumActionResult.SUCCESS;
     }
 
     @Override
@@ -269,14 +283,5 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
         NBTTagCompound cpt = NBTUtils.getItemData(item);
         cpt.setString("name", name);
         return true;
-    }
-
-    @Override
-    public void registerModels() {
-        ModelHelper.registerItemModel(this, MapLocationType.CLEAN.meta, "/clean");
-        ModelHelper.registerItemModel(this, MapLocationType.SPOT.meta, "/spot");
-        ModelHelper.registerItemModel(this, MapLocationType.AREA.meta, "/area");
-        ModelHelper.registerItemModel(this, MapLocationType.PATH.meta, "/path");
-        ModelHelper.registerItemModel(this, MapLocationType.ZONE.meta, "/zone");
     }
 }

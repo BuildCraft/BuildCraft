@@ -6,12 +6,12 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.BCMisc;
 import buildcraft.core.BuildCraftCore;
+import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftTransport.MODID, name = "BuildCraft|Transport", dependencies = "required-after:buildcraftcore", version = BCMisc.VERSION)
+@Mod(modid = BuildCraftTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
 public class BuildCraftTransport {
     public static final String MODID = "buildcrafttransport";
 

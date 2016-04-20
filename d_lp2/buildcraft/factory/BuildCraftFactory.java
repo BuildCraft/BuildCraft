@@ -6,11 +6,11 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.BCMisc;
 import buildcraft.core.BuildCraftCore;
+import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftFactory.MODID, name = "BuildCraft|Factory", dependencies = "required-after:buildcraftcore", version = BCMisc.VERSION)
+@Mod(modid = BuildCraftFactory.MODID, name = "BuildCraft Factory", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
 public class BuildCraftFactory {
     public static final String MODID = "buildcraftfactory";
 

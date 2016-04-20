@@ -5,7 +5,6 @@ import java.io.File;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -18,10 +17,10 @@ import buildcraft.lib.RegistryHelper;
 
 //@formatter:off
 @Mod(modid = BuildCraftCore.MODID,
-        name = "BuildCraft|Core",
-        version = BCMisc.VERSION,
+        name = "BuildCraft Core",
+        version = BuildCraftLib.VERSION,
         acceptedMinecraftVersions = "[1.9]",
-        dependencies = "required-after:Forge@[12.16.0.1865,12.16.1)",
+        dependencies = "required-after:buildcraftlib",
         guiFactory = "buildcraft.core.config.ConfigManager")
 //@formatter:on
 public class BuildCraftCore {
@@ -30,18 +29,10 @@ public class BuildCraftCore {
     @Mod.Instance(MODID)
     public static BuildCraftCore INSTANCE = null;
 
-    public static SimpleNetworkWrapper netWrapper;
-
-    static {
-        BuildCraftLib.staticInit();
-    }
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        BuildCraftLib.fmlPreInit();
-
         BCLog.logger.info("");
-        BCLog.logger.info("Starting BuildCraft " + BCMisc.VERSION);
+        BCLog.logger.info("Starting BuildCraft " + BuildCraftLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
@@ -65,16 +56,9 @@ public class BuildCraftCore {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        BuildCraftLib.fmlInit();
-
         CoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
         BCAchievements.init();
-    }
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
-        BuildCraftLib.fmlPostInit();
     }
 }

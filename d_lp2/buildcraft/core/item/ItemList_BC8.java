@@ -1,11 +1,15 @@
 package buildcraft.core.item;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.StringUtils;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,6 +26,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 public class ItemList_BC8 extends ItemBuildCraft_BC8 implements IList {
     public ItemList_BC8(String id) {
         super(id);
+        setMaxStackSize(1);
     }
 
     @Override
@@ -40,6 +45,14 @@ public class ItemList_BC8 extends ItemBuildCraft_BC8 implements IList {
     @Override
     public int getMetadata(ItemStack stack) {
         return ListHandler.hasItems(stack) ? 1 : 0;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+        String name = getName(stack);
+        if (StringUtils.isNullOrEmpty(name)) return;
+        tooltip.add(TextFormatting.ITALIC + name);
     }
 
     // IList
