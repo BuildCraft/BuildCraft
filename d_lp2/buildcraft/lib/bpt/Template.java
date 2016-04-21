@@ -11,7 +11,6 @@ import net.minecraft.util.math.Vec3i;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilder;
 import buildcraft.api.bpt.Schematic;
-import buildcraft.api.bpt.Schematic.BuildStage;
 
 public class Template extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
@@ -58,7 +57,7 @@ public class Template extends BlueprintBase {
     }
 
     @Override
-    public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder, BuildStage stage) {
+    public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder) {
         return null;
     }
 }

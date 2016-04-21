@@ -12,7 +12,6 @@ import net.minecraft.util.math.Vec3i;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilder;
 import buildcraft.api.bpt.Schematic;
-import buildcraft.api.bpt.Schematic.BuildStage;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlueprintBase {
@@ -34,7 +33,7 @@ public abstract class BlueprintBase {
     /** Translates the contents of this blueprint. The anchor, min and max have been translated. */
     protected abstract void translateContentsBy(Vec3i by);
 
-    public abstract Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder, BuildStage stage);
+    public abstract Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder);
 
     public final void translateBy(Vec3i by) {
         translateContentsBy(by);

@@ -6,22 +6,6 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3i;
 
 public abstract class Schematic {
-    public enum BuildStage {
-        /** Before any items have been sent out. Use this to destroy any existing blocks */
-        BEFORE,
-        /** Blocks that can stand by themselves without any support- stone, obsidian and chests are examples of
-         * these. */
-        STANDALONE,
-        /** Blocks or entities that depend on blocks to exist for support or to place properly- torches, tracks, water
-         * and minecarts are all examples of this.
-         * 
-         * Note that both tracks and minecarts fall into this category, so the returned {@link IBptTask} for minecarts
-         * will return false from {@link IBptTask#isReadyYet()} until a piece of track has been placed under them. */
-        DEPENDENT,
-        /** After all building has completed- usually this is for post- */
-        END
-    }
-
     /** Rotates this schematic in-place according to the same methods in
      * {@link Block#withRotation(net.minecraft.block.state.IBlockState, Rotation)}. You do NOT need to translate
      * yourself at all if your own "offset" is not the origin- the rotation method will call {@link #translate(Vec3i)}
@@ -43,9 +27,5 @@ public abstract class Schematic {
      * 
      * @param stage The current stage the builder is in.
      * @return A collection of all the tasks you need doing to complete the schematic. */
-    public abstract Iterable<IBptTask> createTasks(IBuilder builder, BuildStage stage);
-
-    /** Called when all of the tasks you returned from {@link #createTasks(IBuilder, BuildStage)} have completed their
-     * actions. */
-    public abstract void onTasksComplete(IBuilder builder, BuildStage stage);
+    public abstract Iterable<IBptTask> createTasks(IBuilder builder);
 }

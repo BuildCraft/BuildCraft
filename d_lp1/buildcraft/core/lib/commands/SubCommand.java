@@ -4,15 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 public abstract class SubCommand implements IModCommand {
@@ -73,7 +70,7 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public final void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public final void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             processSubCommand(sender, args);
         }
@@ -94,7 +91,7 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return sender.canCommandSenderUseCommand(getMinimumPermissionLevel(), getCommandName());
     }
 
@@ -124,7 +121,7 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
         return null;
     }
 }

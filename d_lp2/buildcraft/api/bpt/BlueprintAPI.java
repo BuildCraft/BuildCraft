@@ -6,10 +6,10 @@ import java.util.Map;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.IUniqueReader;
-import buildcraft.api.bpt.helper.BptActionPartiallyBreakBlock;
-import buildcraft.api.bpt.helper.BptActionSetBlockState;
-import buildcraft.api.bpt.helper.BptTaskBlockClear;
-import buildcraft.api.bpt.helper.BptTaskBlockStandalone;
+import buildcraft.lib.bpt.helper.BptActionPartiallyBreakBlock;
+import buildcraft.lib.bpt.helper.BptActionSetBlockState;
+import buildcraft.lib.bpt.helper.BptTaskBlockClear;
+import buildcraft.lib.bpt.helper.BptTaskBlockStandalone;
 
 public class BlueprintAPI {
     private static final Map<ResourceLocation, IBptTaskDeserializer> taskDeserializers = new HashMap<>();

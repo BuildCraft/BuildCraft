@@ -12,12 +12,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
 import buildcraft.api.bpt.*;
-import buildcraft.api.bpt.Schematic.BuildStage;
 
 public class Blueprint extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private SchematicBlock[][][] contentBlocks;
-    private List<SchematicEntityBase> contentEntities;
+    private List<SchematicEntity> contentEntities;
 
     public Blueprint(BlockPos anchor, BlockPos min, BlockPos max, EnumFacing direction) {
         super(anchor, min, max, direction);
@@ -49,7 +48,7 @@ public class Blueprint extends BlueprintBase {
             }
         }
 
-        for (SchematicEntityBase schematic : contentEntities) {
+        for (SchematicEntity schematic : contentEntities) {
             schematic.rotate(rotation);
         }
     }
@@ -72,25 +71,25 @@ public class Blueprint extends BlueprintBase {
             }
         }
 
-        for (SchematicEntityBase schematic : contentEntities) {
+        for (SchematicEntity schematic : contentEntities) {
             schematic.translate(by);
         }
     }
 
     @Override
-    public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder, BuildStage stage) {
+    public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder) {
         Map<Schematic, Iterable<IBptTask>> tasks = new IdentityHashMap<>();
         for (SchematicBlock[][] ar2 : contentBlocks) {
             for (SchematicBlock[] ar1 : ar2) {
                 for (SchematicBlock schematic : ar1) {
                     if (schematic == null) continue;
-                    tasks.put(schematic, schematic.createTasks(builder, stage));
+                    tasks.put(schematic, schematic.createTasks(builder));
                 }
             }
         }
 
-        for (SchematicEntityBase schematic : contentEntities) {
-            tasks.put(schematic, schematic.createTasks(builder, stage));
+        for (SchematicEntity schematic : contentEntities) {
+            tasks.put(schematic, schematic.createTasks(builder));
         }
 
         return tasks;

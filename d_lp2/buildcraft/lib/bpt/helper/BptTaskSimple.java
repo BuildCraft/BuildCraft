@@ -1,4 +1,4 @@
-package buildcraft.api.bpt.helper;
+package buildcraft.lib.bpt.helper;
 
 import net.minecraft.nbt.NBTTagCompound;
 

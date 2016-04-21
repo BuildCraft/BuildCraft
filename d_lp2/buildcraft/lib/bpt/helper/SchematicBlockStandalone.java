@@ -1,6 +1,4 @@
-package buildcraft.api.bpt.helper;
-
-import java.util.Collections;
+package buildcraft.lib.bpt.helper;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -26,15 +24,7 @@ public class SchematicBlockStandalone extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilder builder, BuildStage stage) {
-        if (stage == BuildStage.BEFORE) {
-            ImmutableSet.of(BptTaskBlockClear.create(builder, offset));
-        } else if (stage == BuildStage.STANDALONE) {
-            ImmutableSet.of(BptTaskBlockStandalone.create(builder, offset, state));
-        }
-        return Collections.emptyList();
+    public Iterable<IBptTask> createTasks(IBuilder builder) {
+        return ImmutableSet.of(BptTaskBlockClear.create(builder, offset), BptTaskBlockStandalone.create(builder, offset, state));
     }
-
-    @Override
-    public void onTasksComplete(IBuilder builder, BuildStage stage) {}
 }

@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
-import buildcraft.lib.utils.NBTUtils_BC8;
+import buildcraft.lib.misc.NBTUtils_BC8;
 
 public class AverageDouble implements INBTSerializable<NBTTagCompound> {
     private double[] data;

@@ -1,4 +1,4 @@
-package buildcraft.lib.utils;
+package buildcraft.lib.misc;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagDouble;

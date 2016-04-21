@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
 
 public class RootCommand extends CommandBase implements IModCommand {
     public final String name;
@@ -68,7 +69,7 @@ public class RootCommand extends CommandBase implements IModCommand {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             CommandHelpers.throwWrongUsage(sender, this);
         }
