@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.bpt.IBptTask;
 
 public abstract class BptTaskSimple implements IBptTask {
-    private final int required;
+    public final int required;
     private int stored;
 
     public BptTaskSimple(int required) {

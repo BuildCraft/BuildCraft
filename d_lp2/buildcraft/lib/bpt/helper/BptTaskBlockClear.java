@@ -2,21 +2,18 @@ package buildcraft.lib.bpt.helper;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.BCBlocks;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
 
 public class BptTaskBlockClear extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_clear");
-    private static final ItemStack stack = new ItemStack(Item.getItemFromBlock(BCBlocks.coreDecorated));
     private final IBuilder builder;
     private final BlockPos pos;
     private final int ticks;
@@ -71,12 +68,13 @@ public class BptTaskBlockClear extends BptTaskSimple {
 
     @Override
     protected void onReceiveFullPower() {
-        int time = 0;
-        for (int i = 0; i < ticks; i += 2) {
-            time = builder.startBlockBuilding(pos, stack, i);
-            builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) ticks, pos), time + ticks);
+        int[] ticks = builder.startPowerBuilding(new Vec3d(pos), required, 0);
+        int start = ticks[0];
+        int end = ticks[1];
+        for (int i = 0; i < end - start; i++) {
+            builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) i, pos), start + i);
         }
-        builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos), time + ticks + 1);
+        builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos), end);
     }
 
     public enum Deserializer implements IBptTaskDeserializer {

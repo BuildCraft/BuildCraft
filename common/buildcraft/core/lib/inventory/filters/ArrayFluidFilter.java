@@ -5,7 +5,7 @@
 package buildcraft.core.lib.inventory.filters;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -14,25 +14,25 @@ import buildcraft.api.core.IFluidFilter;
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class ArrayFluidFilter implements IFluidFilter {
 
-    protected Fluid[] fluids;
+    protected FluidStack[] fluids;
 
     public ArrayFluidFilter(ItemStack... stacks) {
-        fluids = new Fluid[stacks.length];
+        fluids = new FluidStack[stacks.length];
 
         for (int i = 0; i < stacks.length; ++i) {
             FluidStack stack = FluidContainerRegistry.getFluidForFilledItem(stacks[i]);
             if (stack != null) {
-                fluids[i] = stack.getFluid();
+                fluids[i] = stack;
             }
         }
     }
 
-    public ArrayFluidFilter(Fluid... iFluids) {
+    public ArrayFluidFilter(FluidStack... iFluids) {
         fluids = iFluids;
     }
 
     public boolean hasFilter() {
-        for (Fluid filter : fluids) {
+        for (FluidStack filter : fluids) {
             if (filter != null) {
                 return true;
             }
@@ -41,9 +41,9 @@ public class ArrayFluidFilter implements IFluidFilter {
     }
 
     @Override
-    public boolean matches(Fluid fluid) {
-        for (Fluid filter : fluids) {
-            if (filter != null && fluid.getID() == filter.getID()) {
+    public boolean matches(FluidStack fluid) {
+        for (FluidStack filter : fluids) {
+            if (filter != null && filter.isFluidEqual(fluid)) {
                 return true;
             }
         }

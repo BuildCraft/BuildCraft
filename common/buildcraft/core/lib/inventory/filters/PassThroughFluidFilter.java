@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory.filters;
 
-import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.IFluidFilter;
 
@@ -12,7 +12,7 @@ import buildcraft.api.core.IFluidFilter;
 public class PassThroughFluidFilter implements IFluidFilter {
 
     @Override
-    public boolean matches(Fluid fluid) {
+    public boolean matches(FluidStack fluid) {
         return fluid != null;
     }
 

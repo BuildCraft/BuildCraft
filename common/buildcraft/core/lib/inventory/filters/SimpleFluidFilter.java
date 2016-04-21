@@ -4,27 +4,26 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory.filters;
 
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.IFluidFilter;
 
 public class SimpleFluidFilter implements IFluidFilter {
 
-    private Fluid fluidChecked;
+    private FluidStack fluidChecked;
 
     public SimpleFluidFilter(FluidStack stack) {
         if (stack != null) {
-            fluidChecked = stack.getFluid();
+            fluidChecked = stack;
         }
     }
 
     @Override
-    public boolean matches(Fluid fluid) {
+    public boolean matches(FluidStack fluid) {
         if (fluidChecked != null) {
-            return fluidChecked.getID() == fluid.getID();
+            return fluidChecked.isFluidEqual(fluid);
         } else {
-            return false;
+            return fluid == null;
         }
     }
 }
