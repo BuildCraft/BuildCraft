@@ -21,6 +21,8 @@ import io.netty.buffer.Unpooled;
 
 /** Sending and receiving misc commands (any data) from {@link TileEntity}, {@link Entity}, or {@link Container} between
  * the server and client. Uses a single string for command type so this is not recommended for every-second messages. */
+// Deprecated as commands use strings :/
+@Deprecated
 public class MessageCommand implements IMessage {
 
     private ICommandTarget target;

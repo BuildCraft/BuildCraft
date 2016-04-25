@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.Box;
@@ -14,6 +17,8 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.tile.TileMarkerBase;
 
 public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implements ITileAreaProvider {
+    public static final int NET_SIGNALS_ON = 10;
+    public static final int NET_SIGNALS_OFF = 11;
     public static final Map<BlockPos, TileMarkerVolume> VOLUME_CACHE = new HashMap<>();
 
     public Box box = null;
@@ -53,11 +58,16 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
+    protected void onDisconnect(TileMarkerVolume other) {
+        regenBox();
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         regenBox();
     }
-    
+
     @Override
     public void onLoad() {
         super.onLoad();
@@ -67,8 +77,8 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     private void regenBox() {
         if (allConnected.size() > 0) {
             box = new Box(getPos(), getPos());
-            for (BlockPos connectedTo : allConnected) {
-                box.extendToEncompass(connectedTo);
+            for (TileMarkerVolume connectedTo : gatherAllConnections()) {
+                box.extendToEncompass(connectedTo.getPos());
             }
         } else {
             box = null;
@@ -78,7 +88,13 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     public void updateSignals() {
         if (!worldObj.isRemote) {
             showSignals = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
-            sendNetworkUpdate();
+            sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
+        } else {
+            if (showSignals) {
+                signals = null;// TODO!
+            } else {
+                signals = null;
+            }
         }
     }
 
@@ -97,8 +113,8 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     @Override
     public void removeFromWorld() {
         if (worldObj.isRemote) return;
-        for (BlockPos connectedTo : allConnected) {
-            worldObj.destroyBlock(connectedTo, true);
+        for (TileMarkerVolume connectedTo : gatherAllConnections()) {
+            worldObj.destroyBlock(connectedTo.getPos(), true);
         }
     }
 
@@ -111,5 +127,19 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
             if (PositionUtil.isNextTo(p, pos)) return true;
         }
         return false;
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buffer, Side side) {
+        super.readPayload(id, buffer, side);
+        if (side == Side.CLIENT) {
+            if (id == NET_SIGNALS_ON) {
+                showSignals = true;
+                updateSignals();
+            } else if (id == NET_SIGNALS_OFF) {
+                showSignals = false;
+                updateSignals();
+            }
+        }
     }
 }

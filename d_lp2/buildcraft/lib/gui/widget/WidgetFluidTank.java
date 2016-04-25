@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.minecraft.network.PacketBuffer;
 
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,11 +23,12 @@ public class WidgetFluidTank extends Widget_BC8<ContainerBC8> {
     }
 
     @Override
-    public void handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
             // TODO: Item interaction
         }
+        return null;
     }
 
     @SideOnly(Side.CLIENT)

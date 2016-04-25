@@ -6,6 +6,7 @@ package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
 
+@Deprecated
 public abstract class Packet {
 
     protected boolean isChunkDataPacket = false;

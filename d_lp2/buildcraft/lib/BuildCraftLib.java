@@ -28,7 +28,7 @@ public class BuildCraftLib {
         BCModules.fmlPreInit();
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
         LibProxy.getProxy().fmlPreInit();
-        BCMessageHandler.preInit();
+        BCMessageHandler.fmlPreInit();
     }
 
     @Mod.EventHandler
@@ -39,14 +39,12 @@ public class BuildCraftLib {
         VanillaListHandlers.fmlInit();
 
         ItemBuildCraft_BC8.fmlInit();
-
-        BCMessageHandler.init();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         LibProxy.getProxy().fmlPostInit();
-
+        BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
     }
 }

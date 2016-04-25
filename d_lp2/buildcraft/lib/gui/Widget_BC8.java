@@ -4,13 +4,15 @@ import java.io.IOException;
 
 import net.minecraft.network.PacketBuffer;
 
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
 
 /** Defines some sort of separate element that exists on both the server and client. Doesn't draw directly. */
-public class Widget_BC8<C extends ContainerBC8> {
+public abstract class Widget_BC8<C extends ContainerBC8> implements IPayloadReceiver {
     public final C container;
     public boolean hidden;
 
@@ -24,8 +26,18 @@ public class Widget_BC8<C extends ContainerBC8> {
         container.sendWidgetData(this, writer);
     }
 
-    public void handleWidgetDataServer(PacketBuffer buffer) throws IOException {}
+    public IMessage handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+        return null;
+    }
 
     @SideOnly(Side.CLIENT)
-    public void handleWidgetDataClient(PacketBuffer buffer) throws IOException {}
+    public IMessage handleWidgetDataClient(PacketBuffer buffer) throws IOException {
+        return null;
+    }
+
+    @Override
+    public IMessage receivePayload(Side side, PacketBuffer buffer) throws IOException {
+        if (side == Side.CLIENT) return handleWidgetDataClient(buffer);
+        return handleWidgetDataServer(buffer);
+    }
 }

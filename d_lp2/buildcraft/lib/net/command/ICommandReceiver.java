@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.lib.net.MessageCommand;
 
+@Deprecated
 public interface ICommandReceiver {
     MessageCommand receiveCommand(String command, Side side, PacketBuffer buffer) throws IOException;
 }

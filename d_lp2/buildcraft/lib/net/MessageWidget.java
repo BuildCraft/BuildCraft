@@ -14,7 +14,7 @@ import buildcraft.lib.net.command.IPayloadWriter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-/** Specialised version of {@link MessageCommand} that deals only with containers */
+/** Specialised version of {@link MessageCommand} that deals only with widgets */
 public class MessageWidget implements IMessage {
 
     private int windowId, widgetId;

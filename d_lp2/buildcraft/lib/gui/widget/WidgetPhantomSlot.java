@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,12 +32,13 @@ public class WidgetPhantomSlot extends Widget_BC8<ContainerBC8> {
     }
 
     @Override
-    public void handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLIENT_TO_SERVER_CLICK) {
             byte flags = buffer.readByte();
             tryMouseClick(flags);
         }
+        return null;
     }
 
     private void tryMouseClick(int flags) {
@@ -66,12 +68,13 @@ public class WidgetPhantomSlot extends Widget_BC8<ContainerBC8> {
     }
 
     @Override
-    public void handleWidgetDataClient(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataClient(PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
             stack = buffer.readItemStackFromBuffer();
             onSetStack();
         }
+        return null;
     }
 
     protected int getMaxStackSize(ItemStack stack) {

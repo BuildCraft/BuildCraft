@@ -207,6 +207,7 @@ public class TagManager {
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
         registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
+        registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         // BC Core ItemBlocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker");
         // BC Core Blocks
