@@ -207,12 +207,18 @@ public class TagManager {
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
         registerTag("item.guide").reg("guide").locale("guideItem").model("guide");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
+        // BC Core ItemBlocks
+        registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker");
         // BC Core Blocks
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");
         registerTag("block.engine.bc.stone").locale("engineBlockStone");
         registerTag("block.engine.bc.iron").locale("engineBlockIron");
         registerTag("block.engine.bc.creative").locale("engineBlockCreative");
+        registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker");
+
+        // BC Core Tiles
+        registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
 
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

@@ -13,8 +13,9 @@ import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.widgets.FluidTankWidget;
 import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineStone;
+import buildcraft.lib.gui.ContainerBC8;
 
-public class ContainerEngine extends BuildCraftContainer {
+public class ContainerEngine extends ContainerBC8 {
 
     protected TileEngineWithInventory engine;
 

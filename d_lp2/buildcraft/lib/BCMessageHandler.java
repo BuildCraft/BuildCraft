@@ -14,29 +14,23 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.net.MessageCommand;
+import buildcraft.lib.net.MessageWidget;
 
-public final class BCMessageHandler<REQ extends IMessage, REPLY extends IMessage> implements Comparable<BCMessageHandler<?, ?>> {
+public enum BCMessageHandler {
+    INSTANCE;
+
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.messages");
     public static SimpleNetworkWrapper netWrapper;
 
-    private static final List<BCMessageHandler<?, ?>> handlers = new ArrayList<>();
-
-    private final Class<REQ> messageClass;
-    private final IMessageHandler<REQ, REPLY> handler;
-    private final Side[] sides;
-
-    public BCMessageHandler(Class<REQ> messageClass, IMessageHandler<REQ, REPLY> handler, Side... sides) {
-        this.messageClass = messageClass;
-        this.handler = handler;
-        this.sides = sides;
-    }
+    private static final List<MessageTypeData<?, ?>> handlers = new ArrayList<>();
 
     public static <REQ extends IMessage, REPLY extends IMessage> void addMessageType(Class<REQ> messageClass, IMessageHandler<REQ, REPLY> handler, Side... sides) {
-        handlers.add(new BCMessageHandler<>(messageClass, handler, sides));
+        handlers.add(new MessageTypeData<>(messageClass, handler, sides));
     }
 
     public static void preInit() {
         addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
     }
 
     public static void init() {
@@ -45,7 +39,7 @@ public final class BCMessageHandler<REQ extends IMessage, REPLY extends IMessage
         if (DEBUG) {
             BCLog.logger.info("[lib.messages] Sorted list of messages:");
             for (int i = 0; i < handlers.size(); i++) {
-                final BCMessageHandler<?, ?> handler = handlers.get(i);
+                final MessageTypeData<?, ?> handler = handlers.get(i);
                 BCLog.logger.info("  " + i + " = " + handler.messageClass.getName() + " " + Arrays.toString(handler.sides));
             }
             BCLog.logger.info("[lib.messages] Total of " + handlers.size() + " messages");
@@ -55,14 +49,26 @@ public final class BCMessageHandler<REQ extends IMessage, REPLY extends IMessage
         }
     }
 
-    private static <REQ extends IMessage, REPLY extends IMessage> void addInternal(BCMessageHandler<REQ, REPLY> handler, int discriminator) {
+    private static <REQ extends IMessage, REPLY extends IMessage> void addInternal(MessageTypeData<REQ, REPLY> handler, int discriminator) {
         for (Side side : handler.sides) {
             netWrapper.registerMessage(handler.handler, handler.messageClass, discriminator, side);
         }
     }
 
-    @Override
-    public int compareTo(BCMessageHandler<?, ?> o) {
-        return messageClass.getName().compareTo(o.messageClass.getName());
+    public static class MessageTypeData<REQ extends IMessage, REPLY extends IMessage> implements Comparable<MessageTypeData<?, ?>> {
+        private final Class<REQ> messageClass;
+        private final IMessageHandler<REQ, REPLY> handler;
+        private final Side[] sides;
+
+        public MessageTypeData(Class<REQ> messageClass, IMessageHandler<REQ, REPLY> handler, Side... sides) {
+            this.messageClass = messageClass;
+            this.handler = handler;
+            this.sides = sides;
+        }
+
+        @Override
+        public int compareTo(MessageTypeData<?, ?> o) {
+            return messageClass.getName().compareTo(o.messageClass.getName());
+        }
     }
 }

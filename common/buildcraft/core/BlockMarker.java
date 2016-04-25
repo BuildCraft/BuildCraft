@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
+@Deprecated
 public class BlockMarker extends BlockBuildCraft {
     public BlockMarker() {
         this(false);

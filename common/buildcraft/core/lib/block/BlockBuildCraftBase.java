@@ -39,6 +39,10 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.core.BCCreativeTab;
 
+/**
+ * Deprecated as most stuff can be done better now
+ */
+@Deprecated
 public abstract class BlockBuildCraftBase extends Block {
 
     public static final BuildCraftProperty<EnumFacing> FACING_PROP = BuildCraftProperties.BLOCK_FACING;

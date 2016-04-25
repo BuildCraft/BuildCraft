@@ -13,13 +13,14 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.GuiBC8;
 
-public abstract class GuiEngine extends GuiBuildCraft {
+public abstract class GuiEngine extends GuiBC8<ContainerEngine> {
 
-    private static final ResourceLocation TEXTURES = TextureMap.locationBlocksTexture;
+    private static final ResourceLocation TEXTURES = TextureMap.LOCATION_BLOCKS_TEXTURE;
 
     protected class EngineLedger extends Ledger {
 
@@ -65,8 +66,8 @@ public abstract class GuiEngine extends GuiBuildCraft {
         }
     }
 
-    public GuiEngine(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
-        super(container, inventory, texture);
+    public GuiEngine(ContainerEngine container) {
+        super(container);
     }
 
     @Override

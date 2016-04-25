@@ -3,7 +3,7 @@ package buildcraft.lib.guide.parts;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
+import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.guide.GuiGuide;
 
 public class GuideImage extends GuidePart {

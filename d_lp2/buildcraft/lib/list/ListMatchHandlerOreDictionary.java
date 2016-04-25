@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
@@ -55,8 +56,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
             // cases in which a given stone is also used for crafting equivalents.
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache
-                        .getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         for (int k : matchesIds) {
@@ -127,8 +127,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         } else {
             String s = getBestOreString(oreNames);
             if (s != null) {
-                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache
-                        .getMaterial(s) : ListOreDictionaryCache.getType(s));
+                Set<Integer> stackIds = ListOreDictionaryCache.INSTANCE.getListOfPartialMatches(type == Type.MATERIAL ? ListOreDictionaryCache.getMaterial(s) : ListOreDictionaryCache.getType(s));
                 if (stackIds != null) {
                     for (int j : stackIds) {
                         stacks.addAll(OreDictionary.getOres(OreDictionary.getOreName(j)));

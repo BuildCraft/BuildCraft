@@ -7,26 +7,27 @@ package buildcraft.core.lib.gui.tooltips;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import com.google.common.collect.ForwardingList;
 
-public class ToolTip extends ForwardingList<ToolTipLine> {
+public class ToolTip extends ForwardingList<String> {
 
-    private final List<ToolTipLine> delegate = new ArrayList<>();
+    private final List<String> delegate = new ArrayList<>();
     private final long delay;
     private long mouseOverStart;
 
-    public ToolTip(ToolTipLine... lines) {
+    public ToolTip(String... lines) {
         this.delay = 0;
         Collections.addAll(delegate, lines);
     }
 
-    public ToolTip(int delay, ToolTipLine... lines) {
+    public ToolTip(int delay, String... lines) {
         this.delay = delay;
         Collections.addAll(delegate, lines);
     }
 
     @Override
-    protected final List<ToolTipLine> delegate() {
+    protected final List<String> delegate() {
         return delegate;
     }
 

@@ -4,6 +4,10 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import cofh.api.energy.IEnergyStorage;
 
+/**
+ * Deprecated because of MJ WOOOOOOOOOOOOOOOOOOOOOOO HOOOO!
+ */
+@Deprecated
 public class RFBattery implements IEnergyStorage {
     private int energy, maxEnergy, maxReceive, maxExtract;
 

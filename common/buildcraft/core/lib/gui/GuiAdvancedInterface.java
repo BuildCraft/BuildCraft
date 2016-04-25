@@ -6,6 +6,7 @@ package buildcraft.core.lib.gui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -16,11 +17,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.lib.gui.ContainerBC8;
+
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
     public ArrayList<AdvancedSlot> slots = new ArrayList<>();
 
-    public GuiAdvancedInterface(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
+    public GuiAdvancedInterface(ContainerBC8 container, IInventory inventory, ResourceLocation texture) {
         super(container, inventory, texture);
     }
 

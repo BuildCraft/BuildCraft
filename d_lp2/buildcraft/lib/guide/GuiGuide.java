@@ -14,8 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
-import buildcraft.core.lib.gui.GuiTexture.Rectangle;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.guide.font.FontManager;
 import buildcraft.lib.guide.font.IFontRenderer;
 import buildcraft.lib.guide.parts.GuidePageBase;
@@ -32,8 +32,8 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_LEFT = new GuiIcon(LEFT_PAGE, 0, 0, 193, 248);
     public static final GuiIcon PAGE_RIGHT = new GuiIcon(RIGHT_PAGE, 0, 0, 193, 248);
 
-    public static final Rectangle PAGE_LEFT_TEXT = new Rectangle(31, 22, 141, 193);
-    public static final Rectangle PAGE_RIGHT_TEXT = new Rectangle(20, 22, 141, 193);
+    public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(31, 22, 141, 193);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(20, 22, 141, 193);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS, 0, 0, 17, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS, 17, 0, 100, 100);
@@ -65,7 +65,7 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BORDER_BOTTOM_LEFT = new GuiIcon(ICONS, 0, 209, 13, 13);
     public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS, 13, 209, 13, 13);
 
-    public static final Rectangle BACK_POSITION = new Rectangle(PAGE_LEFT.x + PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.y + PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
+    public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.x + PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.y + PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 
     // REMOVE FROM HERE...
     // TODO: Book cover texture

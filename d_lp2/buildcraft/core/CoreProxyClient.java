@@ -3,6 +3,9 @@ package buildcraft.core;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.MinecraftForge;
+
+import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.list.GuiList;
 import buildcraft.lib.guide.GuiGuide;
 import buildcraft.lib.guide.GuideManager;
@@ -24,5 +27,7 @@ public class CoreProxyClient extends CoreProxy {
         GuideManager.registerManager(guide);
         guide.registerAllBlocks();
         guide.registerAllItems(false);
+
+        MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
     }
 }

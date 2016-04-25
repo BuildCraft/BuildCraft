@@ -5,13 +5,14 @@ import java.util.Set;
 
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.expression.ExpressionCompiler;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.expression.Expression;
+import buildcraft.lib.expression.ExpressionCompiler;
 import buildcraft.lib.expression.ExpressionCompiler.InvalidExpressionException;
 
 public class DetailedConfigOption {
@@ -58,7 +59,7 @@ public class DetailedConfigOption {
     }
 
     protected boolean refresh() {
-        return BuildCraftCore.detailedConfigManager.refresh(this, id);
+        return BCCoreConfig.detailedConfigManager.refresh(this, id);
     }
 
     public String getAsString() {

@@ -1,6 +1,6 @@
 package buildcraft.lib.guide;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
+import buildcraft.lib.gui.GuiIcon;
 
 /** Stores information about a single line of text. This may be displayed as more than a single line though. */
 public class PageLine implements Comparable<PageLine> {

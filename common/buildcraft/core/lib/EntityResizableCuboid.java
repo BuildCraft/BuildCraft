@@ -18,6 +18,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * Redo this in a separate data class. And make the base one abstract because all uses rely on a separate tile.
+ */
+@Deprecated
 public class EntityResizableCuboid extends Entity {
 
     public float shadowSize = 0;

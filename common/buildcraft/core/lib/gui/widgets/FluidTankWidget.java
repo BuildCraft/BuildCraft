@@ -4,22 +4,28 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.Widget_BC8;
 
 /** Provides a "view" of a given {@link Tank} for use in GUI's. The tank will be given a tooltip containing the name of
  * the fluid and the amount of fluid current in the tank. The tank can be clicked with a valid
@@ -29,19 +35,16 @@ public class FluidTankWidget extends Widget {
     public static final byte NET_CLICK = 0;
 
     public final Tank tank;
-    private boolean overlay;
-    private int overlayX, overlayY;
+    private GuiIcon overlay;
 
-    public FluidTankWidget(Tank tank, int x, int y, int w, int h) {
-        super(x, y, 0, 0, w, h);
+    public FluidTankWidget(ContainerBC8 container, Tank tank, int x, int y, int w, int h) {
+        super(container, new GuiRectangle(x, y, w, h));
         this.tank = tank;
     }
 
     /** Adds an overlay for the tank from the specified location in the texture. */
     public FluidTankWidget withOverlay(int x, int y) {
-        overlay = true;
-        overlayX = x;
-        overlayY = y;
+        overlay = new GuiIcon(null, x, y, this.rectangle.width, this.rectangle.height);
         return this;
     }
 
@@ -49,7 +52,7 @@ public class FluidTankWidget extends Widget {
      * This will copy over the overlay (if one has been specified) from {@link #withOverlay(int, int)} */
     public FluidTankWidget copyMoved(Tank tank, int x, int y) {
         FluidTankWidget copy = new FluidTankWidget(tank, x, y, w, h);
-        if (overlay) copy.withOverlay(overlayX, overlayY);
+        copy.overlay = overlay;
         return copy;
     }
 
@@ -59,15 +62,18 @@ public class FluidTankWidget extends Widget {
     }
 
     @Override
-    public boolean handleMouseClick(int mouseX, int mouseY, int mouseButton) {
-        container.sendWidgetDataToServer(this, new byte[] { NET_CLICK });
-        return true;
+    public void onMouseClick(int mouseX, int mouseY, int mouseButton) {
+        sendWidgetData(buffer -> buffer.writeByte(NET_CLICK));
     }
 
     @Override
-    public void handleServerPacketData(DataInputStream data) throws IOException {
-        byte b = data.readByte();
+    public void handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+        byte b = buffer.readByte();
         if (b == NET_CLICK) handleTankClick();
+        else if (ContainerBC8.DEBUG) {
+            // Use container's debug as we don't want a debug value for _every_ widget class
+            BCLog.logger.warn("[lib.container][widget.fluid] Received an unknown message byte ID " + b);
+        }
     }
 
     /** Attempts to interact the currently held item (in the gui) with this tank. This will either attempt to fill or

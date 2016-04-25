@@ -1,6 +1,6 @@
 package buildcraft.lib.guide.parts;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
+import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.guide.GuiGuide;
 import buildcraft.lib.guide.PageLine;
 

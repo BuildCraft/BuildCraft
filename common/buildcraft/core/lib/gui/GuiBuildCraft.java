@@ -30,16 +30,19 @@ import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
+import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.Widget_BC8;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
     public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraftcore:textures/gui/ledger.png");
     public final LedgerManager ledgerManager = new LedgerManager(this);
     public final TileEntity tile;
-    public final BuildCraftContainer container;
+    public final ContainerBC8 container;
     public ResourceLocation texture;
 
-    public GuiBuildCraft(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
+    public GuiBuildCraft(ContainerBC8 container, IInventory inventory, ResourceLocation texture) {
         super(container);
         this.container = container;
 
@@ -135,7 +138,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
         TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(fluid.getFluid(), FluidType.STILL);
 
-        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
         int fullX = width / 16;
         int fullY = height / 16;
@@ -192,7 +195,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     protected void drawWidgets(int mX, int mY) {
-        for (Widget widget : container.getWidgets()) {
+        for (Widget_BC8 widget : container.getWidgets()) {
             if (widget.hidden) {
                 continue;
             }
@@ -326,7 +329,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
             if (toolTips.size() > 1) {
                 var14 += 2 + (toolTips.size() - 1) * 10;
             }
-
             this.zLevel = 300.0F;
             itemRender.zLevel = 300.0F;
             int var15 = -267386864;
@@ -361,7 +363,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
     }
 
-    public BuildCraftContainer getContainer() {
+    public ContainerBC8 getContainer() {
         return container;
     }
 }

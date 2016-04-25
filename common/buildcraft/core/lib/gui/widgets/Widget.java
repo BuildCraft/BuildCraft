@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.network.PacketBuffer;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,10 +58,12 @@ public class Widget implements IToolTipProvider {
     @SideOnly(Side.CLIENT)
     public void handleMouseMove(int mouseX, int mouseY, int mouseButton, long time) {}
 
+    /** Handles the message data from the server. The message from the client will be stored in <code>in</code> */
     @SideOnly(Side.CLIENT)
-    public void handleClientPacketData(DataInputStream data) throws IOException {}
+    public void handleClientPacketData(PacketBuffer in) throws IOException {}
 
-    public void handleServerPacketData(DataInputStream data) throws IOException {}
+    /** Handles the message data from the client. The message from the client will be stored in <code>in</code> */
+    public void handleServerPacketData(PacketBuffer in) throws IOException {}
 
     @SideOnly(Side.CLIENT)
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {

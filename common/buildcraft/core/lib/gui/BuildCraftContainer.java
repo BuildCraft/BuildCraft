@@ -4,10 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +14,15 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.network.PacketGuiWidget;
-import buildcraft.lib.container.BCContainer_BC8;
+import buildcraft.lib.gui.ContainerBC8;
 
-public abstract class BuildCraftContainer extends BCContainer_BC8 {
+// TODO: Rewrite all methods from this into BCContainer_BC8
+@Deprecated
+public abstract class BuildCraftContainer extends ContainerBC8 {
 
     private List<Widget> widgets = new ArrayList<>();
     private int inventorySize;
@@ -35,48 +30,6 @@ public abstract class BuildCraftContainer extends BCContainer_BC8 {
     public BuildCraftContainer(EntityPlayer player, int inventorySize) {
         super(player);
         this.inventorySize = inventorySize;
-    }
-
-    public EntityPlayer getPlayer() {
-        return player;
-    }
-
-    public List<Widget> getWidgets() {
-        return widgets;
-    }
-
-    public void addSlot(Slot slot) {
-        addSlotToContainer(slot);
-    }
-
-    public void addWidget(Widget widget) {
-        widget.addToContainer(this);
-        widgets.add(widget);
-    }
-
-    public void sendWidgetDataToClient(Widget widget, EntityPlayer player, byte[] data) {
-        PacketGuiWidget pkt = new PacketGuiWidget(this.player, windowId, widgets.indexOf(widget), data);
-        BuildCraftCore.instance.sendToPlayer(player, pkt);
-    }
-
-    public void sendWidgetDataToServer(Widget widget, byte[] data) {
-        PacketGuiWidget pkt = new PacketGuiWidget(this.player, windowId, widgets.indexOf(widget), data);
-        BuildCraftCore.instance.sendToServer(pkt);
-    }
-
-    public void handleWidgetData(int widgetId, byte[] data) {
-        InputStream input = new ByteArrayInputStream(data);
-        DataInputStream stream = new DataInputStream(input);
-        if (widgetId < 0 || widgetId >= widgets.size()) BCLog.logger.warn("Found a packet with an invalid widget ID! (" + widgetId + ")");
-        else {
-            Widget widget = widgets.get(widgetId);
-            try {
-                if (getPlayer().isServerWorld()) widget.handleServerPacketData(stream);
-                else widget.handleClientPacketData(stream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override

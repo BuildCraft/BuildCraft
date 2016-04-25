@@ -4,21 +4,21 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
-import buildcraft.core.lib.gui.GuiTexture.Rectangle;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.guide.GuiGuide;
 
 public class GuideCrafting extends GuidePart {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS, 119, 0, 116, 54);
-    public static final Rectangle[][] ITEM_POSITION = new Rectangle[3][3];
-    public static final Rectangle OUT_POSITION = new Rectangle(95, 19, 16, 16);
-    public static final Rectangle OFFSET = new Rectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width,
+    public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
+    public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
+    public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width,
             CRAFTING_GRID.height);
 
     static {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
-                ITEM_POSITION[x][y] = new Rectangle(1 + x * 18, 1 + y * 18, 16, 16);
+                ITEM_POSITION[x][y] = new GuiRectangle(1 + x * 18, 1 + y * 18, 16, 16);
             }
         }
     }
@@ -52,7 +52,7 @@ public class GuideCrafting extends GuidePart {
             RenderHelper.enableGUIStandardItemLighting();
             for (int itemX = 0; itemX < input.length; itemX++) {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
-                    Rectangle rect = ITEM_POSITION[itemX][itemY];
+                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
                     ItemStack stack = input[itemX][itemY].get();
                     if (stack != null) {
                         GlStateManager.color(1, 1, 1);

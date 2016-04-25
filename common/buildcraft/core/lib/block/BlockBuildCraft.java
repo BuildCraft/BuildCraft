@@ -29,6 +29,10 @@ import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 
+/**
+ * Deprecated as most stuff can be done better now
+ */
+@Deprecated
 public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITileEntityProvider {
     protected static boolean keepInventory = false;
 

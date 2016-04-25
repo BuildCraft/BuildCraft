@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
+import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.guide.GuiGuide;
 import buildcraft.lib.guide.PageLine;
 import buildcraft.lib.guide.font.IFontRenderer;

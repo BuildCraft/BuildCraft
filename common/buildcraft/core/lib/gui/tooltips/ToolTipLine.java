@@ -6,6 +6,7 @@ package buildcraft.core.lib.gui.tooltips;
 
 import net.minecraft.util.text.TextFormatting;
 
+@Deprecated
 public class ToolTipLine {
 
     public String text;
@@ -16,7 +17,7 @@ public class ToolTipLine {
         this.text = text;
         this.color = color;
     }
-    
+
     public ToolTipLine(String text, TextFormatting colour) {
         this(text, colour.getColorIndex());
     }

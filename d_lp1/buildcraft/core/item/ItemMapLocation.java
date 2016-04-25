@@ -149,6 +149,46 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
         return EnumActionResult.SUCCESS;
     }
 
+    public static IBox getAreaBox(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        int xMin = cpt.getInteger("xMin");
+        int yMin = cpt.getInteger("yMin");
+        int zMin = cpt.getInteger("zMin");
+        BlockPos min = new BlockPos(xMin, yMin, zMin);
+
+        int xMax = cpt.getInteger("xMax");
+        int yMax = cpt.getInteger("yMax");
+        int zMax = cpt.getInteger("zMax");
+        BlockPos max = new BlockPos(xMax, yMax, zMax);
+
+        return new Box(min, max);
+    }
+
+    public static IBox getPointBox(ItemStack item) {
+        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        MapLocationType type = MapLocationType.getFromStack(item);
+
+        switch (type) {
+            case SPOT: {
+                int x = cpt.getInteger("x");
+                int y = cpt.getInteger("y");
+                int z = cpt.getInteger("z");
+
+                BlockPos pos = new BlockPos(x, y, z);
+
+                return new Box(pos, pos);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
+    public static EnumFacing getPointFace(ItemStack stack) {
+        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        return EnumFacing.VALUES[cpt.getByte("side")];
+    }
+
     @Override
     public IBox getBox(ItemStack item) {
         NBTTagCompound cpt = NBTUtils.getItemData(item);
@@ -170,26 +210,6 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             }
             case SPOT: {
                 return getPointBox(item);
-            }
-            default: {
-                return null;
-            }
-        }
-    }
-
-    public static IBox getPointBox(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
-        MapLocationType type = MapLocationType.getFromStack(item);
-
-        switch (type) {
-            case SPOT: {
-                int x = cpt.getInteger("x");
-                int y = cpt.getInteger("y");
-                int z = cpt.getInteger("z");
-
-                BlockPos pos = new BlockPos(x, y, z);
-
-                return new Box(pos, pos);
             }
             default: {
                 return null;

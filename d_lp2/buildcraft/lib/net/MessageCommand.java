@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.lib.container.BCContainer_BC8;
+import buildcraft.lib.gui.ContainerBC8;
 import buildcraft.lib.net.command.*;
 
 import io.netty.buffer.ByteBuf;
@@ -25,7 +25,7 @@ public class MessageCommand implements IMessage {
 
     private ICommandTarget target;
     private String name;
-    private final ICommandWriter writer;
+    private final IPayloadWriter writer;
     private PacketBuffer payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
@@ -34,21 +34,21 @@ public class MessageCommand implements IMessage {
         writer = null;
     }
 
-    private MessageCommand(ICommandTarget target, String name, ICommandWriter writer) {
+    private MessageCommand(ICommandTarget target, String name, IPayloadWriter writer) {
         this.target = target;
         this.name = name;
         this.writer = writer;
     }
 
-    public MessageCommand(TileEntity sender, String name, ICommandWriter writer) {
+    public MessageCommand(TileEntity sender, String name, IPayloadWriter writer) {
         this(CommandTargets.getForTile(sender), name, writer);
     }
 
-    public MessageCommand(Entity sender, String name, ICommandWriter writer) {
+    public MessageCommand(Entity sender, String name, IPayloadWriter writer) {
         this(CommandTargets.getForEntity(sender), name, writer);
     }
 
-    public MessageCommand(BCContainer_BC8 container, String name, ICommandWriter writer) {
+    public MessageCommand(ContainerBC8 container, String name, IPayloadWriter writer) {
         this(CommandTargets.getForContainer(container), name, writer);
     }
 
@@ -74,9 +74,9 @@ public class MessageCommand implements IMessage {
         } else if (type == CommandTargetType.CONTAINER.ordinal()) {
             target = CommandTargets.TARGET_CONTAINER;
         }
-        payload = new PacketBuffer(Unpooled.buffer());
         int payloadSize = buffer.readUnsignedShort();
-        buffer.readBytes(payload, payloadSize);
+        ByteBuf read = buffer.readBytes(payloadSize);
+        payload = new PacketBuffer(read);
     }
 
     @Override

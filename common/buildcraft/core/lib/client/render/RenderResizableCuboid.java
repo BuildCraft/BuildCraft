@@ -3,16 +3,19 @@ package buildcraft.core.lib.client.render;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -21,11 +24,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 
@@ -205,22 +208,22 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Vec3d textureOffset = new Vec3d(cube.textureOffsetX / 16D, cube.textureOffsetY / 16D, cube.textureOffsetZ / 16D);
         Vec3d size = new Vec3d(cube.xSize, cube.ySize, cube.zSize);
 
-        bindTexture(cube.resource == null ? TextureMap.locationBlocksTexture : cube.resource);
+        bindTexture(cube.resource == null ? TextureMap.LOCATION_BLOCKS_TEXTURE : cube.resource);
 
         Tessellator tess = Tessellator.getInstance();
-        WorldRenderer wr = tess.getWorldRenderer();
+        VertexBuffer vb = tess.getBuffer();
 
-        wr.begin(GL11.GL_QUADS, shadeTypes.vertexFormat);
+        vb.begin(GL11.GL_QUADS, shadeTypes.vertexFormat);
 
         for (EnumFacing face : EnumFacing.values()) {
-            renderCuboidFace(wr, face, sprites, flips, textureStart, textureSize, size, textureOffset, shadeTypes, formula, faceFormula,
+            renderCuboidFace(vb, face, sprites, flips, textureStart, textureSize, size, textureOffset, shadeTypes, formula, faceFormula,
                     cube.worldObj, renderOut, renderIn);
         }
 
         tess.draw();
     }
 
-    private static void renderCuboidFace(WorldRenderer wr, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3d textureStart,
+    private static void renderCuboidFace(VertexBuffer vb, EnumFacing face, TextureAtlasSprite[] sprites, int[] flips, Vec3d textureStart,
             Vec3d textureSize, Vec3d size, Vec3d textureOffset, EnumShadeArgument shadeTypes, IBlockLocation locationFormula,
             IFacingLocation faceFormula, IBlockAccess access, boolean out, boolean in) {
         int ordinal = face.ordinal();
@@ -244,21 +247,21 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         for (RenderInfo ri : renderInfoList) {
             if (flip ? out : in) {
-                renderPoint(wr, face, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, face, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, face, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, face, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, face, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, face, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, face, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, face, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
             }
             if (flip ? in : out) {
-                renderPoint(wr, opposite, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, opposite, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, opposite, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
-                renderPoint(wr, opposite, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, opposite, u, v, other, ri, false, false, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, opposite, u, v, other, ri, false, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, opposite, u, v, other, ri, true, true, locationFormula, faceFormula, access, shadeTypes);
+                renderPoint(vb, opposite, u, v, other, ri, true, false, locationFormula, faceFormula, access, shadeTypes);
             }
         }
     }
 
-    private static void renderPoint(WorldRenderer wr, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV,
+    private static void renderPoint(VertexBuffer wr, EnumFacing face, Axis u, Axis v, double other, RenderInfo ri, boolean minU, boolean minV,
             IBlockLocation locationFormula, IFacingLocation faceFormula, IBlockAccess access, EnumShadeArgument shadeTypes) {
         int U_ARRAY = minU ? U_MIN : U_MAX;
         int V_ARRAY = minV ? V_MIN : V_MAX;
@@ -280,14 +283,14 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
             Vec3d transVertex = locationFormula.transformToWorld(vertex);
             BlockPos pos = Utils.convertFloor(transVertex);
             Block block = access.getBlockState(pos).getBlock();
-            int combindedLight = block.getMixedBrightnessForBlock(access, pos);
+            int combindedLight = block.getPackedLightmapCoords(access.getBlockState(pos), access, pos);
             wr.lightmap(combindedLight >> 16 & 65535, combindedLight & 65535);
         }
 
         wr.endVertex();
     }
 
-    private static void applyLocalAO(WorldRenderer wr, EnumFacing face, IBlockLocation locationFormula, IBlockAccess access,
+    private static void applyLocalAO(VertexBuffer wr, EnumFacing face, IBlockLocation locationFormula, IBlockAccess access,
             EnumShadeArgument shadeTypes, Vec3d vertex) {
         // This doesn't work. At all.
         boolean allAround = false;
@@ -300,12 +303,13 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         double totalDist = 0;
         Vec3d transVertex = locationFormula.transformToWorld(vertex);
         BlockPos pos = Utils.convertFloor(transVertex);
-        Block block = access.getBlockState(pos).getBlock();
-        int combindedLight = block.getMixedBrightnessForBlock(access, pos);
+        IBlockState state = access.getBlockState(pos);
+        Block block = state.getBlock();
+        int combindedLight = block.getPackedLightmapCoords(state, access, pos);
 
         skyLight[0] = combindedLight / 0x10000;
         blockLight[0] = combindedLight % 0x10000;
-        colorMultiplier[0] = block.getAmbientOcclusionLightValue();
+        colorMultiplier[0] = block.getAmbientOcclusionLightValue(state);
         distances[0] = transVertex.distanceTo(Utils.convertMiddle(pos));
 
         int index = 0;
@@ -313,14 +317,15 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         for (EnumFacing otherFace : testArray) {
             Vec3d nearestOther = vertex.add(Utils.convert(otherFace));
             pos = Utils.convertFloor(locationFormula.transformToWorld(nearestOther));
-            block = access.getBlockState(pos).getBlock();
-            combindedLight = block.getMixedBrightnessForBlock(access, pos);
+            state = access.getBlockState(pos);
+            block = state.getBlock();
+            combindedLight = block.getPackedLightmapCoords(state, access, pos);
 
             index++;
 
             skyLight[index] = combindedLight / 0x10000;
             blockLight[index] = combindedLight % 0x10000;
-            colorMultiplier[index] = block.getAmbientOcclusionLightValue();
+            colorMultiplier[index] = block.getAmbientOcclusionLightValue(null);
             // The extra 0.1 is to stop any 1 divided by 0 errors
             distances[index] = 1 / (transVertex.distanceTo(Utils.convertMiddle(pos)) + 0.1);
             totalDist += distances[index];

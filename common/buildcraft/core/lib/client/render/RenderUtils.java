@@ -5,17 +5,19 @@
 package buildcraft.core.lib.client.render;
 
 import java.util.Map;
+
+import javax.vecmath.Vector3f;
+
 import com.google.common.collect.Maps;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.utils.Utils;
-
-import javax.vecmath.Vector3f;
 
 public enum RenderUtils {
     INSTANCE;
@@ -45,15 +47,15 @@ public enum RenderUtils {
         GlStateManager.color(red, green, blue, alpha);
     }
 
-    public static void setWorldRendererRGB(WorldRenderer wr, Vec3d color) {
+    public static void setWorldRendererRGB(VertexBuffer wr, Vec3d color) {
         wr.color((float) color.xCoord, (float) color.yCoord, (float) color.zCoord, 1f);
     }
 
-    public static void addWorldRendererVertex(WorldRenderer wr, Vec3d vertex) {
+    public static void addWorldRendererVertex(VertexBuffer wr, Vec3d vertex) {
         wr.pos(vertex.xCoord, vertex.yCoord, vertex.zCoord);
     }
 
-    public static void putWorldRendererColorMultiplier(WorldRenderer wr, Vec3d color, int index) {
+    public static void putWorldRendererColorMultiplier(VertexBuffer wr, Vec3d color, int index) {
         wr.putColorMultiplier((float) color.xCoord, (float) color.yCoord, (float) color.zCoord, index);
     }
 

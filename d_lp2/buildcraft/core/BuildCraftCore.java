@@ -5,9 +5,9 @@ import java.io.File;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
@@ -40,7 +40,7 @@ public class BuildCraftCore {
         File cfgBase = evt.getModConfigurationDirectory();
         RegistryHelper.setRegistryConfig(MODID, new File(cfgBase, "objects.cfg"));
 
-        BCCoreConfig.preInit(new File(cfgBase, "main.cfg"));
+        BCCoreConfig.preInit(cfgBase);
 
         CreativeTabManager.createTab("buildcraft.main");
 
@@ -60,5 +60,10 @@ public class BuildCraftCore {
 
         BCCoreRecipes.init();
         BCAchievements.init();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent evt) {
+        CoreProxy.getProxy().fmlPostInit();
     }
 }

@@ -6,9 +6,11 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import buildcraft.lib.config.EnumRestartRequirement;
+import buildcraft.lib.config.FileConfigManager;
 
 public class BCCoreConfig {
     public static Configuration config;
+    public static FileConfigManager detailedConfigManager;
 
     public static boolean colourBlindMode;
     public static boolean worldGen;
@@ -33,7 +35,12 @@ public class BCCoreConfig {
     private static Property propItemLifespan;
 
     public static void preInit(File cfgFile) {
-        config = new Configuration(cfgFile);
+        config = new Configuration(new File(cfgFile, "main.cfg"));
+
+        detailedConfigManager = new FileConfigManager(" The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no "
+            + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
+            + " This file will be overwritten every time that buildcraft starts, so there is no point in adding comments");
+        detailedConfigManager.setConfigFile(new File(cfgFile, "detailed.properties"));
 
         // Variables to make
         String general = Configuration.CATEGORY_GENERAL;

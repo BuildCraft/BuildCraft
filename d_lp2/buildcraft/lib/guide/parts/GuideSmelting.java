@@ -5,16 +5,16 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.lib.gui.GuiTexture.GuiIcon;
-import buildcraft.core.lib.gui.GuiTexture.Rectangle;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.guide.GuiGuide;
 
 public class GuideSmelting extends GuidePart {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS, 119, 54, 80, 54);
-    public static final Rectangle OFFSET = new Rectangle((GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
-    public static final Rectangle IN_POS = new Rectangle(1, 1, 16, 16);
-    public static final Rectangle OUT_POS = new Rectangle(60, 19, 16, 16);
-    public static final Rectangle FURNACE_POS = new Rectangle(1, 37, 16, 16);
+    public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
+    public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
+    public static final GuiRectangle OUT_POS = new GuiRectangle(60, 19, 16, 16);
+    public static final GuiRectangle FURNACE_POS = new GuiRectangle(1, 37, 16, 16);
 
     private final ChangingItemStack input, output;
     private final ItemStack furnace;

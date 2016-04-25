@@ -13,21 +13,50 @@ import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.api.lists.ListMatchHandler.Type;
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
-import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.net.MessageCommand;
 import buildcraft.lib.net.command.ICommandReceiver;
 
-public class ContainerList extends BuildCraftContainer implements ICommandReceiver {
+public class ContainerList extends ContainerBC8 implements ICommandReceiver {
     public ListHandler.Line[] lines;
 
+    final WidgetListSlot[][] slots;
+
+    class WidgetListSlot extends WidgetPhantomSlot {
+        final int lineIndex, slotIndex;
+
+        public WidgetListSlot(int lineIndex, int slotIndex) {
+            super(ContainerList.this);
+            this.lineIndex = lineIndex;
+            this.slotIndex = slotIndex;
+        }
+
+        @Override
+        protected void onSetStack() {
+            ContainerList.this.setStack(lineIndex, slotIndex, getStack());
+        }
+    }
+
     public ContainerList(EntityPlayer iPlayer) {
-        super(iPlayer, iPlayer.inventory.getSizeInventory());
+        super(iPlayer);
 
         lines = ListHandler.getLines(getListItemStack());
+
+        slots = new WidgetListSlot[lines.length][ListHandler.WIDTH];
+        for (int line = 0; line < lines.length; line++) {
+            for (int slot = 0; slot < ListHandler.WIDTH; slot++) {
+                WidgetListSlot widget = new WidgetListSlot(line, slot);
+                slots[line][slot] = addWidget(widget);
+                widget.setStack(lines[line].getStack(slot), false);
+            }
+        }
 
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
@@ -58,29 +87,30 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
         return null;
     }
 
-    public void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
+    private void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
         lines[lineIndex].setStack(slotIndex, stack);
         ListHandler.saveLines(getListItemStack(), lines);
-
-        if (player.worldObj.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(new MessageCommand(this, "setStack", (buffer) -> {
-                buffer.writeByte(lineIndex);
-                buffer.writeByte(slotIndex);
-                buffer.writeItemStackToBuffer(stack);
-            }));
-        }
     }
 
     public void switchButton(final int lineIndex, final int button) {
         lines[lineIndex].toggleOption(button);
-        ListHandler.saveLines(getListItemStack(), lines);
 
         if (player.worldObj.isRemote) {
             BCMessageHandler.netWrapper.sendToServer(new MessageCommand(this, "switchButton", (buffer) -> {
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
             }));
+        } else if (button == 1 || button == 2) {
+            ListMatchHandler.Type type = lines[lineIndex].getSortingType();
+            if (type == Type.MATERIAL || type == Type.TYPE) {
+                WidgetListSlot[] widgetSlots = slots[lineIndex];
+                for (int i = 1; i < widgetSlots.length; i++) {
+                    widgetSlots[i].setStack(null, true);
+                }
+            }
         }
+
+        ListHandler.saveLines(getListItemStack(), lines);
     }
 
     public void setLabel(final String text) {
@@ -100,8 +130,6 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
                 setLabel(buffer.readStringFromBuffer(1024));
             } else if ("switchButton".equals(command)) {
                 switchButton(buffer.readUnsignedByte(), buffer.readUnsignedByte());
-            } else if ("setStack".equals(command)) {
-                setStack(buffer.readUnsignedByte(), buffer.readUnsignedByte(), buffer.readItemStackFromBuffer());
             }
         }
         return null;
