@@ -41,6 +41,7 @@ public class BuildCraftCore {
         RegistryHelper.setRegistryConfig(MODID, new File(cfgBase, "objects.cfg"));
 
         BCCoreConfig.preInit(cfgBase);
+        CoreProxy.getProxy().fmlPreInit();
 
         CreativeTabManager.createTab("buildcraft.main");
 

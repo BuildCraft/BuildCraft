@@ -1,6 +1,6 @@
 {
-	"parent": "item/handheld",
+	"parent":"item/handheld",
 	"textures": {
-		"layer0": "buildcraftcore:items/marker_connector"
+		"layer0":"buildcraftcore:items/marker_connector"
 	}
 }

@@ -209,14 +209,14 @@ public class TagManager {
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         // BC Core ItemBlocks
-        registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker");
+        registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         // BC Core Blocks
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");
         registerTag("block.engine.bc.stone").locale("engineBlockStone");
         registerTag("block.engine.bc.iron").locale("engineBlockIron");
         registerTag("block.engine.bc.creative").locale("engineBlockCreative");
-        registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker");
+        registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
 
         // BC Core Tiles
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");

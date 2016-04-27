@@ -1,14 +1,16 @@
 package buildcraft.lib;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import buildcraft.api.BCModules;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.misc.FakePlayerUtil;
 
@@ -29,6 +31,8 @@ public class BuildCraftLib {
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
         LibProxy.getProxy().fmlPreInit();
         BCMessageHandler.fmlPreInit();
+
+        MinecraftForge.EVENT_BUS.register(LibEventDistributor.INSTANCE);
     }
 
     @Mod.EventHandler
@@ -38,7 +42,7 @@ public class BuildCraftLib {
         VanillaRotationHandlers.fmlInit();
         VanillaListHandlers.fmlInit();
 
-        ItemBuildCraft_BC8.fmlInit();
+        ItemManager.fmlInit();
     }
 
     @Mod.EventHandler

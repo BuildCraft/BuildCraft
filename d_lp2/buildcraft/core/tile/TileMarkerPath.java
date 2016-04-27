@@ -24,6 +24,11 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     }
 
     @Override
+    public boolean isActiveForRender() {
+        return false;
+    }
+
+    @Override
     public boolean canConnectTo(TileMarkerPath other) {
         if (allConnected.size() >= 2) return false;
         if (from == null && other.to == null) return true;

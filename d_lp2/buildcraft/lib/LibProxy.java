@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBuildCraftBase_BC8;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemManager;
 
 public abstract class LibProxy {
     @SidedProxy
@@ -52,7 +53,7 @@ public abstract class LibProxy {
         @Override
         void fmlInit() {
             super.fmlInit();
-            ItemBuildCraft_BC8.fmlInitClient();
+            ItemManager.fmlInitClient();
         }
 
         @Override

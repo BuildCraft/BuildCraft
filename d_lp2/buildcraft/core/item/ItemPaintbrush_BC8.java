@@ -46,7 +46,7 @@ public class ItemPaintbrush_BC8 extends ItemBuildCraft_BC8 {
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         addVariant(variants, 0, "clean");
         for (EnumDyeColor colour : EnumDyeColor.values()) {
             addVariant(variants, colour.getMetadata() + 1, colour.getName());

@@ -37,7 +37,7 @@ public class ItemList_BC8 extends ItemBuildCraft_BC8 implements IList {
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         addVariant(variants, 0, "clean");
         addVariant(variants, 1, "used");
     }

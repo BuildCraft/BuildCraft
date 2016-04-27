@@ -2,7 +2,6 @@ package buildcraft.lib.engine;
 
 import java.util.Arrays;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -15,20 +14,11 @@ import buildcraft.api.mj.IMjConductor;
 import buildcraft.api.mj.IMjReciever;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.core.lib.BlockTileCache;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.lib.data.DataTemplate;
 import buildcraft.lib.tile.TileBuildCraft_BC8;
 
 public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {
-    protected static final DataTemplate TEMPLATE_BASE;
     /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
     private static final int[] PULSE_FREQUENCIES = { 60, 45, 35, 25, 15, 50 };
-
-    static {
-        TEMPLATE_BASE = new DataTemplate.Builder()//
-                .addEnum("direction", EnumFacing.class)//
-                .build();
-    }
 
     private final IMjConductor conductor = new IMjConductor() {
         @Override
@@ -45,33 +35,27 @@ public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements I
     private int milliJoulesHeld;
     private float pulseStage = 0;
 
-    public TileEngineBase_BC8(int stages) {
-        super(stages);
+    public TileEngineBase_BC8() {
         // Just make sure
         remakeTileCaches();
     }
 
-    @Override
-    public DataTemplate getTemplateFor(int stage) {
-        if (stage == 0) return TEMPLATE_BASE;
-        return null;
-    }
-
-    @Override
-    public void readFromNBT(int stage, NBTTagCompound nbt) {
-        currentDirection = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
-        milliJoulesHeld = nbt.getInteger("milliJoulesHeld");
-        pulseStage = nbt.getFloat("pulseStage");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(int stage) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("direction", NBTUtils.writeEnum(currentDirection));
-        nbt.setInteger("milliJoulesHeld", milliJoulesHeld);
-        nbt.setFloat("pulseStage", pulseStage);
-        return nbt;
-    }
+    //
+    // @Override
+    // public void readFromNBT(NBTTagCompound nbt) {
+    // currentDirection = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
+    // milliJoulesHeld = nbt.getInteger("milliJoulesHeld");
+    // pulseStage = nbt.getFloat("pulseStage");
+    // }
+    //
+    // @Override
+    // public NBTTagCompound writeToNBT(int stage) {
+    // NBTTagCompound nbt = new NBTTagCompound();
+    // nbt.setTag("direction", NBTUtils.writeEnum(currentDirection));
+    // nbt.setInteger("milliJoulesHeld", milliJoulesHeld);
+    // nbt.setFloat("pulseStage", pulseStage);
+    // return nbt;
+    // }
 
     @Override
     public void update() {

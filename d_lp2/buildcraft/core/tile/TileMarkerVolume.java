@@ -53,6 +53,11 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
+    public boolean isActiveForRender() {
+        return showSignals || box != null;
+    }
+
+    @Override
     protected void onConnect(TileMarkerVolume other) {
         regenBox();
     }
@@ -65,16 +70,12 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        showSignals = compound.getBoolean("showSignals");
         regenBox();
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        updateSignals();
-    }
-
     private void regenBox() {
+        boolean before = isActiveForRender();
         if (allConnected.size() > 0) {
             box = new Box(getPos(), getPos());
             for (TileMarkerVolume connectedTo : gatherAllConnections()) {
@@ -83,18 +84,27 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
         } else {
             box = null;
         }
+        if (before != isActiveForRender()) {
+            redrawBlock();
+        }
     }
 
     public void updateSignals() {
+        boolean before = isActiveForRender();
         if (!worldObj.isRemote) {
-            showSignals = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
-            sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
+            if (worldObj.isBlockLoaded(getPos())) {
+                showSignals = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
+                sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
+            }
         } else {
             if (showSignals) {
                 signals = null;// TODO!
             } else {
                 signals = null;
             }
+        }
+        if (before != isActiveForRender()) {
+            redrawBlock();
         }
     }
 
@@ -130,6 +140,16 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
+    public void writePayload(int id, PacketBuffer buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                buffer.writeBoolean(showSignals);
+            }
+        }
+    }
+
+    @Override
     public void readPayload(int id, PacketBuffer buffer, Side side) {
         super.readPayload(id, buffer, side);
         if (side == Side.CLIENT) {
@@ -138,6 +158,9 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
                 updateSignals();
             } else if (id == NET_SIGNALS_OFF) {
                 showSignals = false;
+                updateSignals();
+            } else if (id == NET_RENDER_DATA) {
+                showSignals = buffer.readBoolean();
                 updateSignals();
             }
         }

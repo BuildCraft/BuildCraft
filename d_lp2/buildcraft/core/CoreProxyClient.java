@@ -5,6 +5,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 
+import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.list.GuiList;
 import buildcraft.lib.guide.GuiGuide;
@@ -19,6 +20,13 @@ public class CoreProxyClient extends CoreProxy {
             return new GuiList(player);
         }
         return null;
+    }
+
+    @Override
+    public void fmlPreInit() {
+        super.fmlPreInit();
+
+        BuildCraftLaserManager.fmlPreInit();
     }
 
     @Override

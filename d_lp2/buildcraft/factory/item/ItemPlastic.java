@@ -32,7 +32,7 @@ public class ItemPlastic extends ItemBuildCraftBlockMulti {
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         for (EnumDyeColor colour : EnumDyeColor.values()) {
             addVariant(variants, colour.getMetadata(), colour.getName());
         }

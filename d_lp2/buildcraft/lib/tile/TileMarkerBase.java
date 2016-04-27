@@ -29,6 +29,10 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     /** Checks to see if this can connect to the other type. */
     public abstract boolean canConnectTo(T other);
 
+    /** @return True if this has lasers being emitted, or any other reason you want. Activates the surrounding "glow"
+     *         parts for the block model. */
+    public abstract boolean isActiveForRender();
+
     /** @return A list of all the possible valid connections that this marker could make. This may be empty, but never
      *         null. */
     public final List<T> getValidConnections() {

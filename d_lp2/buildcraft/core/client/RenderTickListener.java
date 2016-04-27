@@ -26,6 +26,8 @@ import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
+import buildcraft.lib.client.render.LaserData_BC8;
+import buildcraft.lib.client.render.LaserRenderer_BC8;
 
 public enum RenderTickListener {
     INSTANCE;
@@ -66,9 +68,8 @@ public enum RenderTickListener {
 
     private static void renderHeldItemInWorld(float partialTicks) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.getRenderManager().livingPlayer == null) return;
-
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        if (player == null) return;
         ItemStack held = player.getHeldItemMainhand();
         WorldClient world = mc.theWorld;
 
@@ -81,6 +82,8 @@ public enum RenderTickListener {
             Item item = held.getItem();
             if (item == BCCoreItems.mapLocation) {
                 renderMapLocation(world, held);
+            } else if (item == BCCoreItems.markerConnector) {
+                renderMarkerConnector(world, player, partialTicks);
             }
         }
 
@@ -127,5 +130,12 @@ public enum RenderTickListener {
         } else if (type == MapLocationType.ZONE) {
             // TODO!
         }
+    }
+
+    private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
+        Vec3d start = new Vec3d(0, 3, 0);
+        Vec3d end = player.getPositionEyes(partialTicks);
+        LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.LASER_MARKER_PATH, start, end, 1 / 4.0);
+        LaserRenderer_BC8.renderLaser(data);
     }
 }

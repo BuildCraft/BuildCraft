@@ -50,7 +50,7 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
 
     @Override
     @SideOnly(Side.CLIENT)
-    protected void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         for (MapLocationType type : MapLocationType.values()) {
             addVariant(variants, type.meta, type.name().toLowerCase(Locale.ROOT));
         }

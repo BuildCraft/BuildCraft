@@ -17,9 +17,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
     private ItemStack currentFuel;
     private int ticksLeft = 0;
 
-    public TileEngineStone_BC8() {
-        super(1);// All details are known
-    }
+    public TileEngineStone_BC8() {}
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
