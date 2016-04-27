@@ -135,7 +135,7 @@ public enum RenderTickListener {
     private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
         Vec3d start = new Vec3d(0, 3, 0);
         Vec3d end = player.getPositionEyes(partialTicks);
-        LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.LASER_MARKER_PATH, start, end, 1 / 4.0);
+        LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.LASER_MARKER_PATH, start, end, 1 / 16.0);
         LaserRenderer_BC8.renderLaser(data);
     }
 }

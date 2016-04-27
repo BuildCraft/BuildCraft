@@ -28,8 +28,8 @@ public class BuildCraftLaserManager {
             LaserRow capStart = new LaserRow(sprite, 0, 0, 3, 3);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 3);
             LaserRow[] middle = { //
-                new LaserRow(sprite, 0, 3, 16, 6, LaserSide.TOP, LaserSide.BOTTOM),//
-                new LaserRow(sprite, 0, 6, 16, 9, LaserSide.LEFT, LaserSide.RIGHT) //
+                new LaserRow(sprite, 0, 4, 16, 7, LaserSide.TOP, LaserSide.BOTTOM),//
+                new LaserRow(sprite, 0, 8, 16, 11, LaserSide.LEFT, LaserSide.RIGHT) //
             };
             LaserRow end = new LaserRow(sprite, 0, 12, 16, 15);
             LaserRow capEnd = new LaserRow(sprite, 13, 12, 16, 15);

@@ -78,7 +78,9 @@ public class LaserData_BC8 {
     public enum LaserSide {
         TOP,
         BOTTOM,
+        /** +Z */
         LEFT,
+        /** -Z */
         RIGHT;
 
         public static final LaserSide[] VALUES = values();

@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.client.render.LaserData_BC8.LaserRow;
@@ -189,16 +190,35 @@ public class LaserRenderer_BC8 {
         public void bakeFor(LaserContext context) {
             startCap.bakeStartCap(context);
             endCap.bakeEndCap(context);
-            // TODO: middle :P
-            // Some sort of fair divide between start and end
-            // then rendering out the rows in turn
+
+            double lengthForMiddle = Math.max(0, context.length - startWidth - endWidth);
+            int numMiddle = MathHelper.floor_double(lengthForMiddle / middleWidth);
+            double leftOverFromMiddle = lengthForMiddle - middleWidth * numMiddle;
+            if (leftOverFromMiddle > 0) {
+                numMiddle++;
+            }
+            double lengthEnds = context.length - middleWidth * numMiddle;
+            double ratioStartEnd = startWidth / endWidth;
+            double startLength = (lengthEnds / 2) * ratioStartEnd;
+            double endLength = (lengthEnds / 2) / ratioStartEnd;
+            start.bakeStart(context, startLength);
+            end.bakeEnd(context, endLength);
+
+            if (numMiddle > 0) {
+                for (LaserSide side : LaserSide.VALUES) {
+                    InterpLaserRow interp = rows.get(side);
+                    interp.bakeFor(context, side, startLength, numMiddle);
+                }
+            }
         }
     }
 
     public static class InterpLaserRow {
         public final LaserRow[] rows;
+        private final TextureAtlasSprite[] sprites;
         public final int width;
         public final int height;
+        private int currentRowIndex;
 
         public InterpLaserRow(LaserRow row) {
             this(new LaserRow[] { row });
@@ -209,43 +229,131 @@ public class LaserRenderer_BC8 {
             this.rows = rows;
             this.width = rows[0].width;
             this.height = rows[0].height;
+            this.sprites = new TextureAtlasSprite[rows.length];
+            for (int i = 0; i < rows.length; i++) {
+                sprites[i] = rows[i].sprite.getSprite();
+            }
+        }
+
+        private double texU(double between) {
+            TextureAtlasSprite sprite = sprites[currentRowIndex];
+            LaserRow row = rows[currentRowIndex];
+            if (between == 0) return sprite.getInterpolatedU(row.uMin);
+            if (between == 1) return sprite.getInterpolatedU(row.uMax);
+            double interp = row.uMin * (1 - between) + row.uMax * between;
+            return sprite.getInterpolatedU(interp);
+        }
+
+        private double texV(double between) {
+            TextureAtlasSprite sprite = sprites[currentRowIndex];
+            LaserRow row = rows[currentRowIndex];
+            if (between == 0) return sprite.getInterpolatedV(row.vMin);
+            if (between == 1) return sprite.getInterpolatedV(row.vMax);
+            double interp = row.vMin * (1 - between) + row.vMax * between;
+            return sprite.getInterpolatedV(interp);
         }
 
         public void bakeStartCap(LaserContext context) {
-            final LaserRow row = rows[0];
-            TextureAtlasSprite sprite = row.sprite.getSprite();
+            this.currentRowIndex = 0;
             int h = height / 2;
-            // anti-clockwise
-            context.transformPos(0, h, h).tex(sprite.getInterpolatedU(row.uMax), sprite.getInterpolatedV(row.vMax)).endVertex();
-            context.transformPos(0, h, -h).tex(sprite.getInterpolatedU(row.uMax), sprite.getInterpolatedV(row.vMin)).endVertex();
-            context.transformPos(0, -h, -h).tex(sprite.getInterpolatedU(row.uMin), sprite.getInterpolatedV(row.vMin)).endVertex();
-            context.transformPos(0, -h, h).tex(sprite.getInterpolatedU(row.uMin), sprite.getInterpolatedV(row.vMax)).endVertex();
+            context.transformPos(0, h, h).tex(texU(1), texV(1)).endVertex();
+            context.transformPos(0, h, -h).tex(texU(1), texV(0)).endVertex();
+            context.transformPos(0, -h, -h).tex(texU(0), texV(0)).endVertex();
+            context.transformPos(0, -h, h).tex(texU(0), texV(1)).endVertex();
         }
 
         public void bakeEndCap(LaserContext context) {
-            final LaserRow row = rows[0];
-            TextureAtlasSprite sprite = row.sprite.getSprite();
+            this.currentRowIndex = 0;
             int h = height / 2;
-            // clockwise
-            context.transformPos(context.length, -h, h).tex(sprite.getInterpolatedU(row.uMin), sprite.getInterpolatedV(row.vMax)).endVertex();
-            context.transformPos(context.length, -h, -h).tex(sprite.getInterpolatedU(row.uMin), sprite.getInterpolatedV(row.vMin)).endVertex();
-            context.transformPos(context.length, h, -h).tex(sprite.getInterpolatedU(row.uMax), sprite.getInterpolatedV(row.vMin)).endVertex();
-            context.transformPos(context.length, h, h).tex(sprite.getInterpolatedU(row.uMax), sprite.getInterpolatedV(row.vMax)).endVertex();
+            context.transformPos(context.length, -h, h).tex(texU(0), texV(1)).endVertex();
+            context.transformPos(context.length, -h, -h).tex(texU(0), texV(0)).endVertex();
+            context.transformPos(context.length, h, -h).tex(texU(1), texV(0)).endVertex();
+            context.transformPos(context.length, h, h).tex(texU(1), texV(1)).endVertex();
         }
 
-        public void bakeFor(LaserSide side, double startX, int count, LaserContext context) {
+        public void bakeStart(LaserContext context, double length) {
+            this.currentRowIndex = 0;
+            final int h = height / 2;
+            final double l = length;
+            final double i = 1 - (length / width);
+            // TOP
+            context.transformPos(0, h, -h).tex(texU(i), texV(0)).endVertex();// 1
+            context.transformPos(0, h, h).tex(texU(i), texV(1)).endVertex();// 2
+            context.transformPos(l, h, h).tex(texU(1), texV(1)).endVertex();// 3
+            context.transformPos(l, h, -h).tex(texU(1), texV(0)).endVertex();// 4
+            // BOTTOM
+            context.transformPos(l, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
+            context.transformPos(l, -h, h).tex(texU(1), texV(1)).endVertex();// 3
+            context.transformPos(0, -h, h).tex(texU(i), texV(1)).endVertex();// 2
+            context.transformPos(0, -h, -h).tex(texU(i), texV(0)).endVertex();// 1
+            // LEFT
+            context.transformPos(0, -h, -h).tex(texU(i), texV(0)).endVertex();// 1
+            context.transformPos(0, h, -h).tex(texU(i), texV(1)).endVertex();// 2
+            context.transformPos(l, h, -h).tex(texU(1), texV(1)).endVertex();// 3
+            context.transformPos(l, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
+            // RIGHT
+            context.transformPos(l, -h, h).tex(texU(1), texV(0)).endVertex();// 4
+            context.transformPos(l, h, h).tex(texU(1), texV(1)).endVertex();// 3
+            context.transformPos(0, h, h).tex(texU(i), texV(1)).endVertex();// 2
+            context.transformPos(0, -h, h).tex(texU(i), texV(0)).endVertex();// 1
+        }
+
+        public void bakeEnd(LaserContext context, double length) {
+            this.currentRowIndex = 0;
+            final int h = height / 2;
+            final double ls = context.length - length;
+            final double lb = context.length;
+            final double i = length / width;
+            // TOP
+            context.transformPos(ls, h, -h).tex(texU(0), texV(0)).endVertex();// 1
+            context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
+            context.transformPos(lb, h, h).tex(texU(i), texV(1)).endVertex();// 3
+            context.transformPos(lb, h, -h).tex(texU(i), texV(0)).endVertex();// 4
+            // BOTTOM
+            context.transformPos(lb, -h, -h).tex(texU(i), texV(0)).endVertex();// 4
+            context.transformPos(lb, -h, h).tex(texU(i), texV(1)).endVertex();// 3
+            context.transformPos(ls, -h, h).tex(texU(0), texV(1)).endVertex();// 2
+            context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
+            // LEFT
+            context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
+            context.transformPos(ls, h, -h).tex(texU(0), texV(1)).endVertex();// 2
+            context.transformPos(lb, h, -h).tex(texU(i), texV(1)).endVertex();// 3
+            context.transformPos(lb, -h, -h).tex(texU(i), texV(0)).endVertex();// 4
+            // RIGHT
+            context.transformPos(lb, -h, h).tex(texU(i), texV(0)).endVertex();// 4
+            context.transformPos(lb, h, h).tex(texU(i), texV(1)).endVertex();// 3
+            context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
+            context.transformPos(ls, -h, h).tex(texU(0), texV(0)).endVertex();// 1
+        }
+
+        public void bakeFor(LaserContext context, LaserSide side, double startX, int count) {
             double xMin = startX;
             double xMax = startX + width;
+            double h = height / 2;
             for (int i = 0; i < count; i++) {
-                LaserRow row = rows[i % rows.length];
+                this.currentRowIndex = i % rows.length;
+                double ls = xMin;
+                double lb = xMax;
                 if (side == LaserSide.TOP) {
-                    // TODO
+                    context.transformPos(ls, h, -h).tex(texU(0), texV(0)).endVertex();// 1
+                    context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
+                    context.transformPos(lb, h, h).tex(texU(1), texV(1)).endVertex();// 3
+                    context.transformPos(lb, h, -h).tex(texU(1), texV(0)).endVertex();// 4
                 } else if (side == LaserSide.BOTTOM) {
-                    // TODO
+                    context.transformPos(lb, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
+                    context.transformPos(lb, -h, h).tex(texU(1), texV(1)).endVertex();// 3
+                    context.transformPos(ls, -h, h).tex(texU(0), texV(1)).endVertex();// 2
+                    context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
                 } else if (side == LaserSide.LEFT) {
-                    // TODO
+                    context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
+                    context.transformPos(ls, h, -h).tex(texU(0), texV(1)).endVertex();// 2
+                    context.transformPos(lb, h, -h).tex(texU(1), texV(1)).endVertex();// 3
+                    context.transformPos(lb, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
                 } else if (side == LaserSide.RIGHT) {
-                    // TODO
+                    context.transformPos(lb, -h, h).tex(texU(1), texV(0)).endVertex();// 4
+                    context.transformPos(lb, h, h).tex(texU(1), texV(1)).endVertex();// 3
+                    context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
+                    context.transformPos(ls, -h, h).tex(texU(0), texV(0)).endVertex();// 1
                 }
                 xMin += width;
                 xMax += width;
