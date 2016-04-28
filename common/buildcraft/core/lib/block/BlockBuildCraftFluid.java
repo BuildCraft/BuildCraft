@@ -69,15 +69,29 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
-        if (materialIn == Material.water) return Boolean.TRUE;
+        if (materialIn == Material.water && !dense) return Boolean.TRUE;
         return null;
     }
 
     @Override
-    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn,
-            boolean testingHead) {
-        if (materialIn == Material.water) return Boolean.TRUE;
+    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+        if (materialIn == Material.water && !dense) return Boolean.TRUE;
         return null;
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        if (!dense || entity == null) return;
+
+        entity.motionY = Math.min(0.0, entity.motionY);
+
+        if (entity.motionY < -0.05) {
+            entity.motionY *= 0.05;
+        }
+
+        entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
+        entity.motionY -= 0.05;
+        entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
     }
 
     public BlockBuildCraftFluid setDense(boolean dense) {
@@ -127,8 +141,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.randomDisplayTick(world, pos, state, rand);
 
-        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock()
-                .getMaterial().blocksMovement()) {
+        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
             double px = pos.getX() + rand.nextFloat();
             double py = pos.getY() - 1.05D;

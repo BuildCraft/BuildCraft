@@ -78,7 +78,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
             return;
         }
 
-        float renderScale = 0.7f;
+        float renderScale = 0.9f;
         ItemStack itemstack = travellingItem.getItemStack();
 
         GL11.glPushMatrix();

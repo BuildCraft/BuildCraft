@@ -66,14 +66,11 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.gates.GatePluggable;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight, ICustomStateMapper, ICustomPipeConnection {
-    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended(
-            "core_state", TileGenericPipe.CoreState.class);
+    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended("core_state", TileGenericPipe.CoreState.class);
 
-    public static final BuildCraftExtendedProperty<PipeRenderState> PIPE_RENDER_STATE = BuildCraftExtendedProperty.createExtended("render_state",
-            PipeRenderState.class);
+    public static final BuildCraftExtendedProperty<PipeRenderState> PIPE_RENDER_STATE = BuildCraftExtendedProperty.createExtended("render_state", PipeRenderState.class);
 
-    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended(
-            "pluggable_state", PipePluggableState.class);
+    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended("pluggable_state", PipePluggableState.class);
 
     public static final BuildCraftExtendedProperty<Pipe<?>> PIPE_PIPE = BuildCraftExtendedProperty.createExtended("pipe_pipe", Pipe.class);
 
@@ -106,15 +103,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         @Override
         public String toString() {
-            return "RaytraceResult [hitPart=" + hitPart + ", boundingBox=" + boundingBox + ", sideHit=" + sideHit + ", partSide=" + partSide
-                + ",\n movingObjectPosition=" + movingObjectPosition + "]";
+            return "RaytraceResult [hitPart=" + hitPart + ", boundingBox=" + boundingBox + ", sideHit=" + sideHit + ", partSide=" + partSide + ",\n movingObjectPosition=" + movingObjectPosition + "]";
         }
     }
 
     /* Defined subprograms ************************************************* */
     public BlockGenericPipe() {
-        super(Material.glass, (BCCreativeTab) null, true, GENERIC_PIPE_DATA, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST,
-                CONNECTED_NORTH, CONNECTED_SOUTH, PIPE_CORE_STATE, PIPE_RENDER_STATE, PIPE_PLUGGABLE_STATE, PIPE_PIPE);
+        super(Material.glass, (BCCreativeTab) null, true, GENERIC_PIPE_DATA, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH, CONNECTED_SOUTH, PIPE_CORE_STATE, PIPE_RENDER_STATE, PIPE_PLUGGABLE_STATE, PIPE_PIPE);
         setCreativeTab(null);
         setLightOpacity(0);
     }
@@ -532,7 +527,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         pipeRemoved.put(pos, pipe);
         for (EnumFacing dir : EnumFacing.values()) {
             Pipe<?> tpipe = getPipe(world, pos.offset(dir));
-			if (tpipe != null) {
+            if (tpipe != null) {
                 tpipe.scheduleWireUpdate();
             }
         }
@@ -690,8 +685,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, int meta,
-            EntityLivingBase entity) {
+    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, int meta, EntityLivingBase entity) {
         Pipe<?> pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {
@@ -712,8 +706,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float xOffset, float yOffset,
-            float zOffset) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float xOffset, float yOffset, float zOffset) {
         if (super.onBlockActivated(world, pos, state, player, side, xOffset, yOffset, zOffset)) {
             return true;
         }
@@ -788,8 +781,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
             Gate clickedGate = null;
 
-            if (rayTrace != null && rayTrace.hitPart == Part.Pluggable && pipe.container.getPipePluggable(
-                    rayTrace.sideHit) instanceof GatePluggable) {
+            if (rayTrace != null && rayTrace.hitPart == Part.Pluggable && pipe.container.getPipePluggable(rayTrace.sideHit) instanceof GatePluggable) {
                 clickedGate = pipe.gates[rayTrace.sideHit.ordinal()];
             }
 
@@ -823,8 +815,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
 
         if (player.isSneaking()) {
-            if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable && pluggable.getClass()
-                    .isInstance(pipe.container.getPipePluggable(side))) {
+            if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable && pluggable.getClass().isInstance(pipe.container.getPipePluggable(side))) {
                 return pipe.container.setPluggable(side, null, player);
             }
         }
@@ -865,6 +856,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             pipe.updateSignalState();
 
             pipe.container.scheduleRenderUpdate();
+
+            for (EnumFacing face : EnumFacing.VALUES) {
+                TileEntity other = pipe.container.getNeighborTile(face);
+                if (other instanceof IPipeTile) {
+                    IPipeTile otherPipe = (IPipeTile) other;
+                    otherPipe.scheduleRenderUpdate();
+                }
+            }
+
             return true;
         }
         return false;
@@ -888,6 +888,14 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             }
 
             pipe.container.scheduleRenderUpdate();
+
+            for (EnumFacing face : EnumFacing.VALUES) {
+                TileEntity other = pipe.container.getNeighborTile(face);
+                if (other instanceof IPipeTile) {
+                    IPipeTile otherPipe = (IPipeTile) other;
+                    otherPipe.scheduleRenderUpdate();
+                }
+            }
 
             return true;
         }
@@ -1099,12 +1107,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         Block block = BuildCraftTransport.genericPipeBlock;
         float b = 0.1F;
-        double px = target.hitVec.xCoord + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block
-                .getBlockBoundsMinX();
-        double py = target.hitVec.yCoord + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block
-                .getBlockBoundsMinY();
-        double pz = target.hitVec.zCoord + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block
-                .getBlockBoundsMinZ();
+        double px = target.hitVec.xCoord + rand.nextDouble() * (block.getBlockBoundsMaxX() - block.getBlockBoundsMinX() - (b * 2.0F)) + b + block.getBlockBoundsMinX();
+        double py = target.hitVec.yCoord + rand.nextDouble() * (block.getBlockBoundsMaxY() - block.getBlockBoundsMinY() - (b * 2.0F)) + b + block.getBlockBoundsMinY();
+        double pz = target.hitVec.zCoord + rand.nextDouble() * (block.getBlockBoundsMaxZ() - block.getBlockBoundsMinZ() - (b * 2.0F)) + b + block.getBlockBoundsMinZ();
 
         if (sideHit == EnumFacing.DOWN) {
             py = target.hitVec.yCoord + block.getBlockBoundsMinY() - b;
@@ -1130,8 +1135,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             px = target.hitVec.xCoord + block.getBlockBoundsMaxX() + b;
         }
 
-        EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, 0.0D, 0.0D, 0.0D, Block
-                .getStateId(worldObj.getBlockState(target.getBlockPos())));
+        EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, 0.0D, 0.0D, 0.0D, Block.getStateId(worldObj.getBlockState(target.getBlockPos())));
         fx.setParticleIcon(icon);
         effectRenderer.addEffect(fx.multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
         return true;
@@ -1165,8 +1169,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                     double px = pos.getX() + (i + 0.5D) / its;
                     double py = pos.getY() + (j + 0.5D) / its;
                     double pz = pos.getZ() + (k + 0.5D) / its;
-                    EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, px - pos.getX()
-                        - 0.5D, py - pos.getY() - 0.5D, pz - pos.getZ() - 0.5D, Block.getStateId(worldObj.getBlockState(pos)));
+                    EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, px - pos.getX() - 0.5D, py - pos.getY() - 0.5D, pz - pos.getZ() - 0.5D, Block.getStateId(worldObj.getBlockState(pos)));
                     fx.setParticleIcon(icon);
                 }
             }

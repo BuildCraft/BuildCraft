@@ -265,8 +265,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             String errData = "data=[";
             errData += "pipe=" + (pipe == null ? "null" : pipe.getClass());
             if (pipe != null) {
-                errData += "item=" + pipe.item;
-                errData += "class=" + (pipe.item == null ? "null" : pipe.item.getClass());
+                errData += ", item=" + pipe.item;
+                errData += ", class=" + (pipe.item == null ? "null" : pipe.item.getClass());
                 errData += ", id=" + Item.itemRegistry.getIDForObject(pipe.item);
             }
             errData += ", loc=" + loc;

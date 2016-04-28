@@ -88,8 +88,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float par7, float par8,
-            float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float par7, float par8, float par9) {
         TileEntity tile = world.getTileEntity(pos);
 
         BlockInteractionEvent event = new BlockInteractionEvent(player, state);
@@ -169,9 +168,14 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
         if (((TileEngineBase) tile).getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             for (int f = 0; f < 16; f++) {
-                world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x + 0.4F + (random.nextFloat() * 0.2F), y + (random.nextFloat() * 0.5F), z + 0.4F
-                    + (random.nextFloat() * 0.2F), random.nextFloat() * 0.04F - 0.02F, random.nextFloat() * 0.05F + 0.02F, random.nextFloat() * 0.04F
-                        - 0.02F);
+                double particleX = x + 0.4F + (random.nextFloat() * 0.2F);
+                double particleY = y + (random.nextFloat() * 0.5F);
+                double particleZ = z + 0.4F + (random.nextFloat() * 0.2F);
+
+                double particleOffsetX = random.nextFloat() * 0.04F - 0.02F;
+                double particleOffsetY = random.nextFloat() * 0.05F + 0.02F;
+                double particleOffsetZ = random.nextFloat() * 0.04F - 0.02F;
+                world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, particleX, particleY, particleZ, particleOffsetX, particleOffsetY, particleOffsetZ);
             }
         } else if (((TileEngineBase) tile).isBurning()) {
             float f = x + 0.5F;

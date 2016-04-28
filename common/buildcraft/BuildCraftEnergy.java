@@ -180,7 +180,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             oil.block.setFlammability(0);
             BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
                     ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
+            BuildCraftCore.mainConfigManager.register("general.oilIsDense", false, "Should oil be dense and push enties up?",
                     ConfigManager.RestartRequirement.NONE);
 
             fuel = new FluidDefinition("fuel", 1000, 1000, true);
@@ -218,7 +218,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-                oil.block.setFlammable(canOilBurn).setDense(isOilDense);
+                oil.block.setFlammable(canOilBurn).setDense(/*isOilDense*/true);
             }
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {

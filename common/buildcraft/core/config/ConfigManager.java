@@ -69,8 +69,6 @@ public class ConfigManager implements IModGuiFactory {
             p = new Property(s, (String) o, Property.Type.STRING);
         } else if (o instanceof Double || o instanceof Float) {
             p = new Property(s, o.toString(), Property.Type.DOUBLE);
-        } else if (o instanceof Float) {
-            p = new Property(s, o.toString(), Property.Type.DOUBLE);
         } else if (o instanceof Boolean) {
             p = new Property(s, o.toString(), Property.Type.BOOLEAN);
         } else if (o instanceof String[]) {
