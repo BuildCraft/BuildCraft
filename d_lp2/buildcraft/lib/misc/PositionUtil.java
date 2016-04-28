@@ -2,22 +2,25 @@ package buildcraft.lib.misc;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 public class PositionUtil {
-    /** @return The axis that connects the two positions, or null if they do not occupy the same axis-position. Also
-     *         returns null if they are the same. */
-    public static Axis getAxisDifference(BlockPos from, BlockPos to) {
+    @Nullable
+    public static EnumFacing getDirectFacingOffset(BlockPos from, BlockPos to) {
         BlockPos diff = to.subtract(from);
-        boolean x = diff.getX() == 0;
-        boolean y = diff.getY() == 0;
-        boolean z = diff.getZ() == 0;
-        if (!x && y && z) return Axis.X;
-        if (x && !y && z) return Axis.Y;
-        if (x && y && !z) return Axis.Z;
+        boolean x = diff.getX() != 0;
+        boolean y = diff.getY() != 0;
+        boolean z = diff.getZ() != 0;
+        if (x && y || x && z || y && z) return null;
+        if (x) return diff.getX() > 0 ? EnumFacing.EAST : EnumFacing.WEST;
+        if (y) return diff.getY() > 0 ? EnumFacing.UP : EnumFacing.DOWN;
+        if (z) return diff.getZ() > 0 ? EnumFacing.SOUTH : EnumFacing.NORTH;
         return null;
     }
 
@@ -44,5 +47,70 @@ public class PositionUtil {
         boolean z = diff.getZ() == 1 || diff.getZ() == -1;
         if (y && z) return false;
         return x != z;
+    }
+
+    public static double dot(Vec3d a, Vec3d b) {
+        return a.xCoord * b.xCoord + a.yCoord * b.yCoord + a.zCoord * b.zCoord;
+    }
+
+    public static Vec3d scale(Vec3d vec, double scale) {
+        return new Vec3d(vec.xCoord * scale, vec.yCoord * scale, vec.zCoord * scale);
+    }
+
+    public static Vec3d rayTrace(Line line, Vec3d start, Vec3d direction) {
+        double ia = 0, ib = 1;
+        double da = 0, db = 0;
+        double id = 0.5;
+        Vec3d va, vb;
+
+        Vec3d best = null;
+        for (int i = 0; i < 10; i++) {
+            Vec3d a = line.interpolate(ia);
+            Vec3d b = line.interpolate(ib);
+            va = closestPointOnLineToPoint(a, start, direction);
+            vb = closestPointOnLineToPoint(b, start, direction);
+            da = a.squareDistanceTo(va);
+            db = b.squareDistanceTo(vb);
+            if (da < db) {
+                // We work out the square root at the end to get the actual distance
+                best = a;
+                ib -= id;
+            } else /* if (db < da) */ {
+                // We work out the square root at the end to get the actual distance
+                best = b;
+                ia += id;
+            }
+            id /= 2.0;
+        }
+        return best;
+    }
+
+    public static Vec3d closestPointOnLineToPoint(Vec3d point, Vec3d linePoint, Vec3d lineVector) {
+        Vec3d v = lineVector.normalize();
+        Vec3d p1 = linePoint;
+        Vec3d p2 = point;
+
+        // Its maths. Its allowed to deviate from normal naming rules.
+        Vec3d p2_minus_p1 = p2.subtract(p1);
+        double _dot_v = dot(p2_minus_p1, v);
+        Vec3d _scale_v = scale(v, _dot_v);
+        return p1.add(_scale_v);
+    }
+
+    public static class Line {
+        public final Vec3d start, end;
+
+        public Line(Vec3d start, Vec3d end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public static Line createLongLine(Vec3d start, Vec3d direction) {
+            return new Line(start, scale(direction, 1024));
+        }
+
+        public Vec3d interpolate(double interp) {
+            return scale(start, 1 - interp).add(scale(end, interp));
+        }
     }
 }

@@ -38,7 +38,7 @@ public class SpriteHolderRegistry {
             this.spriteLocation = spriteLocation;
         }
 
-        public void onTextureStitchPre(TextureMap map) {
+        protected void onTextureStitchPre(TextureMap map) {
             sprite = map.registerSprite(spriteLocation);
         }
 

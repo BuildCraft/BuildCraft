@@ -9,22 +9,37 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 
 public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBuildCraft_BC8 {
+    public static final List<MarkerCache<?>> CACHES = new ArrayList<>();
+
     protected Set<T> connectedAndLoaded = new HashSet<>();
     protected Set<BlockPos> connectedNotLoaded = new HashSet<>();
     protected Set<BlockPos> allConnected = new HashSet<>();
+
+    public static <T extends TileMarkerBase<T>> MarkerCache<T> createCache(String name) {
+        MarkerCache<T> cache = new MarkerCache<>(name);
+        CACHES.add(cache);
+        return cache;
+    }
 
     /** Generic helper method for getting this as a type of "T" cleanly. Love you generics, but sometimes...
      * 
      * @return (T) this; */
     protected abstract T getAsType();
 
-    /** @return A cache for storing ALL markers in the world. Normally this should be a hash map so lookups shouldn't be
-     *         too long. */
-    public abstract Map<BlockPos, T> getCache();
+    /** @return A cache for storing ALL markers in the world. If you use {@link #createCache(String)} then your markers
+     *         will be connectable with the marker connector */
+    public abstract MarkerCache<T> getCache();
+
+    public Map<BlockPos, T> getCacheForSide() {
+        return getCache().getCache(worldObj);
+    }
 
     /** Checks to see if this can connect to the other type. */
     public abstract boolean canConnectTo(T other);
@@ -33,11 +48,16 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
      *         parts for the block model. */
     public abstract boolean isActiveForRender();
 
+    /** @return The type override. By default this will use the MARKER_POSSIBLE in the BC Core class
+     *         BuildCraftLaserManager. Return a non-null value to use something else. */
+    @SideOnly(Side.CLIENT)
+    public abstract LaserType getPossibleLaserType();
+
     /** @return A list of all the possible valid connections that this marker could make. This may be empty, but never
      *         null. */
-    public final List<T> getValidConnections() {
+    public List<T> getValidConnections() {
         List<T> list = new ArrayList<>();
-        for (T t : getCache().values()) {
+        for (T t : getCacheForSide().values()) {
             if (canConnectTo(t) && t.canConnectTo(getAsType())) list.add(t);
         }
         return list;
@@ -122,7 +142,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     }
 
     private void removeSelfFromCache() {
-        getCache().remove(this.getPos());
+        getCacheForSide().remove(this.getPos());
         for (T t : connectedAndLoaded) {
             t.connectedAndLoaded.remove(this);
             t.connectedNotLoaded.add(getPos());
@@ -131,7 +151,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
 
     private void addSelfToCache() {
         T thisType = getAsType();
-        getCache().put(this.getPos(), thisType);
+        getCacheForSide().put(this.getPos(), thisType);
         attemptConnection();
     }
 
@@ -140,7 +160,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
         Iterator<BlockPos> iter = connectedNotLoaded.iterator();
         while (iter.hasNext()) {
             BlockPos potential = iter.next();
-            T type = getCache().get(potential);
+            T type = getCacheForSide().get(potential);
             if (type != null) {
                 iter.remove();
                 connectedAndLoaded.add(type);
@@ -152,19 +172,19 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
         NBTTagList list = new NBTTagList();
         for (BlockPos pos : allConnected) {
             list.appendTag(NBTUtils.writeBlockPos(pos));
         }
-        compound.setTag("connected", list);
+        nbt.setTag("connected", list);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        NBTTagList list = compound.getTagList("connected", Constants.NBT.TAG_INT_ARRAY);
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        NBTTagList list = nbt.getTagList("connected", Constants.NBT.TAG_INT_ARRAY);
         for (int i = 0; i < list.tagCount(); i++) {
             BlockPos pos = NBTUtils.readBlockPos(list.get(i));
             connectedNotLoaded.add(pos);
@@ -182,6 +202,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
                 for (BlockPos connectedTo : allConnected) {
                     buffer.writeBlockPos(connectedTo);
                 }
+                BCLog.logger.info("Wrote connected data for " + getPos() + " [" + allConnected.size() + "]");
             }
         }
     }
@@ -197,6 +218,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
                 connectedNotLoaded.clear();
                 for (int i = 0; i < connected; i++) {
                     BlockPos connectedTo = buffer.readBlockPos();
+                    BCLog.logger.info("Read a connected block pos (" + getPos() + " -> " + connectedTo + ")");
                     allConnected.add(connectedTo);
                     connectedNotLoaded.add(connectedTo);
                 }

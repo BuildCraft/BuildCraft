@@ -99,7 +99,9 @@ public class LaserRenderer_BC8 {
             holding.setIdentity();
 
             // Step 3
-            holding.setScale((float) data.scale);
+            holding.m00 = (float) data.scale;
+            holding.m11 = (float) data.scale;
+            holding.m22 = (float) data.scale;
             matrix.mul(holding);
             holding.setIdentity();
 
@@ -112,7 +114,6 @@ public class LaserRenderer_BC8 {
             holding.rotZ((float) angleY);
             matrix.mul(holding);
             holding.setIdentity();
-
         }
 
         public VertexBuffer transformPos(Vec3d vec) {
@@ -161,7 +162,7 @@ public class LaserRenderer_BC8 {
         public final LaserType type;
         private final InterpLaserRow startCap, endCap;
         private final InterpLaserRow start, end;
-        private final int startWidth, middleWidth, endWidth;
+        private final double startWidth, middleWidth, endWidth;
         private final Map<LaserSide, InterpLaserRow> rows = new EnumMap<>(LaserSide.class);
 
         public CompiledLaserType(LaserType type) {
@@ -216,8 +217,8 @@ public class LaserRenderer_BC8 {
     public static class InterpLaserRow {
         public final LaserRow[] rows;
         private final TextureAtlasSprite[] sprites;
-        public final int width;
-        public final int height;
+        public final double width;
+        public final double height;
         private int currentRowIndex;
 
         public InterpLaserRow(LaserRow row) {
@@ -255,7 +256,7 @@ public class LaserRenderer_BC8 {
 
         public void bakeStartCap(LaserContext context) {
             this.currentRowIndex = 0;
-            int h = height / 2;
+            double h = height / 2;
             context.transformPos(0, h, h).tex(texU(1), texV(1)).endVertex();
             context.transformPos(0, h, -h).tex(texU(1), texV(0)).endVertex();
             context.transformPos(0, -h, -h).tex(texU(0), texV(0)).endVertex();
@@ -264,7 +265,7 @@ public class LaserRenderer_BC8 {
 
         public void bakeEndCap(LaserContext context) {
             this.currentRowIndex = 0;
-            int h = height / 2;
+            double h = height / 2;
             context.transformPos(context.length, -h, h).tex(texU(0), texV(1)).endVertex();
             context.transformPos(context.length, -h, -h).tex(texU(0), texV(0)).endVertex();
             context.transformPos(context.length, h, -h).tex(texU(1), texV(0)).endVertex();
@@ -273,7 +274,7 @@ public class LaserRenderer_BC8 {
 
         public void bakeStart(LaserContext context, double length) {
             this.currentRowIndex = 0;
-            final int h = height / 2;
+            final double h = height / 2;
             final double l = length;
             final double i = 1 - (length / width);
             // TOP
@@ -300,7 +301,7 @@ public class LaserRenderer_BC8 {
 
         public void bakeEnd(LaserContext context, double length) {
             this.currentRowIndex = 0;
-            final int h = height / 2;
+            final double h = height / 2;
             final double ls = context.length - length;
             final double lb = context.length;
             final double i = length / width;

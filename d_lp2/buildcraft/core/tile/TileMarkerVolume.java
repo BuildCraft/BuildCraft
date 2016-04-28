@@ -1,25 +1,33 @@
 package buildcraft.core.tile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.ITileAreaProvider;
+import buildcraft.core.BCCoreConfig;
 import buildcraft.core.Box;
 import buildcraft.core.LaserData;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.tile.MarkerCache;
 import buildcraft.lib.tile.TileMarkerBase;
 
 public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implements ITileAreaProvider {
     public static final int NET_SIGNALS_ON = 10;
     public static final int NET_SIGNALS_OFF = 11;
-    public static final Map<BlockPos, TileMarkerVolume> VOLUME_CACHE = new HashMap<>();
+    public static final MarkerCache<TileMarkerVolume> VOLUME_CACHE = createCache("bc:volume");
 
     public Box box = null;
 
@@ -28,23 +36,55 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     public LaserData[] signals = null;
 
     @Override
-    public Map<BlockPos, TileMarkerVolume> getCache() {
+    public MarkerCache<TileMarkerVolume> getCache() {
         return VOLUME_CACHE;
     }
 
     @Override
     public boolean canConnectTo(TileMarkerVolume other) {
         if (allConnected.size() >= 3) return false;
-        Axis diff = getDiff(other);
-        if (diff == null) return false;
-        for (BlockPos pos : allConnected) {
-            if (diff == PositionUtil.getAxisDifference(getPos(), pos)) return false;
+        EnumFacing directOffset = PositionUtil.getDirectFacingOffset(getPos(), other.getPos());
+        if (directOffset == null) return false;
+        for (BlockPos alreadyConnected : allConnected) {
+            EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), alreadyConnected);
+            if (offset != null && offset.getAxis() == directOffset.getAxis()) return false;
+        }
+        int diff = MathHelper.floor_double(Math.sqrt(other.getPos().distanceSq(getPos())));
+        for (int i = 1; i < diff; i++) {
+            BlockPos inBetween = getPos().offset(directOffset, i);
+            TileMarkerVolume inBetweenTile = getCacheForSide().get(inBetween);
+            if (inBetweenTile != null && inBetweenTile != other) {
+                return false;
+            }
         }
         return true;
     }
 
-    private Axis getDiff(TileMarkerVolume other) {
-        return other == null ? null : PositionUtil.getAxisDifference(getPos(), other.getPos());
+    @Override
+    public List<TileMarkerVolume> getValidConnections() {
+        if (allConnected.size() >= 3) return ImmutableList.of();
+        Set<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
+        for (BlockPos other : allConnected) {
+            EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), other);
+            if (offset != null) {
+                taken.add(offset.getAxis());
+            }
+        }
+
+        final Map<BlockPos, TileMarkerVolume> cache = getCacheForSide();
+        List<TileMarkerVolume> valids = new ArrayList<>();
+
+        for (EnumFacing face : EnumFacing.values()) {
+            if (taken.contains(face.getAxis())) continue;
+            for (int i = 1; i < BCCoreConfig.markerMaxDistance; i++) {
+                BlockPos toTry = getPos().offset(face, i);
+                TileMarkerVolume other = cache.get(toTry);
+                if (other == null) continue;
+                valids.add(other);
+                break;
+            }
+        }
+        return valids;
     }
 
     @Override
@@ -55,6 +95,12 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     @Override
     public boolean isActiveForRender() {
         return showSignals || box != null;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public LaserType getPossibleLaserType() {
+        return BuildCraftLaserManager.MARKER_VOLUME_POSSIBLE;
     }
 
     @Override

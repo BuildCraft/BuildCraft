@@ -9,10 +9,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
@@ -65,6 +65,7 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
         if (hasWorldObj()) {
             final Side side = worldObj.isRemote ? Side.CLIENT : Side.SERVER;
             return new MessageUpdateTile(getPos(), buffer -> {
+                BCLog.logger.info("Wrote a message for " + getPos());
                 buffer.writeShort(id);
                 this.writePayload(id, buffer, side);
             });
@@ -79,10 +80,9 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
     }
 
     @Override
-    public final IMessage receivePayload(Side side, PacketBuffer buffer) throws IOException {
+    public final void receivePayload(Side side, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, side);
-        return null;
     }
 
     // Network overridables

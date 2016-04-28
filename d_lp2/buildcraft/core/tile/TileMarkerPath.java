@@ -1,14 +1,23 @@
 package buildcraft.core.tile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.core.IPathProvider;
+import buildcraft.core.client.BuildCraftLaserManager;
+import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.tile.MarkerCache;
 import buildcraft.lib.tile.TileMarkerBase;
 
 public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IPathProvider {
-    public static final Map<BlockPos, TileMarkerPath> PATH_CACHE = new HashMap<>();
+    public static final MarkerCache<TileMarkerPath> PATH_CACHE = createCache("bc:path");
     /** The path marker that comes before this. Used to dictate the direction of this path. Will be null if its not
      * connected to anything. */
     private BlockPos from, to;
@@ -19,13 +28,19 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     }
 
     @Override
-    public Map<BlockPos, TileMarkerPath> getCache() {
+    public MarkerCache<TileMarkerPath> getCache() {
         return PATH_CACHE;
     }
 
     @Override
     public boolean isActiveForRender() {
         return false;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public LaserType getPossibleLaserType() {
+        return BuildCraftLaserManager.MARKER_PATH_POSSIBLE;
     }
 
     @Override
@@ -68,7 +83,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         TileMarkerPath start = this;
         while (first != null && !visited.contains(start)) {
             visited.add(start);
-            TileMarkerPath path = PATH_CACHE.get(first);
+            TileMarkerPath path = getCacheForSide().get(first);
             if (path == null) break;
             start = path;
             first = start.from;
@@ -80,7 +95,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         while (start != null && start.to != null && !visited.contains(start)) {
             visited.add(start);
             positions.add(start.to);
-            start = PATH_CACHE.get(start.to);
+            start = getCacheForSide().get(start.to);
         }
         return positions;
     }

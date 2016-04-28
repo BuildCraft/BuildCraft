@@ -5,9 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -25,7 +29,7 @@ public enum BCMessageHandler {
 
     private static final List<MessageTypeData<?, ?>> handlers = new ArrayList<>();
 
-    public static <REQ extends IMessage, REPLY extends IMessage> void addMessageType(Class<REQ> messageClass, IMessageHandler<REQ, REPLY> handler, Side... sides) {
+    public static <I extends IMessage, O extends IMessage> void addMessageType(Class<I> messageClass, IMessageHandler<I, O> handler, Side... sides) {
         if (netWrapper != null) throw new IllegalStateException("Must register all messages BEFORE post-init!");
         handlers.add(new MessageTypeData<>(messageClass, handler, sides));
     }
@@ -52,18 +56,42 @@ public enum BCMessageHandler {
         }
     }
 
-    private static <REQ extends IMessage, REPLY extends IMessage> void addInternal(MessageTypeData<REQ, REPLY> handler, int discriminator) {
+    private static <I extends IMessage, O extends IMessage> void addInternal(MessageTypeData<I, O> handler, int discriminator) {
         for (Side side : handler.sides) {
-            netWrapper.registerMessage(handler.handler, handler.messageClass, discriminator, side);
+            netWrapper.registerMessage(createHandler(handler.handler), handler.messageClass, discriminator, side);
         }
     }
 
-    public static class MessageTypeData<REQ extends IMessage, REPLY extends IMessage> implements Comparable<MessageTypeData<?, ?>> {
-        private final Class<REQ> messageClass;
-        private final IMessageHandler<REQ, REPLY> handler;
+    private static <I extends IMessage, O extends IMessage> IMessageHandler<I, IMessage> createHandler(IMessageHandler<I, O> from) {
+        return (message, context) -> {
+            EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+            if (player == null || player.worldObj == null) return null;
+            LibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
+                O reply = from.onMessage(message, context);
+                if (reply != null) {
+                    BCMessageHandler.sendReturnMessage(context, reply);
+                }
+            });
+            return null;
+        };
+    }
+
+    public static void sendReturnMessage(MessageContext context, IMessage reply) {
+        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            netWrapper.sendTo(reply, playerMP);
+        } else if (player != null) {
+            netWrapper.sendToServer(reply);
+        }
+    }
+
+    public static class MessageTypeData<I extends IMessage, O extends IMessage> implements Comparable<MessageTypeData<?, ?>> {
+        private final Class<I> messageClass;
+        private final IMessageHandler<I, O> handler;
         private final Side[] sides;
 
-        public MessageTypeData(Class<REQ> messageClass, IMessageHandler<REQ, REPLY> handler, Side... sides) {
+        public MessageTypeData(Class<I> messageClass, IMessageHandler<I, O> handler, Side... sides) {
             this.messageClass = messageClass;
             this.handler = handler;
             this.sides = sides;

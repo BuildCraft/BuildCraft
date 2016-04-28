@@ -21,8 +21,11 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
+import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.config.DetailedConfigOption;
 
+/** Use {@link LaserRenderer_BC8} now */
+@Deprecated
 public class RenderLaser extends Render<EntityLaser> {
     /** Option for the number of pixels that each laser should render as. */
     private static final DetailedConfigOption OPTION_LASER_FALLBACK_PIXELS = new DetailedConfigOption("render.laser.fallback.pixels", "2");

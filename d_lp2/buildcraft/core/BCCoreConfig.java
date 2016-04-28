@@ -22,6 +22,7 @@ public class BCCoreConfig {
     public static boolean useBucketsStatic;
     public static boolean useBucketsFlow;
     public static int itemLifespan;
+    public static int markerMaxDistance;
 
     private static Property propColourBlindMode;
     private static Property propWorldGen;
@@ -33,6 +34,7 @@ public class BCCoreConfig {
     private static Property propUseBucketsStatic;
     private static Property propUseBucketsFlow;
     private static Property propItemLifespan;
+    private static Property propMarkerMaxDistance;
 
     public static void preInit(File cfgFile) {
         config = new Configuration(new File(cfgFile, "main.cfg"));
@@ -91,6 +93,11 @@ public class BCCoreConfig {
         propItemLifespan.setComment("How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)");
         none.setTo(propItemLifespan);
 
+        propMarkerMaxDistance = config.get(general, "markerMaxDistance", 64);
+        propMarkerMaxDistance.setMinValue(16).setMaxValue(256);
+        propMarkerMaxDistance.setComment("How far, in minecraft blocks, should markers (volume and path) reach?");
+        none.setTo(propMarkerMaxDistance);
+
         reloadConfig(game);
     }
 
@@ -102,6 +109,7 @@ public class BCCoreConfig {
         useBucketsStatic = propUseBucketsStatic.getBoolean();
         useBucketsFlow = propUseBucketsFlow.getBoolean();
         itemLifespan = propItemLifespan.getInt();
+        markerMaxDistance = propMarkerMaxDistance.getInt();
 
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {
             colourBlindMode = propColourBlindMode.getBoolean();

@@ -1,5 +1,8 @@
 package buildcraft.core.client;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -11,7 +14,9 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -27,7 +32,11 @@ import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.lib.client.render.LaserData_BC8;
+import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.tile.MarkerCache;
+import buildcraft.lib.tile.TileMarkerBase;
 
 public enum RenderTickListener {
     INSTANCE;
@@ -70,7 +79,8 @@ public enum RenderTickListener {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (player == null) return;
-        ItemStack held = player.getHeldItemMainhand();
+        ItemStack mainHand = player.getHeldItemMainhand();
+        ItemStack offHand = player.getHeldItemOffhand();
         WorldClient world = mc.theWorld;
 
         mc.mcProfiler.startSection("bc");
@@ -78,13 +88,13 @@ public enum RenderTickListener {
 
         fromPlayerPreGl(player, partialTicks);
 
-        if (held != null && held.stackSize > 0) {
-            Item item = held.getItem();
-            if (item == BCCoreItems.mapLocation) {
-                renderMapLocation(world, held);
-            } else if (item == BCCoreItems.markerConnector) {
-                renderMarkerConnector(world, player, partialTicks);
-            }
+        Item mainHandItem = mainHand == null ? null : mainHand.getItem();
+        Item offHandItem = offHand == null ? null : offHand.getItem();
+
+        if (mainHandItem == BCCoreItems.mapLocation) {
+            renderMapLocation(world, mainHand);
+        } else if (mainHandItem == BCCoreItems.markerConnector || offHandItem == BCCoreItems.markerConnector) {
+            renderMarkerConnector(world, player, partialTicks);
         }
 
         fromPlayerPostGl();
@@ -133,9 +143,49 @@ public enum RenderTickListener {
     }
 
     private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
-        Vec3d start = new Vec3d(0, 3, 0);
-        Vec3d end = player.getPositionEyes(partialTicks);
-        LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.LASER_MARKER_PATH, start, end, 1 / 16.0);
-        LaserRenderer_BC8.renderLaser(data);
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("marker");
+        for (MarkerCache<?> cache : TileMarkerBase.CACHES) {
+            profiler.startSection(cache.name);
+            renderMarkerCache(world, player, cache);
+            profiler.endSection();
+        }
+        profiler.endSection();
+    }
+
+    private static <T extends TileMarkerBase<T>> void renderMarkerCache(WorldClient world, EntityPlayer player, MarkerCache<T> cache) {
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("compute");
+        Set<LaserData_BC8> toRender = new HashSet<>();
+        for (T tile : cache.getCache(world).values()) {
+            for (T to : tile.getValidConnections()) {
+                BlockPos a = tile.getPos();
+                BlockPos b = to.getPos();
+                if (a.toLong() > b.toLong()) {
+                    BlockPos hold = b;
+                    b = a;
+                    a = hold;
+                }
+
+                Vec3d start = new Vec3d(a).add(Utils.VEC_HALF);
+                Vec3d end = new Vec3d(b).add(Utils.VEC_HALF);
+
+                // Add a little offset in the direction of the
+                Vec3d startToEnd = end.subtract(start).normalize();
+                Vec3d endToStart = start.subtract(end).normalize();
+                start = start.add(PositionUtil.scale(startToEnd, 0.125));
+                end = end.add(PositionUtil.scale(endToStart, 0.125));
+
+                LaserType laserType = tile.getPossibleLaserType();
+                if (laserType == null) laserType = BuildCraftLaserManager.MARKER_DEFAULT_POSSIBLE;
+                LaserData_BC8 data = new LaserData_BC8(laserType, start, end, 1 / 16.0);
+                toRender.add(data);
+            }
+        }
+        profiler.endStartSection("render");
+        for (LaserData_BC8 laser : toRender) {
+            LaserRenderer_BC8.renderLaser(laser);
+        }
+        profiler.endSection();
     }
 }

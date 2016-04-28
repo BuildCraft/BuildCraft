@@ -16,7 +16,7 @@ public class PageMetaLoader extends LocationLoader {
         try {
             return new Gson().fromJson(text, PageMeta.class);
         } catch (JsonSyntaxException ex) {
-            BCLog.logger.warn("Could not load the resource location " + location + " because an exception was thrown!", ex);
+            BCLog.logger.warn("[guide-page-meta] Could not load the resource location " + location + " because an exception was thrown!", ex);
             return new PageMeta(location.toString(), "", "");
         }
     }

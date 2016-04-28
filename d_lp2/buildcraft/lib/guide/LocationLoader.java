@@ -17,10 +17,10 @@ public class LocationLoader {
             }
             return stream;
         } catch (FileNotFoundException fnf) {
-            BCLog.logger.warn("Could not load the resource location " + location + " because it did not exist!");
+            BCLog.logger.warn("[guide-loader] Could not load the resource location " + location + " because it did not exist!");
             return null;
         } catch (IOException io) {
-            BCLog.logger.warn("Could not load the resource location " + location + " because an exception was thrown!", io);
+            BCLog.logger.warn("[guide-loader] Could not load the resource location " + location + " because an exception was thrown!", io);
             return null;
         }
     }
@@ -30,7 +30,7 @@ public class LocationLoader {
             IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(location);
             if (resource == null) {
                 if (!suppress) {
-                    BCLog.logger.warn("Could not load the resource location " + location + " because null was returned!");
+                    BCLog.logger.warn("[guide-loader] Could not load the resource location " + location + " because null was returned!");
                 }
             } else {
                 return resource.getInputStream();
@@ -57,7 +57,7 @@ public class LocationLoader {
                 builder.append(line + "\n");
             }
         } catch (IOException io) {
-            BCLog.logger.warn("Could not load the resource location " + location + " because an exception was thrown!", io);
+            BCLog.logger.warn("[guide] Could not load the resource location " + location + " because an exception was thrown!", io);
             return "";
         }
         return builder.toString();

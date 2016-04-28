@@ -51,6 +51,17 @@ public class LaserData_BC8 {
             this.end = end;
             this.capEnd = capEnd;
         }
+
+        public LaserType(LaserType from, SpriteHolder replacementSprite) {
+            this.capStart = new LaserRow(from.capStart, replacementSprite);
+            this.capEnd = new LaserRow(from.capEnd, replacementSprite);
+            this.start = new LaserRow(from.start, replacementSprite);
+            this.end = new LaserRow(from.end, replacementSprite);
+            this.variations = new LaserRow[from.variations.length];
+            for (int i = 0; i < variations.length; i++) {
+                this.variations[i] = new LaserRow(from.variations[i], replacementSprite);
+            }
+        }
     }
 
     public static class LaserRow {
@@ -72,6 +83,17 @@ public class LaserData_BC8 {
             } else {
                 validSides = sides;
             }
+        }
+
+        public LaserRow(LaserRow from, SpriteHolder sprite) {
+            this.sprite = sprite;
+            this.uMin = from.uMin;
+            this.vMin = from.vMin;
+            this.uMax = from.uMax;
+            this.vMax = from.vMax;
+            this.width = from.width;
+            this.height = from.height;
+            this.validSides = from.validSides;
         }
     }
 

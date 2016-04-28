@@ -1,8 +1,10 @@
 package buildcraft.lib;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -43,6 +45,13 @@ public abstract class LibProxy {
         return ctx.getServerHandler().playerEntity;
     }
 
+    public void addScheduledTask(World world, Runnable task) {
+        if (world instanceof WorldServer) {
+            WorldServer server = (WorldServer) world;
+            server.addScheduledTask(task);
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends LibProxy {
         @Override
@@ -72,6 +81,15 @@ public abstract class LibProxy {
                 return super.getPlayerForContext(ctx);
             }
             return getClientPlayer();
+        }
+
+        @Override
+        public void addScheduledTask(World world, Runnable task) {
+            if (world instanceof WorldClient) {
+                Minecraft.getMinecraft().addScheduledTask(task);
+            } else {
+                super.addScheduledTask(world, task);
+            }
         }
     }
 

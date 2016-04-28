@@ -54,13 +54,13 @@ public class MessageUpdateTile implements IMessage {
         INSTANCE;
 
         @Override
-        public IMessage onMessage(MessageUpdateTile message, MessageContext ctx) {
+        public IMessage onMessage(final MessageUpdateTile message, MessageContext ctx) {
             EntityPlayer player = LibProxy.getProxy().getPlayerForContext(ctx);
             if (player == null || player.worldObj == null) return null;
             TileEntity tile = player.worldObj.getTileEntity(message.pos);
             if (tile instanceof IPayloadReceiver) {
                 try {
-                    return ((IPayloadReceiver) tile).receivePayload(ctx.side, message.payload);
+                    ((IPayloadReceiver) tile).receivePayload(ctx.side, message.payload);
                 } catch (IOException io) {
                     Throwables.propagate(io);
                 }
