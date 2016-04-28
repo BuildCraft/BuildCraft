@@ -36,8 +36,8 @@ public enum BCMessageHandler {
 
     public static void fmlPreInit() {
         addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
-        addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
     }
 
     public static void fmlPostInit() {
@@ -58,16 +58,17 @@ public enum BCMessageHandler {
 
     private static <I extends IMessage, O extends IMessage> void addInternal(MessageTypeData<I, O> handler, int discriminator) {
         for (Side side : handler.sides) {
-            netWrapper.registerMessage(createHandler(handler.handler), handler.messageClass, discriminator, side);
+            netWrapper.registerMessage(wrapHandler(handler.handler), handler.messageClass, discriminator, side);
         }
     }
 
-    private static <I extends IMessage, O extends IMessage> IMessageHandler<I, IMessage> createHandler(IMessageHandler<I, O> from) {
+    /** Wraps this handler to delay message processing until the next world tick. */
+    private static <I extends IMessage> IMessageHandler<I, IMessage> wrapHandler(IMessageHandler<I, ?> from) {
         return (message, context) -> {
             EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
             if (player == null || player.worldObj == null) return null;
             LibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
-                O reply = from.onMessage(message, context);
+                IMessage reply = from.onMessage(message, context);
                 if (reply != null) {
                     BCMessageHandler.sendReturnMessage(context, reply);
                 }
@@ -77,6 +78,8 @@ public enum BCMessageHandler {
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {
+        // TODO This needs testing! IT MIGHT CRASH!
+        // (Never used)
         EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
         if (player instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;

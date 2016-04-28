@@ -60,7 +60,7 @@ public class MessageUpdateTile implements IMessage {
             TileEntity tile = player.worldObj.getTileEntity(message.pos);
             if (tile instanceof IPayloadReceiver) {
                 try {
-                    ((IPayloadReceiver) tile).receivePayload(ctx.side, message.payload);
+                    return ((IPayloadReceiver) tile).receivePayload(ctx.side, message.payload);
                 } catch (IOException io) {
                     Throwables.propagate(io);
                 }

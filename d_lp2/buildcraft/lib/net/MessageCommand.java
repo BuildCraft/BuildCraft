@@ -22,6 +22,10 @@ import io.netty.buffer.Unpooled;
 /** Sending and receiving misc commands (any data) from {@link TileEntity}, {@link Entity}, or {@link Container} between
  * the server and client. Uses a single string for command type so this is not recommended for every-second messages. */
 // Deprecated as commands use strings :/
+
+// Tiles should use MessageUpdateTile directly, and use different ID's
+// Containers have not been implemented yet
+// Entities have not been implemented yet
 @Deprecated
 public class MessageCommand implements IMessage {
 
@@ -94,6 +98,7 @@ public class MessageCommand implements IMessage {
         buffer.writeBytes(payload, payload.readableBytes());
     }
 
+    @Deprecated
     public static enum Handler implements IMessageHandler<MessageCommand, MessageCommand> {
         INSTANCE;
 
