@@ -73,8 +73,7 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 
-@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
-        dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Energy")
@@ -116,37 +115,26 @@ public class BuildCraftEnergy extends BuildCraftMod {
         BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
-        int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT,
-                "The id for the Oil Desert biome", RestartRequirement.GAME).getInt();
-        int oilOceanBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN,
-                "The id for the Oil Ocean biome", RestartRequirement.GAME).getInt();
+        int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT, "The id for the Oil Desert biome", RestartRequirement.GAME).getInt();
+        int oilOceanBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN, "The id for the Oil Ocean biome", RestartRequirement.GAME).getInt();
 
-        BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?",
-                ConfigManager.RestartRequirement.GAME);
-        BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D,
-                "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", ConfigManager.RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
 
-        setBiomeList(OilPopulate.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs",
-                new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
+        setBiomeList(OilPopulate.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs", new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
 
-        setBiomeList(OilPopulate.INSTANCE.excessiveBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excessiveOilIDs",
-                new String[] {}, "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.",
-                RestartRequirement.GAME));
+        setBiomeList(OilPopulate.INSTANCE.excessiveBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excessiveOilIDs", new String[] {},
+                "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.", RestartRequirement.GAME));
 
-        setBiomeList(OilPopulate.INSTANCE.excludedBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excludeOilIDs", new String[] {
-            BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
+        setBiomeList(OilPopulate.INSTANCE.excludedBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excludeOilIDs", new String[] { BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
-        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines",
-                RestartRequirement.GAME);
-        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines",
-                RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines", RestartRequirement.GAME);
 
-        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30,
-                "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME);
-        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60,
-                "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME);
 
         BuildCraftCore.mainConfiguration.save();
 
@@ -178,10 +166,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
             oil.block.setLightOpacity(8);
             oil.fluid.setColour(0x50_50_50, 0x05_05_05);
             oil.block.setFlammability(0);
-            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
-                    ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.oilIsDense", false, "Should oil be dense and push enties up?",
-                    ConfigManager.RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?", ConfigManager.RestartRequirement.NONE);
+            BuildCraftCore.mainConfigManager.register("general.oilIsDense", false, "Should oil be dense and push enties up?", ConfigManager.RestartRequirement.NONE);
 
             fuel = new FluidDefinition("fuel", 1000, 1000, true);
             fuel.block.setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
@@ -218,7 +204,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             if (!Loader.isModLoaded("BuildCraft|Factory") || !BuildCraftCore.DEVELOPER_MODE) {
                 canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
                 isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
-                oil.block.setFlammable(canOilBurn).setDense(/*isOilDense*/true);
+                oil.block.setFlammable(canOilBurn).setDense(isOilDense);
             }
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {
@@ -302,10 +288,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
         EnergyProxy.proxy.registerBlockRenderers();
         EnergyProxy.proxy.registerTileEntities();
 
-        engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.stirlingEngine",
-                "engineAchievement2", 3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
-        engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.combustionEngine",
-                "engineAchievement3", 5, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
+        engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1),
+                BuildCraftCore.engineRedstoneAchievement));
+        engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|energy:achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
     }
 
     @Mod.EventHandler
@@ -317,10 +302,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
     }
 
     public static void loadRecipes() {
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone", 'g',
-                "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2), "www", " g ", "GpG", 'w', "ingotIron", 'g',
-                "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone", 'g', "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2), "www", " g ", "GpG", 'w', "ingotIron", 'g', "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
     }
 
     private int findUnusedBiomeID(String biomeName) {
