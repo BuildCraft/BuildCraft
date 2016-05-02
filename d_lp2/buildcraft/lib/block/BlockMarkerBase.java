@@ -1,4 +1,4 @@
-package buildcraft.core.block;
+package buildcraft.lib.block;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -22,8 +22,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.block.BlockBuildCraftTile_BC8;
-import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.tile.TileMarkerBase;
 
 public abstract class BlockMarkerBase extends BlockBuildCraftTile_BC8 implements ICustomRotationHandler {

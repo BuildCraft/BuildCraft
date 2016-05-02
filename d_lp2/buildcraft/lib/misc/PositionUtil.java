@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -57,7 +58,7 @@ public class PositionUtil {
         return new Vec3d(vec.xCoord * scale, vec.yCoord * scale, vec.zCoord * scale);
     }
 
-    public static Vec3d rayTrace(Line line, Vec3d start, Vec3d direction) {
+    public static LineSkewResult findLineSkewPoint(Line line, Vec3d start, Vec3d direction) {
         double ia = 0, ib = 1;
         double da = 0, db = 0;
         double id = 0.5;
@@ -82,7 +83,17 @@ public class PositionUtil {
             }
             id /= 2.0;
         }
-        return best;
+        return new LineSkewResult(best, Math.sqrt(Math.min(da, db)));
+    }
+
+    public static class LineSkewResult {
+        public final Vec3d closestPos;
+        public final double distFromLine;
+
+        public LineSkewResult(Vec3d closestPos, double distFromLine) {
+            this.closestPos = closestPos;
+            this.distFromLine = distFromLine;
+        }
     }
 
     public static Vec3d closestPointOnLineToPoint(Vec3d point, Vec3d linePoint, Vec3d lineVector) {
@@ -112,5 +123,12 @@ public class PositionUtil {
         public Vec3d interpolate(double interp) {
             return scale(start, 1 - interp).add(scale(end, interp));
         }
+    }
+
+    public static EnumFacing getFacing(Axis axis, boolean positive) {
+        if (axis == Axis.X) return positive ? EnumFacing.EAST : EnumFacing.WEST;
+        if (axis == Axis.Y) return positive ? EnumFacing.UP : EnumFacing.DOWN;
+        if (axis == Axis.Z) return positive ? EnumFacing.SOUTH : EnumFacing.NORTH;
+        return null;
     }
 }

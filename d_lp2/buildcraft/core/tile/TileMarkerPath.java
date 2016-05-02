@@ -1,11 +1,11 @@
 package buildcraft.core.tile;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.MarkerCache;
 import buildcraft.lib.tile.TileMarkerBase;
 
@@ -43,9 +44,32 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         return BuildCraftLaserManager.MARKER_PATH_POSSIBLE;
     }
 
+    @SideOnly(Side.CLIENT)
+    public BlockPos getTo() {
+        return to;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        super.getDebugInfo(left, right, side);
+        left.add("");
+        left.add("from = " + from);
+        left.add("to = " + to);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected String getTypeInfo(BlockPos pos, TileMarkerPath marker) {
+        if (pos.equals(from)) return TextFormatting.LIGHT_PURPLE + "F";
+        else if (pos.equals(to)) return TextFormatting.GREEN + "T";
+        return "";
+    }
+
     @Override
     public boolean canConnectTo(TileMarkerPath other) {
-        if (allConnected.size() >= 2) return false;
+        if (other == this) return false;
+        if (connected.size() >= 2) return false;
+        if (connected.containsKey(other.getPos())) return false;
         if (from == null && other.to == null) return true;
         if (to == null && other.from == null) return true;
         return false;
@@ -53,11 +77,13 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
 
     @Override
     protected void onConnect(TileMarkerPath other) {
-        if (to == null && other.from == null) {
+        if (worldObj.isRemote) return;
+        if (!connected.containsKey(other.getPos())) return;
+        if (to == null && other.from == null && !Objects.equals(from, other.getPos())) {
             // Setup both variables so we don't screw anything up by doing them indervidually
             to = other.getPos();
             other.from = getPos();
-        } else if (from == null && other.to == null) {
+        } else if (from == null && other.to == null && !Objects.equals(to, other.getPos())) {
             from = other.getPos();
             other.to = getPos();
         }
@@ -65,12 +91,12 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
 
     @Override
     protected void onDisconnect(TileMarkerPath other) {
-        if (other.getPos().equals(to)) {
+        if (worldObj.isRemote) return;
+        if (to != null && !connected.containsKey(to)) {
             to = null;
-            other.from = null;
-        } else if (other.getPos().equals(from)) {
+        }
+        if (from != null && !connected.containsKey(from)) {
             from = null;
-            other.to = null;
         }
     }
 
@@ -105,6 +131,30 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         if (worldObj.isRemote) return;
         for (TileMarkerPath connectedTo : gatherAllConnections()) {
             worldObj.destroyBlock(connectedTo.getPos(), true);
+        }
+    }
+
+    @Override
+    public void writePayload(int id, PacketBuffer buffer, Side side) {
+        super.writePayload(id, buffer, side);
+
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                MessageUtil.writeBlockPosArray(buffer, new BlockPos[] { from, to });
+            }
+        }
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buffer, Side side) {
+        super.readPayload(id, buffer, side);
+
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                BlockPos[] arr = MessageUtil.readBlockPosArray(buffer, 2);
+                from = arr[0];
+                to = arr[1];
+            }
         }
     }
 }

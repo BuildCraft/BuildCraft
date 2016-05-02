@@ -2,11 +2,13 @@ package buildcraft.lib.tile;
 
 import java.io.IOException;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -47,13 +49,23 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
         return oldState.getBlock() != newState.getBlock();
     }
 
+    /** Called whenever the block holding this tile is exploded. Called by
+     * {@link Block#onBlockExploded(World, BlockPos, Explosion)} */
+    public void onExplode(Explosion explosion) {
+        onRemove();
+    }
+
+    /** Called whenever the block is removed. called by {@link #onExplode(Explosion)}, and
+     * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
+    public void onRemove() {}
+
     // Network helpers
     /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
     public void redrawBlock() {
         if (hasWorldObj()) worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
     }
 
-    /** Sends a netwok update update of the specified ID. */
+    /** Sends a network update update of the specified ID. */
     public void sendNetworkUpdate(int id) {
         if (hasWorldObj()) {
             MessageUpdateTile message = createNetworkUpdate(id);

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.base.Objects;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -53,7 +55,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public Box(TileEntity e) {
-        this(e.getPos(), e.getPos().add(Utils.POS_ONE));
+        this(e.getPos(), e.getPos());
     }
 
     public void reset() {
@@ -218,13 +220,13 @@ public class Box implements IBox, ISerializable {
 
     public Box extendToEncompass(Vec3d toBeContained) {
         setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
-        setMin(Utils.min(min, Utils.convertCeiling(toBeContained)));
+        setMax(Utils.max(max, Utils.convertCeiling(toBeContained)));
         return this;
     }
 
     public Box extendToEncompass(BlockPos toBeContained) {
         setMin(Utils.min(min, toBeContained));
-        setMin(Utils.min(min, toBeContained));
+        setMax(Utils.max(max, toBeContained));
         return this;
     }
 
@@ -269,5 +271,21 @@ public class Box implements IBox, ISerializable {
             NetworkUtils.writeBlockPos(stream, min);
             NetworkUtils.writeBlockPos(stream, max);
         }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
+        Box box = (Box) obj;
+        if (!Objects.equal(min, box.min)) return false;
+        if (!Objects.equal(max, box.max)) return false;
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(min, max);
     }
 }

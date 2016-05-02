@@ -4,10 +4,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
+import buildcraft.core.client.render.RenderMarkerPath;
+import buildcraft.core.client.render.RenderMarkerVolume;
 import buildcraft.core.list.GuiList;
+import buildcraft.core.tile.TileMarkerPath;
+import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.guide.GuiGuide;
 import buildcraft.lib.guide.GuideManager;
 
@@ -31,6 +36,9 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void fmlInit() {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerPath.class, RenderMarkerPath.INSTANCE);
+
         GuideManager guide = new GuideManager("buildcraftcore");
         GuideManager.registerManager(guide);
         guide.registerAllBlocks();

@@ -166,7 +166,7 @@ public final class BlockUtils {
             return false;
         }
 
-        if (block == Blocks.lava || block == Blocks.flowing_lava) {
+        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             return false;
         } else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null) {
             Fluid f = ((IFluidBlock) block).getFluid();

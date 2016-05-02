@@ -210,6 +210,7 @@ public class TagManager {
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         // BC Core ItemBlocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
+        registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
         // BC Core Blocks
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");
@@ -217,9 +218,11 @@ public class TagManager {
         registerTag("block.engine.bc.iron").locale("engineBlockIron");
         registerTag("block.engine.bc.creative").locale("engineBlockCreative");
         registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
+        registerTag("block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
 
         // BC Core Tiles
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
+        registerTag("tile.marker.path").reg("marker.path");
 
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

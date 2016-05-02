@@ -1,26 +1,30 @@
 package buildcraft.lib.tile;
 
 import java.util.*;
+import java.util.Map.Entry;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 
-public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBuildCraft_BC8 {
+public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBuildCraft_BC8 implements IDebuggable {
     public static final List<MarkerCache<?>> CACHES = new ArrayList<>();
 
-    protected Set<T> connectedAndLoaded = new HashSet<>();
-    protected Set<BlockPos> connectedNotLoaded = new HashSet<>();
-    protected Set<BlockPos> allConnected = new HashSet<>();
+    protected Map<BlockPos, T> connected = new HashMap<>();
 
     public static <T extends TileMarkerBase<T>> MarkerCache<T> createCache(String name) {
         MarkerCache<T> cache = new MarkerCache<>(name);
@@ -53,6 +57,12 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     @SideOnly(Side.CLIENT)
     public abstract LaserType getPossibleLaserType();
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+
     /** @return A list of all the possible valid connections that this marker could make. This may be empty, but never
      *         null. */
     public List<T> getValidConnections() {
@@ -68,48 +78,102 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
      * @return True if they were connected, false if not. */
     public final boolean tryConnectTo(T other) {
         T thisType = getAsType();
-        if (allConnected.contains(other.getPos())) return false;// They were already connected
+        if (connected.containsKey(other.getPos())) return false;// They were already connected
         if (!canConnectTo(other) || !other.canConnectTo(thisType)) return false;
-        connectedAndLoaded.add(other);
-        other.connectedAndLoaded.add(thisType);
-        allConnected.add(other.getPos());
-        other.allConnected.add(getPos());
-        onConnect(other);
+
+        connect(other);
+
+        return true;
+    }
+
+    private void connect(T other) {
+        T thisType = getAsType();
+        connected.put(other.getPos(), other);
+        other.connected.put(getPos(), thisType);
+
+        thisType.onConnect(other);
         other.onConnect(thisType);
+
         if (!worldObj.isRemote) {
             sendNetworkUpdate(NET_RENDER_DATA);
             other.sendNetworkUpdate(NET_RENDER_DATA);
         }
-        return true;
     }
 
     /** Disconnects this from the other one, if it was connected to the other one. */
     public final void disconnect(T other) {
         T thisType = getAsType();
-        if (connectedAndLoaded.contains(other)) {
-            allConnected.remove(other.getPos());
-            other.allConnected.remove(getPos());
-            connectedAndLoaded.remove(other);
-            other.connectedAndLoaded.remove(thisType);
-            onDisconnect(other);
-            other.onDisconnect(thisType);
+        BlockPos otherPos = other.getPos();
+
+        if (connected.containsKey(otherPos)) {
+            Set<T> all = gatherAllConnections();
+
+            connected.remove(otherPos);
+            other.connected.remove(getPos());
+
+            for (T existing : all) {
+                existing.onDisconnect(existing == other ? thisType : other);
+            }
+
             if (!worldObj.isRemote) {
-                sendNetworkUpdate(NET_RENDER_DATA);
-                other.sendNetworkUpdate(NET_RENDER_DATA);
+                for (T existing : all) {
+                    existing.sendNetworkUpdate(NET_RENDER_DATA);
+                }
             }
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("Connections:");
+        Set<T> gathered = gatherAllConnections();
+        Map<BlockPos, T> all = new HashMap<>(connected);
+        for (T to : gathered) {
+            all.put(to.getPos(), to);
+        }
+        List<BlockPos> list = new ArrayList<>(all.keySet());
+        Collections.sort(list);
+        for (BlockPos pos : list) {
+            T value = all.get(pos);
+            String s = " - " + pos + " [";
+            if (value == null) {
+                s += TextFormatting.RED + "U";
+            } else {
+                s += TextFormatting.GREEN + "L";
+            }
+            if (pos.equals(getPos())) {
+                s += TextFormatting.BLACK + "S";
+            } else if (connected.containsKey(pos)) {
+                s += TextFormatting.YELLOW + "D";
+            } else {
+                s += TextFormatting.AQUA + "I";
+            }
+            s += getTypeInfo(pos, value);
+            s += TextFormatting.RESET + "]";
+            left.add(s);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected String getTypeInfo(BlockPos pos, T value) {
+        return "";
     }
 
     /** Gathers ALL tiles that are connected, directly or indirectly, to this marker tile. */
     public final Set<T> gatherAllConnections() {
         Set<T> set = new HashSet<>();
+        set.add(getAsType());
         addAllConnections(set);
         return set;
     }
 
     final void addAllConnections(Set<T> set) {
-        for (T connectedTo : connectedAndLoaded) {
-            if (set.add(connectedTo)) connectedTo.addAllConnections(set);
+        for (T connectedTo : connected.values()) {
+            if (connectedTo != null) {
+                if (set.add(connectedTo)) connectedTo.addAllConnections(set);
+            }
         }
     }
 
@@ -141,11 +205,20 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
         if (hasWorldObj()) addSelfToCache();
     }
 
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        for (T other : ImmutableList.copyOf(connected.values())) {
+            if (other != null) disconnect(other);
+        }
+    }
+
     private void removeSelfFromCache() {
         getCacheForSide().remove(this.getPos());
-        for (T t : connectedAndLoaded) {
-            t.connectedAndLoaded.remove(this);
-            t.connectedNotLoaded.add(getPos());
+        for (T t : connected.values()) {
+            if (t != null) {
+                t.connected.put(getPos(), null);
+            }
         }
     }
 
@@ -156,26 +229,24 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     }
 
     private void attemptConnection() {
-        T thisType = getAsType();
-        Iterator<BlockPos> iter = connectedNotLoaded.iterator();
-        while (iter.hasNext()) {
-            BlockPos potential = iter.next();
-            T type = getCacheForSide().get(potential);
-            if (type != null) {
-                iter.remove();
-                connectedAndLoaded.add(type);
-                type.connectedNotLoaded.remove(getPos());
-                type.connectedAndLoaded.add(thisType);
-            }
+        Set<T> toConnect = new HashSet<>();
+        for (Entry<BlockPos, T> entry : connected.entrySet()) {
+            T value = entry.getValue();
+            if (value != null) continue;
+            value = getCacheForSide().get(entry.getKey());
+            toConnect.add(value);
         }
-
+        for (T other : toConnect) {
+            if (other == null) continue;
+            connect(other);
+        }
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         NBTTagList list = new NBTTagList();
-        for (BlockPos pos : allConnected) {
+        for (BlockPos pos : connected.keySet()) {
             list.appendTag(NBTUtils.writeBlockPos(pos));
         }
         nbt.setTag("connected", list);
@@ -187,8 +258,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
         NBTTagList list = nbt.getTagList("connected", Constants.NBT.TAG_INT_ARRAY);
         for (int i = 0; i < list.tagCount(); i++) {
             BlockPos pos = NBTUtils.readBlockPos(list.get(i));
-            connectedNotLoaded.add(pos);
-            allConnected.add(pos);
+            connected.put(pos, null);
         }
     }
 
@@ -197,12 +267,11 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                byte connected = (byte) allConnected.size();
-                buffer.writeByte(connected);
-                for (BlockPos connectedTo : allConnected) {
+                byte numConnected = (byte) connected.size();
+                buffer.writeByte(numConnected);
+                for (BlockPos connectedTo : connected.keySet()) {
                     buffer.writeBlockPos(connectedTo);
                 }
-                BCLog.logger.info("Wrote connected data for " + getPos() + " [" + allConnected.size() + "]");
             }
         }
     }
@@ -212,15 +281,23 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
         super.readPayload(id, buffer, side);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                byte connected = buffer.readByte();
-                allConnected.clear();
-                connectedAndLoaded.clear();
-                connectedNotLoaded.clear();
-                for (int i = 0; i < connected; i++) {
+                byte numConnected = buffer.readByte();
+                Map<BlockPos, T> existing = new HashMap<>(connected);
+                connected.clear();
+                for (int i = 0; i < numConnected; i++) {
                     BlockPos connectedTo = buffer.readBlockPos();
-                    BCLog.logger.info("Read a connected block pos (" + getPos() + " -> " + connectedTo + ")");
-                    allConnected.add(connectedTo);
-                    connectedNotLoaded.add(connectedTo);
+                    if (existing.containsKey(connectedTo)) {
+                        connected.put(connectedTo, existing.get(connectedTo));
+                        existing.remove(connectedTo);
+                    } else {
+                        connected.put(connectedTo, null);
+                    }
+                }
+                for (T nowInvalid : existing.values()) {
+                    if (nowInvalid != null) {
+                        nowInvalid.onDisconnect(getAsType());
+                        onDisconnect(nowInvalid);
+                    }
                 }
                 attemptConnection();
             }

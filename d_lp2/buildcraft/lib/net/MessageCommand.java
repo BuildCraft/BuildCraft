@@ -48,6 +48,7 @@ public class MessageCommand implements IMessage {
 
     public MessageCommand(TileEntity sender, String name, IPayloadWriter writer) {
         this(CommandTargets.getForTile(sender), name, writer);
+        throw new IllegalArgumentException("You cannot use message command. Idiot.");
     }
 
     public MessageCommand(Entity sender, String name, IPayloadWriter writer) {

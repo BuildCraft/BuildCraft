@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
@@ -34,7 +35,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     private boolean showSignals = false;
     public LaserData[] lasers = null;
     public LaserData[] signals = null;
-
+    
     @Override
     public MarkerCache<TileMarkerVolume> getCache() {
         return VOLUME_CACHE;
@@ -42,14 +43,17 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
 
     @Override
     public boolean canConnectTo(TileMarkerVolume other) {
-        if (allConnected.size() >= 3) return false;
+        if (connected.size() >= 3) return false;
         EnumFacing directOffset = PositionUtil.getDirectFacingOffset(getPos(), other.getPos());
         if (directOffset == null) return false;
-        for (BlockPos alreadyConnected : allConnected) {
-            EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), alreadyConnected);
-            if (offset != null && offset.getAxis() == directOffset.getAxis()) return false;
-        }
+
+        if (!areBoxesAddable(other, directOffset.getAxis())) return false;
+        // for (BlockPos alreadyConnected : connected.keySet()) {
+        // EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), alreadyConnected);
+        // if (offset != null && offset.getAxis() == directOffset.getAxis()) return false;
+        // }
         int diff = MathHelper.floor_double(Math.sqrt(other.getPos().distanceSq(getPos())));
+        if (diff > BCCoreConfig.markerMaxDistance) return false;
         for (int i = 1; i < diff; i++) {
             BlockPos inBetween = getPos().offset(directOffset, i);
             TileMarkerVolume inBetweenTile = getCacheForSide().get(inBetween);
@@ -60,11 +64,31 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
         return true;
     }
 
+    private boolean areBoxesAddable(TileMarkerVolume other, Axis axis) {
+        regenBox();
+        other.regenBox();
+        if (box == null) {
+            return true;
+        } else {
+            Box otherBox = other.box;
+            if (otherBox == null) otherBox = new Box(other);
+            BlockPos thisSize = box.size();
+            BlockPos otherSize = otherBox.size();
+            int addX = (thisSize.getX() > 1 ? 1 : 0) + (otherSize.getX() > 1 ? 1 : 0);
+            int addY = (thisSize.getY() > 1 ? 1 : 0) + (otherSize.getY() > 1 ? 1 : 0);
+            int addZ = (thisSize.getZ() > 1 ? 1 : 0) + (otherSize.getZ() > 1 ? 1 : 0);
+            if (addX == 2 || (axis == Axis.X && addX == 1)) return false;
+            if (addY == 2 || (axis == Axis.Y && addY == 1)) return false;
+            if (addZ == 2 || (axis == Axis.Z && addZ == 1)) return false;
+        }
+        return true;
+    }
+
     @Override
     public List<TileMarkerVolume> getValidConnections() {
-        if (allConnected.size() >= 3) return ImmutableList.of();
+        if (connected.size() >= 3) return ImmutableList.of();
         Set<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
-        for (BlockPos other : allConnected) {
+        for (BlockPos other : connected.keySet()) {
             EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), other);
             if (offset != null) {
                 taken.add(offset.getAxis());
@@ -80,6 +104,8 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
                 BlockPos toTry = getPos().offset(face, i);
                 TileMarkerVolume other = cache.get(toTry);
                 if (other == null) continue;
+                if (!areBoxesAddable(other, face.getAxis())) break;
+                if (!other.areBoxesAddable(this, face.getAxis())) break;
                 valids.add(other);
                 break;
             }
@@ -104,6 +130,20 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        super.getDebugInfo(left, right, side);
+        left.add("");
+        if (box == null) {
+            left.add("No box");
+        } else {
+            left.add("Box:");
+            left.add("   min = " + box.min());
+            left.add("   max = " + box.max());
+        }
+    }
+
+    @Override
     protected void onConnect(TileMarkerVolume other) {
         regenBox();
     }
@@ -122,13 +162,17 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
 
     private void regenBox() {
         boolean before = isActiveForRender();
-        if (allConnected.size() > 0) {
-            box = new Box(getPos(), getPos());
+        Box old = box;
+        if (connected.size() > 0) {
+            box = new Box();
             for (TileMarkerVolume connectedTo : gatherAllConnections()) {
                 box.extendToEncompass(connectedTo.getPos());
             }
         } else {
             box = null;
+        }
+        if (!Objects.equals(old, box)) {
+            sendNetworkUpdate(NET_RENDER_DATA);
         }
         if (before != isActiveForRender()) {
             redrawBlock();
@@ -208,6 +252,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
             } else if (id == NET_RENDER_DATA) {
                 showSignals = buffer.readBoolean();
                 updateSignals();
+                regenBox();
             }
         }
     }

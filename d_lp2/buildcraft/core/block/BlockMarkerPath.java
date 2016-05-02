@@ -4,16 +4,17 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.lib.block.BlockMarkerBase;
 
-public class BlockMarkerVolume extends BlockMarkerBase {
-    public BlockMarkerVolume(Material material, String id) {
+public class BlockMarkerPath extends BlockMarkerBase {
+    public BlockMarkerPath(Material material, String id) {
         super(material, id);
     }
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileMarkerVolume();
+        return new TileMarkerPath();
     }
+
 }

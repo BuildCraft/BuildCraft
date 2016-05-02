@@ -14,13 +14,17 @@ import com.google.common.cache.RemovalNotification;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import buildcraft.lib.client.render.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.LaserData_BC8.LaserSide;
@@ -29,12 +33,23 @@ import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
     private static final LoadingCache<LaserData_BC8, CompiledLaser> COMPILED_LASERS;
+    private static final LoadingCache<BlockPos, Integer> CACHED_LIGHTMAP;
+    private static final VertexFormat POSITION_TEX_LMAP;
 
     static {
         COMPILED_LASERS = CacheBuilder.newBuilder()//
-                .expireAfterAccess(10, TimeUnit.SECONDS)//
+                .expireAfterWrite(5, TimeUnit.SECONDS)//
                 .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
                 .build(CacheLoader.from(CompiledLaser::new));
+
+        CACHED_LIGHTMAP = CacheBuilder.newBuilder()//
+                .expireAfterWrite(1, TimeUnit.SECONDS)//
+                .build(CacheLoader.from(LaserRenderer_BC8::computeLightmap));
+
+        POSITION_TEX_LMAP = new VertexFormat();
+        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.POSITION_3F);
+        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.TEX_2F);
+        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.TEX_2S);
     }
 
     public static void clearModels() {
@@ -53,6 +68,12 @@ public class LaserRenderer_BC8 {
         if (comp != null) {
             comp.deleteGL();
         }
+    }
+
+    private static Integer computeLightmap(BlockPos pos) {
+        World world = Minecraft.getMinecraft().theWorld;
+        if (world == null) return Integer.valueOf(0);
+        return Integer.valueOf(world.getCombinedLight(pos, 0));
     }
 
     public static void renderLaser(LaserData_BC8 data) {
@@ -116,16 +137,21 @@ public class LaserRenderer_BC8 {
             holding.setIdentity();
         }
 
-        public VertexBuffer transformPos(Vec3d vec) {
-            return transformPos(vec.xCoord, vec.yCoord, vec.zCoord);
-        }
-
-        public VertexBuffer transformPos(double x, double y, double z) {
+        public void addPoint(double x, double y, double z, double u, double v) {
             point.x = (float) x;
             point.y = (float) y;
             point.z = (float) z;
             matrix.transform(point);
-            return buffer.pos(point.x, point.y, point.z);
+            buffer.pos(point.x, point.y, point.z);
+            buffer.tex(u, v);
+            computeLightMap(point);
+            buffer.endVertex();
+        }
+
+        private void computeLightMap(Point3f point) {
+            BlockPos pos = new BlockPos(point.x, point.y, point.z);
+            Integer lmap = CACHED_LIGHTMAP.getUnchecked(pos);
+            buffer.lightmap(lmap >> 16 & 65535, lmap & 65535);
         }
     }
 
@@ -138,7 +164,7 @@ public class LaserRenderer_BC8 {
 
             Tessellator tess = Tessellator.getInstance();
             VertexBuffer buffer = tess.getBuffer();
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            buffer.begin(GL11.GL_QUADS, POSITION_TEX_LMAP);
             LaserContext context = new LaserContext(buffer, data);
 
             type.bakeFor(context);
@@ -257,19 +283,19 @@ public class LaserRenderer_BC8 {
         public void bakeStartCap(LaserContext context) {
             this.currentRowIndex = 0;
             double h = height / 2;
-            context.transformPos(0, h, h).tex(texU(1), texV(1)).endVertex();
-            context.transformPos(0, h, -h).tex(texU(1), texV(0)).endVertex();
-            context.transformPos(0, -h, -h).tex(texU(0), texV(0)).endVertex();
-            context.transformPos(0, -h, h).tex(texU(0), texV(1)).endVertex();
+            context.addPoint(0, h, h, texU(1), texV(1));
+            context.addPoint(0, h, -h, texU(1), texV(0));
+            context.addPoint(0, -h, -h, texU(0), texV(0));
+            context.addPoint(0, -h, h, texU(0), texV(1));
         }
 
         public void bakeEndCap(LaserContext context) {
             this.currentRowIndex = 0;
             double h = height / 2;
-            context.transformPos(context.length, -h, h).tex(texU(0), texV(1)).endVertex();
-            context.transformPos(context.length, -h, -h).tex(texU(0), texV(0)).endVertex();
-            context.transformPos(context.length, h, -h).tex(texU(1), texV(0)).endVertex();
-            context.transformPos(context.length, h, h).tex(texU(1), texV(1)).endVertex();
+            context.addPoint(context.length, -h, h, texU(0), texV(1));
+            context.addPoint(context.length, -h, -h, texU(0), texV(0));
+            context.addPoint(context.length, h, -h, texU(1), texV(0));
+            context.addPoint(context.length, h, h, texU(1), texV(1));
         }
 
         public void bakeStart(LaserContext context, double length) {
@@ -278,25 +304,25 @@ public class LaserRenderer_BC8 {
             final double l = length;
             final double i = 1 - (length / width);
             // TOP
-            context.transformPos(0, h, -h).tex(texU(i), texV(0)).endVertex();// 1
-            context.transformPos(0, h, h).tex(texU(i), texV(1)).endVertex();// 2
-            context.transformPos(l, h, h).tex(texU(1), texV(1)).endVertex();// 3
-            context.transformPos(l, h, -h).tex(texU(1), texV(0)).endVertex();// 4
+            context.addPoint(0, h, -h, texU(i), texV(0));// 1
+            context.addPoint(0, h, h, texU(i), texV(1));// 2
+            context.addPoint(l, h, h, texU(1), texV(1));// 3
+            context.addPoint(l, h, -h, texU(1), texV(0));// 4
             // BOTTOM
-            context.transformPos(l, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
-            context.transformPos(l, -h, h).tex(texU(1), texV(1)).endVertex();// 3
-            context.transformPos(0, -h, h).tex(texU(i), texV(1)).endVertex();// 2
-            context.transformPos(0, -h, -h).tex(texU(i), texV(0)).endVertex();// 1
+            context.addPoint(l, -h, -h, texU(1), texV(0));// 4
+            context.addPoint(l, -h, h, texU(1), texV(1));// 3
+            context.addPoint(0, -h, h, texU(i), texV(1));// 2
+            context.addPoint(0, -h, -h, texU(i), texV(0));// 1
             // LEFT
-            context.transformPos(0, -h, -h).tex(texU(i), texV(0)).endVertex();// 1
-            context.transformPos(0, h, -h).tex(texU(i), texV(1)).endVertex();// 2
-            context.transformPos(l, h, -h).tex(texU(1), texV(1)).endVertex();// 3
-            context.transformPos(l, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
+            context.addPoint(0, -h, -h, texU(i), texV(0));// 1
+            context.addPoint(0, h, -h, texU(i), texV(1));// 2
+            context.addPoint(l, h, -h, texU(1), texV(1));// 3
+            context.addPoint(l, -h, -h, texU(1), texV(0));// 4
             // RIGHT
-            context.transformPos(l, -h, h).tex(texU(1), texV(0)).endVertex();// 4
-            context.transformPos(l, h, h).tex(texU(1), texV(1)).endVertex();// 3
-            context.transformPos(0, h, h).tex(texU(i), texV(1)).endVertex();// 2
-            context.transformPos(0, -h, h).tex(texU(i), texV(0)).endVertex();// 1
+            context.addPoint(l, -h, h, texU(1), texV(0));// 4
+            context.addPoint(l, h, h, texU(1), texV(1));// 3
+            context.addPoint(0, h, h, texU(i), texV(1));// 2
+            context.addPoint(0, -h, h, texU(i), texV(0));// 1
         }
 
         public void bakeEnd(LaserContext context, double length) {
@@ -306,25 +332,25 @@ public class LaserRenderer_BC8 {
             final double lb = context.length;
             final double i = length / width;
             // TOP
-            context.transformPos(ls, h, -h).tex(texU(0), texV(0)).endVertex();// 1
-            context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
-            context.transformPos(lb, h, h).tex(texU(i), texV(1)).endVertex();// 3
-            context.transformPos(lb, h, -h).tex(texU(i), texV(0)).endVertex();// 4
+            context.addPoint(ls, h, -h, texU(0), texV(0));// 1
+            context.addPoint(ls, h, h, texU(0), texV(1));// 2
+            context.addPoint(lb, h, h, texU(i), texV(1));// 3
+            context.addPoint(lb, h, -h, texU(i), texV(0));// 4
             // BOTTOM
-            context.transformPos(lb, -h, -h).tex(texU(i), texV(0)).endVertex();// 4
-            context.transformPos(lb, -h, h).tex(texU(i), texV(1)).endVertex();// 3
-            context.transformPos(ls, -h, h).tex(texU(0), texV(1)).endVertex();// 2
-            context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
+            context.addPoint(lb, -h, -h, texU(i), texV(0));// 4
+            context.addPoint(lb, -h, h, texU(i), texV(1));// 3
+            context.addPoint(ls, -h, h, texU(0), texV(1));// 2
+            context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
             // LEFT
-            context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
-            context.transformPos(ls, h, -h).tex(texU(0), texV(1)).endVertex();// 2
-            context.transformPos(lb, h, -h).tex(texU(i), texV(1)).endVertex();// 3
-            context.transformPos(lb, -h, -h).tex(texU(i), texV(0)).endVertex();// 4
+            context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
+            context.addPoint(ls, h, -h, texU(0), texV(1));// 2
+            context.addPoint(lb, h, -h, texU(i), texV(1));// 3
+            context.addPoint(lb, -h, -h, texU(i), texV(0));// 4
             // RIGHT
-            context.transformPos(lb, -h, h).tex(texU(i), texV(0)).endVertex();// 4
-            context.transformPos(lb, h, h).tex(texU(i), texV(1)).endVertex();// 3
-            context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
-            context.transformPos(ls, -h, h).tex(texU(0), texV(0)).endVertex();// 1
+            context.addPoint(lb, -h, h, texU(i), texV(0));// 4
+            context.addPoint(lb, h, h, texU(i), texV(1));// 3
+            context.addPoint(ls, h, h, texU(0), texV(1));// 2
+            context.addPoint(ls, -h, h, texU(0), texV(0));// 1
         }
 
         public void bakeFor(LaserContext context, LaserSide side, double startX, int count) {
@@ -336,25 +362,25 @@ public class LaserRenderer_BC8 {
                 double ls = xMin;
                 double lb = xMax;
                 if (side == LaserSide.TOP) {
-                    context.transformPos(ls, h, -h).tex(texU(0), texV(0)).endVertex();// 1
-                    context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
-                    context.transformPos(lb, h, h).tex(texU(1), texV(1)).endVertex();// 3
-                    context.transformPos(lb, h, -h).tex(texU(1), texV(0)).endVertex();// 4
+                    context.addPoint(ls, h, -h, texU(0), texV(0));// 1
+                    context.addPoint(ls, h, h, texU(0), texV(1));// 2
+                    context.addPoint(lb, h, h, texU(1), texV(1));// 3
+                    context.addPoint(lb, h, -h, texU(1), texV(0));// 4
                 } else if (side == LaserSide.BOTTOM) {
-                    context.transformPos(lb, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
-                    context.transformPos(lb, -h, h).tex(texU(1), texV(1)).endVertex();// 3
-                    context.transformPos(ls, -h, h).tex(texU(0), texV(1)).endVertex();// 2
-                    context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
+                    context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
+                    context.addPoint(lb, -h, h, texU(1), texV(1));// 3
+                    context.addPoint(ls, -h, h, texU(0), texV(1));// 2
+                    context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
                 } else if (side == LaserSide.LEFT) {
-                    context.transformPos(ls, -h, -h).tex(texU(0), texV(0)).endVertex();// 1
-                    context.transformPos(ls, h, -h).tex(texU(0), texV(1)).endVertex();// 2
-                    context.transformPos(lb, h, -h).tex(texU(1), texV(1)).endVertex();// 3
-                    context.transformPos(lb, -h, -h).tex(texU(1), texV(0)).endVertex();// 4
+                    context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
+                    context.addPoint(ls, h, -h, texU(0), texV(1));// 2
+                    context.addPoint(lb, h, -h, texU(1), texV(1));// 3
+                    context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
                 } else if (side == LaserSide.RIGHT) {
-                    context.transformPos(lb, -h, h).tex(texU(1), texV(0)).endVertex();// 4
-                    context.transformPos(lb, h, h).tex(texU(1), texV(1)).endVertex();// 3
-                    context.transformPos(ls, h, h).tex(texU(0), texV(1)).endVertex();// 2
-                    context.transformPos(ls, -h, h).tex(texU(0), texV(0)).endVertex();// 1
+                    context.addPoint(lb, -h, h, texU(1), texV(0));// 4
+                    context.addPoint(lb, h, h, texU(1), texV(1));// 3
+                    context.addPoint(ls, h, h, texU(0), texV(1));// 2
+                    context.addPoint(ls, -h, h, texU(0), texV(0));// 1
                 }
                 xMin += width;
                 xMax += width;
