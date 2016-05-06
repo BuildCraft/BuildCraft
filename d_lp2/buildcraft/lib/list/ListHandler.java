@@ -14,7 +14,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public final class ListHandler {
     public static final int WIDTH = 9;

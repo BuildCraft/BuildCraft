@@ -10,16 +10,23 @@ import net.minecraftforge.items.IItemHandler;
 
 public abstract class Transactor implements ITransactor {
     @Override
-    public ItemStack add(ItemStack stack, boolean doAdd) {
+    public ItemStack insert(ItemStack stack, boolean doAdd) {
         ItemStack added = stack.copy();
         added.stackSize = inject(stack, doAdd);
         return added;
     }
 
+    /**
+     * 
+     * @return The number of items that were injected
+     */
     public abstract int inject(ItemStack stack, boolean doAdd);
 
     public static ITransactor getTransactorFor(Object object, EnumFacing orientation) {
         IItemHandler handler = InvUtils.getItemHandler(object, orientation);
+        if (handler instanceof ITransactor) {
+            return (ITransactor) handler;
+        }
         return handler != null ? new TransactorItemHandler(handler) : null;
     }
 }

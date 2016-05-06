@@ -28,8 +28,8 @@ import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 /** In this implementation, the blueprint library is the interface to the *local* player blueprint. The player will be
  * able to load blueprint on his environment, and save blueprints to the server environment. */

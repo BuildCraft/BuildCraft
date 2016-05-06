@@ -23,7 +23,7 @@ import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class ItemPaintbrush extends ItemBuildCraft {
     private static final int MAX_DAMAGE = 63;

@@ -14,9 +14,9 @@ import net.minecraft.world.WorldServer;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
 

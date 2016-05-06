@@ -25,8 +25,8 @@ import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.Matrix4i;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public abstract class BlueprintBase {
 

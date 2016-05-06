@@ -1,0 +1,20 @@
+{
+    "parent": "block/cube",
+    "display": {
+    	"comment": "Taken from block/orientable",
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.40, 0.40, 0.40 ]
+        }
+    },
+    "textures": {
+        "particle": "buildcraftbuilders:blocks/architect/back",
+        "down": "buildcraftbuilders:blocks/architect/bottom",
+        "up": "buildcraftbuilders:blocks/architect/top",
+        "north": "buildcraftbuilders:blocks/architect/front",
+        "east": "buildcraftbuilders:blocks/architect/left",
+        "south": "buildcraftbuilders:blocks/architect/back",
+        "west": "buildcraftbuilders:blocks/architect/right"
+    }
+}

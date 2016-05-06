@@ -14,7 +14,7 @@ import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.set.hash.TLongHashSet;

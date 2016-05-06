@@ -14,9 +14,9 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.PathFinding;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 

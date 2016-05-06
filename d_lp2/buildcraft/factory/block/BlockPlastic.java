@@ -11,9 +11,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.block.BlockBuildCraftBase_BC8;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 
-public class BlockPlastic extends BlockBuildCraftBase_BC8 {
+public class BlockPlastic extends BlockBCBase_Neptune {
     public BlockPlastic(String id) {
         super(Material.IRON, id);
         setDefaultState(getStateFromMeta(0));

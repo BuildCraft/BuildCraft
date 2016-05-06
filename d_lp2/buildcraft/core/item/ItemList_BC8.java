@@ -17,9 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IList;
 import buildcraft.core.CoreGuis;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.NBTUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 

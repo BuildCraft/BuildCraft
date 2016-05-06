@@ -13,10 +13,10 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.pipe_bc8.IConnection_BC8;
 import buildcraft.api.transport.pipe_bc8.IExtractionManager.IExtractable_BC8;
 import buildcraft.api.transport.pipe_bc8.IInsertionManager.IInsertable_BC8;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.api.transport.pipe_bc8.IPipeHolder_BC8;
 import buildcraft.api.transport.pipe_bc8.IPipe_BC8;
 import buildcraft.api.transport.pipe_bc8.PipeAPI_BC8;
-import buildcraft.core.lib.utils.NBTUtils;
 
 public abstract class PipeConnection implements IConnection_BC8 {
     private final double length;

@@ -25,7 +25,7 @@ public abstract class Schematic {
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
      * builder, but should provide tasks for the builder to complete.
      * 
-     * @param stage The current stage the builder is in.
+     * @param builder The builder that will execute the tasks
      * @return A collection of all the tasks you need doing to complete the schematic. */
     public abstract Iterable<IBptTask> createTasks(IBuilder builder);
 }

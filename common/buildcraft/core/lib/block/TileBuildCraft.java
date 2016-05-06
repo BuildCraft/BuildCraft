@@ -48,8 +48,8 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the

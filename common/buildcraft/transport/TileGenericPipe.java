@@ -63,7 +63,6 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.network.base.Packet;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
@@ -305,11 +304,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             }
         }
 
-        if (nbt.hasKey("pipeId", NBTUtils.STRING)) {
+        if (nbt.hasKey("pipeId", Constants.NBT.TAG_STRING)) {
             coreState.pipeId = nbt.getString("pipeId");
         }
 
-        if (nbt.hasKey("pipeId", NBTUtils.INT)) {
+        if (nbt.hasKey("pipeId", Constants.NBT.TAG_INT)) {
             int id = nbt.getInteger("pipeId");
             Item item = Item.itemRegistry.getObjectById(id);
             ResourceLocation loc = Item.itemRegistry.getNameForObject(item);

@@ -23,7 +23,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
     public ItemRedstoneBoard() {

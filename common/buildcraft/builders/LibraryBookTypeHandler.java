@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.library.LibraryTypeHandlerNBT;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
     public LibraryBookTypeHandler() {

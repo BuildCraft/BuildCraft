@@ -1,0 +1,11 @@
+{
+	"forge_marker":1,
+    "variants": {
+		"facing": {    	
+        	"east":  { "model":"buildcraftbuilders:library" },
+        	"south":  { "model":"buildcraftbuilders:library", "y": 90 },
+        	"west":  { "model":"buildcraftbuilders:library", "y": 180 },
+        	"north":  { "model":"buildcraftbuilders:library", "y": 270 }
+    	}
+    }
+}

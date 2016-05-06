@@ -219,7 +219,6 @@ public class TagManager {
         registerTag("block.engine.bc.creative").locale("engineBlockCreative");
         registerTag("block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
-
         // BC Core Tiles
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
         registerTag("tile.marker.path").reg("marker.path");
@@ -227,17 +226,29 @@ public class TagManager {
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// builders
-        // BC Builders Items
+        // BC Builders Item Blocks
+        registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
+        registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");
+        registerTag("item.block.library").reg("library").locale("libraryBlock").model("library");
         // BC Builders Blocks
+        registerTag("block.architect").reg("architect").locale("architectBlock").model("architect");
+        registerTag("block.builder").reg("builder").locale("builderBlock").model("builder");
+        registerTag("block.library").reg("library").locale("libraryBlock").model("library");
+        // BC Builders Tiles
+        registerTag("tile.architect").reg("architect");
 
         endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// factory
-        // BC Factory Items
+        // BC Factory Item Blocks
         registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
         registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
+        registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
+        registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
+        // BC Factory Tiles
+        registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
 
         endBatch(prependTags("factory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

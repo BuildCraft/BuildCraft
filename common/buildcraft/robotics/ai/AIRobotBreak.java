@@ -18,8 +18,8 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotBreak extends AIRobot {
     private BlockPos blockToBreak;

@@ -24,7 +24,7 @@ import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
     public ItemBlueprint() {

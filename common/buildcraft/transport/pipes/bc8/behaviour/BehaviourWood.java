@@ -27,8 +27,8 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventConnection_BC8.Atte
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventInteract_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BehaviourWood extends PipeBehaviour_BC8 implements IEnergyReceiver {
     private static final int ENERGY_EXTRACT_SINGLE = 20;

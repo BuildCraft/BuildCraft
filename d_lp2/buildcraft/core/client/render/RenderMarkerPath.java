@@ -21,7 +21,7 @@ public class RenderMarkerPath extends TileEntitySpecialRenderer<TileMarkerPath> 
     public static final LaserType LASER_TYPE = BuildCraftLaserManager.MARKER_PATH_CONNECTED;
 
     private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
-    private static final double SCALE = 1 / 24.01;
+    private static final double SCALE = 1 / 24.05;
 
     @Override
     public boolean isGlobalRenderer(TileMarkerPath te) {

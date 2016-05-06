@@ -17,30 +17,25 @@ import buildcraft.lib.misc.ColourUtil;
 
 public class BCCoreRecipes {
     public static void init() {
-        // if (BCCoreItems.wrench != null) {
-        // ItemStack out = new ItemStack(BCCoreItems.wrench);
-        // Object[] in = { "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone" };
-        // BCRegistry.INSTANCE.addCraftingRecipe(out, in);
-        // }
-        //
-        // Item list = BCCoreItems.list;
-        // if (list != null) {
-        // // Convert old lists to new lists
-        // BCRegistry.INSTANCE.addShapelessRecipe(new ItemStack(list, 1, 1), new ItemStack(list, 1, 0));
-        // if (BCModules.SILICON.isLoaded()) {
-        // Object[] input = { "dyeGreen", "dustRedstone", new ItemStack(Items.PAPER, 8) };
-        // ItemStack output = new ItemStack(BuildCraftCore.listItem, 1, 1);
-        // BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:list", 20000, output, input);
-        // } else {
-        // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(list, 1, 1), "ppp", "pYp", "ppp", 'p', Items.PAPER, 'Y',
-        // "dyeGreen");
-        // }
-        // }
-        //
-        // if (BCCoreItems.mapLocation != null) {
-        // BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(BCCoreItems.mapLocation), "ppp", "pYp", "ppp", 'p',
-        // Items.PAPER, 'Y', "dyeYellow");
-        // }
+        if (BCCoreItems.wrench != null) {
+            ItemStack out = new ItemStack(BCCoreItems.wrench);
+            Object[] in = { "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone" };
+            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
+        }
+
+        if (BCCoreBlocks.markerVolume != null) {
+            ItemStack out = new ItemStack(BCCoreBlocks.markerVolume);
+            ItemStack lapisLazuli = new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage());
+            Object[] in = { "l", "t", 'l', lapisLazuli, 't', Blocks.REDSTONE_TORCH };
+            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
+        }
+
+        if (BCCoreBlocks.markerPath != null) {
+            ItemStack out = new ItemStack(BCCoreBlocks.markerPath);
+            ItemStack cactusGreen = new ItemStack(Items.DYE, 1, EnumDyeColor.GREEN.getDyeDamage());
+            Object[] in = { "g", "t", 'g', cactusGreen, 't', Blocks.REDSTONE_TORCH };
+            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
+        }
 
         if (BCCoreItems.paintbrush != null) {
             Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL, 1, 0), 'i', Items.STRING };

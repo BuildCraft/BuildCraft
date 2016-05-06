@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.block.BlockBuildCraftBase_BC8;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.item.ItemManager;
 
@@ -27,7 +27,7 @@ public abstract class LibProxy {
 
     void postRegisterItem(ItemBuildCraft_BC8 item) {}
 
-    void postRegisterBlock(BlockBuildCraftBase_BC8 block) {}
+    void postRegisterBlock(BlockBCBase_Neptune block) {}
 
     void fmlPreInit() {}
 

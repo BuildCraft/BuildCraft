@@ -31,8 +31,8 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.robotics.ZonePlan;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -89,15 +89,19 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
                 strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 break;
             }
-            case PATH: {
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-                BlockPos first = NBTUtils.readBlockPos(pathNBT);
+            case PATH:
+            case PATH_REPEATING: {
+                NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
 
-                int x = first.getX();
-                int y = first.getY();
-                int z = first.getZ();
+                if (pathNBT.tagCount() > 0) {
+                    BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
 
-                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                    int x = first.getX();
+                    int y = first.getY();
+                    int z = first.getZ();
+
+                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                }
                 break;
             }
             default: {
@@ -116,12 +120,18 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
         NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
         if (tile instanceof IPathProvider) {
-            MapLocationType.PATH.setToStack(stack);
+            List<BlockPos> path = ((IPathProvider) tile).getPath();
+
+            if (path.size() > 1 && path.get(0).equals(path.get(path.size() - 1))) {
+                MapLocationType.PATH_REPEATING.setToStack(stack);
+            } else {
+                MapLocationType.PATH.setToStack(stack);
+            }
 
             NBTTagList pathNBT = new NBTTagList();
 
-            for (BlockPos index : ((IPathProvider) tile).getPath()) {
-                pathNBT.appendTag(NBTUtils.writeBlockPos(index));
+            for (BlockPos posInPath : path) {
+                pathNBT.appendTag(NBTUtils.writeBlockPos(posInPath));
             }
 
             cpt.setTag("path", pathNBT);
@@ -254,7 +264,8 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             case AREA: {
                 return getBox(item);
             }
-            case PATH: {
+            case PATH:
+            case PATH_REPEATING: {
                 return getPointBox(item);
             }
             default: {
@@ -268,7 +279,8 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
         NBTTagCompound cpt = NBTUtils.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
-            case PATH: {
+            case PATH:
+            case PATH_REPEATING: {
                 List<BlockPos> indexList = new ArrayList<>();
                 NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < pathNBT.tagCount(); i++) {

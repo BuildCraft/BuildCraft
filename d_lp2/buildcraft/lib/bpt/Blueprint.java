@@ -5,6 +5,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -17,6 +19,11 @@ public class Blueprint extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private SchematicBlock[][][] contentBlocks;
     private List<SchematicEntity> contentEntities;
+
+    public Blueprint(NBTTagCompound nbt) {
+        super(nbt);
+        deserializeNBT(nbt);
+    }
 
     public Blueprint(BlockPos anchor, BlockPos min, BlockPos max, EnumFacing direction) {
         super(anchor, min, max, direction);
@@ -93,5 +100,27 @@ public class Blueprint extends BlueprintBase {
         }
 
         return tasks;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        NBTTagList list = new NBTTagList();
+        // We have just moved down to
+        for (int x = 0; x <= max.getX(); x++) {
+            for (int y = 0; y <= max.getY(); y++) {
+                for (int z = 0; z <= max.getZ(); z++) {
+                    SchematicBlock block = contentBlocks[x][y][z];
+                    list.appendTag(BlueprintAPI.serializeSchematic(block));
+                }
+            }
+        }
+        nbt.setTag("blocks", list);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+
     }
 }

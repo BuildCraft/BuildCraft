@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.core.Box;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BlockScanner implements Iterable<BlockPos> {
 

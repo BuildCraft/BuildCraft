@@ -14,8 +14,8 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.recipes.IntegrationRecipeBC;
+import buildcraft.lib.misc.NBTUtils;
 
 public class RobotIntegrationRecipe extends IntegrationRecipeBC {
     public RobotIntegrationRecipe() {

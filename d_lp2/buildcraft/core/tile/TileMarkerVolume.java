@@ -1,5 +1,6 @@
 package buildcraft.core.tile;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.google.common.collect.ImmutableList;
@@ -240,7 +241,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) {
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
         super.readPayload(id, buffer, side);
         if (side == Side.CLIENT) {
             if (id == NET_SIGNALS_ON) {

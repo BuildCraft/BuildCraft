@@ -1,13 +1,15 @@
 package buildcraft.lib.guide;
 
+import com.google.common.collect.ImmutableMap;
+
 public class PageMeta {
     public final String title;
-    public final String customLocation;
+    public final ImmutableMap<String, String> customTypes;
     public final String customImageLocation;
 
-    PageMeta(String title, String customLocation, String customImageLocation) {
+    PageMeta(String title, ImmutableMap<String, String> customTypes, String customImageLocation) {
         this.title = title;
-        this.customLocation = customLocation;
+        this.customTypes = customTypes;
         this.customImageLocation = customImageLocation;
     }
 

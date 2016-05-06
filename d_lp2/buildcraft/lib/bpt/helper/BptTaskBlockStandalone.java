@@ -10,6 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilder.IRequestedStack;
 
 public class BptTaskBlockStandalone extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_standalone");

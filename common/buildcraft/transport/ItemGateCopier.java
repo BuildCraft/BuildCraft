@@ -16,7 +16,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;
 import buildcraft.transport.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;

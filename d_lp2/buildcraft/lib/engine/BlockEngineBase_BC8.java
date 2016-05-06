@@ -21,9 +21,9 @@ import net.minecraft.world.World;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.block.BlockBuildCraftTile_BC8;
+import buildcraft.lib.block.BlockBCTile_Neptune;
 
-public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBuildCraftTile_BC8 {
+public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
 
     public BlockEngineBase_BC8(Material material, String id) {

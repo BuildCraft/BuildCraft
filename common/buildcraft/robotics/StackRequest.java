@@ -16,7 +16,7 @@ import buildcraft.api.robots.IRobotRegistry;
 import buildcraft.api.robots.ResourceId;
 import buildcraft.api.robots.ResourceIdRequest;
 import buildcraft.api.robots.RobotManager;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class StackRequest {
     private IRequestProvider requester;

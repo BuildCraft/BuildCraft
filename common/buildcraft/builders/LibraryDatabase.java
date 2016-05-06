@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.core.blueprints.LibraryId;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class LibraryDatabase {
     protected Set<LibraryId> blueprintIds = new TreeSet<>();

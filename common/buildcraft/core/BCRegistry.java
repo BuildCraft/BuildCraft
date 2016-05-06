@@ -15,7 +15,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.LibProxy;
-import buildcraft.lib.block.BlockBuildCraftBase_BC8;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBuildCraft_BC8;
 
 @Deprecated
@@ -35,7 +35,7 @@ public final class BCRegistry {
         regCfg = new Configuration(f);
     }
 
-    public boolean registerBlock(BlockBuildCraftBase_BC8 block, boolean forced) {
+    public boolean registerBlock(BlockBCBase_Neptune block, boolean forced) {
         return registerBlock(block, new ItemBlockBuildCraft_BC8(block), forced);
     }
 

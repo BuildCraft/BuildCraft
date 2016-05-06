@@ -20,7 +20,7 @@ import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.misc.PositionUtil;
 
 public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolume> {
-    private static final double SCALE = 1 / 16.01;
+    private static final double SCALE = 1 / 16.05;
 
     public static final RenderMarkerVolume INSTANCE = new RenderMarkerVolume();
 

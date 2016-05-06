@@ -35,9 +35,9 @@ import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
     public enum Mode {

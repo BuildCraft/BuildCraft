@@ -1,6 +1,10 @@
 package buildcraft.core.tile;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -10,6 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
@@ -100,28 +105,40 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         }
     }
 
+    public void reverseDirection() {
+        Set<TileMarkerPath> tiles = gatherAllConnections();
+        for (TileMarkerPath marker : tiles) {
+            BlockPos from = marker.from;
+            marker.from = marker.to;
+            marker.to = from;
+        }
+        for (TileMarkerPath marker : tiles) {
+            marker.sendNetworkUpdate(NET_RENDER_DATA);
+        }
+    }
+
     @Override
     public List<BlockPos> getPath() {
-        Set<TileMarkerPath> visited = new HashSet<>();
-        List<BlockPos> positions = new ArrayList<>();
-        // Find the first one with a null "from", or its already been visited
-        BlockPos first = getPos();
-        TileMarkerPath start = this;
-        while (first != null && !visited.contains(start)) {
-            visited.add(start);
-            TileMarkerPath path = getCacheForSide().get(first);
-            if (path == null) break;
-            start = path;
-            first = start.from;
+        LinkedList<BlockPos> positions = new LinkedList<>();
+
+        positions.add(getPos());
+
+        TileMarkerPath current = this;
+        while ((current = getCacheForSide().get(current.from)) != null) {
+            BlockPos pos = current.getPos();
+            positions.addFirst(pos);
+            if (positions.getLast().equals(pos)) break;
         }
-        // Now iterate through all of the set, removing each one as its added to the list
-        visited.clear();
-        visited.add(start);
-        positions.add(first);
-        while (start != null && start.to != null && !visited.contains(start)) {
-            visited.add(start);
-            positions.add(start.to);
-            start = getCacheForSide().get(start.to);
+        current = this;
+        while ((current = getCacheForSide().get(current.to)) != null) {
+            BlockPos pos = current.getPos();
+            if (positions.contains(pos)) break;
+            positions.addLast(pos);
+        }
+
+        BCLog.logger.info("Computed path:");
+        for (BlockPos p : positions) {
+            BCLog.logger.info(" - " + p);
         }
         return positions;
     }
@@ -146,7 +163,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) {
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
         super.readPayload(id, buffer, side);
 
         if (side == Side.CLIENT) {

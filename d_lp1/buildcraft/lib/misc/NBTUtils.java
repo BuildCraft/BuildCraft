@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,18 +21,6 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BCLog;
 
 public final class NBTUtils {
-    public static final int BYTE = 1;
-    public static final int SHORT = 2;
-    public static final int INT = 3;
-    public static final int LONG = 4;
-    public static final int FLOAT = 5;
-    public static final int DOUBLE = 6;
-    public static final int BYTE_ARRAY = 7;
-    public static final int STRING = 8;
-    public static final int LIST = 9;
-    public static final int COMPOUND = 10;
-    public static final int INT_ARRAY = 11;
-
     /** Deactivate constructor */
     private NBTUtils() {
 
@@ -98,11 +86,11 @@ public final class NBTUtils {
     public static BlockPos readBlockPos(NBTBase base) {
         if (base == null) return null;
         switch (base.getId()) {
-            case INT_ARRAY: {
+            case Constants.NBT.TAG_INT_ARRAY: {
                 int[] array = ((NBTTagIntArray) base).getIntArray();
                 return new BlockPos(array[0], array[1], array[2]);
             }
-            case COMPOUND: {
+            case Constants.NBT.TAG_COMPOUND: {
                 NBTTagCompound nbt = (NBTTagCompound) base;
                 BlockPos pos = BlockPos.ORIGIN;
                 if (nbt.hasKey("i")) {
@@ -143,7 +131,7 @@ public final class NBTUtils {
     }
 
     public static Vec3d readVec3d(NBTTagCompound nbt, String tagName) {
-        return readVec3d(nbt.getTagList(tagName, DOUBLE));
+        return readVec3d(nbt.getTagList(tagName, Constants.NBT.TAG_DOUBLE));
     }
 
     public static Vec3d readVec3d(NBTTagList list) {
@@ -248,5 +236,24 @@ public final class NBTUtils {
             }
         }
         throw new Error("Tried to load an object from an unknown tag! " + nbt);
+    }
+
+    public static NBTBase writeDoubleArray(double[] data) {
+        NBTTagList list = new NBTTagList();
+        for (double d : data) {
+            list.appendTag(new NBTTagDouble(d));
+        }
+        return list;
+    }
+
+    public static double[] readDoubleArray(NBTBase tag, int intendedLength) {
+        double[] arr = new double[intendedLength];
+        if (tag instanceof NBTTagList) {
+            NBTTagList list = (NBTTagList) tag;
+            for (int i = 0; i < list.tagCount() && i < intendedLength; i++) {
+                arr[i] = list.getDoubleAt(i);
+            }
+        }
+        return arr;
     }
 }

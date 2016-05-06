@@ -2,6 +2,7 @@ package buildcraft.lib.bpt;
 
 import java.util.Map;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Mirror;
@@ -9,15 +10,36 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import net.minecraftforge.common.util.INBTSerializable;
+
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilder;
 import buildcraft.api.bpt.Schematic;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
-public abstract class BlueprintBase {
+public abstract class BlueprintBase implements INBTSerializable<NBTTagCompound> {
     public BlockPos anchor;
     public BlockPos min, max;
     public EnumFacing direction;
+
+    public BlueprintBase(NBTTagCompound nbt) {
+        this.anchor = NBTUtils.readBlockPos(nbt.getTag("anchor"));
+        this.max = NBTUtils.readBlockPos(nbt.getTag("max"));
+        this.direction = NBTUtils.readEnum(nbt.getTag("direction"), EnumFacing.class);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        if (!BlockPos.ORIGIN.equals(min)) {
+            translateBy(BlockPos.ORIGIN.subtract(min));
+        }
+        nbt.setTag("anchor", NBTUtils.writeBlockPos(anchor));
+        nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        nbt.setTag("direction", NBTUtils.writeEnum(direction));
+        return nbt;
+    }
 
     public BlueprintBase(BlockPos anchor, BlockPos min, BlockPos max, EnumFacing direction) {
         this.anchor = anchor;

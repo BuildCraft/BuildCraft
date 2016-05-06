@@ -17,7 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;

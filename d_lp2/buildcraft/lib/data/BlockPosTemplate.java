@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public enum BlockPosTemplate implements IDataTemplate {
     INSTANCE;

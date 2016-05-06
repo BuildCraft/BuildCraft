@@ -41,8 +41,11 @@ public class CoreProxyClient extends CoreProxy {
 
         GuideManager guide = new GuideManager("buildcraftcore");
         GuideManager.registerManager(guide);
-        guide.registerAllBlocks();
-        guide.registerAllItems(false);
+        guide.registerPage("item/gear_wood");
+        guide.registerPage("item/gear_stone");
+        guide.registerPage("item/gear_iron");
+        guide.registerPage("item/gear_gold");
+        guide.registerPage("item/gear_diamond");
 
         MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
     }

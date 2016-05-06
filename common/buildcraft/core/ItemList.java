@@ -20,8 +20,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.items.IList;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ModelHelper;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.NBTUtils;
 
 @Deprecated
 public class ItemList extends ItemBuildCraft implements IList {

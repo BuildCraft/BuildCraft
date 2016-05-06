@@ -1,0 +1,9 @@
+{
+	"title": "Wooden Gear",
+	"customTypes": {
+		"mod": "BuildCraft",
+		"submod": "BC Core",
+		"era": "Wooden Era",
+		"type": "Gears"
+	}
+}

@@ -21,8 +21,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.transport.utils.TransportUtils;
 
 public class TravelingItem {

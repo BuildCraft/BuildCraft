@@ -28,9 +28,9 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.core.BlockDecoration;
 import buildcraft.core.StackAtPosition;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BuildingItem implements IBuildingItem, ISerializable {
 

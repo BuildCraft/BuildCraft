@@ -21,9 +21,9 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.Matrix4i;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 import io.netty.buffer.ByteBuf;
 

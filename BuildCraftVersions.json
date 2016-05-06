@@ -13,6 +13,6 @@
     },
     "1.8.9": {
         "7.2.0-pre6": "      Fix the builder and architect",
-        "7.2.0-pre12":"      Fix most things",
-    }
+        "7.2.0-pre12":"      Fix most things"
+	}
 }

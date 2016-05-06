@@ -11,7 +11,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotSearchAndGotoBlock extends AIRobot {
 

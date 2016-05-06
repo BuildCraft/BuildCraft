@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public enum Vec3dTemplate implements IDataTemplate {
     INSTANCE;

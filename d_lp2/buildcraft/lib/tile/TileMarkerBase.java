@@ -1,5 +1,6 @@
 package buildcraft.lib.tile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -18,10 +19,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.misc.NBTUtils;
 
-public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBuildCraft_BC8 implements IDebuggable {
+public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBC_Neptune implements IDebuggable {
     public static final List<MarkerCache<?>> CACHES = new ArrayList<>();
 
     protected Map<BlockPos, T> connected = new HashMap<>();
@@ -277,7 +278,7 @@ public abstract class TileMarkerBase<T extends TileMarkerBase<T>> extends TileBu
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) {
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
         super.readPayload(id, buffer, side);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {

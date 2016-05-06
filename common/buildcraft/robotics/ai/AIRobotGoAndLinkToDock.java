@@ -11,8 +11,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotGoAndLinkToDock extends AIRobot {
 

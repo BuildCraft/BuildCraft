@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -19,11 +20,13 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.command.IPayloadReceiver;
+import buildcraft.lib.net.command.IPayloadWriter;
 
-public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadReceiver {
+public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver {
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
     public static final int NET_RENDER_DATA = 0;
@@ -31,9 +34,9 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
      * shown in the GUI. */
     public static final int NET_GUI_DATA = 1;
 
-    public TileBuildCraft_BC8() {}
+    public TileBC_Neptune() {}
 
-    public static <T extends TileBuildCraft_BC8> void registerTile(Class<T> tileClass, String id) {
+    public static <T extends TileBC_Neptune> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
@@ -84,6 +87,16 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
         return null;
     }
 
+    public final void createAndSendMessage(final int id, final IPayloadWriter writer) {
+        if (hasWorldObj()) {
+            MessageUpdateTile message = new MessageUpdateTile(getPos(), buffer -> {
+                buffer.writeShort(id);
+                writer.write(buffer);
+            });
+            MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+        }
+    }
+
     @Override
     public final Packet<?> getDescriptionPacket() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
@@ -100,5 +113,26 @@ public abstract class TileBuildCraft_BC8 extends TileEntity implements IPayloadR
     // Network overridables
     public void writePayload(int id, PacketBuffer buffer, Side side) {}
 
-    public void readPayload(int id, PacketBuffer buffer, Side side) {}
+    /** @throws IOException if something went wrong */
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {}
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        int version = nbt.getInteger("data-version");
+        if (version != BCVersion.CURRENT.dataVersion) {
+            migrateOldNBT(nbt);
+        }
+    }
+
+    protected void migrateOldNBT(NBTTagCompound nbt) {
+
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
+    }
 }

@@ -32,7 +32,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.IndexRequirementMap;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
 

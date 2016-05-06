@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.pipe_bc8.EnumContentsJourneyPart;
 import buildcraft.api.transport.pipe_bc8.IPipeContentsEditable.IPipeContentsEditableItem;
 import buildcraft.api.transport.pipe_bc8.IPipePropertyProvider.IPipePropertyProviderEditable;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class PipeContentsEditableItem implements IPipeContentsEditableItem {
     private final IPipePropertyProviderEditable propertyProvider;

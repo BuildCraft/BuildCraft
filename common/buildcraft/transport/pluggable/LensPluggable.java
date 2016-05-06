@@ -15,7 +15,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.client.model.ModelKeyLens;
 import buildcraft.transport.pipes.events.PipeEventItem;

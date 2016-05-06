@@ -17,8 +17,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public static class TileWrapper implements ISerializable {

@@ -18,8 +18,8 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.LibraryId;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.NBTUtils;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {
     public static final RealBlueprintDeployer realInstance = new RealBlueprintDeployer();

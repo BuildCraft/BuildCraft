@@ -14,9 +14,9 @@ import buildcraft.api.mj.IMjConductor;
 import buildcraft.api.mj.IMjReciever;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.core.lib.BlockTileCache;
-import buildcraft.lib.tile.TileBuildCraft_BC8;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class TileEngineBase_BC8 extends TileBuildCraft_BC8 implements ITickable {
+public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable {
     /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
     private static final int[] PULSE_FREQUENCIES = { 60, 45, 35, 25, 15, 50 };
 

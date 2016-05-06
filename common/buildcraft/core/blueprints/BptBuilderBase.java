@@ -35,9 +35,9 @@ import buildcraft.core.Box;
 import buildcraft.core.builders.*;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.NBTUtils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

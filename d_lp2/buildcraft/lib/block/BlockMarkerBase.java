@@ -24,7 +24,7 @@ import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.tile.TileMarkerBase;
 
-public abstract class BlockMarkerBase extends BlockBuildCraftTile_BC8 implements ICustomRotationHandler {
+public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private static final Map<EnumFacing, AxisAlignedBB> BOUNDING_BOXES = new EnumMap<>(EnumFacing.class);
     private static final EnumFacing[] ALL_SIDES = VanillaRotationHandlers.getAllSidesArray();
 

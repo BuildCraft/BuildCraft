@@ -33,7 +33,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 

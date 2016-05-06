@@ -8,35 +8,30 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-import buildcraft.lib.tile.TileBuildCraft_BC8;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class BlockBuildCraftTile_BC8 extends BlockBuildCraftBase_BC8 implements ITileEntityProvider {
-    public BlockBuildCraftTile_BC8(Material material, String id) {
+public abstract class BlockBCTile_Neptune extends BlockBCBase_Neptune implements ITileEntityProvider {
+    public BlockBCTile_Neptune(Material material, String id) {
         super(material, id);
     }
 
     @Override
     public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileBuildCraft_BC8) {
-            TileBuildCraft_BC8 tileBC = (TileBuildCraft_BC8) tile;
+        if (tile instanceof TileBC_Neptune) {
+            TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onExplode(explosion);
         }
         super.onBlockExploded(world, pos, explosion);
     }
-    
+
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileBuildCraft_BC8) {
-            TileBuildCraft_BC8 tileBC = (TileBuildCraft_BC8) tile;
+        if (tile instanceof TileBC_Neptune) {
+            TileBC_Neptune tileBC = (TileBC_Neptune) tile;
             tileBC.onRemove();
         }
         super.breakBlock(world, pos, state);
-    }
-
-    @Override
-    public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state) {
-        super.onBlockDestroyedByPlayer(worldIn, pos, state);
     }
 }

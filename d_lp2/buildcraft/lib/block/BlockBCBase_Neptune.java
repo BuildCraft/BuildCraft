@@ -16,13 +16,13 @@ import buildcraft.lib.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.item.ItemBlockBuildCraft_BC8;
 import buildcraft.lib.item.ItemManager;
 
-public class BlockBuildCraftBase_BC8 extends Block {
-    private static List<BlockBuildCraftBase_BC8> registeredBlocks = new ArrayList<>();
+public class BlockBCBase_Neptune extends Block {
+    private static List<BlockBCBase_Neptune> registeredBlocks = new ArrayList<>();
 
     /** The tag used to identify this in the {@link TagManager} */
     public final String id;
 
-    public BlockBuildCraftBase_BC8(Material material, String id) {
+    public BlockBCBase_Neptune(Material material, String id) {
         super(material);
         this.id = id;
         setUnlocalizedName(TagManager.getTag(id, EnumTagType.UNLOCALIZED_NAME));
@@ -30,19 +30,19 @@ public class BlockBuildCraftBase_BC8 extends Block {
         setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block) {
+    public static <B extends BlockBCBase_Neptune> B register(B block) {
         return register(block, false, ItemBlockBuildCraft_BC8::new);
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block, boolean force) {
+    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force) {
         return register(block, force, ItemBlockBuildCraft_BC8::new);
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune> B register(B block, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
         return register(block, false, itemBlockConstructor);
     }
 
-    public static <B extends BlockBuildCraftBase_BC8> B register(B block, boolean force, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
         if (RegistryHelper.registerBlock(block, force)) {
             registeredBlocks.add(block);
             MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));

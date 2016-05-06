@@ -1,5 +1,5 @@
 {
-    "parent":"buildcraftcore:block/default_cube",
+    "parent":"block/cube",
     "textures": {
         "particle":"buildcraftrobotics:blocks/requester/side",
         "down":"buildcraftrobotics:blocks/requester/bottom",
