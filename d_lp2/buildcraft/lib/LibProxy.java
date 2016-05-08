@@ -2,6 +2,8 @@ package buildcraft.lib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.item.ItemManager;
 
@@ -68,6 +71,9 @@ public abstract class LibProxy {
         @Override
         void fmlInit() {
             super.fmlInit();
+            IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+            IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
+            reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
             ItemManager.fmlInitClient();
         }
 

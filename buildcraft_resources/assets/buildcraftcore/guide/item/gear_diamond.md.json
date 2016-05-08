@@ -1,0 +1,10 @@
+{
+	"title": "Diamond Gear",
+	"typeTags": {
+		"mod": "buildcraft",
+		"submod": "core",
+		"stage": "rare",
+		"type": "item",
+		"subtype": "gear"
+	}
+}

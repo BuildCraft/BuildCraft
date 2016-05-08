@@ -1,0 +1,10 @@
+{
+	"title": "Wooden Gear",
+	"typeTags": {
+		"mod": "buildcraft",
+		"submod": "core",
+		"stage": "basic",
+		"type": "item",
+		"subtype": "gear"
+	}
+}

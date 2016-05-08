@@ -1,10 +1,14 @@
 # Wooden Gear
-The most basic gear available, this can only be used for the simplest machines.
-$[special.crafting](buildcraft|core:woodenGearItem)
+In your efforts to create simple automation you have found a useful part: a turnable gear!
+
+Its only made of wood so it must be upgraded for more demanding tasks...
 $[special.new_page]
+Recipe:
+$[special.crafting](buildcraftcore:gear_wood)
 Upgrade:
-$[special.crafting](buildcraft|core:stoneGearItem)
+$[special.crafting](buildcraftcore:gear_stone)
+$[special.new_page]
 Uses:
-$[special.crafting](buildcraft|core:guideBook)
-$[special.crafting](buildcraft|core:engineBlock)
-$[special.crafting](buildcraft|core:paintbrush)
+$[special.crafting](buildcraftcore:guide)
+$[special.crafting](buildcraftcore:engineBlock)
+$[special.crafting](buildcraftcore:paintbrush)

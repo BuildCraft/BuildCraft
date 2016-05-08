@@ -432,7 +432,7 @@ item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
-item.guideBook.name=Guide Book
+item.guide.name=Guide Book
 item.robot_goggles.name=Robot Goggles
 
 itemGroup.buildcraft.boards=BuildCraft Robots
@@ -620,10 +620,25 @@ command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
 command.buildcraft.buildcraft.changelog.help=Displays the latest BC changelog.
 command.buildcraft.buildcraft.changelog.format=Format: /%s
 
-buildcraft.guide.chapter.=EMPTY CHAPTER!
-buildcraft.guide.chapter.block=Blocks
-buildcraft.guide.chapter.item=Items
-buildcraft.guide.chapter.gears=Gears
+buildcraft.guide.chapter.type.unknown=Unknown Type!
+buildcraft.guide.chapter.type.block=Blocks
+buildcraft.guide.chapter.type.item=Items
+
+buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
+buildcraft.guide.chapter.subtype.gear=Gears
+
+buildcraft.guide.chapter.stage.unknown=Unknown Era!
+buildcraft.guide.chapter.stage.base=Basic Resources
+buildcraft.guide.chapter.stage.common=Common Materials
+buildcraft.guide.chapter.stage.rare=Rare Elements
+buildcraft.guide.chapter.stage.nether=Nether
+buildcraft.guide.chapter.stage.end=Ender
+
+buildcraft.guide.chapter.mod.unknown=Unknown Mod!
+buildcraft.guide.chapter.mod.buildcraft=BuildCraft
+
+buildcraft.guide.chapter.submod.unknown=Unknown SubMod!
+buildcraft.guide.chapter.submod.core=Core
 
 command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
 command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)

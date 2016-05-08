@@ -13,6 +13,7 @@ import buildcraft.lib.item.ItemBuildCraft_BC8;
 public class ItemGuide extends ItemBuildCraft_BC8 {
     public ItemGuide(String id) {
         super(id);
+        setContainerItem(this);
     }
 
     @Override
