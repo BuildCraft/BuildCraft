@@ -64,7 +64,7 @@ public class BuildingSlotBlock extends BuildingSlot {
             if (!getSchematic().isAlreadyBuilt(context, pos)) {
                 context.world().sendBlockBreakProgress(pos.hashCode(), pos, -1);
                 if (BuildCraftBuilders.dropBrokenBlocks) {
-                    BlockUtils.breakBlock((WorldServer) context.world(), pos);
+                    BlockUtils.breakBlock((WorldServer) context.world(), pos, pos);
                     return false;
                 } else {
                     context.world().setBlockToAir(pos);

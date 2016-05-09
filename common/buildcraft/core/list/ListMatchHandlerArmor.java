@@ -2,6 +2,7 @@ package buildcraft.core.list;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.common.DimensionManager;
 
@@ -12,7 +13,7 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
     private int getArmorTypeID(ItemStack stack) {
         EntityPlayer player = CoreProxy.proxy.getClientPlayer();
         if (player == null) {
-            player = CoreProxy.proxy.getBuildCraftPlayer(DimensionManager.getWorld(0)).get();
+            player = CoreProxy.proxy.getBuildCraftPlayer(DimensionManager.getWorld(0), BlockPos.ORIGIN).get();
         }
         int atID = 0;
 

@@ -246,8 +246,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
         // Version tag that can be used for upgrading.
         // 0 means[1.8.9] 7.2.0-pre12 or before (default value)
-        // 1 means [1.8.9] 7.2.0-pre13 up until 7.2.0-preX
-        // 2 means [1.8.9] 7.2.0-preX or later
+        // 1 means [1.8.9] 7.2.0-pre13 up until 7.2.0
+        // 2 means [1.9] 8.0.0 or later
         nbt.setInteger("data-version", 1);
 
         /* Also save the state of all BC tiles. This will be helpful for migration. */

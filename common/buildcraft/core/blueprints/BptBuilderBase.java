@@ -259,7 +259,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     protected boolean isBlockBreakCanceled(World world, BlockPos pos) {
         if (!world.isAirBlock(pos)) {
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(
-                    (WorldServer) world).get());
+                    (WorldServer) world, this.pos).get());
             MinecraftForge.EVENT_BUS.post(breakEvent);
             return breakEvent.isCanceled();
         }
