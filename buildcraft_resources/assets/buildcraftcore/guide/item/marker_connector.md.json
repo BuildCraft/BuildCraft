@@ -1,0 +1,11 @@
+{
+	"title": "item.markerConnector.name",
+	"pageKey": "buildcraftcore:marker_connector",
+	"typeTags": {
+		"mod": "buildcraft",
+		"submod": "core",
+		"stage": "common",
+		"type": "item",
+		"subtype": "tool"
+	}
+}

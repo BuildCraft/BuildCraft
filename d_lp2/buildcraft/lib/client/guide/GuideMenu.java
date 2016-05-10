@@ -4,8 +4,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -53,8 +51,8 @@ public class GuideMenu extends GuidePageBase {
                 }
                 indent++;
             }
-            String translated = meta.title;
-            PageLine line = new PageLine(indent, translated, true);
+            String translatedTitle = I18n.format(meta.title);
+            PageLine line = new PageLine(indent, translatedTitle, true);
             node.addChild(line);
             metaMap.put(location, meta);
             pageLinks.put(line, location);

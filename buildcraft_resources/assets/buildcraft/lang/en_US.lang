@@ -362,6 +362,7 @@ item.blueprint.incomplete=Incomplete
 item.mapLocation.name=Map Location
 item.gateCopier.name=Gate Copier
 item.plasticSheet.name=Plastic Sheet
+item.markerConnector.name=Marker Connector
 
 item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
 item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe
@@ -626,6 +627,7 @@ buildcraft.guide.chapter.type.item=Items
 
 buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
 buildcraft.guide.chapter.subtype.gear=Gears
+buildcraft.guide.chapter.subtype.tool=Tools
 
 buildcraft.guide.chapter.stage.unknown=Unknown Era!
 buildcraft.guide.chapter.stage.base=Basic Resources

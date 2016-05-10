@@ -12,13 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 public class PageMeta {
     public final String title;
     public final String customImageLocation;
-    public final String pageKey;
+    public final String itemKey;
     public final PageTypeTags typeTags;
 
-    public PageMeta(String title, String customImageLocation, String pageKey, PageTypeTags typeTags) {
+    public PageMeta(String title, String customImageLocation, String itemKey, PageTypeTags typeTags) {
         this.title = title;
         this.customImageLocation = customImageLocation;
-        this.pageKey = pageKey;
+        this.itemKey = itemKey;
         this.typeTags = typeTags;
     }
 

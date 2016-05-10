@@ -1,11 +1,11 @@
 {
-	"title": "item.woodenGearItem.name",
-	"pageKey": "buildcraftcore:gear_wood",
+	"title": "item.wrenchItem.name",
+	"pageKey": "buildcraftcore:wrench",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",
 		"stage": "common",
 		"type": "item",
-		"subtype": "gear"
+		"subtype": "tool"
 	}
 }

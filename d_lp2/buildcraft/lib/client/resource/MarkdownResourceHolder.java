@@ -8,7 +8,9 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
@@ -16,6 +18,7 @@ import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.client.guide.parts.*;
 
 public class MarkdownResourceHolder extends StringResourceHolder implements GuidePartFactory<GuidePage> {
+    public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
     private List<GuidePartFactory<?>> factories = null;
 
     public MarkdownResourceHolder(ResourceLocation location) {
@@ -47,7 +50,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
 
         factory = loadSpecialLine(line);
         if (factory != null) return factory;
-        
+
         // Attempt to load a "list" from all of the given lines
 
         // We failed to find a factory for any of the special, so lets just interpret it as a raw string
@@ -67,8 +70,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             modLine = TextFormatting.UNDERLINE + modLine.substring(2);
             enabledFormattings.add(TextFormatting.UNDERLINE);
         }
-        // TODO: Add support for stuff like *italic* **bold** ~~strikethrough~~ %%Obfuscated%%
-        // (or _italic_ or __bold__ )
+        // TODO: Add support for stuff like *italic* __bold__ ~~strikethrough~~ %%Obfuscated%%
 
         // And lists
 
@@ -152,7 +154,6 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     private static GuidePartFactory<?> loadCraftingLine(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
-            BCLog.logger.warn("[guide-markdown] Unable to find an itemstack for ");
             return null;
         }
         return GuideCraftingFactory.create(stack);
@@ -161,7 +162,6 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     private static GuidePartFactory<?> loadSmeltingLine(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
-
             return null;
         }
         return GuideSmeltingFactory.create(stack);
@@ -179,9 +179,9 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     private static ItemStack loadSimpleItemStack(String substring) {
         Item item = Item.getByNameOrId(substring);
         if (item != null) {
-            BCLog.logger.warn(substring + " was not a valid item!");
             return new ItemStack(item);
         } else {
+            BCLog.logger.warn("[markdown-loader] " + substring + " was not a valid item!");
             return null;
         }
 
@@ -190,15 +190,15 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     private static ItemStack loadComplexItemStack(String line) {
         String[] args = line.split(",");
         if (args.length == 0) {
-            BCLog.logger.warn(line + " was not a valid item string!");
+            BCLog.logger.warn("[markdown-loader] " + line + " was not a valid complex item string!");
             return null;
         }
         ItemStack stack = null;
         Item item = Item.getByNameOrId(args[0]);
         if (item != null) {
-            BCLog.logger.warn(args[0] + " was not a valid item!");
             stack = new ItemStack(item);
         } else {
+            BCLog.logger.warn("[markdown-loader] " + args[0] + " was not a valid item!");
             return null;
         }
 
@@ -208,7 +208,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         try {
             stackSize = Integer.parseInt(args[1]);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn(args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[markdown-loader] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
         stack.stackSize = stackSize;
 
@@ -218,7 +218,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             int meta = Integer.parseInt(args[2]);
             stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn(args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[markdown-loader] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
 
         if (args.length == 3) return stack;
@@ -227,7 +227,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         try {
             stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
-            BCLog.logger.warn(nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
+            BCLog.logger.warn("[markdown-loader] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
         return stack;
     }

@@ -1,5 +1,6 @@
 {
-	"title": "Iron Gear",
+	"title": "item.ironGearItem.name",
+	"pageKey": "buildcraftcore:gear_iron",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",

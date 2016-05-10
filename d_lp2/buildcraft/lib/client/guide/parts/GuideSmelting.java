@@ -13,7 +13,7 @@ public class GuideSmelting extends GuidePart {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS, 119, 54, 80, 54);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
     public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
-    public static final GuiRectangle OUT_POS = new GuiRectangle(60, 19, 16, 16);
+    public static final GuiRectangle OUT_POS = new GuiRectangle(59, 19, 16, 16);
     public static final GuiRectangle FURNACE_POS = new GuiRectangle(1, 37, 16, 16);
 
     private final ChangingItemStack input, output;
