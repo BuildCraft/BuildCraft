@@ -43,7 +43,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
     @Override
     public void update() {
-        deltaManager.tick(worldObj.getTotalWorldTime());
+        deltaManager.tick();
     }
 
     protected class WorkbenchCrafting extends InventoryCrafting {
