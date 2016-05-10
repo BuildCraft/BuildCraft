@@ -111,7 +111,7 @@ public class Blueprint extends BlueprintBase {
             for (int y = 0; y <= max.getY(); y++) {
                 for (int z = 0; z <= max.getZ(); z++) {
                     SchematicBlock block = contentBlocks[x][y][z];
-                    list.appendTag(BlueprintAPI.serializeSchematic(block));
+                    list.appendTag(BlueprintAPI.serializeSchematic(block, new BlockPos(x, y, z)));
                 }
             }
         }

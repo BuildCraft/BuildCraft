@@ -9,7 +9,7 @@ import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilder;
 
 public class BptActionPartiallyBreakBlock implements IBptAction {
-    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi", "partial_break_block");
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "partial_break_block");
     private final int breakProgress;
     private final BlockPos pos;
 

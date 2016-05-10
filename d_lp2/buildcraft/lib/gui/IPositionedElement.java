@@ -24,4 +24,29 @@ public interface IPositionedElement {
     default String rectangleToString() {
         return "[x = " + getX() + ", y = " + getY() + ", w = " + getWidth() + ", h = " + getHeight() + "]";
     }
+
+    default IPositionedElement offset(IPositionedElement by) {
+        IPositionedElement containing = this;
+        return new IPositionedElement() {
+            @Override
+            public int getX() {
+                return by.getX() + containing.getX();
+            }
+
+            @Override
+            public int getY() {
+                return by.getY() + containing.getY();
+            }
+
+            @Override
+            public int getWidth() {
+                return containing.getWidth();
+            }
+
+            @Override
+            public int getHeight() {
+                return containing.getHeight();
+            }
+        };
+    }
 }

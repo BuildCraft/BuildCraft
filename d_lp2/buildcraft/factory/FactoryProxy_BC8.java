@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.factory.container.ContainerAutoCraftItems;
+import buildcraft.factory.gui.GuiAutoCraftItems;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 
 public abstract class FactoryProxy_BC8 implements IGuiHandler {
@@ -25,7 +27,8 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (ID == FactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
             if (tile instanceof TileAutoWorkbenchItems) {
-
+                TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
+                return new ContainerAutoCraftItems(player, workbench);
             }
         }
         return null;
@@ -50,7 +53,8 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
             if (ID == FactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
                 if (tile instanceof TileAutoWorkbenchItems) {
-
+                    TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
+                    return new GuiAutoCraftItems(new ContainerAutoCraftItems(player, workbench));
                 }
             }
             return null;

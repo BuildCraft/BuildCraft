@@ -11,7 +11,7 @@ import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilder;
 
 public class BptActionSetBlockState implements IBptAction {
-    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi", "set_block_state");
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "set_block_state");
     private final IBlockState state;
     private final BlockPos pos;
 

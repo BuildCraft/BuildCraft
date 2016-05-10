@@ -52,6 +52,7 @@ public abstract class SchematicBlock extends Schematic {
 
     private <V extends Comparable<V>> void readStateProperty(NBTTagCompound props, IProperty<V> property) throws SchematicException {
         String name = props.getString(property.getName());
+        // Ideally we would use property.parseValue(name); but thats client-only :(
         for (V value : property.getAllowedValues()) {
             if (name.equals(property.getName(value))) {
                 state = state.withProperty(property, value);

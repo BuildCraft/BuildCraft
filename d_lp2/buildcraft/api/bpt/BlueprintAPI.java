@@ -6,6 +6,8 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.IUniqueReader;
 import buildcraft.lib.bpt.helper.BptActionPartiallyBreakBlock;
@@ -14,8 +16,8 @@ import buildcraft.lib.bpt.helper.BptTaskBlockClear;
 import buildcraft.lib.bpt.helper.BptTaskBlockStandalone;
 
 public class BlueprintAPI {
-    private static final Map<ResourceLocation, SchematicFactoryNBTBlock<? extends SchematicBlock>> schematicBlockDeserializers = new HashMap<>();
-    private static final Map<ResourceLocation, SchematicFactoryNBTBlock<? extends SchematicEntity>> schematicEntityDeserializers = new HashMap<>();
+    private static final Map<ResourceLocation, SchematicFactoryNBTBlock<?>> schematicBlockDeserializers = new HashMap<>();
+    private static final Map<ResourceLocation, SchematicFactoryNBTEntity<?>> schematicEntityDeserializers = new HashMap<>();
     private static final Map<ResourceLocation, IBptTaskDeserializer> taskDeserializers = new HashMap<>();
     private static final Map<ResourceLocation, IUniqueReader<IBptAction>> actionDeserializers = new HashMap<>();
 
@@ -23,7 +25,7 @@ public class BlueprintAPI {
         schematicBlockDeserializers.put(block.getRegistryName(), schematic);
     }
 
-    public static SchematicFactoryNBTBlock<? extends SchematicBlock> getFor(Block block) {
+    public static SchematicFactoryNBTBlock<?> getFor(Block block) {
         ResourceLocation regName = block.getRegistryName();
         return schematicBlockDeserializers.get(regName);
     }
@@ -54,14 +56,21 @@ public class BlueprintAPI {
         registerActionDeserializer(BptActionPartiallyBreakBlock.ID, BptActionPartiallyBreakBlock.Deserializer.INSTANCE);
     }
 
-    public static NBTTagCompound serializeSchematic(SchematicBlock block) {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("block", block.getBlockType().getRegistryName().toString());
-        
-        return nbt;
+    public static NBTTagCompound serializeSchematic(SchematicBlock block, BlockPos offset) {
+        if (block == null) return new NBTTagCompound();
+        return block.serializeNBT();
     }
-    
-    public static SchematicBlock deserializeSchematic() {
-        
+
+    public static SchematicBlock deserializeSchematic(NBTTagCompound nbt, BlockPos offset) {
+        String regName = nbt.getString("block");
+        if (StringUtils.isNullOrEmpty(regName)) return null;
+        ResourceLocation loc = new ResourceLocation(regName);
+        Block block = Block.REGISTRY.getObject(loc);
+        SchematicFactoryNBTBlock<?> des = getFor(block);
+        if (des == null) {
+            return null;
+        } else {
+            return des.createFromNBT(nbt, offset);
+        }
     }
 }

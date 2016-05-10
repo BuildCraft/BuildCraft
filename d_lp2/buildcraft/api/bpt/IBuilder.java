@@ -41,6 +41,8 @@ public interface IBuilder {
 
     void addAction(IBptAction action, int delay);
 
+    void clearToAir(BlockPos pos);
+
     public interface IRequestedStack {
         ItemStack getRequested();
 

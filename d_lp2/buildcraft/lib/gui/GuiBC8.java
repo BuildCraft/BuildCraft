@@ -64,7 +64,7 @@ public abstract class GuiBC8<C extends ContainerBC8> extends GuiContainer {
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         mouse.setMousePosition(mouseX, mouseY);
 
-        drawBackgroundLayer();
+        drawBackgroundLayer(partialTicks);
 
         for (IGuiElement element : guiElements) {
             element.drawBackground();
@@ -120,7 +120,7 @@ public abstract class GuiBC8<C extends ContainerBC8> extends GuiContainer {
         }
     }
 
-    protected void drawBackgroundLayer() {}
+    protected void drawBackgroundLayer(float particlTicks) {}
 
     protected void drawForegroundLayer() {}
 }

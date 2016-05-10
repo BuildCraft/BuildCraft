@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +28,18 @@ public abstract class ContainerBC8 extends Container {
 
     public ContainerBC8(EntityPlayer player) {
         this.player = player;
+    }
+    
+    protected void addFullPlayerInventory(int startY) {
+        for (int sy = 0; sy < 3; sy++) {
+            for (int sx = 0; sx < 9; sx++) {
+                addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, startY + sy * 18));
+            }
+        }
+
+        for (int sx = 0; sx < 9; sx++) {
+            addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, startY + 58));
+        }
     }
 
     protected <W extends Widget_BC8<?>> W addWidget(W widget) {

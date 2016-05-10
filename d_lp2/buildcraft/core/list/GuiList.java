@@ -121,7 +121,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
     }
 
     @Override
-    protected void drawBackgroundLayer() {
+    protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.draw(guiLeft, guiTop);
 
         for (int i = 0; i < 2; i++) {

@@ -20,6 +20,7 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageUpdateTile;
@@ -33,6 +34,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Used for sending all data in the GUI. Basically what has been omitted from {@link #NET_RENDER_DATA} that is
      * shown in the GUI. */
     public static final int NET_GUI_DATA = 1;
+
+    public static final int NET_DELTA = 2;
+
+    protected final DeltaManager deltaManager = new DeltaManager(writer -> {
+        this.createAndSendMessage(NET_DELTA, writer);
+    });
 
     public TileBC_Neptune() {}
 
@@ -114,7 +121,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public void writePayload(int id, PacketBuffer buffer, Side side) {}
 
     /** @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {}
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+        if (side == Side.CLIENT) {
+            if (id == NET_DELTA) {
+                deltaManager.receiveDeltaData(buffer);
+            }
+        }
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {

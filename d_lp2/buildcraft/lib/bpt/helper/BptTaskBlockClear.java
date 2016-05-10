@@ -13,7 +13,7 @@ import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
 
 public class BptTaskBlockClear extends BptTaskSimple {
-    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_clear");
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftlib:bpt_block_clear");
     private final IBuilder builder;
     private final BlockPos pos;
     private final int ticks;

@@ -25,8 +25,15 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
 
     @Override
     public Iterable<IBptTask> createTasks(IBuilder builder) {
-        // TODO: Some sort of advanced clearing.
+        return ImmutableSet.of(BptTaskBlockStandalone.create(builder, offset, state));
+    }
 
-        return ImmutableSet.of(BptTaskBlockClear.create(builder, offset), BptTaskBlockStandalone.create(builder, offset, state));
+    @Override
+    public BptClearer createClearingTask(IBuilder builder) {
+        IBlockState existing = builder.getWorld().getBlockState(builder.getPos().add(offset));
+        if (existing == state) {
+            return DefaultBptClearers.NONE;
+        }
+        return DefaultBptClearers.REMOVE;
     }
 }

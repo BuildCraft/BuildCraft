@@ -7,7 +7,6 @@ package buildcraft.core.list;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -25,6 +24,8 @@ import buildcraft.lib.net.MessageCommand;
 import buildcraft.lib.net.command.ICommandReceiver;
 
 public class ContainerList extends ContainerBC8 implements ICommandReceiver {
+    private static final int PLAYER_INV_START = 103;
+
     public ListHandler.Line[] lines;
 
     final WidgetListSlot[][] slots;
@@ -58,15 +59,7 @@ public class ContainerList extends ContainerBC8 implements ICommandReceiver {
             }
         }
 
-        for (int sy = 0; sy < 3; sy++) {
-            for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, 103 + sy * 18));
-            }
-        }
-
-        for (int sx = 0; sx < 9; sx++) {
-            addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, 161));
-        }
+        addFullPlayerInventory(PLAYER_INV_START);
     }
 
     @Override

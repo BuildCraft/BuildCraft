@@ -2,6 +2,7 @@ package buildcraft.lib.bpt;
 
 import java.util.Map;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -15,6 +16,11 @@ import buildcraft.api.bpt.Schematic;
 public class Template extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private boolean[][][] contentBlocks;
+
+    public Template(NBTTagCompound nbt) {
+        super(nbt);
+        deserializeNBT(nbt);
+    }
 
     public Template(BlockPos anchor, BlockPos min, BlockPos max, EnumFacing direction) {
         super(anchor, min, max, direction);
@@ -59,5 +65,17 @@ public class Template extends BlueprintBase {
     @Override
     public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder) {
         return null;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        
     }
 }
