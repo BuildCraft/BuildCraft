@@ -11,10 +11,11 @@ import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderMarkerPath;
 import buildcraft.core.client.render.RenderMarkerVolume;
 import buildcraft.core.list.GuiList;
-import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.GuideManager;
+import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 
 public class CoreProxyClient extends CoreProxy {
     @Override
@@ -32,12 +33,15 @@ public class CoreProxyClient extends CoreProxy {
         super.fmlPreInit();
 
         BuildCraftLaserManager.fmlPreInit();
+
+        // DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderMarkerVolume.INSTANCE);
+        DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderMarkerPath.INSTANCE);
     }
 
     @Override
     public void fmlInit() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerPath.class, RenderMarkerPath.INSTANCE);
+        // ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerPath.class, RenderMarkerPath.INSTANCE);
 
         MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
     }

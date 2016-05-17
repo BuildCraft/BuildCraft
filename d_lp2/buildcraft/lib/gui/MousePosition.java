@@ -3,7 +3,7 @@ package buildcraft.lib.gui;
 public final class MousePosition implements IPositionedElement {
     private int x, y;
 
-    void setMousePosition(int mouseX, int mouseY) {
+    public void setMousePosition(int mouseX, int mouseY) {
         this.x = mouseX;
         this.y = mouseY;
     }

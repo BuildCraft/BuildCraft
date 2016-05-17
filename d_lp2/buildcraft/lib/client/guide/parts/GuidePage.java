@@ -16,10 +16,10 @@ public class GuidePage extends GuidePageBase {
     }
 
     @Override
-    public void setSpecifics(IFontRenderer fontRenderer, int mouseX, int mouseY) {
-        super.setSpecifics(fontRenderer, mouseX, mouseY);
+    public void setFontRenderer(IFontRenderer fontRenderer) {
+        super.setFontRenderer(fontRenderer);
         for (GuidePart part : parts) {
-            part.setSpecifics(fontRenderer, mouseX, mouseY);
+            part.setFontRenderer(fontRenderer);
         }
     }
 

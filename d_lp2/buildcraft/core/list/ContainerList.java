@@ -17,13 +17,13 @@ import buildcraft.api.lists.ListMatchHandler.Type;
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.net.MessageCommand;
 import buildcraft.lib.net.command.ICommandReceiver;
 
-public class ContainerList extends ContainerBC8 implements ICommandReceiver {
+public class ContainerList extends ContainerBC_Neptune implements ICommandReceiver {
     private static final int PLAYER_INV_START = 103;
 
     public ListHandler.Line[] lines;

@@ -1,6 +1,9 @@
 package buildcraft.lib.tile;
 
 import java.io.IOException;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,22 +41,24 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
      * shown in the GUI. */
     public static final int NET_GUI_DATA = 1;
 
-    public static final int NET_DELTA_SINGLE = 2;
-    public static final int NET_DELTA_CLEAR = 3;
-    public static final int NET_DELTA_ALL = 4;
+    public static final int NET_REN_DELTA_SINGLE = 2;
+    public static final int NET_REN_DELTA_CLEAR = 3;
+    public static final int NET_GUI_DELTA_SINGLE = 4;
+    public static final int NET_GUI_DELTA_CLEAR = 5;
 
-    protected final DeltaManager deltaManager = new DeltaManager((type, writer) -> {
+    /** Handles all of the players that are currently using this tile (have a GUI open) */
+    private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
+
+    protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int netId;
         if (type == EnumDeltaMessage.ADD_SINGLE) {
-            netId = NET_DELTA_SINGLE;
+            netId = gui ? NET_GUI_DELTA_SINGLE : NET_REN_DELTA_SINGLE;
         } else if (type == EnumDeltaMessage.SET_VALUE) {
-            netId = NET_DELTA_CLEAR;
-        } else if (type == EnumDeltaMessage.CURRENT_STATE) {
-            netId = NET_DELTA_ALL;
+            netId = gui ? NET_GUI_DELTA_CLEAR : NET_REN_DELTA_CLEAR;
         } else {
             throw new IllegalArgumentException("Unknown delta message type " + type);
         }
-        this.createAndSendMessage(netId, writer);
+        this.createAndSendMessage(gui, netId, writer);
     });
 
     public TileBC_Neptune() {}
@@ -85,7 +89,28 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
      * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
     public void onRemove() {}
 
+    public void onPlayerOpen(EntityPlayer player) {
+        usingPlayers.add(player);
+        sendNetworkUpdate(NET_GUI_DATA, player);
+    }
+
+    public void onPlayerClose(EntityPlayer player) {
+        usingPlayers.remove(player);
+    }
+
+    public boolean canInteractWith(EntityPlayer player) {
+        if (worldObj.getTileEntity(getPos()) != this) {
+            return false;
+        }
+        return player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64.0D;
+    }
+
+    // ##################
+    //
     // Network helpers
+    //
+    // ##################
+
     /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
     public void redrawBlock() {
         if (hasWorldObj()) worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
@@ -117,13 +142,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return null;
     }
 
-    public final void createAndSendMessage(final int id, final IPayloadWriter writer) {
+    public final void createAndSendMessage(boolean gui, int id, IPayloadWriter writer) {
         if (hasWorldObj()) {
             MessageUpdateTile message = new MessageUpdateTile(getPos(), buffer -> {
                 buffer.writeShort(id);
                 writer.write(buffer);
             });
-            MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+            if (gui) {
+                MessageUtil.sendToPlayers(usingPlayers, message);
+            } else {
+                MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+            }
         }
     }
 
@@ -140,29 +169,48 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return null;
     }
 
+    // ######################
+    //
     // Network overridables
+    //
+    // ######################
+
     public void writePayload(int id, PacketBuffer buffer, Side side) {
+        // Send a Render Data packet as well as the gui packet
+        if (id == NET_GUI_DATA) {
+            writePayload(NET_RENDER_DATA, buffer, side);
+        }
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
-                deltaManager.writeDeltaState(buffer);
+                deltaManager.writeDeltaState(false, buffer);
+            } else if (id == NET_GUI_DATA) {
+                deltaManager.writeDeltaState(true, buffer);
             }
         }
     }
 
     /** @throws IOException if something went wrong */
     public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+        // Send a Render Data packet as well as the gui packet
+        if (id == NET_GUI_DATA) {
+            readPayload(NET_RENDER_DATA, buffer, side);
+        }
         if (side == Side.CLIENT) {
-            if (id == NET_RENDER_DATA) {
-                deltaManager.receiveDeltaData(EnumDeltaMessage.CURRENT_STATE, buffer);
-            } else if (id == NET_DELTA_SINGLE) {
-                deltaManager.receiveDeltaData(EnumDeltaMessage.ADD_SINGLE, buffer);
-            } else if (id == NET_DELTA_CLEAR) {
-                deltaManager.receiveDeltaData(EnumDeltaMessage.SET_VALUE, buffer);
-            } else if (id == NET_DELTA_ALL) {
-                deltaManager.receiveDeltaData(EnumDeltaMessage.CURRENT_STATE, buffer);
-            }
+            if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
+            else if (id == NET_GUI_DATA) deltaManager.receiveDeltaData(true, EnumDeltaMessage.CURRENT_STATE, buffer);
+            else if (id == NET_REN_DELTA_SINGLE) deltaManager.receiveDeltaData(false, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
+            else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
+
         }
     }
+
+    // ######################
+    //
+    // NBT handling
+    //
+    // ######################
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
@@ -171,7 +219,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (version != BCVersion.CURRENT.dataVersion) {
             migrateOldNBT(nbt);
         }
-        deltaManager.readFromNBT(nbt.getTagList("deltas", Constants.NBT.TAG_COMPOUND));
+        deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
     }
 
     protected void migrateOldNBT(NBTTagCompound nbt) {

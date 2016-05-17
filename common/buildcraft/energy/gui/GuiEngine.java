@@ -15,7 +15,7 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
 
 public abstract class GuiEngine extends GuiBC8<ContainerEngine> {

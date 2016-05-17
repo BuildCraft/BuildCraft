@@ -13,8 +13,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,6 +42,7 @@ import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.lib.LibProxy;
+import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
@@ -197,7 +196,7 @@ public enum RenderTickListener {
         mc.mcProfiler.startSection("bc");
         mc.mcProfiler.startSection("renderWorld");
 
-        fromPlayerPreGl(player, partialTicks);
+        DetatchedRenderer.fromWorldOriginPre(player, partialTicks);
 
         Item mainHandItem = mainHand == null ? null : mainHand.getItem();
         Item offHandItem = offHand == null ? null : offHand.getItem();
@@ -208,31 +207,10 @@ public enum RenderTickListener {
             renderMarkerConnector(world, player, partialTicks);
         }
 
-        fromPlayerPostGl();
+        DetatchedRenderer.fromWorldOriginPost();
 
         mc.mcProfiler.endSection();
         mc.mcProfiler.endSection();
-    }
-
-    public static void fromPlayerPreGl(EntityPlayer player, float partialTicks) {
-        GL11.glPushMatrix();
-
-        Vec3d diff = new Vec3d(0, 0, 0);
-        diff = diff.subtract(player.getPositionEyes(partialTicks));
-        diff = diff.addVector(0, player.getEyeHeight(), 0);
-        GL11.glTranslated(diff.xCoord, diff.yCoord, diff.zCoord);
-
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.enableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-    }
-
-    public static void fromPlayerPostGl() {
-        GL11.glPopMatrix();
-
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
     private static void renderMapLocation(WorldClient world, ItemStack stack) {

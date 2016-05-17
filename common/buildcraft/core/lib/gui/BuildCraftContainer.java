@@ -18,11 +18,11 @@ import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 
 // TODO: Rewrite all methods from this into BCContainer_BC8
 @Deprecated
-public abstract class BuildCraftContainer extends ContainerBC8 {
+public abstract class BuildCraftContainer extends ContainerBC_Neptune {
 
     private List<Widget> widgets = new ArrayList<>();
     private int inventorySize;

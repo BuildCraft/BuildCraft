@@ -54,6 +54,11 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         return to;
     }
 
+    @SideOnly(Side.CLIENT)
+    public BlockPos getFrom() {
+        return from;
+    }
+
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
@@ -74,7 +79,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     public boolean canConnectTo(TileMarkerPath other) {
         if (other == this) return false;
         if (connected.size() >= 2) return false;
-        if (connected.containsKey(other.getPos())) return false;
+        if (connected.contains(other.getPos())) return false;
         if (from == null && other.to == null) return true;
         if (to == null && other.from == null) return true;
         return false;
@@ -83,7 +88,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     @Override
     protected void onConnect(TileMarkerPath other) {
         if (worldObj.isRemote) return;
-        if (!connected.containsKey(other.getPos())) return;
+        if (!connected.contains(other.getPos())) return;
         if (to == null && other.from == null && !Objects.equals(from, other.getPos())) {
             // Setup both variables so we don't screw anything up by doing them indervidually
             to = other.getPos();
@@ -97,16 +102,16 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     @Override
     protected void onDisconnect(TileMarkerPath other) {
         if (worldObj.isRemote) return;
-        if (to != null && !connected.containsKey(to)) {
+        if (to != null && !connected.contains(to)) {
             to = null;
         }
-        if (from != null && !connected.containsKey(from)) {
+        if (from != null && !connected.contains(from)) {
             from = null;
         }
     }
 
     public void reverseDirection() {
-        Set<TileMarkerPath> tiles = gatherAllConnections();
+        Set<TileMarkerPath> tiles = gatherAllLoadedConnections();
         for (TileMarkerPath marker : tiles) {
             BlockPos from = marker.from;
             marker.from = marker.to;
@@ -124,13 +129,13 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
         positions.add(getPos());
 
         TileMarkerPath current = this;
-        while ((current = getCacheForSide().get(current.from)) != null) {
+        while ((current = getLocalCache().get(current.from)) != null) {
             BlockPos pos = current.getPos();
             positions.addFirst(pos);
             if (positions.getLast().equals(pos)) break;
         }
         current = this;
-        while ((current = getCacheForSide().get(current.to)) != null) {
+        while ((current = getLocalCache().get(current.to)) != null) {
             BlockPos pos = current.getPos();
             if (positions.contains(pos)) break;
             positions.addLast(pos);
@@ -146,7 +151,7 @@ public class TileMarkerPath extends TileMarkerBase<TileMarkerPath> implements IP
     @Override
     public void removeFromWorld() {
         if (worldObj.isRemote) return;
-        for (TileMarkerPath connectedTo : gatherAllConnections()) {
+        for (TileMarkerPath connectedTo : gatherAllLoadedConnections()) {
             worldObj.destroyBlock(connectedTo.getPos(), true);
         }
     }

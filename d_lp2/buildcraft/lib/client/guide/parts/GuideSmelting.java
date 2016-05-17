@@ -34,23 +34,23 @@ public class GuideSmelting extends GuidePart {
         x += OFFSET.x;
         y += OFFSET.y + current.line * LINE_HEIGHT;
         if (current.page == index) {
-            SMELTING_ICON.draw(x, y);
+            SMELTING_ICON.drawAt(x, y);
             // Render the item
             GlStateManager.enableRescaleNormal();
             RenderHelper.enableGUIStandardItemLighting();
 
             gui.mc.getRenderItem().renderItemIntoGUI(input.get(), x + IN_POS.x, y + IN_POS.y);
-            if (IN_POS.isMouseInside(x + IN_POS.x, y + IN_POS.y, mouseX, mouseY)) {
+            if (IN_POS.offset(x, y).contains(gui.mouse)) {
                 gui.tooltipStack = input.get();
             }
 
             gui.mc.getRenderItem().renderItemIntoGUI(output.get(), x + OUT_POS.x, y + OUT_POS.y);
-            if (OUT_POS.isMouseInside(x + OUT_POS.x, y + OUT_POS.y, mouseX, mouseY)) {
+            if (OUT_POS.offset(x, y).contains(gui.mouse)) {
                 gui.tooltipStack = output.get();
             }
 
             gui.mc.getRenderItem().renderItemIntoGUI(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
-            if (FURNACE_POS.isMouseInside(x + FURNACE_POS.x, y + FURNACE_POS.y, mouseX, mouseY)) {
+            if (FURNACE_POS.offset(x, y).contains(gui.mouse)) {
                 gui.tooltipStack = furnace;
             }
 

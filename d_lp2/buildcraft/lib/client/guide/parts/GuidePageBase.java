@@ -3,6 +3,7 @@ package buildcraft.lib.client.guide.parts;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 
 public abstract class GuidePageBase extends GuidePart {
     /** The current page that is being rendered */
@@ -84,10 +85,11 @@ public abstract class GuidePageBase extends GuidePart {
             // Back page button
             if (index != 0) {
                 GuiIcon icon = GuiGuide.TURN_BACK;
-                if (icon.isMouseInside(x, y + height, mouseX, mouseY)) {
+                GuiRectangle turnBox = new GuiRectangle(x, y + height, icon.width, icon.height);
+                if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_BACK_HOVERED;
                 }
-                icon.draw(x, y + height);
+                icon.drawCutInside(turnBox);
             }
             // Page index
             String text = (index + 1) + " / " + numPages;
@@ -98,10 +100,11 @@ public abstract class GuidePageBase extends GuidePart {
             // Back page button
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                if (icon.isMouseInside(x + width - icon.width, y + height, mouseX, mouseY)) {
+                GuiRectangle turnBox = new GuiRectangle(x + width - icon.width, y + height, icon.width, icon.height);
+                if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_FORWARDS_HOVERED;
                 }
-                icon.draw(x + width - icon.width, y + height);
+                icon.drawScaledInside(turnBox);
             }
             // Page index
             if (index + 1 <= numPages) {
@@ -121,7 +124,8 @@ public abstract class GuidePageBase extends GuidePart {
         if (index % 2 == 0) {
             if (index != 0) {
                 GuiIcon icon = GuiGuide.TURN_BACK;
-                if (icon.isMouseInside(x, y + height, mouseX, mouseY)) {
+                GuiRectangle turnBox = new GuiRectangle(x, y + height, icon.width, icon.height);
+                if (turnBox.contains(gui.mouse)) {
                     backPage();
                 }
             }
@@ -130,7 +134,8 @@ public abstract class GuidePageBase extends GuidePart {
         else {
             if (index + 1 < numPages) {
                 GuiIcon icon = GuiGuide.TURN_FORWARDS;
-                if (icon.isMouseInside(x + width - icon.width, y + height, mouseX, mouseY)) {
+                GuiRectangle turnBox = new GuiRectangle(x + width - icon.width, y + height, icon.width, icon.height);
+                if (turnBox.contains(gui.mouse)) {
                     nextPage();
                 }
             }

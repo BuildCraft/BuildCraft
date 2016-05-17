@@ -23,7 +23,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.draw(rootElement);
+        ICON_GUI.drawAt(rootElement);
 
         DeltaInt delta = container.tile.deltaProgress;
         double dynamic = delta.getDynamic(partialTicks);
@@ -32,7 +32,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
         GuiRectangle progress = RECT_PROGRESS.createProgress(p, 1);
         ICON_PROGRESS.drawCutInside(progress.offset(rootElement));
 
-        int dyI = (int) dynamic;
+        double dyI = dynamic;
         fontRendererObj.drawString("Start = " + delta.getStatic(true), 10, 10, -1);
         fontRendererObj.drawString("Dyn   = " + dyI, 10, 20, -1);
         fontRendererObj.drawString("End   = " + delta.getStatic(false), 10, 30, -1);

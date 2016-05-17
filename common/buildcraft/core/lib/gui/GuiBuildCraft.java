@@ -30,19 +30,19 @@ import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.Widget_BC8;
+import buildcraft.lib.gui.Widget_Neptune;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
     public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraftcore:textures/gui/ledger.png");
     public final LedgerManager ledgerManager = new LedgerManager(this);
     public final TileEntity tile;
-    public final ContainerBC8 container;
+    public final ContainerBC_Neptune container;
     public ResourceLocation texture;
 
-    public GuiBuildCraft(ContainerBC8 container, IInventory inventory, ResourceLocation texture) {
+    public GuiBuildCraft(ContainerBC_Neptune container, IInventory inventory, ResourceLocation texture) {
         super(container);
         this.container = container;
 
@@ -195,7 +195,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     protected void drawWidgets(int mX, int mY) {
-        for (Widget_BC8 widget : container.getWidgets()) {
+        for (Widget_Neptune widget : container.getWidgets()) {
             if (widget.hidden) {
                 continue;
             }
@@ -363,7 +363,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         }
     }
 
-    public ContainerBC8 getContainer() {
+    public ContainerBC_Neptune getContainer() {
         return container;
     }
 }

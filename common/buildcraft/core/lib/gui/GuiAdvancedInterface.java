@@ -17,13 +17,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 
 public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
     public ArrayList<AdvancedSlot> slots = new ArrayList<>();
 
-    public GuiAdvancedInterface(ContainerBC8 container, IInventory inventory, ResourceLocation texture) {
+    public GuiAdvancedInterface(ContainerBC_Neptune container, IInventory inventory, ResourceLocation texture) {
         super(container, inventory, texture);
     }
 

@@ -12,11 +12,11 @@ import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
 
 /** Defines some sort of separate element that exists on both the server and client. Doesn't draw directly. */
-public abstract class Widget_BC8<C extends ContainerBC8> implements IPayloadReceiver {
+public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements IPayloadReceiver {
     public final C container;
     public boolean hidden;
 
-    public Widget_BC8(C container) {
+    public Widget_Neptune(C container) {
         this.container = container;
     }
 

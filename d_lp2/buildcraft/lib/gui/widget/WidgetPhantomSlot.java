@@ -17,7 +17,7 @@ import buildcraft.lib.gui.*;
 import buildcraft.lib.misc.GuiUtil;
 
 /** Defines a widget that represents a phantom slot. */
-public class WidgetPhantomSlot extends Widget_BC8<ContainerBC8> {
+public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte NET_CLIENT_TO_SERVER_CLICK = 0;
     private static final byte NET_SERVER_TO_CLIENT_ITEM = 0;
 
@@ -27,7 +27,7 @@ public class WidgetPhantomSlot extends Widget_BC8<ContainerBC8> {
 
     private ItemStack stack;
 
-    public WidgetPhantomSlot(ContainerBC8 container) {
+    public WidgetPhantomSlot(ContainerBC_Neptune container) {
         super(container);
     }
 
@@ -107,7 +107,7 @@ public class WidgetPhantomSlot extends Widget_BC8<ContainerBC8> {
     protected void onSetStack() {}
 
     @SideOnly(Side.CLIENT)
-    public class GuiElementPhantomSlot<G extends GuiBC8<C>, C extends ContainerBC8> extends GuiElementSimple<G, C> {
+    public class GuiElementPhantomSlot<G extends GuiBC8<C>, C extends ContainerBC_Neptune> extends GuiElementSimple<G, C> {
         private final ToolTip tooltip = GuiUtil.createToolTip(gui, this::getStack);
 
         public GuiElementPhantomSlot(G gui, IPositionedElement parent, GuiRectangle position) {

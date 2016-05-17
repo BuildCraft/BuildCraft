@@ -51,7 +51,7 @@ public class GuideImage extends GuidePart {
             current = current.nextPage();
         }
         if (index == current.page) {
-            icon.drawScaled(x, y + current.line * LINE_HEIGHT, this.width, this.height);
+            icon.drawScaledInside(x, y + current.line * LINE_HEIGHT, this.width, this.height);
         }
         return current.nextLine(MathHelper.floor_double(this.height / (double) LINE_HEIGHT) + 1, height / LINE_HEIGHT);
     }

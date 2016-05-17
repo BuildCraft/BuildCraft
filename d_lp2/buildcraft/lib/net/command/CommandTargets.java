@@ -3,7 +3,7 @@ package buildcraft.lib.net.command;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 
 public class CommandTargets {
     public static final ICommandTarget TARGET_TILE = new CommandTargetTile(null);
@@ -18,7 +18,7 @@ public class CommandTargets {
         return new CommandTargetEntity(entity);
     }
 
-    public static ICommandTarget getForContainer(ContainerBC8 container) {
+    public static ICommandTarget getForContainer(ContainerBC_Neptune container) {
         return new CommandTargetContainer(container);
     }
 }

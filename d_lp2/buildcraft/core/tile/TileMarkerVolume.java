@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
@@ -26,19 +25,28 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.tile.MarkerCache;
 import buildcraft.lib.tile.TileMarkerBase;
 
-public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implements ITileAreaProvider {
+@Deprecated
+public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume, MarkerConnectionVolume> implements ITileAreaProvider {
+    @Deprecated
+    public static class CacheVolume extends MarkerCache<TileMarkerVolume, MarkerConnectionVolume> {
+        public CacheVolume() {
+            super("bc:volume", MarkerConnectionVolume.LOADER);
+        }
+
+    }
+
     public static final int NET_SIGNALS_ON = 10;
     public static final int NET_SIGNALS_OFF = 11;
-    public static final MarkerCache<TileMarkerVolume> VOLUME_CACHE = createCache("bc:volume");
+    public static final CacheVolume VOLUME_CACHE = new CacheVolume();
 
     public Box box = null;
 
     private boolean showSignals = false;
     public LaserData[] lasers = null;
     public LaserData[] signals = null;
-    
+
     @Override
-    public MarkerCache<TileMarkerVolume> getCache() {
+    public CacheVolume getCache() {
         return VOLUME_CACHE;
     }
 
@@ -89,7 +97,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     public List<TileMarkerVolume> getValidConnections() {
         if (connected.size() >= 3) return ImmutableList.of();
         Set<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
-        for (BlockPos other : connected.keySet()) {
+        for (BlockPos other : connected) {
             EnumFacing offset = PositionUtil.getDirectFacingOffset(getPos(), other);
             if (offset != null) {
                 taken.add(offset.getAxis());
@@ -155,10 +163,25 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        showSignals = compound.getBoolean("showSignals");
-        regenBox();
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setBoolean("showSignals", showSignals);
+        if (box != null) {
+            NBTTagCompound boxNbt = new NBTTagCompound();
+            box.writeToNBT(boxNbt);
+            nbt.setTag("box", boxNbt);
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        showSignals = nbt.getBoolean("showSignals");
+        if (nbt.hasKey("box")) {
+            NBTTagCompound boxNbt = nbt.getCompoundTag("box");
+            box = new Box();
+            box.initialize(boxNbt);
+        }
     }
 
     private void regenBox() {
@@ -166,7 +189,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
         Box old = box;
         if (connected.size() > 0) {
             box = new Box();
-            for (TileMarkerVolume connectedTo : gatherAllConnections()) {
+            for (TileMarkerVolume connectedTo : gatherAllLoadedConnections()) {
                 box.extendToEncompass(connectedTo.getPos());
             }
         } else {
@@ -214,7 +237,7 @@ public class TileMarkerVolume extends TileMarkerBase<TileMarkerVolume> implement
     @Override
     public void removeFromWorld() {
         if (worldObj.isRemote) return;
-        for (TileMarkerVolume connectedTo : gatherAllConnections()) {
+        for (TileMarkerVolume connectedTo : gatherAllLoadedConnections()) {
             worldObj.destroyBlock(connectedTo.getPos(), true);
         }
     }

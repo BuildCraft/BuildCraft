@@ -22,10 +22,10 @@ import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.Widget_BC8;
+import buildcraft.lib.gui.Widget_Neptune;
 
 /** Provides a "view" of a given {@link Tank} for use in GUI's. The tank will be given a tooltip containing the name of
  * the fluid and the amount of fluid current in the tank. The tank can be clicked with a valid
@@ -37,7 +37,7 @@ public class FluidTankWidget extends Widget {
     public final Tank tank;
     private GuiIcon overlay;
 
-    public FluidTankWidget(ContainerBC8 container, Tank tank, int x, int y, int w, int h) {
+    public FluidTankWidget(ContainerBC_Neptune container, Tank tank, int x, int y, int w, int h) {
         super(container, new GuiRectangle(x, y, w, h));
         this.tank = tank;
     }
@@ -70,7 +70,7 @@ public class FluidTankWidget extends Widget {
     public void handleWidgetDataServer(PacketBuffer buffer) throws IOException {
         byte b = buffer.readByte();
         if (b == NET_CLICK) handleTankClick();
-        else if (ContainerBC8.DEBUG) {
+        else if (ContainerBC_Neptune.DEBUG) {
             // Use container's debug as we don't want a debug value for _every_ widget class
             BCLog.logger.warn("[lib.container][widget.fluid] Received an unknown message byte ID " + b);
         }

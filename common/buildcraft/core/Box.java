@@ -95,6 +95,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public void initialize(NBTTagCompound nbt) {
+        reset();
         kind = Kind.values()[nbt.getShort("kind")];
 
         BlockPos min;
@@ -107,6 +108,19 @@ public class Box implements IBox, ISerializable {
             max = NBTUtils.readBlockPos(nbt.getTag("max"));
         }
         extendToEncompassBoth(min, max);
+    }
+
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setByte("kind", (byte) kind.ordinal());
+
+        if (min != null) nbt.setTag("min", NBTUtils.writeBlockPos(min));
+        if (max != null) nbt.setTag("max", NBTUtils.writeBlockPos(max));
+    }
+
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        writeToNBT(nbt);
+        return nbt;
     }
 
     public void initializeCenter(BlockPos center, int size) {
@@ -189,13 +203,6 @@ public class Box implements IBox, ISerializable {
         lasersData = Utils.createLaserDataBox(Utils.convert(min()), Utils.convert(max()));
     }
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setByte("kind", (byte) kind.ordinal());
-
-        if (min != null) nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        if (max != null) nbt.setTag("max", NBTUtils.writeBlockPos(max));
-    }
-
     @Override
     public String toString() {
         return "Box[min = " + min + ", max = " + max + "]";
@@ -272,7 +279,7 @@ public class Box implements IBox, ISerializable {
             NetworkUtils.writeBlockPos(stream, max);
         }
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -283,7 +290,7 @@ public class Box implements IBox, ISerializable {
         if (!Objects.equal(max, box.max)) return false;
         return true;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(min, max);

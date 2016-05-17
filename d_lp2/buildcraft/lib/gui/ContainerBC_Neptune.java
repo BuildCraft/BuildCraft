@@ -20,13 +20,13 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.command.IPayloadWriter;
 
-public abstract class ContainerBC8 extends Container {
+public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
 
     public final EntityPlayer player;
-    private final List<Widget_BC8<?>> widgets = new ArrayList<>();
+    private final List<Widget_Neptune<?>> widgets = new ArrayList<>();
 
-    public ContainerBC8(EntityPlayer player) {
+    public ContainerBC_Neptune(EntityPlayer player) {
         this.player = player;
     }
     
@@ -42,18 +42,18 @@ public abstract class ContainerBC8 extends Container {
         }
     }
 
-    protected <W extends Widget_BC8<?>> W addWidget(W widget) {
+    protected <W extends Widget_Neptune<?>> W addWidget(W widget) {
         if (widget == null) throw new NullPointerException("widget");
         widgets.add(widget);
         return widget;
     }
 
-    public ImmutableList<Widget_BC8<?>> getWidgets() {
+    public ImmutableList<Widget_Neptune<?>> getWidgets() {
         return ImmutableList.copyOf(widgets);
     }
 
     // Package-private so that the widget itself can send this
-    void sendWidgetData(Widget_BC8<?> widget, IPayloadWriter writer) {
+    void sendWidgetData(Widget_Neptune<?> widget, IPayloadWriter writer) {
         int widgetId = widgets.indexOf(widget);
         if (widgetId == -1) {
             if (DEBUG) {
@@ -85,7 +85,7 @@ public abstract class ContainerBC8 extends Container {
             }
             return;
         }
-        Widget_BC8<?> widget = widgets.get(widgetId);
+        Widget_Neptune<?> widget = widgets.get(widgetId);
         try {
             if (side == Side.SERVER) {
                 widget.handleWidgetDataServer(payload);

@@ -12,8 +12,8 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.Box;
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
@@ -43,7 +43,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         profiler.startSection("marker");
         profiler.startSection("volume");
 
-        RenderTickListener.fromPlayerPreGl(Minecraft.getMinecraft().thePlayer, partialTicks);
+        DetatchedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().thePlayer, partialTicks);
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -64,7 +64,6 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
             vecs[1][0][1] = new Vec3d(new BlockPos(max.getX(), min.getY(), max.getZ())).add(VEC_HALF);
             vecs[0][1][1] = new Vec3d(new BlockPos(min.getX(), max.getY(), max.getZ())).add(VEC_HALF);
             vecs[1][1][1] = new Vec3d(max).add(VEC_HALF);
-
 
             if (sizeX > 1) {
                 renderLaser(vecs[0][0][0], vecs[1][0][0], Axis.X);
@@ -106,7 +105,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
             }
         }
         RenderHelper.enableStandardItemLighting();
-        RenderTickListener.fromPlayerPostGl();
+        DetatchedRenderer.fromWorldOriginPost();
 
         profiler.endSection();
         profiler.endSection();

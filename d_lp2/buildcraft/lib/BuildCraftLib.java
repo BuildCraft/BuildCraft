@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import buildcraft.api.BCModules;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.item.ItemManager;

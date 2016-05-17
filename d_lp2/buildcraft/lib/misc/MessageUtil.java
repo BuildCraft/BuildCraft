@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.management.PlayerManager.PlayerInstance;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +36,14 @@ public class MessageUtil {
             // We could just use this instead, but that requires extra packet size as we are wrapping our
             // packet in an FML packet and sending it through the vanilla system, which is not really desired
             /** playerChunkMap.sendPacket(getWrapper().getPacketFrom(message)); */
+        }
+    }
+
+    public static void sendToPlayers(Iterable<EntityPlayer> players, IMessage message) {
+        for (EntityPlayer player : players) {
+            if (player instanceof EntityPlayerMP) {
+                getWrapper().sendTo(message, (EntityPlayerMP) player);
+            }
         }
     }
 

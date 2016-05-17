@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 
-public abstract class GuiBC8<C extends ContainerBC8> extends GuiContainer {
+public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     public final C container;
     public final MousePosition mouse = new MousePosition();
     public final IPositionedElement rootElement = new IPositionedElement() {

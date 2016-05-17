@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.net.command.*;
 
 import io.netty.buffer.ByteBuf;
@@ -55,7 +55,7 @@ public class MessageCommand implements IMessage {
         this(CommandTargets.getForEntity(sender), name, writer);
     }
 
-    public MessageCommand(ContainerBC8 container, String name, IPayloadWriter writer) {
+    public MessageCommand(ContainerBC_Neptune container, String name, IPayloadWriter writer) {
         this(CommandTargets.getForContainer(container), name, writer);
     }
 

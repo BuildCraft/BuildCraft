@@ -62,7 +62,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                     @Override
                     public void drawBackground() {
                         if (!shouldDrawHighlight()) {
-                            ICON_HIGHLIGHT.draw(getX(), getY());
+                            ICON_HIGHLIGHT.drawAt(this);
                         }
                     }
 
@@ -122,11 +122,11 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
-        ICON_GUI.draw(guiLeft, guiTop);
+        ICON_GUI.drawAt(rootElement);
 
         for (int i = 0; i < 2; i++) {
             if (container.lines[i].isOneStackMode()) {
-                ICON_ONE_STACK.draw(guiLeft + 6, guiTop + 30 + i * 34);
+                ICON_ONE_STACK.drawAt(guiLeft + 6, guiTop + 30 + i * 34);
             }
         }
     }

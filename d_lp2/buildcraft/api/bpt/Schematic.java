@@ -12,12 +12,6 @@ public abstract class Schematic {
      * along with this. */
     public abstract void rotate(Rotation rotation);
 
-    /** Mirrors this schematic in-place according to the same methods in
-     * {@link Block#withMirror(net.minecraft.block.state.IBlockState, Mirror)}. You do NOT need to translate yourself at
-     * all if your own "offset" is not the origin- the mirroring method will call {@link #translate(Vec3i)} along with
-     * this. */
-    public abstract void mirror(Mirror mirror);
-
     /** Translates this schematic by the given vector. Generally only tile entities and normal entities need to
      * translate like this. */
     public abstract void translate(Vec3i by);

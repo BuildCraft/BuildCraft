@@ -1,10 +1,11 @@
 package buildcraft.lib.delta;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 
 import buildcraft.lib.net.command.IPayloadWriter;
@@ -16,72 +17,90 @@ public class DeltaManager {
         CURRENT_STATE;
     }
 
+    public enum EnumNetworkVisibility {
+        NONE,
+        GUI_ONLY,
+        RENDER,
+    }
+
     private final IDeltaMessageSender sender;
-    private final List<DeltaInt> deltas = new ArrayList<>();
+    private final Map<EnumNetworkVisibility, List<DeltaInt>> deltas = new EnumMap<>(EnumNetworkVisibility.class);
 
     public DeltaManager(IDeltaMessageSender sender) {
         this.sender = sender;
+        deltas.put(EnumNetworkVisibility.NONE, new ArrayList<>());
+        deltas.put(EnumNetworkVisibility.GUI_ONLY, new ArrayList<>());
+        deltas.put(EnumNetworkVisibility.RENDER, new ArrayList<>());
     }
 
-    public DeltaInt addDelta() {
-        DeltaInt delta = new DeltaInt(this);
-        deltas.add(delta);
+    public DeltaInt addDelta(String name, EnumNetworkVisibility visibility) {
+        DeltaInt delta = new DeltaInt(name, visibility, this);
+        deltas.get(visibility).add(delta);
         return delta;
     }
 
     public void tick() {
-        for (DeltaInt delta : deltas) {
-            delta.tick();
+        for (List<DeltaInt> innerList : deltas.values()) {
+            for (DeltaInt delta : innerList) {
+                delta.tick();
+            }
         }
     }
 
-    public void receiveDeltaData(EnumDeltaMessage type, PacketBuffer buffer) {
+    public void receiveDeltaData(boolean gui, EnumDeltaMessage type, PacketBuffer buffer) {
+        EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
         if (type == EnumDeltaMessage.CURRENT_STATE) {
-            for (DeltaInt delta : deltas) {
+            for (DeltaInt delta : deltas.get(visibility)) {
                 delta.receiveData(EnumDeltaMessage.CURRENT_STATE, buffer);
             }
         } else {
             int index = buffer.readUnsignedByte();
-            DeltaInt delta = deltas.get(index);
+            DeltaInt delta = deltas.get(visibility).get(index);
             delta.receiveData(type, buffer);
         }
     }
 
     void sendDeltaMessage(EnumDeltaMessage type, DeltaInt from, IPayloadWriter writer) {
-        final int index = deltas.indexOf(from);
+        EnumNetworkVisibility visibility = from.visibility;
+        if (visibility == EnumNetworkVisibility.NONE) return;
+        boolean gui = visibility == EnumNetworkVisibility.GUI_ONLY;
+
+        final int index = deltas.get(from.visibility).indexOf(from);
         if (index == -1) throw new IllegalArgumentException("Unknown delta!");
-        sender.sendDeltaMessage(type, buffer -> {
+
+        sender.sendDeltaMessage(gui, type, buffer -> {
             buffer.writeByte(index);
             writer.write(buffer);
         });
     }
 
-    public void writeDeltaState(PacketBuffer buffer) {
-        for (DeltaInt delta : deltas) {
+    public void writeDeltaState(boolean gui, PacketBuffer buffer) {
+        EnumNetworkVisibility visibility = gui ? EnumNetworkVisibility.GUI_ONLY : EnumNetworkVisibility.RENDER;
+        for (DeltaInt delta : deltas.get(visibility)) {
             delta.writeState(buffer);
         }
     }
 
-    public void readFromNBT(NBTTagList list) {
-        for (int i = 0; i < list.tagCount() && i < deltas.size(); i++) {
-            DeltaInt delta = deltas.get(i);
-            delta.readFromNBT(list.getCompoundTagAt(i));
-        }
-        for (int i = list.tagCount(); i < deltas.size(); i++) {
-            DeltaInt delta = deltas.get(i);
-            delta.readFromNBT(new NBTTagCompound());
+    public void readFromNBT(NBTTagCompound nbt) {
+        for (List<DeltaInt> innerList : deltas.values()) {
+            for (DeltaInt delta : innerList) {
+                delta.readFromNBT(nbt.getCompoundTag(delta.name));
+            }
         }
     }
 
-    public NBTTagList writeToNBT() {
-        NBTTagList list = new NBTTagList();
-        for (DeltaInt delta : deltas) {
-            list.appendTag(delta.writeToNBT());
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (List<DeltaInt> innerList : deltas.values()) {
+            for (DeltaInt delta : innerList) {
+                nbt.setTag(delta.name, delta.writeToNBT());
+            }
         }
-        return list;
+        return nbt;
     }
 
     public interface IDeltaMessageSender {
-        void sendDeltaMessage(EnumDeltaMessage type, IPayloadWriter writer);
+        /** @param type The type of message. NEVER {@link EnumDeltaMessage#CURRENT_STATE}. */
+        void sendDeltaMessage(boolean gui, EnumDeltaMessage type, IPayloadWriter writer);
     }
 }

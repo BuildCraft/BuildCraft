@@ -12,12 +12,12 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.gui.*;
 
-public class WidgetFluidTank extends Widget_BC8<ContainerBC8> {
+public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte NET_CLICK = 0;
 
     private final Tank tank;
 
-    public WidgetFluidTank(ContainerBC8 container, Tank tank) {
+    public WidgetFluidTank(ContainerBC_Neptune container, Tank tank) {
         super(container);
         this.tank = tank;
     }
@@ -32,14 +32,14 @@ public class WidgetFluidTank extends Widget_BC8<ContainerBC8> {
     }
 
     @SideOnly(Side.CLIENT)
-    public IGuiElement createGuiElement(GuiBC8<ContainerBC8> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
+    public IGuiElement createGuiElement(GuiBC8<ContainerBC_Neptune> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
         return new GuiElementFluidTank(gui, parent, position, overlay);
     }
 
-    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<ContainerBC8>, ContainerBC8> {
+    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<ContainerBC_Neptune>, ContainerBC_Neptune> {
         private final GuiIcon overlay;
 
-        public GuiElementFluidTank(GuiBC8<ContainerBC8> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
+        public GuiElementFluidTank(GuiBC8<ContainerBC_Neptune> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
             super(gui, parent, position);
             this.overlay = overlay;
         }

@@ -49,4 +49,29 @@ public interface IPositionedElement {
             }
         };
     }
+
+    default IPositionedElement offset(int x, int y) {
+        IPositionedElement containing = this;
+        return new IPositionedElement() {
+            @Override
+            public int getX() {
+                return x + containing.getX();
+            }
+
+            @Override
+            public int getY() {
+                return y + containing.getY();
+            }
+
+            @Override
+            public int getWidth() {
+                return containing.getWidth();
+            }
+
+            @Override
+            public int getHeight() {
+                return containing.getHeight();
+            }
+        };
+    }
 }

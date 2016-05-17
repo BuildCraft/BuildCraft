@@ -3,14 +3,19 @@ package buildcraft.lib.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiIcon extends GuiRectangle {
+public class GuiIcon {
     public final ResourceLocation texture;
+    public final int u, v, width, height;
 
     public GuiIcon(ResourceLocation texture, int u, int v, int width, int height) {
-        super(u, v, width, height);
         this.texture = texture;
+        this.u = u;
+        this.v = v;
+        this.width = width;
+        this.height = height;
     }
 
     private void bindTexture() {
@@ -20,30 +25,46 @@ public class GuiIcon extends GuiRectangle {
         GlStateManager.color(1, 1, 1);
     }
 
-    public void draw(IPositionedElement element) {
-        draw(element.getX(), element.getY());
+    public DynamicTexture createDynamicTexure(int scale) {
+        return new DynamicTexture(width * scale, height * scale);
     }
 
-    public void draw(int x, int y) {
+    public void drawAt(IPositionedElement element) {
+        drawAt(element.getX(), element.getY());
+    }
+
+    public void drawAt(int x, int y) {
         bindTexture();
-        Gui.drawModalRectWithCustomSizedTexture(x, y, this.x, this.y, width, height, 256, 256);
+        int width = this.width;
+        int height = this.height;
+        int tileWidth = 256;
+        int tileHeight = 256;
+        Gui.drawScaledCustomSizeModalRect(x, y, u, v, width, height, width, height, tileWidth, tileHeight);
     }
 
-    public void drawScaled(int x, int y, int scaledWidth, int scaledHeight) {
+    public void drawScaledInside(IPositionedElement element) {
+        drawScaledInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
+    }
+
+    public void drawScaledInside(int x, int y, int width, int height) {
         bindTexture();
-        Gui.drawScaledCustomSizeModalRect(x, y, this.x, this.y, width, height, scaledWidth, scaledHeight, 256, 256);
-    }
-
-    public void drawScaledInside(GuiRectangle rectangle) {
-        drawScaled(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+        int uWidth = this.width;
+        int vHeight = this.height;
+        int tileWidth = 256;
+        int tileHeight = 256;
+        Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
     }
 
     public void drawCutInside(IPositionedElement element) {
+        drawCutInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
+    }
+    
+    public void drawCutInside(int x, int y, int width, int height) {
         bindTexture();
-        final int x2 = element.getX();
-        final int y2 = element.getY();
-        final int w2 = element.getWidth();
-        final int h2 = element.getHeight();
-        Gui.drawModalRectWithCustomSizedTexture(x2, y2, this.x, this.y, Math.min(width, w2), Math.min(height, h2), 256, 256);
+        width = Math.min(this.width, width);
+        height = Math.min(this.height, height);
+        int tileWidth = 256;
+        int tileHeight = 256;
+        Gui.drawScaledCustomSizeModalRect(x, y, u, v, width, height, width, height, tileWidth, tileHeight);
     }
 }

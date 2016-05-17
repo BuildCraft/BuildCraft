@@ -1,6 +1,6 @@
 package buildcraft.lib.gui;
 
-public class GuiElementSimple<G extends GuiBC8<C>, C extends ContainerBC8> implements IGuiElement {
+public class GuiElementSimple<G extends GuiBC8<C>, C extends ContainerBC_Neptune> implements IGuiElement {
     public final G gui;
     private final IPositionedElement parent;
     private final GuiRectangle rectangle;

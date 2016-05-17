@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.lib.LibProxy;
-import buildcraft.lib.gui.ContainerBC8;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.net.command.IPayloadWriter;
 
 import io.netty.buffer.ByteBuf;
@@ -62,8 +62,8 @@ public class MessageWidget implements IMessage {
             int windowId = message.windowId;
             int widgetId = message.widgetId;
             EntityPlayer player = LibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null && player.openContainer instanceof ContainerBC8 && player.openContainer.windowId == windowId) {
-                ContainerBC8 container = (ContainerBC8) player.openContainer;
+            if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
+                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
                 container.handleWidgetMessage(widgetId, message.payload, ctx.side);
             }
             return null;

@@ -21,9 +21,11 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
 import buildcraft.lib.client.render.LaserData_BC8.LaserRow;
@@ -73,7 +75,17 @@ public class LaserRenderer_BC8 {
     private static Integer computeLightmap(BlockPos pos) {
         World world = Minecraft.getMinecraft().theWorld;
         if (world == null) return Integer.valueOf(0);
-        return Integer.valueOf(world.getCombinedLight(pos, 0));
+        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, pos);
+        int skyLight = getLightFor(world, EnumSkyBlock.SKY, pos);
+        return Integer.valueOf(skyLight << 20 | blockLight << 4);
+    }
+
+    private static int getLightFor(World world, EnumSkyBlock type, BlockPos pos) {
+        int val = world.getLightFor(type, pos);
+        for (EnumFacing face : EnumFacing.values()) {
+            val = Math.max(val, world.getLightFor(type, pos.offset(face)));
+        }
+        return val;
     }
 
     public static void renderLaser(LaserData_BC8 data) {

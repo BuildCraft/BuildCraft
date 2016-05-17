@@ -11,8 +11,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
+import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 
 public class DeltaInt {
+    public final String name;
+    public final EnumNetworkVisibility visibility;
     /** The static value at the START of each delta If you add a delta entry then this value will change before delta
      * has completed. */
     private int staticStartValue = 0;
@@ -25,7 +28,9 @@ public class DeltaInt {
     private final DeltaManager manager;
     private long tick = 0;
 
-    public DeltaInt(DeltaManager manager) {
+    public DeltaInt(String name, EnumNetworkVisibility visibility, DeltaManager manager) {
+        this.name = name;
+        this.visibility = visibility;
         this.manager = manager;
     }
 

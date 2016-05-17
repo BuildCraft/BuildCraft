@@ -1,10 +1,6 @@
 package buildcraft.lib.gui;
 
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.math.MathHelper;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class GuiRectangle implements IPositionedElement {
     public final int x, y, width, height;
@@ -34,11 +30,6 @@ public class GuiRectangle implements IPositionedElement {
     @Override
     public int getHeight() {
         return height;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public DynamicTexture createDynamicTexure(int scale) {
-        return new DynamicTexture(width * scale, height * scale);
     }
 
     @Override

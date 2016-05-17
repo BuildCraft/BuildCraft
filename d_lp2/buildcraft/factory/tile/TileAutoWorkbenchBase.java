@@ -1,32 +1,48 @@
 package buildcraft.factory.tile;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
+import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune implements ITickable {
+import gnu.trove.set.hash.TIntHashSet;
+
+public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     protected WorkbenchCrafting crafting = createCrafting();
     protected final IItemHandlerModifiable invBlueprint;
     protected final IItemHandlerModifiable invMaterials;
     protected final IItemHandlerModifiable invResult;
+    protected final Map<ItemStackKey, TIntHashSet> itemStackCache;
 
     protected IRecipe currentRecipe;
 
-    public final DeltaInt deltaProgress = deltaManager.addDelta();
+    public final DeltaInt deltaProgress = deltaManager.addDelta("progress", EnumNetworkVisibility.GUI_ONLY);
 
     public TileAutoWorkbenchBase(int slots) {
         invBlueprint = addInventory("blueprint", slots, EnumAccess.NONE);
         invMaterials = addInventory("materials", slots, EnumAccess.INSERT, EnumPipePart.VALUES);
         invResult = addInventory("result", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+        itemStackCache = new HashMap<>();
     }
 
     protected abstract WorkbenchCrafting createCrafting();
@@ -44,6 +60,42 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     @Override
     public void update() {
         deltaManager.tick();
+    }
+
+    @Override
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+        if (handler == invMaterials) {
+            ItemStackKey keyBefore = new ItemStackKey(before);
+            ItemStackKey keyAfter = new ItemStackKey(after);
+            if (keyAfter.equals(keyBefore)) return;
+            if (itemStackCache.containsKey(keyBefore)) {
+                TIntHashSet set = itemStackCache.get(keyBefore);
+                set.remove(slot);
+                if (set.size() == 0) {
+                    itemStackCache.remove(keyBefore);
+                }
+            }
+
+            if (after != null) {
+                if (!itemStackCache.containsKey(keyAfter)) {
+                    // Use a different _no_entry_value as 0 is a valid slot
+                    itemStackCache.put(keyAfter, new TIntHashSet(10, 0.5f, -1));
+                }
+                TIntHashSet set = itemStackCache.get(keyAfter);
+                set.add(slot);
+            }
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        for (Entry<ItemStackKey, TIntHashSet> entry : itemStackCache.entrySet()) {
+            ItemStackKey key = entry.getKey();
+            TIntHashSet set = entry.getValue();
+            left.add("  " + key);
+            left.add("  = " + Arrays.toString(set.toArray()));
+        }
     }
 
     protected class WorkbenchCrafting extends InventoryCrafting {
@@ -114,10 +166,25 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
         @Override
         public ItemStack use(int count) {
-            ItemStack current = invMaterials.getStackInSlot(slot);
-            if (current == null) return null;
+            ItemStack target = get();
+            if (target == null) {
+                // Why was this even called? We already know there's nothing here...
+                return null;
+            }
+            ItemStackKey targetKey = new ItemStackKey(target);
+            TIntHashSet set = itemStackCache.get(targetKey);
+            if (set == null) {
+                // No items found :(
+                return null;
+            }
+            int slotToUse = set.iterator().next();
+            ItemStack current = invMaterials.getStackInSlot(slotToUse);
+            if (current == null) {
+                // Something bad happened to the caching stuffs.
+                return null;
+            }
             ItemStack split = current.splitStack(count);
-            invMaterials.setStackInSlot(slot, current);
+            invMaterials.setStackInSlot(slotToUse, current);
             return split;
         }
     }

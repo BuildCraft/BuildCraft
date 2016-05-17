@@ -10,6 +10,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 
 /** Represents a single page, image or crafting recipe for displaying. Only exists on the client. */
 @SideOnly(Side.CLIENT)
@@ -48,7 +49,6 @@ public abstract class GuidePart {
 
     protected final GuiGuide gui;
     private IFontRenderer fontRenderer;
-    protected int mouseX, mouseY;
     protected boolean wasHovered = false;
     protected boolean wasIconHovered = false;
 
@@ -60,10 +60,8 @@ public abstract class GuidePart {
         return fontRenderer;
     }
 
-    public void setSpecifics(IFontRenderer fontRenderer, int mouseX, int mouseY) {
+    public void setFontRenderer(IFontRenderer fontRenderer) {
         this.fontRenderer = fontRenderer;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
     }
 
     /** Renders a raw line at the position, lowering it appropriately */
@@ -147,7 +145,8 @@ public abstract class GuidePart {
             int linkY = y + current.line * LINE_HEIGHT;
             int linkXEnd = linkX + stringWidth + 2;
             int linkYEnd = linkY + fontRenderer.getFontHeight() + 2;
-            if (line.link && mouseX >= linkX && mouseX <= linkXEnd && mouseY >= linkY && mouseY <= linkYEnd) {
+            GuiRectangle linkArea = new GuiRectangle(linkX, linkY, stringWidth + 2, fontRenderer.getFontHeight() + 2);
+            if (line.link && linkArea.contains(gui.mouse)) {
                 wasHovered = true;
                 if (render) {
                     Gui.drawRect(linkX - 2, linkY - 2, linkXEnd, linkYEnd, 0xFFD3AD6C);
@@ -161,12 +160,13 @@ public abstract class GuidePart {
                 /* Ok this is because minecraft default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT
                  * is 9. */
                 int iconY = linkY + (6 - icon.height) / 2;
-                wasIconHovered = icon.isMouseInside(iconX, iconY, mouseX, mouseY);
+                GuiRectangle iconBox = new GuiRectangle(iconX, iconY, icon.width, icon.height);
+                wasIconHovered = iconBox.contains(gui.mouse);
                 if (wasIconHovered && line.startIconHovered != null) {
                     icon = line.startIconHovered;
                 }
                 if (render) {
-                    icon.draw(iconX, iconY);
+                    icon.drawCutInside(iconBox);
                 }
             }
             current = current.nextLine(1, allowedLines);
