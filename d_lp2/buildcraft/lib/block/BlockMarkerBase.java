@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.tile.TileMarkerBase;
+import buildcraft.lib.tile.TileMarker;
 
 public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private static final Map<EnumFacing, AxisAlignedBB> BOUNDING_BOXES = new EnumMap<>(EnumFacing.class);
@@ -70,8 +70,8 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileMarkerBase) {
-            TileMarkerBase<?> marker = (TileMarkerBase<?>) tile;
+        if (tile instanceof TileMarker) {
+            TileMarker<?> marker = (TileMarker<?>) tile;
             state = state.withProperty(BuildCraftProperties.ACTIVE, marker.isActiveForRender());
         }
         return state;

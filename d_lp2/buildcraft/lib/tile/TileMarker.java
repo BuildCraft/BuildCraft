@@ -9,53 +9,48 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.marker.MarkerCache2;
-import buildcraft.lib.marker.MarkerCache2.PerWorld2;
+import buildcraft.lib.marker.MarkerCache2.SubCache2;
 import buildcraft.lib.marker.MarkerConnection2;
 
-public abstract class TileMarker<C extends MarkerConnection2<C>, T extends TileMarker<C, T>> extends TileBC_Neptune implements IDebuggable {
-    public abstract MarkerCache2<? extends PerWorld2<C, T>> getCache();
+public abstract class TileMarker<C extends MarkerConnection2<C>> extends TileBC_Neptune implements IDebuggable {
+    public abstract MarkerCache2<? extends SubCache2<C>> getCache();
 
-    public PerWorld2<C, T> getLocalCache() {
+    public SubCache2<C> getLocalCache() {
         return getCache().getSubCache(worldObj);
     }
 
-    public abstract T getAsType();
-
-    public abstract boolean tryConnectTo(T other);
+    /** @return True if this has lasers being emitted, or any other reason you want. Activates the surrounding "glow"
+     *         parts for the block model. */
+    public abstract boolean isActiveForRender();
 
     public C getCurrentConnection() {
         return getLocalCache().getConnection(getPos());
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        getLocalCache().loadMarker(getPos(), this);
+    }
+
+    @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        removeSelfFromCache();
+        getLocalCache().unloadMarker(getPos());
     }
 
     @Override
     public void invalidate() {
         super.invalidate();
+        getLocalCache().removeMarker(getPos());
         disconnectFromOthers();
-        removeSelfFromCache();
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        addSelfToCache();
-    }
-
-    @Override
-    public void validate() {
-        super.validate();
-        if (hasWorldObj()) addSelfToCache();
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
         disconnectFromOthers();
+        getLocalCache().removeMarker(getPos());
     }
 
     protected void disconnectFromOthers() {
@@ -63,14 +58,6 @@ public abstract class TileMarker<C extends MarkerConnection2<C>, T extends TileM
         if (currentConnection != null) {
             currentConnection.removeMarker(getPos());
         }
-    }
-
-    private void removeSelfFromCache() {
-        getLocalCache().unloadMarker(getPos());
-    }
-
-    private void addSelfToCache() {
-        getLocalCache().addMarker(getPos(), getAsType());
     }
 
     @Override
@@ -81,7 +68,7 @@ public abstract class TileMarker<C extends MarkerConnection2<C>, T extends TileM
             left.add("");
             left.add("No connection!");
         } else {
-            current.getDebugInfo(getWorld(), getPos(), left);
+            current.getDebugInfo(getPos(), left);
         }
     }
 }

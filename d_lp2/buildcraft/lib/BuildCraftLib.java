@@ -11,6 +11,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
+import buildcraft.lib.marker.MarkerCache2;
 import buildcraft.lib.misc.FakePlayerUtil;
 
 //@formatter:off
@@ -49,5 +50,6 @@ public class BuildCraftLib {
         LibProxy.getProxy().fmlPostInit();
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
+        MarkerCache2.postInit();
     }
 }

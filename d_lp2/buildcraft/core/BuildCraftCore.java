@@ -11,9 +11,11 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
+import buildcraft.core.marker.VolumeCache;
 import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.RegistryHelper;
+import buildcraft.lib.marker.MarkerCache2;
 
 //@formatter:off
 @Mod(modid = BuildCraftCore.MODID,
@@ -62,6 +64,9 @@ public class BuildCraftCore {
 
         BCCoreRecipes.init();
         BCAchievements.init();
+
+        MarkerCache2.registerCache(VolumeCache.INSTANCE);
+        // MarkerCache2.registerCache(PathCache.INSTANCE);
     }
 
     @Mod.EventHandler

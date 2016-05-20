@@ -16,6 +16,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
+import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.item.ItemManager;
@@ -66,6 +69,12 @@ public abstract class LibProxy {
         @Override
         public void postRegisterItem(ItemBuildCraft_BC8 item) {
             item.postRegisterClient();
+        }
+        
+        @Override
+        void fmlPreInit() {
+            super.fmlPreInit();
+            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
         }
 
         @Override

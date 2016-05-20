@@ -46,9 +46,9 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.marker.MarkerCache2;
+import buildcraft.lib.marker.MarkerCache2.SubCache2;
 import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.tile.MarkerCache;
-import buildcraft.lib.tile.TileMarkerBase;
 
 public enum RenderTickListener {
     INSTANCE;
@@ -241,26 +241,23 @@ public enum RenderTickListener {
     private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("marker");
-        for (MarkerCache<?> cache : TileMarkerBase.CACHES) {
+        for (MarkerCache2<?> cache : MarkerCache2.CACHES) {
             profiler.startSection(cache.name);
-            renderMarkerCache(world, player, cache);
+            renderMarkerCache(player, cache.getSubCache(world));
             profiler.endSection();
         }
         profiler.endSection();
     }
 
-    private static <T extends TileMarkerBase<T>> void renderMarkerCache(WorldClient world, EntityPlayer player, MarkerCache<T> cache) {
+    private static void renderMarkerCache(EntityPlayer player, SubCache2<?> cache) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
         Set<LaserData_BC8> toRender = new HashSet<>();
-        for (T tile : cache.getCache(world).values()) {
-            for (T to : tile.getValidConnections()) {
-                BlockPos a = tile.getPos();
-                BlockPos b = to.getPos();
+        for (final BlockPos a : cache.getAllMarkers()) {
+            for (final BlockPos b : cache.getValidConnections(a)) {
                 if (a.toLong() > b.toLong()) {
-                    BlockPos hold = b;
-                    b = a;
-                    a = hold;
+                    // Only render each pair once
+                    continue;
                 }
 
                 Vec3d start = new Vec3d(a).add(Utils.VEC_HALF);
@@ -271,8 +268,10 @@ public enum RenderTickListener {
                 start = start.add(PositionUtil.scale(startToEnd, 0.125));
                 end = end.add(PositionUtil.scale(endToStart, 0.125));
 
-                LaserType laserType = tile.getPossibleLaserType();
-                if (laserType == null || isLookingAt(tile, to, player)) laserType = BuildCraftLaserManager.MARKER_DEFAULT_POSSIBLE;
+                LaserType laserType = cache.getPossibleLaserType();
+                if (laserType == null || isLookingAt(a, b, player)) {
+                    laserType = BuildCraftLaserManager.MARKER_DEFAULT_POSSIBLE;
+                }
 
                 LaserData_BC8 data = new LaserData_BC8(laserType, start, end, 1 / 16.0);
                 toRender.add(data);
@@ -285,7 +284,7 @@ public enum RenderTickListener {
         profiler.endSection();
     }
 
-    private static <T extends TileMarkerBase<T>> boolean isLookingAt(T tile, T to, EntityPlayer player) {
-        return ItemMarkerConnector.doesInteract(tile, to, player);
+    private static boolean isLookingAt(BlockPos from, BlockPos to, EntityPlayer player) {
+        return ItemMarkerConnector.doesInteract(from, to, player);
     }
 }
