@@ -1,24 +1,25 @@
 package buildcraft.core.lib.block;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import buildcraft.api.enums.*;
+import buildcraft.api.properties.BuildCraftExtendedProperty;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.core.BCCreativeTab;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,18 +27,11 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.enums.EnumBlueprintType;
-import buildcraft.api.enums.EnumDecoratedBlock;
-import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.enums.EnumEngineType;
-import buildcraft.api.enums.EnumFillerPattern;
-import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftExtendedProperty;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.core.BCCreativeTab;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Deprecated as most stuff can be done better now
@@ -49,7 +43,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumFacing> FACING_6_PROP = BuildCraftProperties.BLOCK_FACING_6;
 
     public static final BuildCraftProperty<EnumEngineType> ENGINE_TYPE = BuildCraftProperties.ENGINE_TYPE;
-    public static final BuildCraftProperty<EnumColor> COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
+    public static final BuildCraftProperty<EnumDyeColor> COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
     public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperties.ENERGY_STAGE;
     public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
@@ -84,7 +78,7 @@ public abstract class BlockBuildCraftBase extends Block {
     protected List<BuildCraftProperty<?>> propertyList;
     protected final Map<Integer, IBlockState> intToState = Maps.newHashMap();
     protected final Map<IBlockState, Integer> stateToInt = Maps.newHashMap();
-    protected final BlockState myBlockState;
+    protected final BlockStateContainer myBlockState;
 
     /** True if this block can rotate in any of the horizontal directions */
     public boolean horizontallyRotatable;
@@ -226,15 +220,15 @@ public abstract class BlockBuildCraftBase extends Block {
     }
 
     @Override
-    public BlockState getBlockState() {
+    public BlockStateContainer getBlockState() {
         return this.myBlockState;
     }
 
     @Override
-    protected BlockState createBlockState() {
+    protected BlockStateContainer createBlockState() {
         if (properties == null) {
             // Will be overridden later
-            return new BlockState(this, new IProperty[] {});
+            return new BlockStateContainer(this, new IProperty[] {});
         }
 
         IProperty[] props = new IProperty[properties.length + nonMetaProperties.length];
@@ -243,7 +237,7 @@ public abstract class BlockBuildCraftBase extends Block {
         if (hasExtendedProperties) {
             return new ExtendedBlockState(this, props, extendedProperties);
         }
-        return new BlockState(this, props);
+        return new BlockStateContainer(this, props);
     }
 
     @Override
@@ -288,43 +282,45 @@ public abstract class BlockBuildCraftBase extends Block {
 
     /** Exposed so subclasses can call Block's collision ray trace method without needing to resort to idk,
      * reflection? */
-    public MovingObjectPosition collisionRayTrace_super(World world, BlockPos pos, Vec3d origin, Vec3d direction) {
-        return super.collisionRayTrace(world, pos, origin, direction);
+    public RayTraceResult collisionRayTrace_super(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
+        return super.collisionRayTrace(blockState, worldIn, pos, start, end);
     }
 
-    @Override
-    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3d origin, Vec3d direction) {
-        IBlockState state = world.getBlockState(pos);
-        AxisAlignedBB[] aabbs = getBoxes(world, pos, state);
-        MovingObjectPosition closest = null;
-        for (AxisAlignedBB aabb : aabbs) {
-            aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
 
-            MovingObjectPosition mop = aabb.calculateIntercept(origin, direction);
-            if (mop != null) {
-                if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
-                    closest = mop;
-                } else {
-                    closest = mop;
-                }
-            }
-        }
-        if (closest == null) {
-            return null;
-        } else {
-            return new MovingObjectPosition(closest.hitVec, closest.sideHit, pos);
-        }
-    }
+	@Nullable
+	@Override
+	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
+		IBlockState state = world.getBlockState(pos);
+		AxisAlignedBB[] aabbs = getBoxes(world, pos, state);
+		RayTraceResult closest = null;
+		for (AxisAlignedBB aabb : aabbs) {
+			aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
+
+			RayTraceResult mop = aabb.calculateIntercept(start, end);
+			if (mop != null) {
+				if (closest != null && mop.hitVec.distanceTo(start) < closest.hitVec.distanceTo(start)) {
+					closest = mop;
+				} else {
+					closest = mop;
+				}
+			}
+		}
+		if (closest == null) {
+			return null;
+		} else {
+			return new RayTraceResult(closest.hitVec, closest.sideHit, pos);
+		}
+	}
 
     @Override
-    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity par7Entity) {
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
         if (!isCollidable()) {
             return;
         } else {
             for (AxisAlignedBB bb : getBoxes(world, pos, state)) {
                 bb = bb.offset(pos.getX(), pos.getY(), pos.getZ());
-                if (mask.intersectsWith(bb)) {
-                    list.add(bb);
+                if (entityBox.intersectsWith(bb)) {
+                    collidingBoxes.add(bb);
                 }
             }
         }
@@ -336,9 +332,9 @@ public abstract class BlockBuildCraftBase extends Block {
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         if (isCollidable()) {
-            return getBox(world, pos, state).offset(pos.getX(), pos.getY(), pos.getZ());
+            return getBox(worldIn, pos, blockState).offset(pos.getX(), pos.getY(), pos.getZ());
         } else {
             return null;
         }
@@ -346,8 +342,8 @@ public abstract class BlockBuildCraftBase extends Block {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
-        return getBox(world, pos, world.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+        return getBox(worldIn, pos, worldIn.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
     }
 
     /* @Override public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) { AxisAlignedBB[] bbs =

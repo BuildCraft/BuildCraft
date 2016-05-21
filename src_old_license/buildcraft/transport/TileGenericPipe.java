@@ -4,39 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.List;
-import com.google.common.base.Throwables;
-import org.apache.logging.log4j.Level;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -46,19 +13,13 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.ICustomPipeConnection;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeConnectionAPI;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.*;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
-import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.BlockTileCache;
+import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.PacketTileState;
@@ -70,6 +31,38 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.network.PacketPipeSyncRequest;
 import buildcraft.transport.pluggable.PlugPluggable;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
+import com.google.common.base.Throwables;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
+
+import java.util.List;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IDropControlInventory, ISyncedTile,
         ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IPipeConnection, ITickable, IEnergyProvider {
@@ -252,7 +245,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     public TileGenericPipe() {}
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
         if (glassColor >= 0) {
@@ -266,7 +259,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (coreState.pipeId != null) {
             nbt.setString("pipeId", coreState.pipeId);
         } else {
-            ResourceLocation loc = pipe != null ? Item.itemRegistry.getNameForObject(pipe.item) : null;
+            ResourceLocation loc = pipe != null ? Item.REGISTRY.getNameForObject(pipe.item) : null;
             if (loc == null) {
                 BCLog.logger.error("A BuildCraft pipe @ " + pos.toString() + " could not save pipe ID! Please report to developers!");
             } else {
@@ -281,6 +274,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         sideProperties.writeToNBT(nbt);
+		return nbt;
     }
 
     @Override
@@ -310,13 +304,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         if (nbt.hasKey("pipeId", Constants.NBT.TAG_INT)) {
             int id = nbt.getInteger("pipeId");
-            Item item = Item.itemRegistry.getObjectById(id);
-            ResourceLocation loc = Item.itemRegistry.getNameForObject(item);
+            Item item = Item.REGISTRY.getObjectById(id);
+            ResourceLocation loc = Item.REGISTRY.getNameForObject(item);
             if (loc == null) coreState.pipeId = "";
             else coreState.pipeId = loc.toString();
         }
 
-        Item item = Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId));
+        Item item = Item.REGISTRY.getObject(new ResourceLocation(coreState.pipeId));
         if (item instanceof ItemPipe) {
             pipe = BlockGenericPipe.createPipe((ItemPipe) item);
         } else {
@@ -610,7 +604,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     private void bindPipe() {
         if (!pipeBound && pipe != null) {
             pipe.setTile(this);
-            coreState.pipeId = Item.itemRegistry.getNameForObject(pipe.item).toString();
+            coreState.pipeId = Item.REGISTRY.getNameForObject(pipe.item).toString();
             pipeBound = true;
         }
     }
@@ -680,7 +674,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public S35PacketUpdateTileEntity getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("net-type", "desc-packet");
         Packet p = getBCDescriptionPacket();
@@ -689,12 +683,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         nbt.setByteArray("net-data", bytes);
-        S35PacketUpdateTileEntity tileUpdate = new S35PacketUpdateTileEntity(getPos(), 0, nbt);
+		SPacketUpdateTileEntity tileUpdate = new SPacketUpdateTileEntity(getPos(), 0, nbt);
         return tileUpdate;
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         if (!worldObj.isRemote) return;
         if (pkt.getNbtCompound() == null) throw new RuntimeException("No NBTTag compound! This is a bug!");
         NBTTagCompound nbt = pkt.getNbtCompound();
@@ -1048,7 +1042,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 }
 
                 if (pipe == null && coreState.pipeId != null) {
-                    initialize(BlockGenericPipe.createPipe((ItemPipe) Item.itemRegistry.getObject(new ResourceLocation(coreState.pipeId))));
+                    initialize(BlockGenericPipe.createPipe((ItemPipe) Item.REGISTRY.getObject(new ResourceLocation(coreState.pipeId))));
                 }
 
                 if (pipe == null) {
