@@ -7,6 +7,7 @@ package buildcraft.core;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,10 +25,10 @@ public class BlockSpring extends BlockBuildCraftBase {
     public static final XorShift128Random rand = new XorShift128Random();
 
     public BlockSpring() {
-        super(Material.rock, SPRING_TYPE);
+        super(Material.ROCK, SPRING_TYPE);
         setBlockUnbreakable();
         setResistance(6000000.0F);
-        setStepSound(soundTypeStone);
+        setSoundType(SoundType.STONE);
 
         disableStats();
         setTickRandomly(true);

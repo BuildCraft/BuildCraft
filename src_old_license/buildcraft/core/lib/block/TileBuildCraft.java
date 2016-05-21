@@ -5,9 +5,8 @@
 package buildcraft.core.lib.block;
 
 import java.util.HashSet;
+
 import org.apache.commons.lang3.StringUtils;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -21,15 +20,16 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -38,18 +38,22 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.BlockTileCache;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
@@ -197,7 +201,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     }
 
     @Override
-    public S35PacketUpdateTileEntity getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("net-type", "desc-packet");
         Packet p = getPacketUpdate();
@@ -206,12 +210,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         nbt.setByteArray("net-data", bytes);
-        S35PacketUpdateTileEntity tileUpdate = new S35PacketUpdateTileEntity(getPos(), 0, nbt);
+        SPacketUpdateTileEntity tileUpdate = new SPacketUpdateTileEntity(getPos(), 0, nbt);
         return tileUpdate;
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         if (!worldObj.isRemote) return;
         if (pkt.getNbtCompound() == null) throw new RuntimeException("No NBTTag compound! This is a bug!");
         NBTTagCompound nbt = pkt.getNbtCompound();
@@ -227,8 +231,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
                 BCLog.logger.warn("Recieved a packet with a different type that expected (" + nbt.getString("net-type") + ")");
             }
         } catch (Throwable t) {
-            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data")
-                + "\")", t);
+            throw new RuntimeException("Failed to read a packet! (net-type=\"" + nbt.getTag("net-type") + "\", net-data=\"" + nbt.getTag("net-data") + "\")", t);
         }
     }
 
@@ -238,7 +241,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setString("owner", owner);
         if (battery != null) {
@@ -273,6 +276,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
                 nbt.setTag("blockstate", statenbt);
             }
         }
+
+        return nbt;
     }
 
     @Override
@@ -385,8 +390,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
     private void throwNullWorldCrash() {
         if (worldObj != null) return;
-        CrashReport crash = new CrashReport("Attempted to create a cache for a BC tile without a world! WTF? Thats a bad idea!",
-                new NullPointerException("worldObj"));
+        CrashReport crash = new CrashReport("Attempted to create a cache for a BC tile without a world! WTF? Thats a bad idea!", new NullPointerException("worldObj"));
         CrashReportCategory cat = crash.makeCategory("BC tile debug info");
         cat.addCrashSection("VN::getPos()", getPos());
         cat.addCrashSection("VN::isInvalid()", this.isInvalid());
@@ -465,8 +469,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
         return getInventoryName();
     }
 
-    public IChatComponent getDisplayName() {
-        return new ChatComponentText(getInventoryName());
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(getInventoryName());
     }
 
     public void clear() {}

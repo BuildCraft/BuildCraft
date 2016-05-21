@@ -7,7 +7,6 @@ package buildcraft.core.builders;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -16,8 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
@@ -31,6 +31,8 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class BuildingItem implements IBuildingItem, ISerializable {
 

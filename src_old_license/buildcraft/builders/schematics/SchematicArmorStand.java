@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
@@ -19,9 +20,9 @@ public class SchematicArmorStand extends SchematicEntity {
 		List<ItemStack> requirements = new ArrayList<>();
 		EntityArmorStand stand = (EntityArmorStand) entity;
 
-		requirements.add(new ItemStack(Items.armor_stand));
-		for (int i = 0; i <= 4; i++) {
-			ItemStack stack = stand.getEquipmentInSlot(i);
+		requirements.add(new ItemStack(Items.ARMOR_STAND));
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+			ItemStack stack = stand.getItemStackFromSlot(slot);
 			if (stack != null) {
 				requirements.add(stack);
 			}

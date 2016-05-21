@@ -316,7 +316,7 @@ public class Blueprint extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
+        Item item = Item.REGISTRY.getObject(new ResourceLocation("BuildCraft|Builders:blueprintItem"));
         if (item == null) throw new Error("Could not find the blueprint item! Did you attempt to use this without buildcraft builders installed?");
         ItemStack stack = new ItemStack(item, 1, 1);
         NBTTagCompound nbt = NBTUtils.getItemData(stack);

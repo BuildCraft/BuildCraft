@@ -17,7 +17,7 @@ public class SchematicFire extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Items.flint_and_steel));
+        requirements.add(new ItemStack(Items.FLINT_AND_STEEL));
     }
 
     @Override

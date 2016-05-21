@@ -10,7 +10,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -33,10 +33,10 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
     }
 
     @Override
-    public void onCraftGuiOpened(ICrafting player) {
-        super.onCraftGuiOpened(player);
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
         for (Widget widget : widgets) {
-            widget.initWidget(player);
+            widget.initWidget(listener);
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         for (Widget widget : widgets) {
-            for (ICrafting player : listeners) {
+            for (IContainerListener player : listeners) {
                 widget.updateWidget(player);
             }
         }

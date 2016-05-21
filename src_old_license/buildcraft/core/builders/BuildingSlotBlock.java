@@ -91,7 +91,7 @@ public class BuildingSlotBlock extends BuildingSlot {
                         BCLog.logger.warn(
                                 "Placed block does not match expectations! Most likely a bug in BuildCraft or a supported mod. Removed mismatched block.");
                         IBlockState state = context.world().getBlockState(pos);
-                        BCLog.logger.warn("Location: " + pos + " - Block: " + Block.blockRegistry.getNameForObject(state.getBlock()) + "@" + state);
+                        BCLog.logger.warn("Location: " + pos + " - Block: " + Block.REGISTRY.getNameForObject(state.getBlock()) + "@" + state);
                         context.world().removeTileEntity(pos);
                         context.world().setBlockToAir(pos);
                         return false;

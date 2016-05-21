@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3di;
+import net.minecraft.util.math.Vec3i;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
@@ -32,7 +32,7 @@ public class SchematicHanging extends SchematicEntity {
 
         Vec3d pos = new Vec3d(entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
         pos = pos.add(transform);
-        Vec3di floored = Utils.convertFloor(pos);
+        Vec3i floored = Utils.convertFloor(pos);
         entityNBT.setInteger("TileX", floored.getX());
         entityNBT.setInteger("TileY", floored.getY());
         entityNBT.setInteger("TileZ", floored.getZ());
@@ -44,7 +44,7 @@ public class SchematicHanging extends SchematicEntity {
 
         Vec3d pos = new Vec3d(entityNBT.getInteger("TileX"), entityNBT.getInteger("TileY"), entityNBT.getInteger("TileZ"));
         pos = pos.add(transform);
-        Vec3di floored = Utils.convertFloor(pos);
+        Vec3i floored = Utils.convertFloor(pos);
         entityNBT.setInteger("TileX", floored.getX());
         entityNBT.setInteger("TileY", floored.getY());
         entityNBT.setInteger("TileZ", floored.getZ());
@@ -75,7 +75,7 @@ public class SchematicHanging extends SchematicEntity {
     public void readFromWorld(IBuilderContext context, Entity entity) {
         super.readFromWorld(context, entity);
 
-        if (baseItem == Items.item_frame) {
+        if (baseItem == Items.ITEM_FRAME) {
             NBTTagCompound tag = entityNBT.getCompoundTag("Item");
             ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
 

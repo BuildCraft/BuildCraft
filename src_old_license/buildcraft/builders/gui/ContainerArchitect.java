@@ -5,7 +5,7 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
@@ -42,19 +42,18 @@ public class ContainerArchitect extends BuildCraftContainer {
     // FIXME: This is not called anymore
 
     @Override
-    public void onCraftGuiOpened(ICrafting icrafting) {
-        super.onCraftGuiOpened(icrafting);
-        icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
+        listener.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        for (Object crafter : crafters) {
-            ICrafting icrafting = (ICrafting) crafter;
+        for (IContainerListener listener : listeners) {
             if (computingTime != architect.getComputingProgressScaled(24)) {
-                icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
+                listener.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
             }
         }
 

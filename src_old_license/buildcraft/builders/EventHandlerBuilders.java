@@ -18,7 +18,7 @@ public class EventHandlerBuilders {
         // Temporary solution
         // Please remove the world Load event when world Unload event gets implimented
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            TilePathMarker.clearAvailableMarkersList(event.world);
+            TilePathMarker.clearAvailableMarkersList(event.getWorld());
         }
     }
 
@@ -27,7 +27,7 @@ public class EventHandlerBuilders {
         // When a world unloads clean from the list of available markers the ones
         // that were on the unloaded world
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            TilePathMarker.clearAvailableMarkersList(event.world);
+            TilePathMarker.clearAvailableMarkersList(event.getWorld());
         }
     }
 

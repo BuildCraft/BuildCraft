@@ -18,7 +18,7 @@ public class BuilderItemMetaPair {
             this.item = stack.getItem();
             this.meta = stack.getItemDamage();
         } else {
-            this.item = Item.getItemFromBlock(Blocks.air);
+            this.item = Item.getItemFromBlock(Blocks.AIR);
             this.meta = 0;
         }
     }

@@ -21,7 +21,7 @@ public class SchematicBed extends SchematicBlock {
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
         if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
-            requirements.add(new ItemStack(Items.bed));
+            requirements.add(new ItemStack(Items.BED));
         }
     }
 
@@ -33,14 +33,14 @@ public class SchematicBed extends SchematicBlock {
     @Override
     public void rotateLeft(IBuilderContext context) {
         IBlockState oldState = state;
-        EnumFacing oldFacing = (EnumFacing) oldState.getValue(BlockBed.FACING);
+        EnumFacing oldFacing = oldState.getValue(BlockBed.FACING);
         state = oldState.withProperty(BlockBed.FACING, oldFacing.rotateY());
     }
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
         context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD));
-        BlockPos feetPos = pos.offset(state.getValue(getFacingProp()), -1);
+        BlockPos feetPos = pos.offset(state.getValue(BlockBed.FACING), -1);
         context.world().setBlockState(feetPos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT));
     }
 

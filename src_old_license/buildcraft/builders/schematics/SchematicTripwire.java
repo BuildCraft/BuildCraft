@@ -18,7 +18,7 @@ public class SchematicTripwire extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Items.string));
+        requirements.add(new ItemStack(Items.STRING));
     }
 
     @Override
@@ -28,11 +28,11 @@ public class SchematicTripwire extends SchematicBlock {
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
-        context.world().setBlockState(pos, Blocks.tripwire.getDefaultState(), 3);
+        context.world().setBlockState(pos, Blocks.TRIPWIRE.getDefaultState(), 3);
     }
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-        return context.world().getBlockState(pos).getBlock() == Blocks.tripwire;
+        return context.world().getBlockState(pos).getBlock() == Blocks.TRIPWIRE;
     }
 }

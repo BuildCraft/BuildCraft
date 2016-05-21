@@ -19,7 +19,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
 public class SchematicRail extends SchematicBlockFloored {
-    private static final IBlockState defaultDirection = Blocks.rail.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);
+    private static final IBlockState defaultDirection = Blocks.RAIL.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);
 
     @Override
     public void rotateLeft(IBuilderContext context) {

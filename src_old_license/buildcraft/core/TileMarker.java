@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +18,9 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
 
+import io.netty.buffer.ByteBuf;
+
+@Deprecated
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public static class TileWrapper implements ISerializable {
 
@@ -420,7 +421,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
 
         if (origin.isSet() && origin.vectO.getMarker(worldObj) == this) {
@@ -432,6 +433,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
                 }
             }
         }
+        return nbt;
     }
 
     @Override

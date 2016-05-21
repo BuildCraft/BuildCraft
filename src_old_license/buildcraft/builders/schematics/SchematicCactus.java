@@ -17,7 +17,7 @@ public class SchematicCactus extends SchematicBlockFloored {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.cactus));
+        requirements.add(new ItemStack(Blocks.CACTUS));
     }
 
     @Override
@@ -27,11 +27,11 @@ public class SchematicCactus extends SchematicBlockFloored {
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
-        context.world().setBlockState(pos, Blocks.cactus.getDefaultState(), 3);
+        context.world().setBlockState(pos, Blocks.CACTUS.getDefaultState(), 3);
     }
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-        return context.world().getBlockState(pos).getBlock() == Blocks.cactus;
+        return context.world().getBlockState(pos).getBlock() == Blocks.CACTUS;
     }
 }

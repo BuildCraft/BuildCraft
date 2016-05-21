@@ -21,9 +21,9 @@ public class SchematicFactoryBlock extends SchematicFactory<SchematicBlock> {
         int blockId = nbt.getInteger("blockId");
         Block b = registry.getBlockForId(blockId);
 
-        if (b == Blocks.air) {
+        if (b == Blocks.AIR) {
             SchematicBlock s = new SchematicBlock();
-            s.state = Blocks.air.getDefaultState();
+            s.state = Blocks.AIR.getDefaultState();
 
             return s;
         } else {

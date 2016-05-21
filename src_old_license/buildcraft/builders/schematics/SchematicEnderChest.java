@@ -17,8 +17,8 @@ import buildcraft.api.blueprints.SchematicTile;
 public class SchematicEnderChest extends SchematicTile {
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.obsidian, 8));
-        requirements.add(new ItemStack(Items.ender_eye, 1));
+        requirements.add(new ItemStack(Blocks.OBSIDIAN, 8));
+        requirements.add(new ItemStack(Items.ENDER_EYE, 1));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SchematicFarmland extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.dirt));
+        requirements.add(new ItemStack(Blocks.DIRT));
     }
 
     @Override
@@ -35,6 +35,6 @@ public class SchematicFarmland extends SchematicBlock {
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
         Block block = context.world().getBlockState(pos).getBlock();
 
-        return block == Blocks.farmland;
+        return block == Blocks.FARMLAND;
     }
 }

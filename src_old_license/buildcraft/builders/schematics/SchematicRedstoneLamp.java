@@ -18,7 +18,7 @@ public class SchematicRedstoneLamp extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.redstone_lamp, 1, 0));
+        requirements.add(new ItemStack(Blocks.REDSTONE_LAMP, 1, 0));
     }
 
     @Override
@@ -30,6 +30,6 @@ public class SchematicRedstoneLamp extends SchematicBlock {
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
         Block block = context.world().getBlockState(pos).getBlock();
 
-        return block == Blocks.redstone_lamp || block == Blocks.lit_redstone_lamp;
+        return block == Blocks.REDSTONE_LAMP || block == Blocks.LIT_REDSTONE_LAMP;
     }
 }

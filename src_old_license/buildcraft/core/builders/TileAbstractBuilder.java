@@ -145,8 +145,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
-        super.writeToNBT(nbttagcompound);
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+       return super.writeToNBT(nbttagcompound);
     }
 
     @Override

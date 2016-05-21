@@ -15,9 +15,9 @@ public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
     @Override
     public boolean isHandler(ItemStack stack, HandlerType type) {
         if (type == HandlerType.STORE) {
-            return stack.getItem() == Items.written_book;
+            return stack.getItem() == Items.WRITTEN_BOOK;
         } else {
-            return stack.getItem() == Items.writable_book || stack.getItem() == Items.written_book;
+            return stack.getItem() == Items.WRITABLE_BOOK || stack.getItem() == Items.WRITTEN_BOOK;
         }
     }
 
@@ -34,7 +34,7 @@ public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
 
     @Override
     public ItemStack load(ItemStack stack, NBTTagCompound compound) {
-        ItemStack out = new ItemStack(Items.written_book);
+        ItemStack out = new ItemStack(Items.WRITTEN_BOOK);
         NBTTagCompound outNBT = new NBTTagCompound();
         outNBT.setString("title", compound.getString("title"));
         outNBT.setString("author", compound.getString("author"));

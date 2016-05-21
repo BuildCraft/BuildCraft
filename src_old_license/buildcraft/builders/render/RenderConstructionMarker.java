@@ -10,9 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.builders.TileConstructionMarker;
@@ -55,8 +55,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
 
             if (marker.laser != null) {
                 GL11.glPushMatrix();
-                RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, marker.laser,
-                        EntityLaser.LASER_STRIPES_YELLOW);
+                RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, marker.laser, EntityLaser.LASER_STRIPES_YELLOW);
                 GL11.glPopMatrix();
             }
 
@@ -83,7 +82,7 @@ public class RenderConstructionMarker extends RenderBoxProvider<TileConstruction
         GL11.glTranslatef((float) x, (float) y, (float) z);
         GL11.glTranslatef(0, 0.25F, 0);
         GL11.glScalef(renderScale, renderScale, renderScale);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(stack);
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
 

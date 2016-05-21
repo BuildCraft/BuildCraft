@@ -33,7 +33,7 @@ public class BCCreativeTab extends CreativeTabs {
 
     private ItemStack getItem() {
         if (icon == null || icon.getItem() == null) {
-            return new ItemStack(Blocks.brick_block, 1);
+            return new ItemStack(Blocks.BRICK_BLOCK, 1);
         }
         return icon;
     }

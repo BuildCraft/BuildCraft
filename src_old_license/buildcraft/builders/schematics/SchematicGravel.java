@@ -18,7 +18,7 @@ public class SchematicGravel extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.gravel));
+        requirements.add(new ItemStack(Blocks.GRAVEL));
     }
 
     @Override
@@ -28,13 +28,13 @@ public class SchematicGravel extends SchematicBlock {
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
-        context.world().setBlockState(pos, Blocks.gravel.getDefaultState());
+        context.world().setBlockState(pos, Blocks.GRAVEL.getDefaultState());
     }
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
         Block block = context.world().getBlockState(pos).getBlock();
 
-        return block == Blocks.gravel;
+        return block == Blocks.GRAVEL;
     }
 }

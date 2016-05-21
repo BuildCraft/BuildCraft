@@ -60,7 +60,7 @@ public enum TickHandlerCore {
     public void worldUnload(WorldEvent.Unload unload) {
         BCLog.logger.info("World Unload event");
         for (PacketHandler packetHandler : packetHandlers) {
-            packetHandler.unload(unload.world);
+            packetHandler.unload(unload.getWorld());
         }
     }
 }

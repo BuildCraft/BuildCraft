@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +19,9 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.core.lib.utils.Utils;
 
+import io.netty.buffer.ByteBuf;
+
+@Deprecated
 public class TilePathMarker extends TileMarker implements IPathProvider {
     // A list with the pathMarkers that aren't fully connected
     // It only contains markers within the loaded chunks
@@ -77,8 +79,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         double nearestDistance = 0, distance;
 
         for (TilePathMarker available : availableMarkers) {
-            if (available == this || available == this.links[0] || available == this.links[1] || available.getWorld().provider
-                    .getDimensionId() != this.getWorld().provider.getDimensionId()) {
+            if (available == this || available == this.links[0] || available == this.links[1] || available.getWorld().provider.getDimension() != this.getWorld().provider.getDimension()) {
                 continue;
             }
 
@@ -243,7 +244,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         super.writeToNBT(nbttagcompound);
 
         if (links[0] != null) {
@@ -257,6 +258,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
             nbttagcompound.setInteger("y1", links[1].pos.getY());
             nbttagcompound.setInteger("z1", links[1].pos.getZ());
         }
+        return nbttagcompound;
     }
 
     @Override
@@ -272,7 +274,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
     public static void clearAvailableMarkersList(World w) {
         for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
             TilePathMarker t = it.next();
-            if (t.getWorld().provider.getDimensionId() != w.provider.getDimensionId()) {
+            if (t.getWorld().provider.getDimension() != w.provider.getDimension()) {
                 it.remove();
             }
         }

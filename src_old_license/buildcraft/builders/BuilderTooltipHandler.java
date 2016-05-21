@@ -2,7 +2,9 @@ package buildcraft.builders;
 
 import java.util.List;
 
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
+
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -13,16 +15,16 @@ import buildcraft.core.blueprints.RequirementItemStack;
 public class BuilderTooltipHandler {
     @SubscribeEvent
     public void itemTooltipEvent(ItemTooltipEvent event) {
-        if (event.itemStack != null && event.entityPlayer != null && event.entityPlayer.openContainer != null
-            && event.entityPlayer.openContainer instanceof ContainerBuilder) {
-            ContainerBuilder containerBuilder = (ContainerBuilder) event.entityPlayer.openContainer;
+        EntityPlayer player = event.getEntityPlayer();
+        if (event.getItemStack() != null && player != null && player.openContainer != null && player.openContainer instanceof ContainerBuilder) {
+            ContainerBuilder containerBuilder = (ContainerBuilder) player.openContainer;
             TileBuilder builder = containerBuilder.getBuilder();
             if (builder != null) {
                 List<RequirementItemStack> needs = builder.getNeededItems();
                 if (needs != null) {
                     for (RequirementItemStack ris : needs) {
-                        if (ris.stack == event.itemStack) {
-                            event.toolTip.add(EnumChatFormatting.GRAY + "" + EnumChatFormatting.ITALIC + "Needed: " + ris.size);
+                        if (ris.stack == event.getItemStack()) {
+                            event.getToolTip().add(TextFormatting.GRAY + "" + TextFormatting.ITALIC + "Needed: " + ris.size);
                         }
                     }
                 }

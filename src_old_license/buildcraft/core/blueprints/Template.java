@@ -82,7 +82,7 @@ public class Template extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = Item.itemRegistry.getObject(new ResourceLocation("BuildCraft|Builders:templateItem"));
+        Item item = Item.REGISTRY.getObject(new ResourceLocation("BuildCraft|Builders:templateItem"));
         if (item == null) {
             throw new Error("Could not find the template item! Did you attempt to use this without buildcraft builders installed?");
         }

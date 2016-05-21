@@ -134,10 +134,11 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         inv.writeToNBT(nbt, "inv");
         nbt.setInteger("energy", energy);
+        return nbt;
     }
 
     @Override

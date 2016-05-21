@@ -261,11 +261,11 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
                 List<BlockPos> positions = message.positions;
                 if (message.add) {
                     for (BlockPos p : positions) {
-                        removeMarker(p);
+                        loadMarker(p, null);
                     }
                 } else {
                     for (BlockPos p : positions) {
-                        loadMarker(p, null);
+                        removeMarker(p);
                     }
                 }
             }

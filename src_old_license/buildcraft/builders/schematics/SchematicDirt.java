@@ -18,7 +18,7 @@ public class SchematicDirt extends SchematicBlock {
 
     @Override
     public void getRequirementsForPlacement(IBuilderContext context, List<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.dirt));
+        requirements.add(new ItemStack(Blocks.DIRT));
     }
 
     @Override
@@ -28,13 +28,13 @@ public class SchematicDirt extends SchematicBlock {
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, List<ItemStack> stacks) {
-        context.world().setBlockState(pos, Blocks.dirt.getDefaultState(), 3);
+        context.world().setBlockState(pos, Blocks.DIRT.getDefaultState(), 3);
     }
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
         Block block = context.world().getBlockState(pos).getBlock();
 
-        return block == Blocks.dirt || block == Blocks.grass || block == Blocks.farmland;
+        return block == Blocks.DIRT || block == Blocks.GRASS || block == Blocks.FARMLAND;
     }
 }
