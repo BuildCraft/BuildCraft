@@ -3,7 +3,7 @@ package buildcraft.lib.misc;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.server.management.PlayerManager.PlayerInstance;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -22,7 +22,7 @@ public class MessageUtil {
     public static void sendToAllWatching(World worldObj, BlockPos pos, IMessage message) {
         if (worldObj instanceof WorldServer) {
             WorldServer server = (WorldServer) worldObj;
-            PlayerInstance playerChunkMap = server.getPlayerChunkMap().getEntry(pos.getX() >> 4, pos.getZ() >> 4);
+            PlayerChunkMapEntry playerChunkMap = server.getPlayerChunkMap().getEntry(pos.getX() >> 4, pos.getZ() >> 4);
             if (playerChunkMap == null) {
                 // No-one was watching this chunk.
                 return;

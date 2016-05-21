@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -155,9 +156,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             }
         }
     }
-
+    
     @Override
-    public final Packet<?> getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
         return BCMessageHandler.netWrapper.getPacketFrom(message);
     }
@@ -227,9 +228,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
         nbt.setTag("deltas", deltaManager.writeToNBT());
+        return nbt;
     }
 }
