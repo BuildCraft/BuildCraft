@@ -50,18 +50,19 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         return getDefaultState().withProperty(LEVEL, meta);
     }
 
-    @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
-        super.onNeighborBlockChange(world, pos, state, block);
-        if (flammable && world.provider.getDimensionId() == -1) {
-            world.setBlockToAir(pos);
-            world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
-        }
-    }
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(world, pos, neighbor);
+		//TODO: explode in neather
+		/*if (flammable && world.provider.getDimensionId() == -1) {
+			world.setBlockToAir(pos);
+			world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
+		}*/
+	}
 
     @Override
     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
-        if (materialIn == Material.water) return Boolean.TRUE;
+        if (materialIn == Material.WATER) return Boolean.TRUE;
         return null;
     }
 
