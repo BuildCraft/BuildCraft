@@ -21,7 +21,7 @@ import buildcraft.lib.marker.MarkerCache2;
 @Mod(modid = BuildCraftCore.MODID,
         name = "BuildCraft Core",
         version = BuildCraftLib.VERSION,
-        acceptedMinecraftVersions = "[1.9]",
+        acceptedMinecraftVersions = "[1.9.4]",
         dependencies = "required-after:buildcraftlib",
         guiFactory = "buildcraft.core.config.ConfigManager")
 //@formatter:on

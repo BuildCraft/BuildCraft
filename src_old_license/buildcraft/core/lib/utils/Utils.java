@@ -26,11 +26,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -114,8 +110,16 @@ public final class Utils {
 
             TileEntity tile = world.getTileEntity(newpos);
             ITransactor transactor = Transactor.getTransactorFor(tile, orientation.getOpposite());
-            if (transactor != null && !(tile instanceof IEngine) && transactor.add(stack, false).stackSize > 0) {
-                return transactor.add(stack, true).stackSize;
+            if (transactor != null && !(tile instanceof IEngine) && transactor.insert(stack, false).stackSize > 0) {// FIXME
+                                                                                                                    // WRONG
+                                                                                                                    // OMG
+                                                                                                                    // 1.9.4
+                                                                                                                    // port
+                                                                                                                    // messed
+                                                                                                                    // this
+                                                                                                                    // ITransactor
+                                                                                                                    // UP!
+                return transactor.insert(stack, true).stackSize;
             }
         }
         return 0;
@@ -200,8 +204,7 @@ public final class Utils {
         return block;
     }
 
-    public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax,
-            LaserKind kind) {
+    public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
         EntityLaser[] lasers = new EntityLaser[12];
         Vec3d[] p = new Vec3d[8];
 
@@ -439,7 +442,8 @@ public final class Utils {
         return axisOtherMap.get(a).get(b);
     }
 
-    // We always return BlockPos instead of Vec3di as it will be usable in all situations that Vec3di is, and all the ones
+    // We always return BlockPos instead of Vec3di as it will be usable in all situations that Vec3di is, and all the
+    // ones
     // that require BlockPos
     public static BlockPos convertFloor(Vec3d vec) {
         return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
@@ -571,23 +575,23 @@ public final class Utils {
 
     /** Returns all of the chunks that all the block positions returned by
      * {@link #allInBoxIncludingCorners(BlockPos, BlockPos)} occupy */
-    public static Iterable<ChunkCoordIntPair> allChunksFor(BlockPos pos1, BlockPos pos2) {
+    public static Iterable<ChunkPos> allChunksFor(BlockPos pos1, BlockPos pos2) {
         BlockPos min = min(pos1, pos2);
         BlockPos max = max(pos1, pos2);
         int minX = min.getX() >> 4;
         int maxX = max.getX() >> 4;
         int minZ = min.getZ() >> 4;
         int maxZ = max.getZ() >> 4;
-        List<ChunkCoordIntPair> list = Lists.newArrayList();
+        List<ChunkPos> list = Lists.newArrayList();
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
-                list.add(new ChunkCoordIntPair(x, z));
+                list.add(new ChunkPos(x, z));
             }
         }
         return list;
     }
 
-    public static Iterable<BlockPos> allInChunk(ChunkCoordIntPair ccip) {
+    public static Iterable<BlockPos> allInChunk(ChunkPos ccip) {
         return BlockPos.getAllInBox(ccip.getBlock(0, 0, 0), ccip.getBlock(15, 255, 15));
     }
 

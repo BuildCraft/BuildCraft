@@ -10,7 +10,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +21,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
@@ -156,11 +154,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             }
         }
     }
-    
+
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
-        return BCMessageHandler.netWrapper.getPacketFrom(message);
+        MessageUtil.doDelayed(4, () -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
+        return null;
     }
 
     @Override

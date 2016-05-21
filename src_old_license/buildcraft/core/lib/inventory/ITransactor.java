@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.core.IStackFilter;
 
 @Deprecated
-public interface ITransactor {
+public interface ITransactor {// FIXME WRONG OMG 1.9.4 port messed this ITransactor UP!
 
     /** Adds an Item to the inventory.
      *

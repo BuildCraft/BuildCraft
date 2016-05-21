@@ -18,8 +18,8 @@ import buildcraft.lib.misc.FakePlayerUtil;
 @Mod(modid = BuildCraftLib.MODID,
       name = "BuildCraft Lib",
       version = BuildCraftLib.VERSION,
-      acceptedMinecraftVersions = "[1.9]",
-      dependencies = "required-after:Forge@[12.16.0.1865,12.16.1)")
+      acceptedMinecraftVersions = "[1.9.4]",
+      dependencies = "required-after:Forge@[12.17.0.1909,)")
 //@formatter:on
 public class BuildCraftLib {
     public static final String MODID = "buildcraftlib";

@@ -19,6 +19,10 @@ public class MessageUtil {
         return BCMessageHandler.netWrapper;
     }
 
+    public static void doDelayed(int ticks, Runnable task) {
+        task.run();// FIXME!
+    }
+
     public static void sendToAllWatching(World worldObj, BlockPos pos, IMessage message) {
         if (worldObj instanceof WorldServer) {
             WorldServer server = (WorldServer) worldObj;
