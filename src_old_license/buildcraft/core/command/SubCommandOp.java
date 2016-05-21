@@ -1,5 +1,6 @@
 package buildcraft.core.command;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
@@ -14,8 +15,13 @@ public class SubCommandOp extends SubCommand {
     }
 
     @Override
-    public void processSubCommand(ICommandSender sender, String[] args) {
-        MinecraftServer.getServer().getConfigurationManager().addOp(BuildCraftCore.gameProfile);
-        CommandHelpers.sendLocalizedChatMessage(sender, "commands.op.success", "[BuildCraft]");
+    public void processSubCommand(ICommandSender sender, String[] args) throws CommandException {
+        MinecraftServer server = sender.getServer();
+        if (server == null) {
+            throw new CommandException("No server!");
+        } else {
+            server.getPlayerList().addOp(BuildCraftCore.gameProfile);
+            CommandHelpers.sendLocalizedChatMessage(sender, "commands.op.success", "[BuildCraft]");
+        }
     }
 }
