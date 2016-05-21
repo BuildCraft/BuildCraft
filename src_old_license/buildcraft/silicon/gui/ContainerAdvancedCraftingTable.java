@@ -4,16 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.Slot;
-
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.core.lib.gui.slots.SlotUntouchable;
 import buildcraft.silicon.TileAdvancedCraftingTable;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IContainerListener;
+import net.minecraft.inventory.Slot;
 
 public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 
@@ -64,8 +63,8 @@ public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        for (Object crafter : crafters) {
-            workbench.sendGUINetworkData(this, (ICrafting) crafter);
+        for (IContainerListener listener : listeners) {
+            workbench.sendGUINetworkData(this, listener);
         }
     }
 

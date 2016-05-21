@@ -4,18 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
-import java.io.IOException;
-
-import net.minecraft.inventory.ICrafting;
-import net.minecraft.network.PacketBuffer;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
+import net.minecraft.inventory.IContainerListener;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
 
 public class Widget implements IToolTipProvider {
 
@@ -81,7 +79,7 @@ public class Widget implements IToolTipProvider {
         return true;
     }
 
-    public void initWidget(ICrafting player) {}
+    public void initWidget(IContainerListener player) {}
 
-    public void updateWidget(ICrafting player) {}
+    public void updateWidget(IContainerListener player) {}
 }

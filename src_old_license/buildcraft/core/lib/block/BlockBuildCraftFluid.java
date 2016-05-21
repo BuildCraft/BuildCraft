@@ -4,8 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import java.util.Random;
-
+import buildcraft.core.lib.client.render.EntityDropParticleFX;
+import buildcraft.core.lib.utils.ICustomStateMapper;
+import buildcraft.core.lib.utils.ModelHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -13,14 +14,12 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -28,9 +27,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.client.render.EntityDropParticleFX;
-import buildcraft.core.lib.utils.ICustomStateMapper;
-import buildcraft.core.lib.utils.ModelHelper;
+import java.util.Random;
 
 public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper {
 
