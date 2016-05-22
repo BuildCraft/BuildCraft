@@ -4,21 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.BlockPlacedDownEvent;
@@ -28,6 +13,23 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
+import javax.annotation.Nullable;
 
 /**
  * Deprecated as most stuff can be done better now
@@ -92,17 +94,12 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
         }
     }
 
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
-            float hitZ) {
-        BlockInteractionEvent event = new BlockInteractionEvent(player, state);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) {
-            return true;
-        }
-
-        return false;
-    }
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		BlockInteractionEvent event = new BlockInteractionEvent(playerIn, state);
+		MinecraftForge.EVENT_BUS.post(event);
+		return !event.isCanceled();
+	}
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
@@ -110,45 +107,45 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
         super.breakBlock(world, pos, state);
     }
 
-    @Override
-    public int getLightValue(IBlockAccess world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
-            return super.getLightValue(world, pos) + 8;
-        } else {
-            return super.getLightValue(world, pos);
-        }
-    }
+	@Override
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+		TileEntity tile = world.getTileEntity(pos);
+		if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
+			return super.getLightValue(state, world, pos) + 8;
+		} else {
+			return super.getLightValue(state, world, pos);
+		}
+	}
 
-    @Override
-    public boolean hasComparatorInputOverride() {
-        return this instanceof IComparatorInventory;
-    }
+	@Override
+	public boolean hasComparatorInputOverride(IBlockState state) {
+		return this instanceof IComparatorInventory;
+	}
 
-    @Override
-    public int getComparatorInputOverride(World world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IInventory) {
-            int count = 0;
-            int countNonEmpty = 0;
-            float power = 0.0F;
-            for (EnumFacing face : EnumFacing.values()) {
-                for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, face)) {
-                    if (((IComparatorInventory) this).doesSlotCountComparator(tile, slot.getIndex(), slot.getStackInSlot())) {
-                        count++;
-                        if (slot.getStackInSlot() != null) {
-                            countNonEmpty++;
-                            power += (float) slot.getStackInSlot().stackSize / (float) Math.min(((IInventory) tile).getInventoryStackLimit(), slot
-                                    .getStackInSlot().getMaxStackSize());
-                        }
-                    }
-                }
-            }
+	@Override
+	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile instanceof IInventory) {
+			int count = 0;
+			int countNonEmpty = 0;
+			float power = 0.0F;
+			for (EnumFacing face : EnumFacing.values()) {
+				for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, face)) {
+					if (((IComparatorInventory) this).doesSlotCountComparator(tile, slot.getIndex(), slot.getStackInSlot())) {
+						count++;
+						if (slot.getStackInSlot() != null) {
+							countNonEmpty++;
+							power += (float) slot.getStackInSlot().stackSize / (float) Math.min(((IInventory) tile).getInventoryStackLimit(), slot
+									.getStackInSlot().getMaxStackSize());
+						}
+					}
+				}
+			}
 
-            power /= count;
-            return MathHelper.floor_float(power * 14.0F) + (countNonEmpty > 0 ? 1 : 0);
-        }
+			power /= count;
+			return MathHelper.floor_float(power * 14.0F) + (countNonEmpty > 0 ? 1 : 0);
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 }

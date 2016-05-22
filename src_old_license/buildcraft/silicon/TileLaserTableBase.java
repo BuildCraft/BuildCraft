@@ -7,7 +7,7 @@ package buildcraft.silicon;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -211,7 +211,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
         }
     }
 
-    public void sendGUINetworkData(Container container, ICrafting iCrafting) {
+    public void sendGUINetworkData(Container container, IContainerListener iCrafting) {
         int requiredEnergy = getRequiredEnergy();
         int currentStored = energy;
         int lRecentEnergy = (int) (recentEnergyAverageUtil.getAverage() * 100f);

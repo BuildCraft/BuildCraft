@@ -4,22 +4,24 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import net.minecraft.block.Block;
+import buildcraft.api.items.IMapLocation;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.items.IMapLocation;
-import buildcraft.core.lib.block.BlockBuildCraft;
+import javax.annotation.Nullable;
 
 @Deprecated
 public class BlockMarker extends BlockBuildCraft {
@@ -28,15 +30,15 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     protected BlockMarker(boolean on) {
-        super(Material.circuits, FACING_6_PROP, on ? LED_DONE : null);
+        super(Material.CIRCUITS, FACING_6_PROP, on ? LED_DONE : null);
         setDefaultState(getDefaultState().withProperty(FACING_6_PROP, EnumFacing.UP));
         setLightLevel(0.5F);
         setHardness(0.0F);
     }
 
     public static boolean canPlaceTorch(World world, BlockPos pos, EnumFacing side) {
-        Block block = world.getBlockState(pos).getBlock();
-        return (block.isOpaqueCube() || block.isSideSolid(world, pos, side));
+        IBlockState state = world.getBlockState(pos);
+        return (state.isOpaqueCube() || state.isSideSolid(world, pos, side));
     }
 
     @Override
@@ -70,47 +72,49 @@ public class BlockMarker extends BlockBuildCraft {
         return new TileMarker();
     }
 
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float hitX, float hitY,
-            float hitZ) {
-        if (super.onBlockActivated(world, pos, state, player, face, hitX, hitY, hitZ)) {
-            return true;
-        }
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ)) {
+			return true;
+		}
 
-        if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
-            return false;
-        }
+		if (playerIn.inventory.getCurrentItem() != null && playerIn.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
+			return false;
+		}
 
-        if (player.isSneaking()) {
-            return false;
-        }
+		if (playerIn.isSneaking()) {
+			return false;
+		}
 
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileMarker) {
-            ((TileMarker) tile).tryConnection();
-            return true;
-        }
-        return false;
-    }
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile instanceof TileMarker) {
+			((TileMarker) tile).tryConnection();
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
 
-    @Override
-    public boolean isFullCube() {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
 
-    @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileMarker) {
-            ((TileMarker) tile).updateSignals();
-        }
-        dropTorchIfCantStay(world, pos, state);
-    }
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+		TileEntity tile = world.getTileEntity(pos);
+		if (tile instanceof TileMarker) {
+			((TileMarker) tile).updateSignals();
+		}
+		if (world instanceof World)
+		dropTorchIfCantStay((World) world, pos, world.getBlockState(pos));
+	}
+
 
     @Override
     public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
@@ -133,7 +137,7 @@ public class BlockMarker extends BlockBuildCraft {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 }

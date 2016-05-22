@@ -1,31 +1,24 @@
 package buildcraft.core.lib.world;
 
-import java.util.EnumMap;
-import com.google.common.collect.Maps;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Project;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.chunk.Chunk;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
+import com.google.common.collect.Maps;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.Chunk;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Project;
+
+import java.util.EnumMap;
 
 public class FakeWorldManager {
     private final Minecraft mc = Minecraft.getMinecraft();
@@ -34,12 +27,12 @@ public class FakeWorldManager {
     // private final RenderGlobal renderGlobal;
     // private final ChunkRenderDispatcher chunkBatcher;
     // private final Map<BlockPos, RenderChunk> chunks = Maps.newHashMap();
-    private final EnumMap<EnumWorldBlockLayer, Tessellator> tessMap = Maps.newEnumMap(EnumWorldBlockLayer.class);
-    private final EnumMap<EnumWorldBlockLayer, Integer> displayListMap = Maps.newEnumMap(EnumWorldBlockLayer.class);
+    private final EnumMap<BlockRenderLayer, Tessellator> tessMap = Maps.newEnumMap(BlockRenderLayer.class);
+    private final EnumMap<BlockRenderLayer, Integer> displayListMap = Maps.newEnumMap(BlockRenderLayer.class);
 
     public FakeWorldManager(FakeWorld world) {
         this.world = world;
-        for (EnumWorldBlockLayer layer : EnumWorldBlockLayer.values()) {
+        for (BlockRenderLayer layer : BlockRenderLayer.values()) {
             tessMap.put(layer, new Tessellator(1 << 16));
         }
         world.tick();
@@ -71,7 +64,7 @@ public class FakeWorldManager {
 
     public void renderWorld(double mouseX, double mouseY, double sf, BlockPos offset) {
         // Prepare
-        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         RenderHelper.disableStandardItemLighting();
 
         GlStateManager.pushMatrix();
@@ -101,26 +94,26 @@ public class FakeWorldManager {
     private void renderAll() {
         GlStateManager.disableAlpha();
         // Solids
-        EnumWorldBlockLayer layer = EnumWorldBlockLayer.SOLID;
+        BlockRenderLayer layer = BlockRenderLayer.SOLID;
         renderAllChunks(layer);
 
         // Cutouts (That have mipmapping applied)
-        layer = EnumWorldBlockLayer.CUTOUT_MIPPED;
+        layer = BlockRenderLayer.CUTOUT_MIPPED;
         GlStateManager.enableAlpha();
         renderAllChunks(layer);
 
         // Cutouts (That don't have mipmapping applied)
-        layer = EnumWorldBlockLayer.CUTOUT;
-        mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+        layer = BlockRenderLayer.CUTOUT;
+        mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         renderAllChunks(layer);
 
         // Cutout tear-down
-        mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+        mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         GlStateManager.shadeModel(7424);
         GlStateManager.alphaFunc(516, 0.1F);
 
         // Translucent (Partial alpha)
-        layer = EnumWorldBlockLayer.TRANSLUCENT;
+        layer = BlockRenderLayer.TRANSLUCENT;
         if (mc.gameSettings.fancyGraphics) {
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
@@ -131,7 +124,7 @@ public class FakeWorldManager {
         }
     }
 
-    private void renderAllChunks(EnumWorldBlockLayer layer) {
+    private void renderAllChunks(BlockRenderLayer layer) {
         Tessellator tess = tessMap.get(layer);
         WorldRenderer renderer = tess.getWorldRenderer();
         if (displayListMap.containsKey(layer)) {
@@ -148,7 +141,7 @@ public class FakeWorldManager {
         }
     }
 
-    private void renderAllBlocks(EnumWorldBlockLayer layer, WorldRenderer renderer) {
+    private void renderAllBlocks(BlockRenderLayer layer, WorldRenderer renderer) {
         for (ChunkCoordIntPair ccip : Utils.allChunksFor(min, max)) {
             if (world.getChunkProvider().chunkExists(ccip.chunkXPos, ccip.chunkZPos)) {
                 Chunk chunk = world.getChunkFromChunkCoords(ccip.chunkXPos, ccip.chunkZPos);
@@ -169,10 +162,10 @@ public class FakeWorldManager {
         }
     }
 
-    private void renderBlock(BlockPos pos, EnumWorldBlockLayer layer, WorldRenderer renderer) {
+    private void renderBlock(BlockPos pos, BlockRenderLayer layer, WorldRenderer renderer) {
         IBlockState actualState = world.getBlockState(pos);
         Block block = actualState.getBlock();
-        if (block == Blocks.air || block == null) {
+        if (block == Blocks.AIR || block == null) {
             return;
         }
 

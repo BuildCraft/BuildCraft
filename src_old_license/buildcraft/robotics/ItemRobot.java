@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import java.util.List;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -102,8 +102,8 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
             } else if (energy == 0) {
                 enInfo = BCStringUtils.localize("tip.gate.nocharge");
             }
-            enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD
-                : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
+            enInfo = (pct >= 80 ? ChatFormatting.GREEN : (pct >= 50 ? ChatFormatting.YELLOW : (pct >= 30 ? ChatFormatting.GOLD
+                : (pct >= 20 ? ChatFormatting.RED : ChatFormatting.DARK_RED)))) + enInfo;
             list.add(enInfo);
         }
     }

@@ -4,17 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import java.util.Arrays;
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IChatComponent;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.IZone;
@@ -30,9 +19,18 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.gui.ContainerZonePlan;
 import buildcraft.robotics.map.MapWorld;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.server.FMLServerHandler;
+
+import java.util.Arrays;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
-
     public static final int RESOLUTION = 2048;
     public static final int CRAFT_TIME = 120;
     private static final int PREVIEW_BLOCKS_PER_PIXEL = 10;
@@ -125,7 +123,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setString("name", mapName);
 
@@ -140,6 +138,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
                 nbt.setTag("selectedArea[" + i + "]", subNBT);
             }
         }
+		return nbt;
     }
 
     @Override
@@ -147,11 +146,6 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
         super.readFromNBT(nbt);
 
         mapName = nbt.getString("name");
-
-        if (mapName == null) {
-            mapName = "";
-        }
-
         inv.readFromNBT(nbt.getCompoundTag("inv"));
 
         for (int i = 0; i < selectedAreas.length; ++i) {
@@ -182,8 +176,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
             final IZone zone = ((IMapLocation) stack.getItem()).getZone(stack);
             if (zone != null && zone instanceof ZonePlan) {
                 selectedAreas[currentSelectedArea] = (ZonePlan) zone;
-
-                for (EntityPlayerMP e : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+                for (EntityPlayerMP e : FMLServerHandler.instance().getServer().getPlayerList().getPlayerList()) {
                     if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan && ((ContainerZonePlan) e.openContainer)
                             .getTile() == this) {
                         Packet p = new PacketCommand(e.openContainer, "areaLoaded", new CommandWriter() {
@@ -193,6 +186,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
                             }
                         });
 
+						//TODO: move to the new mod instance
                         BuildCraftCore.instance.sendToPlayer(e, p);
                     }
                 }
@@ -244,7 +238,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         return inv.getDisplayName();
     }
 
