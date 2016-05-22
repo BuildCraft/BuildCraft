@@ -7,7 +7,7 @@ package buildcraft.core.lib.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 
 /** Wrapper class used to specify part of an existing inventory to be treated as a complete inventory. Used primarily to
  * map a side of an ISidedInventory, but it is also helpful for complex inventories such as the Tunnel Bore. */
@@ -112,7 +112,7 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         return null;
     }
 

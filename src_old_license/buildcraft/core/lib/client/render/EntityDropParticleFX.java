@@ -6,16 +6,17 @@ package buildcraft.core.lib.client.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.particle.EntityFX;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class EntityDropParticleFX extends EntityFX {
+public class EntityDropParticleFX extends Particle {
 
     /** The height of the current bob */
     private int bobTimer;
@@ -72,10 +73,10 @@ public class EntityDropParticleFX extends EntityFX {
         this.motionZ *= 0.9800000190734863D;
 
         if (this.particleMaxAge-- <= 0) {
-            this.setDead();
+            this.setExpired();
         }
 
-        if (this.onGround) {
+        if (this.isCollided) {
             this.setParticleTextureIndex(114);
 
             this.motionX *= 0.699999988079071D;
@@ -86,15 +87,16 @@ public class EntityDropParticleFX extends EntityFX {
         int y = MathHelper.floor_double(this.posY);
         int z = MathHelper.floor_double(this.posZ);
         BlockPos pos = new BlockPos(x, y, z);
-        Block block = worldObj.getBlockState(pos).getBlock();
+		IBlockState state = worldObj.getBlockState(pos);
+		Block block = state.getBlock();
 
-        Material material = block.getMaterial();
+        Material material = state.getMaterial();
 
         if ((material.isLiquid() || material.isSolid()) && block instanceof IFluidBlock) {
             double d0 = MathHelper.floor_double(this.posY) + 1 - ((IFluidBlock) block).getFilledPercentage(worldObj, pos);
 
             if (this.posY < d0) {
-                this.setDead();
+                this.setExpired();
             }
         }
     }

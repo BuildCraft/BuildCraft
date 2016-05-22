@@ -7,12 +7,11 @@ package buildcraft.core.lib.block;
 import buildcraft.core.lib.client.render.EntityDropParticleFX;
 import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.ModelHelper;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -51,26 +50,23 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     }
 
 	@Override
-	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-		super.onNeighborChange(world, pos, neighbor);
-		//TODO: explode in neather
-		/*if (flammable && world.provider.getDimensionId() == -1) {
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+		if (flammable && world.provider.getDimension() == -1) {
 			world.setBlockToAir(pos);
 			world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
-		}*/
+		}
 	}
 
-    @Override
+	@Override
     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
         if (materialIn == Material.WATER) return Boolean.TRUE;
         return null;
     }
 
-    @Override
-    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
-        if (materialIn == Material.water) return Boolean.TRUE;
-        return null;
-    }
+	@Override
+	public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+		return materialIn == Material.WATER ? true : null;
+	}
 
     public BlockBuildCraftFluid setDense(boolean dense) {
         this.dense = dense;
@@ -114,25 +110,26 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         return this;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
-        super.randomDisplayTick(world, pos, state, rand);
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+		super.randomDisplayTick(stateIn, worldIn, pos, rand);
 
-        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
-            double px = pos.getX() + rand.nextFloat();
-            double py = pos.getY() - 1.05D;
-            double pz = pos.getZ() + rand.nextFloat();
+		if (rand.nextInt(10) == 0 && worldIn.isSideSolid(pos.down(), EnumFacing.UP) && !worldIn.getBlockState(pos.down(2)).getMaterial().blocksMovement()) {
 
-            EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
-            FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
-        }
-    }
+			double px = pos.getX() + rand.nextFloat();
+			double py = pos.getY() - 1.05D;
+			double pz = pos.getZ() + rand.nextFloat();
+
+			Particle particle = new EntityDropParticleFX(worldIn, px, py, pz, particleRed, particleGreen, particleBlue);
+			FMLClientHandler.instance().getClient().effectRenderer.addEffect(particle);
+		}
+	}
 
     @Override
     public boolean canDisplace(IBlockAccess world, BlockPos pos) {
-        if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
+        if (world.getBlockState(pos).getMaterial().isLiquid()) {
             return false;
         }
         return super.canDisplace(world, pos);
@@ -140,7 +137,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public boolean displaceIfPossible(World world, BlockPos pos) {
-        if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
+        if (world.getBlockState(pos).getMaterial().isLiquid()) {
             return false;
         }
         return super.displaceIfPossible(world, pos);
