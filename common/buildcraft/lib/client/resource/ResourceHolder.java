@@ -20,10 +20,15 @@ public abstract class ResourceHolder {
         this.locationBase = location;
     }
 
-    public static ResourceLocation getForLang(ResourceLocation location) {
+    public static ResourceLocation getForLang(ResourceLocation location, boolean _default) {
         String domain = location.getResourceDomain();
         String path = location.getResourcePath();
-        String lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        final String lang;
+        if (_default) {
+            lang = "en_US";
+        } else {
+            lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        }
         path = path.replaceFirst("guide", "guide/" + lang);
         return new ResourceLocation(domain, path);
     }
@@ -32,16 +37,16 @@ public abstract class ResourceHolder {
         onLoad(load(resourceManager));
     }
 
-    public ResourceLocation getLocationForLang() {
-        return getForLang(locationBase);
+    public ResourceLocation getLocationForLang(boolean _default) {
+        return getForLang(locationBase, _default);
     }
 
     protected abstract void onLoad(byte[] data);
 
     protected byte[] load(IResourceManager resourceManager) {
-        byte[] loaded = load(resourceManager, getLocationForLang(), false);
+        byte[] loaded = load(resourceManager, getLocationForLang(false), false);
         if (loaded != null) return loaded;
-        loaded = load(resourceManager, locationBase, true);
+        loaded = load(resourceManager, getLocationForLang(true), true);
         if (loaded != null) return loaded;
 
         return new byte[0];
