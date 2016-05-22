@@ -20,11 +20,11 @@ public abstract class ResourceHolder {
         this.locationBase = location;
     }
 
-    public static ResourceLocation getForLang(ResourceLocation location, boolean _default) {
+    public static ResourceLocation getForLang(ResourceLocation location, boolean useFallback) {
         String domain = location.getResourceDomain();
         String path = location.getResourcePath();
         final String lang;
-        if (_default) {
+        if (useFallback) {
             lang = "en_US";
         } else {
             lang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
@@ -37,8 +37,8 @@ public abstract class ResourceHolder {
         onLoad(load(resourceManager));
     }
 
-    public ResourceLocation getLocationForLang(boolean _default) {
-        return getForLang(locationBase, _default);
+    public ResourceLocation getLocationForLang(boolean useFallback) {
+        return getForLang(locationBase, useFallback);
     }
 
     protected abstract void onLoad(byte[] data);

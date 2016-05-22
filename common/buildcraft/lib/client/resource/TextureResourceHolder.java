@@ -13,7 +13,7 @@ import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
 public class TextureResourceHolder extends ResourceHolder implements GuidePartFactory<GuideImage> {
     private SimpleTexture texture;
-    private boolean locale;
+    private boolean langFallback;
     private final int dispWidth, dispHeight;
     private int texWidth, texHeight;
 
@@ -29,11 +29,10 @@ public class TextureResourceHolder extends ResourceHolder implements GuidePartFa
 
     @Override
     protected byte[] load(IResourceManager resourceManager) {
-        ResourceLocation loc = getLocationForLang();
-        if (createFrom(loc)) {
-            locale = true;
-        } else if (createFrom(locationBase)) {
-            locale = false;
+        if (createFrom(getLocationForLang(false))) {
+            langFallback = false;
+        } else if (createFrom(getLocationForLang(true))) {
+            langFallback = true;
         } else {
             texture = null;
         }
@@ -57,7 +56,7 @@ public class TextureResourceHolder extends ResourceHolder implements GuidePartFa
 
     @Override
     public GuideImage createNew(GuiGuide gui) {
-        return new GuideImage(gui, locale ? getLocationForLang() : locationBase, texWidth, texHeight, dispWidth, dispHeight);
+        return new GuideImage(gui, getLocationForLang(langFallback), texWidth, texHeight, dispWidth, dispHeight);
     }
 
 }

@@ -18,6 +18,14 @@ public class GuiIcon {
         this.height = height;
     }
 
+    public GuiIcon(GuiIcon from, int uDiff, int vDiff) {
+        this.texture = from.texture;
+        this.u = from.u + uDiff;
+        this.v = from.v + vDiff;
+        this.width = from.width;
+        this.height = from.height;
+    }
+
     private void bindTexture() {
         if (texture != null) {
             Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
@@ -58,7 +66,7 @@ public class GuiIcon {
     public void drawCutInside(IPositionedElement element) {
         drawCutInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
-    
+
     public void drawCutInside(int x, int y, int width, int height) {
         bindTexture();
         width = Math.min(this.width, width);

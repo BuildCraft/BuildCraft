@@ -5,9 +5,11 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TransportProxy_BC8 implements IGuiHandler {
-    @SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient_BC8", serverSide = "buildcraft.transport.TransportProxy_BC8")
+public abstract class TransportProxy_BC8 implements IGuiHandler {
+    @SidedProxy
     private static TransportProxy_BC8 proxy;
 
     public static TransportProxy_BC8 getProxy() {
@@ -25,4 +27,14 @@ public class TransportProxy_BC8 implements IGuiHandler {
     }
 
     public void fmlInit() {}
+
+    @SideOnly(Side.SERVER)
+    public static class ServerProxy extends TransportProxy_BC8 {
+
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static class ClientProxy extends TransportProxy_BC8 {
+
+    }
 }

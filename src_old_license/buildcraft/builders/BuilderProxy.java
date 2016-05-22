@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import buildcraft.core.lib.EntityResizableCuboid;
 
 public class BuilderProxy {
-    @SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
+//    @SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
     public static BuilderProxy proxy;
     public static int frameRenderId;
 

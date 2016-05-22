@@ -66,8 +66,13 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BORDER_TOP_RIGHT = new GuiIcon(ICONS, 13, 196, 13, 13);
     public static final GuiIcon BORDER_BOTTOM_LEFT = new GuiIcon(ICONS, 0, 209, 13, 13);
     public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS, 13, 209, 13, 13);
-    
-    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS, );
+
+    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS, 14, 100, 14, 14);
+    public static final GuiIcon ORDER_STAGE = new GuiIcon(ICONS, 28, 100, 14, 14);
+    public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS, 42, 100, 14, 14);
+    public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS, 56, 100, 14, 14);
+
+    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_STAGE, ORDER_MOD_TYPE, ORDER_MOD };
 
     public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.u + PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.v + PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 

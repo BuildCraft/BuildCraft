@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import buildcraft.core.lib.EntityResizableCuboid;
 
 public class FactoryProxy {
-    @SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
+//    @SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
     public static FactoryProxy proxy;
 
     public void preInit() {}

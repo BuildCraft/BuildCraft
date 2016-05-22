@@ -14,7 +14,7 @@ import buildcraft.core.CompatHooks;
 import buildcraft.transport.pipes.bc8.TilePipe_BC8;
 
 public class TransportProxy {
-    @SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")
+//    @SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")
     public static TransportProxy proxy;
     public static int pipeModel = -1;
 
