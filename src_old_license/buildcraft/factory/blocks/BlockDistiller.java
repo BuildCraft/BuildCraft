@@ -1,15 +1,17 @@
 package buildcraft.factory.blocks;
 
+import javax.annotation.Nullable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.GuiIds;
@@ -18,7 +20,7 @@ import buildcraft.factory.tile.TileDistiller;
 
 public class BlockDistiller extends BlockBuildCraft implements ICustomPipeConnection {
     public BlockDistiller() {
-        super(Material.iron);
+        super(Material.IRON);
         setLightOpacity(0);
     }
 
@@ -27,40 +29,39 @@ public class BlockDistiller extends BlockBuildCraft implements ICustomPipeConnec
         return new TileDistiller();
     }
 
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
-            float hitZ) {
-        if (super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ)) {
-            return true;
-        }
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ)) {
+			return true;
+		}
 
-        TileEntity tile = world.getTileEntity(pos);
+		TileEntity tile = worldIn.getTileEntity(pos);
 
-        if (!(tile instanceof TileDistiller)) {
-            return false;
-        }
+		if (!(tile instanceof TileDistiller)) {
+			return false;
+		}
 
-        if (!world.isRemote) {
-            player.openGui(BuildCraftFactory.instance, GuiIds.DISTILLER, world, pos.getX(), pos.getY(), pos.getZ());
-        }
+		if (!worldIn.isRemote) {
+			playerIn.openGui(BuildCraftFactory.instance, GuiIds.DISTILLER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		}
 
-        return true;
-    }
-
-    @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT;
-    }
+		return true;
+	}
 
     @Override
-    public boolean isFullBlock() {
-        return false;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
+	@Override
+	public boolean isFullBlock(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
 
     @Override
     public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {

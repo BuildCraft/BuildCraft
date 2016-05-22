@@ -4,12 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import java.util.List;
+import buildcraft.BuildCraftRobotics;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.lib.misc.NBTUtils;
 import com.google.common.collect.Lists;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -18,12 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.boards.RedstoneBoardNBT;
-import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.lib.misc.NBTUtils;
+import java.util.List;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
     public ItemRedstoneBoard() {

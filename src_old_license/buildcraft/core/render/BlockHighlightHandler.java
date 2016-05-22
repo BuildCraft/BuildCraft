@@ -5,39 +5,33 @@
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.core.lib.client.render.ICustomHighlight;
 
 public class BlockHighlightHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void handleBlockHighlight(DrawBlockHighlightEvent e) {
-        if (e.target.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            int x = MathHelper.floor_double(e.target.hitVec.xCoord);
-            int y = MathHelper.floor_double(e.target.hitVec.yCoord);
-            int z = MathHelper.floor_double(e.target.hitVec.zCoord);
+        if (e.getTarget().typeOfHit == RayTraceResult.Type.BLOCK) {
+            int x = MathHelper.floor_double(e.getTarget().hitVec.xCoord);
+            int y = MathHelper.floor_double(e.getTarget().hitVec.yCoord);
+            int z = MathHelper.floor_double(e.getTarget().hitVec.zCoord);
 
             BlockPos pos = new BlockPos(x, y, z);
-            IBlockState state = e.player.worldObj.getBlockState(pos);
+            IBlockState state = e.getPlayer().worldObj.getBlockState(pos);
             Block block = state.getBlock();
 
             if (block instanceof ICustomHighlight) {
-                AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, pos, state);
-                Vec3d nPos = e.player.getPositionEyes(e.partialTicks).subtract(0, e.player.getEyeHeight(), 0);
+                AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.getPlayer().worldObj, pos, state);
+                Vec3d nPos = e.getPlayer().getPositionEyes(e.getPartialTicks()).subtract(0, e.getPlayer().getEyeHeight(), 0);
 
                 // Highlight "breathing"
                 long millis = System.currentTimeMillis();
