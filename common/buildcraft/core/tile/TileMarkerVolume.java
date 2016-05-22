@@ -138,25 +138,16 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     // }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setBoolean("showSignals", showSignals);
-        // if (box != null) {
-        // NBTTagCompound boxNbt = new NBTTagCompound();
-        // box.writeToNBT(boxNbt);
-        // nbt.setTag("box", boxNbt);
-        // }
+        return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         showSignals = nbt.getBoolean("showSignals");
-        // if (nbt.hasKey("box")) {
-        // NBTTagCompound boxNbt = nbt.getCompoundTag("box");
-        // box = new Box();
-        // box.initialize(boxNbt);
-        // }
     }
 
     // private void regenBox() {

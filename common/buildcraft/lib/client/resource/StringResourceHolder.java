@@ -8,6 +8,7 @@ import com.google.common.base.Charsets;
 import net.minecraft.util.ResourceLocation;
 
 public class StringResourceHolder extends ResourceHolder {
+    private static final String REGEX_LINE_END = "\\R";
     private List<String> lines = new ArrayList<>();
 
     public StringResourceHolder(ResourceLocation location) {
@@ -22,7 +23,7 @@ public class StringResourceHolder extends ResourceHolder {
     protected final void onLoad(byte[] data) {
         String fullData = new String(data, Charsets.UTF_8);
         List<String> newLines = new ArrayList<>();
-        for (String s : fullData.split("\n")) {
+        for (String s : fullData.split(REGEX_LINE_END)) {
             newLines.add(s);
         }
         lines = newLines;
