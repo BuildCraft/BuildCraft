@@ -34,13 +34,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
@@ -163,7 +160,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         this(world);
 
         board = boardNBT.create(this);
-        dataWatcher.updateObject(DATA_BOARD_ID, board.getNBTHandler().getID());
+        dataManager.set(DATA_BOARD_ID, board.getNBTHandler().getID());
 
         if (!world.isRemote) {
             mainAI = new AIRobotMain(this);

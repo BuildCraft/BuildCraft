@@ -1,15 +1,17 @@
 package buildcraft.factory.blocks;
 
+import javax.annotation.Nullable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
@@ -17,7 +19,7 @@ import buildcraft.factory.tile.TileHeatExchange;
 
 public class BlockHeatExchange extends BlockBuildCraft {
     public BlockHeatExchange() {
-        super(Material.iron, FACING_PROP);
+        super(Material.IRON, FACING_PROP);
     }
 
     @Override
@@ -34,42 +36,41 @@ public class BlockHeatExchange extends BlockBuildCraft {
         return true;
     }
 
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		if (super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ)) {
+			return true;
+		}
+
+		TileEntity tile = worldIn.getTileEntity(pos);
+
+		if (!(tile instanceof TileHeatExchange)) {
+			return false;
+		}
+
+		if (!worldIn.isRemote) {
+			playerIn.openGui(BuildCraftFactory.instance, GuiIds.HEAT_EXCHANGE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isFullBlock(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
+
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
-            float hitZ) {
-        if (super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ)) {
-            return true;
-        }
-
-        TileEntity tile = world.getTileEntity(pos);
-
-        if (!(tile instanceof TileHeatExchange)) {
-            return false;
-        }
-
-        if (!world.isRemote) {
-            player.openGui(BuildCraftFactory.instance, GuiIds.HEAT_EXCHANGE, world, pos.getX(), pos.getY(), pos.getZ());
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isFullBlock() {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube() {
-        return false;
-    }
-
-    @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 }

@@ -4,20 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
-import java.util.List;
+import buildcraft.api.core.INBTStoreable;
 import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.INBTStoreable;
+import java.util.List;
 
 public class SimpleInventory implements IInventory, INBTStoreable {
 
@@ -184,8 +183,8 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     }
 
     @Override
-    public IChatComponent getDisplayName() {
-        return new ChatComponentText(name);
+    public ITextComponent getDisplayName() {
+        return new TextComponentString(name);
     }
 
     @Override
