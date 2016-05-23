@@ -63,7 +63,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     public void update() {
         super.update();
 
-        if (init != 2 || worldObj == null) return;
+        if (isNotReady()) return;
 
         if (worldObj.isRemote) {
             int lightValue = getFluidLightLevel();
@@ -119,7 +119,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
     /** @return Last tank block below this one or this one if it is the last. */
     public TileTank getBottomTank() {
-
+        if (isNotReady()) return null;
         TileTank lastTank = this;
 
         while (true) {
@@ -134,11 +134,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
         return lastTank;
     }
 
-    public TileTank getTopTank() {
-        TileTank lastTank = this;
+    public TileBuildCraft getTopTank() {
+        if (isNotReady()) return null;
+        TileBuildCraft lastTank = this;
 
         while (true) {
-            TileTank above = getTankAbove(lastTank);
+            TileBuildCraft above = getTankAbove(lastTank);
             if (above != null) {
                 lastTank = above;
             } else {
@@ -149,7 +150,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
         return lastTank;
     }
 
-    public static TileTank getTankBelow(TileTank tile) {
+    public static TileTank getTankBelow(TileBuildCraft tile) {
         TileEntity below = tile.getTile(EnumFacing.DOWN);
         if (below instanceof TileTank) {
             if (!below.hasWorldObj()) return null;
@@ -159,7 +160,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
         }
     }
 
-    public static TileTank getTankAbove(TileTank tile) {
+    public static TileTank getTankAbove(TileBuildCraft tile) {
         TileEntity above = tile.getTile(EnumFacing.UP);
         if (above instanceof TileTank) {
             if (!above.hasWorldObj()) return null;
@@ -170,6 +171,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     }
 
     public void moveFluidBelow() {
+        if (isNotReady()) return;
         TileTank below = getTankBelow(this);
         if (below == null) {
             return;
@@ -193,6 +195,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
     /* ITANKCONTAINER */
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+        if (isNotReady()) return 0;
         if (resource == null) {
             return 0;
         }
@@ -228,6 +231,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
     @Override
     public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
+        if (isNotReady()) return null;
         TileTank bottom = getBottomTank();
         bottom.hasNetworkUpdate = true;
         int oldComparator = getComparatorInputOverride();
@@ -242,6 +246,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
     @Override
     public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+        if (isNotReady()) return null;
         if (resource == null) {
             return null;
         }
@@ -254,6 +259,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
     @Override
     public FluidTankInfo[] getTankInfo(EnumFacing direction) {
+        if (isNotReady()) return new FluidTankInfo[0];
         FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
         TileTank tile = getBottomTank();
@@ -287,22 +293,26 @@ public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggab
 
     @Override
     public boolean canFill(EnumFacing from, Fluid fluid) {
+        if (isNotReady()) return false;
         Fluid tankFluid = getBottomTank().tank.getFluidType();
         return tankFluid == null || tankFluid == fluid;
     }
 
     @Override
     public boolean canDrain(EnumFacing from, Fluid fluid) {
+        if (isNotReady()) return false;
         Fluid tankFluid = getBottomTank().tank.getFluidType();
         return tankFluid != null && tankFluid == fluid;
     }
 
     public int getFluidLightLevel() {
+        if (isNotReady()) return 0;
         FluidStack tankFluid = tank.getFluid();
         return tankFluid == null || tankFluid.amount == 0 ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
     }
 
     public int calculateComparatorInputOverride() {
+        if (isNotReady()) return 0;
         FluidTankInfo[] info = getTankInfo(null);
         if (info.length > 0 && info[0] != null && info[0].fluid != null) {
             return info[0].fluid.amount * 15 / info[0].capacity;

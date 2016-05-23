@@ -31,6 +31,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
+
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.util.Constants.NBT;
 
@@ -269,8 +271,11 @@ public class RenderRobot extends Render<EntityRobot> {
                 helmetBox.render(1 / 16F);
 
                 if (color != 16777215) {
-                    this.bindTexture(new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, "", 0, "overlay")));
-                    helmetBox.render(1 / 16F);
+                    String armorTexture = ForgeHooksClient.getArmorTexture(entity, wearable, "", 0, "overlay");
+                    if (!StringUtils.isNullOrEmpty(armorTexture)) {
+                        this.bindTexture(new ResourceLocation(armorTexture));
+                        helmetBox.render(1 / 16F);
+                    }
                     GL11.glPopAttrib();
                 }
             }
@@ -296,8 +301,7 @@ public class RenderRobot extends Render<EntityRobot> {
             }
         }
 
-        TileEntitySkullRenderer.instance.renderSkull(-0.5F, -0.25F, -0.5F, EnumFacing.values()[wearable.getItemDamage() & 7], -90.0F, 1, gameProfile,
-                0);
+        TileEntitySkullRenderer.instance.renderSkull(-0.5F, -0.25F, -0.5F, EnumFacing.values()[wearable.getItemDamage() & 7], -90.0F, 1, gameProfile, 0);
         if (gameProfile != null) {
             GL11.glTranslatef(0.0f, -0.25f, 0.0f);
             GL11.glRotatef(180F, 0, 0, 1);

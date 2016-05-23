@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BitSetUtils;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public abstract class PipeTransport {
     public TileGenericPipe container;
@@ -118,5 +119,10 @@ public abstract class PipeTransport {
 
     public boolean delveIntoUnloadedChunks() {
         return false;
+    }
+
+    protected void destroyPipe() {
+        BlockUtils.explodeBlock(container.getWorld(), container.getPos());
+        container.getWorld().setBlockToAir(container.getPos());
     }
 }

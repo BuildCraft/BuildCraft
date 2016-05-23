@@ -392,7 +392,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
                 }
             }
             for (DockingStation station : new ArrayList<>(stations.values())) {
-                if (world.isAirBlock(station.getPos())) {
+                if (!world.isBlockLoaded(station.getPos())) {
                     station.onChunkUnload();
                 }
             }

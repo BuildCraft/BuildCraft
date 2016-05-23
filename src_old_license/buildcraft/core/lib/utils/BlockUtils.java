@@ -45,7 +45,7 @@ public final class BlockUtils {
     /** Deactivate constructor */
     private BlockUtils() {}
 
-    public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos) {
+    public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         if (block == null || block.isAir(state, world, pos)) {
@@ -53,8 +53,8 @@ public final class BlockUtils {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(
-                world).get());
+        EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer(world, owner).get();
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         ArrayList<ItemStack> returnList = new ArrayList<>();
         for (ItemStack s : dropsList) {
@@ -66,14 +66,14 @@ public final class BlockUtils {
         return returnList;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos) {
-        return breakBlock(world, pos, BuildCraftCore.itemLifespan * 20);
+    public static boolean breakBlock(WorldServer world, BlockPos pos, BlockPos owner) {
+        return breakBlock(world, pos, BuildCraftCore.itemLifespan * 20, owner);
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan) {
+    public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos owner) {
         List<ItemStack> items = new ArrayList<>();
 
-        if (breakBlock(world, pos, items)) {
+        if (breakBlock(world, pos, items, owner)) {
             for (ItemStack item : items) {
                 dropItem(world, pos, forcedLifespan, item);
             }
@@ -82,8 +82,8 @@ public final class BlockUtils {
         return false;
     }
 
-    public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool) {
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world).get());
+    public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool, BlockPos owner) {
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -121,8 +121,8 @@ public final class BlockUtils {
         return player;
     }
 
-    public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops) {
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world).get());
+    public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops, BlockPos owner) {
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -130,7 +130,7 @@ public final class BlockUtils {
         }
 
         if (!world.isAirBlock(pos) && !world.isRemote && world.getGameRules().getBoolean("doTileDrops")) {
-            drops.addAll(getItemStackFromBlock(world, pos));
+            drops.addAll(getItemStackFromBlock(world, pos, owner));
         }
         world.setBlockToAir(pos);
 
@@ -181,7 +181,8 @@ public final class BlockUtils {
     public static float getBlockHardnessMining(World world, BlockPos pos, Block b) {
         IBlockState state = world.getBlockState(pos);
         if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
-            float relativeHardness = b.getPlayerRelativeBlockHardness(state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get(), world, pos);
+            EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pos).get();
+            float relativeHardness = b.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
                                             // is < 0.0F.
                 return -1.0F;

@@ -255,8 +255,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
         // Version tag that can be used for upgrading.
         // 0 means[1.8.9] 7.2.0-pre12 or before (default value)
-        // 1 means [1.8.9] 7.2.0-pre13 up until 7.2.0-preX
-        // 2 means [1.8.9] 7.2.0-preX or later
+        // 1 means [1.8.9] 7.2.0-pre13 up until 7.2.0
+        // 2 means [1.9] 8.0.0 or later
         nbt.setInteger("data-version", 1);
 
         /* Also save the state of all BC tiles. This will be helpful for migration. */
@@ -373,7 +373,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     }
 
     public IBlockState getBlockState(EnumFacing side) {
-        throwNullWorldCrash();
+        if (isNotReady()) return null;
         if (cache == null) {
             cache = BlockTileCache.makeCache(worldObj, pos, false);
         }
@@ -381,21 +381,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
     }
 
     public TileEntity getTile(EnumFacing side) {
-        throwNullWorldCrash();
+        if (isNotReady()) return null;
         if (cache == null) {
             cache = BlockTileCache.makeCache(worldObj, pos, false);
         }
         return cache[side.ordinal()].getTile();
-    }
-
-    private void throwNullWorldCrash() {
-        if (worldObj != null) return;
-        CrashReport crash = new CrashReport("Attempted to create a cache for a BC tile without a world! WTF? Thats a bad idea!", new NullPointerException("worldObj"));
-        CrashReportCategory cat = crash.makeCategory("BC tile debug info");
-        cat.addCrashSection("VN::getPos()", getPos());
-        cat.addCrashSection("VN::isInvalid()", this.isInvalid());
-        cat.addCrashSection("BC::init", init);
-        throw new ReportedException(crash);
     }
 
     public IControllable.Mode getControlMode() {
@@ -477,5 +467,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyProvid
 
     public boolean hasCustomName() {
         return !StringUtils.isEmpty(getInventoryName());
+    }
+
+    public boolean isNotReady() {
+        return !hasWorldObj() || init != 2;
     }
 }

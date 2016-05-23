@@ -12,20 +12,10 @@ import java.util.Objects;
 import com.google.common.collect.Maps;
 
 import buildcraft.core.lib.event.IEventBus;
-import buildcraft.core.lib.event.IEventBusProvider;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
 public class PipeEventBus implements IEventBus<PipeEvent> {
-    public enum Provider implements IEventBusProvider<PipeEvent> {
-        INSTANCE;
-
-        @Override
-        public IEventBus<PipeEvent> newBus() {
-            return new PipeEventBus();
-        }
-    }
-
     private class EventHandler {
         public Method method;
         public Object owner;

@@ -7,9 +7,9 @@ package buildcraft.builders;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -19,14 +19,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.*;
+import net.minecraft.util.text.TextComponentTranslation;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
@@ -62,8 +59,9 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable,
-        IDebuggable {
+import io.netty.buffer.ByteBuf;
+
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable, IDebuggable {
 
     private static enum Stage {
         BUILDING,
@@ -109,8 +107,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     public TileQuarry() {
         box.kind = Kind.STRIPES;
-        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000
-            * BuildCraftCore.miningMultiplier), 0));
+        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000 * BuildCraftCore.miningMultiplier), 0));
     }
 
     public void createUtilsIfNeeded() {
@@ -461,19 +458,19 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
-        super.writeToNBT(nbttagcompound);
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
 
-        nbttagcompound.setInteger("targetX", target.getX());
-        nbttagcompound.setInteger("targetY", target.getY());
-        nbttagcompound.setInteger("targetZ", target.getZ());
-        nbttagcompound.setDouble("headPosX", headPos.xCoord);
-        nbttagcompound.setDouble("headPosY", headPos.yCoord);
-        nbttagcompound.setDouble("headPosZ", headPos.zCoord);
+        nbt.setInteger("targetX", target.getX());
+        nbt.setInteger("targetY", target.getY());
+        nbt.setInteger("targetZ", target.getZ());
+        nbt.setDouble("headPosX", headPos.xCoord);
+        nbt.setDouble("headPosY", headPos.yCoord);
+        nbt.setDouble("headPosZ", headPos.zCoord);
 
         NBTTagCompound boxTag = new NBTTagCompound();
         box.writeToNBT(boxTag);
-        nbttagcompound.setTag("box", boxTag);
+        nbt.setTag("box", boxTag);
 
         NBTTagCompound bptNBT = new NBTTagCompound();
 
@@ -483,7 +480,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             bptNBT.setTag("builderState", builderCpt);
         }
 
-        nbttagcompound.setTag("bpt", bptNBT);
+        nbt.setTag("bpt", bptNBT);
+        return nbt;
     }
 
     public void positionReached() {
@@ -503,8 +501,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private boolean isQuarriableBlock(BlockPos pos) {
         IBlockState state = worldObj.getBlockState(pos);
         Block block = state.getBlock();
-        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid)
-            && !(block instanceof IFluidBlock);
+        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
     }
 
     @Override
@@ -567,7 +564,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             chunkTicket.getModData().setInteger("quarryX", pos.getX());
             chunkTicket.getModData().setInteger("quarryY", pos.getY());
             chunkTicket.getModData().setInteger("quarryZ", pos.getZ());
-            ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4));
+            ForgeChunkManager.forceChunk(chunkTicket, new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4));
         }
 
         IAreaProvider a = null;
@@ -587,8 +584,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
             if (placedBy != null) {
-                placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall", xSize, zSize, chunkTicket != null
-                    ? chunkTicket.getMaxChunkListDepth() : 0));
+                placedBy.addChatMessage(new TextComponentTranslation("chat.buildcraft.quarry.tooSmall", xSize, zSize, chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
             }
 
             a = new DefaultAreaProvider(pos, pos.add(new BlockPos(10, 4, 10)));
@@ -696,11 +692,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         setStage(Stage.values()[flags & 0x07]);
         movingHorizontally = (flags & 0x10) != 0;
         movingVertically = (flags & 0x20) != 0;
-        int newLedState = stream.readUnsignedByte();
-        if (newLedState != ledState) {
-            ledState = newLedState;
-            worldObj.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
-        }
+        ledState = stream.readUnsignedByte();
 
         createUtilsIfNeeded();
 
@@ -868,15 +860,15 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             chunkTicket = ticket;
         }
 
-        Set<ChunkCoordIntPair> chunks = Sets.newHashSet();
-        ChunkCoordIntPair quarryChunk = new ChunkCoordIntPair(pos.getX() >> 4, pos.getZ() >> 4);
+        Set<ChunkPos> chunks = Sets.newHashSet();
+        ChunkPos quarryChunk = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
         chunks.add(quarryChunk);
         ForgeChunkManager.forceChunk(ticket, quarryChunk);
 
         if (box.isInitialized()) {
             for (int chunkX = box.min().getX() >> 4; chunkX <= box.max().getX() >> 4; chunkX++) {
                 for (int chunkZ = box.min().getZ() >> 4; chunkZ <= box.max().getZ() >> 4; chunkZ++) {
-                    ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
+                    ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
                     ForgeChunkManager.forceChunk(ticket, chunk);
                     chunks.add(chunk);
                 }
@@ -884,8 +876,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-            placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos()
-                    .getZ(), chunks.size()));
+            placedBy.addChatMessage(new TextComponentTranslation("chat.buildcraft.quarry.chunkloadInfo", getPos().getX(), getPos().getY(), getPos().getZ(), chunks.size()));
         }
     }
 
@@ -898,7 +889,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     public AxisAlignedBB getRenderBoundingBox() {
         // return Utils.boundingBox(Utils.vec3(-100000d), Utils.vec3(100000d));
         if (getPos() == null) return null;
-        return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
+        return new Box(this).extendToEncompass(box).extendToEncompass(miningBox).getBoundingBox();
     }
 
     @Override

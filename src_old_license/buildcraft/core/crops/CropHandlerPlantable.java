@@ -83,7 +83,7 @@ public class CropHandlerPlantable implements ICropHandler {
     public boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
         if (!world.isRemote) {
             IBlockState state = world.getBlockState(pos);
-            if (BlockUtils.breakBlock((WorldServer) world, pos, drops)) {
+            if (BlockUtils.breakBlock((WorldServer) world, pos, drops, pos)) {
                 world.playAuxSFXAtEntity(null, 2001, pos, Block.getStateId(state));
                 return true;
             }

@@ -116,8 +116,16 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             return EnumActionResult.PASS;
         }
 
+        ItemStack modified = stack;
+
+        if (stack.stackSize > 1) {
+            modified = stack.copy();
+            stack.stackSize--;
+            modified.stackSize = 1;
+        }
+
         TileEntity tile = world.getTileEntity(pos);
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtils.getItemData(modified);
 
         if (tile instanceof IPathProvider) {
             List<BlockPos> path = ((IPathProvider) tile).getPath();
@@ -136,7 +144,7 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
 
             cpt.setTag("path", pathNBT);
         } else if (tile instanceof IAreaProvider) {
-            MapLocationType.AREA.setToStack(stack);
+            MapLocationType.AREA.setToStack(modified);
 
             IAreaProvider areaTile = (IAreaProvider) tile;
 
@@ -148,7 +156,7 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             cpt.setInteger("zMax", areaTile.max().getZ());
 
         } else {
-            MapLocationType.SPOT.setToStack(stack);
+            MapLocationType.SPOT.setToStack(modified);
 
             cpt.setByte("side", (byte) side.getIndex());
             cpt.setInteger("x", pos.getX());
@@ -201,22 +209,11 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
 
     @Override
     public IBox getBox(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
         MapLocationType type = MapLocationType.getFromStack(item);
 
         switch (type) {
             case AREA: {
-                int xMin = cpt.getInteger("xMin");
-                int yMin = cpt.getInteger("yMin");
-                int zMin = cpt.getInteger("zMin");
-                BlockPos min = new BlockPos(xMin, yMin, zMin);
-
-                int xMax = cpt.getInteger("xMax");
-                int yMax = cpt.getInteger("yMax");
-                int zMax = cpt.getInteger("zMax");
-                BlockPos max = new BlockPos(xMax, yMax, zMax);
-
-                return new Box(min, max);
+                return getAreaBox(item);
             }
             case SPOT: {
                 return getPointBox(item);

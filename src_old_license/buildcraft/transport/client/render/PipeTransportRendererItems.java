@@ -74,7 +74,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
             return;
         }
 
-        float renderScale = 0.7f;
+        float renderScale = 0.9f;
         ItemStack itemstack = travellingItem.getItemStack();
 
         int val = (travellingItem.id * 191) ^ 0x8d35;

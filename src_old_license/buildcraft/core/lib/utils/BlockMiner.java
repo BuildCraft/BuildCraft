@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -53,8 +54,7 @@ public class BlockMiner {
             float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
             float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-            EntityItem entityitem = new EntityItem(owner.getWorld(), owner.getPos().getX() + f, owner.getPos().getY() + f1 + 0.5F, owner.getPos()
-                    .getZ() + f2, stack);
+            EntityItem entityitem = new EntityItem(owner.getWorld(), owner.getPos().getX() + f, owner.getPos().getY() + f1 + 0.5F, owner.getPos().getZ() + f2, stack);
 
             entityitem.lifespan = BuildCraftCore.itemLifespan * 20;
             entityitem.setDefaultPickupDelay();
@@ -87,12 +87,12 @@ public class BlockMiner {
 
             IBlockState state = world.getBlockState(pos);
 
-            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world)
-                    .get());
+            EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, owner.getPos()).get();
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, fakePlayer);
             MinecraftForge.EVENT_BUS.post(breakEvent);
 
             if (!breakEvent.isCanceled()) {
-                List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) world, pos);
+                List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) world, pos, owner.getPos());
 
                 if (stacks != null) {
                     for (ItemStack s : stacks) {

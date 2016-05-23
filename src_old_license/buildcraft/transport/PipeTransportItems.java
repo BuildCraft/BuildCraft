@@ -150,7 +150,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         return true;
     }
 
-    private void destroyPipe() {
+    @Override
+    protected void destroyPipe() {
         BlockUtils.explodeBlock(container.getWorld(), container.getPos());
         container.getWorld().setBlockToAir(container.getPos());
     }

@@ -7,6 +7,7 @@ package buildcraft.robotics.ai;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -83,13 +84,13 @@ public class AIRobotBreak extends AIRobot {
             boolean continueBreaking = true;
 
             if (robot.getHeldItem() != null) {
-                if (robot.getHeldItem().getItem().onBlockStartBreak(robot.getHeldItem(), blockToBreak, CoreProxy.proxy.getBuildCraftPlayer(
-                        (WorldServer) robot.worldObj).get())) {
+                EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, robot.getPosition()).get();
+                if (robot.getHeldItem().getItem().onBlockStartBreak(robot.getHeldItem(), blockToBreak, fakePlayer)) {
                     continueBreaking = false;
                 }
             }
 
-            if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem())) {
+            if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem(), robot.getPosition())) {
                 robot.worldObj.playAuxSFXAtEntity(null, 2001, blockToBreak, Block.getStateId(state));
 
                 if (robot.getHeldItem() != null) {

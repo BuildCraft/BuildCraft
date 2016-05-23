@@ -94,7 +94,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
     @Override
     public void applyData(World world, EntityPlayer player) {
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return;
         }
 

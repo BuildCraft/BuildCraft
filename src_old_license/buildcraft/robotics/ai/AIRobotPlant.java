@@ -41,7 +41,7 @@ public class AIRobotPlant extends AIRobot {
         }
 
         if (delay++ > 40) {
-            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get();
+            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, robot.getPosition()).get();
             if (CropManager.plantCrop(robot.worldObj, player, robot.getHeldItem(), blockFound)) {} else {
                 setSuccess(false);
             }

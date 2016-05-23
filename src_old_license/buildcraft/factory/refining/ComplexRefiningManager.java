@@ -92,6 +92,7 @@ public class ComplexRefiningManager {
         steam = defineFluid("steam", 100, 1000, 2, 1, colours[index][0], colours[index++][1]);
 
         BuildCraftEnergy.oil = crudeOil[0];
+        BuildCraftEnergy.oil.block.setDense(true);
         BuildCraftEnergy.fuel = fuelLight[0];
     }
 

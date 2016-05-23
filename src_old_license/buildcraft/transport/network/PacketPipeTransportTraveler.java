@@ -131,7 +131,7 @@ public class PacketPipeTransportTraveler extends Packet {
 
     @Override
     public void applyData(World world, EntityPlayer player) {
-        if (world.isAirBlock(pos)) {
+        if (!world.isBlockLoaded(pos)) {
             return;
         }
 

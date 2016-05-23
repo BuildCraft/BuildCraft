@@ -4,15 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import buildcraft.core.lib.client.render.EntityDropParticleFX;
-import buildcraft.core.lib.utils.ICustomStateMapper;
-import buildcraft.core.lib.utils.ModelHelper;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -20,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -27,7 +26,9 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Random;
+import buildcraft.core.lib.client.render.EntityDropParticleFX;
+import buildcraft.core.lib.utils.ICustomStateMapper;
+import buildcraft.core.lib.utils.ModelHelper;
 
 public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper {
 
@@ -53,7 +54,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
         super.onNeighborBlockChange(world, pos, state, block);
-        if (flammable && world.provider.getDimensionId() == -1) {
+        if (flammable && world.provider.getDimension() == -1) {
             world.setBlockToAir(pos);
             world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
         }
@@ -61,14 +62,29 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn) {
-        if (materialIn == Material.water) return Boolean.TRUE;
+        if (materialIn == Material.WATER && !dense) return Boolean.TRUE;
         return null;
     }
 
     @Override
-    public Boolean isEntityInsideMaterial(World world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
-        if (materialIn == Material.water) return Boolean.TRUE;
+    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+        if (materialIn == Material.WATER && !dense) return Boolean.TRUE;
         return null;
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        if (!dense || entity == null) return;
+
+        entity.motionY = Math.min(0.0, entity.motionY);
+
+        if (entity.motionY < -0.05) {
+            entity.motionY *= 0.05;
+        }
+
+        entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
+        entity.motionY -= 0.05;
+        entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
     }
 
     public BlockBuildCraftFluid setDense(boolean dense) {

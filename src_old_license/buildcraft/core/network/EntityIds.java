@@ -9,6 +9,7 @@ public final class EntityIds {
     public static final int ROBOT = 10;
     public static final int PACKAGE_THROWABLE = 11;
     public static final int MECHANICAL_ARM = 12;
+    public static final int RESIZABLE_CUBOID = 13;
 
     /** Deactivate constructor */
     private EntityIds() {}

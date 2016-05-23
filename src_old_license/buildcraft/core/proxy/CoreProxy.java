@@ -83,16 +83,6 @@ public class CoreProxy implements IBCFakePlayer {
     }
 
     @Override
-    public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world) {
-        if (CoreProxy.buildCraftPlayer.get() == null) {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world);
-        } else {
-            CoreProxy.buildCraftPlayer.get().worldObj = world;
-        }
-
-        return CoreProxy.buildCraftPlayer;
-    }
-
     public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, BlockPos pos) {
         if (CoreProxy.buildCraftPlayer.get() == null) {
             CoreProxy.buildCraftPlayer = createNewPlayer(world, pos);

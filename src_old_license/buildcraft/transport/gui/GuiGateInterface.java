@@ -13,16 +13,18 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.client.CoreIconProvider;
+import buildcraft.lib.config.DetailedConfigOption;
+import buildcraft.lib.config.OverridableConfigOption;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.StatementParameterSlot;
@@ -36,12 +38,12 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 public class GuiGateInterface extends GuiAdvancedInterface {
     // Options are public so that JEI compat can see them
     /** Options for the maximum number of pickables. Min is 1. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new DetailedConfigOption("gui.gate.picker.triggers.wide", "6");
-    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new DetailedConfigOption("gui.gate.picker.actions.wide", "6");
+    public static final DetailedConfigOption OPTION_TRIGGERS_WIDE = new OverridableConfigOption("gui.gate", "picker.triggers.wide", "6");
+    public static final DetailedConfigOption OPTION_ACTIONS_WIDE = new OverridableConfigOption("gui.gate", "picker.actions.wide", "6");
 
     /** Options for the y-start positions of the lists. */
-    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new DetailedConfigOption("gui.gate.picker.triggers.y", "8");
-    public static final DetailedConfigOption OPTION_ACTIONS_Y = new DetailedConfigOption("gui.gate.picker.actions.y", "8");
+    public static final DetailedConfigOption OPTION_TRIGGERS_Y = new OverridableConfigOption("gui.gate", "picker.triggers.y", "8");
+    public static final DetailedConfigOption OPTION_ACTIONS_Y = new OverridableConfigOption("gui.gate", "picker.actions.y", "8");
 
     IInventory playerInventory;
     private final ContainerGateInterface container;
@@ -255,8 +257,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 if (container.actionsState[((TriggerSlot) slot).slot] != ActionActiveState.Deactivated) {
                     mc.renderEngine.bindTexture(texture);
 
-                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth ? 9
-                        : 18, 4);
+                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth ? 9 : 18, 4);
                 }
             } else if (slot instanceof StatementParameterSlot) {
                 StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
@@ -278,7 +279,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
         drawBackgroundSlots(x, y);
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
         GlStateManager.disableLighting();
@@ -300,7 +301,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             int pY = this.guiTop + sY;
             if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
                 String desc = statement.getDescription();
-                tooltip = StatCollector.translateToLocal(desc);
+                tooltip = I18n.format(desc);
             }
             drawStatement(pX, pY, statement);
             if (sX >= width) {
@@ -325,7 +326,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
             drawStatement(pX, pY, statement);
             if (x > pX & x < pX + 16 && y > pY && y < pY + 16) {
                 String desc = statement.getDescription();
-                tooltip = StatCollector.translateToLocal(desc);
+                tooltip = I18n.format(desc);
             }
             if (sX >= width - 18) {
                 sX = 0;
@@ -470,8 +471,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 }
 
                 if (param != null) {
-                    param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k,
-                            isShiftKeyDown()));
+                    param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k, isShiftKeyDown()));
                     paramSlot.setParameter(param, true);
                 }
             }

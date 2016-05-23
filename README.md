@@ -101,12 +101,22 @@ Add the following to your build.gradle file:
 repositories {
     ivy {
         name "BuildCraft"
-        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision].[ext]"
+        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision](-[classifier]).[ext]"
     }
 }
+````
 
+If you want to depend on JUST the API then do this:
+````
 dependencies {
-    deobfCompile name: "buildcraft", version: "7.2.0"
+    deobfCompile name: "buildcraft", version: "7.2.5", classifier: "api"
+}
+````
+
+If you want to depend on the whole of buildcraft do this:
+````
+dependencies {
+    deobfCompile name: "buildcraft", version: "7.2.5"
 }
 ```
-Where `7.2.0` is the desired version of BuildCraft.
+Where `7.2.5` is the desired version of BuildCraft.

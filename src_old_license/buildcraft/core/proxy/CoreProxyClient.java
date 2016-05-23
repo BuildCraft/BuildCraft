@@ -23,6 +23,11 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
+<<<<<<< HEAD:src_old_license/buildcraft/core/proxy/CoreProxyClient.java
+=======
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+>>>>>>> b499bdc20249136f5691d9a6030404067be0cbd9:common/buildcraft/core/proxy/CoreProxyClient.java
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -38,6 +43,7 @@ import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -47,6 +53,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.TileMarker;
 import buildcraft.core.TilePathMarker;
 import buildcraft.core.client.BuildCraftStateMapper;
+import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.engines.RenderEngine;
@@ -94,7 +101,11 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void init() {
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
+
+        IResourceManager resourceManager = Minecraft.getMinecraft().getResourceManager();
+        IReloadableResourceManager reloadable = (IReloadableResourceManager) resourceManager;
+        reloadable.registerReloadListener(DetailedConfigOption.ReloadListener.INSTANCE);
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
         ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());

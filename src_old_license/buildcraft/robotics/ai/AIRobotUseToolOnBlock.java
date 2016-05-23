@@ -46,7 +46,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
         if (useCycles > 40) {
             ItemStack stack = robot.getHeldItem();
 
-            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get();
+            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, robot.getPosition()).get();
             if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock, EnumFacing.UP)) {
                 if (robot.getHeldItem().isItemStackDamageable()) {
                     robot.getHeldItem().damageItem(1, robot);

@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.lib.utils.Utils;
 
+// replaced by BlockWorldState
+@Deprecated
 public final class BlockTileCache {
 
     private IBlockState state = null;

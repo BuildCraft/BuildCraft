@@ -35,6 +35,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -72,7 +74,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         public FacadeState(NBTTagCompound nbt) {
             String key = nbt.getString("block");
-            Block block = (Block) Block.blockRegistry.getObject(new ResourceLocation(key));
+            Block block = (Block) Block.REGISTRY.getObject(new ResourceLocation(key));
             if (block == null) throw new NullPointerException("Could not load a block from the key \"" + key + "\"");
             int metadata = nbt.getByte("metadata");
             state = block.getStateFromMeta(metadata);
@@ -82,7 +84,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         private FacadeState(PipeWire wire) {
-            state = Blocks.bedrock.getDefaultState();
+            state = Blocks.BEDROCK.getDefaultState();
             this.wire = wire;
             this.transparent = true;
             this.hollow = false;
@@ -244,7 +246,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     public static List<IBlockState> getAllFacades() {
         List<IBlockState> stacks = new ArrayList<>();
 
-        for (Block b : Block.blockRegistry) {
+        for (Block b : Block.REGISTRY) {
             for (int i = 0; i < 16; i++) {
                 try {
                     IBlockState state = b.getStateFromMeta(i);
@@ -290,7 +292,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     private static void generateFacadeStacks() {
         HashSet<IBlockState> states = new HashSet<>();
 
-        for (Block b : Block.blockRegistry) {
+        for (Block b : Block.REGISTRY) {
             for (int i = 0; i < 16; i++) {
                 try {
                     Item item = Item.getItemFromBlock(b);
@@ -351,9 +353,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         Block block = null, blockAlt = null;
         int metadata = 0, metadataAlt;
         PipeWire wire = null;
-        if (nbt.hasKey("id")) block = Block.blockRegistry.getObjectById(nbt.getInteger("id"));
-        else if (nbt.hasKey("name")) block = Block.blockRegistry.getObject(new ResourceLocation(nbt.getString("name")));
-        if (nbt.hasKey("name_alt")) blockAlt = Block.blockRegistry.getObject(new ResourceLocation(nbt.getString("name_alt")));
+        if (nbt.hasKey("id")) block = Block.REGISTRY.getObjectById(nbt.getInteger("id"));
+        else if (nbt.hasKey("name")) block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("name")));
+        if (nbt.hasKey("name_alt")) blockAlt = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("name_alt")));
         if (nbt.hasKey("meta")) metadata = nbt.getInteger("meta");
         if (nbt.hasKey("meta_alt")) metadataAlt = nbt.getInteger("meta_alt");
         else metadataAlt = stack.getItemDamage() & 0x0000F;
@@ -408,7 +410,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         Set<IBlockState> states = new HashSet<>();
 
-        for (Block b : Block.blockRegistry) {
+        for (Block b : Block.REGISTRY) {
             for (int i = 0; i < 16; i++) {
                 try {
                     IBlockState state = b.getStateFromMeta(i);

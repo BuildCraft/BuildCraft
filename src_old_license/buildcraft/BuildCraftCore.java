@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
@@ -24,10 +25,9 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -40,16 +40,11 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -65,13 +60,7 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.StatementManager;
-import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.*;
 import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
@@ -80,21 +69,7 @@ import buildcraft.core.*;
 import buildcraft.core.blueprints.BuildingSlotMapIterator;
 import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.builders.patterns.FillerRegistry;
-import buildcraft.core.builders.patterns.PatternBox;
-import buildcraft.core.builders.patterns.PatternClear;
-import buildcraft.core.builders.patterns.PatternCylinder;
-import buildcraft.core.builders.patterns.PatternFill;
-import buildcraft.core.builders.patterns.PatternFlatten;
-import buildcraft.core.builders.patterns.PatternFrame;
-import buildcraft.core.builders.patterns.PatternHorizon;
-import buildcraft.core.builders.patterns.PatternNone;
-import buildcraft.core.builders.patterns.PatternParameterCenter;
-import buildcraft.core.builders.patterns.PatternParameterHollow;
-import buildcraft.core.builders.patterns.PatternParameterXZDir;
-import buildcraft.core.builders.patterns.PatternParameterYDir;
-import buildcraft.core.builders.patterns.PatternPyramid;
-import buildcraft.core.builders.patterns.PatternStairs;
+import buildcraft.core.builders.patterns.*;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.command.SubCommandDeop;
@@ -103,6 +78,8 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.lib.DebuggingTools;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
@@ -115,37 +92,15 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.list.ListTooltipHandler;
-import buildcraft.core.properties.WorldPropertyIsDirt;
-import buildcraft.core.properties.WorldPropertyIsFarmland;
-import buildcraft.core.properties.WorldPropertyIsFluidSource;
-import buildcraft.core.properties.WorldPropertyIsHarvestable;
-import buildcraft.core.properties.WorldPropertyIsLeaf;
-import buildcraft.core.properties.WorldPropertyIsOre;
-import buildcraft.core.properties.WorldPropertyIsReplaceable;
-import buildcraft.core.properties.WorldPropertyIsShoveled;
-import buildcraft.core.properties.WorldPropertyIsSoft;
-import buildcraft.core.properties.WorldPropertyIsWood;
+import buildcraft.core.network.EntityIds;
+import buildcraft.core.properties.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.ProgrammingRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
-import buildcraft.core.statements.ActionMachineControl;
-import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.DefaultActionProvider;
-import buildcraft.core.statements.DefaultTriggerProvider;
-import buildcraft.core.statements.StatementParameterDirection;
-import buildcraft.core.statements.StatementParameterItemStackExact;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
-import buildcraft.core.statements.StatementParameterRedstoneLevel;
-import buildcraft.core.statements.TriggerEnergy;
-import buildcraft.core.statements.TriggerFluidContainer;
-import buildcraft.core.statements.TriggerFluidContainerLevel;
-import buildcraft.core.statements.TriggerInventory;
-import buildcraft.core.statements.TriggerInventoryLevel;
-import buildcraft.core.statements.TriggerMachine;
-import buildcraft.core.statements.TriggerRedstoneInput;
+import buildcraft.core.statements.*;
 import buildcraft.core.tablet.ItemTablet;
 import buildcraft.core.tablet.PacketTabletMessage;
 import buildcraft.core.tablet.TabletProgramMenuFactory;
@@ -154,7 +109,6 @@ import buildcraft.core.tablet.manager.TabletManagerServer;
 import buildcraft.lib.AchievementPageManager;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.list.*;
-import buildcraft.lib.misc.BCStatCollector;
 
 //@Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
 //        dependencies = "required-after:Forge@[11.15.1.1764,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",
@@ -409,6 +363,8 @@ public class BuildCraftCore extends BuildCraftMod {
     public void init(FMLInitializationEvent evt) {
         BuildCraftAPI.fakePlayerProvider = CoreProxy.proxy;
 
+        EntityRegistry.registerModEntity(EntityResizableCuboid.class, "bcResizCuboid", EntityIds.RESIZABLE_CUBOID, instance, 0, 100, false);
+
         ChannelHandler coreChannelHandler = new ChannelHandler();
         coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
@@ -498,6 +454,8 @@ public class BuildCraftCore extends BuildCraftMod {
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
         ListRegistry.itemClassAsType.add(ItemFood.class);
+
+        DebuggingTools.init();
     }
 
     @Mod.EventHandler

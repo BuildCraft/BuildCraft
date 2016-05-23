@@ -4,35 +4,29 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
-import io.netty.buffer.ByteBuf;
+import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fluids.*;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.SingleUseTank;
 import buildcraft.core.lib.fluids.TankUtils;
@@ -40,13 +34,15 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
+import io.netty.buffer.ByteBuf;
+
 public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver {
 
     public static final int REBUID_DELAY = 512;
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
     public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
-    private EntityResizableCuboid tube;
+    public EntityResizableCuboid tube;
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private double tubeY = Double.NaN;
     private int aimY = 0;
@@ -156,7 +152,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isBlocked(BlockPos pos) {
-        Material mat = BlockUtils.getBlockState(worldObj, pos).getBlock().getMaterial();
+        Material mat = BlockUtils.getBlockState(worldObj, pos).getMaterial();
         return mat.blocksMovement();
     }
 
@@ -289,8 +285,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public void queueForPumping(BlockPos pos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
         BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
-            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
-                * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
                 return;
             }
 
@@ -334,7 +329,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isFluidAllowed(Fluid fluid) {
-        return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.getDimensionId());
+        return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.getDimension());
     }
 
     @Override
@@ -350,7 +345,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
 
         tank.writeToNBT(data);
@@ -364,6 +359,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         } else {
             data.setFloat("tubeY", pos.getY());
         }
+        return data;
     }
 
     @Override
@@ -409,6 +405,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
             tube.setPosition(pos.getX() + CoreConstants.PIPE_MIN_POS, tubeY, pos.getZ() + CoreConstants.PIPE_MIN_POS);
         }
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        if (getPos() == null) return null;
+        return new Box(this).extendToEncompass(Utils.withValue(getPos(), Axis.Y, 0)).getBoundingBox();
     }
 
     @Override

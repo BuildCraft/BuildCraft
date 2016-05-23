@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe, Comparable<Pipe<?>> {
     // TODO: Change this to EventBusProviderASM!
-    private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus.Provider.INSTANCE;
+    private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus::new;
 
     public int[] signalStrength = new int[] { 0, 0, 0, 0 };
     public TileGenericPipe container;

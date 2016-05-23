@@ -273,7 +273,6 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
 
     public static boolean debugPrintFacadeList = false;
-    public static boolean usePipeLoss = false;
 
     public static float gateCostMultiplier = 1.0F;
 
@@ -302,8 +301,10 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         try {
-            BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false,
-                    "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
+            BuildCraftCore.mainConfigManager.register("experimental.kinesisLossMode", "lossless",
+                    "Allowed values: lossless, absolute, percentage. Defaults to lossless.", ConfigManager.RestartRequirement.WORLD);
+            BuildCraftCore.mainConfigManager.register("experimental.kinesisCanExplode", false,
+                    "Can kinesis pipes explode when over their RF/t rating?", ConfigManager.RestartRequirement.NONE);
 
             BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?",
                     ConfigManager.RestartRequirement.NONE);
@@ -632,10 +633,21 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             reloadConfig(ConfigManager.RestartRequirement.WORLD);
         } else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-            usePipeLoss = BuildCraftCore.mainConfigManager.get("experimental.kinesisPowerLossOnTravel").getBoolean();
+            PipeTransportPower.lossMode = PipeTransportPower.LossMode.LOSSLESS;
+            String lossMode = BuildCraftCore.mainConfigManager.get("experimental.kinesisLossMode").getString();
+
+            if (lossMode != null && lossMode.length() > 0) {
+                for (PipeTransportPower.LossMode mode : PipeTransportPower.LossMode.values()) {
+                    if (mode.name().toLowerCase().equals(lossMode.toLowerCase())) {
+                        PipeTransportPower.lossMode = mode;
+                        break;
+                    }
+                }
+            }
 
             reloadConfig(ConfigManager.RestartRequirement.NONE);
         } else {
+            PipeTransportPower.canExplode = BuildCraftCore.mainConfigManager.get("experimental.kinesisCanExplode").getBoolean();
             pipeDurability = (float) BuildCraftCore.mainConfigManager.get("general.pipes.hardness").getDouble();
 
             if (BuildCraftCore.mainConfiguration.hasChanged()) {

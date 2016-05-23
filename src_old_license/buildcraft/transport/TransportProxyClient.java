@@ -4,25 +4,17 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.transport.client.model.FacadeItemModel;
-import buildcraft.transport.client.model.FacadePluggableModel;
-import buildcraft.transport.client.model.GateItemModel;
-import buildcraft.transport.client.model.GatePluggableModel;
-import buildcraft.transport.client.model.LensPluggableModel;
-import buildcraft.transport.client.model.ModelPowerAdapter;
-import buildcraft.transport.client.model.PlugPluggableModel;
-import buildcraft.transport.client.render.PipeRendererTESR;
-import buildcraft.transport.client.render.PipeTransportRenderer;
-import buildcraft.transport.client.render.PipeTransportRendererFluids;
-import buildcraft.transport.client.render.PipeTransportRendererItems;
-import buildcraft.transport.client.render.PipeTransportRendererPower;
+import buildcraft.transport.client.model.*;
+import buildcraft.transport.client.render.*;
 
 public class TransportProxyClient extends TransportProxy {
 
@@ -63,5 +55,10 @@ public class TransportProxyClient extends TransportProxy {
     @Override
     public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
         item.setPipesIcons(dummyPipe.getIconProvider());
+    }
+
+    @Override
+    public void clearDisplayList(int displayList) {
+        GLAllocation.deleteDisplayLists(displayList);
     }
 }

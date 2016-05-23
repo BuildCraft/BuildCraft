@@ -40,7 +40,7 @@ public class PacketTileUpdate extends PacketUpdate {
     }
 
     public boolean targetExists(World world) {
-        return !world.isAirBlock(pos);
+        return world.isBlockLoaded(pos);
     }
 
     public TileEntity getTarget(World world) {
