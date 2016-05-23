@@ -17,7 +17,7 @@ import buildcraft.lib.gui.GuiRectangle;
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
 public class GuideMenu extends GuidePageBase {
-    private static final int ORDER_OFFSET_X = -40;
+    private static final int ORDER_OFFSET_X = -50;
     private static final int ORDER_OFFSET_Y = 14;
 
     /** Map of type (block, item, etc) -> List of pages for each (Quarry, Paintbrush, etc...) */
