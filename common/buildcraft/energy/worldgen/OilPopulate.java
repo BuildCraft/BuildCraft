@@ -193,7 +193,7 @@ public final class OilPopulate {
             }
 
             if (type == GenType.LARGE) {
-                for (int y = 0; y <= maxHeight - wellHeight / 2 - wellY; ++y) {
+                for (int y = 1; y <= maxHeight - wellHeight / 2 - wellY; ++y) {
                     world.setBlockState(well.up(y).west(), oil, 3);
                     world.setBlockState(well.up(y).east(), oil, 3);
                     world.setBlockState(well.up(y).north(), oil, 3);

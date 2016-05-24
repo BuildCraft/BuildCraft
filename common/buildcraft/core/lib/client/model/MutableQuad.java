@@ -213,20 +213,20 @@ public class MutableQuad {
 
     /* A lot of delegate functions here. The actual documentation should be per-vertex. */
     // @formatter:off
-    /** @see MutableVertex#normalv(Vector3f) */ public void normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec));}
-    public void normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z));}
+    /** @see MutableVertex#normalv(Vector3f) */ public MutableQuad normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec)); return this;}
+    public MutableQuad normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z)); return this;}
 
-    public void colourv(Vector4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec));};
-    public void colourf(float r, float g, float b, float a) {Arrays.stream(verticies).forEach(v -> v.colourf(r,g,b,a));}
-    public void colouri(int rgba) {Arrays.stream(verticies).forEach(v -> v.colouri(rgba));}
-    public void colouri(int r, int g, int b, int a) {Arrays.stream(verticies).forEach(v -> v.colouri(r, g, b, a));}
+    public MutableQuad colourv(Vector4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec)); return this;};
+    public MutableQuad colourf(float r, float g, float b, float a) {Arrays.stream(verticies).forEach(v -> v.colourf(r,g,b,a)); return this;}
+    public MutableQuad colouri(int rgba) {Arrays.stream(verticies).forEach(v -> v.colouri(rgba)); return this;}
+    public MutableQuad colouri(int r, int g, int b, int a) {Arrays.stream(verticies).forEach(v -> v.colouri(r, g, b, a)); return this;}
 
-    public void lightv(Vector2f vec) {for (MutableVertex v : verticies) v.lightv(vec);}
-    public void lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky);}
-    public void lighti(int combined) {for (MutableVertex v : verticies) v.lighti(combined);}
-    public void lighti(int block, int sky) {for (MutableVertex v : verticies) v.lighti(block, sky);}
+    public MutableQuad lightv(Vector2f vec) {for (MutableVertex v : verticies) v.lightv(vec); return this;}
+    public MutableQuad lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky); return this;}
+    public MutableQuad lighti(int combined) {for (MutableVertex v : verticies) v.lighti(combined); return this;}
+    public MutableQuad lighti(int block, int sky) {for (MutableVertex v : verticies) v.lighti(block, sky); return this;}
 
-    public void transform(Matrix4f transformation) {for (MutableVertex v : verticies) v.transform(transformation);}
+    public MutableQuad transform(Matrix4f transformation) {for (MutableVertex v : verticies) v.transform(transformation); return this;}
     // @formatter:on
 
     @Override

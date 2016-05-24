@@ -1,6 +1,9 @@
 package buildcraft.transport.client.model;
 
 import java.util.List;
+
+import javax.vecmath.Matrix4f;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -14,6 +17,7 @@ import net.minecraft.client.resources.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
@@ -24,8 +28,6 @@ import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
-
-import javax.vecmath.Matrix4f;
 
 public final class FacadePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyFacade> {
     private static final ResourceLocation hollowLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/facade_hollow.obj");
