@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 
 import buildcraft.core.render.RenderLaser;
 import buildcraft.silicon.TileLaser;
@@ -25,8 +27,11 @@ public class RenderLaserTile extends TileEntitySpecialRenderer<TileLaser> {
             GL11.glTranslated(-laser.getPos().getX(), -laser.getPos().getY(), -laser.getPos().getZ());
 
             GL11.glPushMatrix();
+            GlStateManager.disableLighting();
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0xF0, 0xF0);
             RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, TileEntityRendererDispatcher.instance.renderEngine, laser.laser,
                     laser.getTexture());
+            GlStateManager.enableLighting();
             GL11.glPopMatrix();
 
             GL11.glPopMatrix();
