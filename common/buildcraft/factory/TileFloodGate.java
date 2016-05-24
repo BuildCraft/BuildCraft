@@ -14,15 +14,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.*;
 
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
+public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDebuggable {
     public static final int[] REBUILD_DELAY = new int[8];
     public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
     private final TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
@@ -186,8 +188,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
             return;
         }
         if (visitedBlocks.add(pos)) {
-            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
-                * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
                 return;
             }
 
@@ -265,6 +266,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     }
 
     public void switchSide(EnumFacing side) {
+        if (worldObj.isRemote) return;
         if (side != EnumFacing.UP) {
             if (blockedSides.contains(side)) blockedSides.remove(side);
             else blockedSides.add(side);
@@ -319,5 +321,14 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
     public boolean isSideBlocked(EnumFacing face) {
         return blockedSides.contains(face);
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        TileFloodGate gate = CoreProxy.proxy.getServerTile(this);
+        left.add("");
+        left.add("isRemote = " + gate.worldObj.isRemote);
+        left.add("Blocked Sides = " + gate.blockedSides);
+        left.add("Contents = " + gate.tank.getContentsString());
     }
 }

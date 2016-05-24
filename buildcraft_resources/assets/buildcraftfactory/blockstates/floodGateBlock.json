@@ -1,5 +1,15 @@
 {
+    "forge_marker":1,
     "variants": {
-        "normal": { "model": "buildcraftfactory:floodGate" }
+    	"connected_down": {
+    		"false": "",
+    		"true": ""
+    	},
+		"normal": {
+			"model":"buildcraftfactory:floodGate",
+			"textures": {
+			    "#mainTex":"buildcraftfactory:blocks/distiller/main"
+			}
+		}
     }
 }

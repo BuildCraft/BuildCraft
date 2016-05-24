@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.tools.IToolWrench;
@@ -19,7 +20,21 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFloodGate extends BlockBuildCraft {
     public BlockFloodGate() {
-        super(Material.iron);
+        super(Material.iron, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH, CONNECTED_SOUTH);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        TileEntity tile = access.getTileEntity(pos);
+
+        if (tile instanceof TileFloodGate) {
+            TileFloodGate floodGate = (TileFloodGate) tile;
+            for (EnumFacing face : EnumFacing.values()) {
+                if (face == EnumFacing.UP) continue;
+                state = state.withProperty(CONNECTED_MAP.get(face), !floodGate.isSideBlocked(face));
+            }
+        }
+        return state;
     }
 
     @Override
@@ -28,8 +43,7 @@ public class BlockFloodGate extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8,
-            float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8, float par9) {
         if (super.onBlockActivated(world, pos, state, entityplayer, side, par7, par8, par9)) {
             return true;
         }

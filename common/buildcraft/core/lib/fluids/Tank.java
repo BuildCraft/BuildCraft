@@ -131,4 +131,16 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     public void setFluid(FluidStack fluid) {
         if (fluid == null || filter == null || filter.test(fluid)) super.setFluid(fluid);
     }
+
+    @Override
+    public String toString() {
+        return "Tank [" + getContentsString() + "]";
+    }
+
+    public String getContentsString() {
+        if (fluid == null || fluid.amount <= 0) {
+            return "Empty";
+        }
+        return (fluid.amount / 1000.0) + "B of " + fluid.getLocalizedName();
+    }
 }
