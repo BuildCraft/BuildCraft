@@ -25,8 +25,11 @@ public class RenderLaserTile extends TileEntitySpecialRenderer<TileLaser> {
             GL11.glTranslated(-laser.getPos().getX(), -laser.getPos().getY(), -laser.getPos().getZ());
 
             GL11.glPushMatrix();
+            GlStateManager.disableLighting();
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0xF0, 0xF0);
             RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, TileEntityRendererDispatcher.instance.renderEngine, laser.laser,
                     laser.getTexture());
+            GlStateManager.enableLighting();
             GL11.glPopMatrix();
 
             GL11.glPopMatrix();
