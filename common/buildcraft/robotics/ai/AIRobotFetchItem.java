@@ -133,7 +133,7 @@ public class AIRobotFetchItem extends AIRobot {
             BoardRobotPicker.targettedItems.add(target.getEntityId());
             if (Math.floor(target.posX) != Math.floor(robot.posX) || Math.floor(target.posY) != Math.floor(robot.posY) || Math.floor(
                     target.posZ) != Math.floor(robot.posZ)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target)));
+                startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target), true));
             }
         } else {
             // No item was found, terminate this AI

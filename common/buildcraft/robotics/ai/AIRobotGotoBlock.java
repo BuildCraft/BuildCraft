@@ -4,7 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
-import buildcraft.api.core.BuildCraftAPI;
+import java.util.LinkedList;
+
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -14,8 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
-
-import java.util.LinkedList;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
@@ -27,7 +26,9 @@ public class AIRobotGotoBlock extends AIRobotGoto {
     private double maxDistance = 0;
     private BlockPos lastBlockInPath;
     private boolean loadedFromNBT;
-
+    private boolean skipLastIfNotSoft;
+    private BlockPos lastBlock;
+    
     public AIRobotGotoBlock(EntityRobotBase iRobot) {
         super(iRobot);
     }
@@ -49,6 +50,12 @@ public class AIRobotGotoBlock extends AIRobotGoto {
         setNextInPath();
     }
 
+    public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos, boolean iSkipLastIfNotSoft) {
+        this(robot);
+        finalPos = pos;
+        skipLastIfNotSoft = iSkipLastIfNotSoft;
+    }
+    
     @Override
     public void start() {
         robot.undock();
@@ -117,11 +124,14 @@ public class AIRobotGotoBlock extends AIRobotGoto {
             boolean isFirst = prevDistance == Double.MAX_VALUE;
 
             BlockPos next = path.getFirst();
-            if (isFirst || BuildCraftAPI.isSoftBlock(robot.worldObj, next)) {
+            if (isFirst || PathFinding.isFreeForPath(robot.worldObj, next)) {
+            	lastBlock = next;
                 setDestination(robot, Utils.convertMiddle(next));
                 prevDistance = Double.MAX_VALUE;
                 robot.aimItemAt(next);
-            } else {
+			} else if (skipLastIfNotSoft && path.size() == 1) {
+				lastBlockInPath = lastBlock;
+			} else {
                 // Path invalid!
                 path = null;
 
@@ -131,6 +141,11 @@ public class AIRobotGotoBlock extends AIRobotGoto {
                     robot.motionY = 0;
                     robot.motionZ = 0;
                 }
+                
+                // If the Path is invalid it should be recalculated or this AI should fail
+                pathSearch = null;
+                pathSearchJob = null;
+                
             }
         }
     }
@@ -156,7 +171,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
         nbt.setTag("finalPos", NBTUtils.writeBlockPos(finalPos));
         nbt.setDouble("maxDistance", maxDistance);
-
+        nbt.setBoolean("skipLastIfNotSoft", skipLastIfNotSoft);
+        
         if (path != null) {
             NBTTagList pathList = new NBTTagList();
 
@@ -174,7 +190,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
         finalPos = NBTUtils.readBlockPos(nbt.getTag("finalPos"));
         maxDistance = nbt.getDouble("maxDistance");
-
+        skipLastIfNotSoft = nbt.getBoolean("skipLastIfNotSoft");
+        
         if (nbt.hasKey("path")) {
             NBTTagList pathList = nbt.getTagList("path", Constants.NBT.TAG_COMPOUND);
 
