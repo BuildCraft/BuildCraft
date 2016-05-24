@@ -1,6 +1,7 @@
 {
 	"title": "item.stoneGearItem.name",
 	"pageKey": "buildcraftcore:gear_stone",
+	"itemStack":"(buildcraftcore:gear_stone)",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",

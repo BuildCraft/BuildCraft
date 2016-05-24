@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiIcon {
+public class GuiIcon implements ISimpleDrawable {
     public final ResourceLocation texture;
     public final int u, v, width, height;
 
@@ -37,10 +37,7 @@ public class GuiIcon {
         return new DynamicTexture(width * scale, height * scale);
     }
 
-    public void drawAt(IPositionedElement element) {
-        drawAt(element.getX(), element.getY());
-    }
-
+    @Override
     public void drawAt(int x, int y) {
         bindTexture();
         int width = this.width;

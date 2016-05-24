@@ -1,6 +1,7 @@
 {
 	"title": "item.wrenchItem.name",
 	"pageKey": "buildcraftcore:wrench",
+	"itemStack":"(buildcraftcore:wrench)",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",

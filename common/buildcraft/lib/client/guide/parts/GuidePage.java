@@ -6,12 +6,15 @@ import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.resource.MarkdownResourceHolder;
 
 public class GuidePage extends GuidePageBase {
-    private final ImmutableList<GuidePart> parts;
+    public final MarkdownResourceHolder creator;
+    public final ImmutableList<GuidePart> parts;
 
-    public GuidePage(GuiGuide gui, List<GuidePart> parts) {
+    public GuidePage(GuiGuide gui, List<GuidePart> parts, MarkdownResourceHolder creator) {
         super(gui);
+        this.creator = creator;
         this.parts = ImmutableList.copyOf(parts);
     }
 

@@ -9,17 +9,25 @@ import com.google.gson.annotations.SerializedName;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.item.ItemStack;
+
+import buildcraft.lib.client.resource.MarkdownResourceHolder;
+
 public class PageMeta {
     public final String title;
     public final String customImageLocation;
-    public final String itemKey;
+    public final String itemStack;
     public final PageTypeTags typeTags;
 
-    public PageMeta(String title, String customImageLocation, String itemKey, PageTypeTags typeTags) {
+    public PageMeta(String title, String customImageLocation, String itemStack, PageTypeTags typeTags) {
         this.title = title;
         this.customImageLocation = customImageLocation;
-        this.itemKey = itemKey;
+        this.itemStack = itemStack;
         this.typeTags = typeTags;
+    }
+    
+    public ItemStack getItemStack() {
+        return MarkdownResourceHolder.loadItemStack(itemStack);
     }
 
     public IComparableLine[] getLocationArray(TypeOrder order) {

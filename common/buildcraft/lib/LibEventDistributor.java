@@ -11,6 +11,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,6 +20,7 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.marker.MarkerCache2;
+import buildcraft.lib.misc.MessageUtil;
 
 public enum LibEventDistributor {
     INSTANCE;
@@ -60,5 +63,15 @@ public enum LibEventDistributor {
         float partialTicks = event.getPartialTicks();
 
         DetatchedRenderer.INSTANCE.renderWorldLastEvent(player, partialTicks);
+    }
+
+    @SubscribeEvent
+    public void serverTick(ServerTickEvent event) {
+        MessageUtil.postOrPreTick();
+    }
+
+    @SubscribeEvent
+    public void clientTick(ClientTickEvent event) {
+        MessageUtil.postOrPreTick();
     }
 }

@@ -167,7 +167,8 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         return GuideSmeltingFactory.create(stack);
     }
 
-    private static ItemStack loadItemStack(String line) {
+    public static ItemStack loadItemStack(String line) {
+        if (line == null) return null;
         if (line.startsWith("(") && line.endsWith(")")) {
             return loadSimpleItemStack(line.substring(1, line.length() - 1));
         } else if (line.startsWith("{") && line.endsWith("}")) {
@@ -238,6 +239,6 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         for (GuidePartFactory<?> factory : factories) {
             parts.add(factory.createNew(gui));
         }
-        return new GuidePage(gui, parts);
+        return new GuidePage(gui, parts, this);
     }
 }

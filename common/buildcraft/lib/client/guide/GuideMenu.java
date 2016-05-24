@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
@@ -13,6 +14,8 @@ import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.GuiStack;
+import buildcraft.lib.gui.ISimpleDrawable;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
@@ -52,12 +55,17 @@ public class GuideMenu extends GuidePageBase {
                     }
                 }
                 if (notFound) {
-                    node = node.addChild(new PageLine(GuiGuide.BOX_MINUS, GuiGuide.BOX_SELECTED_MINUS, indent, translated, line, false));
+                    node = node.addChild(new PageLine(null, null, indent, translated, line, false));
                 }
                 indent++;
             }
             String translatedTitle = I18n.format(meta.title);
-            PageLine line = new PageLine(indent, translatedTitle, true);
+            ItemStack stack = meta.getItemStack();
+            ISimpleDrawable icon = null;
+            if (stack != null) {
+                icon = new GuiStack(stack);
+            }
+            PageLine line = new PageLine(icon, icon, indent, translatedTitle, null, true);
             node.addChild(line);
             metaMap.put(location, meta);
             pageLinks.put(line, location);
@@ -67,10 +75,10 @@ public class GuideMenu extends GuidePageBase {
 
     @Override
     protected void renderPage(int x, int y, int width, int height, int index) {
-        renderLines(parentNode.iterateOnlyExpandedLines(), x, y, width, height, index);
+        renderLines(parentNode.iterateNonNullLines(), x, y, width, height, index);
         if (numPages == -1) {
             PagePart part = new PagePart(0, 0);
-            for (PageLine line : parentNode.iterateOnlyExpandedLines()) {
+            for (PageLine line : parentNode.iterateNonNullLines()) {
                 part = renderLine(part, part, line, x, y, width, height, index);
             }
             numPages = part.page + 1;
@@ -107,7 +115,7 @@ public class GuideMenu extends GuidePageBase {
                 oY += 14;
             }
         }
-        PageLine line = getClicked(parentNode.iterateOnlyExpandedLines(), x, y, width, height, mouseX, mouseY, index);
+        PageLine line = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index);
         if (line != null) {
             ResourceLocation location = pageLinks.get(line);
             if (location != null) {
@@ -118,23 +126,24 @@ public class GuideMenu extends GuidePageBase {
             }
         }
         // because its impossible to click both the text and the icon
-        else {
-            PageLine iconLine = getIconClicked(parentNode.iterateOnlyExpandedLines(), x, y, width, height, mouseX, mouseY, index);
-            if (iconLine != null) {
-                NodePageLine node = parentNode.getChildNode(iconLine);
-                if (node != null) {
-                    if (node.expanded) {
-                        iconLine.startIcon = GuiGuide.BOX_PLUS;
-                        iconLine.startIconHovered = GuiGuide.BOX_SELECTED_PLUS;
-                    } else {
-                        iconLine.startIcon = GuiGuide.BOX_MINUS;
-                        iconLine.startIconHovered = GuiGuide.BOX_SELECTED_MINUS;
-                    }
-                    // Make it recalculate the number of pages
-                    numPages = -1;
-                    node.expanded = !node.expanded;
-                }
-            }
-        }
+        // else {
+        // PageLine iconLine = getIconClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY,
+        // index);
+        // if (iconLine != null) {
+        // NodePageLine node = parentNode.getChildNode(iconLine);
+        // if (node != null) {
+        // if (node.expanded) {
+        // iconLine.startIcon = GuiGuide.BOX_PLUS;
+        // iconLine.startIconHovered = GuiGuide.BOX_SELECTED_PLUS;
+        // } else {
+        // iconLine.startIcon = GuiGuide.BOX_MINUS;
+        // iconLine.startIconHovered = GuiGuide.BOX_SELECTED_MINUS;
+        // }
+        // // Make it recalculate the number of pages
+        // numPages = -1;
+        // node.expanded = !node.expanded;
+        // }
+        // }
+        // }
     }
 }

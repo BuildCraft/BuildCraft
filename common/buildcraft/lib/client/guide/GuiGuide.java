@@ -6,6 +6,8 @@ import java.util.Deque;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Queues;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -23,7 +25,8 @@ import buildcraft.lib.gui.IPositionedElement;
 import buildcraft.lib.gui.MousePosition;
 
 public class GuiGuide extends GuiScreen {
-    public static final ResourceLocation ICONS = new ResourceLocation("buildcraftcore:textures/gui/guide/icons.png");
+    public static final ResourceLocation ICONS_1 = Gui.ICONS;
+    public static final ResourceLocation ICONS_2 = new ResourceLocation("buildcraftcore:textures/gui/guide/icons.png");
     public static final ResourceLocation COVER = new ResourceLocation("buildcraftcore:textures/gui/guide/cover.png");
     public static final ResourceLocation LEFT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/left_page.png");
     public static final ResourceLocation RIGHT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/right_page.png");
@@ -37,40 +40,40 @@ public class GuiGuide extends GuiScreen {
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(31, 22, 141, 193);
     public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(20, 22, 141, 193);
 
-    public static final GuiIcon PEN_UP = new GuiIcon(ICONS, 0, 0, 17, 135);
-    public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS, 17, 0, 100, 100);
+    public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 17, 135);
+    public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
 
-    public static final GuiIcon PEN_HIDDEN_MIN = new GuiIcon(ICONS, 0, 4, 10, 5);
-    public static final GuiIcon PEN_HIDDEN_MAX = new GuiIcon(ICONS, 0, 4, 10, 15);
+    public static final GuiIcon PEN_HIDDEN_MIN = new GuiIcon(ICONS_2, 0, 4, 10, 5);
+    public static final GuiIcon PEN_HIDDEN_MAX = new GuiIcon(ICONS_2, 0, 4, 10, 15);
 
-    public static final GuiIcon TURN_BACK = new GuiIcon(ICONS, 0, 152, 18, 10);
-    public static final GuiIcon TURN_BACK_HOVERED = new GuiIcon(ICONS, 23, 152, 18, 10);
+    public static final GuiIcon TURN_BACK = new GuiIcon(ICONS_2, 0, 152, 18, 10);
+    public static final GuiIcon TURN_BACK_HOVERED = new GuiIcon(ICONS_2, 23, 152, 18, 10);
 
-    public static final GuiIcon TURN_FORWARDS = new GuiIcon(ICONS, 0, 139, 18, 10);
-    public static final GuiIcon TURN_FORWARDS_HOVERED = new GuiIcon(ICONS, 23, 139, 18, 10);
+    public static final GuiIcon TURN_FORWARDS = new GuiIcon(ICONS_2, 0, 139, 18, 10);
+    public static final GuiIcon TURN_FORWARDS_HOVERED = new GuiIcon(ICONS_2, 23, 139, 18, 10);
 
-    public static final GuiIcon BACK = new GuiIcon(ICONS, 48, 139, 17, 9);
-    public static final GuiIcon BACK_HOVERED = new GuiIcon(ICONS, 48, 152, 17, 9);
+    public static final GuiIcon BACK = new GuiIcon(ICONS_2, 48, 139, 17, 9);
+    public static final GuiIcon BACK_HOVERED = new GuiIcon(ICONS_2, 48, 152, 17, 9);
 
-    public static final GuiIcon BOX_EMPTY = new GuiIcon(ICONS, 0, 164, 16, 16);
-    public static final GuiIcon BOX_MINUS = new GuiIcon(ICONS, 16, 164, 16, 16);
-    public static final GuiIcon BOX_PLUS = new GuiIcon(ICONS, 32, 164, 16, 16);
-    public static final GuiIcon BOX_TICKED = new GuiIcon(ICONS, 48, 164, 16, 16);
+    public static final GuiIcon BOX_EMPTY = new GuiIcon(ICONS_2, 0, 164, 16, 16);
+    public static final GuiIcon BOX_MINUS = new GuiIcon(ICONS_2, 16, 164, 16, 16);
+    public static final GuiIcon BOX_PLUS = new GuiIcon(ICONS_2, 32, 164, 16, 16);
+    public static final GuiIcon BOX_TICKED = new GuiIcon(ICONS_2, 48, 164, 16, 16);
 
-    public static final GuiIcon BOX_SELECTED_EMPTY = new GuiIcon(ICONS, 0, 180, 16, 16);
-    public static final GuiIcon BOX_SELECTED_MINUS = new GuiIcon(ICONS, 16, 180, 16, 16);
-    public static final GuiIcon BOX_SELECTED_PLUS = new GuiIcon(ICONS, 32, 180, 16, 16);
-    public static final GuiIcon BOX_SELECTED_TICKED = new GuiIcon(ICONS, 48, 180, 16, 16);
+    public static final GuiIcon BOX_SELECTED_EMPTY = new GuiIcon(ICONS_2, 0, 180, 16, 16);
+    public static final GuiIcon BOX_SELECTED_MINUS = new GuiIcon(ICONS_2, 16, 180, 16, 16);
+    public static final GuiIcon BOX_SELECTED_PLUS = new GuiIcon(ICONS_2, 32, 180, 16, 16);
+    public static final GuiIcon BOX_SELECTED_TICKED = new GuiIcon(ICONS_2, 48, 180, 16, 16);
 
-    public static final GuiIcon BORDER_TOP_LEFT = new GuiIcon(ICONS, 0, 196, 13, 13);
-    public static final GuiIcon BORDER_TOP_RIGHT = new GuiIcon(ICONS, 13, 196, 13, 13);
-    public static final GuiIcon BORDER_BOTTOM_LEFT = new GuiIcon(ICONS, 0, 209, 13, 13);
-    public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS, 13, 209, 13, 13);
+    public static final GuiIcon BORDER_TOP_LEFT = new GuiIcon(ICONS_2, 0, 196, 13, 13);
+    public static final GuiIcon BORDER_TOP_RIGHT = new GuiIcon(ICONS_2, 13, 196, 13, 13);
+    public static final GuiIcon BORDER_BOTTOM_LEFT = new GuiIcon(ICONS_2, 0, 209, 13, 13);
+    public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS_2, 13, 209, 13, 13);
 
-    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS, 14, 100, 14, 14);
-    public static final GuiIcon ORDER_STAGE = new GuiIcon(ICONS, 28, 100, 14, 14);
-    public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS, 42, 100, 14, 14);
-    public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS, 56, 100, 14, 14);
+    public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS_2, 14, 100, 14, 14);
+    public static final GuiIcon ORDER_STAGE = new GuiIcon(ICONS_2, 28, 100, 14, 14);
+    public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 42, 100, 14, 14);
+    public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS_2, 56, 100, 14, 14);
 
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_STAGE, ORDER_MOD_TYPE, ORDER_MOD };
 
@@ -122,6 +125,12 @@ public class GuiGuide extends GuiScreen {
 
     public GuiGuide() {
         openPage(new GuideMenu(this));
+    }
+
+    public void initForExport() {
+        isOpening = true;
+        isOpen = true;
+        setWorldAndResolution(Minecraft.getMinecraft(), 1920, 1080);
     }
 
     public void openPage(GuidePageBase page) {
@@ -257,7 +266,7 @@ public class GuiGuide extends GuiScreen {
             mc.renderEngine.bindTexture(COVER);
             BOOK_BINDING.drawScaledInside(minX, minY, bindingWidth, BOOK_BINDING.height);
 
-            mc.renderEngine.bindTexture(ICONS);
+            mc.renderEngine.bindTexture(ICONS_2);
             drawTexturedModalRect(minX + pageWidth + bindingWidth - (PEN_HIDDEN_WIDTH / 2), minY - penHeight, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, penHeight);
         }
     }
@@ -293,7 +302,7 @@ public class GuiGuide extends GuiScreen {
 
         // Draw the pen
         if (isEditing) {
-            mc.renderEngine.bindTexture(ICONS);
+            mc.renderEngine.bindTexture(ICONS_2);
 
             if (isOverHover) {
                 PEN_UP.drawAt(mouse.getX() - PEN_UP.width / 2, mouse.getY() - PEN_UP.height);
@@ -304,7 +313,7 @@ public class GuiGuide extends GuiScreen {
             int height = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
 
             // Draw pen
-            mc.renderEngine.bindTexture(ICONS);
+            mc.renderEngine.bindTexture(ICONS_2);
             drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - height, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, height);
 
             if (tooltipStack != null) {

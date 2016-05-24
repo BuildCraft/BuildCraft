@@ -1,6 +1,7 @@
 {
 	"title": "item.woodenGearItem.name",
 	"pageKey": "buildcraftcore:gear_wood",
+	"itemStack":"(buildcraftcore:gear_wood)",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",

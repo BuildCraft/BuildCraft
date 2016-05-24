@@ -46,7 +46,6 @@ public class VolumeCache extends MarkerCache2<SubCacheVolume> {
             VolumeConnection toConnection = getConnection(to);
             if (fromConnection == null) {
                 if (toConnection == null) {
-                    // Create a new connection
                     return VolumeConnection.tryCreateConnection(this, from, to);
                 } else {// The other one has a connection
                     return toConnection.addMarker(from);
@@ -66,7 +65,6 @@ public class VolumeCache extends MarkerCache2<SubCacheVolume> {
             VolumeConnection toConnection = getConnection(to);
             if (fromConnection == null) {
                 if (toConnection == null) {
-                    // Create a new connection
                     return VolumeConnection.canCreateConnection(this, from, to);
                 } else {// The other one has a connection
                     return toConnection.canAddMarker(from);

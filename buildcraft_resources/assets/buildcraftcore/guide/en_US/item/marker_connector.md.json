@@ -1,6 +1,7 @@
 {
 	"title": "item.markerConnector.name",
 	"pageKey": "buildcraftcore:marker_connector",
+	"itemStack":"(buildcraftcore:marker_connector)",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",

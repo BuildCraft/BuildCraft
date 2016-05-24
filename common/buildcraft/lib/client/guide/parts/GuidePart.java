@@ -9,8 +9,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
-import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.ISimpleDrawable;
 
 /** Represents a single page, image or crafting recipe for displaying. Only exists on the client. */
 @SideOnly(Side.CLIENT)
@@ -21,18 +21,25 @@ public abstract class GuidePart {
     /** Stores information about the current rendering position */
     public static class PagePart {
         public final int page;
-        public final int line;
+        public final int pixel;
 
-        public PagePart(int page, int height) {
+        public PagePart(int page, int pixel) {
             this.page = page;
-            this.line = height;
+            this.pixel = pixel;
         }
 
-        public PagePart nextLine(int by, int maxLines) {
-            if (line + by >= maxLines) {
+        public PagePart nextLine(int pixelDifference, int maxHeight) {
+            int added = pixel + pixelDifference;
+            if (added >= maxHeight) {
                 return nextPage();
             }
-            return new PagePart(page, line + by);
+            return new PagePart(page, added);
+        }
+
+        public PagePart guarenteeSpace(int required, int maxPageHeight) {
+            PagePart next = nextLine(required, maxPageHeight);
+            if (next.page == page) return this;
+            return next;
         }
 
         public PagePart nextPage() {
@@ -40,7 +47,7 @@ public abstract class GuidePart {
         }
 
         public PagePart newPage() {
-            if (line != 0) {
+            if (pixel != 0) {
                 return nextPage();
             }
             return this;
@@ -107,7 +114,7 @@ public abstract class GuidePart {
         int allowedLines = height / LINE_HEIGHT;
 
         String toRender = line.text;
-        GuiIcon icon = line.startIcon;
+        ISimpleDrawable icon = line.startIcon;
         boolean firstLine = true;
         while (current.line <= allowedLines) {
             if (toRender.length() == 0) {
@@ -156,17 +163,18 @@ public abstract class GuidePart {
                 fontRenderer.drawString(thisLine, linkX, linkY, 0);
             }
             if (firstLine && icon != null) {
-                int iconX = linkX - icon.width;
+                int iconX = linkX - 18;
                 /* Ok this is because minecraft default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT
                  * is 9. */
-                int iconY = linkY + (6 - icon.height) / 2;
-                GuiRectangle iconBox = new GuiRectangle(iconX, iconY, icon.width, icon.height);
+                int iconY = linkY - 5;
+                GuiRectangle iconBox = new GuiRectangle(iconX, iconY, 16, 16);
                 wasIconHovered = iconBox.contains(gui.mouse);
                 if (wasIconHovered && line.startIconHovered != null) {
                     icon = line.startIconHovered;
                 }
                 if (render) {
-                    icon.drawCutInside(iconBox);
+                    icon.drawAt(iconX, iconY);
+                    // icon.drawCutInside(iconBox);
                 }
             }
             current = current.nextLine(1, allowedLines);

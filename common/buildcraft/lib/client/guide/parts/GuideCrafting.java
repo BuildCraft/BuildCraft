@@ -9,7 +9,7 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 
 public class GuideCrafting extends GuidePart {
-    public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS, 119, 0, 116, 54);
+    public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
     public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width, CRAFTING_GRID.height);

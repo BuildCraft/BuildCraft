@@ -13,6 +13,6 @@ public class GuideText extends GuidePart {
 
     @Override
     public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
-        return renderLines(text.iterateOnlyExpandedLines(), current, x, y, width, height, index);
+        return renderLines(text.iterateNonNullLines(), current, x, y, width, height, index);
     }
 }

@@ -1,12 +1,12 @@
 package buildcraft.lib.client.guide;
 
-import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.ISimpleDrawable;
 
 /** Stores information about a single line of text. This may be displayed as more than a single line though. */
 public class PageLine implements Comparable<PageLine> {
     /** Can be any of the boxes, any icon with dimensions different to these will render incorrectly. */
-    public GuiIcon startIcon;
-    public GuiIcon startIconHovered;
+    public ISimpleDrawable startIcon;
+    public ISimpleDrawable startIconHovered;
     public final int indent;
     /** This will be wrapped automatically when it is rendered. */
     public final String text;
@@ -17,7 +17,7 @@ public class PageLine implements Comparable<PageLine> {
         this(null, null, indent, text, null, isLink);
     }
 
-    public PageLine(GuiIcon startIcon, GuiIcon startIconHovered, int indent, String text, IComparableLine line, boolean isLink) {
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, IComparableLine line, boolean isLink) {
         this.startIcon = startIcon;
         this.startIconHovered = startIconHovered;
         this.indent = indent;

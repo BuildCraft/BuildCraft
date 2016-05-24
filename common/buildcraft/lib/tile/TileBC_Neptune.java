@@ -158,7 +158,14 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
-        MessageUtil.doDelayed(4, () -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
+        MessageUtil.doDelayed(() -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
+        return null;
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
+        MessageUtil.doDelayed(() -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
         return null;
     }
 

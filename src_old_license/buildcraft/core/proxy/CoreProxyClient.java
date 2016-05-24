@@ -23,11 +23,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
-<<<<<<< HEAD:src_old_license/buildcraft/core/proxy/CoreProxyClient.java
-=======
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.ModelResourceLocation;
->>>>>>> b499bdc20249136f5691d9a6030404067be0cbd9:common/buildcraft/core/proxy/CoreProxyClient.java
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

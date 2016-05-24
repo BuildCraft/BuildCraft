@@ -1,5 +1,6 @@
 {
 	"title": "item.diamondGearItem.name",
+	"itemStack":"(buildcraftcore:gear_diamond)",
 	"typeTags": {
 		"mod": "buildcraft",
 		"submod": "core",
