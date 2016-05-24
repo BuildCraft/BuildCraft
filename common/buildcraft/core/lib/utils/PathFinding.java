@@ -13,11 +13,14 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IWorldProperty;
 
 /** This class implements a 3D path finding based on the A* algorithm, following guidelines documented on
  * http://www.policyalmanac.org/games/aStarTutorial.htm . */
 public class PathFinding implements IIterableAlgorithm {
 
+	private static IWorldProperty FREE_FOR_PATH = BuildCraftAPI.getWorldProperty("freepath");
+	
     public static int PATH_ITERATIONS = 1000;
 
     private World world;
@@ -196,12 +199,16 @@ public class PathFinding implements IIterableAlgorithm {
         return dx * dx + dy * dy + dz * dz;
     }
 
+    public static boolean isFreeForPath(World world, BlockPos pos){
+    	return FREE_FOR_PATH.get(world, pos);
+    }
+    
     private boolean endReached(int x, int y, int z) {
         if (maxDistanceToEndSq == 0) {
             return end.getX() == x && end.getY() == y && end.getZ() == z;
         } else {
             BlockPos pos = new BlockPos(x, y, z);
-            return BuildCraftAPI.isSoftBlock(world, pos) && distanceSq(new BlockPos(pos), end) <= maxDistanceToEndSq;
+            return isFreeForPath(world, pos) && distanceSq(new BlockPos(pos), end) <= maxDistanceToEndSq;
         }
     }
 
@@ -219,7 +226,7 @@ public class PathFinding implements IIterableAlgorithm {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 0;
                     } else if (endReached(x, y, z)) {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 2;
-                    } else if (!BuildCraftAPI.isSoftBlock(world, new BlockPos(x, y, z))) {
+                    } else if (!isFreeForPath(world, new BlockPos(x, y, z))) {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 0;
                     } else {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 1;
