@@ -52,8 +52,8 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
             if (param != null && param instanceof ActionParameterSignal) {
                 ActionParameterSignal signal = (ActionParameterSignal) param;
 
-                if (signal.color != null) {
-                    gate.broadcastSignal(signal.color);
+                if (signal.getColor() != null) {
+                    gate.broadcastSignal(signal.getColor());
                 }
             }
         }
