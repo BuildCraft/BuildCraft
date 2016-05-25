@@ -4,11 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
 
-import io.netty.buffer.ByteBuf;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -16,10 +15,12 @@ import net.minecraft.util.ResourceLocation;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
@@ -28,8 +29,11 @@ import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
-public abstract class TileEngineBase extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
+import io.netty.buffer.ByteBuf;
+
+public abstract class TileEngineBase extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable, IDebuggable {
     // TEMP
     public static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_blue.png");
     public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_green.png");
@@ -68,8 +72,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public abstract EnumEngineType getEngineType();
 
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
-        if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
-                .getItem() instanceof IToolWrench) {
+        if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
             if (wrench.canWrench(player, pos)) {
                 if (getEnergyStage() == EnumEnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
@@ -576,5 +579,13 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public double setHeatValue(double value) {
         heat = (float) MathUtils.clamp(value, MIN_HEAT, MAX_HEAT);
         return heat;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        TileEngineBase server = CoreProxy.proxy.getServerTile(this);
+        left.add("");
+        left.add("orient = " + server.orientation);
+        left.add("isRemote = " + server.worldObj.isRemote);
     }
 }

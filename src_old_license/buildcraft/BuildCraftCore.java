@@ -492,6 +492,8 @@ public class BuildCraftCore extends BuildCraftMod {
         BuildCraftAPI.registerWorldProperty("dirt", new WorldPropertyIsDirt());
         BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
 
+        BuildCraftAPI.registerWorldProperty("freepath", new WorldPropertyIsFreePath());
+        
         // Landmarks are often caught incorrectly, making building them counter-productive.
         SchematicRegistry.INSTANCE.registerSchematicBlock(markerBlock, SchematicIgnore.class);
         SchematicRegistry.INSTANCE.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);

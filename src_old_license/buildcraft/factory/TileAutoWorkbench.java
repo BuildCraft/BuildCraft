@@ -12,6 +12,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
+import java.util.List;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,6 +26,7 @@ import net.minecraft.world.WorldServer;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -35,7 +40,7 @@ import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
+public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver, IDebuggable {
     public static final int SLOT_RESULT = 9;
     public static final int CRAFT_TIME = 256;
     public static final int UPDATE_TIME = 16;
@@ -63,6 +68,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
     public TileAutoWorkbench() {
         super();
         this.setBattery(new RFBattery(16, 16, 0));
+        inputInv.addInvListener((slot, before, after) -> {
+            if (after != null) {
+                if (craftMatrix.isJammed) {
+                    scheduledCacheRebuild = true;
+                }
+            }
+        });
     }
 
     @Override
@@ -98,12 +110,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                     return null;
                 }
             } else {
-				return super.getStackInSlot(slot);
-			}
+                return super.getStackInSlot(slot);
+            }
         }
 
         public ItemStack getRecipeOutput() {
-			currentRecipe = findRecipe(); // Fixes repair recipe handling (why is it not dynamic?)
+            currentRecipe = findRecipe(); // Fixes repair recipe handling (why is it not dynamic?)
             if (currentRecipe == null) {
                 return null;
             }
@@ -140,8 +152,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
             hasWork = result != null;
             ItemStack resultInto = resultInv.getStackInSlot(0);
 
-            if (resultInto != null && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto
-                    .getMaxStackSize())) {
+            if (resultInto != null && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())) {
                 isJammed = true;
             } else {
                 isJammed = false;
@@ -257,11 +268,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         resultInv.writeToNBT(data);
         InvUtils.writeInvToNBT(inputInv, "input", data);
         InvUtils.writeInvToNBT(craftMatrix, "matrix", data);
+        return data;
     }
 
     @Override
@@ -432,5 +444,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
     @Override
     public boolean hasCustomName() {
         return false;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        TileAutoWorkbench server = CoreProxy.proxy.getServerTile(this);
+        left.add("");
+        left.add("isJammed = " + server.craftMatrix.isJammed);
+        left.add("isRemote = " + server.worldObj.isRemote);
     }
 }

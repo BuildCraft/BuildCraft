@@ -73,7 +73,7 @@ public class MutableVertex {
         }
         // Otherwise... thats not good.
         String s = element.toString();
-        if (!failedStrings.contains(s)) {
+        if (!failedStrings.contains(s) && usage != EnumUsage.PADDING) {
             failedStrings.add(s);
             BCLog.logger.info("Element " + s + " failed!");
         }
@@ -231,7 +231,7 @@ public class MutableVertex {
 
     @Override
     public String toString() {
-        return "\tVertex [\n\t\tposition=" + Arrays.toString(position) + ",\n\t\tnormal=" + Arrays.toString(normal) + ",\n\t\tcolour=" + Arrays
-                .toString(colour) + ",\n\t\tuv=" + Arrays.toString(uv) + ",\n\t\tlight=" + Arrays.toString(light) + "\n\t]";
+        return "\tVertex [\n\t\tposition=" + Arrays.toString(position) + ",\n\t\tnormal=" + Arrays.toString(normal) + ",\n\t\tcolour=" + Arrays.toString(colour) + ",\n\t\tuv=" + Arrays.toString(uv) + ",\n\t\tlight=" + Arrays.toString(light)
+            + "\n\t]";
     }
 }

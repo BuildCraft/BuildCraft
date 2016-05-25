@@ -4,13 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory;
 
-import java.util.Deque;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeMap;
 import io.netty.buffer.ByteBuf;
+
+import java.util.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,13 +21,17 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
-public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
+import io.netty.buffer.ByteBuf;
+
+public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDebuggable {
     public static final int[] REBUILD_DELAY = new int[8];
     public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
     private final TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
@@ -77,7 +77,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
                     return;
                 }
 
-                if (fluid == FluidRegistry.WATER && worldObj.provider.getDimensionId() == -1) {
+                if (fluid == FluidRegistry.WATER && worldObj.provider.getDimension() == -1) {
                     tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
                     return;
                 }
@@ -195,8 +195,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
             return;
         }
         if (visitedBlocks.add(pos)) {
-            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
-                * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
                 return;
             }
 
@@ -238,7 +237,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound data) {
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         tank.writeToNBT(data);
         data.setByte("rebuildDelay", (byte) rebuildDelay);
@@ -248,6 +247,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
                 data.setBoolean("blocked[" + i + "]", true);
             }
         }
+        return data;
     }
 
     @Override
@@ -274,6 +274,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
     }
 
     public void switchSide(EnumFacing side) {
+        if (worldObj.isRemote) return;
         if (side != EnumFacing.UP) {
             if (blockedSides.contains(side)) blockedSides.remove(side);
             else blockedSides.add(side);
@@ -328,5 +329,13 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
     public boolean isSideBlocked(EnumFacing face) {
         return blockedSides.contains(face);
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("isRemote = " + worldObj.isRemote);
+        left.add("Blocked Sides = " + blockedSides);
+        left.add("Contents = " + tank.getContentsString());
     }
 }
