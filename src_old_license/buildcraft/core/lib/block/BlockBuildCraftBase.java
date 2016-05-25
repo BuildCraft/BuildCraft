@@ -286,7 +286,6 @@ public abstract class BlockBuildCraftBase extends Block {
         return super.collisionRayTrace(blockState, worldIn, pos, start, end);
     }
 
-
 	@Nullable
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
@@ -298,9 +297,7 @@ public abstract class BlockBuildCraftBase extends Block {
 
 			RayTraceResult mop = aabb.calculateIntercept(start, end);
 			if (mop != null) {
-				if (closest != null && mop.hitVec.distanceTo(start) < closest.hitVec.distanceTo(start)) {
-					closest = mop;
-				} else {
+				if (closest == null || mop.hitVec.distanceTo(start) < closest.hitVec.distanceTo(start)) {
 					closest = mop;
 				}
 			}
