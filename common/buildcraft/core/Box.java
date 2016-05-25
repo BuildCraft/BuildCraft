@@ -219,13 +219,13 @@ public class Box implements IBox, ISerializable {
 
     public Box extendToEncompass(Vec3 toBeContained) {
         setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
-        setMin(Utils.min(min, Utils.convertCeiling(toBeContained)));
+        setMax(Utils.max(min, Utils.convertCeiling(toBeContained)));
         return this;
     }
 
     public Box extendToEncompass(BlockPos toBeContained) {
         setMin(Utils.min(min, toBeContained));
-        setMin(Utils.min(min, toBeContained));
+        setMax(Utils.max(min, toBeContained));
         return this;
     }
 

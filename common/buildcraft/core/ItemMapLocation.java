@@ -30,6 +30,8 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.robotics.ZonePlan;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
+    private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");
+
     public ItemMapLocation() {
         super(BCCreativeTab.get("main"));
         setHasSubtypes(true);
@@ -76,14 +78,14 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 break;
             }
             case PATH: {
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-                BlockPos first = NBTUtils.readBlockPos(pathNBT);
+                NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
+                BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
 
                 int x = first.getX();
                 int y = first.getY();
                 int z = first.getZ();
 
-                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
                 break;
             }
             default: {
@@ -93,8 +95,38 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (world.isRemote) {
+            return stack;
+        }
+        if (player.isSneaking()) {
+            return clearMarkerData(stack);
+        }
+        return stack;
+    }
+
+    private static ItemStack clearMarkerData(ItemStack stack) {
+        if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
+            return stack;
+        }
+        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        for (String key : STORAGE_TAGS) {
+            nbt.removeTag(key);
+        }
+        if (nbt.hasNoTags()) {
+            stack.setTagCompound(null);
+        }
+        MapLocationType.CLEAN.setToStack(stack);
+        return stack;
+    }
+
+    @Override
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
         if (world.isRemote) {
+            return false;
+        }
+
+        if (MapLocationType.getFromStack(stack) != MapLocationType.CLEAN) {
             return false;
         }
 
