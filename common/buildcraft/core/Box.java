@@ -206,7 +206,7 @@ public class Box implements IBox, ISerializable {
         }
 
         setMin(Utils.min(min, toBeContained.min()));
-        setMax(Utils.min(max, toBeContained.max()));
+        setMax(Utils.max(max, toBeContained.max()));
 
         return this;
     }
