@@ -6,6 +6,8 @@ package buildcraft.core.statements;
 
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -29,7 +31,8 @@ public class StatementParameterDirection implements IStatementParameter {
     @SideOnly(Side.CLIENT)
     private static TextureAtlasSprite[] sprites;
 
-    public EnumFacing direction = null;
+    @Nullable
+    private EnumFacing direction = null;
 
     @SideOnly(Side.CLIENT)
     public static void registerIcons(TextureMap map) {
@@ -46,36 +49,53 @@ public class StatementParameterDirection implements IStatementParameter {
 
     }
 
+    @Nullable
+    public EnumFacing getDirection() {
+        return direction;
+    }
+
     @Override
     public ItemStack getItemStack() {
         return null;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getIcon() {
-        if (direction == null) {
+        EnumFacing dir = getDirection();
+        if (dir == null) {
             return null;
         } else {
-            return sprites[direction.ordinal()];
+            return sprites[dir.ordinal()];
         }
     }
 
     @Override
     public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        EnumFacing direction = getDirection();
         if (source.getTile() instanceof IPipeTile) {
             for (int i = 0; i < 6; i++) {
-                direction = EnumFacing.VALUES[(direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6];
-                if (((IPipeTile) source.getTile()).isPipeConnected(direction)) {
+                int ord;
+                if (direction == null) {
+                    ord = 0;
+                } else {
+                    ord = direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1);
+                }
+                direction = EnumFacing.VALUES[ord % 6];
+                if (((IPipeTile) source.getTile()).isPipeConnected(getDirection())) {
                     return;
                 }
             }
             direction = null;
         }
+        this.direction = direction;
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setByte("direction", (byte) direction.ordinal());
+        if (direction != null) {
+            nbt.setByte("direction", (byte) direction.ordinal());
+        }
     }
 
     @Override
@@ -91,22 +111,23 @@ public class StatementParameterDirection implements IStatementParameter {
     public boolean equals(Object object) {
         if (object instanceof StatementParameterDirection) {
             StatementParameterDirection param = (StatementParameterDirection) object;
-            return param.direction == this.direction;
+            return param.getDirection() == this.getDirection();
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
-        return Objects.hash(direction);
+        return Objects.hash(getDirection());
     }
 
     @Override
     public String getDescription() {
-        if (direction == null) {
+        EnumFacing dir = getDirection();
+        if (dir == null) {
             return "";
         } else {
-            return BCStringUtils.localize("direction." + direction.name().toLowerCase());
+            return BCStringUtils.localize("direction." + dir.name().toLowerCase());
         }
     }
 
@@ -118,8 +139,9 @@ public class StatementParameterDirection implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         StatementParameterDirection d = new StatementParameterDirection();
-        if (d.direction != null && d.direction.getAxis() != Axis.Y) {
-            d.direction = d.direction.rotateY();
+        EnumFacing dir = d.getDirection();
+        if (dir != null && dir.getAxis() != Axis.Y) {
+            d.direction = dir.rotateY();
         }
         return d;
     }

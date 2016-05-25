@@ -39,4 +39,9 @@ public class RenderLaserTile extends TileEntitySpecialRenderer<TileLaser> {
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
+    
+    @Override
+    public boolean forceTileEntityRender() {
+        return true;
+    }
 }
