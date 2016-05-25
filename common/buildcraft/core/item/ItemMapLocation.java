@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -38,6 +39,8 @@ import buildcraft.robotics.ZonePlan;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation {
+    private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");
+
     public ItemMapLocation(String id) {
         super(id);
         setHasSubtypes(true);
@@ -100,7 +103,7 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
                     int y = first.getY();
                     int z = first.getZ();
 
-                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
                 }
                 break;
             }
@@ -111,9 +114,39 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
     }
 
     @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote) {
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+        if (player.isSneaking()) {
+            return clearMarkerData(stack);
+        }
+        return new ActionResult<>(EnumActionResult.PASS, stack);
+    }
+
+    private static ActionResult<ItemStack> clearMarkerData(ItemStack stack) {
+        if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        for (String key : STORAGE_TAGS) {
+            nbt.removeTag(key);
+        }
+        if (nbt.hasNoTags()) {
+            stack.setTagCompound(null);
+        }
+        MapLocationType.CLEAN.setToStack(stack);
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+    }
+
+    @Override
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         if (world.isRemote) {
             return EnumActionResult.PASS;
+        }
+
+        if (MapLocationType.getFromStack(stack) != MapLocationType.CLEAN) {
+            return EnumActionResult.FAIL;
         }
 
         ItemStack modified = stack;

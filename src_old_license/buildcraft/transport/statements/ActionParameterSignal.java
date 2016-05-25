@@ -7,6 +7,8 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -27,18 +29,25 @@ public class ActionParameterSignal implements IStatementParameter {
     @SideOnly(Side.CLIENT)
     private static TextureAtlasSprite[] icons;
 
-    public PipeWire color = null;
+    @Nullable
+    private PipeWire color = null;
 
     public ActionParameterSignal() {
 
     }
 
+    @Nullable
+    public PipeWire getColor() {
+        return color;
+    }
+
     @Override
     public TextureAtlasSprite getIcon() {
-        if (color == null) {
+        PipeWire colour = getColor();
+        if (colour == null) {
             return null;
         } else {
-            return icons[color.ordinal()];
+            return icons[colour.ordinal()];
         }
     }
 
@@ -48,29 +57,32 @@ public class ActionParameterSignal implements IStatementParameter {
         if (source instanceof Gate) {
             maxColor = ((Gate) source).material.maxWireColor;
         }
+        PipeWire colour = getColor();
 
-        if (color == null) {
-            color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
-        } else if (color == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
-            color = null;
+        if (colour == null) {
+            colour = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
+        } else if (colour == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
+            colour = null;
         } else {
             do {
-                color = PipeWire.values()[(mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1) & 3];
-            } while (color.ordinal() >= maxColor);
+                colour = PipeWire.values()[(mouse.getButton() == 0 ? colour.ordinal() + 1 : colour.ordinal() - 1) & 3];
+            } while (colour.ordinal() >= maxColor);
         }
+        this.color = colour;
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
-        if (color != null) {
-            nbt.setByte("color", (byte) color.ordinal());
+        PipeWire colour = getColor();
+        if (colour != null) {
+            nbt.setByte("color", (byte) colour.ordinal());
         }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("color")) {
-            color = PipeWire.values()[nbt.getByte("color")];
+            this.color = PipeWire.values()[nbt.getByte("color")];
         }
     }
 
@@ -79,7 +91,7 @@ public class ActionParameterSignal implements IStatementParameter {
         if (object instanceof ActionParameterSignal) {
             ActionParameterSignal param = (ActionParameterSignal) object;
 
-            return param.color == color;
+            return param.getColor() == getColor();
         } else {
             return false;
         }
@@ -87,16 +99,18 @@ public class ActionParameterSignal implements IStatementParameter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(color);
+        return Objects.hash(getColor());
     }
 
     @Override
     public String getDescription() {
-        if (color == null) {
+        PipeWire colour = getColor();
+        if (colour == null) {
             return null;
         }
-        return String.format(BCStringUtils.localize("gate.action.pipe.wire"), BCStringUtils.localize("color." + color.name().toLowerCase(
-                Locale.ENGLISH)));
+        String format = BCStringUtils.localize("gate.action.pipe.wire");
+        Object[] args = { BCStringUtils.localize("color." + colour.name().toLowerCase(Locale.ENGLISH)) };
+        return String.format(format, args);
     }
 
     @Override
