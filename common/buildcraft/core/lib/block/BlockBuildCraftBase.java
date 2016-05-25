@@ -287,11 +287,9 @@ public abstract class BlockBuildCraftBase extends Block {
 
             MovingObjectPosition mop = aabb.calculateIntercept(origin, direction);
             if (mop != null) {
-                if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
+                if (closest == null || mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
                     closest = mop;
-                } else {
-                    closest = mop;
-                }
+                } 
             }
         }
         if (closest == null) {
