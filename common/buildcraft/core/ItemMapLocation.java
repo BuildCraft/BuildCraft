@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
@@ -93,6 +94,57 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
+            MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, false);
+            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+                BlockPos pos = movingobjectposition.getBlockPos();
+                ItemStack toChange = stack.stackSize > 1 ? stack.splitStack(1) : stack;
+                TileEntity tile = world.getTileEntity(pos);
+                NBTTagCompound cpt = NBTUtils.getItemData(toChange);
+
+                if (tile instanceof IPathProvider) {
+                    MapLocationType.PATH.setToStack(toChange);
+
+                    NBTTagList pathNBT = new NBTTagList();
+
+                    for (BlockPos index : ((IPathProvider) tile).getPath()) {
+                        pathNBT.appendTag(NBTUtils.writeBlockPos(index));
+                    }
+
+                    cpt.setTag("path", pathNBT);
+                } else if (tile instanceof IAreaProvider) {
+                    MapLocationType.AREA.setToStack(toChange);
+
+                    IAreaProvider areaTile = (IAreaProvider) tile;
+
+                    cpt.setInteger("xMin", areaTile.min().getX());
+                    cpt.setInteger("yMin", areaTile.min().getY());
+                    cpt.setInteger("zMin", areaTile.min().getZ());
+                    cpt.setInteger("xMax", areaTile.max().getX());
+                    cpt.setInteger("yMax", areaTile.max().getY());
+                    cpt.setInteger("zMax", areaTile.max().getZ());
+
+                } else {
+                    MapLocationType.SPOT.setToStack(toChange);
+
+                    cpt.setByte("side", (byte) movingobjectposition.sideHit.getIndex());
+                    cpt.setInteger("x", pos.getX());
+                    cpt.setInteger("y", pos.getY());
+                    cpt.setInteger("z", pos.getZ());
+                }
+                if (toChange != stack && !player.inventory.addItemStackToInventory(toChange)) {
+                    player.dropItem(toChange, false, true);
+                }
+            }
+        } else if (player.isSneaking()) {
+            MapLocationType.CLEAN.setToStack(stack);
+        }
+        return stack;
+    }
+    
+    /*
+    @Override
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
         if (world.isRemote) {
             return false;
@@ -150,7 +202,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
         return true;
     }
-
+*/
     @Override
     public IBox getBox(ItemStack item) {
         MapLocationType type = MapLocationType.getFromStack(item);
