@@ -204,9 +204,7 @@ public class Box implements IBox, ISerializable {
         if (toBeContained == null) {
             return this;
         }
-
-        setMin(toBeContained.min());
-        setMax(toBeContained.max());
+        extendToEncompassBoth(toBeContained.min(), toBeContained.max());
 
         return this;
     }
