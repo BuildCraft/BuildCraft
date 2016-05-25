@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.misc.WorkerThreadUtil;
 import buildcraft.lib.path.task.MiniChunkCalculationData;
-import buildcraft.lib.path.task.TaskMiniChunkFiller;
+import buildcraft.lib.path.task.TaskMiniChunkManager;
 
 public class MiniChunkCache {
     private static Map<Integer, MiniChunkCache> worldCaches = new HashMap<>();
@@ -67,9 +67,9 @@ public class MiniChunkCache {
                 return tempData.get(pos).futureResult;
             }
             MiniChunkCalculationData data = new MiniChunkCalculationData(this, pos);
-            tempData.put(pos, data);
+            tempData.put(pos, data);// FIXME: This uses the wrong data object!
             // Fill the data (from the world) in the thread pool
-            WorkerThreadUtil.executeWorkTask(new TaskMiniChunkFiller(world, data));
+            WorkerThreadUtil.executeWorkTask(new TaskMiniChunkManager(world, pos));
             return data.futureResult;
         }
     }
