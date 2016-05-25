@@ -9,6 +9,7 @@ import java.util.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -127,11 +128,11 @@ public class GuiList extends GuiAdvancedInterface implements IButtonClickEventLi
 
         for (int sy = 0; sy < ListHandler.HEIGHT; sy++) {
             for (int sx = 0; sx < ListHandler.WIDTH; sx++) {
-                slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 33, sy, sx));
+                slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 34, sy, sx));
             }
             int bOff = sy * BUTTON_COUNT;
             int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
-            int bOffY = this.guiTop + 32 + sy * 33 + 18;
+            int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
             buttonList.add(new GuiImageButton(bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
             buttonList.add(new GuiImageButton(bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
@@ -167,6 +168,9 @@ public class GuiList extends GuiAdvancedInterface implements IButtonClickEventLi
         }
 
         drawBackgroundSlots(x, y);
+        
+        GlStateManager.disableBlend();
+        
     }
 
     @Override
