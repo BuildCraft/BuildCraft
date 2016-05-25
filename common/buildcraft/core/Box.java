@@ -205,8 +205,8 @@ public class Box implements IBox, ISerializable {
             return this;
         }
 
-        setMin(toBeContained.min());
-        setMax(toBeContained.max());
+        setMin(Utils.min(min, toBeContained.min()));
+        setMax(Utils.min(max, toBeContained.max()));
 
         return this;
     }
@@ -219,13 +219,13 @@ public class Box implements IBox, ISerializable {
 
     public Box extendToEncompass(Vec3 toBeContained) {
         setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
-        setMin(Utils.min(min, Utils.convertCeiling(toBeContained)));
+        setMax(Utils.max(max, Utils.convertCeiling(toBeContained)));
         return this;
     }
 
     public Box extendToEncompass(BlockPos toBeContained) {
         setMin(Utils.min(min, toBeContained));
-        setMin(Utils.min(min, toBeContained));
+        setMax(Utils.max(max, toBeContained));
         return this;
     }
 
