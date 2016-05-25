@@ -61,7 +61,10 @@ public class BCDebugging {
         if (isAll) {
             BCLog.logger.info("[debugger] Debugging automatically enabled for \"" + string + "\" (" + type + ").");
             return true;
-        } else if (DEBUG_STATUS == DebugStatus.NONE) return false;
+        }
+        if (DEBUG_STATUS == DebugStatus.NONE) {
+            return false;
+        }
         boolean enabled = getRaw(prop);
         if (enabled) {
             BCLog.logger.info("[debugger] Debugging enabled for \"" + string + "\" (" + type + ").");
