@@ -14,10 +14,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
@@ -45,8 +45,10 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     public void addInformation(ItemStack stack, EntityPlayer player, @SuppressWarnings("rawtypes") List list, boolean advanced) {
         @SuppressWarnings("unchecked")
         List<String> strings = list;
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
-
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(stack);
+        if (cpt == null)
+            return;
+        
         if (cpt.hasKey("name")) {
             String name = cpt.getString("name");
             if (name.length() > 0) {
@@ -77,14 +79,14 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 break;
             }
             case PATH: {
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-                BlockPos first = NBTUtils.readBlockPos(pathNBT);
+                NBTTagList pathNBT = cpt.getTagList("path", NBTUtils.DEFAULT_BLOCK_POS_TAG);
+                BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
 
                 int x = first.getX();
                 int y = first.getY();
                 int z = first.getZ();
 
-                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount()-1) + " elements"));
                 break;
             }
             default: {
@@ -96,8 +98,9 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (MapLocationType.getFromStack(stack) == MapLocationType.CLEAN) {
-            MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, false);
-            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+            MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player);
+            if (movingobjectposition != null
+                    && movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
                 BlockPos pos = movingobjectposition.getBlockPos();
                 ItemStack toChange = stack.stackSize > 1 ? stack.splitStack(1) : stack;
                 TileEntity tile = world.getTileEntity(pos);
@@ -138,71 +141,57 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 }
             }
         } else if (player.isSneaking()) {
-            MapLocationType.CLEAN.setToStack(stack);
+            clearMapLocation(stack);
         }
         return stack;
     }
-    
-    /*
-    @Override
-    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
-        if (world.isRemote) {
-            return false;
+
+    protected MovingObjectPosition getMovingObjectPositionFromPlayer(World worldIn, EntityPlayer playerIn) {
+        float f = playerIn.rotationPitch;
+        float f1 = playerIn.rotationYaw;
+        double d0 = playerIn.posX;
+        double d1 = playerIn.posY + (double) playerIn.getEyeHeight();
+        double d2 = playerIn.posZ;
+        Vec3 vec3 = new Vec3(d0, d1, d2);
+        float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
+        float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
+        float f4 = -MathHelper.cos(-f * 0.017453292F);
+        float f5 = MathHelper.sin(-f * 0.017453292F);
+        float f6 = f3 * f4;
+        float f7 = f2 * f4;
+        double d3 = 5.0D;
+        if (playerIn instanceof net.minecraft.entity.player.EntityPlayerMP) {
+            d3 = ((net.minecraft.entity.player.EntityPlayerMP) playerIn).theItemInWorldManager.getBlockReachDistance();
         }
-
-        ItemStack modified = stack;
-
-        if (stack.stackSize > 1) {
-            modified = stack.copy();
-            stack.stackSize--;
-            modified.stackSize = 1;
-        }
-
-        TileEntity tile = world.getTileEntity(pos);
-        NBTTagCompound cpt = NBTUtils.getItemData(modified);
-
-        if (tile instanceof IPathProvider) {
-            MapLocationType.PATH.setToStack(modified);
-
-            NBTTagList pathNBT = new NBTTagList();
-
-            for (BlockPos index : ((IPathProvider) tile).getPath()) {
-                pathNBT.appendTag(NBTUtils.writeBlockPos(index));
-            }
-
-            cpt.setTag("path", pathNBT);
-        } else if (tile instanceof IAreaProvider) {
-            MapLocationType.AREA.setToStack(modified);
-
-            IAreaProvider areaTile = (IAreaProvider) tile;
-
-            cpt.setInteger("xMin", areaTile.min().getX());
-            cpt.setInteger("yMin", areaTile.min().getY());
-            cpt.setInteger("zMin", areaTile.min().getZ());
-            cpt.setInteger("xMax", areaTile.max().getX());
-            cpt.setInteger("yMax", areaTile.max().getY());
-            cpt.setInteger("zMax", areaTile.max().getZ());
-
-        } else {
-            MapLocationType.SPOT.setToStack(modified);
-
-            cpt.setByte("side", (byte) side.getIndex());
-            cpt.setInteger("x", pos.getX());
-            cpt.setInteger("y", pos.getY());
-            cpt.setInteger("z", pos.getZ());
-        }
-
-        if (stack != modified) {
-            if (!player.inventory.addItemStackToInventory(modified)) {
-                player.dropItem(modified, false, true);
-            } else {
-                player.inventoryContainer.detectAndSendChanges();
-            }
-        }
-
-        return true;
+        Vec3 vec31 = vec3.addVector((double) f6 * d3, (double) f5 * d3, (double) f7 * d3);
+        return worldIn.rayTraceBlocks(vec3, vec31, false, false, false);
     }
-*/
+
+    private static void clearMapLocation(ItemStack stack) {
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(stack);
+        // Remove all the tags and not the whole tag compound to allow
+        // enchantments and other things in the tag compound line display names
+        if (cpt != null) {
+            cpt.removeTag("xMin");
+            cpt.removeTag("yMin");
+            cpt.removeTag("zMin");
+            cpt.removeTag("xMax");
+            cpt.removeTag("yMax");
+            cpt.removeTag("zMax");
+            cpt.removeTag("path");
+            cpt.removeTag("side");
+            cpt.removeTag("x");
+            cpt.removeTag("y");
+            cpt.removeTag("z");
+            cpt.removeTag("chunkMapping");
+            cpt.removeTag("name");
+            if (cpt.hasNoTags()) {
+                stack.setTagCompound(null);
+            }
+        }
+        MapLocationType.CLEAN.setToStack(stack);
+    }
+    
     @Override
     public IBox getBox(ItemStack item) {
         MapLocationType type = MapLocationType.getFromStack(item);
@@ -221,7 +210,10 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     public static IBox getAreaBox(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null || MapLocationType.getFromStack(item) != MapLocationType.AREA)
+            return null;
+        
         int xMin = cpt.getInteger("xMin");
         int yMin = cpt.getInteger("yMin");
         int zMin = cpt.getInteger("zMin");
@@ -236,57 +228,50 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
     }
 
     public static IBox getPointBox(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
-        MapLocationType type = MapLocationType.getFromStack(item);
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null || MapLocationType.getFromStack(item) != MapLocationType.SPOT)
+            return null;
+       
+        int x = cpt.getInteger("x");
+        int y = cpt.getInteger("y");
+        int z = cpt.getInteger("z");
 
-        switch (type) {
-            case SPOT: {
-                int x = cpt.getInteger("x");
-                int y = cpt.getInteger("y");
-                int z = cpt.getInteger("z");
+        BlockPos pos = new BlockPos(x, y, z);
 
-                BlockPos pos = new BlockPos(x, y, z);
-
-                return new Box(pos, pos);
-            }
-            default: {
-                return null;
-            }
-        }
+        return new Box(pos, pos);
     }
 
     public static EnumFacing getPointFace(ItemStack stack) {
-        NBTTagCompound cpt = NBTUtils.getItemData(stack);
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(stack);
+        if (cpt == null || MapLocationType.getFromStack(stack) != MapLocationType.SPOT)
+            return null;
+        
         return EnumFacing.VALUES[cpt.getByte("side")];
     }
 
     @Override
     public EnumFacing getPointSide(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
-        MapLocationType type = MapLocationType.getFromStack(item);
-
-        if (type == MapLocationType.SPOT) {
-            return EnumFacing.values()[cpt.getByte("side")];
-        } else {
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null || MapLocationType.getFromStack(item) != MapLocationType.SPOT)
             return null;
-        }
+
+        return EnumFacing.values()[cpt.getByte("side")];
     }
 
     @Override
     public BlockPos getPoint(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
-        MapLocationType type = MapLocationType.getFromStack(item);
-
-        if (type == MapLocationType.SPOT) {
-            return new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
-        } else {
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null || MapLocationType.getFromStack(item) != MapLocationType.SPOT)
             return null;
-        }
+
+        return new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
     }
 
     @Override
     public IZone getZone(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null)
+            return null;
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
             case ZONE: {
@@ -308,14 +293,16 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
     @Override
     public List<BlockPos> getPath(ItemStack item) {
-        NBTTagCompound cpt = NBTUtils.getItemData(item);
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        if (cpt == null)
+            return null;
         MapLocationType type = MapLocationType.getFromStack(item);
         switch (type) {
             case PATH: {
                 List<BlockPos> indexList = new ArrayList<>();
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+                NBTTagList pathNBT = cpt.getTagList("path", NBTUtils.DEFAULT_BLOCK_POS_TAG);
                 for (int i = 0; i < pathNBT.tagCount(); i++) {
-                    indexList.add(NBTUtils.readBlockPos(pathNBT.getCompoundTagAt(i)));
+                    indexList.add(NBTUtils.readBlockPos(pathNBT.get(i)));
                 }
                 return indexList;
             }
@@ -338,7 +325,8 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
     @Override
     public String getName(ItemStack item) {
-        return NBTUtils.getItemData(item).getString("name");
+        NBTTagCompound cpt = NBTUtils.getItemDataOrNull(item);
+        return cpt == null ? "" : cpt.getString("name");
     }
 
     @Override

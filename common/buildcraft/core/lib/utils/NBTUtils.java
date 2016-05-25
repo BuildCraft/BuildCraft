@@ -26,6 +26,8 @@ public final class NBTUtils {
 
     }
 
+    public static final int DEFAULT_BLOCK_POS_TAG = Constants.NBT.TAG_INT_ARRAY;
+    
     public static NBTTagCompound load(byte[] data) {
         try {
             NBTTagCompound nbt = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data));
@@ -47,6 +49,10 @@ public final class NBTUtils {
             stack.setTagCompound(nbt);
         }
         return nbt;
+    }
+    
+    public static NBTTagCompound getItemDataOrNull(ItemStack stack) {
+        return stack == null ? null : stack.getTagCompound();
     }
 
     public static void writeUUID(NBTTagCompound data, String tag, UUID uuid) {
@@ -80,6 +86,7 @@ public final class NBTUtils {
 
     public static NBTBase writeBlockPos(BlockPos pos) {
         if (pos == null) return null;
+        // If changed change DEFAULT_BLOCK_POS_TAG to correct tag
         return new NBTTagIntArray(new int[] { pos.getX(), pos.getY(), pos.getZ() });
     }
 
