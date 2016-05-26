@@ -293,9 +293,9 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
         switch (type) {
             case PATH: {
                 List<BlockPos> indexList = new ArrayList<>();
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+                NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
                 for (int i = 0; i < pathNBT.tagCount(); i++) {
-                    indexList.add(NBTUtils.readBlockPos(pathNBT.getCompoundTagAt(i)));
+                    indexList.add(NBTUtils.readBlockPos(pathNBT.get(i)));
                 }
                 return indexList;
             }

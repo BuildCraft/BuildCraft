@@ -8,15 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
@@ -41,17 +37,14 @@ public class StripesHandlerPipes implements IStripesHandler {
             return false;
         }
 
-        Vec3 p = Utils.convert(pos).add(Utils.convert(direction, -1));
-        BlockPos pi = Utils.convertFloor(p);
-
         Pipe<?> pipe = BlockGenericPipe.createPipe((ItemPipe) stack.getItem());
 
         if (pipe.transport instanceof PipeTransportItems) {
             // Item pipe: request extending on end of tick
-            BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, pi, direction, activator);
+            BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, pos.offset(direction.getOpposite()), direction, activator);
         } else {
             // Non-item pipe: place in front of stripes (item) pipe
-            stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pi).get(), world, pi, EnumFacing.UP, 0, 0, 0);
+            stack.getItem().onItemUse(stack, player, world, pos, direction, 0, 0, 0);
         }
         return true;
     }

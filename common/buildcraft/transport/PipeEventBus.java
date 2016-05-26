@@ -125,7 +125,7 @@ public class PipeEventBus implements IEventBus<PipeEvent> {
             try {
                 eventHandler.method.invoke(eventHandler.owner, event);
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }
