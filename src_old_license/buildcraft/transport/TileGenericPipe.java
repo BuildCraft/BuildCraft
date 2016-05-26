@@ -62,6 +62,7 @@ import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
@@ -1305,20 +1306,21 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        int glassColor = getPipeColor();
+        TileGenericPipe server = CoreProxy.proxy.getServerTile(this);
+        int glassColor = server.getPipeColor();
         if (glassColor >= 0 && glassColor < 16) {
             left.add("");
             left.add("Colour = " + EnumDyeColor.values()[glassColor]);
         }
 
-        if (pipe instanceof IDebuggable) {
-            ((IDebuggable) pipe).getDebugInfo(left, right, side);
+        if (server.pipe instanceof IDebuggable) {
+            ((IDebuggable) server.pipe).getDebugInfo(left, right, side);
         }
-        if (pipe.transport instanceof IDebuggable) {
-            ((IDebuggable) pipe.transport).getDebugInfo(left, right, side);
+        if (server.pipe.transport instanceof IDebuggable) {
+            ((IDebuggable) server.pipe.transport).getDebugInfo(left, right, side);
         }
-        if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
-            ((IDebuggable) getPipePluggable(side)).getDebugInfo(left, right, side);
+        if (server.getPipePluggable(side) != null && server.getPipePluggable(side) instanceof IDebuggable) {
+            ((IDebuggable) server.getPipePluggable(side)).getDebugInfo(left, right, side);
         }
     }
 
