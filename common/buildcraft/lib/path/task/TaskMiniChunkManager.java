@@ -1,6 +1,7 @@
 package buildcraft.lib.path.task;
 
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -11,13 +12,15 @@ import buildcraft.lib.path.MiniChunkGraph;
 public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
     private World world;
     private final BlockPos offset;
+    private final Consumer<MiniChunkGraph> setter;
 
-    public TaskMiniChunkManager(World world, BlockPos offset) {
+    public TaskMiniChunkManager(World world, BlockPos offset, Consumer<MiniChunkGraph> setter) {
         this.world = world;
         this.offset = offset;
+        this.setter = setter;
     }
 
-    public static <T> T execute(Callable<T> callable) throws InterruptedException {
+    private static <T> T execute(Callable<T> callable) throws InterruptedException {
         return WorkerThreadUtil.executeWorkTaskWaiting(callable);
     }
 
@@ -25,9 +28,11 @@ public class TaskMiniChunkManager implements Callable<MiniChunkGraph> {
     public MiniChunkGraph call() throws Exception {
         try {
             FilledChunk filled = execute(new TaskMiniChunkFiller(world, offset));
-            world = null;
-
-            return null;
+            world = null;// We no longer need this. Let the GC remove this if we are holding the last reference to it.
+            AnalysedChunk analysed = execute(new TaskMiniChunkAnalyser(filled));
+            MiniChunkGraph graph = null;
+            setter.accept(graph);
+            return graph;
         } catch (InterruptedException ex) {
             throw ex;
         }

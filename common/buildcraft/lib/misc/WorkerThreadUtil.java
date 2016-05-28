@@ -43,18 +43,14 @@ public class WorkerThreadUtil {
      * gone wrong, and will notify the log that a task took too long. If it goes on for longer than 10s then it will
      * make a big error in the log. */
     public static void executeWorkTask(Runnable task) {
-        TaskRunnable taskMonitor = new TaskRunnable(task);
-        Future<?> future = WORKING_POOL.submit(taskMonitor);
-        if (!future.isDone()) {
-            executeMonitoringTask(new MonitorTask(taskMonitor, future, task.getClass()));
-        }
+        executeWorkTask(new CallableDelegate(task));
     }
 
     /** Executes a task. If this is in debug mode then If this takes longer than 30ms the it assumes that something has
      * gone wrong, and will notify the log that a task took too long. If it goes on for longer than 10s then it will
      * make a big error in the log. */
     public static <T> Future<T> executeWorkTask(Callable<T> task) {
-        TaskCallable<T> taskMonitor = new TaskCallable<>(task);
+        Task<T> taskMonitor = new Task<>(task);
         Future<T> future = WORKING_POOL.submit(taskMonitor);
         if (!future.isDone()) {
             executeMonitoringTask(new MonitorTask(taskMonitor, future, task.getClass()));
@@ -77,6 +73,10 @@ public class WorkerThreadUtil {
         DEPENDANT_WORKING_POOL.execute(task);
     }
 
+    public static <T> Future<T> executeDependantTask(Callable<T> callable) {
+        return DEPENDANT_WORKING_POOL.submit(callable);
+    }
+
     /** Executes a monitoring task. This is ONLY run when this is in debug mode, so ONLY use this for monitoring other
      * tasks. */
     public static void executeMonitoringTask(Runnable task) {
@@ -85,33 +85,27 @@ public class WorkerThreadUtil {
         }
     }
 
-    private static abstract class Task {
-        final CountDownLatch start = new CountDownLatch(1);
-        final CountDownLatch end = new CountDownLatch(1);
-    }
+    private static class CallableDelegate implements Callable<Void> {
+        private final Runnable runnable;
 
-    private static class TaskRunnable extends Task implements Runnable {
-        private final Runnable delegate;
-
-        public TaskRunnable(Runnable delegate) {
-            this.delegate = delegate;
+        public CallableDelegate(Runnable runnable) {
+            this.runnable = runnable;
         }
 
         @Override
-        public void run() {
-            start.countDown();
-            try {
-                delegate.run();
-            } finally {
-                end.countDown();
-            }
+        public Void call() throws Exception {
+            runnable.run();
+            return null;
         }
+
     }
 
-    private static class TaskCallable<T> extends Task implements Callable<T> {
+    private static class Task<T> implements Callable<T> {
+        final CountDownLatch start = new CountDownLatch(1);
+        final CountDownLatch end = new CountDownLatch(1);
         private final Callable<T> delegate;
 
-        public TaskCallable(Callable<T> delegate) {
+        public Task(Callable<T> delegate) {
             this.delegate = delegate;
         }
 

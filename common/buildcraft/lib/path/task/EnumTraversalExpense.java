@@ -1,5 +1,6 @@
 package buildcraft.lib.path.task;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -8,7 +9,8 @@ import net.minecraft.world.World;
 public enum EnumTraversalExpense {
     AIR((byte) 1),
     FLUID((byte) 3),
-    SOLID((byte) 63);
+    /** If you *must* find a path then you can use this, but this isn't included in any of the graphs. */
+    SOLID((byte) -1);
 
     public final byte expense;
 
@@ -28,9 +30,10 @@ public enum EnumTraversalExpense {
         if (mat.isLiquid()) {
             return FLUID;
         }
-        if (mat.blocksMovement()) {
-            return SOLID;
+        Block block = state.getBlock();
+        if (block.isPassable(world, pos)) {
+            return AIR;
         }
-        return AIR;
+        return SOLID;
     }
 }
