@@ -618,6 +618,8 @@ command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
 command.buildcraft.buildcraft.changelog.help=Displays the latest BC changelog.
 command.buildcraft.buildcraft.changelog.format=Format: /%s
 
+buildcraft.item.maplocation.nonclean.usage=Shift-right click to clean
+
 buildcraft.guide.chapter.=EMPTY CHAPTER!
 buildcraft.guide.chapter.block=Blocks
 buildcraft.guide.chapter.item=Items

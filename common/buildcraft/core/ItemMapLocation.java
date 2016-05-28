@@ -16,8 +16,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
@@ -91,6 +89,9 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
             default: {
                 break;
             }
+        }
+        if (type != MapLocationType.CLEAN) {
+            strings.add(BCStringUtils.localize("buildcraft.item.maplocation.nonclean.usage"));
         }
     }
 

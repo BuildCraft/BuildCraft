@@ -246,21 +246,25 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDeb
     public void readData(ByteBuf stream) {
         byte data = stream.readByte();
         blockedSides.clear();
+        int flag = 1;
         for (EnumFacing face : EnumFacing.VALUES) {
-            int offset = face.ordinal();
-            int isBlocked = (data >> offset) % 2;
-            if (isBlocked != 0) blockedSides.add(face);
+            if ((data & flag) == flag) {
+                blockedSides.add(face);
+            }
+            flag <<= 1;
         }
+        worldObj.markBlockRangeForRenderUpdate(pos, pos);
     }
 
     @Override
     public void writeData(ByteBuf stream) {
-        int offset = 0;
+        int flag = 1;
         byte data = 0;
         for (EnumFacing face : EnumFacing.VALUES) {
-            int isBlocked = blockedSides.contains(face) ? 1 : 0;
-            data &= isBlocked << offset;
-            offset++;
+            if (blockedSides.contains(face)) {
+                data |= flag;
+            }
+            flag <<= 1;
         }
         stream.writeByte(data);
     }
@@ -273,7 +277,6 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDeb
 
             rebuildQueue();
             sendNetworkUpdate();
-            worldObj.markBlockRangeForRenderUpdate(pos, pos);
         }
     }
 

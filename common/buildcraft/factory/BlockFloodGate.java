@@ -33,6 +33,8 @@ public class BlockFloodGate extends BlockBuildCraft {
                 if (face == EnumFacing.UP) continue;
                 state = state.withProperty(CONNECTED_MAP.get(face), !floodGate.isSideBlocked(face));
             }
+        } else {
+            state = state.withProperty(CONNECTED_DOWN, false);
         }
         return state;
     }
