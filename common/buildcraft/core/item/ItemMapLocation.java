@@ -21,7 +21,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -110,6 +109,9 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             default: {
                 break;
             }
+        }
+        if (type != MapLocationType.CLEAN) {
+            strings.add(BCStringUtils.localize("buildcraft.item.maplocation.nonclean.usage"));
         }
     }
 
@@ -312,9 +314,9 @@ public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation 
             case PATH:
             case PATH_REPEATING: {
                 List<BlockPos> indexList = new ArrayList<>();
-                NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+                NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
                 for (int i = 0; i < pathNBT.tagCount(); i++) {
-                    indexList.add(NBTUtils.readBlockPos(pathNBT.getCompoundTagAt(i)));
+                    indexList.add(NBTUtils.readBlockPos(pathNBT.get(i)));
                 }
                 return indexList;
             }

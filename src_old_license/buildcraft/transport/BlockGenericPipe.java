@@ -1063,6 +1063,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         if (placed) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileGenericPipe) {
+                tile.setWorldObj(world);// TODO: Remove this when forge pull my PR
                 TileGenericPipe tilePipe = (TileGenericPipe) tile;
                 tilePipe.initialize(pipe);
                 tilePipe.sendNetworkUpdate();
