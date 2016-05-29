@@ -37,6 +37,8 @@ public class BCDebugging {
 
         if (DEBUG_STATUS == DebugStatus.ALL) {
             BCLog.logger.info("[debugger] Debugging automatically enabled for ALL of buildcraft. Prepare for log spam.");
+        } else if (DEBUG_STATUS == DebugStatus.LOGGING_ONLY) {
+            BCLog.logger.info("[debugger] Debugging automatically enabled for some non-spammy parts of buildcraft.");
         } else if (DEBUG_STATUS == DebugStatus.ENABLE) {
             BCLog.logger.info("[debugger] Debugging not automatically enabled for all of buildcraft. Logging all possible debug options.");
             BCLog.logger.info("              To enable it for only logging messages add \"-Dbuildcraft.debug=log\" to your launch VM arguments");

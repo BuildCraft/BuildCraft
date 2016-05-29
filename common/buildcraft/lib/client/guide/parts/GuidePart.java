@@ -15,8 +15,8 @@ import buildcraft.lib.gui.ISimpleDrawable;
 /** Represents a single page, image or crafting recipe for displaying. Only exists on the client. */
 @SideOnly(Side.CLIENT)
 public abstract class GuidePart {
-    public static final int LINE_HEIGHT = 16;
     public static final int INDENT_WIDTH = 16;
+    public static final int LINE_HEIGHT = 17;
 
     /** Stores information about the current rendering position */
     public static class PagePart {
@@ -111,12 +111,10 @@ public abstract class GuidePart {
             throw new IllegalStateException("Was indented too far");
         }
 
-        int allowedLines = height / LINE_HEIGHT;
-
         String toRender = line.text;
         ISimpleDrawable icon = line.startIcon;
         boolean firstLine = true;
-        while (current.line <= allowedLines) {
+        while (current.pixel <= height) {
             if (toRender.length() == 0) {
                 break;
             }
@@ -149,7 +147,7 @@ public abstract class GuidePart {
             boolean render = pageRenderIndex == current.page;
             int stringWidth = fontRenderer.getStringWidth(thisLine);
             int linkX = x + INDENT_WIDTH * line.indent;
-            int linkY = y + current.line * LINE_HEIGHT;
+            int linkY = y + current.pixel;
             int linkXEnd = linkX + stringWidth + 2;
             int linkYEnd = linkY + fontRenderer.getFontHeight() + 2;
             GuiRectangle linkArea = new GuiRectangle(linkX, linkY, stringWidth + 2, fontRenderer.getFontHeight() + 2);
@@ -177,7 +175,7 @@ public abstract class GuidePart {
                     // icon.drawCutInside(iconBox);
                 }
             }
-            current = current.nextLine(1, allowedLines);
+            current = current.nextLine(LINE_HEIGHT, height);
             firstLine = false;
         }
         return current;

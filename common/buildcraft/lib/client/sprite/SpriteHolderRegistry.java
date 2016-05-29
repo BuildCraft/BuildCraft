@@ -7,8 +7,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.BCLog;
-
 public class SpriteHolderRegistry {
     private static final Map<ResourceLocation, SpriteHolder> HOLDER_MAP = new HashMap<>();
 
@@ -26,7 +24,6 @@ public class SpriteHolderRegistry {
     public static void onTextureStitchPre(TextureMap map) {
         for (SpriteHolder holder : HOLDER_MAP.values()) {
             holder.onTextureStitchPre(map);
-            BCLog.logger.info("Stitching " + holder.spriteLocation);
         }
     }
 

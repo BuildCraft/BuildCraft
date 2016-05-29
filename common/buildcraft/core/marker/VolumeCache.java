@@ -18,11 +18,10 @@ import buildcraft.core.BCCoreConfig;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.VolumeCache.SubCacheVolume;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
-import buildcraft.lib.marker.MarkerCache2;
-import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.net.MessageMarker;
 
-public class VolumeCache extends MarkerCache2<SubCacheVolume> {
+public class VolumeCache extends MarkerCache<SubCacheVolume> {
     public static final VolumeCache INSTANCE = new VolumeCache();
 
     private VolumeCache() {
@@ -34,7 +33,7 @@ public class VolumeCache extends MarkerCache2<SubCacheVolume> {
         return new SubCacheVolume(world);
     }
 
-    public class SubCacheVolume extends MarkerCache2.SubCache2<VolumeConnection> {
+    public class SubCacheVolume extends MarkerCache.SubCache<VolumeConnection> {
         public SubCacheVolume(World world) {
             super(world, CACHES.indexOf(INSTANCE));
             // TODO: Load it from the world!
@@ -83,15 +82,7 @@ public class VolumeCache extends MarkerCache2<SubCacheVolume> {
             VolumeConnection existing = getConnection(from);
             Set<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
             if (existing != null) {
-                for (BlockPos other : existing.getMarkerPositions()) {
-                    if (other.equals(from)) {
-                        continue;
-                    }
-                    EnumFacing offset = PositionUtil.getDirectFacingOffset(from, other);
-                    if (offset != null) {
-                        taken.add(offset.getAxis());
-                    }
-                }
+                taken.addAll(existing.getConnectedAxis());
             }
 
             ImmutableList.Builder<BlockPos> valids = ImmutableList.builder();
@@ -125,16 +116,15 @@ public class VolumeCache extends MarkerCache2<SubCacheVolume> {
                         VolumeConnection existing = this.getConnection(p);
                         destroyConnection(existing);
                     }
-                    VolumeConnection con = new VolumeConnection(this);
-                    for (BlockPos p : positions) {
-                        con.addMarker(p);
-                    }
+                    VolumeConnection con = new VolumeConnection(this, positions);
                     addConnection(con);
                 } else { // removing from a connection
                     for (BlockPos p : positions) {
                         VolumeConnection existing = this.getConnection(p);
-                        existing.removeMarker(p);
-                        refreshConnection(existing);
+                        if (existing != null) {
+                            existing.removeMarker(p);
+                            refreshConnection(existing);
+                        }
                     }
                 }
             }

@@ -15,6 +15,7 @@ public class GuideSmelting extends GuidePart {
     public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
     public static final GuiRectangle OUT_POS = new GuiRectangle(59, 19, 16, 16);
     public static final GuiRectangle FURNACE_POS = new GuiRectangle(1, 37, 16, 16);
+    public static final int PIXEL_HEIGHT = 42;
 
     private final ChangingItemStack input, output;
     private final ItemStack furnace;
@@ -28,11 +29,11 @@ public class GuideSmelting extends GuidePart {
 
     @Override
     public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
-        if (current.line + 4 > height / LINE_HEIGHT) {
+        if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
         x += OFFSET.x;
-        y += OFFSET.y + current.line * LINE_HEIGHT;
+        y += OFFSET.y + current.pixel;
         if (current.page == index) {
             SMELTING_ICON.drawAt(x, y);
             // Render the item
@@ -57,7 +58,7 @@ public class GuideSmelting extends GuidePart {
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
         }
-        current = current.nextLine(4, height / LINE_HEIGHT);
+        current = current.nextLine(PIXEL_HEIGHT, height);
         return current;
     }
 

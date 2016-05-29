@@ -166,7 +166,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public NBTTagCompound getUpdateTag() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
         MessageUtil.doDelayed(() -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
-        return null;
+        return super.getUpdateTag();
     }
 
     @Override

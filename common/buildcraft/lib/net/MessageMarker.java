@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.marker.MarkerCache2;
+import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
 import io.netty.buffer.ByteBuf;
@@ -86,13 +86,13 @@ public class MessageMarker implements IMessage {
                 }
                 return;
             }
-            if (message.cacheId < 0 || message.cacheId >= MarkerCache2.CACHES.size()) {
+            if (message.cacheId < 0 || message.cacheId >= MarkerCache.CACHES.size()) {
                 if (DEBUG) {
                     BCLog.logger.warn("[lib.messages][marker] The cache ID " + message.cacheId + " was invalid!");
                 }
                 return;
             }
-            MarkerCache2<?> cache = MarkerCache2.CACHES.get(message.cacheId);
+            MarkerCache<?> cache = MarkerCache.CACHES.get(message.cacheId);
             cache.getSubCache(world).handleMessageMain(message);
         }
     }

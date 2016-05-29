@@ -11,11 +11,13 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
@@ -23,7 +25,7 @@ import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.item.ItemManager;
 
-public abstract class LibProxy {
+public abstract class LibProxy implements IGuiHandler {
     @SidedProxy
     private static LibProxy proxy;
 
@@ -64,13 +66,23 @@ public abstract class LibProxy {
         return tile;
     }
 
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        return null;
+    }
+
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends LibProxy {
         @Override
         public void postRegisterItem(ItemBuildCraft_BC8 item) {
             item.postRegisterClient();
         }
-        
+
         @Override
         void fmlPreInit() {
             super.fmlPreInit();
@@ -128,6 +140,11 @@ public abstract class LibProxy {
                 }
             }
             return tile;
+        }
+
+        @Override
+        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+            return new GuiGuide();
         }
     }
 

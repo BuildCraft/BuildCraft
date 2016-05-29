@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
 public enum CoreGuis {
-    GUIDE,
     LIST;
 
     public void openGUI(EntityPlayer player) {

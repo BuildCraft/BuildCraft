@@ -12,10 +12,11 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.VolumeCache;
+import buildcraft.lib.BCLibItems;
 import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.RegistryHelper;
-import buildcraft.lib.marker.MarkerCache2;
+import buildcraft.lib.marker.MarkerCache;
 
 //@formatter:off
 @Mod(modid = BuildCraftCore.MODID,
@@ -30,6 +31,10 @@ public class BuildCraftCore {
 
     @Mod.Instance(MODID)
     public static BuildCraftCore INSTANCE = null;
+    
+    static {
+        BCLibItems.enableGuide();
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
@@ -65,7 +70,7 @@ public class BuildCraftCore {
         BCCoreRecipes.init();
         BCAchievements.init();
 
-        MarkerCache2.registerCache(VolumeCache.INSTANCE);
+        MarkerCache.registerCache(VolumeCache.INSTANCE);
         // MarkerCache2.registerCache(PathCache.INSTANCE);
     }
 

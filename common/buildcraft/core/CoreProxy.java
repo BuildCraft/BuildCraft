@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -11,9 +12,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
+import buildcraft.core.client.render.RenderMarkerVolume;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
-import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.guide.GuideManager;
 
 public abstract class CoreProxy implements IGuiHandler {
@@ -52,9 +54,7 @@ public abstract class CoreProxy implements IGuiHandler {
     public static class ClientProxy extends CoreProxy {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-            if (ID == CoreGuis.GUIDE.ordinal()) {
-                return new GuiGuide();
-            } else if (ID == CoreGuis.LIST.ordinal()) {
+            if (ID == CoreGuis.LIST.ordinal()) {
                 return new GuiList(player);
             }
             return null;
@@ -65,14 +65,11 @@ public abstract class CoreProxy implements IGuiHandler {
             super.fmlPreInit();
 
             BuildCraftLaserManager.fmlPreInit();
-
-            // DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderMarkerVolume.INSTANCE);
-            // DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderMarkerPath.INSTANCE);
         }
 
         @Override
         public void fmlInit() {
-            // ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
+            ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
             // ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerPath.class, RenderMarkerPath.INSTANCE);
 
             MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);

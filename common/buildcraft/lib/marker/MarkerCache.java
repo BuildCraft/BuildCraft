@@ -18,24 +18,24 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
-import buildcraft.lib.marker.MarkerCache2.SubCache2;
+import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;
 
-public abstract class MarkerCache2<S extends SubCache2<?>> {
+public abstract class MarkerCache<S extends SubCache<?>> {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markers");
-    public static final List<MarkerCache2<?>> CACHES = new ArrayList<>();
+    public static final List<MarkerCache<?>> CACHES = new ArrayList<>();
 
     public final String name;
 
     private final Map<Integer, S> cacheClient = new HashMap<>();
     private final Map<Integer, S> cacheServer = new HashMap<>();
 
-    public MarkerCache2(String name) {
+    public MarkerCache(String name) {
         this.name = name;
     }
 
-    public static void registerCache(MarkerCache2<?> cache) {
+    public static void registerCache(MarkerCache<?> cache) {
         if (Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
             throw new IllegalStateException("Registered too late!");
         }
@@ -53,7 +53,7 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
         if (DEBUG) {
             BCLog.logger.info("[lib.markers] Sorted list of cache types:");
             for (int i = 0; i < CACHES.size(); i++) {
-                final MarkerCache2<?> cache = CACHES.get(i);
+                final MarkerCache<?> cache = CACHES.get(i);
                 BCLog.logger.info("  " + i + " = " + cache.name);
             }
             BCLog.logger.info("[lib.markers] Total of " + CACHES.size() + " cache types");
@@ -61,7 +61,7 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
     }
 
     public static void onPlayerJoinWorld(EntityPlayerMP player) {
-        for (MarkerCache2<?> cache : CACHES) {
+        for (MarkerCache<?> cache : CACHES) {
             World world = player.worldObj;
             cache.getSubCache(world).onPlayerJoinWorld(player);
         }
@@ -83,7 +83,7 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
 
     // TODO: World loading and unloading
 
-    public static abstract class SubCache2<C extends MarkerConnection2<C>> {
+    public static abstract class SubCache<C extends MarkerConnection<C>> {
         public final int cacheId;
         public final int dimensionId;
         public final boolean isServer;
@@ -91,7 +91,7 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
         private final Map<C, Set<BlockPos>> connectionToPos = new IdentityHashMap<>();
         private final Map<BlockPos, TileMarker<C>> tileCache = new HashMap<>();
 
-        public SubCache2(World world, int cacheId) {
+        public SubCache(World world, int cacheId) {
             this.isServer = !world.isRemote;
             this.dimensionId = world.provider.getDimension();
             this.cacheId = cacheId;
@@ -153,6 +153,11 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
 
         public void removeMarker(BlockPos pos) {
             tileCache.remove(pos);
+            C connection = getConnection(pos);
+            if (connection != null) {
+                connection.removeMarker(pos);
+                refreshConnection(connection);
+            }
             if (isServer) {
                 MessageMarker message = new MessageMarker();
                 message.add = false;
@@ -162,10 +167,6 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
                 message.count = 1;
                 message.positions.add(pos);
                 BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
-            }
-            C connection = getConnection(pos);
-            if (connection != null) {
-                connection.removeMarker(pos);
             }
         }
 
@@ -261,7 +262,9 @@ public abstract class MarkerCache2<S extends SubCache2<?>> {
                 List<BlockPos> positions = message.positions;
                 if (message.add) {
                     for (BlockPos p : positions) {
-                        loadMarker(p, null);
+                        if (!hasLoadedOrUnloadedMarker(p)) {
+                            loadMarker(p, null);
+                        }
                     }
                 } else {
                     for (BlockPos p : positions) {

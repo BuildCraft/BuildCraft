@@ -205,7 +205,7 @@ public class TagManager {
         registerTag("item.gear.diamond").reg("gear_diamond").locale("diamondGearItem").oreDict("gearDiamond").oldReg("diamondGearItem").model("gears/diamond");
         registerTag("item.list").reg("list").locale("list").oldReg("listItem").model("list_");
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
-        registerTag("item.guide").reg("guide").locale("guide").model("guide");
+        registerTag("item.guide").reg("guide").locale("guide").model("guide").tab("vanilla.misc");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
         // BC Core ItemBlocks

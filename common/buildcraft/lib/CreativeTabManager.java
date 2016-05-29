@@ -11,6 +11,12 @@ public class CreativeTabManager {
     private static final Map<String, CreativeTabBC> tabMap = new HashMap<>();
 
     public static CreativeTabs getTab(String name) {
+        if (name.startsWith("vanilla.")) {
+            String after = name.substring("vanilla.".length());
+            if ("misc".equals(after)) {
+                return CreativeTabs.MISC;
+            }
+        }
         if (tabMap.containsKey(name)) {
             return tabMap.get(name);
         } else {

@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import buildcraft.api.BCBlocks;
+import buildcraft.api.BCItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
@@ -17,34 +19,48 @@ import buildcraft.lib.misc.ColourUtil;
 
 public class BCCoreRecipes {
     public static void init() {
-        if (BCCoreItems.wrench != null) {
-            ItemStack out = new ItemStack(BCCoreItems.wrench);
+        if (BCItems.CORE_WRENCH != null) {
+            ItemStack out = new ItemStack(BCItems.CORE_WRENCH);
             Object[] in = { "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone" };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCCoreBlocks.markerVolume != null) {
-            ItemStack out = new ItemStack(BCCoreBlocks.markerVolume);
+        if (BCBlocks.CORE_MARKER_VOLUME != null) {
+            ItemStack out = new ItemStack(BCBlocks.CORE_MARKER_VOLUME);
             ItemStack lapisLazuli = new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage());
             Object[] in = { "l", "t", 'l', lapisLazuli, 't', Blocks.REDSTONE_TORCH };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCCoreBlocks.markerPath != null) {
-            ItemStack out = new ItemStack(BCCoreBlocks.markerPath);
+        if (BCBlocks.CORE_MARKER_PATH != null) {
+            ItemStack out = new ItemStack(BCBlocks.CORE_MARKER_PATH);
             ItemStack cactusGreen = new ItemStack(Items.DYE, 1, EnumDyeColor.GREEN.getDyeDamage());
             Object[] in = { "g", "t", 'g', cactusGreen, 't', Blocks.REDSTONE_TORCH };
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
-        if (BCCoreItems.paintbrush != null) {
+        if (BCItems.CORE_MARKER_CONNECTOR != null) {
+            ItemStack out = new ItemStack(BCItems.CORE_MARKER_CONNECTOR);
+            Item wrench;
+            if (BCItems.CORE_WRENCH != null) wrench = BCItems.CORE_WRENCH;
+            else wrench = Items.IRON_INGOT;
+
+            Item gear;
+            if (BCItems.CORE_GEAR_WOOD != null) gear = BCItems.CORE_GEAR_WOOD;
+            else gear = Items.STICK;
+
+            Object[] in = { "r", "g", "w", 'r', Blocks.REDSTONE_TORCH, 'g', gear, 'w', wrench };
+            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
+        }
+
+        if (BCItems.CORE_PAINTBRUSH != null) {
+            ItemStack cleanPaintbrush = new ItemStack(BCItems.CORE_PAINTBRUSH);
             Object[] input = { " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.WOOL, 1, 0), 'i', Items.STRING };
-            ItemStack cleanPaintbrush = new ItemStack(BCCoreItems.paintbrush);
             GameRegistry.addRecipe(new ShapedOreRecipe(cleanPaintbrush, input));
 
             for (EnumDyeColor colour : EnumDyeColor.values()) {
                 ItemPaintbrush_BC8.Brush brush = BCCoreItems.paintbrush.new Brush(colour);
-                ItemStack out = brush.save(null);
+                ItemStack out = brush.save();
                 GameRegistry.addRecipe(new ShapelessOreRecipe(out, cleanPaintbrush, ColourUtil.getDyeName(colour)));
             }
         }

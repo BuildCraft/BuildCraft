@@ -8,14 +8,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.lib.marker.MarkerCache2;
-import buildcraft.lib.marker.MarkerCache2.SubCache2;
-import buildcraft.lib.marker.MarkerConnection2;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerCache.SubCache;
+import buildcraft.lib.marker.MarkerConnection;
 
-public abstract class TileMarker<C extends MarkerConnection2<C>> extends TileBC_Neptune implements IDebuggable {
-    public abstract MarkerCache2<? extends SubCache2<C>> getCache();
+public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_Neptune implements IDebuggable {
+    public abstract MarkerCache<? extends SubCache<C>> getCache();
 
-    public SubCache2<C> getLocalCache() {
+    public SubCache<C> getLocalCache() {
         return getCache().getSubCache(worldObj);
     }
 
@@ -43,13 +43,11 @@ public abstract class TileMarker<C extends MarkerConnection2<C>> extends TileBC_
     public void invalidate() {
         super.invalidate();
         getLocalCache().removeMarker(getPos());
-        disconnectFromOthers();
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
-        disconnectFromOthers();
         getLocalCache().removeMarker(getPos());
     }
 

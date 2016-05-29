@@ -1,4 +1,4 @@
-package buildcraft.core.lib;
+package buildcraft.lib.misc;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -13,56 +13,42 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.config.DetailedConfigOption;
 
 public class DebuggingTools {
-    public static final DetailedConfigOption OPTION_PRINT_RENDER_UPDATES = new DetailedConfigOption("debug.tool.render.update", "false");
+    public static final boolean ENABLE = BCDebugging.shouldDebugComplex("lib.debug.world");
 
-    public static void init() {
-        EventHook hook = new EventHook();
-        boolean use = false;
-        if (OPTION_PRINT_RENDER_UPDATES.getAsBoolean()) {
-            hook.renderUpdate = true;
-            use = true;
-        }
-        if (use) {
-            MinecraftForge.EVENT_BUS.register(hook);
+    public static void fmlInit() {
+        if (ENABLE) {
+            MinecraftForge.EVENT_BUS.register(new EventHook());
         }
     }
 
     private static class EventHook {
-        private boolean renderUpdate;
-
         @SubscribeEvent
         public void worldLoadEvent(WorldEvent.Load load) {
-            load.getWorld().addEventListener(new WorldListener(this));
+            load.getWorld().addEventListener(new WorldListener());
         }
     }
 
     private static class WorldListener implements IWorldEventListener {
-        private final boolean renderUpdate;
-
-        public WorldListener(EventHook hook) {
-            this.renderUpdate = hook.renderUpdate;
-        }
+        public WorldListener() {}
 
         @Override
         public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {
-            if (renderUpdate) {
-                StackTraceElement[] elements = new Throwable().getStackTrace();
-                String[] bc = new String[elements.length];
-                int bcIndex = 0;
-                for (int i = 1; i < elements.length; i++) {
-                    StackTraceElement ste = elements[i];
-                    if (!ste.getClassName().startsWith("buildcraft")) continue;
-                    bc[bcIndex++] = ste.getClassName() + " # " + ste.getMethodName() + " : " + ste.getLineNumber();
-                }
-                if (bcIndex > 0) {
-                    BCLog.logger.info("markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
-                    for (int i = 0; i < bcIndex; i++) {
-                        BCLog.logger.info("  at " + bc[i]);
-                    }
+            StackTraceElement[] elements = new Throwable().getStackTrace();
+            String[] bc = new String[elements.length];
+            int bcIndex = 0;
+            for (int i = 1; i < elements.length; i++) {
+                StackTraceElement ste = elements[i];
+                if (!ste.getClassName().startsWith("buildcraft")) continue;
+                bc[bcIndex++] = ste.getClassName() + " # " + ste.getMethodName() + " : " + ste.getLineNumber();
+            }
+            if (bcIndex > 0) {
+                BCLog.logger.info("[lib.debug.world] markBlockRangeForRenderUpdate(" + x1 + ", " + y1 + ", " + z1 + ", " + x2 + ", " + y2 + ", " + z2 + ")");
+                for (int i = 0; i < bcIndex; i++) {
+                    BCLog.logger.info("[lib.debug.world]   at " + bc[i]);
                 }
             }
         }

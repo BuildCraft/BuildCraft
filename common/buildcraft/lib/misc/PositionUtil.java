@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -48,14 +47,6 @@ public class PositionUtil {
         boolean z = diff.getZ() == 1 || diff.getZ() == -1;
         if (y && z) return false;
         return x != z;
-    }
-
-    public static double dot(Vec3d a, Vec3d b) {
-        return a.xCoord * b.xCoord + a.yCoord * b.yCoord + a.zCoord * b.zCoord;
-    }
-
-    public static Vec3d scale(Vec3d vec, double scale) {
-        return new Vec3d(vec.xCoord * scale, vec.yCoord * scale, vec.zCoord * scale);
     }
 
     public static LineSkewResult findLineSkewPoint(Line line, Vec3d start, Vec3d direction) {
@@ -103,8 +94,8 @@ public class PositionUtil {
 
         // Its maths. Its allowed to deviate from normal naming rules.
         Vec3d p2_minus_p1 = p2.subtract(p1);
-        double _dot_v = dot(p2_minus_p1, v);
-        Vec3d _scale_v = scale(v, _dot_v);
+        double _dot_v = VecUtil.dot(p2_minus_p1, v);
+        Vec3d _scale_v = VecUtil.scale(v, _dot_v);
         return p1.add(_scale_v);
     }
 
@@ -117,18 +108,11 @@ public class PositionUtil {
         }
 
         public static Line createLongLine(Vec3d start, Vec3d direction) {
-            return new Line(start, scale(direction, 1024));
+            return new Line(start, VecUtil.scale(direction, 1024));
         }
 
         public Vec3d interpolate(double interp) {
-            return scale(start, 1 - interp).add(scale(end, interp));
+            return VecUtil.scale(start, 1 - interp).add(VecUtil.scale(end, interp));
         }
-    }
-
-    public static EnumFacing getFacing(Axis axis, boolean positive) {
-        if (axis == Axis.X) return positive ? EnumFacing.EAST : EnumFacing.WEST;
-        if (axis == Axis.Y) return positive ? EnumFacing.UP : EnumFacing.DOWN;
-        if (axis == Axis.Z) return positive ? EnumFacing.SOUTH : EnumFacing.NORTH;
-        return null;
     }
 }

@@ -261,12 +261,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
         if (stack != null) {
             FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
             if (liquid == null && heat > MIN_HEAT * 2) {
-                final ItemStack stackOne = stack.copy();
-                stackOne.stackSize = 1;
-                ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(stackOne));
-                if (coolant != null) {
-                    liquid = coolant.getFluidFromSolidCoolant(stackOne);
-                }
+                final ItemStack stackOne = stack.copy();//Prototik
+                stackOne.stackSize = 1;//Prototik
+                ISolidCoolant coolant = BuildcraftFuelRegistry.coolant.getSolidCoolant(StackKey.stack(stackOne));//Prototik
+                if (coolant != null) {//Prototik
+                    liquid = coolant.getFluidFromSolidCoolant(stackOne);//Prototik
+                }//Prototik
             }
 
             if (liquid != null) {

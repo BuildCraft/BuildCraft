@@ -12,8 +12,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class MiniChunkGraph {
+import buildcraft.lib.path.task.TaskMiniChunkAnalyser;
 
+public class MiniChunkGraph {
     public enum ChunkType {
         COMPLETLY_FREE,
         SINGLE_GRAPH,

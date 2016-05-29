@@ -1,12 +1,12 @@
 package buildcraft.lib.client.guide.parts;
 
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
 
 public class GuideImage extends GuidePart {
+    public static final int PIXEL_HEIGHT = 42;
     final ResourceLocation location;
     final GuiIcon icon, fullPicture;
     final int imageWidth, imageHeight;
@@ -47,12 +47,12 @@ public class GuideImage extends GuidePart {
 
     @Override
     public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
-        if (height - current.line * LINE_HEIGHT < this.height) {
+        if (height - current.pixel < this.height) {
             current = current.nextPage();
         }
         if (index == current.page) {
-            icon.drawScaledInside(x, y + current.line * LINE_HEIGHT, this.width, this.height);
+            icon.drawScaledInside(x, y + current.pixel, this.width, this.height);
         }
-        return current.nextLine(MathHelper.floor_double(this.height / (double) LINE_HEIGHT) + 1, height / LINE_HEIGHT);
+        return current.nextLine(this.height + 1, height);
     }
 }

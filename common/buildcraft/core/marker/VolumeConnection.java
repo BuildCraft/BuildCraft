@@ -1,6 +1,7 @@
 package buildcraft.core.marker;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,10 +20,11 @@ import buildcraft.core.marker.VolumeCache.SubCacheVolume;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
-import buildcraft.lib.marker.MarkerConnection2;
+import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.VecUtil;
 
-public class VolumeConnection extends MarkerConnection2<VolumeConnection> {
+public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
     private static final LaserType LASER_TYPE = BuildCraftLaserManager.MARKER_VOLUME_CONNECTED;
     private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
@@ -57,9 +59,19 @@ public class VolumeConnection extends MarkerConnection2<VolumeConnection> {
         super(subCache);
     }
 
+    public VolumeConnection(SubCacheVolume subCache, Collection<BlockPos> positions) {
+        super(subCache);
+        makup.addAll(positions);
+        createBox();
+    }
+
     @Override
     public void removeMarker(BlockPos pos) {
         makup.remove(pos);
+        if (makup.size() < 2) {
+            // This connection will be removed by the sub-cache
+            makup.clear();
+        }
         createBox();
     }
 
@@ -74,23 +86,61 @@ public class VolumeConnection extends MarkerConnection2<VolumeConnection> {
     }
 
     public boolean canAddMarker(BlockPos to) {
+        Set<Axis> taken = getConnectedAxis();
         for (BlockPos from : makup) {
-
+            EnumFacing direct = PositionUtil.getDirectFacingOffset(from, to);
+            if (direct != null && !taken.contains(direct.getAxis())) {
+                return true;
+            }
         }
-        // Check validity
-        return true;
+        return false;
     }
 
     public boolean mergeWith(VolumeConnection other) {
         if (canMergeWith(other)) {
-            // Merge
+            makup.addAll(other.makup);
+            other.makup.clear();
+            createBox();
+            subCache.refreshConnection(other);
+            subCache.refreshConnection(this);
+            return true;
         }
         return false;
     }
 
     public boolean canMergeWith(VolumeConnection other) {
-        // Check validity
+        EnumSet<Axis> us = getConnectedAxis();
+        EnumSet<Axis> them = other.getConnectedAxis();
+        if (us.size() != 1 || them.size() != 1) {
+            return false;
+        }
+        if (us.equals(them)) {
+            return false;
+        }
+        Set<Axis> blacklisted = EnumSet.copyOf(us);
+        blacklisted.addAll(them);
+        for (BlockPos from : makup) {
+            for (BlockPos to : other.makup) {
+                EnumFacing offset = PositionUtil.getDirectFacingOffset(from, to);
+                if (offset != null && !blacklisted.contains(offset.getAxis())) {
+                    return true;
+                }
+            }
+        }
         return false;
+    }
+
+    public EnumSet<Axis> getConnectedAxis() {
+        EnumSet<Axis> taken = EnumSet.noneOf(EnumFacing.Axis.class);
+        for (BlockPos a : getMarkerPositions()) {
+            for (BlockPos b : getMarkerPositions()) {
+                EnumFacing offset = PositionUtil.getDirectFacingOffset(a, b);
+                if (offset != null) {
+                    taken.add(offset.getAxis());
+                }
+            }
+        }
+        return taken;
     }
 
     @Override
@@ -178,8 +228,8 @@ public class VolumeConnection extends MarkerConnection2<VolumeConnection> {
     }
 
     private static void renderLaser(Vec3d min, Vec3d max, Axis axis) {
-        EnumFacing faceForMin = PositionUtil.getFacing(axis, true);
-        EnumFacing faceForMax = PositionUtil.getFacing(axis, false);
+        EnumFacing faceForMin = VecUtil.getFacing(axis, true);
+        EnumFacing faceForMax = VecUtil.getFacing(axis, false);
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, RENDER_SCALE);

@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.marker.MarkerCache2;
+import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
 public enum LibEventDistributor {
@@ -30,7 +30,7 @@ public enum LibEventDistributor {
         Entity entity = event.getEntity();
         if (entity instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) entity;
-            MarkerCache2.onPlayerJoinWorld(playerMP);
+            MarkerCache.onPlayerJoinWorld(playerMP);
         }
     }
 

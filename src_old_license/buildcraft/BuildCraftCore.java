@@ -78,7 +78,6 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.item.ItemMapLocation;
-import buildcraft.core.lib.DebuggingTools;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
@@ -109,6 +108,7 @@ import buildcraft.core.tablet.manager.TabletManagerServer;
 import buildcraft.lib.AchievementPageManager;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.list.*;
+import buildcraft.lib.misc.DebuggingTools;
 
 //@Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
 //        dependencies = "required-after:Forge@[11.15.1.1764,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",

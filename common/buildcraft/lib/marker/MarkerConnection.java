@@ -11,18 +11,18 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.marker.MarkerCache2.SubCache2;
+import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.tile.TileMarker;
 
-public abstract class MarkerConnection2<C extends MarkerConnection2<C>> {
-    public final SubCache2<C> subCache;
+public abstract class MarkerConnection<C extends MarkerConnection<C>> {
+    public final SubCache<C> subCache;
 
-    public MarkerConnection2(SubCache2<C> subCache) {
+    public MarkerConnection(SubCache<C> subCache) {
         this.subCache = subCache;
     }
 
     /** Removes the specified marker from this connection. This should be called via
-     * {@link SubCache2#removeMarker(BlockPos)}. This may need to remove itself and split itself up (if the resulting
+     * {@link SubCache#removeMarker(BlockPos)}. This may need to remove itself and split itself up (if the resulting
      * connection is invalid). */
     public abstract void removeMarker(BlockPos pos);
 

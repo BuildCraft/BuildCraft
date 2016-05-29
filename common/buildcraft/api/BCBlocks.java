@@ -15,6 +15,8 @@ public class BCBlocks {
     // BC Core
     public static final Block coreDecorated;
     public static final Block coreEngineRedstone;
+    public static final Block CORE_MARKER_VOLUME;
+    public static final Block CORE_MARKER_PATH;
 
     // BC Builders
 
@@ -38,6 +40,8 @@ public class BCBlocks {
         String core = "core";
         coreDecorated = getRegisteredBlock(core, "decorated");
         coreEngineRedstone = getRegisteredBlock(core, "engine_redstone");
+        CORE_MARKER_VOLUME = getRegisteredBlock(core, "marker_volume");
+        CORE_MARKER_PATH = getRegisteredBlock(core, "marker_path");
 
         String energy = "energy";
         energyEngineStirling = getRegisteredBlock(energy, "engine_stirling");
@@ -48,7 +52,7 @@ public class BCBlocks {
     private static Block getRegisteredBlock(String module, String regName) {
         String modid = "buildcraft" + module;
         Block block = Block.REGISTRY.getObject(new ResourceLocation(modid, regName));
-        if (block != null) {
+        if (block != Blocks.AIR) {
             return block;
         }
         if (Loader.isModLoaded(modid)) {

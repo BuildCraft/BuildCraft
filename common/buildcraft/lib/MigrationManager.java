@@ -30,7 +30,7 @@ public enum MigrationManager {
 
     public void addBlockMigration(Block to, String... oldNames) {
         // If we mistakenly try to migrate null then it must have been disabled.
-        if (to == null || Block.REGISTRY.getNameForObject(to) == null) return;
+        if (to == null) return;
         for (String old : oldNames) {
             String oldLowerCase = old.toLowerCase(Locale.ROOT);
             if (blockMigrations.containsKey(oldLowerCase)) throw new IllegalArgumentException("Already registered block migration \"" + oldLowerCase + "\"!");

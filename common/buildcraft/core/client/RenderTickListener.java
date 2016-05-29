@@ -46,9 +46,9 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
-import buildcraft.lib.marker.MarkerCache2;
-import buildcraft.lib.marker.MarkerCache2.SubCache2;
-import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerCache.SubCache;
+import buildcraft.lib.misc.VecUtil;
 
 public enum RenderTickListener {
     INSTANCE;
@@ -241,7 +241,7 @@ public enum RenderTickListener {
     private static void renderMarkerConnector(WorldClient world, EntityPlayer player, float partialTicks) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("marker");
-        for (MarkerCache2<?> cache : MarkerCache2.CACHES) {
+        for (MarkerCache<?> cache : MarkerCache.CACHES) {
             profiler.startSection(cache.name);
             renderMarkerCache(player, cache.getSubCache(world));
             profiler.endSection();
@@ -249,7 +249,7 @@ public enum RenderTickListener {
         profiler.endSection();
     }
 
-    private static void renderMarkerCache(EntityPlayer player, SubCache2<?> cache) {
+    private static void renderMarkerCache(EntityPlayer player, SubCache<?> cache) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
         Set<LaserData_BC8> toRender = new HashSet<>();
@@ -265,8 +265,8 @@ public enum RenderTickListener {
 
                 Vec3d startToEnd = end.subtract(start).normalize();
                 Vec3d endToStart = start.subtract(end).normalize();
-                start = start.add(PositionUtil.scale(startToEnd, 0.125));
-                end = end.add(PositionUtil.scale(endToStart, 0.125));
+                start = start.add(VecUtil.scale(startToEnd, 0.125));
+                end = end.add(VecUtil.scale(endToStart, 0.125));
 
                 LaserType laserType = cache.getPossibleLaserType();
                 if (laserType == null || isLookingAt(a, b, player)) {

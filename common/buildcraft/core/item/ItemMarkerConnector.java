@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
-import buildcraft.lib.marker.MarkerCache2;
-import buildcraft.lib.marker.MarkerCache2.SubCache2;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
@@ -27,7 +27,7 @@ public class ItemMarkerConnector extends ItemBuildCraft_BC8 {
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         EnumActionResult result = EnumActionResult.PASS;
         if (!world.isRemote) {
-            for (MarkerCache2<?> cache : MarkerCache2.CACHES) {
+            for (MarkerCache<?> cache : MarkerCache.CACHES) {
                 if (interactCache(cache.getSubCache(world), player)) {
                     result = EnumActionResult.SUCCESS;
                     player.swingArm(hand);
@@ -38,7 +38,7 @@ public class ItemMarkerConnector extends ItemBuildCraft_BC8 {
         return ActionResult.newResult(result, stack);
     }
 
-    private static <S extends SubCache2<?>> boolean interactCache(S cache, EntityPlayer player) {
+    private static <S extends SubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
         MarkerLineInteraction best = null;
         Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d playerLook = player.getLookVec();

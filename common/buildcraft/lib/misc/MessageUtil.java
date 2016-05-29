@@ -25,7 +25,6 @@ public class MessageUtil {
 
     public static void doDelayed(Runnable task) {
         DELAYED_TASKS.add(task);
-        task.run();// FIXME!
     }
 
     public static void postOrPreTick() {

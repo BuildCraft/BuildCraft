@@ -13,6 +13,7 @@ public class GuideCrafting extends GuidePart {
     public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width, CRAFTING_GRID.height);
+    public static final int PIXEL_HEIGHT = 42;
 
     static {
         for (int x = 0; x < 3; x++) {
@@ -39,11 +40,11 @@ public class GuideCrafting extends GuidePart {
 
     @Override
     public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
-        if (current.line + 4 > height / LINE_HEIGHT) {
+        if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
         x += OFFSET.x;
-        y += OFFSET.y + current.line * LINE_HEIGHT;
+        y += OFFSET.y + current.pixel;
         if (current.page == index) {
             CRAFTING_GRID.drawAt(x, y);
             // Render the item
@@ -69,7 +70,7 @@ public class GuideCrafting extends GuidePart {
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
         }
-        current = current.nextLine(4, height / LINE_HEIGHT);
+        current = current.nextLine(PIXEL_HEIGHT, height);
         return current;
     }
 }

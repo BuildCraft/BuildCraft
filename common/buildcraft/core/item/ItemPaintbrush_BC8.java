@@ -137,6 +137,10 @@ public class ItemPaintbrush_BC8 extends ItemBuildCraft_BC8 {
             }
         }
 
+        public ItemStack save() {
+            return save(null);
+        }
+
         public ItemStack save(ItemStack existing) {
             ItemStack stack = existing;
             if (existing == null || existing.getMetadata() != getMeta()) {
