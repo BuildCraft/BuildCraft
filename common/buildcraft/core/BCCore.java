@@ -12,26 +12,26 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.marker.VolumeCache;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
-import buildcraft.lib.BuildCraftLib;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.marker.MarkerCache;
 
 //@formatter:off
-@Mod(modid = BuildCraftCore.MODID,
-        name = "BuildCraft Core",
-        version = BuildCraftLib.VERSION,
-        acceptedMinecraftVersions = "[1.9.4]",
-        dependencies = "required-after:buildcraftlib",
-        guiFactory = "buildcraft.core.config.ConfigManager")
+@Mod(modid = BCCore.MODID,
+     name = "BuildCraft Core",
+     version = BCLib.VERSION,
+     acceptedMinecraftVersions = "[1.9.4]",
+     dependencies = "required-after:buildcraftlib",
+     guiFactory = "buildcraft.core.config.ConfigManager")
 //@formatter:on
-public class BuildCraftCore {
+public class BCCore {
     public static final String MODID = "buildcraftcore";
 
     @Mod.Instance(MODID)
-    public static BuildCraftCore INSTANCE = null;
-    
+    public static BCCore INSTANCE = null;
+
     static {
         BCLibItems.enableGuide();
     }
@@ -39,7 +39,7 @@ public class BuildCraftCore {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         BCLog.logger.info("");
-        BCLog.logger.info("Starting BuildCraft " + BuildCraftLib.VERSION);
+        BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");

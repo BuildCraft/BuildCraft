@@ -7,10 +7,10 @@ public enum CoreGuis {
     LIST;
 
     public void openGUI(EntityPlayer player) {
-        player.openGui(BuildCraftCore.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
+        player.openGui(BCCore.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
     }
 
     public void openGUI(EntityPlayer player, BlockPos pos) {
-        player.openGui(BuildCraftCore.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+        player.openGui(BCCore.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 }

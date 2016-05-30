@@ -7,7 +7,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-import buildcraft.lib.BuildCraftLib;
+import buildcraft.lib.BCLib;
 
 public class ItemGuide extends ItemBuildCraft_BC8 {
     public ItemGuide(String id) {
@@ -17,7 +17,7 @@ public class ItemGuide extends ItemBuildCraft_BC8 {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        player.openGui(BuildCraftLib.INSTANCE, 0, world, 0, 0, 0);
+        player.openGui(BCLib.INSTANCE, 0, world, 0, 0, 0);
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 }

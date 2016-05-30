@@ -9,10 +9,10 @@ public enum BuildersGuis {
     LIBRARY;
 
     public void openGUI(EntityPlayer player) {
-        player.openGui(BuildCraftBuilders.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
+        player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
     }
 
     public void openGUI(EntityPlayer player, BlockPos pos) {
-        player.openGui(BuildCraftBuilders.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+        player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 }

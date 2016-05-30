@@ -5,20 +5,20 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import buildcraft.core.BuildCraftCore;
-import buildcraft.lib.BuildCraftLib;
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
-public class BuildCraftEnergy {
+@Mod(modid = BCEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+public class BCEnergy {
     public static final String MODID = "buildcraftenergy";
 
     @Mod.Instance(MODID)
-    public static BuildCraftEnergy INSTANCE;
+    public static BCEnergy INSTANCE;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BuildCraftCore.MODID);
+        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
         // BCEnergyItems.preInit();
         BCEnergyBlocks.preInit();
     }

@@ -17,18 +17,18 @@ import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
 
 //@formatter:off
-@Mod(modid = BuildCraftLib.MODID,
-      name = "BuildCraft Lib",
-      version = BuildCraftLib.VERSION,
-      acceptedMinecraftVersions = "[1.9.4]",
-      dependencies = "required-after:Forge@[12.17.0.1909,)")
+@Mod(modid = BCLib.MODID,
+     name = "BuildCraft Lib",
+     version = BCLib.VERSION,
+     acceptedMinecraftVersions = "[1.9.4]",
+     dependencies = "required-after:Forge@[12.17.0.1909,)")
 //@formatter:on
-public class BuildCraftLib {
+public class BCLib {
     public static final String MODID = "buildcraftlib";
     public static final String VERSION = "@VERSION@";
 
     @Instance(MODID)
-    public static BuildCraftLib INSTANCE;
+    public static BCLib INSTANCE;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {

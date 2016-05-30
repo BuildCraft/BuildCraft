@@ -6,20 +6,20 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.BuildCraftCore;
-import buildcraft.lib.BuildCraftLib;
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftFactory.MODID, name = "BuildCraft Factory", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
-public class BuildCraftFactory {
+@Mod(modid = BCFactory.MODID, name = "BuildCraft Factory", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+public class BCFactory {
     public static final String MODID = "buildcraftfactory";
 
     @Mod.Instance(MODID)
-    public static BuildCraftFactory INSTANCE = null;
+    public static BCFactory INSTANCE = null;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BuildCraftCore.MODID);
+        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCFactoryItems.preInit();
         BCFactoryBlocks.preInit();

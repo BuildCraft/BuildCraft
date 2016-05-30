@@ -6,21 +6,21 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.BuildCraftCore;
-import buildcraft.lib.BuildCraftLib;
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
 import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.RegistryHelper;
 
-@Mod(modid = BuildCraftTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BuildCraftLib.VERSION)
-public class BuildCraftTransport {
+@Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
+public class BCTransport {
     public static final String MODID = "buildcrafttransport";
 
     @Mod.Instance(MODID)
-    public static BuildCraftTransport INSTANCE = null;
+    public static BCTransport INSTANCE = null;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
-        RegistryHelper.useOtherModConfigFor(MODID, BuildCraftCore.MODID);
+        RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         CreativeTabManager.createTab("buildcraft.pipe");
 

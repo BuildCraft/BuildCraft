@@ -55,9 +55,7 @@ public class BCItems {
     public static final Item TRANSPORT_PLUGGABLE_LENS;
     public static final Item TRANSPORT_PLUGGABLE_POWER_ADAPTOR;
     public static final Item TRANSPORT_PLUGGABLE_FACADE;
-    // TODO: Pipes
 
-    // Initialiser
     static {
         if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
             throw new RuntimeException("Accessed BC items too early! You can only use them from init onwards!");
