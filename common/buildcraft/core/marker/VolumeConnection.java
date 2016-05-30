@@ -18,7 +18,6 @@ import buildcraft.core.Box;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.VolumeCache.SubCacheVolume;
 import buildcraft.lib.client.render.LaserData_BC8;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.misc.PositionUtil;
@@ -26,7 +25,6 @@ import buildcraft.lib.misc.VecUtil;
 
 public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private static final double RENDER_SCALE = 1 / 16.05;
-    private static final LaserType LASER_TYPE = BuildCraftLaserManager.MARKER_VOLUME_CONNECTED;
     private static final Vec3d VEC_HALF = new Vec3d(0.5, 0.5, 0.5);
 
     private final Set<BlockPos> makup = new HashSet<>();
@@ -227,15 +225,17 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     private static void renderLaser(Vec3d min, Vec3d max, Axis axis) {
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);
         EnumFacing faceForMax = VecUtil.getFacing(axis, false);
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
-        LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, RENDER_SCALE);
+        LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, one, two, RENDER_SCALE);
         LaserRenderer_BC8.renderLaser(data);
     }
 
+    @SideOnly(Side.CLIENT)
     private static Vec3d offset(Vec3d vec, EnumFacing face) {
         double by = 1 / 16.0;
         if (face == EnumFacing.DOWN) {

@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.lib.block.BlockMarkerBase;
+import buildcraft.lib.misc.PermissionUtil;
 
 public class BlockMarkerPath extends BlockMarkerBase {
     public BlockMarkerPath(Material material, String id) {
@@ -29,7 +30,9 @@ public class BlockMarkerPath extends BlockMarkerBase {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileMarkerPath) {
                 TileMarkerPath marker = (TileMarkerPath) tile;
-                marker.reverseDirection();
+                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, marker.getPermBlock())) {
+                    marker.reverseDirection();
+                }
             }
         }
         return true;

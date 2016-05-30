@@ -18,7 +18,7 @@ import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.misc.PermissionUtil;
-import buildcraft.lib.misc.PermissionUtil.UsedObject;
+import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.tile.TileMarker;
 
@@ -146,12 +146,12 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     public void onManualConnectionAttempt(EntityPlayer player) {
-        if (PermissionUtil.hasPermission(player, new UsedObject(getOwner(), getPos()))) {
+        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(getOwner(), getPos()))) {
             SubCache<VolumeConnection> cache = this.getLocalCache();
             for (BlockPos other : cache.getValidConnections(getPos())) {
                 TileMarkerVolume tile = (TileMarkerVolume) cache.getMarker(other);
                 if (tile == null) continue;
-                if (PermissionUtil.hasPermission(player, new UsedObject(tile.getOwner(), other))) {
+                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(tile.getOwner(), other))) {
                     cache.tryConnect(getPos(), other);
                 }
             }

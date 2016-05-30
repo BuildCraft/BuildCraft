@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
+import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
@@ -71,7 +72,7 @@ public class BCCore {
         BCAchievements.init();
 
         MarkerCache.registerCache(VolumeCache.INSTANCE);
-        // MarkerCache2.registerCache(PathCache.INSTANCE);
+        MarkerCache.registerCache(PathCache.INSTANCE);
     }
 
     @Mod.EventHandler

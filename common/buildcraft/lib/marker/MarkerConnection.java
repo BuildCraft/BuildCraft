@@ -1,9 +1,6 @@
 package buildcraft.lib.marker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -35,8 +32,11 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     public void getDebugInfo(BlockPos caller, List<String> left) {
         left.add("");
         left.add("Connections:");
-        List<BlockPos> list = new ArrayList<>(getMarkerPositions());
-        Collections.sort(list);
+        Collection<BlockPos> positions = getMarkerPositions();
+        List<BlockPos> list = new ArrayList<>(positions);
+        if (positions instanceof Set) {
+            Collections.sort(list);
+        }
         for (BlockPos pos : list) {
             TileMarker<C> marker = subCache.getMarker(pos);
             String s = " - " + pos + " [";

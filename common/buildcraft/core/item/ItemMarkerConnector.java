@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.marker.MarkerCache;
@@ -51,7 +50,13 @@ public class ItemMarkerConnector extends ItemBuildCraft_BC8 {
             }
         }
         if (best != null) {
-            return cache.tryConnect(best.marker1, best.marker2);
+            if (cache.tryConnect(best.marker1, best.marker2)) {
+                return true;
+            } else if (cache.tryConnect(best.marker2, best.marker1)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         return false;
     }

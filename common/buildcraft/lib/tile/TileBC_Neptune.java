@@ -29,7 +29,7 @@ import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
-import buildcraft.lib.misc.PermissionUtil.UsedObject;
+import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
@@ -111,11 +111,16 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) > 64.0D) {
             return false;
         }
-        return PermissionUtil.hasPermission(player, new UsedObject(getOwner(), getPos()));
+        // edit rather than view because you can normally change the contents from gui interaction
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock());
     }
 
     public PlayerOwner getOwner() {
         return owner;
+    }
+
+    public PermissionUtil.PermissionBlock getPermBlock() {
+        return new PermissionBlock(getOwner(), getPos());
     }
 
     // ##################

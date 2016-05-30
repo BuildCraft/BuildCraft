@@ -108,7 +108,7 @@ public abstract class MarkerCache<S extends SubCache<?>> {
                     message.positions.addAll(tileCache.keySet());
                     message.count = message.positions.size();
                     message.multiple = message.count > 1;
-                    BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+                    BCMessageHandler.netWrapper.sendTo(message, player);
                 }
                 // Send ALL connections.
                 for (C connection : connectionToPos.keySet()) {
@@ -119,7 +119,7 @@ public abstract class MarkerCache<S extends SubCache<?>> {
                     message.positions.addAll(connection.getMarkerPositions());
                     message.count = message.positions.size();
                     message.multiple = message.count > 1;
-                    BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
+                    BCMessageHandler.netWrapper.sendTo(message, player);
                 }
             }
         }
@@ -232,7 +232,7 @@ public abstract class MarkerCache<S extends SubCache<?>> {
                 message.add = true;
                 message.connection = true;
                 message.cacheId = cacheId;
-                message.positions.addAll(lastSeen);
+                message.positions.addAll(connection.getMarkerPositions());
                 message.count = message.positions.size();
                 message.multiple = message.count > 1;
                 BCMessageHandler.netWrapper.sendToDimension(message, dimensionId);
