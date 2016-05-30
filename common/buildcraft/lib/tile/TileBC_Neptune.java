@@ -28,9 +28,15 @@ import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.PermissionUtil;
+import buildcraft.lib.misc.PermissionUtil.UsedObject;
 import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.lib.permission.PlayerOwner;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver {
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
@@ -47,6 +53,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
+    private PlayerOwner owner;
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int netId;
@@ -101,7 +108,14 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (worldObj.getTileEntity(getPos()) != this) {
             return false;
         }
-        return player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) <= 64.0D;
+        if (player.getDistanceSq(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D) > 64.0D) {
+            return false;
+        }
+        return PermissionUtil.hasPermission(player, new UsedObject(getOwner(), getPos()));
+    }
+
+    public PlayerOwner getOwner() {
+        return owner;
     }
 
     // ##################
@@ -165,8 +179,25 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public NBTTagCompound getUpdateTag() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
-        MessageUtil.doDelayed(() -> MessageUtil.sendToAllWatching(worldObj, getPos(), message));
-        return super.getUpdateTag();
+        ByteBuf buf = Unpooled.buffer();
+        message.toBytes(buf);
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.readBytes(bytes);
+        NBTTagCompound nbt = super.getUpdateTag();
+        nbt.setByteArray("d", bytes);
+        return nbt;
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        byte[] bytes = tag.getByteArray("d");
+        ByteBuf buf = Unpooled.copiedBuffer(bytes);
+        try {
+            receivePayload(worldObj.isRemote ? Side.CLIENT : Side.SERVER, new PacketBuffer(buf));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
