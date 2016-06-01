@@ -14,11 +14,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.marker.PathCache.SubCachePath;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
-import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.marker.MarkerConnection;
+import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.VecUtil;
 
 public class PathConnection extends MarkerConnection<PathConnection> {
@@ -27,26 +26,19 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     private final Deque<BlockPos> positions = new LinkedList<>();
     private boolean loop = false;
 
-    public static boolean tryCreateConnection(SubCachePath subCache, BlockPos from, BlockPos to) {
-        if (canCreateConnection(subCache, from, to)) {
-            PathConnection connection = new PathConnection(subCache);
-            connection.positions.add(from);
-            connection.positions.add(to);
-            subCache.addConnection(connection);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean canCreateConnection(SubCachePath subCache, BlockPos from, BlockPos to) {
+    public static boolean tryCreateConnection(PathSubCache subCache, BlockPos from, BlockPos to) {
+        PathConnection connection = new PathConnection(subCache);
+        connection.positions.add(from);
+        connection.positions.add(to);
+        subCache.addConnection(connection);
         return true;
     }
 
-    public PathConnection(SubCache<PathConnection> subCache) {
+    public PathConnection(MarkerSubCache<PathConnection> subCache) {
         super(subCache);
     }
 
-    public PathConnection(SubCachePath subCache, List<BlockPos> positions) {
+    public PathConnection(PathSubCache subCache, List<BlockPos> positions) {
         super(subCache);
         for (BlockPos p : positions) {
             if (p.equals(this.positions.peekFirst())) {
@@ -195,7 +187,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
 
     @Override
     public ImmutableList<BlockPos> getMarkerPositions() {
-        if (loop) {
+        if (loop && positions.size() > 0) {
             ImmutableList.Builder<BlockPos> list = ImmutableList.builder();
             list.addAll(positions);
             list.add(positions.getFirst());

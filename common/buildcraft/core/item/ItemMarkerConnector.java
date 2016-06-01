@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.item.ItemBuildCraft_BC8;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerCache.SubCache;
+import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
@@ -37,7 +37,7 @@ public class ItemMarkerConnector extends ItemBuildCraft_BC8 {
         return ActionResult.newResult(result, stack);
     }
 
-    private static <S extends SubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
+    private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
         MarkerLineInteraction best = null;
         Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d playerLook = player.getLookVec();

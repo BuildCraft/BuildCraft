@@ -48,13 +48,13 @@ public class MessageMarker implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        // TODO: Add debug lines for the packet state!
+        count = positions.size();
+        multiple = count != 1;
         PacketBuffer packet = new PacketBuffer(buf);
         boolean[] flags = { add, multiple, connection };
         MessageUtil.writeBooleanArray(packet, flags);
         packet.writeShort(cacheId);
         if (multiple) packet.writeShort(count);
-        else count = 1;
         for (int i = 0; i < count; i++) {
             packet.writeBlockPos(positions.get(i));
         }

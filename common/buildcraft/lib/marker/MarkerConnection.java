@@ -2,24 +2,25 @@ package buildcraft.lib.marker;
 
 import java.util.*;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.tile.TileMarker;
 
 public abstract class MarkerConnection<C extends MarkerConnection<C>> {
-    public final SubCache<C> subCache;
+    public final MarkerSubCache<C> subCache;
 
-    public MarkerConnection(SubCache<C> subCache) {
+    public MarkerConnection(MarkerSubCache<C> subCache) {
         this.subCache = subCache;
     }
 
     /** Removes the specified marker from this connection. This should be called via
-     * {@link SubCache#removeMarker(BlockPos)}. This may need to remove itself and split itself up (if the resulting
+     * {@link MarkerSubCache#removeMarker(BlockPos)}. This may need to remove itself and split itself up (if the resulting
      * connection is invalid). */
     public abstract void removeMarker(BlockPos pos);
 
@@ -57,7 +58,7 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
     }
 
     @SideOnly(Side.CLIENT)
-    protected String getTypeInfo(BlockPos pos, TileMarker<C> value) {
+    protected String getTypeInfo(BlockPos pos, @Nullable TileMarker<C> value) {
         return "";
     }
 }

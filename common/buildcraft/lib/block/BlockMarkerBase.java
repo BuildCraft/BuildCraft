@@ -3,6 +3,7 @@ package buildcraft.lib.block;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -113,6 +114,17 @@ public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICu
     @Override
     public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
         return world.isSideSolid(pos.offset(side.getOpposite()), side);
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+        if (state.getBlock() != this) {
+            return;
+        }
+        EnumFacing sideOn = state.getValue(BuildCraftProperties.BLOCK_FACING_6);
+        if (!canPlaceBlockOnSide(world, pos, sideOn)) {
+            world.destroyBlock(pos, true);
+        }
     }
 
     @Override

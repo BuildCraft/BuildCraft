@@ -3,6 +3,7 @@ package buildcraft.api.bpt;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -24,7 +25,7 @@ public abstract class SchematicBlock extends Schematic {
     public SchematicBlock(NBTTagCompound nbt, BlockPos offset) throws SchematicException {
         String regName = nbt.getString("block");
         this.block = Block.REGISTRY.getObject(new ResourceLocation(regName));
-        if (block == null) {
+        if (block == Blocks.AIR && !"minecraft:air".equals(regName)) {
             throw new SchematicException("Unknown block name " + regName);
         }
         if (nbt.hasKey("state")) {

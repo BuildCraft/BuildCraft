@@ -9,13 +9,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerCache.SubCache;
 import buildcraft.lib.marker.MarkerConnection;
+import buildcraft.lib.marker.MarkerSubCache;
 
 public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_Neptune implements IDebuggable {
-    public abstract MarkerCache<? extends SubCache<C>> getCache();
+    public abstract MarkerCache<? extends MarkerSubCache<C>> getCache();
 
-    public SubCache<C> getLocalCache() {
+    public MarkerSubCache<C> getLocalCache() {
         return getCache().getSubCache(worldObj);
     }
 

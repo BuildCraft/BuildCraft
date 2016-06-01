@@ -16,7 +16,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.Box;
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.core.marker.VolumeCache.SubCacheVolume;
 import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerConnection;
@@ -30,7 +29,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
     private final Set<BlockPos> makup = new HashSet<>();
     private final Box box = new Box();
 
-    public static boolean tryCreateConnection(SubCacheVolume subCache, BlockPos from, BlockPos to) {
+    public static boolean tryCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
         if (canCreateConnection(subCache, from, to)) {
             VolumeConnection connection = new VolumeConnection(subCache);
             connection.makup.add(from);
@@ -42,7 +41,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         return false;
     }
 
-    public static boolean canCreateConnection(SubCacheVolume subCache, BlockPos from, BlockPos to) {
+    public static boolean canCreateConnection(VolumeSubCache subCache, BlockPos from, BlockPos to) {
         EnumFacing directOffset = PositionUtil.getDirectFacingOffset(from, to);
         if (directOffset == null) return false;
         for (int i = 1; i < BCCoreConfig.markerMaxDistance; i++) {
@@ -53,11 +52,11 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         return false;
     }
 
-    public VolumeConnection(SubCacheVolume subCache) {
+    public VolumeConnection(VolumeSubCache subCache) {
         super(subCache);
     }
 
-    public VolumeConnection(SubCacheVolume subCache, Collection<BlockPos> positions) {
+    public VolumeConnection(VolumeSubCache subCache, Collection<BlockPos> positions) {
         super(subCache);
         makup.addAll(positions);
         createBox();

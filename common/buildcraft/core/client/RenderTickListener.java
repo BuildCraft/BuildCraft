@@ -47,7 +47,7 @@ import buildcraft.lib.client.render.LaserData_BC8;
 import buildcraft.lib.client.render.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerCache.SubCache;
+import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.VecUtil;
 
 public enum RenderTickListener {
@@ -249,7 +249,7 @@ public enum RenderTickListener {
         profiler.endSection();
     }
 
-    private static void renderMarkerCache(EntityPlayer player, SubCache<?> cache) {
+    private static void renderMarkerCache(EntityPlayer player, MarkerSubCache<?> cache) {
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("compute");
         Set<LaserData_BC8> toRender = new HashSet<>();

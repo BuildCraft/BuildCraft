@@ -1,7 +1,6 @@
 package buildcraft.api.bpt;
 
 import net.minecraft.block.Block;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3i;
 
