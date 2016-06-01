@@ -45,10 +45,9 @@ public class PathCache extends MarkerCache<SubCachePath> {
                 if (conTo == null) {
                     return conFrom.addMarker(from, to);
                 } else {
-
+                    return conFrom.mergeWith(conTo, from, to);
                 }
             }
-            return false;
         }
 
         @Override
@@ -65,10 +64,9 @@ public class PathCache extends MarkerCache<SubCachePath> {
                 if (conTo == null) {
                     return conFrom.canAddMarker(from, to);
                 } else {
-
+                    return conFrom.canMergeWith(conTo, from, to);
                 }
             }
-            return false;
         }
 
         @Override

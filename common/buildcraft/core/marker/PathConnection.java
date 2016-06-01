@@ -49,7 +49,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     public PathConnection(SubCachePath subCache, List<BlockPos> positions) {
         super(subCache);
         for (BlockPos p : positions) {
-            if (p.equals(this.positions.peekLast())) {
+            if (p.equals(this.positions.peekFirst())) {
                 loop = true;
                 break;
             } else {
@@ -62,11 +62,13 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     public void removeMarker(BlockPos pos) {
         if (positions.getFirst().equals(pos)) {
             positions.removeFirst();
+            loop = false;
             if (positions.size() < 2) {
                 positions.clear();
             }
         } else if (positions.getLast().equals(pos)) {
             positions.removeLast();
+            loop = false;
             if (positions.size() < 2) {
                 positions.clear();
             }
@@ -142,6 +144,50 @@ public class PathConnection extends MarkerConnection<PathConnection> {
             } else {
                 return true;
             }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean mergeWith(PathConnection conTo, BlockPos from, BlockPos to) {
+        if (loop || conTo.loop) {
+            return false;
+        } else if (conTo == this) {
+            if (positions.size() <= 2) {
+                return false;
+            }
+            if (positions.getFirst().equals(to) && positions.getLast().equals(from)) {
+                loop = true;
+                subCache.refreshConnection(this);
+                return true;
+            } else {
+                return false;
+            }
+        } else if (positions.getLast().equals(from) && conTo.positions.getFirst().equals(to)) {
+            positions.addAll(conTo.positions);
+            conTo.positions.clear();
+            subCache.refreshConnection(conTo);
+            subCache.refreshConnection(this);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean canMergeWith(PathConnection conTo, BlockPos from, BlockPos to) {
+        if (loop || conTo.loop) {
+            return false;
+        } else if (conTo == this) {
+            if (positions.size() <= 2) {
+                return false;
+            }
+            if (positions.getFirst().equals(to) && positions.getLast().equals(from)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (positions.getLast().equals(from) && conTo.positions.getFirst().equals(to)) {
+            return true;
         } else {
             return false;
         }
