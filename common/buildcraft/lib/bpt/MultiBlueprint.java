@@ -56,8 +56,7 @@ public class MultiBlueprint<B extends BlueprintBase> implements INBTSerializable
         NBTTagList list = nbt.getTagList("", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < blueprints.length; i++) {
             NBTTagCompound inside = list.getCompoundTagAt(i);
-            blueprints[i] = null;
-            blueprints[i].deserializeNBT(inside);
+            blueprints[i] = loader.apply(inside);
         }
     }
 }

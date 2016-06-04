@@ -130,19 +130,21 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     // ##################
 
     /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
-    public void redrawBlock() {
-        if (hasWorldObj()) worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+    public final void redrawBlock() {
+        if (hasWorldObj()) {
+            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+        }
     }
 
     /** Sends a network update update of the specified ID. */
-    public void sendNetworkUpdate(int id) {
+    public final void sendNetworkUpdate(int id) {
         if (hasWorldObj()) {
             MessageUpdateTile message = createNetworkUpdate(id);
             MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
         }
     }
 
-    public void sendNetworkUpdate(int id, EntityPlayer target) {
+    public final void sendNetworkUpdate(int id, EntityPlayer target) {
         if (hasWorldObj() && target instanceof EntityPlayerMP) {
             MessageUpdateTile message = createNetworkUpdate(id);
             MessageUtil.getWrapper().sendTo(message, (EntityPlayerMP) target);

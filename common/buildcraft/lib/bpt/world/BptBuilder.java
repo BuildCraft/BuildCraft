@@ -1,5 +1,5 @@
 package buildcraft.lib.bpt.world;
 
-public class BptWriter {
+public class BptBuilder {
 
 }

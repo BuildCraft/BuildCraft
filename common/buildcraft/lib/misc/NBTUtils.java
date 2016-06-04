@@ -7,8 +7,13 @@ package buildcraft.lib.misc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.UUID;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.nbt.NBTBase.NBTPrimitive;
@@ -19,6 +24,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.data.LoadingException;
 
 public final class NBTUtils {
     /** Deactivate constructor */
@@ -255,5 +261,55 @@ public final class NBTUtils {
             }
         }
         return arr;
+    }
+
+    public static NBTTagCompound writeEntireBlockState(IBlockState state) {
+        if (state == null || state == Blocks.AIR.getDefaultState()) {
+            return new NBTTagCompound();
+        }
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString("block", state.getBlock().getRegistryName().toString());
+        nbt.setTag("state", writeBlockStateProperties(state));
+        return nbt;
+    }
+
+    public static IBlockState readEntireBlockState(NBTTagCompound nbt) throws LoadingException {
+        if (nbt.hasNoTags()) {
+            return Blocks.AIR.getDefaultState();
+        }
+        Block block = Block.getBlockFromName(nbt.getString("block"));
+        if (block == null || block == Blocks.AIR) {
+            throw new LoadingException("Unknown block " + nbt.getString("block"));
+        }
+        return readBlockStateProperties(block.getDefaultState(), nbt.getCompoundTag("state"));
+    }
+
+    public static NBTTagCompound writeBlockStateProperties(IBlockState state) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (IProperty<?> prop : state.getPropertyNames()) {
+            nbt.setString(prop.getName().toLowerCase(Locale.ROOT), getPropName(state, prop));
+        }
+        return nbt;
+    }
+
+    private static <V extends Comparable<V>> String getPropName(IBlockState state, IProperty<V> prop) {
+        return prop.getName(state.getValue(prop)).toLowerCase(Locale.ROOT);
+    }
+
+    public static IBlockState readBlockStateProperties(IBlockState state, NBTTagCompound nbt) {
+        for (IProperty<?> prop : state.getPropertyNames()) {
+            state = updateState(state, prop, nbt.getString(prop.getName().toLowerCase(Locale.ROOT)));
+        }
+        return state;
+    }
+
+    private static <V extends Comparable<V>> IBlockState updateState(IBlockState state, IProperty<V> prop, String string) {
+        for (V val : prop.getAllowedValues()) {
+            if (prop.getName(val).equalsIgnoreCase(string)) {
+                return state.withProperty(prop, val);
+            }
+        }
+        BCLog.logger.warn("[lib.nbt] Failed to read the state property " + string + " as " + prop);
+        return state;
     }
 }

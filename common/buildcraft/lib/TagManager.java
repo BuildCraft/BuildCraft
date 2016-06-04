@@ -226,6 +226,8 @@ public class TagManager {
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// builders
+        // BC Builders Items
+        registerTag("item.schematic.single").reg("schematic_single").locale("schematicSingle").model("schematic_single");
         // BC Builders Item Blocks
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");

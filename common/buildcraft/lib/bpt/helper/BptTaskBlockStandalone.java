@@ -1,42 +1,42 @@
 package buildcraft.lib.bpt.helper;
 
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBptTaskDeserializer;
 import buildcraft.api.bpt.IBuilder;
-import buildcraft.api.bpt.IBuilder.IRequestedStack;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BptTaskBlockStandalone extends BptTaskSimple {
-    public static final ResourceLocation ID = new ResourceLocation("buildcraftapi:bpt_block_standalone");
-    private final IBuilder builder;
+    public static final ResourceLocation ID = new ResourceLocation("buildcraftlib:bpt_block_standalone");
     private final BlockPos pos;
     private final IBlockState state;
 
-    public static BptTaskBlockStandalone create(IBuilder builder, BlockPos offset, IBlockState state) {
-        return new BptTaskBlockStandalone(builder, offset, state);
+    public static BptTaskBlockStandalone create(BlockPos pos, IBlockState state) {
+        return new BptTaskBlockStandalone(pos, state);
     }
 
-    public BptTaskBlockStandalone(IBuilder builder, BlockPos offset, IBlockState state) {
+    public BptTaskBlockStandalone(BlockPos pos, IBlockState state) {
         super(500);
-        this.builder = builder;
-        this.pos = builder.getPos().add(offset);
+        this.pos = pos;
         this.state = state;
     }
 
-    public BptTaskBlockStandalone(NBTTagCompound nbt, IBuilder builder) {
+    public BptTaskBlockStandalone(NBTTagCompound nbt) {
         super(nbt.getCompoundTag("super"));
-        this.builder = builder;
         int[] pos = nbt.getIntArray("pos");
         this.pos = new BlockPos(pos[0], pos[1], pos[2]);
         Block block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
-        int meta = nbt.getInteger("meta");
-        state = block.getStateFromMeta(meta);
+        IBlockState state = block.getDefaultState();
+        this.state = NBTUtils.readBlockStateProperties(state, nbt.getCompoundTag("state"));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BptTaskBlockStandalone extends BptTaskSimple {
         nbt.setTag("super", super.serializeNBT());
         nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
         nbt.setString("block", state.getBlock().getRegistryName().toString());
-        nbt.setInteger("meta", state.getBlock().getMetaFromState(state));
+        nbt.setTag("state", NBTUtils.writeBlockStateProperties(state));
         return nbt;
     }
 
@@ -55,27 +55,18 @@ public class BptTaskBlockStandalone extends BptTaskSimple {
     }
 
     @Override
-    public boolean isReady() {
-        return builder.getWorld().isAirBlock(pos);
+    public Set<EnumFacing> getRequiredSolidFaces(IBuilder builder) {
+        return ImmutableSet.of();
     }
 
     @Override
-    public boolean isDone() {
+    public boolean isDone(IBuilder builder) {
         return builder.getWorld().getBlockState(pos) == state;
     }
 
     @Override
-    protected void onReceiveFullPower() {
-        int time = builder.startBlockBuilding(new Vec3d(pos), state, 0);
+    protected void onReceiveFullPower(IBuilder builder) {
+        int time = builder.startBlockAnimation(new Vec3d(pos), state, 0);
         builder.addAction(new BptActionSetBlockState(state, pos), time);
-    }
-
-    public enum Deserializer implements IBptTaskDeserializer {
-        INSTANCE;
-
-        @Override
-        public IBptTask deserializeNBT(NBTTagCompound nbt, IBuilder builder) {
-            return new BptTaskBlockStandalone(nbt, builder);
-        }
     }
 }

@@ -58,8 +58,6 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
         }
         nbt.setTag("connections", connectionList);
 
-        System.out.println(nbt);
-
         return nbt;
     }
 

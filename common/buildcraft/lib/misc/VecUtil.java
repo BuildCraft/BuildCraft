@@ -2,6 +2,7 @@ package buildcraft.lib.misc;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
@@ -29,5 +30,9 @@ public class VecUtil {
         if (axis == Axis.Y) return positive ? EnumFacing.UP : EnumFacing.DOWN;
         if (axis == Axis.Z) return positive ? EnumFacing.SOUTH : EnumFacing.NORTH;
         return null;
+    }
+
+    public static BlockPos absolute(BlockPos val) {
+        return new BlockPos(Math.abs(val.getX()), Math.abs(val.getY()), Math.abs(val.getZ()));
     }
 }

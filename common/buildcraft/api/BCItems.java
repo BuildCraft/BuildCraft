@@ -31,6 +31,7 @@ public class BCItems {
     public static final Item CORE_MARKER_CONNECTOR;
 
     // BC Builders
+    public static final Item BUILDERS_SINGLE_SCHEMATIC;
     public static final Item BUILDERS_BLUEPRINT;
     public static final Item BUILDERS_TEMPLATE;
 
@@ -75,6 +76,7 @@ public class BCItems {
         CORE_MARKER_CONNECTOR = getRegisteredItem(core, "marker_connector");
         // builders
         final String builders = "builders";
+        BUILDERS_SINGLE_SCHEMATIC = getRegisteredItem(builders, "single_schematic");
         BUILDERS_BLUEPRINT = getRegisteredItem(builders, "blueprint");
         BUILDERS_TEMPLATE = getRegisteredItem(builders, "template");
         // factory

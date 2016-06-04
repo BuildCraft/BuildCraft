@@ -48,8 +48,8 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     protected abstract WorkbenchCrafting createCrafting();
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        return super.writeToNBT(compound);
     }
 
     @Override

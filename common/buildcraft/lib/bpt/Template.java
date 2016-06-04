@@ -1,31 +1,36 @@
 package buildcraft.lib.bpt;
 
-import java.util.Map;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilder;
-import buildcraft.api.bpt.Schematic;
 
 public class Template extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private boolean[][][] contentBlocks;
 
-    public Template(NBTTagCompound nbt) {
-        super(nbt);
-        deserializeNBT(nbt);
+    public Template(BlockPos size, EnumFacing direction) {
+        super(size, direction);
+        contentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
     }
 
-    public Template(BlockPos anchor, BlockPos min, BlockPos max, EnumFacing direction) {
-        super(anchor, min, max, direction);
-        BlockPos size = max.subtract(min).add(1, 1, 1);
-        contentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
+    public Template(NBTTagCompound nbt) {
+        super(nbt);
+
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+
+        return nbt;
     }
 
     @Override
@@ -51,31 +56,7 @@ public class Template extends BlueprintBase {
     }
 
     @Override
-    protected void mirrorContents(Mirror mirror) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
-
-    }
-
-    @Override
-    protected void translateContentsBy(Vec3i by) {
-        // NO-OP
-    }
-
-    @Override
-    public Map<Schematic, Iterable<IBptTask>> createTasks(IBuilder builder) {
-        return null;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = super.serializeNBT();
-
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(NBTTagCompound nbt) {
-        
+    public List<Iterable<IBptTask>> createTasks(IBuilder builder, BlockPos pos) {
+        return ImmutableList.of();
     }
 }

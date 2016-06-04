@@ -23,6 +23,11 @@ public class DeltaManager {
         RENDER,
     }
 
+    public interface IDeltaMessageSender {
+        /** @param type The type of message. NEVER {@link EnumDeltaMessage#CURRENT_STATE}. */
+        void sendDeltaMessage(boolean gui, EnumDeltaMessage type, IPayloadWriter writer);
+    }
+
     private final IDeltaMessageSender sender;
     private final Map<EnumNetworkVisibility, List<DeltaInt>> deltas = new EnumMap<>(EnumNetworkVisibility.class);
 
@@ -97,10 +102,5 @@ public class DeltaManager {
             }
         }
         return nbt;
-    }
-
-    public interface IDeltaMessageSender {
-        /** @param type The type of message. NEVER {@link EnumDeltaMessage#CURRENT_STATE}. */
-        void sendDeltaMessage(boolean gui, EnumDeltaMessage type, IPayloadWriter writer);
     }
 }

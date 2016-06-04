@@ -1,14 +1,17 @@
 package buildcraft.lib.bpt.helper;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilder;
+import buildcraft.lib.misc.SoundUtil;
 
 public class BptActionSetBlockState implements IBptAction {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "set_block_state");
@@ -20,7 +23,7 @@ public class BptActionSetBlockState implements IBptAction {
         int meta = nbt.getByte("meta");
         int[] pos = nbt.getIntArray("pos");
         Block block = Block.REGISTRY.getObject(new ResourceLocation(regName));
-        this.state = block.getStateFromMeta(meta);
+        this.state = block.getStateFromMeta(meta);// FIXME
         this.pos = new BlockPos(pos[0], pos[1], pos[2]);
     }
 
@@ -37,6 +40,7 @@ public class BptActionSetBlockState implements IBptAction {
     @Override
     public void run(IBuilder builder) {
         builder.getWorld().setBlockState(pos, state);
+        SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
     }
 
     @Override

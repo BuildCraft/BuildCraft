@@ -14,6 +14,15 @@ public class PermissionUtil {
     public static final Object PERM_DESTROY = "buildcraft.destroy";
 
     public static boolean hasPermission(Object type, PermissionBlock attempting, PermissionBlock target) {
+        // TODO: fire a forge block-break event if its a break event
+        if (type == PERM_DESTROY || type == PERM_EDIT) {
+            // TODO check "area" -- the player must be an OP if its within spawn radius
+        }
+        return true;
+    }
+
+    public static boolean hasPermission(Object type, PlayerOwner attempting, PermissionBlock target) {
+        // TODO: fire a forge block-break event if its a break event
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius
         }
@@ -21,6 +30,7 @@ public class PermissionUtil {
     }
 
     public static boolean hasPermission(Object type, EntityPlayer attempting, PermissionBlock target) {
+        // TODO: fire a forge block-break event if its a break event
         // TODO check "closeness" -- the player must be close to the target
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius

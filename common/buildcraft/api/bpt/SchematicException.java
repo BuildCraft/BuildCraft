@@ -16,5 +16,4 @@ public class SchematicException extends Exception {
     public SchematicException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }

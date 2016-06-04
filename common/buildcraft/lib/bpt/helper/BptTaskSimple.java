@@ -3,6 +3,7 @@ package buildcraft.lib.bpt.helper;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.bpt.IBptTask;
+import buildcraft.api.bpt.IBuilder;
 
 public abstract class BptTaskSimple implements IBptTask {
     public final int required;
@@ -26,19 +27,19 @@ public abstract class BptTaskSimple implements IBptTask {
     }
 
     @Override
-    public int receivePower(int milliJoules) {
-        int accepted = Math.min(getRequiredMilliJoules(), milliJoules);
+    public int receivePower(IBuilder builder, int milliJoules) {
+        int accepted = Math.min(getRequiredMilliJoules(builder), milliJoules);
         this.stored += accepted;
         if (stored >= required) {
-            onReceiveFullPower();
+            onReceiveFullPower(builder);
         }
         return milliJoules - accepted;
     }
 
     @Override
-    public int getRequiredMilliJoules() {
+    public int getRequiredMilliJoules(IBuilder builder) {
         return required - stored;
     }
 
-    protected abstract void onReceiveFullPower();
+    protected abstract void onReceiveFullPower(IBuilder builder);
 }

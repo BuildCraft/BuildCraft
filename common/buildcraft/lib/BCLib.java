@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
+import buildcraft.lib.bpt.vanilla.VanillaBlueprints;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
@@ -50,6 +51,7 @@ public class BCLib {
 
         VanillaRotationHandlers.fmlInit();
         VanillaListHandlers.fmlInit();
+        VanillaBlueprints.fmlInit();
 
         ItemManager.fmlInit();
     }

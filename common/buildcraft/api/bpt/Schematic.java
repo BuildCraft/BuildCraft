@@ -2,62 +2,57 @@ package buildcraft.api.bpt;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.BlockPos;
 
 public abstract class Schematic {
     /** Rotates this schematic in-place according to the same methods in
-     * {@link Block#withRotation(net.minecraft.block.state.IBlockState, Rotation)}. You do NOT need to translate
-     * yourself at all if your own "offset" is not the origin- the rotation method will call {@link #translate(Vec3i)}
-     * along with this. */
+     * {@link Block#withRotation(net.minecraft.block.state.IBlockState, Rotation)}. */
     public abstract void rotate(Rotation rotation);
-
-    /** Translates this schematic by the given vector. Generally only tile entities and normal entities need to
-     * translate like this. */
-    public abstract void translate(Vec3i by);
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
      * builder, but should provide tasks for the builder to complete.
      * 
      * @param builder The builder that will execute the tasks
+     * @param pos The position to build this schematic at
      * @return A collection of all the tasks you need doing to complete the schematic. */
-    public abstract Iterable<IBptTask> createTasks(IBuilder builder);
+    public abstract Iterable<IBptTask> createTasks(IBuilder builder, BlockPos pos);
 
     /** Clears the way for this schematic to build properly.
      * 
      * @param builder
      * @return A blueprint clearer that will dispatch the tasks necessary for clearing. You are recommended to use
-     *         {@link DefaultBptClearers#REMOVE} if you just want air, or {@link DefaultBptClearers#NONE} if you don't
+     *         {@link DefaultBptActions#REQUIRE_AIR} if you just want air, or {@link DefaultBptActions#LEAVE} if you don't
      *         need to make any changes to the existing block. */
-    public abstract BptClearer createClearingTask(IBuilder builder);
+    public abstract PreBuildAction createClearingTask(IBuilder builder, BlockPos pos);
 
-    public enum EnumClearType {
-        NONE,
-        REMOVE,
-        CUSTOM;
+    public enum EnumPreBuildAction {
+        LEAVE,
+        REQUIRE_AIR,
+        CUSTOM_REMOVAL;
     }
 
-    public interface BptClearer {
-        EnumClearType getType();
+    public interface PreBuildAction {
+        EnumPreBuildAction getType();
 
-        Iterable<IBptTask> getTasks();
+        Iterable<IBptTask> getTasks(IBuilder builder, BlockPos pos);
     }
 
-    public enum DefaultBptClearers implements BptClearer {
-        NONE(EnumClearType.NONE),
-        REMOVE(EnumClearType.REMOVE);
-        private final EnumClearType type;
+    public enum DefaultBptActions implements PreBuildAction {
+        LEAVE(EnumPreBuildAction.LEAVE),
+        REQUIRE_AIR(EnumPreBuildAction.REQUIRE_AIR);
+        private final EnumPreBuildAction type;
 
-        private DefaultBptClearers(EnumClearType type) {
+        private DefaultBptActions(EnumPreBuildAction type) {
             this.type = type;
         }
 
         @Override
-        public EnumClearType getType() {
+        public EnumPreBuildAction getType() {
             return type;
         }
 
         @Override
-        public Iterable<IBptTask> getTasks() {
+        public Iterable<IBptTask> getTasks(IBuilder builder, BlockPos pos) {
             throw new IllegalStateException("You are responsible for creating tasks for " + type);
         }
     }
