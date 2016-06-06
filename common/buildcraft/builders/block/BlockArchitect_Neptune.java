@@ -18,7 +18,7 @@ import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockArchitect_Neptune extends BlockBCTile_Neptune {
-    private static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
 
     public BlockArchitect_Neptune(Material material, String id) {
         super(material, id);
@@ -60,9 +60,10 @@ public class BlockArchitect_Neptune extends BlockBCTile_Neptune {
     // Others
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-        EnumFacing orientation = entity.getHorizontalFacing();
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        EnumFacing orientation = placer.getHorizontalFacing();
         world.setBlockState(pos, state.withProperty(PROP_FACING, orientation.getOpposite()));
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
     }
 
     @Override

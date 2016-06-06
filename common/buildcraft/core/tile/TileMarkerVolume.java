@@ -1,10 +1,14 @@
 package buildcraft.core.tile;
 
 import java.io.IOException;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
@@ -106,6 +110,27 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
         return BCCoreConfig.markerMaxDistance * 4 * BCCoreConfig.markerMaxDistance;
     }
 
+    public void onManualConnectionAttempt(EntityPlayer player) {
+        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(getOwner(), getPos()))) {
+            MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
+            for (BlockPos other : cache.getValidConnections(getPos())) {
+                TileMarkerVolume tile = (TileMarkerVolume) cache.getMarker(other);
+                if (tile == null) continue;
+                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(tile.getOwner(), other))) {
+                    cache.tryConnect(getPos(), other);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        super.getDebugInfo(left, right, side);
+        left.add("");
+        left.add("Min = " + min());
+        left.add("Max = " + max());
+    }
+
     // ITileAreaProvider
 
     @Override
@@ -122,12 +147,14 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
 
     @Override
     public void removeFromWorld() {
-        if (worldObj.isRemote) return;
+        if (worldObj.isRemote) {
+            return;
+        }
         VolumeConnection connection = getCurrentConnection();
-        if (connection == null) {
-            worldObj.destroyBlock(getPos(), true);
-        } else {
-            for (BlockPos p : connection.getMarkerPositions()) {
+        if (connection != null) {
+            // Copy the list over because the iterator doesn't like it if you change the connection while using it
+            List<BlockPos> allPositions = ImmutableList.copyOf(connection.getMarkerPositions());
+            for (BlockPos p : allPositions) {
                 worldObj.destroyBlock(p, true);
             }
         }
@@ -136,25 +163,18 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     @Override
     public boolean isValidFromLocation(BlockPos pos) {
         VolumeConnection connection = getCurrentConnection();
-        if (connection == null) return false;
-        Box box = connection.getBox();
-        if (box.contains(pos)) return false;
-        for (BlockPos p : PositionUtil.getCorners(box.min(), box.max())) {
-            if (PositionUtil.isNextTo(p, pos)) return true;
+        if (connection == null) {
+            return false;
         }
-        return false;
-    }
-
-    public void onManualConnectionAttempt(EntityPlayer player) {
-        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(getOwner(), getPos()))) {
-            MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
-            for (BlockPos other : cache.getValidConnections(getPos())) {
-                TileMarkerVolume tile = (TileMarkerVolume) cache.getMarker(other);
-                if (tile == null) continue;
-                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(tile.getOwner(), other))) {
-                    cache.tryConnect(getPos(), other);
-                }
+        Box box = connection.getBox();
+        if (box.contains(pos)) {
+            return false;
+        }
+        for (BlockPos p : PositionUtil.getCorners(box.min(), box.max())) {
+            if (PositionUtil.isNextTo(p, pos)) {
+                return true;
             }
         }
+        return false;
     }
 }

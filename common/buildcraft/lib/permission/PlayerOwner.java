@@ -6,6 +6,7 @@ import java.util.concurrent.Future;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +18,22 @@ import buildcraft.lib.misc.WorkerThreadUtil;
 public final class PlayerOwner {
     private GameProfile owner;
 
+    public static PlayerOwner getOwnerOf(Entity entity) {
+        if (entity.worldObj.isRemote) {
+            throw new IllegalArgumentException("Can only use this on the logical server!");
+        }
+        if (entity.getClass() == EntityPlayerMP.class) {
+            return new PlayerOwner((EntityPlayer) entity);
+        } else {
+            // TODO: Add handling for fake players + other indirect methods.
+            throw new IllegalArgumentException("Unknown player entity " + entity);
+        }
+    }
+
     public PlayerOwner(EntityPlayer player) {
+        if (player.worldObj.isRemote) {
+            throw new IllegalArgumentException("Can only use this on the logical server!");
+        }
         if (player.getClass() != EntityPlayerMP.class) {
             throw new IllegalArgumentException("Invalid player class " + player.getClass());
         }

@@ -845,7 +845,7 @@ public final class Utils {
             return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
         }
 
-        private BlockPos increment(BlockPos pos, EnumFacing facing) {
+        private static BlockPos increment(BlockPos pos, EnumFacing facing) {
             int diff = facing.getAxisDirection().getOffset();
             int value = Utils.getValue(pos, facing.getAxis()) + diff;
             return Utils.withValue(pos, facing.getAxis(), value);

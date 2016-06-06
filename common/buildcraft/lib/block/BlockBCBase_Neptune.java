@@ -13,7 +13,7 @@ import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
-import buildcraft.lib.item.ItemBlockBuildCraft_BC8;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
 public class BlockBCBase_Neptune extends Block {
@@ -31,23 +31,23 @@ public class BlockBCBase_Neptune extends Block {
     }
 
     public static <B extends BlockBCBase_Neptune> B register(B block) {
-        return register(block, false, ItemBlockBuildCraft_BC8::new);
+        return register(block, false, ItemBlockBC_Neptune::new);
     }
 
     public static <B extends BlockBCBase_Neptune> B register(B block, boolean force) {
-        return register(block, force, ItemBlockBuildCraft_BC8::new);
+        return register(block, force, ItemBlockBC_Neptune::new);
     }
 
-    public static <B extends BlockBCBase_Neptune> B register(B block, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune> B register(B block, Function<B, ItemBlockBC_Neptune> itemBlockConstructor) {
         return register(block, false, itemBlockConstructor);
     }
 
-    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force, Function<B, ItemBlockBuildCraft_BC8> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force, Function<B, ItemBlockBC_Neptune> itemBlockConstructor) {
         if (RegistryHelper.registerBlock(block, force)) {
             registeredBlocks.add(block);
             MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
             if (itemBlockConstructor != null) {
-                ItemBlockBuildCraft_BC8 item = itemBlockConstructor.apply(block);
+                ItemBlockBC_Neptune item = itemBlockConstructor.apply(block);
                 if (item != null) {
                     ItemManager.register(item, true);
                 }

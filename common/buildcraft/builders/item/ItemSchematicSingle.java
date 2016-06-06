@@ -42,7 +42,7 @@ public class ItemSchematicSingle extends ItemBuildCraft_BC8 {
         int damage = stack.getItemDamage();
         if (damage != DAMAGE_STORED_SCHEMATIC) {
             IBlockState state = world.getBlockState(pos);
-            SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldFactoryForBlock(state.getBlock());
+            SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(state.getBlock());
             if (factory != null) {
                 try {
                     SchematicBlock schematic = factory.createFromWorld(world, pos);

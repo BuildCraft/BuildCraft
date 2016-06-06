@@ -7,8 +7,10 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -94,6 +96,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Called whenever the block is removed. called by {@link #onExplode(Explosion)}, and
      * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
     public void onRemove() {}
+
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        if (!placer.worldObj.isRemote) {
+            this.owner = PlayerOwner.getOwnerOf(placer);
+        }
+    }
 
     public void onPlayerOpen(EntityPlayer player) {
         usingPlayers.add(player);

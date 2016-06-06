@@ -1,9 +1,27 @@
 package buildcraft.api.bpt;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 public abstract class Schematic {
-    public abstract void transform(IBptTransform transform);
+    /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
+     * 
+     * @param axis The axis to mirror in.
+     * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
+     *             (So don't throw if you are a fence and you were asked to mirror in the Y axis) */
+    public abstract void mirror(Axis axis) throws SchematicException;
+
+    /** Attempts to rotate this schematic in the given axis, by the given rotation. (So for Axis.Y and
+     * Rotation.CLOCKWISE_90 you should do whatever {@link IBlockState#withRotation(Rotation)} would do.)
+     * 
+     * @param axis The axis to rotate in.
+     * @param rotation The rotation to apply.
+     * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
+     *             (So don't throw if you are rail block and you were asked to rotate in the X axis, but DO throw if you
+     *             are a torch and you have been asked to rotate to be placed upside down. */
+    public abstract void rotate(Axis axis, Rotation rotation) throws SchematicException;
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
      * builder, but should provide tasks for the builder to complete.

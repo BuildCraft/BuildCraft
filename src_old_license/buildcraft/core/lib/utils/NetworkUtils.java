@@ -140,7 +140,7 @@ public final class NetworkUtils {
     }
 
     public static <E extends Enum<E>> void writeEnum(ByteBuf stream, E value) {
-        // TODO: Make this check if the value imlpements "INetSerialisable" and write using that.
+        // TODO: Make this check if the value implements "INetSerialisable" and write using that.
         if (value == null) writeUTF(stream, "");
         else writeUTF(stream, value.name());
     }

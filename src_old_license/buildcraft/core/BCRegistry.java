@@ -16,7 +16,7 @@ import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.LibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.item.ItemBlockBuildCraft_BC8;
+import buildcraft.lib.item.ItemBlockBC_Neptune;
 
 @Deprecated
 public final class BCRegistry {
@@ -36,7 +36,7 @@ public final class BCRegistry {
     }
 
     public boolean registerBlock(BlockBCBase_Neptune block, boolean forced) {
-        return registerBlock(block, new ItemBlockBuildCraft_BC8(block), forced);
+        return registerBlock(block, new ItemBlockBC_Neptune(block), forced);
     }
 
     public boolean registerBlock(Block block, Item item, boolean forced) {
