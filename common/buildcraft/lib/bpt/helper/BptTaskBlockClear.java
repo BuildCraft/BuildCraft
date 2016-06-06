@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 
 public class BptTaskBlockClear extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib:bpt_block_clear");
@@ -55,17 +55,17 @@ public class BptTaskBlockClear extends BptTaskSimple {
     }
 
     @Override
-    public boolean isDone(IBuilder builder) {
+    public boolean isDone(IBuilderAccessor builder) {
         return builder.getWorld().isAirBlock(pos);
     }
 
     @Override
-    public Set<EnumFacing> getRequiredSolidFaces(IBuilder builder) {
+    public Set<EnumFacing> getRequiredSolidFaces(IBuilderAccessor builder) {
         return ImmutableSet.of();
     }
 
     @Override
-    protected void onReceiveFullPower(IBuilder builder) {
+    protected void onReceiveFullPower(IBuilderAccessor builder) {
         int[] ticks = builder.startPowerAnimation(new Vec3d(pos), required, 0);
         int start = ticks[0];
         int end = ticks[1];

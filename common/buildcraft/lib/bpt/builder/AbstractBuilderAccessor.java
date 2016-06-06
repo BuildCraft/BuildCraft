@@ -14,25 +14,25 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.IBptAction;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
-public abstract class AbstractBuilder implements IBuilder, ITickable {
+public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITickable {
     private final PlayerOwner owner;
     private final World world;
     private final DelayedList<IBptAction> actions = new DelayedList<>();
     private final BuilderAnimationManager animationManager;
 
-    public AbstractBuilder(PlayerOwner owner, World world, BuilderAnimationManager animationManager) {
+    public AbstractBuilderAccessor(PlayerOwner owner, World world, BuilderAnimationManager animationManager) {
         this.owner = owner;
         this.world = world;
         this.animationManager = animationManager;
     }
 
-    public AbstractBuilder(PlayerOwner owner, World world, BuilderAnimationManager animation, NBTTagCompound nbt) {
+    public AbstractBuilderAccessor(PlayerOwner owner, World world, BuilderAnimationManager animation, NBTTagCompound nbt) {
         this(owner, world, animation);
         NBTTagList list = (NBTTagList) nbt.getTag("actions");
         for (int delay = 0; delay < list.tagCount(); delay++) {

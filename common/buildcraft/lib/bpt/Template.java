@@ -1,16 +1,13 @@
 package buildcraft.lib.bpt;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.lib.bpt.vanilla.SchematicAir;
+import buildcraft.lib.misc.VecUtil;
 
 public class Template extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
@@ -35,28 +32,30 @@ public class Template extends BlueprintBase {
 
     @Override
     protected void rotateContentsBy(Rotation rotation) {
-        BlockPos oldMax = max.subtract(min);
-        BlockPos newMax = rotate(oldMax, rotation);
-        BlockPos size = newMax.add(1, 1, 1);
+        BlockPos oldSize = this.size;
+        BlockPos newSize = VecUtil.absolute(rotate(oldSize, rotation));
         boolean[][][] newContentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
-        BlockPos arrayOffset = newMax.subtract(oldMax);
+        BlockPos arrayOffset = newSize.subtract(oldSize);// FIXME: This might be the wrong offset!
 
         for (int x = 0; x < contentBlocks.length; x++) {
-            boolean[][] inXLayer = contentBlocks[x];
-            for (int y = 0; y < inXLayer.length; y++) {
-                boolean[] inYLayer = inXLayer[y];
-                for (int z = 0; z < inYLayer.length; z++) {
+            for (int y = 0; y < contentBlocks[x].length; y++) {
+                for (int z = 0; z < contentBlocks[x][y].length; z++) {
                     BlockPos original = new BlockPos(x, y, z);
                     BlockPos rotated = rotate(original, rotation);
                     rotated = rotated.add(arrayOffset);
-                    newContentBlocks[rotated.getX()][rotated.getY()][rotated.getZ()] = inYLayer[z];
+                    newContentBlocks[rotated.getX()][rotated.getY()][rotated.getZ()] = contentBlocks[x][y][z];
                 }
             }
         }
+        contentBlocks = newContentBlocks;
     }
 
     @Override
-    public List<Iterable<IBptTask>> createTasks(IBuilder builder, BlockPos pos) {
-        return ImmutableList.of();
+    public SchematicBlock getSchematicAt(BlockPos pos) {
+        if (contentBlocks[pos.getX()][pos.getY()][pos.getZ()]) {
+            throw new AbstractMethodError("// TODO: Implement this!");
+        } else {
+            return SchematicAir.INSTANCE;
+        }
     }
 }

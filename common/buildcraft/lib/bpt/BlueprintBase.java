@@ -1,15 +1,12 @@
 package buildcraft.lib.bpt;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.VecUtil;
@@ -37,7 +34,11 @@ public abstract class BlueprintBase {
 
     protected abstract void rotateContentsBy(Rotation rotation);
 
-    public abstract List<Iterable<IBptTask>> createTasks(IBuilder builder, BlockPos from);
+    /** Gets the schematic at the given position.
+     * 
+     * @param pos The position. Should be <code>for (a = {x, y, z}) 0 <= a < size.a</code>
+     * @return The schematic for the position. */
+    public abstract SchematicBlock getSchematicAt(BlockPos pos);
 
     public final void rotateBy(Rotation rotation) {
         rotateContentsBy(rotation);

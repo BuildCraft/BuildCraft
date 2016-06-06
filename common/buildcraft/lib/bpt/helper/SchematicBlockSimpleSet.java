@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.lib.misc.PermissionUtil;
@@ -25,7 +25,7 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilder builder, BlockPos pos) {
+    public Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
         if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, builder.getOwner(), PermissionUtil.createFrom(builder.getWorld(), pos))) {
             return ImmutableList.of(new BptTaskBlockStandalone(pos, state));
         } else {
@@ -34,7 +34,7 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
     }
 
     @Override
-    public PreBuildAction createClearingTask(IBuilder builder, BlockPos pos) {
+    public PreBuildAction createClearingTask(IBuilderAccessor builder, BlockPos pos) {
         return DefaultBptActions.REQUIRE_AIR;
     }
 }

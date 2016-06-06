@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 
 public class BptActionPartiallyBreakBlock implements IBptAction {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "partial_break_block");
@@ -38,7 +38,7 @@ public class BptActionPartiallyBreakBlock implements IBptAction {
     }
 
     @Override
-    public void run(IBuilder builder) {
+    public void run(IBuilderAccessor builder) {
         builder.getWorld().sendBlockBreakProgress(pos.hashCode(), pos, breakProgress);
     }
 

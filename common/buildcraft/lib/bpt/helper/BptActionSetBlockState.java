@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.lib.misc.SoundUtil;
 
 public class BptActionSetBlockState implements IBptAction {
@@ -38,7 +38,7 @@ public class BptActionSetBlockState implements IBptAction {
     }
 
     @Override
-    public void run(IBuilder builder) {
+    public void run(IBuilderAccessor builder) {
         builder.getWorld().setBlockState(pos, state);
         SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
     }

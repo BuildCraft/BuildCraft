@@ -4,8 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -53,7 +53,12 @@ public abstract class SchematicBlock extends Schematic {
     }
 
     @Override
-    public void rotate(Rotation rotation) {
-        state = state.withRotation(rotation);
+    public void transform(IBptTransform transform) {
+        if (transform instanceof TransformRotation) {
+            TransformRotation rotation = (TransformRotation) transform;
+            if (rotation.axis == Axis.Y) {
+                state = state.withRotation(rotation.rotation);
+            }
+        } // We cannot handle mirror by default as vanilla is odd.
     }
 }

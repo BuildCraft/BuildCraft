@@ -24,7 +24,7 @@ public class VanillaBlueprints {
     public static void fmlInit() {
         for (Block block : STANDARD_BLOCKS) {
             BlueprintAPI.registerWorldBlockSchematic(block, createStandardBlockWorld(block));
-            BlueprintAPI.registerSchematicBlockDeserializer(block, createStandardBlockNBT(block));
+            BlueprintAPI.registerNbtBlockSchematic(block, createStandardBlockNBT(block));
         }
     }
 

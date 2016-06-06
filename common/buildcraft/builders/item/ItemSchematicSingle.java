@@ -42,7 +42,7 @@ public class ItemSchematicSingle extends ItemBuildCraft_BC8 {
         int damage = stack.getItemDamage();
         if (damage != DAMAGE_STORED_SCHEMATIC) {
             IBlockState state = world.getBlockState(pos);
-            SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldFactoryFor(state.getBlock());
+            SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldFactoryForBlock(state.getBlock());
             if (factory != null) {
                 try {
                     SchematicBlock schematic = factory.createFromWorld(world, pos);
@@ -70,8 +70,8 @@ public class ItemSchematicSingle extends ItemBuildCraft_BC8 {
                 world.setBlockToAir(place);
             }
             try {
-                SchematicBlock schematic = BlueprintAPI.deserializeSchematic(schematicNBT);
-                IBuilder playerBuilder = new BuilderPlayer(player);
+                SchematicBlock schematic = BlueprintAPI.deserializeSchematicBlock(schematicNBT);
+                IBuilderAccessor playerBuilder = new BuilderPlayer(player);
                 boolean failed = false;
                 for (IBptTask task : schematic.createTasks(playerBuilder, place)) {
                     task.receivePower(playerBuilder, Integer.MAX_VALUE);

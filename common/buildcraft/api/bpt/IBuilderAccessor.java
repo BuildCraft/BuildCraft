@@ -17,7 +17,7 @@ import buildcraft.lib.permission.PlayerOwner;
 // Should implementations delegate to something else for item/fluid getting?
 // How do "robot builders" work? Don't they have lots of different positions depending
 // on which one is executing it?
-public interface IBuilder {
+public interface IBuilderAccessor {
     World getWorld();
 
     /** @return The position from where building animations should start. Most of the time this will be inside the

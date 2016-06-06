@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.lib.misc.NBTUtils;
 
 public class BptTaskBlockStandalone extends BptTaskSimple {
@@ -55,17 +55,17 @@ public class BptTaskBlockStandalone extends BptTaskSimple {
     }
 
     @Override
-    public Set<EnumFacing> getRequiredSolidFaces(IBuilder builder) {
+    public Set<EnumFacing> getRequiredSolidFaces(IBuilderAccessor builder) {
         return ImmutableSet.of();
     }
 
     @Override
-    public boolean isDone(IBuilder builder) {
+    public boolean isDone(IBuilderAccessor builder) {
         return builder.getWorld().getBlockState(pos) == state;
     }
 
     @Override
-    protected void onReceiveFullPower(IBuilder builder) {
+    protected void onReceiveFullPower(IBuilderAccessor builder) {
         int time = builder.startBlockAnimation(new Vec3d(pos), state, 0);
         builder.addAction(new BptActionSetBlockState(state, pos), time);
     }

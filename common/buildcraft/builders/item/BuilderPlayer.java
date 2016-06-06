@@ -12,12 +12,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBptAction;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.permission.PlayerOwner;
 
-public class BuilderPlayer implements IBuilder {
+public class BuilderPlayer implements IBuilderAccessor {
     private static final ImmutableSet<BptPermissions> PERMISSIONS_CREATIVE, PERMISSIONS_SURVIVAL;
 
     static {

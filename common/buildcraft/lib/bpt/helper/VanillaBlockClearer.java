@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilder;
+import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.Schematic.DefaultBptActions;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
@@ -24,7 +24,7 @@ public enum VanillaBlockClearer implements PreBuildAction {
     }
 
     @Override
-    public Iterable<IBptTask> getTasks(IBuilder builder, BlockPos pos) {
+    public Iterable<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
         World world = builder.getWorld();
         if (world.isAirBlock(pos)) {
             return ImmutableList.of();

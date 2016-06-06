@@ -12,12 +12,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.*;
+import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.misc.VecUtil;
 
 public class Blueprint extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private SchematicBlock[][][] contentBlocks;
-    private List<SchematicEntity> contentEntities;// TODO: Store the offsets!
+    private List<SchematicEntityOffset> contentEntities;
 
     public Blueprint(NBTTagCompound nbt) {
         super(nbt);
@@ -36,7 +37,7 @@ public class Blueprint extends BlueprintBase {
                 for (int z = 0; z < size.getZ(); z++) {
                     BlockPos pos = from.add(x, y, z);
                     Block block = world.getBlockState(pos).getBlock();
-                    SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldFactoryFor(block);
+                    SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(block);
                     if (factory != null) {
                         contentBlocks[x][y][z] = factory.createFromWorld(world, pos);
                     }
@@ -82,27 +83,13 @@ public class Blueprint extends BlueprintBase {
             }
         }
 
-        for (SchematicEntity schematic : contentEntities) {
+        for (SchematicEntityOffset schematic : contentEntities) {
             schematic.rotate(rotation);
         }
     }
 
     @Override
-    public List<Iterable<IBptTask>> createTasks(IBuilder builder, BlockPos pos) {
-        List<Iterable<IBptTask>> tasks = new ArrayList<>();
-        for (SchematicBlock[][] ar2 : contentBlocks) {
-            for (SchematicBlock[] ar1 : ar2) {
-                for (SchematicBlock schematic : ar1) {
-                    if (schematic == null) continue;
-                    tasks.add(schematic.createTasks(builder, pos));
-                }
-            }
-        }
-
-        for (SchematicEntity schematic : contentEntities) {
-            tasks.add(schematic.createTasks(builder, pos));
-        }
-
-        return tasks;
+    public SchematicBlock getSchematicAt(BlockPos pos) {
+        return contentBlocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 }

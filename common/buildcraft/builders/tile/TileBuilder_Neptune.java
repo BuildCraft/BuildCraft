@@ -1,24 +1,20 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.lib.bpt.builder.AbstractBuilder;
+import buildcraft.core.Box;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
-import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -32,9 +28,11 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     public static final int NET_ANIM_FLUID = 14;
     public static final int NET_ANIM_POWER = 15;
 
-    private final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
+    public final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
     private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    private Builder builder = null;
+    private TileBuilderAccessor builder = null;
+    private List<BlockPos> path = null;
+    private Box box = null;
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -54,6 +52,10 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             builder.update();
             animation.update();
         }
+    }
+
+    private void advanceBuilder() {
+
     }
 
     private void sendMessage(EnumBuilderAnimMessage type, IPayloadWriter writer) {
@@ -100,30 +102,6 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             else if (id == NET_ANIM_BLOCK) animation.receiveMessage(EnumBuilderAnimMessage.BLOCK, buffer);
             else if (id == NET_ANIM_FLUID) animation.receiveMessage(EnumBuilderAnimMessage.FLUID, buffer);
             else if (id == NET_ANIM_POWER) animation.receiveMessage(EnumBuilderAnimMessage.POWER, buffer);
-        }
-    }
-
-    public static class Builder extends AbstractBuilder {
-        private final Vec3d vec;
-
-        public Builder(TileBuilder_Neptune tile, NBTTagCompound nbt) {
-            super(tile.getOwner(), tile.worldObj, tile.animation, nbt);
-            this.vec = VecUtil.add(null, tile.getPos());
-        }
-
-        public Builder(TileBuilder_Neptune tile) {
-            super(tile.getOwner(), tile.worldObj, tile.animation);
-            this.vec = VecUtil.add(null, tile.getPos());
-        }
-
-        @Override
-        public Vec3d getBuilderPosition() {
-            return vec;
-        }
-
-        @Override
-        public ImmutableSet<BptPermissions> getPermissions() {
-            return ImmutableSet.of();
         }
     }
 }
