@@ -768,9 +768,27 @@ public final class Utils {
             this.third = getFacing(order.third, positiveThird ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
         }
 
+        private AxisOrder(EnumFacing first, EnumFacing second, EnumFacing third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
+        }
+
         @Override
         public String toString() {
             return first + ", " + second + ", " + third;
+        }
+
+        public AxisOrder invertFirst() {
+            return new AxisOrder(first.getOpposite(), second, third);
+        }
+
+        public AxisOrder invertSecond() {
+            return new AxisOrder(first, second.getOpposite(), third);
+        }
+
+        public AxisOrder invertThird() {
+            return new AxisOrder(first, second, third.getOpposite());
         }
     }
 

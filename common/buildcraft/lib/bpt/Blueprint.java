@@ -6,13 +6,19 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.bpt.*;
+import buildcraft.api.bpt.BlueprintAPI;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.api.bpt.SchematicException;
+import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
+import buildcraft.lib.bpt.vanilla.SchematicAir;
+import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class Blueprint extends BlueprintBase {
@@ -24,14 +30,20 @@ public class Blueprint extends BlueprintBase {
         super(nbt);
     }
 
-    public Blueprint(BlockPos size, EnumFacing direction) {
-        super(size, direction);
+    private Blueprint(BlockPos size) {
+        super(size);
         contentBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
         contentEntities = new ArrayList<>();
     }
 
-    public Blueprint(World world, BlockPos from, BlockPos size, EnumFacing direction) throws SchematicException {
-        this(size, direction);
+    public Blueprint(SchematicBlock[][][] blocks, List<SchematicEntityOffset> entities) {
+        super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length));
+        contentBlocks = blocks;
+        contentEntities = new ArrayList<>(entities);
+    }
+
+    public Blueprint(World world, BlockPos from, BlockPos size) throws SchematicException {
+        this(size);
         for (int x = 0; x < size.getX(); x++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int z = 0; z < size.getZ(); z++) {
@@ -40,6 +52,8 @@ public class Blueprint extends BlueprintBase {
                     SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(block);
                     if (factory != null) {
                         contentBlocks[x][y][z] = factory.createFromWorld(world, pos);
+                    } else {
+                        contentBlocks[x][y][z] = SchematicAir.INSTANCE;
                     }
                 }
             }
@@ -64,9 +78,9 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    protected void rotateContentsBy(Rotation rotation) {
+    protected void rotateContentsBy(Axis axis, Rotation rotation) {
         BlockPos oldSize = this.size;
-        BlockPos newSize = VecUtil.absolute(rotate(oldSize, rotation));
+        BlockPos newSize = VecUtil.absolute(PositionUtil.rotatePos(oldSize, axis, rotation));
         SchematicBlock[][][] newContentBlocks = new SchematicBlock[newSize.getX()][newSize.getY()][newSize.getZ()];
         BlockPos arrayOffset = newSize.subtract(oldSize);// FIXME: This might be the wrong offset!
 
@@ -74,17 +88,43 @@ public class Blueprint extends BlueprintBase {
             for (int y = 0; y < contentBlocks[x].length; y++) {
                 for (int z = 0; z < contentBlocks[x][y].length; z++) {
                     SchematicBlock schematic = contentBlocks[x][y][z];
-                    schematic.rotate(rotation);
+                    schematic.rotate(axis, rotation);
                     BlockPos original = new BlockPos(x, y, z);
-                    BlockPos rotated = rotate(original, rotation);
+                    BlockPos rotated = PositionUtil.rotatePos(original, axis, rotation);
                     rotated = rotated.add(arrayOffset);
                     newContentBlocks[rotated.getX()][rotated.getY()][rotated.getZ()] = schematic;
                 }
             }
         }
 
+        contentBlocks = newContentBlocks;
+
         for (SchematicEntityOffset schematic : contentEntities) {
-            schematic.rotate(rotation);
+            schematic.rotate(axis, rotation, oldSize);
+        }
+    }
+
+    @Override
+    public void mirror(Axis axis) {
+        SchematicBlock[][][] newContentBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
+
+        for (int x = 0; x < contentBlocks.length; x++) {
+            for (int y = 0; y < contentBlocks[x].length; y++) {
+                for (int z = 0; z < contentBlocks[x][y].length; z++) {
+                    SchematicBlock schematic = contentBlocks[x][y][z];
+                    schematic.mirror(axis);
+                    BlockPos mirrored = new BlockPos(x, y, z);
+                    int value = Utils.getValue(size, axis) - 1 - Utils.getValue(mirrored, axis);
+                    mirrored = Utils.withValue(mirrored, axis, value);
+                    newContentBlocks[mirrored.getX()][mirrored.getY()][mirrored.getZ()] = schematic;
+                }
+            }
+        }
+
+        contentBlocks = newContentBlocks;
+
+        for (SchematicEntityOffset schematic : contentEntities) {
+            schematic.mirror(axis, size);
         }
     }
 

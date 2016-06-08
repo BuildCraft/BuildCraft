@@ -10,16 +10,19 @@ import buildcraft.core.lib.utils.Utils.AxisOrder;
 
 public class BoxIterator {
     private final BlockPos min, max;
-    private final AxisOrder order;
+    private final boolean invert, repeat;
+    private AxisOrder order;
     private BlockPos current;
 
-    public BoxIterator(IBox box, AxisOrder order) {
-        this(box.min(), box.max(), order);
+    public BoxIterator(IBox box, AxisOrder order, boolean invert) {
+        this(box.min(), box.max(), order, invert);
     }
 
-    public BoxIterator(BlockPos min, BlockPos max, AxisOrder order) {
+    public BoxIterator(BlockPos min, BlockPos max, AxisOrder order, boolean invert) {
         this.min = min;
         this.max = max;
+        this.invert = invert;
+        this.repeat = false;
         this.order = order;
         this.current = getStart();
     }
@@ -47,13 +50,26 @@ public class BoxIterator {
         }
         current = increment(current, order.first);
         if (shouldReset(current, order.first)) {
+            if (invert) {
+                order = order.invertFirst();
+            }
             current = replace(current, order.first);
             current = increment(current, order.second);
             if (shouldReset(current, order.second)) {
+                if (invert) {
+                    order = order.invertSecond();
+                }
                 current = replace(current, order.second);
                 current = increment(current, order.third);
                 if (shouldReset(current, order.third)) {
-                    current = null;
+                    if (repeat) {
+                        if (invert) {
+                            order = order.invertThird();
+                        }
+                        current = replace(current, order.third);
+                    } else {
+                        current = null;
+                    }
                 }
             }
         }

@@ -1,8 +1,5 @@
 {
 	"forge_marker":1,
-	"defaults": {
-		"model": "buildcraftbuilders:architect"
-	},
     "variants": {
     	"facing": {
     		"east": { "y":90 },
@@ -10,6 +7,14 @@
     		"west": { "y":270 },
     		"north": { "y":0 }
     	},
-        "inventory": [{ "model": "buildcraftbuilders:architect" }]
+    	"valid": {
+    	   "true": {
+               "model": "buildcraftbuilders:architect_on"
+    	   },
+    	   "false": {
+    	       "model": "buildcraftbuilders:architect_off"
+    	   }
+    	},
+        "inventory": [{ "model": "buildcraftbuilders:architect_off" }]
     }
 }

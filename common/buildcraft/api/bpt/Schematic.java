@@ -11,7 +11,7 @@ public abstract class Schematic {
      * @param axis The axis to mirror in.
      * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
      *             (So don't throw if you are a fence and you were asked to mirror in the Y axis) */
-    public abstract void mirror(Axis axis) throws SchematicException;
+    public abstract void mirror(Axis axis);
 
     /** Attempts to rotate this schematic in the given axis, by the given rotation. (So for Axis.Y and
      * Rotation.CLOCKWISE_90 you should do whatever {@link IBlockState#withRotation(Rotation)} would do.)
@@ -21,7 +21,7 @@ public abstract class Schematic {
      * @throws SchematicException if your current state cannot be rotated in the given axis, but other states could be.
      *             (So don't throw if you are rail block and you were asked to rotate in the X axis, but DO throw if you
      *             are a torch and you have been asked to rotate to be placed upside down. */
-    public abstract void rotate(Axis axis, Rotation rotation) throws SchematicException;
+    public abstract void rotate(Axis axis, Rotation rotation);
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
      * builder, but should provide tasks for the builder to complete.

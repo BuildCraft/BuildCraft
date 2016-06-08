@@ -20,8 +20,7 @@ public enum CustomRotationHelper {
 
     /* If you want to test your class-based rotation registration then add the system property
      * "-Dbuildcraft.api.rotation.debug.class=true" to your launch. */
-    private static final boolean DEBUG_CLASS = BCDebugging.shouldDebugLog("api.rotation.class");
-    private static final boolean DEBUG_SINGLE = BCDebugging.shouldDebugLog("api.rotation.single");
+    private static final boolean DEBUG = BCDebugging.shouldDebugLog("api.rotation");
 
     private final Map<Block, List<ICustomRotationHandler>> handlers = new IdentityHashMap<>();
 
@@ -29,8 +28,8 @@ public enum CustomRotationHelper {
         for (Block block : Block.REGISTRY) {
             Class<? extends Block> foundClass = block.getClass();
             if (blockClass.isAssignableFrom(foundClass)) {
-                if (DEBUG_CLASS) {
-                    BCLog.logger.info("[api.rotation.class] Found an assignable block " + block.getRegistryName() + " (" + foundClass + ") for " + blockClass);
+                if (DEBUG) {
+                    BCLog.logger.info("[api.rotation] Found an assignable block " + block.getRegistryName() + " (" + foundClass + ") for " + blockClass);
                 }
                 registerHandlerInternal(block, handler);
             }
@@ -39,11 +38,11 @@ public enum CustomRotationHelper {
 
     public void registerHandler(Block block, ICustomRotationHandler handler) {
         if (registerHandlerInternal(block, handler)) {
-            if (DEBUG_SINGLE) {
-                BCLog.logger.info("[api.rotation.single] Setting a rotation handler for block " + block.getRegistryName());
+            if (DEBUG) {
+                BCLog.logger.info("[api.rotation] Setting a rotation handler for block " + block.getRegistryName());
             }
-        } else if (DEBUG_SINGLE) {
-            BCLog.logger.info("[api.rotation.single] Adding another rotation handler for block " + block.getRegistryName());
+        } else if (DEBUG) {
+            BCLog.logger.info("[api.rotation] Adding another rotation handler for block " + block.getRegistryName());
         }
     }
 

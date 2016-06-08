@@ -54,10 +54,10 @@ public abstract class SchematicBlock extends Schematic {
     }
 
     @Override
-    public void mirror(Axis axis) throws SchematicException {}
+    public void mirror(Axis axis) {}
 
     @Override
-    public void rotate(Axis axis, Rotation rotation) throws SchematicException {
+    public void rotate(Axis axis, Rotation rotation) {
         if (axis == Axis.Y) {
             state = state.withRotation(rotation);
         }

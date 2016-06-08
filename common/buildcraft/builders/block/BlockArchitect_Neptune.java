@@ -1,6 +1,7 @@
 package buildcraft.builders.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,34 +14,41 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockArchitect_Neptune extends BlockBCTile_Neptune {
-    public static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final IProperty<Boolean> PROP_VALID = BuildCraftProperties.VALID;
+
+    private static final int META_VALID_INDEX = 4;
 
     public BlockArchitect_Neptune(Material material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(PROP_FACING, EnumFacing.NORTH));
+        IBlockState defaultState = getDefaultState();
+        defaultState = defaultState.withProperty(PROP_FACING, EnumFacing.NORTH);
+        defaultState = defaultState.withProperty(PROP_VALID, Boolean.TRUE);
+        setDefaultState(defaultState);
     }
 
     // BlockState
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, PROP_FACING);
+        return new BlockStateContainer(this, PROP_FACING, PROP_VALID);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = getDefaultState();
+        state = state.withProperty(PROP_VALID, Boolean.valueOf((meta & META_VALID_INDEX) == 0));
         return state.withProperty(PROP_FACING, EnumFacing.getHorizontal(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(PROP_FACING).getHorizontalIndex();
+        int valid = state.getValue(PROP_VALID) ? 0 : META_VALID_INDEX;
+        return state.getValue(PROP_FACING).getHorizontalIndex() | valid;
     }
 
     @Override

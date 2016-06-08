@@ -10,22 +10,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.bpt.*;
-import buildcraft.api.core.BCLog;
+import buildcraft.api.bpt.BlueprintAPI;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.api.bpt.SchematicException;
+import buildcraft.api.bpt.SchematicFactoryWorldBlock;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.block.BlockArchitect_Neptune;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
+import buildcraft.lib.bpt.Blueprint;
+import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
@@ -34,19 +41,27 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 public class TileArchitect_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
-    private static final int BLOCKS_PER_TICK = 0;
+    private static final int BLOCKS_PER_TICK = 1;
 
     protected final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     protected final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
+    public boolean shouldScanEntities = false;
+    /** Details- if true then this will create a blueprint, otherwise it will be a template. */
+    private boolean shouldScanDetails = true;
     private final Box box = new Box();
-    private List<SchematicEntity<?>> scannedEntitites;
-    private SchematicBlock[][][] scannedBlocks;
+    private List<SchematicEntityOffset> blueprintScannedEntitites;
+    private SchematicBlock[][][] blueprintScannedBlocks;
+    private boolean[][][] templateScannedBlocks;
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
 
     public TileArchitect_Neptune() {}
+
+    private int maxBlocksPerTick() {
+        return shouldScanDetails ? BLOCKS_PER_TICK : BLOCKS_PER_TICK * 3;
+    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
@@ -66,11 +81,9 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         if (placer.worldObj.isRemote) {
             return;
         }
-        BCLog.logger.info("onPlacedBy " + placer + ", " + stack);
         EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockArchitect_Neptune.PROP_FACING);
         BlockPos areaPos = getPos().offset(facing.getOpposite());
         TileEntity tile = worldObj.getTileEntity(areaPos);
-        BCLog.logger.info("foundPos = " + areaPos + " -> " + (tile == null ? "null" : tile.getClass()));
         if (tile instanceof IAreaProvider) {
             IAreaProvider provider = (IAreaProvider) tile;
             box.reset();
@@ -82,22 +95,30 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             sendNetworkUpdate(NET_BOX);
         } else {
             isValid = false;
+            IBlockState state = worldObj.getBlockState(getPos());
+            state = state.withProperty(BlockArchitect_Neptune.PROP_VALID, Boolean.FALSE);
+            worldObj.setBlockState(getPos(), state);
         }
     }
 
     @Override
     public void update() {
+        if (worldObj.isRemote) {
+            return;
+        }
         if (scanning && isValid) {
             scanMultipleBlocks();
             if (!scanning) {
-                scanEntities();
+                if (shouldScanEntities) {
+                    scanEntities();
+                }
                 finishScanning();
             }
         }
     }
 
     private void scanMultipleBlocks() {
-        for (int i = BLOCKS_PER_TICK; i > 0; i--) {
+        for (int i = maxBlocksPerTick(); i > 0; i--) {
             scanSingleBlock();
             if (!scanning) {
                 break;
@@ -107,17 +128,23 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
 
     private void scanSingleBlock() {
         BlockPos size = box.size();
-        if (scannedBlocks == null) {
-            scannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
-            boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.defaultOrder);
+        if (blueprintScannedBlocks == null) {
+            blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
+            boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.defaultOrder, true);
+            templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
         }
 
         // Read from world
         BlockPos worldScanPos = boxIterator.getCurrent();
-        SchematicBlock schematic = readSchematicForBlock(worldScanPos);
-
         BlockPos schematicIndex = worldScanPos.subtract(box.min());
-        scannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
+        if (shouldScanDetails) {
+            SchematicBlock schematic = readSchematicForBlock(worldScanPos);
+
+            blueprintScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = schematic;
+        } else {
+            boolean solid = !worldObj.isAirBlock(worldScanPos);
+            templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
+        }
 
         createAndSendMessage(false, NET_SCAN, (buffer) -> {
             buffer.writeBlockPos(worldScanPos);
@@ -148,12 +175,32 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     }
 
     private void scanEntities() {
-        scannedEntitites = new ArrayList<>();
+        blueprintScannedEntitites = new ArrayList<>();
         // TODO: Scan all entities
     }
 
     private void finishScanning() {
-        // TODO: write out the blueprint
+        EnumFacing direction = EnumFacing.NORTH;
+        IBlockState state = worldObj.getBlockState(getPos());
+        if (state.getBlock() == BCBuildersBlocks.architect) {
+            direction = state.getValue(BlockArchitect_Neptune.PROP_FACING);
+        }
+        if (shouldScanDetails) {
+            Blueprint bpt = new Blueprint(blueprintScannedBlocks, blueprintScannedEntitites);
+            blueprintScannedBlocks = null;
+            blueprintScannedEntitites = null;
+            Rotation rotation = Rotation.NONE;
+            while (direction != EnumFacing.NORTH) {
+                direction = direction.rotateY();
+                rotation = rotation.add(Rotation.CLOCKWISE_90);
+            }
+            if (rotation != Rotation.NONE) {
+                bpt.rotate(Axis.Y, rotation);
+            }
+        } else {
+            // Template tpl = new Template();
+            throw new IllegalStateException("// TODO: This :D");
+        }
     }
 
     @Override
@@ -180,6 +227,17 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
                 worldObj.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
             }
         }
+    }
+
+    public void setScanDetails(boolean scanDetails) {
+        if (!scanning) {
+            shouldScanDetails = scanDetails;
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public Box getScanningBox() {
+        return box;
     }
 
     @Override

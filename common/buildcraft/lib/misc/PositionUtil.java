@@ -7,8 +7,13 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+
+import buildcraft.core.lib.utils.Utils;
 
 public class PositionUtil {
     @Nullable
@@ -47,6 +52,66 @@ public class PositionUtil {
         boolean z = diff.getZ() == 1 || diff.getZ() == -1;
         if (y && z) return false;
         return x != z;
+    }
+
+    /** Rotates a given {@link EnumFacing} by the given rotation, in a given axis. This relies on the behaviour defined
+     * in {@link EnumFacing#rotateAround(Axis)}. */
+    public static EnumFacing rotateFacing(EnumFacing from, Axis axis, Rotation rotation) {
+        if (rotation == Rotation.NONE || rotation == null) {
+            return from;
+        }
+        if (from.getAxis() == axis) {
+            return from;
+        } else if (rotation == Rotation.CLOCKWISE_180) {
+            return from.getOpposite();
+        }
+
+        if (rotation == Rotation.COUNTERCLOCKWISE_90) {
+            // 270 is the same as 180 + 90
+            // Vanilla gives us 90 for free.
+            from = from.getOpposite();
+        }
+        return from.rotateAround(axis);
+    }
+
+    /** Rotates a given vector by the given rotation, in a given axis. This relies on the behaviour of
+     * {@link #rotateFacing(EnumFacing, Axis, Rotation)}. */
+    public static Vec3d rotateVec(Vec3d from, Axis axis, Rotation rotation) {
+        Vec3d rotated = new Vec3d(0, 0, 0);
+
+        double numEast = from.xCoord;
+        double numUp = from.yCoord;
+        double numSouth = from.zCoord;
+
+        EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
+        EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
+        EnumFacing newSouth = PositionUtil.rotateFacing(EnumFacing.SOUTH, axis, rotation);
+
+        rotated = Utils.withValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
+        rotated = Utils.withValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
+        rotated = Utils.withValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
+
+        return rotated;
+    }
+
+    /** Rotates a given position by the given rotation, in a given axis. This relies on the behaviour of
+     * {@link #rotateFacing(EnumFacing, Axis, Rotation)}. */
+    public static BlockPos rotatePos(Vec3i from, Axis axis, Rotation rotation) {
+        BlockPos rotated = new BlockPos(0, 0, 0);
+
+        int numEast = from.getX();
+        int numUp = from.getY();
+        int numSouth = from.getZ();
+
+        EnumFacing newEast = PositionUtil.rotateFacing(EnumFacing.EAST, axis, rotation);
+        EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
+        EnumFacing newSouth = PositionUtil.rotateFacing(EnumFacing.SOUTH, axis, rotation);
+
+        rotated = Utils.withValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
+        rotated = Utils.withValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
+        rotated = Utils.withValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
+
+        return rotated;
     }
 
     public static LineSkewResult findLineSkewPoint(Line line, Vec3d start, Vec3d direction) {
