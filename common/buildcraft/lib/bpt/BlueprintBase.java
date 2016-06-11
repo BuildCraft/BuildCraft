@@ -31,8 +31,7 @@ public abstract class BlueprintBase {
 
     public final void rotate(Axis axis, Rotation rotation) {
         rotateContentsBy(axis, rotation);
-        size = PositionUtil.rotatePos(size, axis, rotation);
-        size = VecUtil.absolute(size);
+        size = VecUtil.absolute(PositionUtil.rotatePos(size, axis, rotation));
     }
 
     public abstract void mirror(Axis axis);

@@ -1,0 +1,37 @@
+package buildcraft.api.data;
+
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+
+public class NBTSquishConstants {
+    /** Default written NBT Tag type- this is provided by
+     * {@link CompressedStreamTools#write(NBTTagCompound, java.io.DataOutput)} and
+     * {@link CompressedStreamTools#read(java.io.DataInput, net.minecraft.nbt.NBTSizeTracker)}.
+     * 
+     * Generally more suited to smaller NBT tags, and it writes fairly quickly. Can quickly use up a lot of space for
+     * larger/more complex tags so it is recommended that you also pass it through a GZIP compressor to take up a much
+     * smaller space. */
+    public static final int VANILLA = 0;
+    /** Buildcraft provided NBT compressor - puts every tag type into a dictionary and then refers to the dictionary for
+     * every tag which is written out. Can get much better space usage than {@link #VANILLA}, but at the cost of time.
+     * GZIP compression does less here, however it takes a lot less time to compress the resulting stream with GZIP that
+     * it does to do the initial compression. */
+    public static final int BUILDCRAFT_V1 = 1;
+
+    // The flags used by BUILDCRAFT_V1 to check the existence of each dictionary
+    public static final int FLAG_HAS_BYTES = 1 << 0;
+    public static final int FLAG_HAS_SHORTS = 1 << 1;
+    public static final int FLAG_HAS_INTS = 1 << 2;
+    public static final int FLAG_HAS_LONGS = 1 << 3;
+    public static final int FLAG_HAS_FLOATS = 1 << 4;
+    public static final int FLAG_HAS_DOUBLES = 1 << 5;
+    public static final int FLAG_HAS_BYTE_ARRAYS = 1 << 6;
+    public static final int FLAG_HAS_INT_ARRAYS = 1 << 7;
+    public static final int FLAG_HAS_STRINGS = 1 << 8;
+    public static final int FLAG_HAS_COMPLEX = 1 << 9;
+
+    // Complex types
+    public static final int COMPLEX_COMPOUND = 0;
+    public static final int COMPLEX_LIST = 1;
+    public static final int COMPLEX_LIST_PACKED = 2;
+}

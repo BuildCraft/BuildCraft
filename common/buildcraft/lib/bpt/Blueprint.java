@@ -15,6 +15,7 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
@@ -39,7 +40,11 @@ public class Blueprint extends BlueprintBase {
     public Blueprint(SchematicBlock[][][] blocks, List<SchematicEntityOffset> entities) {
         super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length));
         contentBlocks = blocks;
-        contentEntities = new ArrayList<>(entities);
+        if (entities == null) {
+            contentEntities = new ArrayList<>();
+        } else {
+            contentEntities = new ArrayList<>(entities);
+        }
     }
 
     public Blueprint(World world, BlockPos from, BlockPos size) throws SchematicException {
@@ -82,7 +87,9 @@ public class Blueprint extends BlueprintBase {
         BlockPos oldSize = this.size;
         BlockPos newSize = VecUtil.absolute(PositionUtil.rotatePos(oldSize, axis, rotation));
         SchematicBlock[][][] newContentBlocks = new SchematicBlock[newSize.getX()][newSize.getY()][newSize.getZ()];
-        BlockPos arrayOffset = newSize.subtract(oldSize);// FIXME: This might be the wrong offset!
+        Box to = new Box(BlockPos.ORIGIN, newSize.add(-1, -1, -1));
+        BlockPos newMax = PositionUtil.rotatePos(size.add(-1, -1, -1), axis, rotation);
+        BlockPos arrayOffset = to.closestInsideTo(newMax).subtract(newMax);// FIXME: This might be the wrong offset!
 
         for (int x = 0; x < contentBlocks.length; x++) {
             for (int y = 0; y < contentBlocks[x].length; y++) {

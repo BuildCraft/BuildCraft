@@ -3,8 +3,8 @@ package buildcraft.lib.misc.data;
 import gnu.trove.list.array.TByteArrayList;
 
 public class CompactingBitSet {
+    public final int bits;
     private final TByteArrayList bytes = new TByteArrayList();
-    private final int bits;
     private int bitIndex = 0;
 
     public CompactingBitSet(int bits) {

@@ -30,17 +30,17 @@ public enum WrittenType {
     }
 
     public void writeType(ByteBuf bytes) {
-        bytes.writeByte(numBytes);
+        bytes.writeByte(numBytes - 1);
     }
 
     public static WrittenType readType(ByteBuf bytes) throws IOException {
         byte val = bytes.readByte();
         for (WrittenType type : ORDERED_VALUES) {
-            if (val == type.numBytes) {
+            if (val == type.numBytes - 1) {
                 return type;
             }
         }
-        throw new IOException("Incorrect size given, expected any of [1, 2, 3, 4] but got " + val);
+        throw new IOException("Incorrect size given, expected any of [0, 1, 2, 3] but got " + val);
     }
 
     public void writeIndex(ByteBuf bytes, int index) {
