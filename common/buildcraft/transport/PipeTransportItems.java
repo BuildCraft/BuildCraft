@@ -227,7 +227,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             return pipe.inputOpen(o.getOpposite()) && pipe.transport instanceof PipeTransportItems;
         } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
             ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
-            if (transactor != null && transactor.add(item.getItemStack(), false).stackSize > 0) {
+            if (transactor != null /*&& transactor.add(item.getItemStack(), false).stackSize > 0*/) {
                 return true;
             }
         }

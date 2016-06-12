@@ -52,7 +52,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
                 @Override
                 public boolean matches(World world, BlockPos pos) {
-                    return pos.getY() < world.getActualHeight() - flyingHeight && !world.isAirBlock(pos);
+                    return pos.getY() < world.getHeight() - flyingHeight && !world.isAirBlock(pos);
                 }
             }, robot.getZoneToWork()));
         }

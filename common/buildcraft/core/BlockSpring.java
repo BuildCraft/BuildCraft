@@ -63,7 +63,7 @@ public class BlockSpring extends BlockBuildCraftBase {
     }
 
     private void assertSpring(World world, BlockPos pos, IBlockState state) {
-        EnumSpring spring = (EnumSpring) state.getValue(SPRING_TYPE);
+        EnumSpring spring = state.getValue(SPRING_TYPE);
         world.scheduleUpdate(pos, this, spring.tickRate);
         if (!spring.canGen || spring.liquidBlock == null) {
             return;

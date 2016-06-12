@@ -4,17 +4,19 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -58,11 +60,12 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
             }
         }
 
+        event.shuffle = false;
+        Collections.shuffle(nonPipesList);
+        Collections.shuffle(pipesList);
+
         event.destinations.clear();
-        if (nonPipesList.isEmpty()) {
-            event.destinations.addAll(pipesList);
-        } else {
-            event.destinations.addAll(nonPipesList);
-        }
+        event.destinations.addAll(nonPipesList);
+        event.destinations.addAll(pipesList);
     }
 }

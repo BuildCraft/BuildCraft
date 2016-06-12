@@ -24,13 +24,13 @@ public class PatternHorizon extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.min().getX();
-        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
-        int zMin = (int) box.min().getZ();
+        int xMin = box.min().getX();
+        int yMin = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
+        int zMin = box.min().getZ();
 
-        int xMax = (int) box.max().getX();
-        int yMax = world.getActualHeight();
-        int zMax = (int) box.max().getZ();
+        int xMax = box.max().getX();
+        int yMax = world.getHeight();
+        int zMax = box.max().getZ();
 
         Template bpt = new Template(Utils.withValue(box.size(), Axis.Y, yMax - yMin));
 
@@ -47,7 +47,7 @@ public class PatternHorizon extends FillerPattern {
 
     @Override
     public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
-        int yMin = box.min().getY() > 0 ? (int) box.min().getY() - 1 : 0;
+        int yMin = box.min().getY() > 0 ? box.min().getY() - 1 : 0;
 
         return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.min().getX(), yMin, box.min().getZ()));
     }

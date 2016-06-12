@@ -15,6 +15,7 @@ import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.*;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
@@ -1163,7 +1164,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             return false;
         }
 
-        if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+        if (player.isSneaking() && stack.getItem() instanceof IToolWrench) {
             RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
             MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
             if (robotDismantleEvent.isCanceled()) {
@@ -1173,7 +1174,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             onRobotHit(false);
 
             if (worldObj.isRemote) {
-                ((ItemWrench) stack.getItem()).wrenchUsed(player, this);
+                ((IToolWrench) stack.getItem()).wrenchUsed(player, this);
             }
             return true;
         } else if (wearables.size() < MAX_WEARABLES && stack.getItem().isValidArmor(stack, 0, this)) {

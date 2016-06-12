@@ -7,19 +7,18 @@ package buildcraft.transport.gui;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.EnumDyeColor;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
@@ -27,8 +26,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
-import buildcraft.core.lib.utils.RevolvingList;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {
@@ -94,7 +93,7 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
     @Override
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int id, int data) {
-        paintWidgets[id].colors.setCurrent(data == 0 ? null : EnumColor.fromId(data - 1));
+        paintWidgets[id].currentColor = data;
     }
 
     @Override
@@ -105,15 +104,15 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
     private class PaintWidget extends ButtonWidget {
 
         private final int slot;
-        private RevolvingList<EnumColor> colors = new RevolvingList<>();
+        private int currentColor = 0;
 
         private ToolTip toolTip = new ToolTip(500) {
             @Override
             public void refresh() {
                 toolTip.clear();
-                EnumColor color = colors.getCurrent();
+                EnumDyeColor color = getCurrent();
                 if (color != null) {
-                    toolTip.add(new ToolTipLine(String.format(BCStringUtils.localize("gui.pipes.emzuli.paint"), color.getLocalizedName())));
+                    toolTip.add(new ToolTipLine(String.format(BCStringUtils.localize("gui.pipes.emzuli.paint"), ColorUtils.localize(color))));
                 } else {
                     toolTip.add(new ToolTipLine(BCStringUtils.localize("gui.pipes.emzuli.nopaint")));
                 }
@@ -123,16 +122,19 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
         public PaintWidget(int slot, int x, int y) {
             super(x, y, 176, 0, 20, 20);
             this.slot = slot;
-            colors.add(null);
-            colors.addAll(Arrays.asList(EnumColor.VALUES));
+        }
+
+        private EnumDyeColor getCurrent() {
+            return currentColor == 0 ? null : EnumDyeColor.byMetadata(currentColor - 1);
         }
 
         @Override
+        @SideOnly(Side.CLIENT)
         public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
             super.draw(gui, guiX, guiY, mouseX, mouseY);
-            EnumColor color = colors.getCurrent();
+            EnumDyeColor color = getCurrent();
             if (color != null) {
-                gui.bindTexture(TextureMap.locationBlocksTexture);
+                GuiBuildCraft.bindTexture(TextureMap.locationBlocksTexture);
                 gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getGuiSprite(), 16, 16);
             } else {
                 gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, u, v + h + h, 16, 16);
@@ -143,21 +145,27 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
         public void onRelease(int mouseButton) {
             switch (mouseButton) {
                 case 0:
-                    colors.rotateLeft();
+                    currentColor++;
+                    if (currentColor > 16) {
+                        currentColor = 0;
+                    }
                     break;
                 case 1:
-                    colors.rotateRight();
+                    currentColor--;
+                    if (currentColor < 0) {
+                        currentColor = 16;
+                    }
                     break;
                 case 2:
-                    colors.setCurrent(null);
+                    currentColor = 0;
                     break;
             }
             try {
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 DataOutputStream data = new DataOutputStream(bytes);
                 data.writeByte(slot);
-                EnumColor color = colors.getCurrent();
-                data.writeByte(color == null ? 0 : color.ordinal() + 1);
+                EnumDyeColor color = getCurrent();
+                data.writeByte(color == null ? 0 : color.getMetadata() + 1);
                 PacketGuiReturn pkt = new PacketGuiReturn(pipe.getContainer(), bytes.toByteArray());
                 pkt.sendPacket();
             } catch (IOException ex) {}

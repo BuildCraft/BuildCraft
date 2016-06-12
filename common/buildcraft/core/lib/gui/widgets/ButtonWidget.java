@@ -4,6 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.core.lib.gui.GuiBuildCraft;
 
 public class ButtonWidget extends Widget {
@@ -16,6 +19,7 @@ public class ButtonWidget extends Widget {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
         int vv = pressed ? v + h : v;
         gui.drawTexturedModalRect(guiX + x, guiY + y, u, vv, w, h);

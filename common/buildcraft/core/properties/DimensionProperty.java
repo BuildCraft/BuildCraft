@@ -23,7 +23,7 @@ public class DimensionProperty implements IWorldAccess {
 
     public DimensionProperty(World iWorld, WorldProperty iProp) {
         world = iWorld;
-        worldHeight = iWorld.getActualHeight();
+        worldHeight = iWorld.getHeight();
         world.addWorldAccess(this);
         worldProperty = iProp;
     }
