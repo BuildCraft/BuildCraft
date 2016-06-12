@@ -7,6 +7,9 @@ package buildcraft.lib.misc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -311,5 +314,28 @@ public final class NBTUtils {
         }
         BCLog.logger.warn("[lib.nbt] Failed to read the state property " + string + " as " + prop);
         return state;
+    }
+
+    public static NBTTagCompound writeLocalDateTime(LocalDateTime localDateTime) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("year", localDateTime.getYear());
+        nbt.setInteger("month", localDateTime.getMonthValue());
+        nbt.setInteger("day", localDateTime.getDayOfMonth());
+        nbt.setInteger("hour", localDateTime.getHour());
+        nbt.setInteger("minute", localDateTime.getMinute());
+        nbt.setInteger("second", localDateTime.getSecond());
+        return nbt;
+    }
+
+    public static LocalDateTime readLocalDateTime(NBTTagCompound nbt) {
+        int year = nbt.getInteger("year");
+        int month = nbt.getInteger("month");
+        int dayOfMonth = nbt.getInteger("day");
+        LocalDate date = LocalDate.of(year, month, dayOfMonth);
+        int hour = nbt.getInteger("hour");
+        int minute = nbt.getInteger("minute");
+        int second = nbt.getInteger("second");
+        LocalTime time = LocalTime.of(hour, minute, second);
+        return LocalDateTime.of(date, time);
     }
 }

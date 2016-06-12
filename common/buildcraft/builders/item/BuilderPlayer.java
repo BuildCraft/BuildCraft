@@ -30,7 +30,7 @@ public class BuilderPlayer implements IBuilderAccessor {
 
     public BuilderPlayer(EntityPlayer player) {
         this.player = player;
-        this.owner = new PlayerOwner(player);
+        this.owner = PlayerOwner.getOwnerOf(player);
     }
 
     @Override

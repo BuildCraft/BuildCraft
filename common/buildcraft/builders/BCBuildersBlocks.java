@@ -6,6 +6,7 @@ import buildcraft.builders.block.BlockArchitect_Neptune;
 import buildcraft.builders.block.BlockBuilder_Neptune;
 import buildcraft.builders.block.BlockLibrary_Neptune;
 import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -20,5 +21,7 @@ public class BCBuildersBlocks {
         library = BlockBCBase_Neptune.register(new BlockLibrary_Neptune(Material.IRON, "block.library"));
 
         TileBC_Neptune.registerTile(TileArchitect_Neptune.class, "tile.architect");
+        // TODO: builder
+        TileBC_Neptune.registerTile(TileLibrary_Neptune.class, "tile.library");
     }
 }

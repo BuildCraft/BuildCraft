@@ -14,15 +14,14 @@ import com.google.common.base.Stopwatch;
 
 import org.junit.Test;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.lib.nbt.NBTSquishDebugging;
 import buildcraft.lib.nbt.NbtSquisher;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.Unpooled;
 
 public class NbtSquisherTester {
     @Test
@@ -30,7 +29,6 @@ public class NbtSquisherTester {
         Random rand = new Random(0x517123);
 
         NBTSquishDebugging.debug = true;
-        NBTSquishDebugging.usesystem = true;
 
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("primitive|byte", (byte) 1);
@@ -116,47 +114,46 @@ public class NbtSquisherTester {
 
         test(nbt);
         NBTSquishDebugging.debug = false;
-        NBTSquishDebugging.usesystem = false;
-
-        for (int i = 0; i < 6; i++) {
-            test(nbt);
-        }
+        test(nbt);
     }
 
     public static byte[] test(NBTTagCompound nbt) throws IOException {
         Stopwatch watch = Stopwatch.createStarted();
-        ByteBuf buf = Unpooled.buffer();
-        try (ByteBufOutputStream out = new ByteBufOutputStream(buf)) {
-            CompressedStreamTools.write(nbt, out);
-            watch.stop();
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.readBytes(bytes);
-            printBytesData("vanilla   [un] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
-            watch.reset();
+        byte[] bytes = NbtSquisher.squishVanillaUncompressed(nbt);
+        watch.stop();
+        printBytesData("vanilla   [un] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        watch.reset();
 
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            watch.start();
-            CompressedStreamTools.writeCompressed(nbt, outStream);
-            watch.stop();
-            bytes = outStream.toByteArray();
-            printBytesData("vanilla   [cp] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
-            watch.reset();
+        NBTTagCompound to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
 
-            watch.start();
-            bytes = NbtSquisher.squish(nbt);
-            watch.stop();
-            printBytesData("buildcraft[un] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
-            watch.reset();
+        watch.start();
+        bytes = NbtSquisher.squishVanilla(nbt);
+        watch.stop();
+        printBytesData("vanilla   [cp] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        watch.reset();
 
-            NBTTagCompound to = NbtSquisher.expand(bytes);
-            checkEquality(nbt, to);
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
 
-            watch.start();
-            bytes = compress(bytes);
-            watch.stop();
-            printBytesData("buildcraft[cp] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
-            return bytes;
-        }
+        watch.start();
+        bytes = NbtSquisher.squishBuildCraftV1Uncompressed(nbt);
+        watch.stop();
+        printBytesData("buildcraft[un] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+        watch.reset();
+
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
+
+        watch.start();
+        bytes = NbtSquisher.squishBuildCraftV1(nbt);
+        watch.stop();
+        printBytesData("buildcraft[cp] took " + pad(watch.elapsed(TimeUnit.MILLISECONDS), 8), bytes);
+
+        to = NbtSquisher.expand(bytes.clone());
+        checkEquality(nbt, to);
+
+        return bytes;
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
@@ -195,17 +192,6 @@ public class NbtSquisherTester {
         stateCmp.setString("facing", facing.getName().toLowerCase(Locale.ROOT));
         chest.setTag("state", stateCmp);
         NBTTagList chestItems = new NBTTagList();
-        //
-        // NBTTagCompound itemA = genRandomItem(rand);
-        // NBTTagCompound itemB = genRandomItem(rand);
-        // int num = rand.nextInt(3) + rand.nextInt(3) - 3;
-        // for (int i = 0; i < num; i++) {
-        // if (rand.nextInt(6) == 0) {
-        // chestItems.appendTag(itemB);
-        // } else {
-        // chestItems.appendTag(itemA);
-        // }
-        // }
 
         NBTTagCompound itemB = genRandomItem(rand);
         int num = rand.nextInt(3) + rand.nextInt(3) - 3;

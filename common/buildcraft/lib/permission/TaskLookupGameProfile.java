@@ -7,8 +7,13 @@ import java.util.concurrent.Future;
 import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.util.StringUtils;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public class TaskLookupGameProfile implements Callable<GameProfile> {
@@ -43,7 +48,24 @@ public class TaskLookupGameProfile implements Callable<GameProfile> {
 
     @Override
     public GameProfile call() throws Exception {
-        // A simple way to lookup profiles. This handles everything we could want :)
-        return TileEntitySkull.updateGameprofile(from);
+        GameProfile profile;
+        if (!StringUtils.isNullOrEmpty(from.getName())) {
+//            getProfileCache().addEntry(from);
+            profile = getProfileCache().getGameProfileForUsername(from.getName());
+        } else {
+            profile = getProfileCache().getProfileByUUID(from.getId());
+        }
+        if (profile == null) {
+            throw new IllegalStateException("Null Profile!");
+        }
+        profile = TileEntitySkull.updateGameprofile(profile);
+        if (profile == null) {
+            throw new IllegalStateException("Null Profile!");
+        }
+        return profile;
+    }
+
+    public static PlayerProfileCache getProfileCache() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache();
     }
 }

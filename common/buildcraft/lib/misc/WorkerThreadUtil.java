@@ -24,7 +24,13 @@ public class WorkerThreadUtil {
             BCLog.logger.info("[lib.threads] Creating 2 thread pools with up to " + max + " threads each.");
         }
 
-        ThreadFactory factory = new BasicThreadFactory.Builder().daemon(false).namingPattern("BuildCraft Worker Thread %d").build();
+        ThreadFactory factory = new BasicThreadFactory.Builder().daemon(false)//
+                .namingPattern("BuildCraft Worker Thread %d")//
+                .uncaughtExceptionHandler((thread, e) -> {
+                    e.printStackTrace();
+                    throw new IllegalStateException(e);
+                })//
+                .build();
         RejectedExecutionHandler rejectHandler = new CallerRunsPolicy();
         WORKING_POOL = new ThreadPoolExecutor(0, max, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), factory, rejectHandler);
 
@@ -114,6 +120,9 @@ public class WorkerThreadUtil {
             start.countDown();
             try {
                 return delegate.call();
+            } catch (Throwable t) {
+                t.printStackTrace();
+                throw Throwables.propagate(t);
             } finally {
                 end.countDown();
             }
@@ -121,11 +130,11 @@ public class WorkerThreadUtil {
     }
 
     private static class MonitorTask implements Runnable {
-        private final Task task;
+        private final Task<?> task;
         private final Future<?> future;
         private final String taskType;
 
-        public MonitorTask(Task task, Future<?> future, Class<?> taskType) {
+        public MonitorTask(Task<?> task, Future<?> future, Class<?> taskType) {
             this.task = task;
             this.future = future;
             this.taskType = taskType.getSimpleName();

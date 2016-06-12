@@ -12,11 +12,12 @@ public class NBTSquishConstants {
      * larger/more complex tags so it is recommended that you also pass it through a GZIP compressor to take up a much
      * smaller space. */
     public static final int VANILLA = 0;
+    public static final int VANILLA_COMPRESSED = 1;
     /** Buildcraft provided NBT compressor - puts every tag type into a dictionary and then refers to the dictionary for
-     * every tag which is written out. Can get much better space usage than {@link #VANILLA}, but at the cost of time.
-     * GZIP compression does less here, however it takes a lot less time to compress the resulting stream with GZIP that
-     * it does to do the initial compression. */
-    public static final int BUILDCRAFT_V1 = 1;
+     * every tag which is written out. Can get much better space usage than {@link #VANILLA}, but at the cost of
+     * time. */
+    public static final int BUILDCRAFT_V1 = 2;
+    public static final int BUILDCRAFT_V1_COMPRESSED = 3;
 
     // The flags used by BUILDCRAFT_V1 to check the existence of each dictionary
     public static final int FLAG_HAS_BYTES = 1 << 0;

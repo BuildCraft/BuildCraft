@@ -1,7 +1,10 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
@@ -207,6 +210,15 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             try {
                 byte[] bytes = NbtSquisherTester.test(nbt);
                 BCLog.logger.info("Wrote " + bytes.length + " bytes");
+
+                DateFormat format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+
+                String now = format.format(Date.from(Instant.now()));
+                now = now.replace(' ', '_');
+                now = now.replace('/', '.');
+                now = now.replace('\\', '.');
+                BCLog.logger.info("Now = " + now);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
