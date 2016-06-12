@@ -8,19 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import net.minecraft.launchwrapper.Launch;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.data.NBTSquishConstants;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.misc.WorkerThreadUtil;
-import buildcraft.lib.misc.data.ZipFileHelper;
 
+/** A local database. Stores the current */
 public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
     public File outDirectory;
     public final List<File> inDirectories = new ArrayList<>();
@@ -41,7 +40,6 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         inDirectories.add(dir);
     }
 
-    @Override
     public void readAll() {
         List<String> endings = new ArrayList<>();
         for (String key : BCLibDatabase.REGISTERED_TYPES.keySet()) {
@@ -80,15 +78,28 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
             return;
         }
         try (FileInputStream fis = new FileInputStream(file)) {
-            ZipInputStream zis = new ZipInputStream(fis);
-            ZipFileHelper helper = new ZipFileHelper(zis);
-            addEntry(helper, file.getAbsolutePath(), last);
+            Entry<LibraryEntryHeader, LibraryEntryData> loaded = load(fis);
+            LibraryEntryHeader header = loaded.getKey();
+            LibraryEntryData data = loaded.getValue();
+            entries.put(header, data);
         } catch (IOException io) {
-            io.printStackTrace();
+            BCLog.logger.warn("[lib.library] Failed to add " + file + " because " + io.getMessage());
+            if (DEBUG) {
+                io.printStackTrace();
+            }
         }
     }
 
     @Override
+    public boolean addNew(LibraryEntryHeader header, LibraryEntryData data) {
+        if (super.addNew(header, data)) {
+            save(header, data);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     protected void save(LibraryEntryHeader header, LibraryEntryData data) {
         String name = header.name.replace('/', '-').replace("\\", "-") + " - ";
         name += header.creation.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -99,13 +110,19 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
             toTry++;
         }
         // Its a new file
-        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(toSaveTo))) {
-            ZipFileHelper helper = new ZipFileHelper(HEADER);
-            helper.addNbtEntry(HEADER, "", header.writeToNBT(), NBTSquishConstants.VANILLA);
-            data.write(helper);
-            helper.write(zos);
+        try (FileOutputStream fos = new FileOutputStream(toSaveTo)) {
+            save(fos, header, data);
         } catch (IOException io) {
             io.printStackTrace();
         }
+    }
+
+    public LibraryEntryData getEntry(LibraryEntryHeader header) {
+        return entries.get(header);
+    }
+
+    @Override
+    public Collection<LibraryEntryHeader> getAllHeaders() {
+        return entries.keySet();
     }
 }

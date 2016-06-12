@@ -37,7 +37,7 @@ public class DimensionProperty implements IWorldAccess {
             ChunkProperty property;
             if (!chunkMapping.containsItem(chunkId)) {
                 property = new ChunkProperty(world, world.getHeight(), xChunk, zChunk);
-                chunkMapping.add(chunkId, property);
+                chunkMapping.addNew(chunkId, property);
                 load(world.getChunkFromChunkCoords(xChunk, zChunk), property);
             } else {
                 property = chunkMapping.getValueByKey(chunkId);

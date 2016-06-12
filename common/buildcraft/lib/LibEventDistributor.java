@@ -14,6 +14,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,6 +40,12 @@ public enum LibEventDistributor {
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event) {
         MarkerCache.onWorldUnload(event.getWorld());
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onConnectToServer(ClientConnectedToServerEvent event) {
+        BCLibDatabase.connectToServer(event);
     }
 
     @SubscribeEvent

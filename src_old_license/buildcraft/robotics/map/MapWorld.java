@@ -66,7 +66,7 @@ public class MapWorld {
                 }
             }
 
-            regionMap.add(id, region);
+            regionMap.addNew(id, region);
         }
         return region;
     }

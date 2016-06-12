@@ -331,7 +331,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         }
 
         for (ItemStack output : outputs) {
-            output.stackSize -= Transactor.getTransactorFor(invOutput, EnumFacing.UP).add(output, true).stackSize;
+            output.stackSize -= Transactor.getTransactorFor(invOutput, EnumFacing.UP).addNew(output, true).stackSize;
 
             if (output.stackSize > 0) {
                 output.stackSize -= Utils.addToRandomInventoryAround(worldObj, getPos(), output);

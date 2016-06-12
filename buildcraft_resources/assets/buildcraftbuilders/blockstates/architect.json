@@ -2,9 +2,9 @@
 	"forge_marker":1,
     "variants": {
     	"facing": {
-    		"east": { "y":90 },
+    		"east":  { "y":90 },
     		"south": { "y":180 },
-    		"west": { "y":270 },
+    		"west":  { "y":270 },
     		"north": { "y":0 }
     	},
     	"valid": {

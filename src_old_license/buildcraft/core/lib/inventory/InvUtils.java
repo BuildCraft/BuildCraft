@@ -65,7 +65,7 @@ public final class InvUtils {
             return false;
         }
         ITransactor tran = Transactor.getTransactorFor(dest, side);
-        return tran.add(stack, false).stackSize > 0;
+        return tran.addNew(stack, false).stackSize > 0;
     }
 
     /** Attempts to move a single item from one inventory to another.
@@ -79,7 +79,7 @@ public final class InvUtils {
         ItemStack stack = imSource.remove(filter, false);
         if (stack != null) {
             ITransactor imDest = Transactor.getTransactorFor(dest, input);
-            int moved = imDest.add(stack, true).stackSize;
+            int moved = imDest.addNew(stack, true).stackSize;
             if (moved > 0) {
                 imSource.remove(filter, true);
                 return stack;

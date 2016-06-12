@@ -276,7 +276,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         } else if (item.getInsertionHandler().canInsertItem(item, entity)) {
             ITransactor transactor = Transactor.getTransactorFor(entity, o.getOpposite());
             if (transactor != null) {
-                return transactor.add(item.getItemStack(), false).stackSize > 0 ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
+                return transactor.addNew(item.getItemStack(), false).stackSize > 0 ? ReceiveType.ALLOWED : ReceiveType.CLOGGED;
             }
         }
 
@@ -387,7 +387,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                     ITransactor transactor = Transactor.getTransactorFor(tile, item.output.getOpposite());
                     if (transactor != null) {
                         handled = true;
-                        ItemStack added = transactor.add(item.getItemStack(), true);
+                        ItemStack added = transactor.addNew(item.getItemStack(), true);
                         item.getItemStack().stackSize -= added.stackSize;
                     }
                 }

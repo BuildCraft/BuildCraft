@@ -78,7 +78,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     }
 
     private void addRobotLoaded(EntityRobot robot) {
-        robotsLoaded.add(robot.getRobotId(), robot);
+        robotsLoaded.addNew(robot.getRobotId(), robot);
         robotsLoadedSet.add(robot);
     }
 
@@ -165,7 +165,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
             resourcesTaken.put(resourceId, robotId);
 
             if (!resourcesTakenByRobot.containsItem(robotId)) {
-                resourcesTakenByRobot.add(robotId, new HashSet<ResourceId>());
+                resourcesTakenByRobot.addNew(robotId, new HashSet<ResourceId>());
             }
 
             getResourcesTakenByRobot(robotId).add(resourceId);
@@ -294,7 +294,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     @Override
     public synchronized void take(DockingStation station, long robotId) {
         if (!stationsTakenByRobot.containsItem(robotId)) {
-            stationsTakenByRobot.add(robotId, new HashSet<StationIndex>());
+            stationsTakenByRobot.addNew(robotId, new HashSet<StationIndex>());
         }
 
         getStationsTakenByRobot(robotId).add(new StationIndex(station));

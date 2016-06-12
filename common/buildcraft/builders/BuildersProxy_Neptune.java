@@ -10,19 +10,24 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.factory.tile.TileAutoWorkbenchItems;
+import buildcraft.builders.tile.TileLibrary_Neptune;
 
-public abstract class BuildersProxy_BC8 implements IGuiHandler {
+public abstract class BuildersProxy_Neptune implements IGuiHandler {
     @SidedProxy
-    private static BuildersProxy_BC8 proxy;
+    private static BuildersProxy_Neptune proxy;
 
-    public static BuildersProxy_BC8 getProxy() {
+    public static BuildersProxy_Neptune getProxy() {
         return proxy;
     }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+        if (ID == BuildersGuis.LIBRARY.ordinal()) {
+            if (tile instanceof TileLibrary_Neptune) {
+                TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+            }
+        }
         return null;
     }
 
@@ -34,15 +39,22 @@ public abstract class BuildersProxy_BC8 implements IGuiHandler {
     public void fmlInit() {}
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BuildersProxy_BC8 {
+    public static class ServerProxy extends BuildersProxy_Neptune {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends BuildersProxy_BC8 {
+    public static class ClientProxy extends BuildersProxy_Neptune {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+
+            if (ID == BuildersGuis.LIBRARY.ordinal()) {
+                if (tile instanceof TileLibrary_Neptune) {
+                    TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+                }
+            }
+
             return null;
         }
     }

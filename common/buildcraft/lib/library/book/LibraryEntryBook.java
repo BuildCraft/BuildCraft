@@ -1,7 +1,6 @@
 package buildcraft.lib.library.book;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,27 +9,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWritableBook;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.StringUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.lib.library.LibraryDatabase_Neptune;
 import buildcraft.lib.library.LibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
-import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.ZipFileHelper;
-import buildcraft.lib.permission.PlayerOwner;
 
 public class LibraryEntryBook implements LibraryEntryData {
     public static final String KIND = "book";
-    private final LibraryEntryHeader header;
     private final List<String> pages = new ArrayList<>();
 
     public LibraryEntryBook(ZipFileHelper helper) throws IOException {
         LibraryEntryHeader h = null;
         for (String key : helper.getKeys()) {
-            if (key.equals("header.nbt")) {
+            if (key.equals(LibraryDatabase_Neptune.HEADER)) {
                 h = new LibraryEntryHeader(helper.getNbtEntry(key), KIND);
             }
             if (key.startsWith("page/") && key.endsWith(".txt")) {
@@ -42,14 +38,9 @@ public class LibraryEntryBook implements LibraryEntryData {
                 pages.set(index - 1, helper.getTextEntry(key));
             }
         }
-        header = h;
-        if (header == null) {
-            throw new IOException("Did not find a header!");
-        }
     }
 
-    public LibraryEntryBook(LibraryEntryHeader header, List<String> pages) {
-        this.header = header;
+    public LibraryEntryBook(List<String> pages) {
         this.pages.addAll(pages);
     }
 
@@ -64,28 +55,13 @@ public class LibraryEntryBook implements LibraryEntryData {
                 return null;
             }
 
-            PlayerOwner author = PlayerOwner.lookup(nbt.getString("author"));
-            LocalDateTime time;
-            if (nbt.hasKey("creation")) {
-                time = NBTUtils.readLocalDateTime(nbt.getCompoundTag("creation"));
-            } else {
-                time = LocalDateTime.now();
-            }
-
-            String name = nbt.getString("title");
-
-            if (StringUtils.isNullOrEmpty(name)) {
-                name = "Unknown";
-            }
-            LibraryEntryHeader header = new LibraryEntryHeader(name, KIND, time, author);
-
             NBTTagList pagesNbt = nbt.getTagList("pages", Constants.NBT.TAG_STRING);
             List<String> pages = new ArrayList<>();
             for (int i = 0; i < pagesNbt.tagCount(); i++) {
                 pages.add(prettifyPage(pagesNbt.getStringTagAt(i)));
             }
 
-            return new LibraryEntryBook(header, pages);
+            return new LibraryEntryBook(pages);
         } else {
             return null;
         }
@@ -95,7 +71,7 @@ public class LibraryEntryBook implements LibraryEntryData {
         ITextComponent component;
         try {
             component = ITextComponent.Serializer.fromJsonLenient(json);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
             component = new TextComponentString(json);
         }
 
@@ -117,12 +93,8 @@ public class LibraryEntryBook implements LibraryEntryData {
         }
     }
 
-    public LibraryEntryHeader getHeader() {
-        return header;
-    }
-
     @Override
-    public LibraryEntryHeader write(ZipFileHelper helper) {
+    public void write(ZipFileHelper helper) {
         if (!pages.isEmpty()) {
             int pageNum = 1;
             for (String page : pages) {
@@ -130,7 +102,6 @@ public class LibraryEntryBook implements LibraryEntryData {
                 pageNum++;
             }
         }
-        return header;
     }
 
     private static String pad(int pageNum, int i) {

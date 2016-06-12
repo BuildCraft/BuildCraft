@@ -100,7 +100,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IRedstoneEn
             }
 
             ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-            if (transactor.add(clonedStack, true).stackSize > 0) {
+            if (transactor.addNew(clonedStack, true).stackSize > 0) {
                 inventory.decrStackSize(internalSlot, 1);
                 return;
             }

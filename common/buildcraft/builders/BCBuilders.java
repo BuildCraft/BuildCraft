@@ -24,12 +24,12 @@ public class BCBuilders {
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BuildersProxy_BC8.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BuildersProxy_Neptune.getProxy());
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        BuildersProxy_BC8.getProxy().fmlInit();
+        BuildersProxy_Neptune.getProxy().fmlInit();
         BCBuildersRecipes.init();
     }
 

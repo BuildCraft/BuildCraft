@@ -17,6 +17,9 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.lib.library.network.MessageLibraryDBIndex;
+import buildcraft.lib.library.network.MessageLibraryRequest;
+import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.net.MessageCommand;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.net.MessageUpdateTile;
@@ -40,6 +43,9 @@ public enum BCMessageHandler {
         addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);
+        addMessageType(MessageLibraryTransferEntry.class, MessageLibraryTransferEntry.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageLibraryDBIndex.class, MessageLibraryDBIndex.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
     }
 
     public static void fmlPostInit() {

@@ -894,7 +894,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             }
 
             ITransactor t = Transactor.getTransactorFor(this, null);
-            ItemStack added = t.add(toAdd, true);
+            ItemStack added = t.addNew(toAdd, true);
 
             if (added.stackSize >= stack.stackSize) {
                 return null;

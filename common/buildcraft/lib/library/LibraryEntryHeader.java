@@ -8,7 +8,6 @@ import java.util.Objects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.permission.PlayerOwner;
 
@@ -70,9 +69,7 @@ public final class LibraryEntryHeader {
     }
 
     private int computeHash() {
-        return Objects.hash(name, kind, creation
-        // , author.getOwner().getId()
-        );
+        return Objects.hash(name, kind, creation, author.getOwner().getId());
     }
 
     @Override
