@@ -58,6 +58,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
         super();
         this.setBattery(new RFBattery(16, 16, 0));
         inputInv.addInvListener((slot, before, after) -> {
+            if (after != null) {
+                if (craftMatrix.isJammed) {
+                    scheduledCacheRebuild = true;
+                }
+            }
+        });
+        resultInv.addInvListener((slot, before, after) -> {
             if (craftMatrix.isJammed) {
                 scheduledCacheRebuild = true;
             }
