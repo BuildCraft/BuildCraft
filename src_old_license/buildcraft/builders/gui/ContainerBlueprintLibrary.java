@@ -5,26 +5,24 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
+import buildcraft.lib.gui.ContainerBCTile;
 
-public class ContainerBlueprintLibrary extends BuildCraftContainer {
+public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
     protected ScrollbarWidget scrollbarWidget;
     protected IInventory playerInventory;
-    protected TileBlueprintLibrary library;
 
     private int progressIn, progressOut;
 
-    public ContainerBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
-        super(player, library.getSizeInventory());
+    public ContainerBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
+        super(player, library);
         this.playerInventory = player.inventory;
-        this.library = library;
 
         this.scrollbarWidget = new ScrollbarWidget(163, 21, 244, 0, 110);
         this.scrollbarWidget.hidden = true;

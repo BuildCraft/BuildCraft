@@ -11,6 +11,7 @@ import buildcraft.lib.library.LibraryEntryType;
 import buildcraft.lib.library.LocalLibraryDatabase;
 import buildcraft.lib.library.RemoteLibraryDatabase;
 import buildcraft.lib.library.book.LibraryEntryBook;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public class BCLibDatabase {
@@ -33,5 +34,6 @@ public class BCLibDatabase {
             return;
         }
         remoteDB = new RemoteLibraryDatabase();
+        MessageUtil.doDelayed(() -> RemoteLibraryDatabase.requestIndex());
     }
 }

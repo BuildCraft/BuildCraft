@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.builders.gui.ContainerBlueprintLibrary;
+import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 
 public abstract class BuildersProxy_Neptune implements IGuiHandler {
@@ -26,6 +28,7 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
         if (ID == BuildersGuis.LIBRARY.ordinal()) {
             if (tile instanceof TileLibrary_Neptune) {
                 TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+                return new ContainerBlueprintLibrary(player, library);
             }
         }
         return null;
@@ -52,6 +55,7 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
             if (ID == BuildersGuis.LIBRARY.ordinal()) {
                 if (tile instanceof TileLibrary_Neptune) {
                     TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
+                    return new GuiBlueprintLibrary(player, library);
                 }
             }
 

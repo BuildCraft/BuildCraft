@@ -7,13 +7,13 @@ package buildcraft.builders;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftBuilders;
@@ -30,6 +30,8 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
+
+import io.netty.buffer.ByteBuf;
 
 /** In this implementation, the blueprint library is the interface to the *local* player blueprint. The player will be
  * able to load blueprint on his environment, and save blueprints to the server environment. */
@@ -89,10 +91,12 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         super.writeToNBT(nbttagcompound);
 
         inv.writeToNBT(nbttagcompound);
+
+        return nbttagcompound;
     }
 
     @Override

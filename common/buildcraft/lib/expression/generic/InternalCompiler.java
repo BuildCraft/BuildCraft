@@ -1,31 +1,35 @@
-package buildcraft.lib.expression;
+package buildcraft.lib.expression.generic;
 
 import java.util.*;
 import java.util.function.LongBinaryOperator;
 import java.util.function.LongUnaryOperator;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
-public class ExpressionCompiler {
+import buildcraft.lib.expression.generic.Arguments.ArgType;
+import buildcraft.lib.expression.generic.Arguments.ArgumentCounts;
+
+class InternalCompiler {
     private static String operators = "+-*/^%~";
     private static String splitters = operators + "(),";
     private static String leftAssosiative = "+-^*/%";
-    private static String rightAssosiative = "-";
+    private static String rightAssosiative = "-~";
     private static String[] precedence = { "()", "+-", "%", "*/", "^", "~" };
     /** This is not a complete encompassing regular expression, just for the char set that can be used */
-    private static String expressionRegex = "[a-z0-9]|[+\\-*/^%()~,]";
+    private static String expressionRegex = "[a-z0-9]|[+\\-*/^%()~,\\._<=>]";
     private static Pattern expressionMatcher = Pattern.compile(expressionRegex);
-    private static String numberRegex = "[-+]?[0-9]+";
-    private static Pattern numberMatcher = Pattern.compile(numberRegex);
+    private static String longNumberRegex = "[-+]?[0-9]+";
+    private static Pattern longNumberMatcher = Pattern.compile(longNumberRegex);
+    private static String doubleNumberRegex = "[-+]?[0-9]+(\\.[0-9]+)?";
+    private static Pattern doubleNumerMatcher = Pattern.compile(doubleNumberRegex);
+    private static String booleanRegex = "true|false";
+    private static Pattern booleanMatcher = Pattern.compile(booleanRegex);
+    private static String stringRegex = "\"[a-z_]+\"";
+    private static Pattern stringMatcher = Pattern.compile(stringRegex);
 
-    public static Expression compileExpression(String expression) throws InvalidExpressionException {
-        return compileExpression(expression, ImmutableMap.of());
-    }
-
-    public static Expression compileExpression(String expression, Map<String, Expression> functions) throws InvalidExpressionException {
+    public static String validateExpression(String expression) throws InvalidExpressionException {
         expression = expression.replace(" ", "").toLowerCase(Locale.ROOT);
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
@@ -33,12 +37,10 @@ public class ExpressionCompiler {
                 throw new InvalidExpressionException("Could not compile " + expression + ", as the " + i + "th char ('" + c + "') was invalid");
             }
         }
-        String[] split = split(expression);
-        String[] postfix = convertToPostfix(split);
-        return makeExpression(postfix, functions);
+        return expression;
     }
 
-    private static String[] split(String function) {
+    public static String[] split(String function) {
         function = function.replaceAll("\\s", "");
         List<String> list = Lists.newArrayList();
         StringBuffer buffer = new StringBuffer();
@@ -74,14 +76,14 @@ public class ExpressionCompiler {
         return p;
     }
 
-    private static String[] convertToPostfix(String[] infix) throws InvalidExpressionException {
+    public static String[] convertToPostfix(String[] infix) throws InvalidExpressionException {
         // Implementation of https://en.wikipedia.org/wiki/Shunting-yard_algorithm
         Deque<String> stack = Queues.newArrayDeque();
         List<String> postfix = Lists.newArrayList();
         int index = 0;
         for (index = 0; index < infix.length; index++) {
             String token = infix[index];
-            if (numberMatcher.matcher(token).matches()) {
+            if (longNumberMatcher.matcher(token).matches()) {
                 // Its a number
                 postfix.add(token);
             } else if (",".equals(token)) {
@@ -169,9 +171,10 @@ public class ExpressionCompiler {
         return postfix.toArray(new String[postfix.size()]);
     }
 
-    private static Expression makeExpression(String[] postfix, Map<String, Expression> functions) throws InvalidExpressionException {
+    public static IExpressionNode makeExpression(String[] postfix, Map<String, IExpression> functions) throws InvalidExpressionException {
         List<String> variables = new ArrayList<>();
-        Deque<Node> stack = Queues.newArrayDeque();
+        List<ArgType> variableTypes = new ArrayList<>();
+        Deque<IExpressionNode> stack = Queues.newArrayDeque();
         for (String op : postfix) {
             if ("-".equals(op)) pushBinaryOperatorNode(stack, (a, b) -> b - a);
             else if ("+".equals(op)) pushBinaryOperatorNode(stack, (a, b) -> b + a);
@@ -180,12 +183,12 @@ public class ExpressionCompiler {
             else if ("%".equals(op)) pushBinaryOperatorNode(stack, (a, b) -> b % a);
             else if ("^".equals(op)) pushBinaryOperatorNode(stack, (a, b) -> (long) Math.pow(b, a));
             else if ("~".equals(op)) pushUnaryOperatorNode(stack, (a) -> -a);
-            else if (numberMatcher.matcher(op).matches()) {
+            else if (longNumberMatcher.matcher(op).matches()) {
                 stack.push(new ValueNode(Long.parseLong(op)));
             } else if (op.startsWith("ƒ")) {
                 // Its a function
                 String function = op.substring(1);
-                Expression func = functions.get(function);
+                IExpression func = functions.get(function);
                 if (func == null) {
                     throw new IllegalArgumentException("Unknown function " + func);
                 } else {
@@ -202,122 +205,38 @@ public class ExpressionCompiler {
         if (stack.size() != 1) {
             throw new InvalidExpressionException("Tried to make an expression with too many nodes! (" + stack + ")");
         }
-        Node n = stack.pop();
-        return new Expression(n, variables.size());
+        return stack.pop();
     }
 
-    private static void pushFunctionNode(Deque<Node> stack, String function, Expression func) throws InvalidExpressionException {
-        int wantedNodes = func.getNumVariables();
-        if (stack.size() < wantedNodes) {
-            throw new InvalidExpressionException("Could not pop " + wantedNodes + " values from the stack for the function " + function);
+    private static void pushFunctionNode(Deque<IExpressionNode> stack, String function, IExpression func) throws InvalidExpressionException {
+        ArgumentCounts counts = func.getCounts();
+        int size = counts.order.size();
+        if (stack.size() < size) {
+            throw new InvalidExpressionException("Could not pop " + size + " values from the stack for the function " + function);
         }
-        Node[] nodes = new Node[wantedNodes];
+
+        List<IExpressionNode> args = new ArrayList<>();
+        for (int i = size - 1; i >= 0; i--) {
+            args.add(stack.pop());
+        }
+
+        GenericNode___OLD[] nodes = new GenericNode___OLD[wantedNodes];
         for (int i = wantedNodes - 1; i >= 0; i--) {
             nodes[i] = stack.pop();
         }
         stack.push(new FunctionNode(func, nodes));
     }
 
-    private static void pushBinaryOperatorNode(Deque<Node> stack, LongBinaryOperator op) throws InvalidExpressionException {
+    private static void pushBinaryOperatorNode(Deque<GenericNode___OLD> stack, LongBinaryOperator op) throws InvalidExpressionException {
         if (stack.size() < 2) throw new InvalidExpressionException("Could not pop 2 values from the stack!");
-        Node a = stack.pop();
-        Node b = stack.pop();
+        GenericNode___OLD a = stack.pop();
+        GenericNode___OLD b = stack.pop();
         stack.push(new BinaryExpressionNode(a, b, op));
     }
 
-    private static void pushUnaryOperatorNode(Deque<Node> stack, LongUnaryOperator op) throws InvalidExpressionException {
+    private static void pushUnaryOperatorNode(Deque<GenericNode___OLD> stack, LongUnaryOperator op) throws InvalidExpressionException {
         if (stack.size() < 1) throw new InvalidExpressionException("Could not pop a value from the stack!");
-        Node a = stack.pop();
+        GenericNode___OLD a = stack.pop();
         stack.push(new UnaryExpressionNode(a, op));
-    }
-
-    static abstract class Node {
-        abstract long evaluate(long[] variables);
-    }
-
-    private static class BinaryExpressionNode extends Node {
-        final Node a, b;
-        final LongBinaryOperator function;
-
-        public BinaryExpressionNode(Node a, Node b, LongBinaryOperator function) {
-            this.a = a;
-            this.b = b;
-            this.function = function;
-        }
-
-        @Override
-        long evaluate(long[] variables) {
-            long aV = a.evaluate(variables);
-            long bV = b.evaluate(variables);
-            return function.applyAsLong(aV, bV);
-        }
-    }
-
-    private static class UnaryExpressionNode extends Node {
-        final Node a;
-        final LongUnaryOperator function;
-
-        public UnaryExpressionNode(Node a, LongUnaryOperator function) {
-            this.a = a;
-            this.function = function;
-        }
-
-        @Override
-        long evaluate(long[] variables) {
-            long aV = a.evaluate(variables);
-            return function.applyAsLong(aV);
-        }
-    }
-
-    private static class ValueNode extends Node {
-        final long value;
-
-        public ValueNode(long value) {
-            this.value = value;
-        }
-
-        @Override
-        long evaluate(long[] variables) {
-            return value;
-        }
-    }
-
-    private static class VariableNode extends Node {
-        final int index;
-
-        public VariableNode(int index) {
-            this.index = index;
-        }
-
-        @Override
-        long evaluate(long[] variables) {
-            return variables[index];
-        }
-    }
-
-    private static class FunctionNode extends Node {
-        final Expression function;
-        final Node[] arguments;
-
-        public FunctionNode(Expression function, Node[] arguments) {
-            this.function = function;
-            this.arguments = arguments;
-        }
-
-        @Override
-        long evaluate(long[] variables) {
-            long[] vars = new long[arguments.length];
-            for (int i = 0; i < vars.length; i++) {
-                vars[i] = arguments[i].evaluate(variables);
-            }
-            return function.evaluate(vars);
-        }
-    }
-
-    @SuppressWarnings("serial")
-    public static class InvalidExpressionException extends Exception {
-        public InvalidExpressionException(String message) {
-            super(message);
-        }
     }
 }

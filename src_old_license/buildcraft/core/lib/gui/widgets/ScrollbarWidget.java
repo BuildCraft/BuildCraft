@@ -5,12 +5,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
+import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.Widget_Neptune;
 
-public class ScrollbarWidget extends Widget {
+public class ScrollbarWidget<C extends ContainerBC_Neptune> extends Widget_Neptune<C> {
     private static final int HEIGHT = 14;
     private int pos, len;
     private boolean isClicking;
-
+    
     public ScrollbarWidget(int x, int y, int u, int v, int h) {
         super(x, y, u, v, 6, h);
     }

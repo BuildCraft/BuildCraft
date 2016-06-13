@@ -14,9 +14,7 @@ import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.lib.library.LibraryDatabase_Neptune;
 import buildcraft.lib.library.LibraryEntryData;
-import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.data.ZipFileHelper;
 
 public class LibraryEntryBook implements LibraryEntryData {
@@ -24,11 +22,7 @@ public class LibraryEntryBook implements LibraryEntryData {
     private final List<String> pages = new ArrayList<>();
 
     public LibraryEntryBook(ZipFileHelper helper) throws IOException {
-        LibraryEntryHeader h = null;
         for (String key : helper.getKeys()) {
-            if (key.equals(LibraryDatabase_Neptune.HEADER)) {
-                h = new LibraryEntryHeader(helper.getNbtEntry(key), KIND);
-            }
             if (key.startsWith("page/") && key.endsWith(".txt")) {
                 String pageIndex = key.substring("page/".length(), key.length() - ".txt".length());
                 int index = parseIndex(pageIndex);
@@ -78,6 +72,9 @@ public class LibraryEntryBook implements LibraryEntryData {
         String pretty = component.getFormattedText();
         pretty = pretty.replaceAll("\\R", "\n");
 
+        // TODO: Replace every duplicate "§*§*" with "§*", where * is the same char.
+
+        // Remove the last "reset" that is added
         if (pretty.endsWith("§r")) {
             pretty = pretty.substring(0, pretty.length() - 2);
         }

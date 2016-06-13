@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -46,6 +47,23 @@ public class ItemSchematicSingle extends ItemBuildCraft_BC8 {
     public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
         addVariant(variants, DAMAGE_CLEAN, "clean");
         addVariant(variants, DAMAGE_STORED_SCHEMATIC, "used");
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote) {
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+        if (player.isSneaking()) {
+            NBTTagCompound itemData = NBTUtils.getItemData(stack);
+            itemData.removeTag(NBT_KEY_SCHEMATIC);
+            if (itemData.hasNoTags()) {
+                stack.setTagCompound(null);
+            }
+            stack.setItemDamage(DAMAGE_CLEAN);
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
+        return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
     @Override

@@ -5,6 +5,7 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
@@ -31,7 +32,6 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
         this.library = library;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
         super.initGui();
