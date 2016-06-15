@@ -233,7 +233,7 @@ public class NbtSquisherTester {
     public static void printBytesData(String name, byte[] bytes) {
         String formatted = DecimalFormat.getInstance().format(bytes.length);
         System.out.print(name + "(" + pad(formatted, 13) + ") |");
-        int max = Math.min(bytes.length, 1000);
+        int max = Math.min(bytes.length, 200);
         for (int i = 0; i < max; i++) {
             printByte(bytes, i);
         }

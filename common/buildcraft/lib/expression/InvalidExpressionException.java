@@ -1,4 +1,4 @@
-package buildcraft.lib.expression.generic;
+package buildcraft.lib.expression;
 
 @SuppressWarnings("serial")
 public class InvalidExpressionException extends Exception {
