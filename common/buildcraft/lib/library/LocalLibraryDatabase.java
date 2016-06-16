@@ -38,7 +38,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
             try {
                 dir = new File(".").getCanonicalFile();
             } catch (IOException e) {
-                throw new RuntimeException("Unable to get the current run directory!", e);
+                throw new RuntimeException("[lib.library] Unable to get the current run directory!", e);
             }
         }
         outDirectory = new File(dir, dbLocation);
@@ -50,13 +50,22 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         specificOutDirectories.put(LibraryEntryBook.KIND, new File(outDirectory, "books"));
     }
 
+    public void onServerStarted() {
+        for (LibraryEntryHeader header : entries.keySet()) {
+            /* If we started BEFORE the server was initialised then the owner lookup would have failed.
+             * 
+             * This makes sure that it is always right. */
+            header.author.fillOwner();
+        }
+    }
+
     public void readAll() {
         List<String> endings = new ArrayList<>();
         for (String key : BCLibDatabase.REGISTERED_TYPES.keySet()) {
             endings.add("." + key);
         }
         for (File in : inDirectories) {
-            BCLog.logger.info("Reading from dir " + in);
+            BCLog.logger.info("[lib.library] Reading from dir " + in);
             if (in.exists()) {
                 if (in.isDirectory()) {
                     try (Stream<Path> fileStream = Files.walk(in.toPath())) {
@@ -79,7 +88,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         if (!file.isFile()) {
             return;
         }
-        BCLog.logger.info("Found a possible file " + file);
+        BCLog.logger.info("[lib.library] Found a possible file " + file);
         String name = file.getName();
         String[] split = name.split("\\.");
         String last = split[split.length - 1];
@@ -92,6 +101,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
             LibraryEntryHeader header = loaded.getKey();
             LibraryEntryData data = loaded.getValue();
             entries.put(header, data);
+            BCLog.logger.info("[lib.library] Added a library entry " + header);
         } catch (IOException io) {
             BCLog.logger.warn("[lib.library] Failed to add " + file + " because " + io.getMessage());
             if (DEBUG) {
@@ -113,7 +123,9 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
     protected void save(LibraryEntryHeader header, LibraryEntryData data) {
         String name = header.name.replace('/', '-').replace("\\", "-") + " - ";
         name += header.creation.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
         File out = getOutDirectory(header.kind);
+        out.mkdirs();
         File toSaveTo = new File(out, name + "." + header.kind);
         int toTry = 1;
         while (toSaveTo.isFile()) {

@@ -3,6 +3,7 @@ package buildcraft.lib.library;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.permission.PlayerOwner;
 
-public final class LibraryEntryHeader {
+public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> {
     public final String name, kind;
     public final LocalDateTime creation;
     public final PlayerOwner author;
@@ -43,6 +44,7 @@ public final class LibraryEntryHeader {
 
     public void writeToByteBuf(PacketBuffer buffer) {
         buffer.writeString(name);
+        buffer.writeString(kind);
         buffer.writeInt(creation.getYear());
         buffer.writeByte(creation.getMonthValue());
         buffer.writeByte(creation.getDayOfMonth());
@@ -52,9 +54,9 @@ public final class LibraryEntryHeader {
         author.writeToByteBuf(buffer);
     }
 
-    public LibraryEntryHeader(NBTTagCompound nbt, String kind) {
+    public LibraryEntryHeader(NBTTagCompound nbt) {
         this.name = nbt.getString("name");
-        this.kind = kind;
+        this.kind = nbt.getString("kind");
         this.creation = NBTUtils.readLocalDateTime(nbt.getCompoundTag("creation"));
         this.author = PlayerOwner.read(nbt.getCompoundTag("author"));
         this.hash = computeHash();
@@ -63,6 +65,7 @@ public final class LibraryEntryHeader {
     public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("name", name);
+        nbt.setString("kind", kind);
         nbt.setTag("creation", NBTUtils.writeLocalDateTime(creation));
         nbt.setTag("author", author.writeToNBT());
         return nbt;
@@ -88,5 +91,21 @@ public final class LibraryEntryHeader {
             && kind.equals(other.kind)//
             && name.equals(other.name)//
             && creation.equals(other.creation);
+    }
+
+    @Override
+    public String toString() {
+        return kind + ":" + name + " by " + author.getOwnerName() + " on " + creation.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    @Override
+    public int compareTo(LibraryEntryHeader o) {
+        int diff = name.compareTo(o.name);
+        if (diff != 0) return diff;
+        diff = creation.compareTo(o.creation);
+        if (diff != 0) return diff;
+        diff = kind.compareTo(o.kind);
+        // if (diff != 0) return diff;
+        return diff;
     }
 }

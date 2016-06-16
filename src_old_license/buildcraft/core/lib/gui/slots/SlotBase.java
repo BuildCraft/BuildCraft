@@ -4,18 +4,18 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.slots;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 
-public class SlotBase extends Slot implements IToolTipProvider {
+public class SlotBase extends SlotItemHandler implements IToolTipProvider {
 
     private ToolTip toolTips;
 
-    public SlotBase(IInventory iinventory, int slotIndex, int posX, int posY) {
-        super(iinventory, slotIndex, posX, posY);
+    public SlotBase(IItemHandler itemHandler, int slotIndex, int posX, int posY) {
+        super(itemHandler, slotIndex, posX, posY);
     }
 
     public boolean canShift() {

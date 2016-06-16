@@ -10,8 +10,8 @@ import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 
-/** Provides a pool of worker threads that can execute tasks. Each task should take no longer than (ideally) 5ms or at a
- * push 30ms. Each task is watched to make sure that it takes less time to complete that that, and if it takes longer
+/** Provides a pool of worker threads that can execute tasks. Each task should take no longer than (ideally) 20ms or at
+ * a push 100ms. Each task is watched to make sure that it takes less time to complete that that, and if it takes longer
  * then a warning is logged. */
 public class WorkerThreadUtil {
     private static final ExecutorService WORKING_POOL, DEPENDANT_WORKING_POOL, MONITORING_POOL;
@@ -59,7 +59,11 @@ public class WorkerThreadUtil {
         Task<T> taskMonitor = new Task<>(task);
         Future<T> future = WORKING_POOL.submit(taskMonitor);
         if (!future.isDone()) {
-            executeMonitoringTask(new MonitorTask(taskMonitor, future, task.getClass()));
+            Class<?> taskClass = task.getClass();
+            if (task instanceof CallableDelegate) {
+                taskClass = ((CallableDelegate) task).getRealClass();
+            }
+            executeMonitoringTask(new MonitorTask(taskMonitor, future, taskClass));
         }
         return future;
     }
@@ -104,6 +108,9 @@ public class WorkerThreadUtil {
             return null;
         }
 
+        public Class<?> getRealClass() {
+            return runnable.getClass();
+        }
     }
 
     private static class Task<T> implements Callable<T> {
@@ -152,8 +159,8 @@ public class WorkerThreadUtil {
         private void runThrowable() throws InterruptedException {
             long startMonitor = System.currentTimeMillis();
             task.start.await();
-            if (System.currentTimeMillis() - startMonitor > 30) {
-                BCLog.logger.warn("[lib.threads] A task took a long time to start! (more than 30 ms) [" + taskType + "]");
+            if (System.currentTimeMillis() - startMonitor > 100) {
+                BCLog.logger.warn("[lib.threads] A task took a long time to start! (more than 100 ms) [" + taskType + "]");
             }
             try {
                 future.get(30, TimeUnit.MILLISECONDS);

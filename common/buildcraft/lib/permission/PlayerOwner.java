@@ -17,22 +17,23 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public final class PlayerOwner {
-    private static final String NAME_UNKNOWN = "Unknown";
-    private static final LoadingCache<UUID, PlayerOwner> CACHE;
+    private static final LoadingCache<UUID, PlayerOwner> CACHE_UUID;
+    private static final LoadingCache<String, PlayerOwner> CACHE_NAME;
 
     static {
-        CACHE = CacheBuilder.newBuilder().build(CacheLoader.from(PlayerOwner::new));
+        CACHE_UUID = CacheBuilder.newBuilder().build(CacheLoader.from(PlayerOwner::new));
+        CACHE_NAME = CacheBuilder.newBuilder().build(CacheLoader.from(PlayerOwner::new));
     }
 
     private static PlayerOwner getOwnerFromUUID(UUID uuid) {
-        return CACHE.getUnchecked(uuid);
+        return CACHE_UUID.getUnchecked(uuid);
     }
 
     private GameProfile owner;
-    private String potentialName = "Loading...";
 
     public static PlayerOwner getOwnerOf(Entity entity) {
         if (entity.worldObj.isRemote) {
@@ -40,7 +41,7 @@ public final class PlayerOwner {
         }
         if (entity.getClass() == EntityPlayerMP.class) {
             EntityPlayerMP player = (EntityPlayerMP) entity;
-            return CACHE.getUnchecked(player.getGameProfile().getId());
+            return CACHE_UUID.getUnchecked(player.getGameProfile().getId()).intern();
         } else {
             // TODO: Add handling for fake players + other indirect methods.
             throw new IllegalArgumentException("Unknown player entity " + entity);
@@ -59,7 +60,8 @@ public final class PlayerOwner {
 
     private PlayerOwner(UUID uuid, String name) {
         owner = new GameProfile(uuid, name);
-        fillOwner();
+        // No need to fill in the owner if both the
+        // UUID and the name are already present.
     }
 
     public static PlayerOwner read(PacketBuffer buffer) {
@@ -70,10 +72,10 @@ public final class PlayerOwner {
 
         // Read the name as well, in case we are offline and it has been saved.
         String name = buffer.readStringFromBuffer(256);
-        if (!StringUtils.isNullOrEmpty(name)) {
-            existing.potentialName = name;
+        if (!StringUtils.isNullOrEmpty(name) && StringUtils.isNullOrEmpty(existing.getOwnerName())) {
+            existing = new PlayerOwner(uuid, name);
         }
-        return existing;
+        return existing.intern();
     }
 
     public void writeToByteBuf(PacketBuffer buffer) {
@@ -95,25 +97,14 @@ public final class PlayerOwner {
 
         // Read the name as well, in case we are offline and it has been saved.
         String name = nbt.getString("name");
-        if (!StringUtils.isNullOrEmpty(name)) {
-            existing.potentialName = name;
+        if (!StringUtils.isNullOrEmpty(name) && StringUtils.isNullOrEmpty(existing.getOwnerName())) {
+            existing = new PlayerOwner(uuid, name);
         }
-        return existing;
+        return existing.intern();
     }
 
     public static PlayerOwner lookup(String name) {
-        for (PlayerOwner existing : CACHE.asMap().values()) {
-            if (!existing.owner.isComplete()) {
-                continue;
-            }
-            if (StringUtils.isNullOrEmpty(existing.getOwnerName())) {
-                continue;
-            }
-            if (existing.getOwnerName().equals(name)) {
-                return existing;
-            }
-        }
-        return new PlayerOwner(name);
+        return CACHE_NAME.getUnchecked(name).intern();
     }
 
     public NBTTagCompound writeToNBT() {
@@ -132,18 +123,16 @@ public final class PlayerOwner {
     }
 
     public void fillOwner() {
-        Future<GameProfile> future = TaskLookupGameProfile.lookupLater(owner);
+        Future<GameProfile> future = TaskLookupGameProfile.lookupLater(owner, false);
         if (future.isDone()) {
             try {
                 owner = future.get();
-                potentialName = NAME_UNKNOWN;
             } catch (InterruptedException | ExecutionException e) {
                 throw new Error("The task was done, but threw an error anyway! THIS IS VERY BAD!", e);
             }
         } else {
-            WorkerThreadUtil.executeWorkTask(() -> {
+            WorkerThreadUtil.executeDependantTask(() -> {
                 PlayerOwner.this.owner = future.get();
-                PlayerOwner.this.potentialName = NAME_UNKNOWN;
                 return null;
             });
         }
@@ -158,27 +147,49 @@ public final class PlayerOwner {
     }
 
     public String getOwnerName() {
-        String name = owner.getName();
-        if (StringUtils.isNullOrEmpty(name)) {
-            return potentialName;
-        }
-        return name;
+        return owner.getName();
     }
 
-    /** Returns the internalised version of this. Only happens if this has been completed. */
-    public PlayerOwner intern() {
-        if (!owner.isComplete()) {
-            return this;
-        }
+    private PlayerOwner intern() {
+        String name = getOwnerName();
         UUID uuid = owner.getId();
-        PlayerOwner existing = CACHE.getIfPresent(uuid);
-        if (existing == null) {
-            CACHE.put(uuid, this);
-            return this;
-        } else if (existing.owner.isComplete()) {
-            return existing;
+        if (StringUtils.isNullOrEmpty(name)) {
+            PlayerOwner existing = CACHE_UUID.getIfPresent(uuid);
+            if (existing == null) {
+                CACHE_UUID.put(uuid, this);
+                return this;
+            } else {
+                return existing;
+            }
+
+        } else if (uuid == null) {
+            PlayerOwner existing = CACHE_NAME.getIfPresent(name);
+            if (existing == null) {
+                CACHE_NAME.put(name, this);
+                return this;
+            } else {
+                return existing;
+            }
         } else {
-            return this;
+            // Both UUID and name are here
+            PlayerOwner fromUUID = CACHE_UUID.getIfPresent(uuid);
+            PlayerOwner fromName = CACHE_NAME.getIfPresent(name);
+            if (fromUUID == null && fromName != null) {
+                CACHE_UUID.put(uuid, fromName);
+                return fromName;
+            } else if (fromUUID != null && fromName == null) {
+                CACHE_NAME.put(name, fromUUID);
+                return fromUUID;
+            } else if (fromUUID == fromName) {
+                return fromName;
+            } else {
+                // Uh oh, thats not good- somehow two separate entries exist with the same properties.
+                // Don't require a debug symbol b/c I'm interested in if this actually happens in the wild
+                String data = "[N=" + System.identityHashCode(fromName) + ", E=" + System.identityHashCode(fromUUID) + "]";
+                BCLog.logger.warn("[lib.perm.owner] Found 2 different (but identical) PlayerOwner objects! Odd...  " + data);
+                CACHE_NAME.put(name, fromUUID);
+                return fromUUID;
+            }
         }
     }
 }

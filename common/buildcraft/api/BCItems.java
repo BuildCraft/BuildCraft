@@ -108,15 +108,15 @@ public class BCItems {
         Item item = Item.REGISTRY.getObject(new ResourceLocation(modid, regName));
         if (item != null) {
             if (DEBUG) {
-                BCLog.logger.info("[item-api] Found the item " + regName + " from the module " + module);
+                BCLog.logger.info("[api.items] Found the item " + regName + " from the module " + module);
             }
             return item;
         }
         if (DEBUG) {
             if (Loader.isModLoaded(modid)) {
-                BCLog.logger.info("[item-api] Did not find the item " + regName + " dispite the appropriate mod being loaded (" + modid + ")");
+                BCLog.logger.info("[api.items] Did not find the item " + regName + " dispite the appropriate mod being loaded (" + modid + ")");
             } else {
-                BCLog.logger.info("[item-api] Did not find the item " + regName + " probable because the mod is not loaded (" + modid + ")");
+                BCLog.logger.info("[api.items] Did not find the item " + regName + " probably because the mod is not loaded (" + modid + ")");
             }
         }
 

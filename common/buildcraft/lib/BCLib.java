@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
@@ -13,8 +14,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.bpt.vanilla.VanillaBlueprints;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.lib.library.LibraryDatabase_Neptune;
-import buildcraft.lib.library.LocalLibraryDatabase;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
@@ -66,5 +65,10 @@ public class BCLib {
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();
+    }
+
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent evt) {
+        LibEventDistributor.onServerStarted(evt);
     }
 }

@@ -3,7 +3,6 @@ package buildcraft.lib.library;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,11 +27,11 @@ public abstract class LibraryDatabase_Neptune {
 
     protected final Map<LibraryEntryHeader, LibraryEntryData> entries = new HashMap<>();
 
-    protected boolean addFromZip(ZipFileHelper helper, String from, String kind) {
+    protected boolean addFromZip(ZipFileHelper helper, String from) {
         if (helper == null) return false;
         if (helper.getKeys().isEmpty()) return false;
         try {
-            addInternal(helper, kind);
+            addInternal(helper);
         } catch (IOException io) {
             BCLog.logger.warn("[lib.library] Failed to add " + from + " because " + io.getMessage());
             if (DEBUG) {
@@ -43,10 +42,11 @@ public abstract class LibraryDatabase_Neptune {
         return true;
     }
 
-    private void addInternal(ZipFileHelper helper, String kind) throws IOException {
+    private void addInternal(ZipFileHelper helper) throws IOException {
         // Try and find the header
         NBTTagCompound headerData = helper.getNbtEntry(HEADER);
-        LibraryEntryHeader header = new LibraryEntryHeader(headerData, kind);
+        LibraryEntryHeader header = new LibraryEntryHeader(headerData);
+        String kind = header.kind;
         LibraryEntryType type = BCLibDatabase.REGISTERED_TYPES.get(kind);
         if (type == null) {
             throw new IOException("Unkown kind " + kind);
@@ -64,31 +64,26 @@ public abstract class LibraryDatabase_Neptune {
     }
 
     public static void save(OutputStream out, LibraryEntryHeader header, LibraryEntryData data) {
-        String kind = header.kind;
-        byte[] string = kind.getBytes(StandardCharsets.UTF_8);
-        try {
-            out.write(string);
-            try (ZipOutputStream zos = new ZipOutputStream(out)) {
-                ZipFileHelper helper = new ZipFileHelper(HEADER);
-                helper.addNbtEntry(HEADER, "", header.writeToNBT(), NBTSquishConstants.VANILLA);
-                data.write(helper);
-                helper.write(zos);
-            }
+        try (ZipOutputStream zos = new ZipOutputStream(out)) {
+            ZipFileHelper helper = new ZipFileHelper(HEADER);
+            helper.addNbtEntry(HEADER, "", header.writeToNBT(), NBTSquishConstants.VANILLA);
+            data.write(helper);
+            helper.write(zos);
+            zos.finish();
+            zos.flush();
         } catch (IOException io) {
             io.printStackTrace();
         }
     }
 
     public static Entry<LibraryEntryHeader, LibraryEntryData> load(InputStream in) throws IOException {
-        byte[] string = new byte[in.read()];
-        String kind = new String(string, StandardCharsets.UTF_8);
         try (ZipInputStream zis = new ZipInputStream(in)) {
             ZipFileHelper helper = new ZipFileHelper(zis);
             NBTTagCompound headerNbt = helper.getNbtEntry(HEADER);
-            LibraryEntryHeader header = new LibraryEntryHeader(headerNbt, kind);
-            LibraryEntryType type = BCLibDatabase.REGISTERED_TYPES.get(kind);
+            LibraryEntryHeader header = new LibraryEntryHeader(headerNbt);
+            LibraryEntryType type = BCLibDatabase.REGISTERED_TYPES.get(header.kind);
             if (type == null) {
-                throw new IOException("Unkown kind " + kind);
+                throw new IOException("Unkown kind " + header.kind);
             }
             LibraryEntryData data = type.read(helper);
             return Pair.of(header, data);

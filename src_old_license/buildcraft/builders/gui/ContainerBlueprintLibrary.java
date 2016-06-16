@@ -8,14 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
 import buildcraft.lib.gui.ContainerBCTile;
 
 public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
-    protected ScrollbarWidget scrollbarWidget;
     protected IInventory playerInventory;
 
     private int progressIn, progressOut;
@@ -24,15 +21,11 @@ public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptu
         super(player, library);
         this.playerInventory = player.inventory;
 
-        this.scrollbarWidget = new ScrollbarWidget(163, 21, 244, 0, 110);
-        this.scrollbarWidget.hidden = true;
-        this.addWidget(scrollbarWidget);
+        addSlotToContainer(new SlotBlueprintLibrary(library, library.inv, player, 0, 219, 57));
+        addSlotToContainer(new SlotOutput(library.inv, 1, 175, 57));
 
-        addSlotToContainer(new SlotBlueprintLibrary(library, player, 0, 219, 57));
-        addSlotToContainer(new SlotOutput(library, 1, 175, 57));
-
-        addSlotToContainer(new SlotBlueprintLibrary(library, player, 2, 175, 79));
-        addSlotToContainer(new SlotOutput(library, 3, 219, 79));
+        addSlotToContainer(new SlotBlueprintLibrary(library, library.inv, player, 2, 175, 79));
+        addSlotToContainer(new SlotOutput(library.inv, 3, 219, 79));
 
         // Player inventory
         for (int l = 0; l < 3; l++) {
@@ -46,34 +39,33 @@ public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptu
         }
     }
 
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        for (Object crafter : crafters) {
-            ICrafting icrafting = (ICrafting) crafter;
-            if (progressIn != library.progressIn) {
-                icrafting.sendProgressBarUpdate(this, 0, library.progressIn);
-            }
-            if (progressOut != library.progressOut) {
-                icrafting.sendProgressBarUpdate(this, 1, library.progressOut);
-            }
-        }
+    // @Override
+    // public void detectAndSendChanges() {
+    // super.detectAndSendChanges();
+    // for (IContainerListener listener : this.listeners) {
+    // if (progressIn != tile.progressIn) {
+    // listener.sendProgressBarUpdate(this, 0, tile.progressIn);
+    // }
+    // if (progressOut != tile.progressOut) {
+    // listener.sendProgressBarUpdate(this, 1, tile.progressOut);
+    // }
+    // }
+    //
+    // progressIn = tile.progressIn;
+    // progressOut = tile.progressOut;
+    // }
 
-        progressIn = library.progressIn;
-        progressOut = library.progressOut;
-    }
-
-    @Override
-    public void updateProgressBar(int i, int j) {
-        if (i == 0) {
-            library.progressIn = j;
-        } else if (i == 1) {
-            library.progressOut = j;
-        }
-    }
+    // @Override
+    // public void updateProgressBar(int i, int j) {
+    // if (i == 0) {
+    // tile.progressIn = j;
+    // } else if (i == 1) {
+    // tile.progressOut = j;
+    // }
+    // }
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return library.isUseableByPlayer(entityplayer);
+        return tile.canInteractWith(entityplayer);
     }
 }

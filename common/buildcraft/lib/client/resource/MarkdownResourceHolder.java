@@ -93,7 +93,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
                 String loc = middle.substring(0, index);
                 String args = middle.substring(index + 2);
                 String[] argsSplit = args.split(",");
-                BCLog.logger.info("Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
+                BCLog.logger.info("[lib.markdown] Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
             }
         }
 
@@ -124,14 +124,14 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     }
 
     private static GuidePartFactory<?> loadDefaultImage(String location) {
-        BCLog.logger.info("Load default image " + location);
+        BCLog.logger.info("[lib.markdown] Load default image " + location);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
     private static GuidePartFactory<?> loadSizedImage(String location, int width, int height) {
-        BCLog.logger.info("Load sized image " + location + ", " + width + ", " + height);
+        BCLog.logger.info("[lib.markdown] Load sized image " + location + ", " + width + ", " + height);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc, width, height);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
@@ -182,7 +182,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         if (item != null) {
             return new ItemStack(item);
         } else {
-            BCLog.logger.warn("[markdown-loader] " + substring + " was not a valid item!");
+            BCLog.logger.warn("[lib.markdown] " + substring + " was not a valid item!");
             return null;
         }
 
@@ -191,7 +191,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     private static ItemStack loadComplexItemStack(String line) {
         String[] args = line.split(",");
         if (args.length == 0) {
-            BCLog.logger.warn("[markdown-loader] " + line + " was not a valid complex item string!");
+            BCLog.logger.warn("[lib.markdown] " + line + " was not a valid complex item string!");
             return null;
         }
         ItemStack stack = null;
@@ -199,7 +199,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         if (item != null) {
             stack = new ItemStack(item);
         } else {
-            BCLog.logger.warn("[markdown-loader] " + args[0] + " was not a valid item!");
+            BCLog.logger.warn("[lib.markdown] " + args[0] + " was not a valid item!");
             return null;
         }
 
@@ -209,7 +209,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         try {
             stackSize = Integer.parseInt(args[1]);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[markdown-loader] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[lib.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
         stack.stackSize = stackSize;
 
@@ -219,7 +219,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             int meta = Integer.parseInt(args[2]);
             stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
         } catch (NumberFormatException nfe) {
-            BCLog.logger.warn("[markdown-loader] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
+            BCLog.logger.warn("[lib.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
 
         if (args.length == 3) return stack;
@@ -228,7 +228,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         try {
             stack.setTagCompound(JsonToNBT.getTagFromJson(nbtString));
         } catch (NBTException e) {
-            BCLog.logger.warn("[markdown-loader] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
+            BCLog.logger.warn("[lib.markdown] " + nbtString + " was not a valid nbt tag: " + e.getLocalizedMessage());
         }
         return stack;
     }

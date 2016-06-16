@@ -11,6 +11,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
@@ -87,5 +88,9 @@ public enum LibEventDistributor {
     @SubscribeEvent
     public void clientTick(ClientTickEvent event) {
         MessageUtil.postOrPreTick();
+    }
+
+    public static void onServerStarted(FMLServerStartedEvent started) {
+        BCLibDatabase.onServerStarted();
     }
 }

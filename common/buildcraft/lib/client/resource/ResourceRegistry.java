@@ -17,7 +17,7 @@ public enum ResourceRegistry implements IResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         for (ResourceHolder holder : holders.values()) {
-            BCLog.logger.info("[lib-resource] Reloading " + holder.locationBase + " as " + holder.getClass());
+            BCLog.logger.info("[lib.resource] Reloading " + holder.locationBase + " as " + holder.getClass());
             holder.reload(resourceManager);
         }
     }
@@ -32,7 +32,7 @@ public enum ResourceRegistry implements IResourceManagerReloadListener {
         if (wanted.isInstance(existing)) {
             return (T) existing;
         } else {
-            BCLog.logger.warn("[lib-resource] " + loc + " has an existing instance for " + existing.getClass() + ", being replaced by " + holder);
+            BCLog.logger.warn("[lib.resource] " + loc + " has an existing instance for " + existing.getClass() + ", being replaced by " + holder);
             holders.put(loc, holder);
             return holder;
         }

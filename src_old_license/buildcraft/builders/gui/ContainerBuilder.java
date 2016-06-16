@@ -11,19 +11,19 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
+import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 
 public class ContainerBuilder extends BuildCraftContainer {
     IInventory playerInventory;
     TileBuilder builder;
-    protected ScrollbarWidget scrollbarWidget;
+    protected ScrollbarElement scrollbarWidget;
 
     public ContainerBuilder(EntityPlayer player, TileBuilder builder) {
         super(player, builder.getSizeInventory());
         this.playerInventory = player.inventory;
         this.builder = builder;
 
-        this.scrollbarWidget = new ScrollbarWidget(172, 17, 18, 0, 108);
+        this.scrollbarWidget = new ScrollbarElement(172, 17, 18, 0, 108);
         this.scrollbarWidget.hidden = true;
         this.addWidget(scrollbarWidget);
 

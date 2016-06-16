@@ -4,13 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.slots;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.items.IItemHandler;
 
 public class SlotOutput extends SlotBase {
 
-    public SlotOutput(IInventory iinventory, int slotIndex, int posX, int posY) {
-        super(iinventory, slotIndex, posX, posY);
+    public SlotOutput(IItemHandler handler, int slotIndex, int posX, int posY) {
+        super(handler, slotIndex, posX, posY);
     }
 
     @Override

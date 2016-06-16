@@ -5,19 +5,20 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 
-import buildcraft.builders.TileBlueprintLibrary;
+import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.lib.gui.slots.SlotBase;
 
 public class SlotBlueprintLibrary extends SlotBase {
-    private TileBlueprintLibrary library;
+    private TileLibrary_Neptune library;
     private EntityPlayer player;
     private int slot;
 
-    public SlotBlueprintLibrary(IInventory iinventory, EntityPlayer player, int slotIndex, int posX, int posY) {
-        super(iinventory, slotIndex, posX, posY);
-        this.library = (TileBlueprintLibrary) iinventory;
+    public SlotBlueprintLibrary(TileLibrary_Neptune library, IItemHandler itemHandler, EntityPlayer player, int slotIndex, int posX, int posY) {
+        super(itemHandler, slotIndex, posX, posY);
+        this.library = library;
         this.slot = slotIndex;
         this.player = player;
     }
@@ -30,10 +31,12 @@ public class SlotBlueprintLibrary extends SlotBase {
         // not robust enough (e.g. what if the player is not logged anymore?
         // is that robust against race conditions? etc.)
 
+        // We can change this now, right?
+        // ~ AlexIIL
         if (slot == 0) {
-            library.uploadingPlayer = player;
+//            library.uploadingPlayer = player;
         } else if (slot == 2) {
-            library.downloadingPlayer = player;
+//            library.downloadingPlayer = player;
         }
 
         this.inventory.markDirty();

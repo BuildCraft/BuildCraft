@@ -36,7 +36,7 @@ public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         markDirty();
     }
-
+    
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);

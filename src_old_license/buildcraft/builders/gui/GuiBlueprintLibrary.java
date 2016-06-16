@@ -5,6 +5,9 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -13,23 +16,45 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.library.LibraryAPI;
-import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.LibraryId;
-import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.BCLibDatabase;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.IPositionedElement;
+import buildcraft.lib.library.LibraryEntryHeader;
 
-public class GuiBlueprintLibrary extends GuiBuildCraft {
+public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
-    private GuiButton deleteButton;
-    private TileBlueprintLibrary library;
+    private static final GuiIcon SCROLLBAR_BACKGROUND = new GuiIcon(TEXTURE, 244, 0, 6, 110);
+    private static final GuiIcon SCROLLBAR_ITSELF = new GuiIcon(TEXTURE, 250, 0, 6, 12);
+    private static List<LibraryEntryHeader> entries = new ArrayList<>();
 
-    public GuiBlueprintLibrary(EntityPlayer player, TileBlueprintLibrary library) {
-        super(new ContainerBlueprintLibrary(player, library), library, TEXTURE);
+    private GuiButton deleteButton;
+    private final ScrollbarElement<GuiBlueprintLibrary, ContainerBlueprintLibrary> scrollbar;
+    private int selected = -1;
+
+    public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
+        super(new ContainerBlueprintLibrary(player, library));
         xSize = 244;
         ySize = 220;
 
-        this.library = library;
+        IPositionedElement parent = rootElement.offset(163, 21);
+        scrollbar = new ScrollbarElement<>(this, parent, height, SCROLLBAR_BACKGROUND, SCROLLBAR_ITSELF);
+
+        fillEntries();
+    }
+
+    private static void fillEntries() {
+        entries.clear();
+        entries.addAll(BCLibDatabase.LOCAL_DB.getAllHeaders());
+        if (BCLibDatabase.remoteDB != null) {
+            entries.addAll(BCLibDatabase.remoteDB.getAllHeaders());
+        }
+        entries.sort(Comparator.naturalOrder());
     }
 
     @Override
@@ -39,33 +64,31 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
         deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, BCStringUtils.localize("gui.del"));
         buttonList.add(deleteButton);
 
-        library.refresh();
+        guiElements.add(scrollbar);
+
+        // container.tile.refresh();
 
         checkDelete();
     }
 
-    private ContainerBlueprintLibrary getLibraryContainer() {
-        return (ContainerBlueprintLibrary) getContainer();
-    }
-
     @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+    protected void drawForegroundLayer() {
         String title = BCStringUtils.localize("tile.libraryBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
-        int off = getLibraryContainer().scrollbarWidget.getPosition();
+        int off = scrollbar.getPosition();
         for (int i = off; i < (off + 12); i++) {
-            if (i >= library.entries.size()) {
+            if (i >= entries.size()) {
                 break;
             }
-            LibraryId bpt = library.entries.get(i);
-            String name = bpt.name;
+            LibraryEntryHeader header = entries.get(i);
+            String name = header.name;
 
             if (name.length() > DefaultProps.MAX_NAME_SIZE) {
                 name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
             }
 
-            if (i == library.selected) {
+            if (i == selected) {
                 int l1 = 8;
                 int i2 = 22;
 
@@ -76,33 +99,36 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
                 name = name.substring(0, name.length() - 1);
             }
 
-            fontRendererObj.drawString(name, 9, 23 + 9 * (i - off), LibraryAPI.getHandlerFor(bpt.extension).getTextColor());
+            fontRendererObj.drawString(name, 9, 23 + 9 * (i - off), LibraryAPI.getHandlerFor(header.kind).getTextColor());
         }
     }
 
+    public int getCenteredOffset(String title) {
+        return 0;
+    }
+    
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+    protected void drawBackgroundLayer(float particlTicks) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(TEXTURE);
 
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        getLibraryContainer().scrollbarWidget.hidden = library.entries.size() <= 12;
-        getLibraryContainer().scrollbarWidget.setLength(Math.max(0, library.entries.size() - 12));
+        scrollbar.setLength(Math.max(0, entries.size() - 12));
 
-        drawWidgets(x, y);
+//        drawWidgets(x, y);
 
-        int inP = library.progressIn * 22 / 100;
-        int outP = library.progressOut * 22 / 100;
+//        int inP = library.progressIn * 22 / 100;
+//        int outP = library.progressOut * 22 / 100;
 
-        drawTexturedModalRect(guiLeft + 194 + 22 - inP, guiTop + 57, 234 + 22 - inP, 240, inP, 16);
-        drawTexturedModalRect(guiLeft + 194, guiTop + 79, 234, 224, outP, 16);
+//        drawTexturedModalRect(guiLeft + 194 + 22 - inP, guiTop + 57, 234 + 22 - inP, 240, inP, 16);
+//        drawTexturedModalRect(guiLeft + 194, guiTop + 79, 234, 224, outP, 16);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
         if (deleteButton != null && button == deleteButton) {
-            library.deleteSelectedBpt();
+//            library.deleteSelectedBpt();
         }
     }
 
@@ -113,10 +139,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
         int y = mouseY - guiTop;
 
         if (x >= 8 && x <= 161) {
-            int ySlot = (y - 22) / 9 + getLibraryContainer().scrollbarWidget.getPosition();
+            int ySlot = (y - 22) / 9 + scrollbar.getPosition();
 
-            if (ySlot > -1 && ySlot < library.entries.size()) {
-                library.selectBlueprint(ySlot);
+            if (ySlot > -1 && ySlot < entries.size()) {
+                selected = ySlot;
             }
         }
 
@@ -124,7 +150,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
     }
 
     protected void checkDelete() {
-        if (library.selected != -1) {
+        if (selected != -1) {
             deleteButton.enabled = true;
         } else {
             deleteButton.enabled = false;

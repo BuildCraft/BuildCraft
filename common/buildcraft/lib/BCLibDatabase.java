@@ -27,6 +27,10 @@ public class BCLibDatabase {
         WorkerThreadUtil.executeDependantTask(LOCAL_DB::readAll);
     }
 
+    public static void onServerStarted() {
+        LOCAL_DB.onServerStarted();
+    }
+
     @SideOnly(Side.CLIENT)
     public static void connectToServer(ClientConnectedToServerEvent event) {
         if (event.isLocal()) {
