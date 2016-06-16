@@ -4,39 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.boards.RedstoneBoardNBT;
-import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.IZone;
-import buildcraft.api.events.RobotEvent;
-import buildcraft.api.robots.*;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.ItemWrench;
-import buildcraft.core.LaserData;
-import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.network.command.CommandWriter;
-import buildcraft.core.lib.network.command.ICommandReceiver;
-import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.robotics.ai.AIRobotMain;
-import buildcraft.robotics.ai.AIRobotShutdown;
-import buildcraft.robotics.ai.AIRobotSleep;
-import buildcraft.robotics.statements.ActionRobotWorkInArea;
-import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
+import java.util.*;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -58,6 +33,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -68,7 +44,34 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobot;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IZone;
+import buildcraft.api.events.RobotEvent;
+import buildcraft.api.robots.*;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.LaserData;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.robotics.ai.AIRobotMain;
+import buildcraft.robotics.ai.AIRobotShutdown;
+import buildcraft.robotics.ai.AIRobotSleep;
+import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
+
+import io.netty.buffer.ByteBuf;
 
 public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
 
@@ -264,7 +267,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public String getName() {
-        return StatCollector.translateToLocal("item.robot.name");
+        if (this.hasCustomName()) {
+            return this.getCustomNameTag();
+        } else {
+            return StatCollector.translateToLocal("item.robot.name");
+        }
     }
 
     @Override
@@ -386,9 +393,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @SideOnly(Side.CLIENT)
     private void spawnEnergyFX() {
-        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDirection.xCoord * 0.25, posY
-            + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05, steamDirection.yCoord * 0.05,
-                steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDirection.xCoord * 0.25, posY + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05,
+                steamDirection.yCoord * 0.05, steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
     }
 
     @Override
@@ -688,15 +694,15 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         updateClientSlot(var1);
     }
 
-    @Override
-    public IChatComponent getDisplayName() {
-        return null;
-    }
+    // @Override
+    // public IChatComponent getDisplayName() {
+    // return null;
+    // }
 
-    @Override
-    public boolean hasCustomName() {
-        return false;
-    }
+    // @Override
+    // public boolean hasCustomName() {
+    // return false;
+    // }
 
     @Override
     public int getInventoryStackLimit() {
@@ -729,8 +735,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public boolean isItemValidForSlot(int var1, ItemStack var2) {
-        return inv[var1] == null || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1]
-                .getItem().getItemStackLimit(inv[var1]));
+        return inv[var1] == null || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
     }
 
     @Override
@@ -989,8 +994,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
         BlockPos entPos = Utils.convertFloor(Utils.getVec(par1Entity));
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, entPos).get(),
-                par1Entity))) {
+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, entPos).get(), par1Entity))) {
             return;
         }
         if (par1Entity.canAttackWithItem()) {
@@ -1033,8 +1037,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                         this.setLastAttacker(par1Entity);
 
                         if (knockback > 0) {
-                            par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F),
-                                    0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F));
+                            par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F), 0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback
+                                * 0.5F));
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
                             this.setSprinting(false);
@@ -1185,8 +1189,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 player.swingItem();
             }
             return true;
-        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem())
-                .isValidRobotOverlay(stack)) {
+        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
             if (!worldObj.isRemote) {
                 wearables.add(stack.splitStack(1));
                 syncWearablesToClient();
@@ -1335,8 +1338,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     /** Tries to receive items in parameters, return items that are left after the operation. */
     @Override
     public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
-        if (currentDockingStation != null && currentDockingStation.index().subtract(tile.getPos()).distanceSq(BlockPos.ORIGIN) == 1
-            && mainAI != null) {
+        if (currentDockingStation != null && currentDockingStation.index().subtract(tile.getPos()).distanceSq(BlockPos.ORIGIN) == 1 && mainAI != null) {
 
             return mainAI.getActiveAI().receiveItem(stack);
         } else {

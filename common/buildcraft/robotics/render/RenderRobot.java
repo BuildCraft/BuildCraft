@@ -91,7 +91,14 @@ public class RenderRobot extends Render<EntityRobot> {
     }
 
     @Override
+    protected boolean canRenderName(EntityRobot entity) {
+        return entity.hasCustomName();
+    }
+
+    @Override
     public void doRender(EntityRobot robot, double x, double y, double z, float f, float f1) {
+        this.renderName(robot, x, y, z);
+
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
 
