@@ -51,9 +51,13 @@ public class MessageLibraryDBIndex implements IMessage {
         @Override
         public IMessage onMessage(MessageLibraryDBIndex message, MessageContext ctx) {
             RemoteLibraryDatabase remote = BCLibDatabase.remoteDB;
-            for (LibraryEntryHeader header : message.headers) {
-                remote.addNew(header, null);
+            if (remote != null) {
+                for (LibraryEntryHeader header : message.headers) {
+                    remote.addNew(header, null);
+                }
             }
+
+            BCLibDatabase.fillEntries();
             return null;
         }
     }

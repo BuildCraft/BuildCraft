@@ -17,13 +17,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IList;
 import buildcraft.core.CoreGuis;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.NBTUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemList_BC8 extends ItemBuildCraft_BC8 implements IList {
+public class ItemList_BC8 extends ItemBC_Neptune implements IList {
     public ItemList_BC8(String id) {
         super(id);
         setMaxStackSize(1);

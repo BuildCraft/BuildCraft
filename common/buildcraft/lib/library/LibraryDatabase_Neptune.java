@@ -65,7 +65,7 @@ public abstract class LibraryDatabase_Neptune {
 
     public static void save(OutputStream out, LibraryEntryHeader header, LibraryEntryData data) {
         try (ZipOutputStream zos = new ZipOutputStream(out)) {
-            ZipFileHelper helper = new ZipFileHelper(HEADER);
+            ZipFileHelper helper = new ZipFileHelper();
             helper.addNbtEntry(HEADER, "", header.writeToNBT(), NBTSquishConstants.VANILLA);
             data.write(helper);
             helper.write(zos);

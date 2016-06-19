@@ -1,16 +1,32 @@
 package buildcraft.lib.misc.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
 
 /** Implements a delayed list of something- stuff that can be postponed for later retrieval. A specialised ordered queue
  * really. */
 public class DelayedList<E> {
-    private final List<List<E>> elements = new ArrayList<>();
+    private final List<List<E>> elements;
+    private final Supplier<List<E>> innerListSupplier;
 
-    public DelayedList() {}
+    public DelayedList() {
+        this(new ArrayList<>(), ArrayList::new);
+    }
+
+    public static <E> DelayedList<E> createConcurrent() {
+        return new DelayedList<>(Collections.synchronizedList(new ArrayList<>()), () -> {
+            return Collections.synchronizedList(new ArrayList<>());
+        });
+    }
+
+    private DelayedList(List<List<E>> actualList, Supplier<List<E>> innerList) {
+        elements = actualList;
+        innerListSupplier = innerList;
+    }
 
     /** @return The maximum delay value that any of the elements has. */
     public int getMaxDelay() {
@@ -34,7 +50,7 @@ public class DelayedList<E> {
             delay = 0;
         }
         while (elements.size() < delay + 1) {
-            elements.add(new ArrayList<>());
+            elements.add(innerListSupplier.get());
         }
         elements.get(delay).add(element);
     }

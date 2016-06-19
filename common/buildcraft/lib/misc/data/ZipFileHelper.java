@@ -17,38 +17,24 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class ZipFileHelper {
-    private final String first;
     private final Map<String, byte[]> entries = new HashMap<>();
     private final Map<String, String> comments = new HashMap<>();
 
-    public ZipFileHelper(String first) {
-        this.first = first;
-    }
+    public ZipFileHelper() {}
 
     public ZipFileHelper(ZipInputStream zis) throws IOException {
         ZipEntry entry;
-        String s = null;
         while ((entry = zis.getNextEntry()) != null) {
             if (entry.isDirectory()) continue;
 
             String name = entry.getName();
-            if (s == null) {
-                s = name;
-            }
             comments.put(name, entry.getComment());
             entries.put(name, IOUtils.toByteArray(zis));
         }
-        first = s;
     }
 
     public void write(ZipOutputStream zos) throws IOException {
-        if (entries.containsKey(first)) {
-            writeEntry(zos, first);
-        }
         for (String key : entries.keySet()) {
-            if (key.equals(first)) {
-                continue;
-            }
             writeEntry(zos, key);
         }
     }

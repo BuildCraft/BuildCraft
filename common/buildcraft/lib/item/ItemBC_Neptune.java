@@ -4,11 +4,11 @@ import net.minecraft.item.Item;
 
 import buildcraft.lib.TagManager;
 
-public class ItemBuildCraft_BC8 extends Item implements IItemBuildCraft {
+public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     /** The tag used to identify this in the {@link TagManager} */
     public final String id;
 
-    public ItemBuildCraft_BC8(String id) {
+    public ItemBC_Neptune(String id) {
         this.id = id;
         init();
     }

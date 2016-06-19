@@ -58,6 +58,8 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
 
                     set(LibSlot.SAVE_IN, null);
                     set(LibSlot.SAVE_OUT, saving);
+
+                    BCLibDatabase.fillEntries();
                 }
             }
         }

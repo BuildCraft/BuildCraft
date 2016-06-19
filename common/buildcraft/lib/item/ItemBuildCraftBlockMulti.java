@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
-/** Basically a copy of {@link ItemMultiTexture}, but extends {@link ItemBuildCraft_BC8} */
+/** Basically a copy of {@link ItemMultiTexture}, but extends {@link ItemBC_Neptune} */
 public class ItemBuildCraftBlockMulti extends ItemBlockBC_Neptune {
     protected final Function<ItemStack, String> nameFunction;
 

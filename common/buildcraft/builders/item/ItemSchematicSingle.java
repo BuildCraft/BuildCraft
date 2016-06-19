@@ -17,12 +17,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.bpt.*;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemSchematicSingle extends ItemBuildCraft_BC8 {
+public class ItemSchematicSingle extends ItemBC_Neptune {
     private static final String NBT_KEY_SCHEMATIC = "schematic";
     private static final int DAMAGE_CLEAN = 0;
     private static final int DAMAGE_STORED_SCHEMATIC = 1;

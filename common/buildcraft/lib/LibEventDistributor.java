@@ -14,6 +14,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -82,12 +83,16 @@ public enum LibEventDistributor {
 
     @SubscribeEvent
     public void serverTick(ServerTickEvent event) {
-        MessageUtil.postOrPreTick();
+        if (event.phase == Phase.START) {
+            MessageUtil.preTick();
+        }
     }
 
     @SubscribeEvent
     public void clientTick(ClientTickEvent event) {
-        MessageUtil.postOrPreTick();
+        if (event.phase == Phase.START) {
+            MessageUtil.preTick();
+        }
     }
 
     public static void onServerStarted(FMLServerStartedEvent started) {

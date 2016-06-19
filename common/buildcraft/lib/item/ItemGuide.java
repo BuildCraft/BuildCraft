@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 
 import buildcraft.lib.BCLib;
 
-public class ItemGuide extends ItemBuildCraft_BC8 {
+public class ItemGuide extends ItemBC_Neptune {
     public ItemGuide(String id) {
         super(id);
         setContainerItem(this);

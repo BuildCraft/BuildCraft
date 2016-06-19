@@ -246,9 +246,18 @@ public class TagManager {
 
         endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
+        startBatch();// energy
+        registerTag("item.glob.oil").reg("glob_oil").locale("globOil").model("glob_oil");
+        // BC Energy Items
+        // BC Energy Item Blocks
+        // BC Energy Blocks
+        // BC Energy Tiles
+
+        endBatch(prependTags("energy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
         startBatch();// factory
-        // BC Factory Item Blocks
         registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
+        // BC Factory Item Blocks
         registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
         // BC Factory Blocks

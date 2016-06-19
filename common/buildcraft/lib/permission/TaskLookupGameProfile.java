@@ -41,6 +41,8 @@ public class TaskLookupGameProfile implements Callable<GameProfile> {
 
     @Override
     public GameProfile call() throws Exception {
+        long sleep = (long) ((Math.random() * 4000) + 3000);
+        Thread.sleep(sleep);
         PlayerProfileCache cache = getProfileCache();
         if (cache == null) {
             return from;

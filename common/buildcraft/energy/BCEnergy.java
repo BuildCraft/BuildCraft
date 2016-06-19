@@ -19,8 +19,9 @@ public class BCEnergy {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
-        // BCEnergyItems.preInit();
+        BCEnergyItems.preInit();
         BCEnergyBlocks.preInit();
+        BCEnergyEntities.preInit();
     }
 
     @Mod.EventHandler

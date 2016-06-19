@@ -1,6 +1,6 @@
 package buildcraft.energy;
 
-public class BCEnergyBlocks {
+public class BCEnergyEntities {
     public static void preInit() {
 
     }

@@ -23,11 +23,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemPaintbrush_BC8 extends ItemBuildCraft_BC8 {
+public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     private static final String DAMAGE = "damage";
     private static final int MAX_USES = 64;
 

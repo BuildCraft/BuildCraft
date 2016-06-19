@@ -31,13 +31,13 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.robotics.ZonePlan;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemMapLocation extends ItemBuildCraft_BC8 implements IMapLocation {
+public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     private static final String[] STORAGE_TAGS = "x,y,z,side,xMin,xMax,yMin,yMax,zMin,zMax,path,chunkMapping,name".split(",");
 
     public ItemMapLocation(String id) {

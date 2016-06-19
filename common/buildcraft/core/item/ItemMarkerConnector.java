@@ -10,14 +10,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
 
-public class ItemMarkerConnector extends ItemBuildCraft_BC8 {
+public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
         super(id);
     }

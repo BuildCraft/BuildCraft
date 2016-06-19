@@ -35,6 +35,9 @@ public class BCItems {
     public static final Item BUILDERS_BLUEPRINT;
     public static final Item BUILDERS_TEMPLATE;
 
+    // BC Energy
+    public static final Item ENERGY_GLOB_OF_OIL;
+
     // BC Factory
     public static final Item FACTORY_PLASTIC_SHEET;
 
@@ -61,6 +64,8 @@ public class BCItems {
         if (!Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {
             throw new RuntimeException("Accessed BC items too early! You can only use them from init onwards!");
         }
+        final String lib = "lib";
+        LIB_GUIDE = getRegisteredItem(lib, "guide");
         // core
         final String core = "core";
         CORE_WRENCH = getRegisteredItem(core, "wrench");
@@ -72,13 +77,15 @@ public class BCItems {
         CORE_GEAR_IRON = getRegisteredItem(core, "gear_iron");
         CORE_GEAR_GOLD = getRegisteredItem(core, "gear_gold");
         CORE_GEAR_DIAMOND = getRegisteredItem(core, "gear_diamond");
-        LIB_GUIDE = getRegisteredItem(core, "guide");
         CORE_MARKER_CONNECTOR = getRegisteredItem(core, "marker_connector");
         // builders
         final String builders = "builders";
         BUILDERS_SINGLE_SCHEMATIC = getRegisteredItem(builders, "single_schematic");
         BUILDERS_BLUEPRINT = getRegisteredItem(builders, "blueprint");
         BUILDERS_TEMPLATE = getRegisteredItem(builders, "template");
+        // energy
+        final String energy = "energy";
+        ENERGY_GLOB_OF_OIL = getRegisteredItem(energy, "glob_oil");
         // factory
         final String factory = "factory";
         FACTORY_PLASTIC_SHEET = getRegisteredItem(factory, "plastic_sheet");

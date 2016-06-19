@@ -13,9 +13,9 @@ import net.minecraft.world.World;
 
 import buildcraft.api.blocks.CustomRotationHelper;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 
-public class ItemWrench_Neptune extends ItemBuildCraft_BC8 implements IToolWrench {
+public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     public ItemWrench_Neptune(String id) {
         super(id);
     }

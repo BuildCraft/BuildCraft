@@ -22,7 +22,7 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
 public abstract class LibProxy implements IGuiHandler {
@@ -33,7 +33,7 @@ public abstract class LibProxy implements IGuiHandler {
         return proxy;
     }
 
-    void postRegisterItem(ItemBuildCraft_BC8 item) {}
+    void postRegisterItem(ItemBC_Neptune item) {}
 
     void postRegisterBlock(BlockBCBase_Neptune block) {}
 
@@ -79,7 +79,7 @@ public abstract class LibProxy implements IGuiHandler {
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends LibProxy {
         @Override
-        public void postRegisterItem(ItemBuildCraft_BC8 item) {
+        public void postRegisterItem(ItemBC_Neptune item) {
             item.postRegisterClient();
         }
 

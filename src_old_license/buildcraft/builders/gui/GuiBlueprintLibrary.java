@@ -5,9 +5,6 @@
 package buildcraft.builders.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,23 +12,27 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.library.LibraryAPI;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.BCLibDatabase;
+import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IPositionedElement;
+import buildcraft.lib.library.LibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
+import buildcraft.lib.library.RemoteLibraryDatabase;
+import buildcraft.lib.library.network.MessageLibraryTransferEntry;
+import buildcraft.lib.misc.MessageUtil;
 
 public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
     private static final GuiIcon SCROLLBAR_BACKGROUND = new GuiIcon(TEXTURE, 244, 0, 6, 110);
     private static final GuiIcon SCROLLBAR_ITSELF = new GuiIcon(TEXTURE, 250, 0, 6, 12);
-    private static List<LibraryEntryHeader> entries = new ArrayList<>();
+    private static final GuiIcon ICON_UPLOAD = new GuiIcon(TEXTURE, 0, 220, 7, 8);
+    private static final GuiIcon ICON_DOWNLOAD = new GuiIcon(ICON_UPLOAD, 7, 0);
 
     private GuiButton deleteButton;
     private final ScrollbarElement<GuiBlueprintLibrary, ContainerBlueprintLibrary> scrollbar;
@@ -39,22 +40,22 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
         super(new ContainerBlueprintLibrary(player, library));
+
+        // Always re-request the index, just to refresh it
+        RemoteLibraryDatabase.requestIndex();
+
         xSize = 244;
         ySize = 220;
 
         IPositionedElement parent = rootElement.offset(163, 21);
         scrollbar = new ScrollbarElement<>(this, parent, height, SCROLLBAR_BACKGROUND, SCROLLBAR_ITSELF);
 
-        fillEntries();
     }
 
-    private static void fillEntries() {
-        entries.clear();
-        entries.addAll(BCLibDatabase.LOCAL_DB.getAllHeaders());
-        if (BCLibDatabase.remoteDB != null) {
-            entries.addAll(BCLibDatabase.remoteDB.getAllHeaders());
-        }
-        entries.sort(Comparator.naturalOrder());
+    public static GuiIcon getIcon(EntryStatus status) {
+        if (status == EntryStatus.REMOTE) return ICON_DOWNLOAD;
+        if (status == EntryStatus.LOCAL) return ICON_UPLOAD;
+        return null;
     }
 
     @Override
@@ -66,47 +67,56 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
         guiElements.add(scrollbar);
 
-        // container.tile.refresh();
-
         checkDelete();
     }
 
     @Override
     protected void drawForegroundLayer() {
         String title = BCStringUtils.localize("tile.libraryBlock.name");
-        fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        int x = guiLeft;
+        int y = guiTop;
+        fontRendererObj.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);
 
         int off = scrollbar.getPosition();
         for (int i = off; i < (off + 12); i++) {
-            if (i >= entries.size()) {
+            if (i >= BCLibDatabase.allEntries.size()) {
                 break;
             }
-            LibraryEntryHeader header = entries.get(i);
+
+            LibraryEntryHeader header = BCLibDatabase.allEntries.get(i);
             String name = header.name;
 
             if (name.length() > DefaultProps.MAX_NAME_SIZE) {
                 name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
             }
 
-            if (i == selected) {
-                int l1 = 8;
-                int i2 = 22;
+            int l1 = x + 8;
+            int i2 = y + 22;
+            int yOff = i2 + 9 * (i - off);
 
-                drawGradientRect(l1, i2 + 9 * (i - off), l1 + 146, i2 + 9 * (i - off + 1), 0x80ffffff, 0x80ffffff);
+            if (i == selected) {
+                drawGradientRect(l1, yOff, l1 + 154, yOff + 9, 0x80ffffff, 0x80ffffff);
+            }
+            EntryStatus status = BCLibDatabase.getStatus(header);
+            GuiIcon icon = getIcon(status);
+            if (icon != null) {
+                icon.drawAt(x + 8 + 146 + 1, yOff);
             }
 
             while (fontRendererObj.getStringWidth(name) > (160 - 9)) {
                 name = name.substring(0, name.length() - 1);
             }
 
-            fontRendererObj.drawString(name, 9, 23 + 9 * (i - off), LibraryAPI.getHandlerFor(header.kind).getTextColor());
+            int colour = /* LibraryAPI.getHandlerFor(header.kind).getTextColor() */0;
+            fontRendererObj.drawString(name, x + 9, y + 23 + 9 * (i - off), colour);
         }
     }
 
     public int getCenteredOffset(String title) {
-        return 0;
+        int width = fontRendererObj.getStringWidth(title);
+        return (xSize - width) / 2;
     }
-    
+
     @Override
     protected void drawBackgroundLayer(float particlTicks) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -114,21 +124,21 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        scrollbar.setLength(Math.max(0, entries.size() - 12));
+        scrollbar.setLength(Math.max(0, BCLibDatabase.allEntries.size() - 12));
 
-//        drawWidgets(x, y);
+        // drawWidgets(x, y);
 
-//        int inP = library.progressIn * 22 / 100;
-//        int outP = library.progressOut * 22 / 100;
+        // int inP = library.progressIn * 22 / 100;
+        // int outP = library.progressOut * 22 / 100;
 
-//        drawTexturedModalRect(guiLeft + 194 + 22 - inP, guiTop + 57, 234 + 22 - inP, 240, inP, 16);
-//        drawTexturedModalRect(guiLeft + 194, guiTop + 79, 234, 224, outP, 16);
+        // drawTexturedModalRect(guiLeft + 194 + 22 - inP, guiTop + 57, 234 + 22 - inP, 240, inP, 16);
+        // drawTexturedModalRect(guiLeft + 194, guiTop + 79, 234, 224, outP, 16);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
         if (deleteButton != null && button == deleteButton) {
-//            library.deleteSelectedBpt();
+            // library.deleteSelectedBpt();
         }
     }
 
@@ -141,12 +151,32 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
         if (x >= 8 && x <= 161) {
             int ySlot = (y - 22) / 9 + scrollbar.getPosition();
 
-            if (ySlot > -1 && ySlot < entries.size()) {
+            if (ySlot > -1 && ySlot < BCLibDatabase.allEntries.size()) {
                 selected = ySlot;
+                if (x > 154) {
+                    // The "upload/download" button
+                    LibraryEntryHeader header = BCLibDatabase.allEntries.get(ySlot);
+                    EntryStatus status = BCLibDatabase.getStatus(header);
+                    if (status == EntryStatus.LOCAL) {
+                        uploadEntry(header);
+                    } else if (status == EntryStatus.REMOTE) {
+                        downloadEntry(header);
+                    }
+                }
             }
         }
 
-        checkDelete();
+        // checkDelete();
+    }
+
+    private static void uploadEntry(LibraryEntryHeader header) {
+        LibraryEntryData data = BCLibDatabase.LOCAL_DB.getEntry(header);
+        MessageLibraryTransferEntry transfer = new MessageLibraryTransferEntry(header, data);
+        MessageUtil.getWrapper().sendToServer(transfer);
+    }
+
+    private static void downloadEntry(LibraryEntryHeader header) {
+        RemoteLibraryDatabase.requestEntry(header);
     }
 
     protected void checkDelete() {

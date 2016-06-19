@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.item.ItemBuildCraft_BC8;
+import buildcraft.lib.item.ItemBC_Neptune;
 
 public class RegistryHelper {
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
@@ -43,8 +43,8 @@ public class RegistryHelper {
     public static boolean registerItem(Item item, boolean forced) {
         if (forced || isEnabled(getActiveMod(), "items", item.getRegistryName().getResourcePath())) {
             GameRegistry.register(item);
-            if (item instanceof ItemBuildCraft_BC8) {
-                ItemBuildCraft_BC8 itemBc = (ItemBuildCraft_BC8) item;
+            if (item instanceof ItemBC_Neptune) {
+                ItemBC_Neptune itemBc = (ItemBC_Neptune) item;
                 LibProxy.getProxy().postRegisterItem(itemBc);
             }
             return true;

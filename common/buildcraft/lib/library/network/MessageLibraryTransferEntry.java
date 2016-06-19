@@ -34,7 +34,8 @@ public class MessageLibraryTransferEntry implements IMessage {
         try {
             PacketBuffer packet = new PacketBuffer(buf);
             int length = packet.readInt();
-            byte[] bytes = packet.readByteArray(length);
+            byte[] bytes = new byte[length];
+            packet.readBytes(bytes);
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
             Entry<LibraryEntryHeader, LibraryEntryData> entry = LibraryDatabase_Neptune.load(bais);
             header = entry.getKey();
@@ -66,6 +67,8 @@ public class MessageLibraryTransferEntry implements IMessage {
             if (remote != null) {
                 remote.addNew(message.header, message.data);
             }
+
+            BCLibDatabase.fillEntries();
 
             return null;
         }

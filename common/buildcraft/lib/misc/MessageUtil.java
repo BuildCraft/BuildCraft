@@ -1,7 +1,5 @@
 package buildcraft.lib.misc;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
@@ -15,22 +13,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.misc.data.DelayedList;
 
 public class MessageUtil {
-    private static final ConcurrentLinkedQueue<Runnable> DELAYED_TASKS = new ConcurrentLinkedQueue<>();
+    private static final DelayedList<Runnable> DELAYED = DelayedList.createConcurrent();
 
     public static SimpleNetworkWrapper getWrapper() {
         return BCMessageHandler.netWrapper;
     }
 
     public static void doDelayed(Runnable task) {
-        DELAYED_TASKS.add(task);
+        doDelayed(1, task);
     }
 
-    public static void postOrPreTick() {
-        // We only care about delaying tasks, not about doing tasks on a tight schedule.
-        while (!DELAYED_TASKS.isEmpty()) {
-            DELAYED_TASKS.poll().run();
+    public static void doDelayed(int delay, Runnable task) {
+        DELAYED.add(delay, task);
+    }
+
+    public static void preTick() {
+        for (Runnable runnable : DELAYED.advance()) {
+            runnable.run();
         }
     }
 
