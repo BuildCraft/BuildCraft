@@ -30,12 +30,17 @@ public class GuiGuide extends GuiScreen {
     public static final ResourceLocation COVER = new ResourceLocation("buildcraftcore:textures/gui/guide/cover.png");
     public static final ResourceLocation LEFT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/left_page.png");
     public static final ResourceLocation RIGHT_PAGE = new ResourceLocation("buildcraftcore:textures/gui/guide/right_page.png");
+    public static final ResourceLocation LEFT_PAGE_BACK = new ResourceLocation("buildcraftcore:textures/gui/guide/left_page_back.png");
+    public static final ResourceLocation RIGHT_PAGE_BACK = new ResourceLocation("buildcraftcore:textures/gui/guide/right_page_back.png");
 
     public static final GuiIcon BOOK_COVER = new GuiIcon(COVER, 0, 0, 202, 248);
     public static final GuiIcon BOOK_BINDING = new GuiIcon(COVER, 204, 0, 11, 248);
 
     public static final GuiIcon PAGE_LEFT = new GuiIcon(LEFT_PAGE, 0, 0, 193, 248);
     public static final GuiIcon PAGE_RIGHT = new GuiIcon(RIGHT_PAGE, 0, 0, 193, 248);
+
+    public static final GuiIcon PAGE_LEFT_BACK = new GuiIcon(LEFT_PAGE_BACK, 0, 0, 193, 248);
+    public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(31, 22, 141, 193);
     public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(20, 22, 141, 193);
@@ -175,6 +180,7 @@ public class GuiGuide extends GuiScreen {
             openingAngleNext += 180 / BOOK_OPEN_TIME;
         }
         if (currentPage != null) {
+            currentPage.setFontRenderer(currentFont);
             currentPage.tick();
         }
     }
@@ -282,6 +288,12 @@ public class GuiGuide extends GuiScreen {
         isOverHover = PEN_HIDDEN_AREA.offset(minX, minY).contains(mouse);
 
         // Now draw the actual contents of the book
+        String title = currentPage.getTitle();
+        if (title != null) {
+            int x = /* this.minX + */ (width - currentFont.getStringWidth(title)) / 2;
+            currentFont.drawString(title, x, minY + 12, 0);
+        }
+
         tooltipStack = null;
         currentPage.setFontRenderer(currentFont);
         currentPage.renderFirstPage(minX + PAGE_LEFT_TEXT.x, minY + PAGE_LEFT_TEXT.y, PAGE_LEFT_TEXT.width, PAGE_LEFT_TEXT.height);
@@ -335,8 +347,10 @@ public class GuiGuide extends GuiScreen {
                 int pageYMin = this.minY + PAGE_RIGHT_TEXT.y;
                 int pageYMax = pageYMin + PAGE_RIGHT_TEXT.height;
 
-                currentPage.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage(), isEditing);
-                currentPage.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
+                GuidePageBase current = currentPage;
+                current.setFontRenderer(currentFont);
+                current.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage(), isEditing);
+                current.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
 
                 if ((!pages.isEmpty()) && BACK_POSITION.offset(minX, minY).contains(mouse)) {
                     closePage();

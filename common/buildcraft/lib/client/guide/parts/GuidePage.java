@@ -2,6 +2,8 @@ package buildcraft.lib.client.guide.parts;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
@@ -9,13 +11,21 @@ import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.resource.MarkdownResourceHolder;
 
 public class GuidePage extends GuidePageBase {
+    @Nullable
     public final MarkdownResourceHolder creator;
     public final ImmutableList<GuidePart> parts;
+    public final String title;
 
-    public GuidePage(GuiGuide gui, List<GuidePart> parts, MarkdownResourceHolder creator) {
+    public GuidePage(GuiGuide gui, List<GuidePart> parts, MarkdownResourceHolder creator, String title) {
         super(gui);
         this.creator = creator;
         this.parts = ImmutableList.copyOf(parts);
+        this.title = title;
+    }
+    
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     @Override
@@ -43,7 +53,15 @@ public class GuidePage extends GuidePageBase {
 
     @Override
     public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton, int index, boolean isEditing) {
-        // TODO Auto-generated method stub
         super.handleMouseClick(x, y, width, height, mouseX, mouseY, mouseButton, index, isEditing);
+
+        PagePart part = new PagePart(0, 0);
+        for (GuidePart guidePart : parts) {
+            part = guidePart.handleMouseClick(x, y, width, height, part, index, mouseX, mouseY);
+
+            if (numPages != -1 && part.page > index) {
+                break;
+            }
+        }
     }
 }

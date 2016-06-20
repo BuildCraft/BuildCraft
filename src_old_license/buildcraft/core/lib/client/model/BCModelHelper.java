@@ -70,12 +70,12 @@ public class BCModelHelper {
 
     public static List<MutableQuad> toMutableQuadList(IBakedModel model, boolean includeFaces) {
         List<MutableQuad> quads = new ArrayList<>();
-        for (BakedQuad q : model.getGeneralQuads()) {
+        for (BakedQuad q : model.getQuads(null, null, 0)) {
             quads.add(MutableQuad.create(q));
         }
         if (includeFaces) {
             for (EnumFacing facing : EnumFacing.VALUES) {
-                for (BakedQuad q : model.getFaceQuads(facing)) {
+                for (BakedQuad q : model.getQuads(null, facing, 0)) {
                     quads.add(MutableQuad.create(q));
                 }
             }

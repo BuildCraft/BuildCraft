@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -45,14 +46,17 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         putSingle("special.new_page", (after) -> GuidePartNewPage::new);
         putSingle("special.crafting", MarkdownResourceHolder::loadCraftingLine);
         putSingle("special.smelting", MarkdownResourceHolder::loadSmeltingLine);
+        putMulti("special.all_crafting", MarkdownResourceHolder::loadAllCrafting);
         putMulti("special.recipe", MarkdownResourceHolder::loadRecipes);
         putMulti("special.usage", MarkdownResourceHolder::loadUsages);
     }
 
     private List<GuidePartFactory<?>> factories = null;
+    private final String title;
 
-    public MarkdownResourceHolder(ResourceLocation location) {
+    public MarkdownResourceHolder(ResourceLocation location, String title) {
         super(location);
+        this.title = title;
     }
 
     private static void putSingle(String string, SpecialParserSingle parser) {
@@ -225,6 +229,49 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         return RecipeLookupHelper.getAllUsages(stack);
     }
 
+    private static List<GuidePartFactory<?>> loadAllCrafting(String substring) {
+        ItemStack stack = loadItemStack(substring);
+        if (stack == null) {
+            return null;
+        }
+        return loadAllCrafting(stack);
+    }
+
+    public static List<GuidePartFactory<?>> loadAllCrafting(ItemStack stack) {
+        List<GuidePartFactory<?>> list = new ArrayList<>();
+        List<GuidePartFactory<?>> part = RecipeLookupHelper.getAllRecipes(stack);
+        boolean addedNew = false;
+        if (part.size() > 0) {
+            list.add(GuidePartNewPage::new);
+            addedNew = true;
+            if (part.size() == 1) {
+                list.add(translate("buildcraft.guide.recipe.create"));
+            } else {
+                list.add(translate("buildcraft.guide.recipe.create.plural"));
+            }
+            list.addAll(part);
+        }
+        part = RecipeLookupHelper.getAllUsages(stack);
+        if (part.size() > 0) {
+            if (!addedNew) list.add(GuidePartNewPage::new);
+            if (part.size() == 1) {
+                list.add(translate("buildcraft.guide.recipe.use"));
+            } else {
+                list.add(translate("buildcraft.guide.recipe.use.plural"));
+            }
+            list.addAll(part);
+        }
+        return list;
+    }
+
+    public static GuidePartFactory<?> translate(String text) {
+        return (gui) -> {
+            NodePageLine node = new NodePageLine(null, null);
+            node.addChild(new PageLine(0, I18n.format(text), false));
+            return new GuideText(gui, node);
+        };
+    }
+
     public static ItemStack loadItemStack(String line) {
         if (line == null) return null;
         if (line.startsWith("(") && line.endsWith(")")) {
@@ -253,7 +300,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             return null;
         }
         ItemStack stack = null;
-        Item item = Item.getByNameOrId(args[0]);
+        Item item = Item.getByNameOrId(args[0].trim());
         if (item != null) {
             stack = new ItemStack(item);
         } else {
@@ -265,7 +312,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
 
         int stackSize = 1;
         try {
-            stackSize = Integer.parseInt(args[1]);
+            stackSize = Integer.parseInt(args[1].trim());
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn("[lib.markdown] " + args[1] + " was not a valid number: " + nfe.getLocalizedMessage());
         }
@@ -274,7 +321,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         if (args.length == 2) return stack;
 
         try {
-            int meta = Integer.parseInt(args[2]);
+            int meta = Integer.parseInt(args[2].trim());
             stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn("[lib.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());
@@ -297,6 +344,6 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         for (GuidePartFactory<?> factory : factories) {
             parts.add(factory.createNew(gui));
         }
-        return new GuidePage(gui, parts, this);
+        return new GuidePage(gui, parts, this, I18n.format(title));
     }
 }

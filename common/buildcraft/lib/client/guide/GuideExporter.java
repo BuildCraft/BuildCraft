@@ -27,7 +27,7 @@ public class GuideExporter {
                 invalids.add(new JsonInvalid(loc.toString(), "No meta defined!"));
                 continue;
             }
-            GuidePartFactory<GuidePageBase> pageFactory = GuideManager.registeredPages.get(loc);
+            GuidePartFactory<? extends GuidePageBase> pageFactory = GuideManager.registeredPages.get(loc);
             GuidePage page = null;
             if (pageFactory != null) {
                 GuidePageBase base = pageFactory.createNew(guide);

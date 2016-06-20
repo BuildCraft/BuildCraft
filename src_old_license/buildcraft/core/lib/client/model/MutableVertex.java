@@ -4,21 +4,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.client.renderer.WorldRenderer;
+import javax.vecmath.*;
+
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 
 import buildcraft.api.core.BCLog;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple2f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
 
 public class MutableVertex {
     private final float[] position = new float[3];
@@ -82,18 +75,18 @@ public class MutableVertex {
 
     private static Set<String> failedStrings = new HashSet<>();
 
-    public void render(WorldRenderer wr) {
-        VertexFormat vf = wr.getVertexFormat();
+    public void render(VertexBuffer vb) {
+        VertexFormat vf = vb.getVertexFormat();
         for (VertexFormatElement vfe : vf.getElements()) {
-            if (vfe.getUsage() == EnumUsage.POSITION) wr.pos(position[0], position[1], position[2]);
-            else if (vfe.getUsage() == EnumUsage.NORMAL) wr.normal(normal[0], normal[1], normal[2]);
-            else if (vfe.getUsage() == EnumUsage.COLOR) wr.color(colour[0], colour[1], colour[2], colour[3]);
+            if (vfe.getUsage() == EnumUsage.POSITION) vb.pos(position[0], position[1], position[2]);
+            else if (vfe.getUsage() == EnumUsage.NORMAL) vb.normal(normal[0], normal[1], normal[2]);
+            else if (vfe.getUsage() == EnumUsage.COLOR) vb.color(colour[0], colour[1], colour[2], colour[3]);
             else if (vfe.getUsage() == EnumUsage.UV) {
-                if (vfe.getIndex() == 0) wr.tex(uv[0], uv[1]);
-                else if (vfe.getIndex() == 1) wr.lightmap(lighti()[0], lighti()[1]);
+                if (vfe.getIndex() == 0) vb.tex(uv[0], uv[1]);
+                else if (vfe.getIndex() == 1) vb.lightmap(lighti()[0], lighti()[1]);
             }
         }
-        wr.endVertex();
+        vb.endVertex();
     }
 
     public MutableVertex positionv(Tuple3f vec) {

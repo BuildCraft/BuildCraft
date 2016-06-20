@@ -8,9 +8,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.item.crafting.ShapelessRecipes;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.GuiGuide;
@@ -46,7 +48,7 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
                 if (val != null) {
                     return val;
                 } else {
-                    BCLog.logger.info("Found a matching recipe, but of an unknown class (" + recipe.getClass() + ") for " + stack.getDisplayName());
+                    BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown class (" + recipe.getClass() + ") for " + stack.getDisplayName());
                 }
             }
         }
@@ -74,6 +76,32 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
                 }
             }
             val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        } else if (recipe instanceof ShapelessOreRecipe) {
+            List<Object> input = ((ShapelessOreRecipe) recipe).getInput();
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            for (int x = 0; x < dimInput.length; x++) {
+                for (int y = 0; y < dimInput[x].length; y++) {
+                    int index = x + y * dimInput.length;
+                    if (index < input.size()) {
+                        dimInput[x][y] = oreConvert(input.get(index));
+                    }
+                }
+            }
+            val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        } else if (recipe instanceof ShapelessRecipes) {
+            List<ItemStack> input = ((ShapelessRecipes) recipe).recipeItems;
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            for (int x = 0; x < dimInput.length; x++) {
+                for (int y = 0; y < dimInput[x].length; y++) {
+                    int index = x + y * dimInput.length;
+                    if (index < input.size()) {
+                        dimInput[x][y] = ItemStack.copyItemStack(input.get(index));
+                    }
+                }
+            }
+            val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        } else {
+            BCLog.logger.warn("[lib.guide.crafting] Found an unknown recipe " + recipe.getClass());
         }
         return val;
     }
@@ -101,7 +129,7 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
             return null;
         }
         if (object instanceof ItemStack) {
-            return (ItemStack) object;
+            return ((ItemStack) object).copy();
         }
         if (object instanceof String) {
             List<ItemStack> stacks = OreDictionary.getOres((String) object);
@@ -126,14 +154,12 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
                 }
                 ItemStack best = stacks.get(0);
                 for (ItemStack stack : stacks) {
-                    stack.getItem();
-                    best.getItem();
                     // The lower the ID of an item, the closer it is to minecraft. Hmmm.
                     if (Item.getIdFromItem(stack.getItem()) < Item.getIdFromItem(best.getItem())) {
                         best = stack;
                     }
                 }
-                return best;
+                return best.copy();
             }
             BCLog.logger.warn("Found a list with unknown contents! " + first.getClass());
         }
@@ -149,5 +175,4 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
     public GuideCrafting createNew(GuiGuide gui) {
         return new GuideCrafting(gui, input, output);
     }
-
 }

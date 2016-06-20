@@ -9,7 +9,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 
-public class GuideSmelting extends GuidePart {
+public class GuideSmelting extends GuidePartItem {
     public static final GuiIcon SMELTING_ICON = new GuiIcon(GuiGuide.ICONS_2, 119, 54, 80, 54);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - SMELTING_ICON.width) / 2, 0, SMELTING_ICON.width, SMELTING_ICON.height);
     public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
@@ -40,20 +40,9 @@ public class GuideSmelting extends GuidePart {
             GlStateManager.enableRescaleNormal();
             RenderHelper.enableGUIStandardItemLighting();
 
-            gui.mc.getRenderItem().renderItemIntoGUI(input.get(), x + IN_POS.x, y + IN_POS.y);
-            if (IN_POS.offset(x, y).contains(gui.mouse)) {
-                gui.tooltipStack = input.get();
-            }
-
-            gui.mc.getRenderItem().renderItemIntoGUI(output.get(), x + OUT_POS.x, y + OUT_POS.y);
-            if (OUT_POS.offset(x, y).contains(gui.mouse)) {
-                gui.tooltipStack = output.get();
-            }
-
-            gui.mc.getRenderItem().renderItemIntoGUI(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
-            if (FURNACE_POS.offset(x, y).contains(gui.mouse)) {
-                gui.tooltipStack = furnace;
-            }
+            drawItemStack(input.get(), x + IN_POS.x, y + IN_POS.y);
+            drawItemStack(output.get(), x + OUT_POS.x, y + OUT_POS.y);
+            drawItemStack(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
 
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
@@ -62,4 +51,21 @@ public class GuideSmelting extends GuidePart {
         return current;
     }
 
+    @Override
+    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+        if (current.pixel + PIXEL_HEIGHT > height) {
+            current = current.newPage();
+        }
+        x += OFFSET.x;
+        y += OFFSET.y + current.pixel;
+        if (current.page == index) {
+
+            testClickItemStack(input.get(), x + IN_POS.x, y + IN_POS.y);
+            testClickItemStack(output.get(), x + OUT_POS.x, y + OUT_POS.y);
+            testClickItemStack(furnace, x + FURNACE_POS.x, y + FURNACE_POS.y);
+
+        }
+        current = current.nextLine(PIXEL_HEIGHT, height);
+        return current;
+    }
 }

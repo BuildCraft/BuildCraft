@@ -2,7 +2,9 @@ package buildcraft.core.lib.client.model;
 
 import java.util.Arrays;
 
-import net.minecraft.client.renderer.WorldRenderer;
+import javax.vecmath.*;
+
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -10,13 +12,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 public class MutableQuad {
     public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
@@ -140,12 +137,12 @@ public class MutableQuad {
                 }
             }
         }
-        return new UnpackedBakedQuad(data, tintIndex, face, format);
+        return new UnpackedBakedQuad(data, tintIndex, face, null, false, format);
     }
 
-    public void render(WorldRenderer wr) {
+    public void render(VertexBuffer vb) {
         for (MutableVertex v : verticies) {
-            v.render(wr);
+            v.render(vb);
         }
     }
 

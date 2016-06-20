@@ -86,7 +86,8 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         List<GuidePartFactory<?>> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            if (ItemStack.areItemStacksEqual(stack, recipe.getRecipeOutput())) {
+            ItemStack out = recipe.getRecipeOutput();
+            if (ItemStack.areItemsEqual(stack, out) && ItemStack.areItemStackTagsEqual(stack, out)) {
                 GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
                     list.add(factory);

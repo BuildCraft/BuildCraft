@@ -8,7 +8,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 
-public class GuideCrafting extends GuidePart {
+public class GuideCrafting extends GuidePartItem {
     public static final GuiIcon CRAFTING_GRID = new GuiIcon(GuiGuide.ICONS_2, 119, 0, 116, 54);
     public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
@@ -54,21 +54,36 @@ public class GuideCrafting extends GuidePart {
                 for (int itemY = 0; itemY < input[itemX].length; itemY++) {
                     GuiRectangle rect = ITEM_POSITION[itemX][itemY];
                     ItemStack stack = input[itemX][itemY].get();
-                    if (stack != null) {
-                        GlStateManager.color(1, 1, 1);
-                        gui.mc.getRenderItem().renderItemIntoGUI(stack, x + rect.x, y + rect.y);
-                        if (rect.offset(x, y).contains(gui.mouse)) {
-                            gui.tooltipStack = stack;
-                        }
-                    }
+                    drawItemStack(stack, x + rect.x, y + rect.y);
                 }
             }
-            gui.mc.getRenderItem().renderItemIntoGUI(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
-            if (OUT_POSITION.offset(x, y).contains(gui.mouse)) {
-                gui.tooltipStack = output.get();
-            }
+
+            drawItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
+
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
+        }
+        current = current.nextLine(PIXEL_HEIGHT, height);
+        return current;
+    }
+
+    @Override
+    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+        if (current.pixel + PIXEL_HEIGHT > height) {
+            current = current.newPage();
+        }
+        x += OFFSET.x;
+        y += OFFSET.y + current.pixel;
+        if (current.page == index) {
+            for (int itemX = 0; itemX < input.length; itemX++) {
+                for (int itemY = 0; itemY < input[itemX].length; itemY++) {
+                    GuiRectangle rect = ITEM_POSITION[itemX][itemY];
+                    ItemStack stack = input[itemX][itemY].get();
+                    testClickItemStack(stack, x + rect.x, y + rect.y);
+                }
+            }
+
+            testClickItemStack(output.get(), x + OUT_POSITION.x, y + OUT_POSITION.y);
         }
         current = current.nextLine(PIXEL_HEIGHT, height);
         return current;

@@ -233,7 +233,7 @@ public class ComplexRefiningManager {
             IModel model = new ModelFluid(def.fluid);
             IBakedModel baked = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
             ModelResourceLocation loc = ModelHelper.getBlockResourceLocation(def.block);
-            event.modelRegistry.putObject(loc, baked);
+            event.getModelRegistry().putObject(loc, baked);
         }
     }
 
@@ -243,10 +243,10 @@ public class ComplexRefiningManager {
             int heat = def.fluid.getHeatValue();
             String from = "buildcraftenergy:blocks/fluids/heat_" + heat;
             SpriteColourMapper mapper = new SpriteColourMapper(def.fluid, from + "_still", true);
-            event.map.setTextureEntry(def.fluid.getStill().toString(), mapper);
+            event.getMap().setTextureEntry(def.fluid.getStill().toString(), mapper);
 
             mapper = new SpriteColourMapper(def.fluid, from + "_flow", false);
-            event.map.setTextureEntry(def.fluid.getFlowing().toString(), mapper);
+            event.getMap().setTextureEntry(def.fluid.getFlowing().toString(), mapper);
         }
     }
 }

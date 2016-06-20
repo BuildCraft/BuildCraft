@@ -86,7 +86,8 @@ public abstract class GuidePart {
      * @return The new position for the next part to render from */
     public abstract PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index);
 
-    public void handleMouseClick(int x, int y, int button, int... arguments) {}
+    /** Like {@link #renderIntoArea(int, int, int, int, PagePart, int)} but for a mouse click. */
+    public abstract PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY);
 
     public void handleMouseDragPartial(int startX, int startY, int currentX, int currentY, int button) {}
 

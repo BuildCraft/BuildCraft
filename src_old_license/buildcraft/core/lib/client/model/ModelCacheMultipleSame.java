@@ -3,9 +3,10 @@ package buildcraft.core.lib.client.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
@@ -47,8 +48,8 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     }
 
     @Override
-    public void render(K key, WorldRenderer wr) {
-        mainCache.render(key, wr);
+    public void render(K key, VertexBuffer vb) {
+        mainCache.render(key, vb);
     }
 
     @Override

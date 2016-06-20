@@ -3,16 +3,18 @@ package buildcraft.core.lib.client.model;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.ImmutableList;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
@@ -81,9 +83,9 @@ public class ModelCache<K> implements IModelCache<K> {
     }
 
     @Override
-    public void render(K key, WorldRenderer wr) {
+    public void render(K key, VertexBuffer vb) {
         for (MutableQuad q : modelCache.getUnchecked(key).mutableQuads) {
-            q.render(wr);
+            q.render(vb);
         }
     }
 
@@ -111,10 +113,10 @@ public class ModelCache<K> implements IModelCache<K> {
                 GL11.glNewList(glDisplayList, GL11.GL_COMPILE);
 
                 Tessellator t = Tessellator.getInstance();
-                WorldRenderer wr = t.getWorldRenderer();
-                wr.begin(GL11.GL_QUADS, glVertexFormat);
+                VertexBuffer vb = t.getBuffer();
+                vb.begin(GL11.GL_QUADS, glVertexFormat);
                 for (MutableQuad q : quads) {
-                    q.render(wr);
+                    q.render(vb);
                 }
                 t.draw();
 

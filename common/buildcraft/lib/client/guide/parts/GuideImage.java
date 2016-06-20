@@ -55,4 +55,15 @@ public class GuideImage extends GuidePart {
         }
         return current.nextLine(this.height + 1, height);
     }
+
+    @Override
+    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+        if (height - current.pixel < this.height) {
+            current = current.nextPage();
+        }
+        if (index == current.page) {
+            // icon.drawScaledInside(x, y + current.pixel, this.width, this.height);
+        }
+        return current.nextLine(this.height + 1, height);
+    }
 }

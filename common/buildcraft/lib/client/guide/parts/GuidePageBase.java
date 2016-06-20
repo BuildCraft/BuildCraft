@@ -43,6 +43,8 @@ public abstract class GuidePageBase extends GuidePart {
         return current;
     }
 
+    public abstract String getTitle();
+
     protected PageLine getClicked(Iterable<PageLine> lines, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
         PagePart part = new PagePart(0, 0);
         for (PageLine line : lines) {
@@ -115,8 +117,9 @@ public abstract class GuidePageBase extends GuidePart {
     }
 
     @Override
-    public final void handleMouseClick(int x, int y, int button, int... arguments) {
+    public final PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
         // NO-OP, use the below!
+        return current;
     }
 
     public void handleMouseClick(int x, int y, int width, int height, int mouseX, int mouseY, int mouseButton, int index, boolean isEditing) {

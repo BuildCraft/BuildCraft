@@ -1,22 +1,28 @@
 package buildcraft.lib.client.guide;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
 
 import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.lib.client.guide.block.IBlockGuidePageMapper;
-import buildcraft.lib.client.guide.parts.GuideImage;
-import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.guide.parts.GuidePart;
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.resource.MarkdownResourceHolder;
 import buildcraft.lib.client.resource.ResourceRegistry;
 
@@ -25,10 +31,14 @@ public class GuideManager {
     static final Map<ModContainer, GuideManager> managers = Maps.newHashMap();
 
     /** A cache of what has been loaded so far by this guide. */
-    static private final Map<ResourceLocation, GuidePartFactory<?>> guideMap = Maps.newHashMap();
+    static private final Map<ResourceLocation, GuidePartFactory<?>> guideMap = new HashMap<>();
     /** All of the guide pages that have been registered to appear in this guide manager */
-    static final Map<ResourceLocation, GuidePartFactory<GuidePageBase>> registeredPages = Maps.newHashMap();
-    static final Map<ResourceLocation, PageMeta> pageMetas = Maps.newHashMap();
+    static final Map<ResourceLocation, GuidePartFactory<? extends GuidePageBase>> registeredPages = new HashMap<>();
+    static final Map<ResourceLocation, PageMeta> pageMetas = new HashMap<>();
+    static final Map<ItemStack, ResourceLocation> itemToPages = new HashMap<>();
+
+    private static final Map<ItemStack, GuidePartFactory<? extends GuidePageBase>> generatedPages = new HashMap<>();
+
     /** Base locations for generic chapters */
     private final String locationBase;
 
@@ -52,16 +62,54 @@ public class GuideManager {
         managers.put(container, manager);
     }
 
+    @Nonnull
+    public static GuidePartFactory<? extends GuidePageBase> getPageFor(ItemStack stack) {
+        GuidePartFactory<? extends GuidePageBase> existing = null;
+        for (Entry<ItemStack, ResourceLocation> entry : itemToPages.entrySet()) {
+            if (OreDictionary.itemMatches(entry.getKey(), stack, false)) {
+                existing = registeredPages.get(entry.getValue());
+                if (existing != null) {
+                    return existing;
+                }
+            }
+        }
+        // Create a dummy page for the stack
+        existing = generatedPages.get(stack);
+        if (existing == null) {
+            List<GuidePartFactory<?>> factories = MarkdownResourceHolder.loadAllCrafting(stack);
+            existing = (gui) -> {
+                List<GuidePart> parts = new ArrayList<>();
+                for (GuidePartFactory<?> factory : factories) {
+                    parts.add(factory.createNew(gui));
+                }
+                return new GuidePage(gui, parts, null, stack.getDisplayName());
+            };
+        }
+        return existing;
+    }
+
     // Page Registration
 
-    public static void registerCustomPage(ResourceLocation location, GuidePartFactory<GuidePageBase> page) {
+    public static void registerCustomPage(ResourceLocation location, GuidePartFactory<? extends GuidePageBase> page) {
         registeredPages.put(location, page);
         guideMap.put(location, page);
-        pageMetas.put(location, getPageMeta(location));
+        PageMeta meta = getPageMeta(location);
+        pageMetas.put(location, meta);
+        if (!StringUtils.isNullOrEmpty(meta.itemStack)) {
+            ItemStack stack = MarkdownResourceHolder.loadItemStack(meta.itemStack);
+            if (stack != null) {
+                for (ItemStack key : itemToPages.keySet()) {
+                    if (OreDictionary.itemMatches(key, stack, false)) {
+                        return;
+                    }
+                }
+                itemToPages.put(stack, location);
+            }
+        }
     }
 
     public static void registerPage(ResourceLocation location) {
-        registerCustomPage(location, (GuidePartFactory<GuidePageBase>) getPartFactory(location));
+        registerCustomPage(location, (GuidePartFactory<? extends GuidePageBase>) getPartFactory(location));
     }
 
     public void registerPage(String subFolder) {
@@ -74,9 +122,10 @@ public class GuideManager {
         if (guideMap.containsKey(location)) {
             return guideMap.get(location);
         }
+        PageMeta meta = getPageMeta(location);
         GuidePartFactory<?> part = null;
         if (location.getResourcePath().endsWith(".md")) {// Wiki info page (Markdown)
-            MarkdownResourceHolder holder = new MarkdownResourceHolder(location);
+            MarkdownResourceHolder holder = new MarkdownResourceHolder(location, meta.title == null ? "null" : meta.title);
             part = ResourceRegistry.INSTANCE.register(holder, MarkdownResourceHolder.class);
         } else {
             throw new IllegalArgumentException("Recieved an unknown filetype! " + location);

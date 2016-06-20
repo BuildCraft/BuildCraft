@@ -15,4 +15,9 @@ public class GuideText extends GuidePart {
     public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
         return renderLines(text.iterateNonNullLines(), current, x, y, width, height, index);
     }
+
+    @Override
+    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+        return renderLines(text.iterateNonNullLines(), current, x, y, width, height, -1);
+    }
 }

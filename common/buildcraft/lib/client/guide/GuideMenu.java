@@ -72,6 +72,11 @@ public class GuideMenu extends GuidePageBase {
         }
         parentNode.sortChildrenRecursivly();
     }
+    
+    @Override
+    public String getTitle() {
+        return null;
+    }
 
     @Override
     protected void renderPage(int x, int y, int width, int height, int index) {
@@ -125,25 +130,5 @@ public class GuideMenu extends GuidePageBase {
                 BCLog.logger.warn("Somehow encountered a null link! (line = " + line + ")");
             }
         }
-        // because its impossible to click both the text and the icon
-        // else {
-        // PageLine iconLine = getIconClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY,
-        // index);
-        // if (iconLine != null) {
-        // NodePageLine node = parentNode.getChildNode(iconLine);
-        // if (node != null) {
-        // if (node.expanded) {
-        // iconLine.startIcon = GuiGuide.BOX_PLUS;
-        // iconLine.startIconHovered = GuiGuide.BOX_SELECTED_PLUS;
-        // } else {
-        // iconLine.startIcon = GuiGuide.BOX_MINUS;
-        // iconLine.startIconHovered = GuiGuide.BOX_SELECTED_MINUS;
-        // }
-        // // Make it recalculate the number of pages
-        // numPages = -1;
-        // node.expanded = !node.expanded;
-        // }
-        // }
-        // }
     }
 }
