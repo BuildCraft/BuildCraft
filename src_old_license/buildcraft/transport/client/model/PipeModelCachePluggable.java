@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
@@ -42,7 +42,7 @@ public class PipeModelCachePluggable {
         private final ImmutableSet<PluggableModelKey<?>> pluggables;
         private final int hash;
 
-        public PluggableKey(EnumWorldBlockLayer layer, PipePluggableState state) {
+        public PluggableKey(BlockRenderLayer layer, PipePluggableState state) {
             ImmutableSet.Builder<PluggableModelKey<?>> builder = ImmutableSet.builder();
             for (EnumFacing side : EnumFacing.values()) {
                 PipePluggable pluggable = state.getPluggable(side);

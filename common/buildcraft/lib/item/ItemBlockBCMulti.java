@@ -8,15 +8,16 @@ import net.minecraft.item.ItemStack;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
 /** Basically a copy of {@link ItemMultiTexture}, but extends {@link ItemBC_Neptune} */
-public class ItemBuildCraftBlockMulti extends ItemBlockBC_Neptune {
+public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
     protected final Function<ItemStack, String> nameFunction;
 
-    public ItemBuildCraftBlockMulti(BlockBCBase_Neptune block, Function<ItemStack, String> nameFunction) {
+    public ItemBlockBCMulti(BlockBCBase_Neptune block, Function<ItemStack, String> nameFunction) {
         super(block);
         this.nameFunction = nameFunction;
+        setHasSubtypes(true);
     }
 
-    public ItemBuildCraftBlockMulti(BlockBCBase_Neptune block, final String[] namesByMeta) {
+    public ItemBlockBCMulti(BlockBCBase_Neptune block, final String[] namesByMeta) {
         this(block, stack -> {
             int meta = stack.getMetadata();
             if (meta < 0 || meta >= namesByMeta.length) meta = 0;

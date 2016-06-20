@@ -15,7 +15,7 @@ import buildcraft.lib.gui.ContainerBCTile;
 public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
     protected IInventory playerInventory;
 
-    private int progressIn, progressOut;
+    // private int progressIn, progressOut;
 
     public ContainerBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
         super(player, library);

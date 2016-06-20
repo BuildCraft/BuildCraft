@@ -1,12 +1,12 @@
 package buildcraft.core.lib.client.sprite;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.data.AnimationMetadataSection;
 import net.minecraft.util.ResourceLocation;
 
 public class SubSprite extends TextureAtlasSprite {
@@ -98,16 +98,19 @@ public class SubSprite extends TextureAtlasSprite {
         @Override public float getMinU() {return delegate.getMinU();}
         @Override public float getMaxU() {return delegate.getMaxU();}
         @Override public float getInterpolatedU(double u) {return delegate.getInterpolatedU(u);}
+        @Override public float getUnInterpolatedU(float u) {return delegate.getUnInterpolatedU(u);}
         @Override public float getMinV() {return delegate.getMinV();}
         @Override public float getMaxV() {return delegate.getMaxV();}
         @Override public float getInterpolatedV(double v) {return delegate.getInterpolatedV(v);}
+        @Override public float getUnInterpolatedV(float v) {return delegate.getUnInterpolatedV(v);}
         @Override public String getIconName() {return delegate.getIconName();}
         @Override public void updateAnimation() {delegate.updateAnimation();}
         @Override public int[][] getFrameTextureData(int index) {return delegate.getFrameTextureData(index);}
         @Override public int getFrameCount() {return delegate.getFrameCount();}
         @Override public void setIconWidth(int newWidth) {delegate.setIconWidth(newWidth);}
         @Override public void setIconHeight(int newHeight) {delegate.setIconHeight(newHeight);}
-        @Override public void loadSprite(BufferedImage[] images, AnimationMetadataSection meta) throws IOException {delegate.loadSprite(images, meta);}
+        @Override public void loadSprite(PngSizeInfo sizeInfo, boolean p_188538_2_) throws IOException { delegate.loadSprite(sizeInfo, p_188538_2_); }
+        @Override public void loadSpriteFrames(IResource resource, int mipmaplevels) throws IOException { delegate.loadSpriteFrames(resource, mipmaplevels); }
         @Override public void generateMipmaps(int level) {delegate.generateMipmaps(level);}
         @Override public void clearFramesTextureData() {delegate.clearFramesTextureData();}
         @Override public boolean hasAnimationMetadata() {return delegate.hasAnimationMetadata();}

@@ -3,11 +3,9 @@ package buildcraft.lib;
 import java.util.*;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.LibraryEntryType;
 import buildcraft.lib.library.LocalLibraryDatabase;
@@ -36,8 +34,7 @@ public class BCLibDatabase {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void connectToServer(ClientConnectedToServerEvent event) {
-        BCLog.logger.info("Connected to a server!");
+    public static void connectToServer() {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() != null) {
             remoteDB = null;
             fillEntries();

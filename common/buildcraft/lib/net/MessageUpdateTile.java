@@ -46,8 +46,9 @@ public class MessageUpdateTile implements IMessage {
     public void toBytes(ByteBuf buf) {
         PacketBuffer buffer = new PacketBuffer(buf);
         buffer.writeBlockPos(pos);
-        buffer.writeShort(payload.readableBytes());
-        buffer.writeBytes(payload);
+        int length = payload.readableBytes();
+        buffer.writeShort(length);
+        buffer.writeBytes(payload, 0, length);
     }
 
     public enum Handler implements IMessageHandler<MessageUpdateTile, IMessage> {
@@ -62,7 +63,7 @@ public class MessageUpdateTile implements IMessage {
                 try {
                     return ((IPayloadReceiver) tile).receivePayload(ctx.side, message.payload);
                 } catch (IOException io) {
-                    Throwables.propagate(io);
+                    throw Throwables.propagate(io);
                 }
             }
             return null;

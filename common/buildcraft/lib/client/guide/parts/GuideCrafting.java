@@ -13,7 +13,7 @@ public class GuideCrafting extends GuidePart {
     public static final GuiRectangle[][] ITEM_POSITION = new GuiRectangle[3][3];
     public static final GuiRectangle OUT_POSITION = new GuiRectangle(95, 19, 16, 16);
     public static final GuiRectangle OFFSET = new GuiRectangle((GuiGuide.PAGE_LEFT_TEXT.width - CRAFTING_GRID.width) / 2, 0, CRAFTING_GRID.width, CRAFTING_GRID.height);
-    public static final int PIXEL_HEIGHT = 42;
+    public static final int PIXEL_HEIGHT = 60;
 
     static {
         for (int x = 0; x < 3; x++) {

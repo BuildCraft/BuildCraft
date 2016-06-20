@@ -42,7 +42,7 @@ public class FluidDefinition {
         fluid.setDensity(density).setViscosity(viscocity);
         if (density < 0) fluid.setGaseous(true);
         FluidRegistry.registerFluid(fluid);
-        material = new MaterialBuildCraftLiquid(MapColor.blackColor);
+        material = new MaterialBuildCraftLiquid(MapColor.BLACK);
         block = new BlockBuildCraftFluid(fluid, material).setFlammability(0);
         block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluidName);
         block.setUnlocalizedName("blockFluid_" + fluidName);
@@ -55,7 +55,7 @@ public class FluidDefinition {
         bucket.setUnlocalizedName("bucket_" + fluidName);
         bucket.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_bucket_" + fluidName);
         BCRegistry.INSTANCE.registerItem(bucket, true);
-        FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new ItemStack(Items.bucket));
+        FluidContainerRegistry.registerFluidContainer(bucketFluid, new ItemStack(bucket), new ItemStack(Items.BUCKET));
 
         BucketHandler.INSTANCE.buckets.put(block.getDefaultState().withProperty(BlockFluidClassic.LEVEL, 0), bucket);
     }

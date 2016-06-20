@@ -56,8 +56,10 @@ public class MessageLibraryRequest implements IMessage {
             LocalLibraryDatabase local = BCLibDatabase.LOCAL_DB;
             if (message.id == ID_REQUEST_SINGLE) {
                 LibraryEntryData data = local.getEntry(message.header);
-                MessageLibraryTransferEntry ret = new MessageLibraryTransferEntry(message.header, data);
-                return ret;
+                if (data != null) {
+                    MessageLibraryTransferEntry ret = new MessageLibraryTransferEntry(message.header, data);
+                    return ret;
+                }
             } else if (message.id == ID_REQUEST_INDEX) {
                 List<LibraryEntryHeader> headers = new ArrayList<>(local.getAllHeaders());
                 return new MessageLibraryDBIndex(headers);

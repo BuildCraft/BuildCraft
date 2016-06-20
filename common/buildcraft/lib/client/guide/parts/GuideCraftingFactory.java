@@ -42,30 +42,40 @@ public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
     public static GuideCraftingFactory create(ItemStack stack) {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             if (ItemStack.areItemStacksEqual(stack, recipe.getRecipeOutput())) {
-                if (recipe instanceof ShapedRecipes) {
-                    ItemStack[] input = ((ShapedRecipes) recipe).recipeItems;
-                    ItemStack[][] dimInput = new ItemStack[((ShapedRecipes) recipe).recipeWidth][((ShapedRecipes) recipe).recipeHeight];
-                    for (int x = 0; x < dimInput.length; x++) {
-                        for (int y = 0; y < dimInput[x].length; y++) {
-                            dimInput[x][y] = ItemStack.copyItemStack(input[x + y * dimInput.length]);
-                        }
-                    }
-                    return new GuideCraftingFactory(dimInput, stack);
-                } else if (recipe instanceof ShapedOreRecipe) {
-                    Object[] input = ((ShapedOreRecipe) recipe).getInput();
-                    ItemStack[][] dimInput = getStackSizeArray(recipe);
-                    for (int x = 0; x < dimInput.length; x++) {
-                        for (int y = 0; y < dimInput[x].length; y++) {
-                            dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
-                        }
-                    }
-                    return new GuideCraftingFactory(dimInput, stack);
+                GuideCraftingFactory val = getFactory(recipe);
+                if (val != null) {
+                    return val;
                 } else {
                     BCLog.logger.info("Found a matching recipe, but of an unknown class (" + recipe.getClass() + ") for " + stack.getDisplayName());
                 }
             }
         }
         return null;
+    }
+
+    public static GuideCraftingFactory getFactory(IRecipe recipe) {
+        GuideCraftingFactory val = null;
+        if (recipe instanceof ShapedRecipes) {
+            ShapedRecipes shaped = (ShapedRecipes) recipe;
+            ItemStack[] input = shaped.recipeItems;
+            ItemStack[][] dimInput = new ItemStack[shaped.recipeWidth][shaped.recipeHeight];
+            for (int x = 0; x < dimInput.length; x++) {
+                for (int y = 0; y < dimInput[x].length; y++) {
+                    dimInput[x][y] = ItemStack.copyItemStack(input[x + y * dimInput.length]);
+                }
+            }
+            val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        } else if (recipe instanceof ShapedOreRecipe) {
+            Object[] input = ((ShapedOreRecipe) recipe).getInput();
+            ItemStack[][] dimInput = getStackSizeArray(recipe);
+            for (int x = 0; x < dimInput.length; x++) {
+                for (int y = 0; y < dimInput[x].length; y++) {
+                    dimInput[x][y] = oreConvert(input[x + y * dimInput.length]);
+                }
+            }
+            val = new GuideCraftingFactory(dimInput, recipe.getRecipeOutput());
+        }
+        return val;
     }
 
     private static ItemStack[][] getStackSizeArray(IRecipe recipe) {

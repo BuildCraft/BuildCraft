@@ -2,9 +2,11 @@ package buildcraft.core;
 
 import net.minecraft.block.material.Material;
 
+import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.block.BlockMarkerPath;
 import buildcraft.core.block.BlockMarkerVolume;
+import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -20,6 +22,7 @@ public class BCCoreBlocks {
     public static void preInit() {
         markerVolume = BlockBCBase_Neptune.register(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
         markerPath = BlockBCBase_Neptune.register(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
+        decorated = BlockBCBase_Neptune.register(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
 
         // engine = BlockBuildCraftBase_BC8.register(new BlockEngine_BC8(Material.IRON, "block.engine.bc"),
         // ItemEngine_BC8<EnumEngineType>::new);

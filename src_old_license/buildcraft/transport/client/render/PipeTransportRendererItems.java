@@ -121,7 +121,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
 
         GL11.glPopMatrix();
         if (color != null) {// The box around an item that decides what colour lenses it can go through
-            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             EntityResizableCuboid erc = new EntityResizableCuboid(null);
             erc.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.ItemBox.ordinal());

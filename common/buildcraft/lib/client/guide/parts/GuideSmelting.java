@@ -15,7 +15,7 @@ public class GuideSmelting extends GuidePart {
     public static final GuiRectangle IN_POS = new GuiRectangle(1, 1, 16, 16);
     public static final GuiRectangle OUT_POS = new GuiRectangle(59, 19, 16, 16);
     public static final GuiRectangle FURNACE_POS = new GuiRectangle(1, 37, 16, 16);
-    public static final int PIXEL_HEIGHT = 42;
+    public static final int PIXEL_HEIGHT = 60;
 
     private final ChangingItemStack input, output;
     private final ItemStack furnace;

@@ -47,7 +47,7 @@ public enum LibEventDistributor {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void onConnectToServer(ClientConnectedToServerEvent event) {
-        BCLibDatabase.connectToServer(event);
+        BCLibDatabase.connectToServer();
     }
 
     @SubscribeEvent

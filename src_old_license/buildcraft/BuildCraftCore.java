@@ -66,6 +66,7 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.*;
+import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.blueprints.BuildingSlotMapIterator;
 import buildcraft.core.blueprints.SchematicHelper;
 import buildcraft.core.blueprints.SchematicRegistry;

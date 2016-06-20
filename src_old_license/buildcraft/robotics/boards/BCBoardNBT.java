@@ -7,8 +7,8 @@ import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -44,10 +44,9 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
         return id;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-        list.add(EnumChatFormatting.BOLD + BCStringUtils.localize("buildcraft.boardRobot" + upperName));
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
+        list.add(TextFormatting.BOLD + BCStringUtils.localize("buildcraft.boardRobot" + upperName));
         list.add(BCStringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
     }
 

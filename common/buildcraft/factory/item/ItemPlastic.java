@@ -9,12 +9,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.factory.block.BlockPlastic;
-import buildcraft.lib.item.ItemBuildCraftBlockMulti;
+import buildcraft.lib.item.ItemBlockBCMulti;
 import buildcraft.lib.misc.ColourUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class ItemPlastic extends ItemBuildCraftBlockMulti {
+public class ItemPlastic extends ItemBlockBCMulti {
     public ItemPlastic(BlockPlastic block) {
         super(block, createNameArray());
         this.setMaxDamage(0);

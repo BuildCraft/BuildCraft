@@ -2,6 +2,8 @@ package buildcraft.lib.client.resource;
 
 import java.util.*;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
@@ -16,13 +18,49 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.client.guide.parts.*;
+import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
 
 public class MarkdownResourceHolder extends StringResourceHolder implements GuidePartFactory<GuidePage> {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
+    public static final Map<String, SpecialParser> SPECIAL_FACTORIES = new HashMap<>();
+
+    @FunctionalInterface
+    public interface SpecialParser {
+        List<GuidePartFactory<?>> parse(String after);
+    }
+
+    @FunctionalInterface
+    public interface SpecialParserSingle extends SpecialParser {
+        @Override
+        default List<GuidePartFactory<?>> parse(String after) {
+            GuidePartFactory<?> single = parseSingle(after);
+            if (single == null) return null;
+            return ImmutableList.of(single);
+        }
+
+        GuidePartFactory<?> parseSingle(String after);
+    }
+
+    static {
+        putSingle("special.new_page", (after) -> GuidePartNewPage::new);
+        putSingle("special.crafting", MarkdownResourceHolder::loadCraftingLine);
+        putSingle("special.smelting", MarkdownResourceHolder::loadSmeltingLine);
+        putMulti("special.recipe", MarkdownResourceHolder::loadRecipes);
+        putMulti("special.usage", MarkdownResourceHolder::loadUsages);
+    }
+
     private List<GuidePartFactory<?>> factories = null;
 
     public MarkdownResourceHolder(ResourceLocation location) {
         super(location);
+    }
+
+    private static void putSingle(String string, SpecialParserSingle parser) {
+        SPECIAL_FACTORIES.put(string, parser);
+    }
+
+    private static void putMulti(String string, SpecialParser parser) {
+        SPECIAL_FACTORIES.put(string, parser);
     }
 
     @Override
@@ -31,30 +69,30 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         List<String> lines = new ArrayList<>(getLines());
         while (!lines.isEmpty()) {
             String first = lines.remove(0);
-            GuidePartFactory<?> factory = turnLineIntoPart(first, lines);
-            if (factory != null) {
-                newFactories.add(factory);
+            List<GuidePartFactory<?>> factories = turnLineIntoPart(first, lines);
+            if (factories != null) {
+                newFactories.addAll(factories);
             }
         }
         factories = newFactories;
     }
 
-    public static GuidePartFactory<?> turnLineIntoPart(final String line, List<String> after) {
-        GuidePartFactory<?> factory = null;
+    public static List<GuidePartFactory<?>> turnLineIntoPart(final String line, List<String> after) {
+        List<GuidePartFactory<?>> factories = null;
 
         // Ignore comments
         if (line.startsWith("//")) return null;
 
-        factory = loadImageLine(line);
-        if (factory != null) return factory;
+        factories = loadImageLine(line);
+        if (factories != null) return factories;
 
-        factory = loadSpecialLine(line);
-        if (factory != null) return factory;
+        factories = loadSpecialLine(line);
+        if (factories != null) return factories;
 
         // Attempt to load a "list" from all of the given lines
 
         // We failed to find a factory for any of the special, so lets just interpret it as a raw string
-        return loadRawString(line);
+        return ImmutableList.of(loadRawString(line));
     }
 
     private static GuidePartFactory<?> loadRawString(final String line) {
@@ -80,18 +118,18 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         return (gui) -> new GuideText(gui, node);
     }
 
-    private static GuidePartFactory<?> loadImageLine(String line) {
+    private static List<GuidePartFactory<?>> loadImageLine(String line) {
         // ![path/to/image]
         // ![path/to/image](width, height)
 
         if (line.startsWith("![")) {
+            String substring = line.substring(2, line.length() - 1);
             if (line.endsWith("]")) {
-                return loadDefaultImage(line.substring(2, line.length() - 1));
+                return ImmutableList.of(loadDefaultImage(substring));
             } else if (line.endsWith(")")) {
-                String middle = line.substring(2, line.length() - 1);
-                int index = middle.indexOf("](");
-                String loc = middle.substring(0, index);
-                String args = middle.substring(index + 2);
+                int index = substring.indexOf("](");
+                String loc = substring.substring(0, index);
+                String args = substring.substring(index + 2);
                 String[] argsSplit = args.split(",");
                 BCLog.logger.info("[lib.markdown] Load image " + loc + ", " + args + " -> " + Arrays.toString(argsSplit));
             }
@@ -137,18 +175,22 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
-    private static GuidePartFactory<?> loadSpecialLine(String line) {
-        // $[special.new_page]
-        // $[special.crafting]...
-        // $[special.smelting]...
-        if (line.equals("$[special.new_page]")) {
-            return GuidePartNewPage::new;
-        } else if (line.startsWith("$[special.crafting]")) {
-            return loadCraftingLine(line.substring("$[special.crafting]".length()));
-        } else if (line.startsWith("$[special.smelting]")) {
-            return loadSmeltingLine(line.substring("$[special.smelting]".length()));
+    private static List<GuidePartFactory<?>> loadSpecialLine(String line) {
+        int endIndex = line.indexOf("]");
+        if (line.startsWith("$[") && endIndex > 0) {
+            String inner = line.substring(2, endIndex);
+            String after = line.substring(endIndex + 1);
+            BCLog.logger.info("Changed \"" + line + " to [\"" + inner + "\", \"" + after + "\"]");
+            SpecialParser factory = SPECIAL_FACTORIES.get(inner);
+            if (factory != null) {
+                return factory.parse(after);
+            }
         }
         return null;
+    }
+
+    private static List<GuidePartFactory<?>> createNewPage(String after) {
+        return ImmutableList.of(GuidePartNewPage::new);
     }
 
     private static GuidePartFactory<?> loadCraftingLine(String substring) {
@@ -165,6 +207,22 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             return null;
         }
         return GuideSmeltingFactory.create(stack);
+    }
+
+    private static List<GuidePartFactory<?>> loadRecipes(String substring) {
+        ItemStack stack = loadItemStack(substring);
+        if (stack == null) {
+            return null;
+        }
+        return RecipeLookupHelper.getAllRecipes(stack);
+    }
+
+    private static List<GuidePartFactory<?>> loadUsages(String substring) {
+        ItemStack stack = loadItemStack(substring);
+        if (stack == null) {
+            return null;
+        }
+        return RecipeLookupHelper.getAllUsages(stack);
     }
 
     public static ItemStack loadItemStack(String line) {

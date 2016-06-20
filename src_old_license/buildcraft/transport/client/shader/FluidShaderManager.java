@@ -60,7 +60,7 @@ public enum FluidShaderManager {
     // @SubscribeEvent
     public void renderWorld(RenderWorldLastEvent event) {
         if (Minecraft.getMinecraft().theWorld != null) {
-            getRenderer(Minecraft.getMinecraft().theWorld).renderAll(event.partialTicks);
+            getRenderer(Minecraft.getMinecraft().theWorld).renderAll(event.getPartialTicks());
         }
     }
 }

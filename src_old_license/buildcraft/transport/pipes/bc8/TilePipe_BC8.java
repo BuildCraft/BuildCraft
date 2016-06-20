@@ -39,10 +39,11 @@ public class TilePipe_BC8 extends TileBuildCraft implements IPipeHolder_BC8 {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setString("type", PipeAPI_BC8.PIPE_REGISTRY.getTag(pipe.getBehaviour().definition));
         nbt.setTag("pipe", pipe.writeToNBT());
+        return nbt;
     }
 
     @Override

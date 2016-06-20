@@ -78,9 +78,9 @@ public class TransportPipes_BC8 {
     public static void addRecipies() {
         // Setup the glass types for later
         ItemStack[] glassTypes = new ItemStack[17];
-        glassTypes[0] = new ItemStack(Blocks.glass);
+        glassTypes[0] = new ItemStack(Blocks.GLASS);
         for (int i = 0; i < 16; i++) {
-            glassTypes[i + 1] = new ItemStack(Blocks.stained_glass, 1, i);
+            glassTypes[i + 1] = new ItemStack(Blocks.STAINED_GLASS, 1, i);
         }
 
         // For every registered pipe
@@ -104,7 +104,7 @@ public class TransportPipes_BC8 {
                     if (type == EnumPipeType.FLUID) {
                         modifier = new ItemStack(BuildCraftTransport.pipeWaterproof);
                     } else {
-                        modifier = new ItemStack(Items.redstone);
+                        modifier = new ItemStack(Items.REDSTONE);
                     }
                     Item pipeItem = null;
                     ItemStack inputPipe = new ItemStack(pipeItem, 1, i);

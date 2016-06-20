@@ -16,7 +16,7 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
 
 public class MessageUtil {
-    private static final DelayedList<Runnable> DELAYED = DelayedList.createConcurrent();
+    private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();
 
     public static SimpleNetworkWrapper getWrapper() {
         return BCMessageHandler.netWrapper;
@@ -27,11 +27,11 @@ public class MessageUtil {
     }
 
     public static void doDelayed(int delay, Runnable task) {
-        DELAYED.add(delay, task);
+        DELAYED_TASKS.add(delay, task);
     }
 
     public static void preTick() {
-        for (Runnable runnable : DELAYED.advance()) {
+        for (Runnable runnable : DELAYED_TASKS.advance()) {
             runnable.run();
         }
     }

@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
@@ -25,8 +26,11 @@ public class SpringPopulate {
     @SubscribeEvent
     public void populate(PopulateChunkEvent.Post event) {
 
-        boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
-                PopulateChunkEvent.Populate.EventType.CUSTOM);
+        World world = event.getWorld();
+        Random rand = event.getRand();
+        int chunkX = event.getChunkX();
+        int chunkZ = event.getChunkZ();
+        boolean doGen = TerrainGen.populate(event.getGen(), world, rand, chunkX, chunkZ, event.isHasVillageGenerated(), PopulateChunkEvent.Populate.EventType.CUSTOM);
 
         if (!doGen || !EnumSpring.WATER.canGen) {
             event.setResult(Result.ALLOW);
@@ -34,14 +38,14 @@ public class SpringPopulate {
         }
 
         // shift to world coordinates
-        int worldX = event.chunkX << 4;
-        int worldZ = event.chunkZ << 4;
+        int worldX = chunkX << 4;
+        int worldZ = chunkZ << 4;
 
-        doPopulate(event.world, event.rand, worldX, worldZ);
+        doPopulate(world, rand, worldX, worldZ);
     }
 
     private void doPopulate(World world, Random random, int x, int z) {
-        int dimId = world.provider.getDimensionId();
+        int dimId = world.provider.getDimension();
         // No water springs will generate in the Nether or End.
         if (dimId == -1 || dimId == 1) {
             return;
@@ -59,7 +63,7 @@ public class SpringPopulate {
             BlockPos pos = new BlockPos(posX, i, posZ);
             Block candidate = world.getBlockState(pos).getBlock();
 
-            if (candidate != Blocks.bedrock) {
+            if (candidate != Blocks.BEDROCK) {
                 continue;
             }
 
@@ -75,7 +79,7 @@ public class SpringPopulate {
                 if (world.isAirBlock(new BlockPos(posX, j, posZ))) {
                     break;
                 } else {
-                    world.setBlockState(new BlockPos(posX, j, posZ), Blocks.water.getDefaultState());
+                    world.setBlockState(new BlockPos(posX, j, posZ), Blocks.WATER.getDefaultState());
                 }
             }
 

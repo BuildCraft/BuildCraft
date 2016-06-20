@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -17,6 +18,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.ModelHelper;
 
+@Deprecated
 public class ItemBuildCraft extends Item implements IModelRegister {
     private boolean passSneakClick = false;
     protected String textureName = null;
@@ -42,7 +44,7 @@ public class ItemBuildCraft extends Item implements IModelRegister {
         this.passSneakClick = passClick;
         return this;
     }
-    
+
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
         return passSneakClick;

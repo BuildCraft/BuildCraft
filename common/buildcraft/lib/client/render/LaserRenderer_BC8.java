@@ -44,6 +44,7 @@ public class LaserRenderer_BC8 {
                 .removalListener(LaserRenderer_BC8::removeCompiledLaser)//
                 .build(CacheLoader.from(CompiledLaser::new));
 
+        // Really? Do we need to cache the lightmap?
         CACHED_LIGHTMAP = CacheBuilder.newBuilder()//
                 .expireAfterWrite(1, TimeUnit.SECONDS)//
                 .build(CacheLoader.from(LaserRenderer_BC8::computeLightmap));

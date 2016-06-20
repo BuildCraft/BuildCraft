@@ -12,6 +12,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.gui.widgets.ScrollbarElement;
@@ -36,7 +38,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     private GuiButton deleteButton;
     private final ScrollbarElement<GuiBlueprintLibrary, ContainerBlueprintLibrary> scrollbar;
-    private int selected = -1;
+    public int selected = -1;
 
     public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
         super(new ContainerBlueprintLibrary(player, library));
@@ -153,6 +155,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
             if (ySlot > -1 && ySlot < BCLibDatabase.allEntries.size()) {
                 selected = ySlot;
+                sendSelected();
                 if (x > 154) {
                     // The "upload/download" button
                     LibraryEntryHeader header = BCLibDatabase.allEntries.get(ySlot);
@@ -165,8 +168,12 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
                 }
             }
         }
+    }
 
-        // checkDelete();
+    private void sendSelected() {
+        container.tile.selected = selected;
+        IMessage message = container.tile.createNetworkUpdate(TileLibrary_Neptune.NET_SELECTED);
+        MessageUtil.getWrapper().sendToServer(message);
     }
 
     private static void uploadEntry(LibraryEntryHeader header) {

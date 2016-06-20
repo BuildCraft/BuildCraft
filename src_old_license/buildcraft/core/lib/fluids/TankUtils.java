@@ -77,10 +77,10 @@ public final class TankUtils {
 
     public static Block getFluidBlock(Fluid fluid, boolean moving) {
         if (fluid == FluidRegistry.WATER) {
-            return moving ? Blocks.flowing_water : Blocks.water;
+            return moving ? Blocks.FLOWING_WATER : Blocks.WATER;
         }
         if (fluid == FluidRegistry.LAVA) {
-            return moving ? Blocks.flowing_lava : Blocks.lava;
+            return moving ? Blocks.FLOWING_LAVA : Blocks.LAVA;
         }
         return fluid.getBlock();
     }

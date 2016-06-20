@@ -2,8 +2,8 @@ package buildcraft.transport.client.model;
 
 import java.util.Arrays;
 
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.transport.pluggable.PlugPluggable;
@@ -13,7 +13,7 @@ public class ModelKeyPlug extends PluggableModelKey<ModelKeyPlug> {
     private final int hash;
 
     public ModelKeyPlug(EnumFacing face, PlugPluggable.Material material) {
-        super(EnumWorldBlockLayer.CUTOUT, PlugPluggableModel.INSTANCE, face);
+        super(BlockRenderLayer.CUTOUT, PlugPluggableModel.INSTANCE, face);
         this.material = material;
         hash = Arrays.hashCode(new int[] { super.hashCode(), material.hashCode() });
     }

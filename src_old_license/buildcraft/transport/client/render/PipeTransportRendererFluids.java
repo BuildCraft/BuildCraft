@@ -120,7 +120,7 @@ public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTrans
             // FluidType.STILL);
 
             RenderUtils.setGLColorFromInt(renderData.color);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             boolean above = renderData.amount[EnumFacing.UP.ordinal()] > 0;
             boolean sides = false;

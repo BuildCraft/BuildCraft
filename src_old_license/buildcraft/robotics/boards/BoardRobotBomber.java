@@ -19,15 +19,11 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
-import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
-import buildcraft.robotics.ai.AIRobotLoad;
-import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
+import buildcraft.robotics.ai.*;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {
 
-    private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
+    private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.TNT));
 
     private int flyingHeight = 20;
 
@@ -83,7 +79,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
                 if (stack != null && stack.stackSize > 0) {
                     EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1, robot.posZ + 0.25, robot);
-                    tnt.fuse = 37;
+                    tnt.setFuse(37);
                     robot.worldObj.spawnEntityInWorld(tnt);
                     robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
                 }

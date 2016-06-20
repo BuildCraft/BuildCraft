@@ -270,14 +270,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         super.readFromNBT(nbt);
         int version = nbt.getInteger("data-version");
         if (version != BCVersion.CURRENT.dataVersion) {
-            migrateOldNBT(nbt);
+            migrateOldNBT(version, nbt);
         }
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
     }
 
-    protected void migrateOldNBT(NBTTagCompound nbt) {
-
-    }
+    protected void migrateOldNBT(int version, NBTTagCompound nbt) {}
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {

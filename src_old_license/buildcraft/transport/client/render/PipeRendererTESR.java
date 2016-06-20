@@ -67,7 +67,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
         PipeWireKey key = new PipeWireKey(pipe.renderState);
 
         RenderHelper.disableStandardItemLighting();
-        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
@@ -79,7 +79,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer<TileGenericPipe>
     }
 
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
-        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable pluggable = pipe.getPipePluggable(direction);

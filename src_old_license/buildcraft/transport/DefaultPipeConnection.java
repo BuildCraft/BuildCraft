@@ -1,11 +1,10 @@
 package buildcraft.transport;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -17,8 +16,7 @@ public enum DefaultPipeConnection implements ICustomPipeConnection {
 
     @Override
     public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
-        Block block = state.getBlock();
-        AxisAlignedBB bb = block.getCollisionBoundingBox(world, pos, state);
+        AxisAlignedBB bb = state.getCollisionBoundingBox(world, pos);
         if (bb == null) {
             return 0;
         }

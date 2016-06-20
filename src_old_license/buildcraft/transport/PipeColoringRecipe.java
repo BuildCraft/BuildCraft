@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.lib.utils.ColorUtils;
@@ -80,7 +81,7 @@ public class PipeColoringRecipe implements IRecipe {
                     if (pipeDamage == -1) {
                         pipeDamage = stack.getItemDamage();
                     } else if (pipeDamage != stack.getItemDamage()) pipeDamage = -2;
-                } else if (stack.getItem() == Items.water_bucket) {
+                } else if (stack.getItem() == Items.WATER_BUCKET) {
                     if (bleach == -1 && dye == -1) bleach = i;
                     else valid = false;
                 } else if (ColorUtils.isDye(stack)) {

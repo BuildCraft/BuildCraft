@@ -10,12 +10,9 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
-import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.StringUtils;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public class TaskLookupGameProfile implements Callable<GameProfile> {
@@ -41,28 +38,31 @@ public class TaskLookupGameProfile implements Callable<GameProfile> {
 
     @Override
     public GameProfile call() throws Exception {
-        long sleep = (long) ((Math.random() * 4000) + 3000);
-        Thread.sleep(sleep);
-        PlayerProfileCache cache = getProfileCache();
-        if (cache == null) {
-            return from;
-        }
-        GameProfile profile;
-        if (!StringUtils.isNullOrEmpty(from.getName())) {
-            profile = cache.getGameProfileForUsername(from.getName());
-        } else {
-            profile = cache.getProfileByUUID(from.getId());
-        }
-        if (profile == null) {
-            // Thats not good: the lookup failed
-            return from;
-        }
-        profile = TileEntitySkull.updateGameprofile(profile);
-        if (profile == null) {
-            throw new IllegalStateException("Null Profile!");
-        }
-        BCLog.logger.info("[lib.perm.profile] Successfully looked up the owner of " + from + " as " + profile);
-        return profile;
+        return from;
+        // FIXME: This is VERY broken!
+
+        // long sleep = (long) ((Math.random() * 4000) + 3000);
+        // Thread.sleep(sleep);
+        // PlayerProfileCache cache = getProfileCache();
+        // if (cache == null) {
+        // return from;
+        // }
+        // GameProfile profile;
+        // if (!StringUtils.isNullOrEmpty(from.getName())) {
+        // profile = cache.getGameProfileForUsername(from.getName());
+        // } else {
+        // profile = cache.getProfileByUUID(from.getId());
+        // }
+        // if (profile == null) {
+        // // Thats not good: the lookup failed
+        // return from;
+        // }
+        // profile = TileEntitySkull.updateGameprofile(profile);
+        // if (profile == null) {
+        // throw new IllegalStateException("Null Profile!");
+        // }
+        // BCLog.logger.info("[lib.perm.profile] Successfully looked up the owner of " + from + " as " + profile);
+        // return profile;
     }
 
     @Nullable

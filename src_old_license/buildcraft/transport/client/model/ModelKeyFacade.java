@@ -3,21 +3,21 @@ package buildcraft.transport.client.model;
 import java.util.Arrays;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 public class ModelKeyFacade extends PluggableModelKey<ModelKeyFacade> {
     public static class Cutout extends ModelKeyFacade {
         public Cutout(EnumFacing side, IBlockState state, boolean hollow) {
-            super(EnumWorldBlockLayer.CUTOUT, side, state, hollow);
+            super(BlockRenderLayer.CUTOUT, side, state, hollow);
         }
     }
 
     public static class Transparent extends ModelKeyFacade {
         public Transparent(EnumFacing side, IBlockState state, boolean hollow) {
-            super(EnumWorldBlockLayer.SOLID, side, state, hollow);
+            super(BlockRenderLayer.SOLID, side, state, hollow);
         }
     }
 
@@ -25,7 +25,7 @@ public class ModelKeyFacade extends PluggableModelKey<ModelKeyFacade> {
     public final IBlockState state;
     private final int hash;
 
-    public ModelKeyFacade(EnumWorldBlockLayer layer, EnumFacing side, IBlockState state, boolean hollow) {
+    public ModelKeyFacade(BlockRenderLayer layer, EnumFacing side, IBlockState state, boolean hollow) {
         super(layer, FacadePluggableModel.INSTANCE, side);
         this.hollow = hollow;
         this.state = state;

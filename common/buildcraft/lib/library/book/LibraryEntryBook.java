@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonParseException;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWritableBook;
@@ -14,6 +16,8 @@ import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.library.LibraryDatabase_Neptune;
 import buildcraft.lib.library.LibraryEntryData;
 import buildcraft.lib.misc.data.ZipFileHelper;
 
@@ -65,7 +69,10 @@ public class LibraryEntryBook implements LibraryEntryData {
         ITextComponent component;
         try {
             component = ITextComponent.Serializer.fromJsonLenient(json);
-        } catch (Exception ignored) {
+        } catch (JsonParseException exception) {
+            if (LibraryDatabase_Neptune.DEBUG) {
+                BCLog.logger.warn("[lib.library.book] Failed to parse \"" + json + "\" as json!", exception);
+            }
             component = new TextComponentString(json);
         }
 
@@ -107,5 +114,19 @@ public class LibraryEntryBook implements LibraryEntryData {
             text = "0" + text;
         }
         return text;
+    }
+
+    @Override
+    public int hashCode() {
+        return pages.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
+        LibraryEntryBook other = (LibraryEntryBook) obj;
+        return pages.equals(other.pages);
     }
 }

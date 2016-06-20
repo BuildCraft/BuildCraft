@@ -9,38 +9,38 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public enum EnumPipeMaterial {
     // Extraction
-    WOOD(2, new ItemStack(Blocks.planks, 1, OreDictionary.WILDCARD_VALUE)),
+    WOOD(2, new ItemStack(Blocks.PLANKS, 1, OreDictionary.WILDCARD_VALUE)),
     /** Filtered extraction. */
-    EMERALD(2, new ItemStack(Items.emerald)),
+    EMERALD(2, new ItemStack(Items.EMERALD)),
     // Variations of stone, don't connect to each other
-    COBBLESTONE(1, new ItemStack(Blocks.cobblestone)),
-    STONE(1, new ItemStack(Blocks.stone)),
-    ANDERSITE(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.ANDESITE.getMetadata())),
-    ANDERSITE_POLISHED(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.ANDESITE_SMOOTH.getMetadata())),
-    DIORITE(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.DIORITE.getMetadata())),
-    DIORITE_POLISHED(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.DIORITE_SMOOTH.getMetadata())),
-    GRANITE(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.GRANITE.getMetadata())),
-    GRANITE_POLISHED(1, new ItemStack(Blocks.stone, 1, BlockStone.EnumType.GRANITE_SMOOTH.getMetadata())),
+    COBBLESTONE(1, new ItemStack(Blocks.COBBLESTONE)),
+    STONE(1, new ItemStack(Blocks.STONE)),
+    ANDERSITE(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.ANDESITE.getMetadata())),
+    ANDERSITE_POLISHED(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.ANDESITE_SMOOTH.getMetadata())),
+    DIORITE(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.DIORITE.getMetadata())),
+    DIORITE_POLISHED(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.DIORITE_SMOOTH.getMetadata())),
+    GRANITE(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.GRANITE.getMetadata())),
+    GRANITE_POLISHED(1, new ItemStack(Blocks.STONE, 1, BlockStone.EnumType.GRANITE_SMOOTH.getMetadata())),
     // Different functionality
     /** Send all contents only a single direction */
-    IRON(2, new ItemStack(Items.iron_ingot)),
+    IRON(2, new ItemStack(Items.IRON_INGOT)),
     /** Speed up contents */
-    GOLD(1, new ItemStack(Items.gold_ingot)),
+    GOLD(1, new ItemStack(Items.GOLD_INGOT)),
     /** Only connects to pipes */
-    SANDSTONE(1, new ItemStack(Blocks.sandstone, 1, OreDictionary.WILDCARD_VALUE)),
+    SANDSTONE(1, new ItemStack(Blocks.SANDSTONE, 1, OreDictionary.WILDCARD_VALUE)),
     /** Insertion pipe, will prioritise insertion into an inventory rather than another pipe */
-    CLAY(1, new ItemStack(Items.clay_ball)),
+    CLAY(1, new ItemStack(Items.CLAY_BALL)),
     /** Buffer pipe, will pause items if they cannot go directly into an inventory. (Like clay but doesn't put items
      * into a different place.) */
-    QUARTZ(1, new ItemStack(Items.quartz)),
+    QUARTZ(1, new ItemStack(Items.QUARTZ)),
     /** Sorts contents based off filters for directions. */
-    DIAMOND(7, new ItemStack(Items.diamond)),
+    DIAMOND(7, new ItemStack(Items.DIAMOND)),
     /** Destroys contents */
-    VOID(1, new ItemStack(Items.dye, 1, EnumDyeColor.BLACK.getDyeDamage()), new ItemStack(Items.redstone)),
+    VOID(1, new ItemStack(Items.DYE, 1, EnumDyeColor.BLACK.getDyeDamage()), new ItemStack(Items.REDSTONE)),
     /** Sucks up items */
-    OBSIDIAN(1, new ItemStack(Blocks.obsidian)),
+    OBSIDIAN(1, new ItemStack(Blocks.OBSIDIAN)),
     /** Places items */
-    STRIPES(1, new ItemStack(Items.dye, 1, EnumDyeColor.BLACK.getDyeDamage()), new ItemStack(Items.dye, 1, EnumDyeColor.YELLOW.getDyeDamage()));
+    STRIPES(1, new ItemStack(Items.DYE, 1, EnumDyeColor.BLACK.getDyeDamage()), new ItemStack(Items.DYE, 1, EnumDyeColor.YELLOW.getDyeDamage()));
 
     public final int maxSprites;
     public final ItemStack ingredient1, ingredient2;

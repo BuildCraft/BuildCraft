@@ -127,7 +127,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
                         if (stack != null) {
                             FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
 
-                            if (fluid != null && filter.matches(fluid.getFluid())) {
+                            if (fluid != null && filter.matches(fluid)) {
                                 actionFound = true;
                                 break;
                             }

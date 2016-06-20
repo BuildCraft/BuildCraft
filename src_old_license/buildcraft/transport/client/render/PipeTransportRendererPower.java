@@ -34,7 +34,7 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
 
         GL11.glTranslatef((float) x, (float) y, (float) z);
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         // Used for the centre rendering
         double centerPower = 0;

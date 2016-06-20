@@ -57,7 +57,7 @@ public final class FluidRenderer {
         flowingRenderCache.clear();
         stillRenderCache.clear();
         frozenRenderCache.clear();
-        TextureMap map = event.map;
+        TextureMap map = event.getMap();
         missingIcon = map.getMissingSprite();
 
         textureMap.clear();
