@@ -1,5 +1,6 @@
 package buildcraft.lib.gui;
 
+@FunctionalInterface
 public interface ISimpleDrawable {
     void drawAt(int x, int y);
 

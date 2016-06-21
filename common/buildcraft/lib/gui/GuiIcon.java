@@ -30,7 +30,6 @@ public class GuiIcon implements ISimpleDrawable {
         if (texture != null) {
             Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         }
-        GlStateManager.color(1, 1, 1);
     }
 
     public DynamicTexture createDynamicTexure(int scale) {

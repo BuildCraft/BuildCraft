@@ -17,7 +17,6 @@ import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
-import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
 
@@ -44,6 +43,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
 
     static {
         putSingle("special.new_page", (after) -> GuidePartNewPage::new);
+        putSingle("special.chapter", (after) -> chapter(after));
         putSingle("special.crafting", MarkdownResourceHolder::loadCraftingLine);
         putSingle("special.smelting", MarkdownResourceHolder::loadSmeltingLine);
         putMulti("special.all_crafting", MarkdownResourceHolder::loadAllCrafting);
@@ -117,9 +117,8 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         // And lists
 
         // Just use it as a normal text line
-        NodePageLine node = new NodePageLine(null, null);
-        node.addChild(new PageLine(0, modLine, false));
-        return (gui) -> new GuideText(gui, node);
+        PageLine text = new PageLine(0, modLine, false);
+        return (gui) -> new GuideText(gui, text);
     }
 
     private static List<GuidePartFactory<?>> loadImageLine(String line) {
@@ -239,36 +238,38 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
 
     public static List<GuidePartFactory<?>> loadAllCrafting(ItemStack stack) {
         List<GuidePartFactory<?>> list = new ArrayList<>();
-        List<GuidePartFactory<?>> part = RecipeLookupHelper.getAllRecipes(stack);
-        boolean addedNew = false;
-        if (part.size() > 0) {
+        List<GuidePartFactory<?>> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
+        if (recipeParts.size() > 0) {
             list.add(GuidePartNewPage::new);
-            addedNew = true;
-            if (part.size() == 1) {
-                list.add(translate("buildcraft.guide.recipe.create"));
+            if (recipeParts.size() == 1) {
+                list.add(chapter("buildcraft.guide.recipe.create"));
             } else {
-                list.add(translate("buildcraft.guide.recipe.create.plural"));
+                list.add(chapter("buildcraft.guide.recipe.create.plural"));
             }
-            list.addAll(part);
+            list.addAll(recipeParts);
         }
-        part = RecipeLookupHelper.getAllUsages(stack);
-        if (part.size() > 0) {
-            if (!addedNew) list.add(GuidePartNewPage::new);
-            if (part.size() == 1) {
-                list.add(translate("buildcraft.guide.recipe.use"));
-            } else {
-                list.add(translate("buildcraft.guide.recipe.use.plural"));
+        List<GuidePartFactory<?>> usageParts = RecipeLookupHelper.getAllUsages(stack);
+        if (usageParts.size() > 0) {
+            if (recipeParts.size() != 1) {
+                list.add(GuidePartNewPage::new);
             }
-            list.addAll(part);
+            if (usageParts.size() == 1) {
+                list.add(chapter("buildcraft.guide.recipe.use"));
+            } else {
+                list.add(chapter("buildcraft.guide.recipe.use.plural"));
+            }
+            list.addAll(usageParts);
         }
         return list;
     }
 
+    public static GuidePartFactory<?> chapter(String after) {
+        return (gui) -> new GuidePartChapter(gui, I18n.format(after));
+    }
+
     public static GuidePartFactory<?> translate(String text) {
         return (gui) -> {
-            NodePageLine node = new NodePageLine(null, null);
-            node.addChild(new PageLine(0, I18n.format(text), false));
-            return new GuideText(gui, node);
+            return new GuideText(gui, new PageLine(0, I18n.format(text), false));
         };
     }
 

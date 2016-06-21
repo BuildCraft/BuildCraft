@@ -14,13 +14,13 @@ public class GuideInWorld extends GuidePart {
     }
 
     @Override
-    public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
+    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }
     
     @Override
-    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
         // TODO Auto-generated method stub
         throw new AbstractMethodError("Implement this!");
     }

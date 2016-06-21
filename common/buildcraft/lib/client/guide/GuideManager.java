@@ -1,8 +1,6 @@
 package buildcraft.lib.client.guide;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -76,14 +74,8 @@ public class GuideManager {
         // Create a dummy page for the stack
         existing = generatedPages.get(stack);
         if (existing == null) {
-            List<GuidePartFactory<?>> factories = MarkdownResourceHolder.loadAllCrafting(stack);
-            existing = (gui) -> {
-                List<GuidePart> parts = new ArrayList<>();
-                for (GuidePartFactory<?> factory : factories) {
-                    parts.add(factory.createNew(gui));
-                }
-                return new GuidePage(gui, parts, null, stack.getDisplayName());
-            };
+            existing = GuidePageStandInRecipes.createFactory(stack);
+            generatedPages.put(stack, existing);
         }
         return existing;
     }

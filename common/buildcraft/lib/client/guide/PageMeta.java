@@ -25,7 +25,7 @@ public class PageMeta {
         this.itemStack = itemStack;
         this.typeTags = typeTags;
     }
-    
+
     public ItemStack getItemStack() {
         return MarkdownResourceHolder.loadItemStack(itemStack);
     }

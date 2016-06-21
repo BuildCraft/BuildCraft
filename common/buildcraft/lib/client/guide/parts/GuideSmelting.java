@@ -28,7 +28,7 @@ public class GuideSmelting extends GuidePartItem {
     }
 
     @Override
-    public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
+    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }
@@ -52,7 +52,7 @@ public class GuideSmelting extends GuidePartItem {
     }
 
     @Override
-    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
         if (current.pixel + PIXEL_HEIGHT > height) {
             current = current.newPage();
         }

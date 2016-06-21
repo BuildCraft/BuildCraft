@@ -58,12 +58,14 @@ public class PathConnection extends MarkerConnection<PathConnection> {
             if (positions.size() < 2) {
                 positions.clear();
             }
+            subCache.refreshConnection(this);
         } else if (positions.getLast().equals(pos)) {
             positions.removeLast();
             loop = false;
             if (positions.size() < 2) {
                 positions.clear();
             }
+            subCache.refreshConnection(this);
         } else if (positions.contains(pos)) {
             List<BlockPos> a = new ArrayList<>();
             List<BlockPos> b = new ArrayList<>();

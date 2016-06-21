@@ -6,38 +6,50 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuideText;
+import buildcraft.lib.client.resource.GuidePartChapter;
 
 public class NodePageLine implements Comparable<NodePageLine> {
     public final NodePageLine parent;
-    public final PageLine pageLine;
+    public final GuidePart part;
     private final List<NodePageLine> children = Lists.newArrayList();
 
-    public NodePageLine(NodePageLine parent, PageLine pageLine) {
+    public NodePageLine(NodePageLine parent, GuidePart part) {
         this.parent = parent;
-        this.pageLine = pageLine;
+        this.part = part;
     }
 
-    public NodePageLine addChild(PageLine line) {
-        NodePageLine node = new NodePageLine(this, line);
+    public NodePageLine addChild(GuidePart part) {
+        NodePageLine node = new NodePageLine(this, part);
         children.add(node);
         return node;
+    }
+
+    public void setFontRenderer(IFontRenderer fontRenderer) {
+        if (part != null) {
+            part.setFontRenderer(fontRenderer);
+        }
+        for (NodePageLine node : children) {
+            node.setFontRenderer(fontRenderer);
+        }
     }
 
     public Iterable<NodePageLine> iterateNonNullNodes() {
         return new Iterable<NodePageLine>() {
             @Override
             public Iterator<NodePageLine> iterator() {
-                return new NodeIterator();
+                return new NodePartIterator();
             }
         };
     }
 
-    public Iterable<PageLine> iterateNonNullLines() {
-        return new Iterable<PageLine>() {
+    public Iterable<GuidePart> iterateNonNullLines() {
+        return new Iterable<GuidePart>() {
             @Override
-            public Iterator<PageLine> iterator() {
-                return new NodePageLineIterator();
+            public Iterator<GuidePart> iterator() {
+                return new NodeGuidePartIterator();
             }
         };
     }
@@ -46,9 +58,9 @@ public class NodePageLine implements Comparable<NodePageLine> {
         return Collections.unmodifiableList(children);
     }
 
-    public NodePageLine getChildNode(PageLine line) {
+    public NodePageLine getChildNode(GuidePart line) {
         for (NodePageLine node : iterateNonNullNodes()) {
-            if (node.pageLine == line) {
+            if (node.part == line) {
                 return node;
             }
         }
@@ -62,16 +74,26 @@ public class NodePageLine implements Comparable<NodePageLine> {
         }
     }
 
-    @Override
-    public int compareTo(NodePageLine o) {
-        return pageLine.compareTo(o.pageLine);
+    private String getString() {
+        if (part instanceof GuideText) {
+            return ((GuideText) part).text.text;
+        } else if (part instanceof GuidePartChapter) {
+            return ((GuidePartChapter) part).chapter.text;
+        } else {
+            return part == null ? "null" : part.toString();
+        }
     }
 
-    private class NodeIterator implements Iterator<NodePageLine> {
+    @Override
+    public int compareTo(NodePageLine o) {
+        return getString().compareTo(o.getString());
+    }
+
+    private class NodePartIterator implements Iterator<NodePageLine> {
         private NodePageLine current;
         private int childrenDone = 0;
 
-        NodeIterator() {
+        NodePartIterator() {
             current = NodePageLine.this;
         }
 
@@ -113,11 +135,11 @@ public class NodePageLine implements Comparable<NodePageLine> {
         }
     }
 
-    private class NodePageLineIterator implements Iterator<PageLine> {
-        private final NodeIterator iterator;
+    private class NodeGuidePartIterator implements Iterator<GuidePart> {
+        private final NodePartIterator iterator;
 
-        private NodePageLineIterator() {
-            iterator = new NodeIterator();
+        private NodeGuidePartIterator() {
+            iterator = new NodePartIterator();
         }
 
         @Override
@@ -126,8 +148,8 @@ public class NodePageLine implements Comparable<NodePageLine> {
         }
 
         @Override
-        public PageLine next() {
-            return iterator.next().pageLine;
+        public GuidePart next() {
+            return iterator.next().part;
         }
 
         @Override

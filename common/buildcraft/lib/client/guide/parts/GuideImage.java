@@ -46,7 +46,7 @@ public class GuideImage extends GuidePart {
     }
 
     @Override
-    public PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
+    public PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         if (height - current.pixel < this.height) {
             current = current.nextPage();
         }
@@ -57,7 +57,7 @@ public class GuideImage extends GuidePart {
     }
 
     @Override
-    public PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+    public PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
         if (height - current.pixel < this.height) {
             current = current.nextPage();
         }

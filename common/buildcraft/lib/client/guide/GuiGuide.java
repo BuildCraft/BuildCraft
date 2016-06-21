@@ -1,7 +1,9 @@
 package buildcraft.lib.client.guide;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Queues;
@@ -19,6 +21,8 @@ import buildcraft.lib.client.guide.PageMeta.TypeOrder;
 import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
+import buildcraft.lib.client.resource.GuidePartChapter;
+import buildcraft.lib.client.resource.GuidePartChapter.EnumGuiSide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.IPositionedElement;
@@ -45,17 +49,17 @@ public class GuiGuide extends GuiScreen {
     public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(31, 22, 141, 193);
     public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(20, 22, 141, 193);
 
-    public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 17, 135);
+    public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
 
     public static final GuiIcon PEN_HIDDEN_MIN = new GuiIcon(ICONS_2, 0, 4, 10, 5);
     public static final GuiIcon PEN_HIDDEN_MAX = new GuiIcon(ICONS_2, 0, 4, 10, 15);
 
-    public static final GuiIcon TURN_BACK = new GuiIcon(ICONS_2, 0, 152, 18, 10);
+    public static final GuiIcon TURN_BACK = new GuiIcon(ICONS_2, 23, 139, 18, 10);
     public static final GuiIcon TURN_BACK_HOVERED = new GuiIcon(ICONS_2, 23, 152, 18, 10);
 
     public static final GuiIcon TURN_FORWARDS = new GuiIcon(ICONS_2, 0, 139, 18, 10);
-    public static final GuiIcon TURN_FORWARDS_HOVERED = new GuiIcon(ICONS_2, 23, 139, 18, 10);
+    public static final GuiIcon TURN_FORWARDS_HOVERED = new GuiIcon(ICONS_2, 0, 152, 18, 10);
 
     public static final GuiIcon BACK = new GuiIcon(ICONS_2, 48, 139, 17, 9);
     public static final GuiIcon BACK_HOVERED = new GuiIcon(ICONS_2, 48, 152, 17, 9);
@@ -64,11 +68,13 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BOX_MINUS = new GuiIcon(ICONS_2, 16, 164, 16, 16);
     public static final GuiIcon BOX_PLUS = new GuiIcon(ICONS_2, 32, 164, 16, 16);
     public static final GuiIcon BOX_TICKED = new GuiIcon(ICONS_2, 48, 164, 16, 16);
+    public static final GuiIcon BOX_CHAPTER = new GuiIcon(ICONS_2, 64, 164, 16, 16);
 
     public static final GuiIcon BOX_SELECTED_EMPTY = new GuiIcon(ICONS_2, 0, 180, 16, 16);
     public static final GuiIcon BOX_SELECTED_MINUS = new GuiIcon(ICONS_2, 16, 180, 16, 16);
     public static final GuiIcon BOX_SELECTED_PLUS = new GuiIcon(ICONS_2, 32, 180, 16, 16);
     public static final GuiIcon BOX_SELECTED_TICKED = new GuiIcon(ICONS_2, 48, 180, 16, 16);
+    public static final GuiIcon BOX_SELECTED_CHAPTER = new GuiIcon(ICONS_2, 64, 180, 16, 16);
 
     public static final GuiIcon BORDER_TOP_LEFT = new GuiIcon(ICONS_2, 0, 196, 13, 13);
     public static final GuiIcon BORDER_TOP_RIGHT = new GuiIcon(ICONS_2, 13, 196, 13, 13);
@@ -79,6 +85,10 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon ORDER_STAGE = new GuiIcon(ICONS_2, 28, 100, 14, 14);
     public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 42, 100, 14, 14);
     public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS_2, 56, 100, 14, 14);
+
+    public static final GuiIcon CHAPTER_MARKER_LEFT = new GuiIcon(ICONS_2, 0, 223, 5, 16);
+    public static final GuiIcon CHAPTER_MARKER_SPACE = new GuiIcon(ICONS_2, 6, 223, 19, 16);
+    public static final GuiIcon CHAPTER_MARKER_RIGHT = new GuiIcon(ICONS_2, 27, 223, 5, 16);
 
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_STAGE, ORDER_MOD_TYPE, ORDER_MOD };
 
@@ -121,10 +131,11 @@ public class GuiGuide extends GuiScreen {
     private float hoverStageLast = 0, hoverStageNext = 0;
     private boolean isOverHover = false;
 
-    private int minX, minY;
+    public int minX, minY;
     public ItemStack tooltipStack = null;
 
-    private Deque<GuidePageBase> pages = Queues.newArrayDeque();
+    private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
+    private final List<GuidePartChapter> chapters = new ArrayList<>();
     private GuidePageBase currentPage;
     private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("DejaVu:13");
 
@@ -139,18 +150,40 @@ public class GuiGuide extends GuiScreen {
     }
 
     public void openPage(GuidePageBase page) {
-        if (currentPage != null) {
+        if (currentPage != null && currentPage.shouldPersistHistory()) {
             pages.push(currentPage);
         }
-        currentPage = page;
+        setPageInternal(page);
     }
 
     public void closePage() {
         if (pages.isEmpty()) {
             mc.displayGuiScreen(null);
         } else {
-            currentPage = pages.pop();
+            setPageInternal(pages.pop());
         }
+    }
+
+    private void setPageInternal(GuidePageBase page) {
+        currentPage = page;
+        refreshChapters();
+    }
+
+    public GuidePageBase getCurrentPage() {
+        return currentPage;
+    }
+
+    public IFontRenderer getCurrentFont() {
+        return this.currentFont;
+    }
+
+    public int getChapterIndex(GuidePartChapter chapter) {
+        return chapters.indexOf(chapter);
+    }
+
+    public void refreshChapters() {
+        chapters.clear();
+        chapters.addAll(currentPage.getChapters());
     }
 
     @Override
@@ -294,10 +327,27 @@ public class GuiGuide extends GuiScreen {
             currentFont.drawString(title, x, minY + 12, 0);
         }
 
+        for (GuidePartChapter chapter : chapters) {
+            chapter.reset();
+        }
+
         tooltipStack = null;
         currentPage.setFontRenderer(currentFont);
         currentPage.renderFirstPage(minX + PAGE_LEFT_TEXT.x, minY + PAGE_LEFT_TEXT.y, PAGE_LEFT_TEXT.width, PAGE_LEFT_TEXT.height);
         currentPage.renderSecondPage(minX + PAGE_LEFT.width + PAGE_RIGHT_TEXT.x, minY + PAGE_RIGHT_TEXT.y, PAGE_RIGHT_TEXT.width, PAGE_RIGHT_TEXT.height);
+
+        int chapterLeftY = minY + 14;
+        int chapterRightY = minY + 14;
+        int chapterIndex = 0;
+        for (GuidePartChapter chapter : chapters) {
+            EnumGuiSide side = chapter.draw(chapterLeftY, chapterRightY, chapterIndex);
+            if (side == EnumGuiSide.LEFT) {
+                chapterLeftY += 20;
+            } else if (side == EnumGuiSide.RIGHT) {
+                chapterRightY += 20;
+            }
+            chapterIndex++;
+        }
 
         // Draw the back button if there are any pages on the stack
         if (!pages.isEmpty()) {

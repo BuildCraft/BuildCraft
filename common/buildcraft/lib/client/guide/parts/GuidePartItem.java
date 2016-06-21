@@ -30,7 +30,6 @@ public abstract class GuidePartItem extends GuidePart {
 
     protected void testClickItemStack(ItemStack stack, int x, int y) {
         if (stack != null && STACK_RECT.offset(x, y).contains(gui.mouse)) {
-            // BCLog.logger.info("Clicked on " + stack);
             gui.openPage(GuideManager.getPageFor(stack).createNew(gui));
         }
     }

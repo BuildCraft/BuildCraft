@@ -19,34 +19,34 @@ public abstract class GuidePart {
     public static final int LINE_HEIGHT = 17;
 
     /** Stores information about the current rendering position */
-    public static class PagePart {
+    public static class PagePosition {
         public final int page;
         public final int pixel;
 
-        public PagePart(int page, int pixel) {
+        public PagePosition(int page, int pixel) {
             this.page = page;
             this.pixel = pixel;
         }
 
-        public PagePart nextLine(int pixelDifference, int maxHeight) {
+        public PagePosition nextLine(int pixelDifference, int maxHeight) {
             int added = pixel + pixelDifference;
             if (added >= maxHeight) {
                 return nextPage();
             }
-            return new PagePart(page, added);
+            return new PagePosition(page, added);
         }
 
-        public PagePart guarenteeSpace(int required, int maxPageHeight) {
-            PagePart next = nextLine(required, maxPageHeight);
+        public PagePosition guarenteeSpace(int required, int maxPageHeight) {
+            PagePosition next = nextLine(required, maxPageHeight);
             if (next.page == page) return this;
             return next;
         }
 
-        public PagePart nextPage() {
-            return new PagePart(page + 1, 0);
+        public PagePosition nextPage() {
+            return new PagePosition(page + 1, 0);
         }
 
-        public PagePart newPage() {
+        public PagePosition newPage() {
             if (pixel != 0) {
                 return nextPage();
             }
@@ -84,17 +84,16 @@ public abstract class GuidePart {
      * @param current The current position to render from
      * @param index The current page index to render on
      * @return The new position for the next part to render from */
-    public abstract PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index);
+    public abstract PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index);
 
-    /** Like {@link #renderIntoArea(int, int, int, int, PagePart, int)} but for a mouse click. */
-    public abstract PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY);
+    /** Like {@link #renderIntoArea(int, int, int, int, PagePosition, int)} but for a mouse click. */
+    public abstract PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY);
 
     public void handleMouseDragPartial(int startX, int startY, int currentX, int currentY, int button) {}
 
     public void handleMouseDragFinish(int startX, int startY, int endX, int endY, int button) {}
 
-    /** @param start Where to start the rendering from.
-     * @param current The current location of the rendering. This will be different from start if this line needed to
+    /** @param current The current location of the rendering. This will be different from start if this line needed to
      *            render over 2 (or more!) pages
      * @param line The line to render
      * @param x The x position the page rendering started from
@@ -103,7 +102,7 @@ public abstract class GuidePart {
      * @param height The height of rendering space available
      * @param simulate If true, this will just calculate the positions and return without rendering.
      * @return The position for the next line to render at. Will automatically be the next page or line if necessary. */
-    protected PagePart renderLine(PagePart start, PagePart current, PageLine line, int x, int y, int width, int height, int pageRenderIndex) {
+    protected PagePosition renderLine(PagePosition current, PageLine line, int x, int y, int width, int height, int pageRenderIndex) {
         wasHovered = false;
         wasIconHovered = false;
         // Firstly break off the last chunk if the total length is greater than the width allows
@@ -182,14 +181,14 @@ public abstract class GuidePart {
         return current;
     }
 
-    protected PagePart renderLines(Iterable<PageLine> lines, PagePart part, int x, int y, int width, int height, int index) {
+    protected PagePosition renderLines(Iterable<PageLine> lines, PagePosition part, int x, int y, int width, int height, int index) {
         for (PageLine line : lines) {
-            part = renderLine(part, part, line, x, y, width, height, index);
+            part = renderLine(part, line, x, y, width, height, index);
         }
         return part;
     }
 
-    protected PagePart renderLines(Iterable<PageLine> lines, int x, int y, int width, int height, int index) {
-        return renderLines(lines, new PagePart(0, 0), x, y, width, height, index);
+    protected PagePosition renderLines(Iterable<PageLine> lines, int x, int y, int width, int height, int index) {
+        return renderLines(lines, new PagePosition(0, 0), x, y, width, height, index);
     }
 }

@@ -1,7 +1,9 @@
 package buildcraft.lib.client.guide.parts;
 
+import java.util.List;
+
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.resource.GuidePartChapter;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 
@@ -38,35 +40,27 @@ public abstract class GuidePageBase extends GuidePart {
     public void tick() {}
 
     @Override
-    public final PagePart renderIntoArea(int x, int y, int width, int height, PagePart current, int index) {
+    public final PagePosition renderIntoArea(int x, int y, int width, int height, PagePosition current, int index) {
         // NO-OP
         return current;
     }
 
     public abstract String getTitle();
 
-    protected PageLine getClicked(Iterable<PageLine> lines, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
-        PagePart part = new PagePart(0, 0);
-        for (PageLine line : lines) {
-            part = renderLine(part, part, line, x, y, width, height, -1);
-            if (wasHovered) {
-                return line;
-            }
-            if (part.page > index) {
-                return null;
-            }
-        }
-        return null;
+    public boolean shouldPersistHistory() {
+        return true;
     }
 
-    protected PageLine getIconClicked(Iterable<PageLine> lines, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
-        PagePart part = new PagePart(0, 0);
-        for (PageLine line : lines) {
-            part = renderLine(part, part, line, x, y, width, height, -1);
-            if (wasIconHovered) {
-                return line;
+    public abstract List<GuidePartChapter> getChapters();
+
+    protected GuidePart getClicked(Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
+        PagePosition pos = new PagePosition(0, 0);
+        for (GuidePart part : iterable) {
+            pos = part.renderIntoArea(x, y, width, height, pos, -1);
+            if (part.wasHovered) {
+                return part;
             }
-            if (part.page > index) {
+            if (pos.page > index) {
                 return null;
             }
         }
@@ -117,7 +111,7 @@ public abstract class GuidePageBase extends GuidePart {
     }
 
     @Override
-    public final PagePart handleMouseClick(int x, int y, int width, int height, PagePart current, int index, int mouseX, int mouseY) {
+    public final PagePosition handleMouseClick(int x, int y, int width, int height, PagePosition current, int index, int mouseX, int mouseY) {
         // NO-OP, use the below!
         return current;
     }
