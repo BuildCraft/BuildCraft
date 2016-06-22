@@ -20,9 +20,8 @@ import buildcraft.lib.client.guide.PageMeta.ETypeTag;
 import buildcraft.lib.client.guide.PageMeta.TypeOrder;
 import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.resource.GuidePartChapter;
-import buildcraft.lib.client.resource.GuidePartChapter.EnumGuiSide;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.IPositionedElement;
@@ -135,7 +134,7 @@ public class GuiGuide extends GuiScreen {
     public ItemStack tooltipStack = null;
 
     private final Deque<GuidePageBase> pages = Queues.newArrayDeque();
-    private final List<GuidePartChapter> chapters = new ArrayList<>();
+    private final List<GuideChapter> chapters = new ArrayList<>();
     private GuidePageBase currentPage;
     private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("DejaVu:13");
 
@@ -164,6 +163,14 @@ public class GuiGuide extends GuiScreen {
         }
     }
 
+    public void goBackToMenu() {
+        GuidePageBase newPage = currentPage;
+        while (!pages.isEmpty()) {
+            newPage = pages.pop();
+        }
+        setPageInternal(newPage);
+    }
+
     private void setPageInternal(GuidePageBase page) {
         currentPage = page;
         refreshChapters();
@@ -177,7 +184,7 @@ public class GuiGuide extends GuiScreen {
         return this.currentFont;
     }
 
-    public int getChapterIndex(GuidePartChapter chapter) {
+    public int getChapterIndex(GuideChapter chapter) {
         return chapters.indexOf(chapter);
     }
 
@@ -208,12 +215,16 @@ public class GuiGuide extends GuiScreen {
                     hoverStageNext = PEN_HIDDEN_HEIGHT_MIN;
                 }
             }
+            currentPage.updateScreen();
+            for (GuideChapter chapter : chapters) {
+                chapter.updateScreen();
+            }
         } else if (isOpening) {
             openingAngleLast = openingAngleNext;
             openingAngleNext += 180 / BOOK_OPEN_TIME;
         }
         if (currentPage != null) {
-            currentPage.setFontRenderer(currentFont);
+            setupFontRenderer();
             currentPage.tick();
         }
     }
@@ -327,25 +338,18 @@ public class GuiGuide extends GuiScreen {
             currentFont.drawString(title, x, minY + 12, 0);
         }
 
-        for (GuidePartChapter chapter : chapters) {
+        tooltipStack = null;
+        setupFontRenderer();
+        for (GuideChapter chapter : chapters) {
             chapter.reset();
         }
 
-        tooltipStack = null;
-        currentPage.setFontRenderer(currentFont);
         currentPage.renderFirstPage(minX + PAGE_LEFT_TEXT.x, minY + PAGE_LEFT_TEXT.y, PAGE_LEFT_TEXT.width, PAGE_LEFT_TEXT.height);
         currentPage.renderSecondPage(minX + PAGE_LEFT.width + PAGE_RIGHT_TEXT.x, minY + PAGE_RIGHT_TEXT.y, PAGE_RIGHT_TEXT.width, PAGE_RIGHT_TEXT.height);
 
-        int chapterLeftY = minY + 14;
-        int chapterRightY = minY + 14;
         int chapterIndex = 0;
-        for (GuidePartChapter chapter : chapters) {
-            EnumGuiSide side = chapter.draw(chapterLeftY, chapterRightY, chapterIndex);
-            if (side == EnumGuiSide.LEFT) {
-                chapterLeftY += 20;
-            } else if (side == EnumGuiSide.RIGHT) {
-                chapterRightY += 20;
-            }
+        for (GuideChapter chapter : chapters) {
+            chapter.draw(chapterIndex);
             chapterIndex++;
         }
 
@@ -384,6 +388,10 @@ public class GuiGuide extends GuiScreen {
         }
     }
 
+    public void setupFontRenderer() {
+        currentPage.setFontRenderer(currentFont);
+    }
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         mouse.setMousePosition(mouseX, mouseY);
@@ -399,6 +407,13 @@ public class GuiGuide extends GuiScreen {
 
                 GuidePageBase current = currentPage;
                 current.setFontRenderer(currentFont);
+
+                for (GuideChapter chapter : chapters) {
+                    if (chapter.handleClick()) {
+                        return;
+                    }
+                }
+
                 current.handleMouseClick(page0xMin, pageYMin, page0xMax - page0xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage(), isEditing);
                 current.handleMouseClick(page1xMin, pageYMin, page1xMax - page1xMin, pageYMax - pageYMin, mouseX, mouseY, mouseButton, currentPage.getPage() + 1, isEditing);
 

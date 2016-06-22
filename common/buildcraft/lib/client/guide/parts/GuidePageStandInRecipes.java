@@ -26,7 +26,7 @@ public class GuidePageStandInRecipes extends GuidePage {
             return new GuidePageStandInRecipes(gui, parts, stack);
         };
     }
-    
+
     @Override
     public boolean shouldPersistHistory() {
         return false;

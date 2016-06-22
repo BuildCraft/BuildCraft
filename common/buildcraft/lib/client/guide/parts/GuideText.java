@@ -5,6 +5,10 @@ import buildcraft.lib.client.guide.PageLine;
 
 public class GuideText extends GuidePart {
     public final PageLine text;
+    
+    public GuideText(GuiGuide gui, String text) {
+        this(gui, new PageLine(0, text, false));
+    }
 
     public GuideText(GuiGuide gui, PageLine text) {
         super(gui);

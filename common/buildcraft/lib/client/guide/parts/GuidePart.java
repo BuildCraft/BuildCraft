@@ -71,6 +71,8 @@ public abstract class GuidePart {
         this.fontRenderer = fontRenderer;
     }
 
+    public void updateScreen() {}
+
     /** Renders a raw line at the position, lowering it appropriately */
     protected void renderTextLine(String text, int x, int y, int colour) {
         fontRenderer.drawString(text, x, y + 8 - (fontRenderer.getFontHeight() / 2), colour);

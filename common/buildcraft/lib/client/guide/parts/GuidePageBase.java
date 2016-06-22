@@ -3,7 +3,6 @@ package buildcraft.lib.client.guide.parts;
 import java.util.List;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.resource.GuidePartChapter;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 
@@ -33,6 +32,18 @@ public abstract class GuidePageBase extends GuidePart {
         }
     }
 
+    protected final void goToPage(int page) {
+        // Make it a multiple of 2
+        index = page / 2;
+        index *= 2;
+        if (index < 0) {
+            index = 0;
+        }
+        if (index >= numPages) {
+            index = numPages - 1;
+        }
+    }
+
     public int getPage() {
         return index;
     }
@@ -51,7 +62,7 @@ public abstract class GuidePageBase extends GuidePart {
         return true;
     }
 
-    public abstract List<GuidePartChapter> getChapters();
+    public abstract List<GuideChapter> getChapters();
 
     protected GuidePart getClicked(Iterable<GuidePart> iterable, int x, int y, int width, int height, int mouseX, int mouseY, int index) {
         PagePosition pos = new PagePosition(0, 0);

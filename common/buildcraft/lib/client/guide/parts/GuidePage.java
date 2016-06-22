@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
-import buildcraft.lib.client.resource.GuidePartChapter;
 import buildcraft.lib.client.resource.MarkdownResourceHolder;
 
 public class GuidePage extends GuidePageBase {
@@ -17,20 +16,23 @@ public class GuidePage extends GuidePageBase {
     public final MarkdownResourceHolder creator;
     public final ImmutableList<GuidePart> parts;
     public final String title;
+    public final GuideChapter chapterContents;
 
     public GuidePage(GuiGuide gui, List<GuidePart> parts, MarkdownResourceHolder creator, String title) {
         super(gui);
         this.creator = creator;
         this.parts = ImmutableList.copyOf(parts);
         this.title = title;
+        this.chapterContents = new GuideChapterContents(gui);
     }
 
     @Override
-    public List<GuidePartChapter> getChapters() {
-        List<GuidePartChapter> list = new ArrayList<>();
+    public List<GuideChapter> getChapters() {
+        List<GuideChapter> list = new ArrayList<>();
+        list.add(chapterContents);
         for (GuidePart part : parts) {
-            if (part instanceof GuidePartChapter) {
-                list.add((GuidePartChapter) part);
+            if (part instanceof GuideChapter) {
+                list.add((GuideChapter) part);
             }
         }
         return list;

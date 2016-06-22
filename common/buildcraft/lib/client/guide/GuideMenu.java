@@ -15,10 +15,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.PageMeta.TypeOrder;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
-import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.guide.parts.GuidePart;
-import buildcraft.lib.client.guide.parts.GuideText;
-import buildcraft.lib.client.resource.GuidePartChapter;
+import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.GuiStack;
@@ -55,8 +52,8 @@ public class GuideMenu extends GuidePageBase {
                 String translated = TextFormatting.UNDERLINE + I18n.format(line.getText());
                 boolean notFound = true;
                 for (NodePageLine childNode : node.getChildren()) {
-                    if (childNode.part instanceof GuidePartChapter) {
-                        if (translated.equals(((GuidePartChapter) childNode.part).chapter.text)) {
+                    if (childNode.part instanceof GuideChapter) {
+                        if (translated.equals(((GuideChapter) childNode.part).chapter.text)) {
                             node = childNode;
                             notFound = false;
                             break;
@@ -64,7 +61,7 @@ public class GuideMenu extends GuidePageBase {
                     }
                 }
                 if (notFound) {
-                    GuidePartChapter text = new GuidePartChapter(gui, indent, translated, line);
+                    GuideChapter text = new GuideChapterWithin(gui, indent, translated, line);
                     node = node.addChild(text);
                 }
                 indent++;
@@ -91,11 +88,11 @@ public class GuideMenu extends GuidePageBase {
     }
 
     @Override
-    public List<GuidePartChapter> getChapters() {
-        List<GuidePartChapter> list = new ArrayList<>();
+    public List<GuideChapter> getChapters() {
+        List<GuideChapter> list = new ArrayList<>();
         for (GuidePart part : parentNode.iterateNonNullLines()) {
-            if (part instanceof GuidePartChapter) {
-                list.add((GuidePartChapter) part);
+            if (part instanceof GuideChapter) {
+                list.add((GuideChapter) part);
             }
         }
         return list;

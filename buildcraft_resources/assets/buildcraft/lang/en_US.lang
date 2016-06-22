@@ -628,6 +628,8 @@ buildcraft.guide.recipe.create.plural=Recipes
 buildcraft.guide.recipe.use=Use
 buildcraft.guide.recipe.use.plural=Uses
 
+buildcraft.guide.chapter.contents=Contents
+
 buildcraft.guide.chapter.type.unknown=Unknown Type!
 buildcraft.guide.chapter.type.block=Blocks
 buildcraft.guide.chapter.type.item=Items

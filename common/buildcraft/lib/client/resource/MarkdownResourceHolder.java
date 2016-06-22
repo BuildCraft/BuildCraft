@@ -105,20 +105,26 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
             modLine = " ";
         }
 
+        boolean chapter = false;
+
         Set<TextFormatting> enabledFormattings = EnumSet.noneOf(TextFormatting.class);
 
         // Make the entire line have an underline, like a title
         if (modLine.startsWith("# ")) {
-            modLine = TextFormatting.UNDERLINE + modLine.substring(2);
-            enabledFormattings.add(TextFormatting.UNDERLINE);
+            modLine = modLine.substring(2);
+            chapter = true;
         }
         // TODO: Add support for stuff like *italic* __bold__ ~~strikethrough~~ %%Obfuscated%%
 
         // And lists
 
         // Just use it as a normal text line
-        PageLine text = new PageLine(0, modLine, false);
-        return (gui) -> new GuideText(gui, text);
+        final String text = modLine;
+        if (chapter) {
+            return (gui) -> new GuideChapterWithin(gui, text);
+        } else {
+            return (gui) -> new GuideText(gui, text);
+        }
     }
 
     private static List<GuidePartFactory<?>> loadImageLine(String line) {
@@ -264,7 +270,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     }
 
     public static GuidePartFactory<?> chapter(String after) {
-        return (gui) -> new GuidePartChapter(gui, I18n.format(after));
+        return (gui) -> new GuideChapterWithin(gui, I18n.format(after));
     }
 
     public static GuidePartFactory<?> translate(String text) {

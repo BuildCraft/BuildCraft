@@ -8,8 +8,8 @@ import com.google.common.collect.Lists;
 
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuidePart;
+import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuideText;
-import buildcraft.lib.client.resource.GuidePartChapter;
 
 public class NodePageLine implements Comparable<NodePageLine> {
     public final NodePageLine parent;
@@ -77,8 +77,8 @@ public class NodePageLine implements Comparable<NodePageLine> {
     private String getString() {
         if (part instanceof GuideText) {
             return ((GuideText) part).text.text;
-        } else if (part instanceof GuidePartChapter) {
-            return ((GuidePartChapter) part).chapter.text;
+        } else if (part instanceof GuideChapter) {
+            return ((GuideChapter) part).chapter.text;
         } else {
             return part == null ? "null" : part.toString();
         }
