@@ -1,5 +1,6 @@
 package buildcraft.lib.misc.data;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -75,5 +78,14 @@ public class ZipFileHelper {
             throw new IOException("No bytes for entry " + name);
         }
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    @Nullable
+    public ByteArrayInputStream getInputStream(String name) {
+        byte[] bytes = entries.get(name);
+        if (bytes == null) {
+            return null;
+        }
+        return new ByteArrayInputStream(bytes);
     }
 }

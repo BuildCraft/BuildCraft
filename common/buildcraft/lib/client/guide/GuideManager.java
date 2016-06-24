@@ -24,6 +24,7 @@ import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.resource.MarkdownResourceHolder;
 import buildcraft.lib.client.resource.ResourceRegistry;
 
+@Deprecated
 @SideOnly(Side.CLIENT)
 public class GuideManager {
     static final Map<ModContainer, GuideManager> managers = Maps.newHashMap();

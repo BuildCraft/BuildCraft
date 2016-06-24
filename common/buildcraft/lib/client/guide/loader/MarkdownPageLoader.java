@@ -1,5 +1,7 @@
-package buildcraft.lib.client.resource;
+package buildcraft.lib.client.guide.loader;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.*;
 
 import com.google.common.collect.ImmutableList;
@@ -15,13 +17,16 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
+import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
+import buildcraft.lib.client.resource.ResourceRegistry;
+import buildcraft.lib.client.resource.TextureResourceHolder;
 
-@Deprecated
-public class MarkdownResourceHolder extends StringResourceHolder implements GuidePartFactory<GuidePage> {
+public enum MarkdownPageLoader implements IPageLoaderText {
+    INSTANCE;
+
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.markdown") || World.class.getName().contains("World");
     public static final Map<String, SpecialParser> SPECIAL_FACTORIES = new HashMap<>();
 
@@ -45,19 +50,11 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     static {
         putSingle("special.new_page", (after) -> GuidePartNewPage::new);
         putSingle("special.chapter", (after) -> chapter(after));
-        putSingle("special.crafting", MarkdownResourceHolder::loadCraftingLine);
-        putSingle("special.smelting", MarkdownResourceHolder::loadSmeltingLine);
-        putMulti("special.all_crafting", MarkdownResourceHolder::loadAllCrafting);
-        putMulti("special.recipe", MarkdownResourceHolder::loadRecipes);
-        putMulti("special.usage", MarkdownResourceHolder::loadUsages);
-    }
-
-    private List<GuidePartFactory<?>> factories = null;
-    private final String title;
-
-    public MarkdownResourceHolder(ResourceLocation location, String title) {
-        super(location);
-        this.title = title;
+        putSingle("special.crafting", MarkdownPageLoader::loadCraftingLine);
+        putSingle("special.smelting", MarkdownPageLoader::loadSmeltingLine);
+        putMulti("special.all_crafting", MarkdownPageLoader::loadAllCrafting);
+        putMulti("special.recipe", MarkdownPageLoader::loadRecipes);
+        putMulti("special.usage", MarkdownPageLoader::loadUsages);
     }
 
     private static void putSingle(String string, SpecialParserSingle parser) {
@@ -68,21 +65,7 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
         SPECIAL_FACTORIES.put(string, parser);
     }
 
-    @Override
-    public void onStringChange() {
-        List<GuidePartFactory<?>> newFactories = new ArrayList<>();
-        List<String> lines = new ArrayList<>(getLines());
-        while (!lines.isEmpty()) {
-            String first = lines.remove(0);
-            List<GuidePartFactory<?>> factories = turnLineIntoPart(first, lines);
-            if (factories != null) {
-                newFactories.addAll(factories);
-            }
-        }
-        factories = newFactories;
-    }
-
-    public static List<GuidePartFactory<?>> turnLineIntoPart(final String line, List<String> after) {
+    public static List<GuidePartFactory<?>> turnLineIntoPart(final String line) {
         List<GuidePartFactory<?>> factories = null;
 
         // Ignore comments
@@ -347,11 +330,22 @@ public class MarkdownResourceHolder extends StringResourceHolder implements Guid
     }
 
     @Override
-    public GuidePage createNew(GuiGuide gui) {
-        List<GuidePart> parts = new ArrayList<>();
-        for (GuidePartFactory<?> factory : factories) {
-            parts.add(factory.createNew(gui));
+    public GuidePartFactory<? extends GuidePageBase> loadPage(BufferedReader bufferedReader, JsonEntry entry) throws IOException {
+        List<GuidePartFactory<?>> factories = new ArrayList<>();
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            List<GuidePartFactory<?>> lineFactories = turnLineIntoPart(line);
+            if (lineFactories != null) {
+                factories.addAll(lineFactories);
+            }
         }
-        return new GuidePage(gui, parts, I18n.format(title));
+        return (gui) -> {
+            List<GuidePart> parts = new ArrayList<>();
+            for (GuidePartFactory<?> factory : factories) {
+                parts.add(factory.createNew(gui));
+            }
+            String title = I18n.format(entry.title);
+            return new GuidePage(gui, parts, title);
+        };
     }
 }

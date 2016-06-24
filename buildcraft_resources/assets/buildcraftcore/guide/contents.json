@@ -1,0 +1,61 @@
+{
+    "entry_mask": "assets/<mod><sub_mod>/guide/<lang>/<type>/<page>",
+    "default_tags": 
+    {
+        "mod": "buildcraft",
+        "sub_mod": "core"
+    },
+    "contents": 
+    [
+        {
+            "title": "item.woodenGearItem.name",
+            "item_stack": "(buildcraftcore:gear_wood)",
+            "page": "gear_wood.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "gear"
+            }
+        },
+        {
+            "title": "item.stoneGearItem.name",
+            "item_stack": "(buildcraftcore:gear_stone)",
+            "page": "gear_stone.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "gear"
+            }
+        },
+        {
+            "title": "item.ironGearItem.name",
+            "item_stack": "(buildcraftcore:gear_iron)",
+            "page": "gear_iron.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "gear"
+            }
+        },
+        {
+            "title": "item.goldGearItem.name",
+            "item_stack": "(buildcraftcore:gear_gold)",
+            "page": "gear_gold.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "gear"
+            }
+        },
+        {
+            "title": "item.diamondGearItem.name",
+            "item_stack": "(buildcraftcore:gear_diamond)",
+            "page": "gear_diamond.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "gear"
+            }
+        }
+    ]
+}

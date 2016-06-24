@@ -13,6 +13,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.bpt.vanilla.VanillaBlueprints;
+import buildcraft.lib.client.guide.GuideManager_V2;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
@@ -44,6 +45,10 @@ public class BCLib {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, LibProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(LibEventDistributor.INSTANCE);
+
+        // TEMP
+        GuideManager_V2.INSTANCE.load();
+        throw new RuntimeException("lol");
     }
 
     @Mod.EventHandler

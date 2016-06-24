@@ -3,24 +3,18 @@ package buildcraft.lib.client.guide.parts;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
-import buildcraft.lib.client.resource.MarkdownResourceHolder;
 
 public class GuidePage extends GuidePageBase {
-    @Nullable
-    public final MarkdownResourceHolder creator;
     public final ImmutableList<GuidePart> parts;
     public final String title;
     public final GuideChapter chapterContents;
 
-    public GuidePage(GuiGuide gui, List<GuidePart> parts, MarkdownResourceHolder creator, String title) {
+    public GuidePage(GuiGuide gui, List<GuidePart> parts, String title) {
         super(gui);
-        this.creator = creator;
         this.parts = ImmutableList.copyOf(parts);
         this.title = title;
         this.chapterContents = new GuideChapterContents(gui);

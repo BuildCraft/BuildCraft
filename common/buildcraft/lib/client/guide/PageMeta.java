@@ -15,13 +15,11 @@ import buildcraft.lib.client.resource.MarkdownResourceHolder;
 
 public class PageMeta {
     public final String title;
-    public final String customImageLocation;
     public final String itemStack;
     public final PageTypeTags typeTags;
 
-    public PageMeta(String title, String customImageLocation, String itemStack, PageTypeTags typeTags) {
+    public PageMeta(String title, String itemStack, PageTypeTags typeTags) {
         this.title = title;
-        this.customImageLocation = customImageLocation;
         this.itemStack = itemStack;
         this.typeTags = typeTags;
     }
