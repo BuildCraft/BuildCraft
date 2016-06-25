@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
 
+@Deprecated
 public class LocationLoader {
     protected static InputStream getStream(ResourceLocation location) {
         try {

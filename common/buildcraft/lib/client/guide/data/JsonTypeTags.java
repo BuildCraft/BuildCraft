@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.guide.ETypeTag;
+import buildcraft.lib.client.guide.TypeOrder;
 
 public class JsonTypeTags {
     public static final JsonTypeTags EMPTY = new JsonTypeTags("", "", "", "");
@@ -26,6 +28,31 @@ public class JsonTypeTags {
         this.subMod = subMod;
         this.type = type;
         this.subType = subType;
+    }
+
+    public String[] getOrdered(TypeOrder typeOrder) {
+        String[] strings = new String[typeOrder.tags.size()];
+        for (int i = 0; i < strings.length; i++) {
+            ETypeTag tag = typeOrder.tags.get(i);
+            strings[i] = getTyped(tag);
+        }
+        return strings;
+    }
+
+    private String getTyped(ETypeTag tag) {
+        String typed;
+        if (tag == ETypeTag.MOD) {
+            typed = mod;
+        } else if (tag == ETypeTag.SUB_MOD) {
+            typed = subMod;
+        } else if (tag == ETypeTag.TYPE) {
+            typed = type;
+        } else if (tag == ETypeTag.SUB_TYPE) {
+            typed = subType;
+        } else {
+            throw new IllegalStateException("Don't know the type " + tag);
+        }
+        return tag.preText + typed;
     }
 
     public JsonTypeTags inheritMissingTags(JsonTypeTags parent) {

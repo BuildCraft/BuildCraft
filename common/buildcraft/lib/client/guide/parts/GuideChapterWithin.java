@@ -1,13 +1,12 @@
 package buildcraft.lib.client.guide.parts;
 
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.IComparableLine;
 
 public class GuideChapterWithin extends GuideChapter {
     private int lastPage = -1;
 
-    public GuideChapterWithin(GuiGuide gui, int indent, String text, IComparableLine line) {
-        super(gui, indent, text, line);
+    public GuideChapterWithin(GuiGuide gui, int indent, String text) {
+        super(gui, indent, text);
     }
 
     public GuideChapterWithin(GuiGuide gui, String chapter) {

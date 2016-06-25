@@ -11,7 +11,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.parts.GuideImage;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
-public class TextureResourceHolder extends ResourceHolder implements GuidePartFactory<GuideImage> {
+public class TextureResourceHolder extends ResourceHolder implements GuidePartFactory {
     private SimpleTexture texture;
     private boolean langFallback;
     private final int dispWidth, dispHeight;

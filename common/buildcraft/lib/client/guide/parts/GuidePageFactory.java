@@ -7,6 +7,7 @@ import buildcraft.lib.client.guide.GuiGuide;
 
 @FunctionalInterface
 @SideOnly(Side.CLIENT)
-public interface GuidePartFactory {
-    GuidePart createNew(GuiGuide gui);
+public interface GuidePageFactory extends GuidePartFactory {
+    @Override
+    GuidePageBase createNew(GuiGuide gui);
 }

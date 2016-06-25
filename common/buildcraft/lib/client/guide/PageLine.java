@@ -10,19 +10,17 @@ public class PageLine implements Comparable<PageLine> {
     public final int indent;
     /** This will be wrapped automatically when it is rendered. */
     public final String text;
-    private final IComparableLine line;
     public final boolean link;
 
     public PageLine(int indent, String text, boolean isLink) {
-        this(null, null, indent, text, null, isLink);
+        this(null, null, indent, text, isLink);
     }
 
-    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, IComparableLine line, boolean isLink) {
+    public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, boolean isLink) {
         this.startIcon = startIcon;
         this.startIconHovered = startIconHovered;
         this.indent = indent;
         this.text = text;
-        this.line = line;
         if (text == null) throw new NullPointerException("text");
         this.link = isLink;
     }
@@ -34,9 +32,6 @@ public class PageLine implements Comparable<PageLine> {
 
     @Override
     public int compareTo(PageLine o) {
-        if (line != null && o.line != null) {
-            return line.compareToLine(o.line);
-        }
         return text.toLowerCase().compareTo(o.text.toLowerCase());
     }
 

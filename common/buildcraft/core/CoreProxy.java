@@ -74,21 +74,5 @@ public abstract class CoreProxy implements IGuiHandler {
 
             MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
         }
-
-        @Override
-        public void fmlPostInit() {
-            GuideManager guide = new GuideManager("buildcraftcore");
-            GuideManager.registerManager(guide);
-            guide.registerPage("item/gear_wood.md");
-            guide.registerPage("item/gear_stone.md");
-            guide.registerPage("item/gear_iron.md");
-            guide.registerPage("item/gear_gold.md");
-            guide.registerPage("item/gear_diamond.md");
-            guide.registerPage("item/wrench.md");
-            guide.registerPage("item/paintbrush.md");
-            guide.registerPage("block/marker_volume.md");
-            guide.registerPage("block/marker_path.md");
-            guide.registerPage("item/marker_connector.md");
-        }
     }
 }

@@ -3,10 +3,9 @@ package buildcraft.lib.client.guide.loader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import buildcraft.lib.client.guide.data.JsonEntry;
-import buildcraft.lib.client.guide.parts.GuidePageBase;
-import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.client.guide.PageEntry;
+import buildcraft.lib.client.guide.parts.GuidePageFactory;
 
 public interface IPageLoader {
-    GuidePartFactory<? extends GuidePageBase> loadPage(InputStream in, JsonEntry entry) throws IOException;
+    GuidePageFactory loadPage(InputStream in, PageEntry entry) throws IOException;
 }

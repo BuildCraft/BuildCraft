@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.client.guide.GuiGuide;
 
-public class GuideImageFactory implements GuidePartFactory<GuideImage> {
+public class GuideImageFactory implements GuidePartFactory {
     private final ResourceLocation location;
     private final int imageWidth, imageHeight;
     private final int width, height;

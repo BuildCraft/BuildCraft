@@ -17,8 +17,8 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
-import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.client.guide.parts.recipe.RecipeLookupHelper;
 import buildcraft.lib.client.resource.ResourceRegistry;
@@ -32,19 +32,19 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
     @FunctionalInterface
     public interface SpecialParser {
-        List<GuidePartFactory<?>> parse(String after);
+        List<GuidePartFactory> parse(String after);
     }
 
     @FunctionalInterface
     public interface SpecialParserSingle extends SpecialParser {
         @Override
-        default List<GuidePartFactory<?>> parse(String after) {
-            GuidePartFactory<?> single = parseSingle(after);
+        default List<GuidePartFactory> parse(String after) {
+            GuidePartFactory single = parseSingle(after);
             if (single == null) return null;
             return ImmutableList.of(single);
         }
 
-        GuidePartFactory<?> parseSingle(String after);
+        GuidePartFactory parseSingle(String after);
     }
 
     static {
@@ -65,8 +65,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         SPECIAL_FACTORIES.put(string, parser);
     }
 
-    public static List<GuidePartFactory<?>> turnLineIntoPart(final String line) {
-        List<GuidePartFactory<?>> factories = null;
+    public static List<GuidePartFactory> turnLineIntoPart(final String line) {
+        List<GuidePartFactory> factories = null;
 
         // Ignore comments
         if (line.startsWith("//")) return null;
@@ -83,7 +83,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return ImmutableList.of(loadRawString(line));
     }
 
-    private static GuidePartFactory<?> loadRawString(final String line) {
+    private static GuidePartFactory loadRawString(final String line) {
         String modLine = line;
         if (modLine.length() == 0) {
             modLine = " ";
@@ -111,7 +111,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         }
     }
 
-    private static List<GuidePartFactory<?>> loadImageLine(String line) {
+    private static List<GuidePartFactory> loadImageLine(String line) {
         // ![path/to/image]
         // ![path/to/image](width, height)
 
@@ -154,21 +154,21 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return null;
     }
 
-    private static GuidePartFactory<?> loadDefaultImage(String location) {
+    private static GuidePartFactory loadDefaultImage(String location) {
         BCLog.logger.info("[lib.markdown] Load default image " + location);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
-    private static GuidePartFactory<?> loadSizedImage(String location, int width, int height) {
+    private static GuidePartFactory loadSizedImage(String location, int width, int height) {
         BCLog.logger.info("[lib.markdown] Load sized image " + location + ", " + width + ", " + height);
         ResourceLocation resLoc = new ResourceLocation(location);
         TextureResourceHolder holder = new TextureResourceHolder(resLoc, width, height);
         return ResourceRegistry.INSTANCE.register(holder, TextureResourceHolder.class);
     }
 
-    private static List<GuidePartFactory<?>> loadSpecialLine(String line) {
+    private static List<GuidePartFactory> loadSpecialLine(String line) {
         int endIndex = line.indexOf("]");
         if (line.startsWith("$[") && endIndex > 0) {
             String inner = line.substring(2, endIndex);
@@ -182,11 +182,11 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return null;
     }
 
-    private static List<GuidePartFactory<?>> createNewPage(String after) {
+    private static List<GuidePartFactory> createNewPage(String after) {
         return ImmutableList.of(GuidePartNewPage::new);
     }
 
-    private static GuidePartFactory<?> loadCraftingLine(String substring) {
+    private static GuidePartFactory loadCraftingLine(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
             return null;
@@ -194,7 +194,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return GuideCraftingFactory.create(stack);
     }
 
-    private static GuidePartFactory<?> loadSmeltingLine(String substring) {
+    private static GuidePartFactory loadSmeltingLine(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
             return null;
@@ -202,7 +202,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return GuideSmeltingFactory.create(stack);
     }
 
-    private static List<GuidePartFactory<?>> loadRecipes(String substring) {
+    private static List<GuidePartFactory> loadRecipes(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
             return null;
@@ -210,7 +210,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return RecipeLookupHelper.getAllRecipes(stack);
     }
 
-    private static List<GuidePartFactory<?>> loadUsages(String substring) {
+    private static List<GuidePartFactory> loadUsages(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
             return null;
@@ -218,7 +218,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return RecipeLookupHelper.getAllUsages(stack);
     }
 
-    private static List<GuidePartFactory<?>> loadAllCrafting(String substring) {
+    private static List<GuidePartFactory> loadAllCrafting(String substring) {
         ItemStack stack = loadItemStack(substring);
         if (stack == null) {
             return null;
@@ -226,9 +226,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return loadAllCrafting(stack);
     }
 
-    public static List<GuidePartFactory<?>> loadAllCrafting(ItemStack stack) {
-        List<GuidePartFactory<?>> list = new ArrayList<>();
-        List<GuidePartFactory<?>> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
+    public static List<GuidePartFactory> loadAllCrafting(ItemStack stack) {
+        List<GuidePartFactory> list = new ArrayList<>();
+        List<GuidePartFactory> recipeParts = RecipeLookupHelper.getAllRecipes(stack);
         if (recipeParts.size() > 0) {
             list.add(GuidePartNewPage::new);
             if (recipeParts.size() == 1) {
@@ -238,7 +238,7 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             }
             list.addAll(recipeParts);
         }
-        List<GuidePartFactory<?>> usageParts = RecipeLookupHelper.getAllUsages(stack);
+        List<GuidePartFactory> usageParts = RecipeLookupHelper.getAllUsages(stack);
         if (usageParts.size() > 0) {
             if (recipeParts.size() != 1) {
                 list.add(GuidePartNewPage::new);
@@ -253,11 +253,11 @@ public enum MarkdownPageLoader implements IPageLoaderText {
         return list;
     }
 
-    public static GuidePartFactory<?> chapter(String after) {
+    public static GuidePartFactory chapter(String after) {
         return (gui) -> new GuideChapterWithin(gui, I18n.format(after));
     }
 
-    public static GuidePartFactory<?> translate(String text) {
+    public static GuidePartFactory translate(String text) {
         return (gui) -> {
             return new GuideText(gui, new PageLine(0, I18n.format(text), false));
         };
@@ -281,10 +281,9 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             BCLog.logger.warn("[lib.markdown] " + substring + " was not a valid item!");
             return null;
         }
-
     }
 
-    private static ItemStack loadComplexItemStack(String line) {
+    public static ItemStack loadComplexItemStack(String line) {
         String[] args = line.split(",");
         if (args.length == 0) {
             BCLog.logger.warn("[lib.markdown] " + line + " was not a valid complex item string!");
@@ -330,18 +329,18 @@ public enum MarkdownPageLoader implements IPageLoaderText {
     }
 
     @Override
-    public GuidePartFactory<? extends GuidePageBase> loadPage(BufferedReader bufferedReader, JsonEntry entry) throws IOException {
-        List<GuidePartFactory<?>> factories = new ArrayList<>();
+    public GuidePageFactory loadPage(BufferedReader bufferedReader, PageEntry entry) throws IOException {
+        List<GuidePartFactory> factories = new ArrayList<>();
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            List<GuidePartFactory<?>> lineFactories = turnLineIntoPart(line);
+            List<GuidePartFactory> lineFactories = turnLineIntoPart(line);
             if (lineFactories != null) {
                 factories.addAll(lineFactories);
             }
         }
         return (gui) -> {
             List<GuidePart> parts = new ArrayList<>();
-            for (GuidePartFactory<?> factory : factories) {
+            for (GuidePartFactory factory : factories) {
                 parts.add(factory.createNew(gui));
             }
             String title = I18n.format(entry.title);

@@ -7,12 +7,11 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.client.guide.parts.GuideImage;
 import buildcraft.lib.client.guide.parts.GuideImageFactory;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 
 public class ImageLoader extends LocationLoader {
-    public static GuidePartFactory<GuideImage> loadImage(ResourceLocation location, int width, int height) {
+    public static GuidePartFactory loadImage(ResourceLocation location, int width, int height) {
         SimpleTexture texture = new SimpleTexture(location);
         if (Minecraft.getMinecraft().renderEngine.loadTexture(location, texture)) {
             Minecraft.getMinecraft().renderEngine.bindTexture(location);

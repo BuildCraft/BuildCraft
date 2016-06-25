@@ -15,10 +15,10 @@ public class RecipeLookupHelper {
         allHandlers.add(GuideCraftingRecipes.INSTANCE);
     }
 
-    public static List<GuidePartFactory<?>> getAllUsages(ItemStack stack) {
-        List<GuidePartFactory<?>> list = new ArrayList<>();
+    public static List<GuidePartFactory> getAllUsages(ItemStack stack) {
+        List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : allHandlers) {
-            List<GuidePartFactory<?>> recipes = handler.getUsages(stack);
+            List<GuidePartFactory> recipes = handler.getUsages(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }
@@ -26,10 +26,10 @@ public class RecipeLookupHelper {
         return list;
     }
 
-    public static List<GuidePartFactory<?>> getAllRecipes(ItemStack stack) {
-        List<GuidePartFactory<?>> list = new ArrayList<>();
+    public static List<GuidePartFactory> getAllRecipes(ItemStack stack) {
+        List<GuidePartFactory> list = new ArrayList<>();
         for (IStackRecipes handler : allHandlers) {
-            List<GuidePartFactory<?>> recipes = handler.getRecipes(stack);
+            List<GuidePartFactory> recipes = handler.getRecipes(stack);
             if (recipes != null) {
                 list.addAll(recipes);
             }

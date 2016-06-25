@@ -1,18 +1,16 @@
-package buildcraft.lib.client.guide;
+package buildcraft.lib.client.guide.parts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.client.guide.PageMeta.TypeOrder;
+import buildcraft.lib.client.guide.*;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
 import buildcraft.lib.client.guide.parts.*;
@@ -23,17 +21,15 @@ import buildcraft.lib.gui.ISimpleDrawable;
 
 /** The base menu for showing all the locations. Should never be registered with and guide managers, this is special and
  * controls them all. */
-public class GuideMenu extends GuidePageBase {
+public class GuidePageContents extends GuidePageBase {
     private static final int ORDER_OFFSET_X = -50;
     private static final int ORDER_OFFSET_Y = 14;
 
-    /** Map of type (block, item, etc) -> List of pages for each (Quarry, Paintbrush, etc...) */
-    private final Map<ResourceLocation, PageMeta> metaMap = Maps.newHashMap();
-    private final Map<GuidePart, ResourceLocation> pageLinks = Maps.newHashMap();
+    private final Map<GuidePart, PageEntry> pageEntries = new HashMap<>();
 
     private NodePageLine parentNode;
 
-    public GuideMenu(GuiGuide gui) {
+    public GuidePageContents(GuiGuide gui) {
         super(gui);
         loadMainGui();
     }
@@ -42,14 +38,14 @@ public class GuideMenu extends GuidePageBase {
         parentNode = new NodePageLine(null, null);
         TypeOrder order = GuiGuide.SORTING_TYPES[gui.sortingOrderIndex];
 
-        for (ResourceLocation location : GuideManager.registeredPages.keySet()) {
-            PageMeta meta = GuideManager.getPageMeta(location);
-            IComparableLine[] locations = meta.getLocationArray(order);
+        for (PageEntry entry : GuideManager.INSTANCE.getAllEntries()) {
+            String[] ordered = entry.typeTags.getOrdered(order);
+
             NodePageLine node = parentNode;
             int indent = 1;
-            for (int i = 0; i < locations.length; i++) {
-                IComparableLine line = locations[i];
-                String translated = TextFormatting.UNDERLINE + I18n.format(line.getText());
+            for (int i = 0; i < ordered.length; i++) {
+                String line = ordered[i];
+                String translated = TextFormatting.UNDERLINE + I18n.format(line);
                 boolean notFound = true;
                 for (NodePageLine childNode : node.getChildren()) {
                     if (childNode.part instanceof GuideChapter) {
@@ -61,23 +57,24 @@ public class GuideMenu extends GuidePageBase {
                     }
                 }
                 if (notFound) {
-                    GuideChapter text = new GuideChapterWithin(gui, indent, translated, line);
+                    GuideChapter text = new GuideChapterWithin(gui, indent, translated);
                     node = node.addChild(text);
                 }
                 indent++;
             }
-            String translatedTitle = I18n.format(meta.title);
-            ItemStack stack = meta.getItemStack();
+
+            String translatedTitle = I18n.format(entry.title);
+            ItemStack stack = entry.getItemStack();
             ISimpleDrawable icon = null;
             if (stack != null) {
                 icon = new GuiStack(stack);
             }
-            PageLine line = new PageLine(icon, icon, indent, translatedTitle, null, true);
+            PageLine line = new PageLine(icon, icon, indent, translatedTitle, true);
             GuideText text = new GuideText(gui, line);
             node.addChild(text);
-            metaMap.put(location, meta);
-            pageLinks.put(text, location);
+            pageEntries.put(text, entry);
         }
+
         parentNode.sortChildrenRecursivly();
     }
 
@@ -158,9 +155,14 @@ public class GuideMenu extends GuidePageBase {
         }
         GuidePart part = getClicked(parentNode.iterateNonNullLines(), x, y, width, height, mouseX, mouseY, index);
         if (part != null) {
-            ResourceLocation location = pageLinks.get(part);
-            if (location != null) {
-                gui.openPage(GuideManager.getPage(location, gui));
+            PageEntry entry = pageEntries.get(part);
+            if (entry != null) {
+                GuidePageFactory factory = GuideManager.INSTANCE.getFactoryFor(entry);
+                if (factory != null) {
+                    gui.openPage(factory.createNew(gui));
+                } else {
+                    BCLog.logger.warn("Somehow encountered a null link factory! (line = " + part + ", link = " + entry + ")");
+                }
             } else {
                 BCLog.logger.warn("Somehow encountered a null link! (line = " + part + ")");
             }

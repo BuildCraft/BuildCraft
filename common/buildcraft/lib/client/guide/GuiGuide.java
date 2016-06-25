@@ -16,12 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.lib.client.guide.PageMeta.ETypeTag;
-import buildcraft.lib.client.guide.PageMeta.TypeOrder;
 import buildcraft.lib.client.guide.font.FontManager;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.parts.GuideChapter;
 import buildcraft.lib.client.guide.parts.GuidePageBase;
+import buildcraft.lib.client.guide.parts.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.IPositionedElement;
@@ -95,7 +94,6 @@ public class GuiGuide extends GuiScreen {
 
     public static final TypeOrder[] SORTING_TYPES = { //
         new TypeOrder(ETypeTag.TYPE, ETypeTag.SUB_TYPE),//
-        new TypeOrder(ETypeTag.STAGE),//
         new TypeOrder(ETypeTag.MOD, ETypeTag.TYPE),//
         new TypeOrder(ETypeTag.MOD, ETypeTag.SUB_MOD),//
     };
@@ -139,7 +137,7 @@ public class GuiGuide extends GuiScreen {
     private IFontRenderer currentFont = FontManager.INSTANCE.getOrLoadFont("DejaVu:13");
 
     public GuiGuide() {
-        openPage(new GuideMenu(this));
+        openPage(new GuidePageContents(this));
     }
 
     public void initForExport() {

@@ -17,7 +17,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.GuiGuide;
 
-public class GuideCraftingFactory implements GuidePartFactory<GuideCrafting> {
+public class GuideCraftingFactory implements GuidePartFactory {
     private static final Field SHAPED_ORE_RECIPE___WIDTH;
     private static final Field SHAPED_ORE_RECIPE___HEIGHT;
 

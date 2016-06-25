@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.client.guide.GuiGuide;
+import buildcraft.lib.client.guide.GuideManager;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
@@ -96,6 +97,12 @@ public abstract class LibProxy implements IGuiHandler {
             IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
             reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
             ItemManager.fmlInitClient();
+        }
+
+        @Override
+        void fmlPostInit() {
+            super.fmlPostInit();
+            GuideManager.INSTANCE.load();
         }
 
         @Override

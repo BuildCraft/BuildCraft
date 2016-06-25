@@ -8,7 +8,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 
 import buildcraft.lib.client.guide.GuiGuide;
 
-public class GuideSmeltingFactory implements GuidePartFactory<GuideSmelting> {
+public class GuideSmeltingFactory implements GuidePartFactory {
     private final ItemStack input, output;
 
     public GuideSmeltingFactory(ItemStack input, ItemStack output) {

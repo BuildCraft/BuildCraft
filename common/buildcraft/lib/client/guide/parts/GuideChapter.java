@@ -2,7 +2,6 @@ package buildcraft.lib.client.guide.parts;
 
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.lib.client.guide.GuiGuide;
-import buildcraft.lib.client.guide.IComparableLine;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.gui.GuiRectangle;
@@ -24,7 +23,7 @@ public abstract class GuideChapter extends GuidePart {
     }
 
     public GuideChapter(GuiGuide gui, String chapter) {
-        this(gui, 0, chapter, null);
+        this(gui, 0, chapter);
     }
 
     private int getColour() {
@@ -33,7 +32,7 @@ public abstract class GuideChapter extends GuidePart {
         return COLOURS[index % COLOURS.length];
     }
 
-    public GuideChapter(GuiGuide gui, int indent, String text, IComparableLine line) {
+    public GuideChapter(GuiGuide gui, int indent, String text) {
         super(gui);
         ISimpleDrawable icon = (x, y) -> {
             GuiGuide.BOX_EMPTY.drawAt(x, y);
@@ -47,7 +46,7 @@ public abstract class GuideChapter extends GuidePart {
             GuiGuide.BOX_SELECTED_CHAPTER.drawAt(x, y);
             RenderUtils.setGLColorFromInt(-1);
         };
-        this.chapter = new PageLine(icon, selected, indent, text, line, false);
+        this.chapter = new PageLine(icon, selected, indent, text, false);
     }
 
     public void reset() {
