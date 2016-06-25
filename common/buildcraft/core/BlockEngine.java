@@ -42,8 +42,11 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
 
     @Override
     public TileEntity createTileEntity(World world, int metadata) {
+        if (!hasEngine(metadata)) {
+            return null;
+        }
         try {
-            return (TileEntity) engineTiles[metadata].newInstance();
+            return engineTiles[metadata].newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

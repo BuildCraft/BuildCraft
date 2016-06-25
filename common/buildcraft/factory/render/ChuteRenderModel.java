@@ -32,8 +32,7 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
              * doesn't exist. Just print out a warning to make sure they know that this is why. Print out a full stack
              * trace because this really shouldn't happen, and it makes it much more obvious in the logfile where the
              * error message is. */
-            throw new IllegalStateException("For some reason, the block model for the chute block was missing!"
-                + "\nThis is not meant to happen, you have a bad JAR file!");
+            throw new IllegalStateException("For some reason, the block model for the chute block was missing!" + "\nThis is not meant to happen, you have a bad JAR file!");
         }
         List<BakedQuad> lst = Lists.newArrayList(parent.getGeneralQuads());
 
@@ -54,13 +53,17 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
         uvs[V_MAX] = sideTexture.getInterpolatedV(8);
 
         MutableQuad[] quads = {//
-            BCModelHelper.createFace(EnumFacing.EAST, eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs),//
-            BCModelHelper.createFace(EnumFacing.WEST, westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs),//
+            BCModelHelper.createFace(EnumFacing.EAST,  eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs),//
+            BCModelHelper.createFace(EnumFacing.WEST,  westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs),//
             BCModelHelper.createFace(EnumFacing.NORTH, westNorthDown, westNorthUp__, eastNorthUp__, eastNorthDown, uvs),//
             BCModelHelper.createFace(EnumFacing.SOUTH, eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs),//
         };
         for (MutableQuad q : quads) {
             q.setCalculatedDiffuse();
+        }
+        BCModelHelper.appendBakeQuads(lst, MutableQuad.ITEM_BLOCK_PADDING, quads);
+        for (MutableQuad q : quads) {
+            q.invertNormal().setCalculatedDiffuse();
         }
         BCModelHelper.appendBakeQuads(lst, MutableQuad.ITEM_BLOCK_PADDING, quads);
 

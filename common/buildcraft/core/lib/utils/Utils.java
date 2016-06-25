@@ -91,7 +91,14 @@ public final class Utils {
     }
 
     public static boolean isRegistered(ItemStack stack) {
-        return stack != null && isRegistered(stack.getItem());
+        if (stack == null) {
+            return false;
+        }
+        Block block = Block.getBlockFromItem(stack.getItem());
+        if (block instanceof BlockEngine) {
+            return isRegistered(block) && ((BlockEngine) block).hasEngine(stack.getMetadata());
+        }
+        return isRegistered(stack.getItem());
     }
 
     /** Tries to add the passed stack to any valid inventories around the given coordinates.
@@ -195,8 +202,7 @@ public final class Utils {
         return block;
     }
 
-    public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax,
-            LaserKind kind) {
+    public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
         EntityLaser[] lasers = new EntityLaser[12];
         Vec3[] p = new Vec3[8];
 

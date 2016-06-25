@@ -1037,8 +1037,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                         this.setLastAttacker(par1Entity);
 
                         if (knockback > 0) {
-                            par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F), 0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback
-                                * 0.5F));
+                            par1Entity.addVelocity(
+                                   -MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F, 
+                                    0.1D, 
+                                    MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F);
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
                             this.setSprinting(false);

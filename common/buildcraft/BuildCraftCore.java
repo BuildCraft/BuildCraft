@@ -353,7 +353,6 @@ public class BuildCraftCore extends BuildCraftMod {
         MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
         MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
-        OreDictionary.registerOre("chestWood", Blocks.chest);
         OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
     }
 
@@ -454,6 +453,7 @@ public class BuildCraftCore extends BuildCraftMod {
         ListRegistry.registerHandler(new ListMatchHandlerFluid());
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
+//        ListRegistry.registerHandler(new ListMatchHandler());
         ListRegistry.itemClassAsType.add(ItemFood.class);
 
         DebuggingTools.init();

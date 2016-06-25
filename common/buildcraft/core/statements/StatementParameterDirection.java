@@ -79,7 +79,8 @@ public class StatementParameterDirection implements IStatementParameter {
                 if (direction == null) {
                     ord = 0;
                 } else {
-                    ord = direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1);
+                    // 5 is -1 when you use clock math
+                    ord = direction.ordinal() + (mouse.getButton() > 0 ? 5 : 1);
                 }
                 direction = EnumFacing.VALUES[ord % 6];
                 if (((IPipeTile) source.getTile()).isPipeConnected(getDirection())) {
