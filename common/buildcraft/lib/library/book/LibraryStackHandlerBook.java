@@ -7,8 +7,10 @@ import javax.annotation.Nullable;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemWrittenBook;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.ILibraryStackHandler;
 import buildcraft.lib.library.LibraryEntry;
@@ -18,6 +20,8 @@ import buildcraft.lib.permission.PlayerOwner;
 
 public enum LibraryStackHandlerBook implements ILibraryStackHandler {
     INSTANCE;
+
+    private static final String NBT_DATE = "buildcraft_creation_date";
 
     @Override
     @Nullable
@@ -30,7 +34,14 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
                 PlayerOwner author = PlayerOwner.lookup(nbt.getString("author"));
                 String title = nbt.getString("title");
 
-                LibraryEntryHeader header = new LibraryEntryHeader(title, LibraryEntryBook.KIND, LocalDateTime.now(), author);
+                LocalDateTime dateTime = null;
+                if (nbt.hasKey(NBT_DATE)) {
+                    dateTime = NBTUtils.readLocalDateTime(nbt.getCompoundTag(NBT_DATE));
+                } else {
+                    dateTime = LocalDateTime.now();
+                }
+
+                LibraryEntryHeader header = new LibraryEntryHeader(title, LibraryEntryBook.KIND, dateTime, author);
 
                 return new LibraryEntry(header, data);
             }
@@ -40,9 +51,26 @@ public enum LibraryStackHandlerBook implements ILibraryStackHandler {
 
     @Override
     @Nullable
-    public ItemStack writeEntryToStack(@Nonnull ItemStack to, LibraryEntryHeader hader, ILibraryEntryData data) {
+    public ItemStack writeEntryToStack(@Nonnull ItemStack to, LibraryEntryHeader header, ILibraryEntryData data) {
+        if (to.getItem() != Items.BOOK || to.stackSize != 1) {
+            return null;
+        }
         if (data instanceof LibraryEntryBook) {
-            
+            LibraryEntryBook book = (LibraryEntryBook) data;
+            ItemStack newStack = book.saveToStack();
+            NBTTagCompound nbt = NBTUtils.getItemData(newStack);
+            nbt.setTag(NBT_DATE, NBTUtils.writeLocalDateTime(header.creation));
+            String auth = header.author.getOwnerName();
+            if (auth == null) {
+                BCLog.logger.warn("Unknown author! (" + header + ")");
+                return null;
+            }
+            nbt.setString("author", auth);
+            nbt.setString("title", header.name);
+
+            if (ItemWrittenBook.validBookTagContents(nbt)) {
+                return newStack;
+            }
         }
         return null;
     }

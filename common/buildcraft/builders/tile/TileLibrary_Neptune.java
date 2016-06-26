@@ -14,7 +14,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.lib.BCLibDatabase;
+import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntry;
+import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -35,7 +37,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     // -- read + writers
 
     public final IItemHandlerModifiable inv;
-    public int selected = -1;
+    public LibraryEntryHeader selected = null;
 
     public TileLibrary_Neptune() {
         inv = addInventory("inv", 4, EnumAccess.NONE);
@@ -61,7 +63,14 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
 
         ItemStack loading = get(LibSlot.LOAD_IN);
         if (get(LibSlot.LOAD_OUT) == null && loading != null) {
-
+            ILibraryEntryData data = BCLibDatabase.LOCAL_DB.getEntry(selected);
+            if (data != null) {
+                ItemStack out = BCLibDatabase.writeEntryToStack(loading.copy(), selected, data);
+                if (out != null) {
+                    set(LibSlot.LOAD_IN, null);
+                    set(LibSlot.LOAD_OUT, out);
+                }
+            }
         }
     }
 
@@ -78,7 +87,12 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
         super.writePayload(id, buffer, side);
 
         if (id == NET_GUI_DATA || id == NET_SELECTED) {
-            buffer.writeInt(selected);
+            if (selected == null) {
+                buffer.writeBoolean(false);
+            } else {
+                buffer.writeBoolean(true);
+                selected.writeToByteBuf(buffer);
+            }
         }
     }
 
@@ -87,7 +101,12 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
         super.readPayload(id, buffer, side);
 
         if (id == NET_GUI_DATA || id == NET_SELECTED) {
-            selected = buffer.readInt();
+            boolean has = buffer.readBoolean();
+            if (has) {
+                selected = new LibraryEntryHeader(buffer);
+            } else {
+                selected = null;
+            }
             if (side == Side.SERVER) {
                 MessageUtil.doDelayed(() -> {
                     sendNetworkUpdate(NET_SELECTED);

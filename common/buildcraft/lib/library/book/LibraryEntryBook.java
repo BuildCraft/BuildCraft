@@ -11,14 +11,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWritableBook;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.library.LibraryDatabase_Neptune;
 import buildcraft.lib.library.ILibraryEntryData;
+import buildcraft.lib.library.LibraryDatabase_Neptune;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.ZipFileHelper;
 
 public class LibraryEntryBook implements ILibraryEntryData {
@@ -95,6 +97,21 @@ public class LibraryEntryBook implements ILibraryEntryData {
         } catch (NumberFormatException nfe) {
             throw new IOException("Invalid integer", nfe);
         }
+    }
+
+    public ItemStack saveToStack() {
+        ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
+        NBTTagCompound nbt = NBTUtils.getItemData(stack);
+        NBTTagList pages = new NBTTagList();
+        for (String rawText : this.pages) {
+            TextComponentString text = new TextComponentString(rawText);
+            String json = ITextComponent.Serializer.componentToJson(text);
+            pages.appendTag(new NBTTagString(json));
+        }
+        nbt.setTag("pages", pages);
+        // all saves must be at least a copy of a copy
+        nbt.setInteger("generation", 2);
+        return stack;
     }
 
     @Override

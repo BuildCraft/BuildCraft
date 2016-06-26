@@ -1,5 +1,9 @@
 package buildcraft.lib;
 
+import static java.time.temporal.ChronoField.*;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 import javax.annotation.Nullable;
@@ -17,6 +21,8 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public class BCLibDatabase {
+    public static final DateTimeFormatter DATE_TIME_FORMATTER;
+
     public static final Map<String, ILibraryEntryType> FILE_HANDLERS = new HashMap<>();
     public static final List<ILibraryStackHandler> STACK_HANDLERS = new ArrayList<>();
     public static final LocalLibraryDatabase LOCAL_DB = new LocalLibraryDatabase();
@@ -27,6 +33,16 @@ public class BCLibDatabase {
     public static final List<LibraryEntryHeader> allEntries = new ArrayList<>();
 
     static {
+        DATE_TIME_FORMATTER = new DateTimeFormatterBuilder()//
+                .append(DateTimeFormatter.ISO_DATE)//
+                .appendLiteral(" - ")//
+                .appendValue(HOUR_OF_DAY, 2)//
+                .appendLiteral(':')//
+                .appendValue(MINUTE_OF_HOUR, 2)//
+                .appendLiteral(':')//
+                .appendValue(SECOND_OF_MINUTE, 2)//
+                .toFormatter();
+
         FILE_HANDLERS.put(LibraryEntryBook.KIND, LibraryEntryBook::new);
         STACK_HANDLERS.add(LibraryStackHandlerBook.INSTANCE);
     }

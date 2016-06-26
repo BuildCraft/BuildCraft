@@ -3,12 +3,12 @@ package buildcraft.lib.library;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
+import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.permission.PlayerOwner;
 
@@ -95,7 +95,7 @@ public final class LibraryEntryHeader implements Comparable<LibraryEntryHeader> 
 
     @Override
     public String toString() {
-        return kind + ":" + name + " by " + author.getOwnerName() + " on " + creation.format(DateTimeFormatter.ISO_DATE_TIME);
+        return kind + ":" + name + " by " + author + " on " + creation.format(BCLibDatabase.DATE_TIME_FORMATTER);
     }
 
     @Override

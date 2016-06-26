@@ -17,6 +17,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.UsernameCache;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
@@ -49,8 +51,13 @@ public final class PlayerOwner {
     }
 
     private PlayerOwner(UUID uuid) {
-        owner = new GameProfile(uuid, null);
-        fillOwner();
+        String possibleName = UsernameCache.getLastKnownUsername(uuid);
+        if (StringUtils.isNullOrEmpty(possibleName)) {
+            owner = new GameProfile(uuid, null);
+            fillOwner();
+        } else {
+            owner = new GameProfile(uuid, possibleName);
+        }
     }
 
     private PlayerOwner(String name) {
@@ -191,5 +198,13 @@ public final class PlayerOwner {
                 return fromUUID;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        if (owner == null) {
+            return "owner [ null ]";
+        }
+        return "owner [ " + owner.getId() + ", " + owner.getName() + " ]";
     }
 }

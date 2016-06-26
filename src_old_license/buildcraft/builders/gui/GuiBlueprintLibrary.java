@@ -39,7 +39,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     private GuiButton deleteButton;
     private final ScrollbarElement<GuiBlueprintLibrary, ContainerBlueprintLibrary> scrollbar;
-    public int selected = -1;
+    public LibraryEntryHeader selected = null;
 
     public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
         super(new ContainerBlueprintLibrary(player, library));
@@ -97,7 +97,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             int i2 = y + 22;
             int yOff = i2 + 9 * (i - off);
 
-            if (i == selected) {
+            if (header.equals(selected)) {
                 drawGradientRect(l1, yOff, l1 + 154, yOff + 9, 0x80ffffff, 0x80ffffff);
             }
             EntryStatus status = BCLibDatabase.getStatus(header);
@@ -156,11 +156,11 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             int ySlot = (y - 22) / 9 + scrollbar.getPosition();
 
             if (ySlot > -1 && ySlot < BCLibDatabase.allEntries.size()) {
-                selected = ySlot;
+                LibraryEntryHeader header = BCLibDatabase.allEntries.get(ySlot);
+                selected = header;
                 sendSelected();
                 if (x > 154) {
                     // The "upload/download" button
-                    LibraryEntryHeader header = BCLibDatabase.allEntries.get(ySlot);
                     EntryStatus status = BCLibDatabase.getStatus(header);
                     if (status == EntryStatus.LOCAL) {
                         uploadEntry(header);
@@ -189,7 +189,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     }
 
     protected void checkDelete() {
-        if (selected != -1) {
+        if (selected != null) {
             deleteButton.enabled = true;
         } else {
             deleteButton.enabled = false;

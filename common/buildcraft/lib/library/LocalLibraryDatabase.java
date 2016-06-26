@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -94,6 +93,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         String last = split[split.length - 1];
         ILibraryEntryType type = BCLibDatabase.FILE_HANDLERS.get(last);
         if (type == null) {
+            BCLog.logger.warn("[lib.library] Unknown type for name " + last);
             return;
         }
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -122,7 +122,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
 
     protected void save(LibraryEntryHeader header, ILibraryEntryData data) {
         String name = header.name.replace('/', '-').replace("\\", "-") + " - ";
-        name += header.creation.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        name += header.creation.format(BCLibDatabase.DATE_TIME_FORMATTER);
 
         File out = getOutDirectory(header.kind);
         out.mkdirs();
