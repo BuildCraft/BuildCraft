@@ -72,9 +72,11 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         if (in instanceof ItemStack) {
             return OreDictionary.itemMatches((ItemStack) in, stack, false);
         } else if (in instanceof List) {
-            for (ItemStack inStack : (List<ItemStack>) in) {
-                if (OreDictionary.itemMatches(inStack, stack, false)) {
-                    return true;
+            for (Object obj : (List<?>) in) {
+                if (obj instanceof ItemStack) {
+                    if (OreDictionary.itemMatches((ItemStack) obj, stack, false)) {
+                        return true;
+                    }
                 }
             }
         }

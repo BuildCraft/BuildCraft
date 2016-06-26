@@ -13,4 +13,11 @@ public class SoundUtil {
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getPlaceSound(), SoundCategory.BLOCKS, volume, pitch);
     }
+
+    public static void playBlockBreak(World world, BlockPos pos, IBlockState state) {
+        SoundType soundType = state.getBlock().getSoundType();
+        float volume = (soundType.getVolume() + 1.0F) / 2.0F;
+        float pitch = soundType.getPitch() * 0.8F;
+        world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, volume, pitch);
+    }
 }

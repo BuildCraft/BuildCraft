@@ -1,13 +1,10 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ITickable;
 
@@ -17,11 +14,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.lib.BCLibDatabase;
-import buildcraft.lib.library.LibraryEntryHeader;
-import buildcraft.lib.library.book.LibraryEntryBook;
+import buildcraft.lib.library.LibraryEntry;
 import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.permission.PlayerOwner;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
@@ -55,23 +49,13 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
 
         ItemStack saving = get(LibSlot.SAVE_IN);
         if (get(LibSlot.SAVE_OUT) == null && saving != null) {
-            if (saving.getItem() == Items.WRITTEN_BOOK) {
+            LibraryEntry entry = BCLibDatabase.readEntryFromStack(saving.copy());
+            if (entry != null) {
+                set(LibSlot.SAVE_IN, null);
+                set(LibSlot.SAVE_OUT, saving);
 
-                LibraryEntryBook data = LibraryEntryBook.create(saving);
-                NBTTagCompound nbt = NBTUtils.getItemData(saving);
-                if (data != null && nbt != null) {
-                    PlayerOwner author = PlayerOwner.lookup(nbt.getString("author"));
-                    String title = nbt.getString("title");
-
-                    LibraryEntryHeader header = new LibraryEntryHeader(title, LibraryEntryBook.KIND, LocalDateTime.of(2016, 1, 1, 0, 0), author);
-
-                    BCLibDatabase.LOCAL_DB.addNew(header, data);
-
-                    set(LibSlot.SAVE_IN, null);
-                    set(LibSlot.SAVE_OUT, saving);
-
-                    BCLibDatabase.fillEntries();
-                }
+                BCLibDatabase.LOCAL_DB.addNew(entry.header, entry.data);
+                BCLibDatabase.fillEntries();
             }
         }
 

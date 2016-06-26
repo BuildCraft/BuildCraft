@@ -5,8 +5,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.bpt.SchematicBlock;
-import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.VecUtil;
 
 public class Template extends BlueprintBase {
@@ -111,12 +109,7 @@ public class Template extends BlueprintBase {
         contentBlocks = newContentBlocks;
     }
 
-    @Override
-    public SchematicBlock getSchematicAt(BlockPos pos) {
-        if (contentBlocks[pos.getX()][pos.getY()][pos.getZ()]) {
-            throw new AbstractMethodError("// TODO: Implement this!");
-        } else {
-            return SchematicAir.INSTANCE;
-        }
+    public boolean getIsSolidAt(BlockPos pos) {
+        return contentBlocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 }

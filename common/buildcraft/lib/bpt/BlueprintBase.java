@@ -35,11 +35,4 @@ public abstract class BlueprintBase {
     }
 
     public abstract void mirror(Axis axis);
-
-    /** Gets the schematic at the given position.
-     * 
-     * @param pos The position. Should be <code>for (a = {x, y, z}) 0 <= a < size.a</code>
-     * @return The schematic for the position. */
-    public abstract SchematicBlock getSchematicAt(BlockPos pos);
-
 }

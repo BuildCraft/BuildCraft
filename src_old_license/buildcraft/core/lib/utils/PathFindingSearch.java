@@ -4,12 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -33,8 +28,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     private double maxDistanceToEnd;
 
-    public PathFindingSearch(World iWorld, BlockPos iStart, Iterator<BlockPos> iBlockIter, IBlockFilter iPathFound, double iMaxDistanceToEnd,
-            float iMaxDistance, IZone iZone) {
+    public PathFindingSearch(World iWorld, BlockPos iStart, Iterator<BlockPos> iBlockIter, IBlockFilter iPathFound, double iMaxDistanceToEnd, float iMaxDistance, IZone iZone) {
         world = iWorld;
         start = iStart;
         pathFound = iPathFound;
@@ -62,8 +56,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
             }
 
             BlockPos delta = blockIter.next();
-            BlockPos block = new BlockPos(start.getX() + delta.getX(), ((start.getY() + delta.getY()) > 0) ? start.getY() + delta.getY() : 0, start
-                    .getZ() + delta.getZ());
+            BlockPos block = new BlockPos(start.getX() + delta.getX(), ((start.getY() + delta.getY()) > 0) ? start.getY() + delta.getY() : 0, start.getZ() + delta.getZ());
             if (isLoadedChunk(block.getX(), block.getZ())) {
                 if (isTarget(block)) {
                     pathFinders.add(new PathFinding(world, start, block, maxDistanceToEnd, maxDistance));
@@ -84,23 +77,23 @@ public class PathFindingSearch implements IIterableAlgorithm {
             return false;
         }
         synchronized (reservations) {
-            if (reservations.containsKey(world.provider.getDimensionId())) {
-                HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimensionId());
+            if (reservations.containsKey(world.provider.getDimension())) {
+                HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimension());
                 if (dimReservations.contains(block)) {
                     return false;
                 }
             }
         }
-        if (!BuildCraftAPI.isSoftBlock(world, block.west()) && !BuildCraftAPI.isSoftBlock(world, block.east()) && !BuildCraftAPI.isSoftBlock(world,
-                block.north()) && !BuildCraftAPI.isSoftBlock(world, block.south()) && !BuildCraftAPI.isSoftBlock(world, block.down())
-            && !BuildCraftAPI.isSoftBlock(world, block.up())) {
+        if (!BuildCraftAPI.isSoftBlock(world, block.west()) && !BuildCraftAPI.isSoftBlock(world, block.east()) && !BuildCraftAPI.isSoftBlock(world, block.north()) && !BuildCraftAPI.isSoftBlock(world, block.south()) && !BuildCraftAPI.isSoftBlock(
+                world, block.down()) && !BuildCraftAPI.isSoftBlock(world, block.up())) {
             return false;
         }
         return true;
     }
 
     private boolean isLoadedChunk(int x, int z) {
-        return world.getChunkProvider().chunkExists(x >> 4, z >> 4);
+        return world.isBlockLoaded(new BlockPos(x, 0, z));
+        // return world.getChunkProvider().chunkExists(x >> 4, z >> 4);
     }
 
     public void iteratePathFind(int itNumber) {
@@ -148,10 +141,10 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     private boolean reserve(BlockPos block) {
         synchronized (reservations) {
-            if (!reservations.containsKey(world.provider.getDimensionId())) {
-                reservations.put(world.provider.getDimensionId(), new HashSet<BlockPos>());
+            if (!reservations.containsKey(world.provider.getDimension())) {
+                reservations.put(world.provider.getDimension(), new HashSet<BlockPos>());
             }
-            HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimensionId());
+            HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimension());
             if (dimReservations.contains(block)) {
                 return false;
             }
@@ -162,8 +155,8 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     public void unreserve(BlockPos block) {
         synchronized (reservations) {
-            if (reservations.containsKey(world.provider.getDimensionId())) {
-                reservations.get(world.provider.getDimensionId()).remove(block);
+            if (reservations.containsKey(world.provider.getDimension())) {
+                reservations.get(world.provider.getDimension()).remove(block);
             }
         }
     }

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.lib.BCLibDatabase;
-import buildcraft.lib.library.LibraryEntryData;
+import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.LocalLibraryDatabase;
 
@@ -55,7 +55,7 @@ public class MessageLibraryRequest implements IMessage {
         public IMessage onMessage(MessageLibraryRequest message, MessageContext ctx) {
             LocalLibraryDatabase local = BCLibDatabase.LOCAL_DB;
             if (message.id == ID_REQUEST_SINGLE) {
-                LibraryEntryData data = local.getEntry(message.header);
+                ILibraryEntryData data = local.getEntry(message.header);
                 if (data != null) {
                     MessageLibraryTransferEntry ret = new MessageLibraryTransferEntry(message.header, data);
                     return ret;

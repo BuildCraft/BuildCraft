@@ -11,6 +11,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+/**
+ * Deprecated because lasers are being done differently in 1.9 onwards
+ * 
+ * The tile or entity itself should render and hold the laser.
+ */
+@Deprecated
 public class EntityLaser extends Entity {
 
     public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraftcore:textures/lasers/red.png");
@@ -106,9 +112,8 @@ public class EntityLaser extends Entity {
 
         // TODO (1.8): Avoid Object Overflow
         // Err... what?
-        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D, Math
-                .min(data.head.zCoord, data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord,
-                        data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord, data.tail.zCoord) + 1.0D));
+        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D, Math.min(data.head.zCoord, data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord)
+            + 1.0D, Math.max(data.head.yCoord, data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord, data.tail.zCoord) + 1.0D));
 
         data.update();
     }

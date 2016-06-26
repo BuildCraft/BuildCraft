@@ -2,26 +2,33 @@ package buildcraft.lib;
 
 import java.util.*;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.library.LibraryEntryHeader;
-import buildcraft.lib.library.LibraryEntryType;
-import buildcraft.lib.library.LocalLibraryDatabase;
-import buildcraft.lib.library.RemoteLibraryDatabase;
+import buildcraft.lib.library.*;
 import buildcraft.lib.library.book.LibraryEntryBook;
+import buildcraft.lib.library.book.LibraryStackHandlerBook;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public class BCLibDatabase {
-    public static final Map<String, LibraryEntryType> REGISTERED_TYPES = new HashMap<>();
+    public static final Map<String, ILibraryEntryType> FILE_HANDLERS = new HashMap<>();
+    public static final List<ILibraryStackHandler> STACK_HANDLERS = new ArrayList<>();
     public static final LocalLibraryDatabase LOCAL_DB = new LocalLibraryDatabase();
     public static RemoteLibraryDatabase remoteDB = null;
+
+    /** A list of all the current entries, at this time. This should be used by GUI's on the client to determine what
+     * entries are available. */
     public static final List<LibraryEntryHeader> allEntries = new ArrayList<>();
 
     static {
-        REGISTERED_TYPES.put(LibraryEntryBook.KIND, LibraryEntryBook::new);
+        FILE_HANDLERS.put(LibraryEntryBook.KIND, LibraryEntryBook::new);
+        STACK_HANDLERS.add(LibraryStackHandlerBook.INSTANCE);
     }
 
     public static void fmlInit() {
@@ -69,12 +76,43 @@ public class BCLibDatabase {
             else return EntryStatus.LOCAL;
         } else {
             if (remote) return EntryStatus.REMOTE;
-            else return EntryStatus.NOWHERE;
+            else return EntryStatus.NEITHER;
         }
     }
 
+    // ILibraryStackHandler quick-read
+
+    @Nullable
+    public static LibraryEntry readEntryFromStack(ItemStack stack) {
+        if (stack == null) {
+            return null;
+        }
+        for (ILibraryStackHandler handler : STACK_HANDLERS) {
+            LibraryEntry entry = handler.readEntryFromStack(stack);
+            if (entry != null) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static ItemStack writeEntryToStack(ItemStack from, LibraryEntryHeader hader, ILibraryEntryData data) {
+        if (from == null) {
+            return null;
+        }
+        for (ILibraryStackHandler handler : STACK_HANDLERS) {
+            ItemStack to = handler.writeEntryToStack(from, hader, data);
+            if (to != null) {
+                return to;
+            }
+        }
+        return null;
+    }
+
+    /** All of the possible states of an entry, in terms of local and remote databases */
     public enum EntryStatus {
-        NOWHERE,
+        NEITHER,
         REMOTE,
         LOCAL,
         BOTH;

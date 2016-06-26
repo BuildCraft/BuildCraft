@@ -8,26 +8,30 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IPlantable;
 
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.crops.ICropHandler;
 
 public class CropHandlerReeds implements ICropHandler {
+    public static final CropHandlerReeds INSTANCE = new CropHandlerReeds();
+    public static final int MAX_HEIGHT = 3;
+
+    protected CropHandlerReeds() {}
 
     @Override
     public boolean isSeed(ItemStack stack) {
-        return stack.getItem() == Items.reeds;
+        return stack.getItem() == Items.REEDS;
     }
 
     @Override
     public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return block.canSustainPlant(world, pos, EnumFacing.UP, (IPlantable) Blocks.reeds) && block != Blocks.reeds && world.isAirBlock(pos.up());
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+        return block.canSustainPlant(state, world, pos, EnumFacing.UP, Blocks.REEDS) && block != Blocks.REEDS && world.isAirBlock(pos.up());
     }
 
     @Override
@@ -36,7 +40,7 @@ public class CropHandlerReeds implements ICropHandler {
     }
 
     @Override
-    public boolean isMature(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+    public boolean isMature(IBlockAccess access, IBlockState state, BlockPos pos) {
         return false;
     }
 

@@ -3,6 +3,7 @@ package buildcraft.lib.config;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 
 import net.minecraft.util.ResourceLocation;

@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.BCLibDatabase;
@@ -23,7 +24,7 @@ import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.IPositionedElement;
-import buildcraft.lib.library.LibraryEntryData;
+import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.RemoteLibraryDatabase;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
@@ -102,6 +103,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             EntryStatus status = BCLibDatabase.getStatus(header);
             GuiIcon icon = getIcon(status);
             if (icon != null) {
+                RenderUtils.setGLColorFromInt(-1);
                 icon.drawAt(x + 8 + 146 + 1, yOff);
             }
 
@@ -177,7 +179,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     }
 
     private static void uploadEntry(LibraryEntryHeader header) {
-        LibraryEntryData data = BCLibDatabase.LOCAL_DB.getEntry(header);
+        ILibraryEntryData data = BCLibDatabase.LOCAL_DB.getEntry(header);
         MessageLibraryTransferEntry transfer = new MessageLibraryTransferEntry(header, data);
         MessageUtil.getWrapper().sendToServer(transfer);
     }

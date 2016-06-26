@@ -56,6 +56,16 @@
                 "type": "item",
                 "sub_type": "gear"
             }
+        },
+        {
+            "title": "item.wrenchItem.name",
+            "item_stack": "(buildcraftcore:wrench)",
+            "page": "wrench.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "tool"
+            }
         }
     ]
 }

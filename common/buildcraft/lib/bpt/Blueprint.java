@@ -135,7 +135,6 @@ public class Blueprint extends BlueprintBase {
         }
     }
 
-    @Override
     public SchematicBlock getSchematicAt(BlockPos pos) {
         return contentBlocks[pos.getX()][pos.getY()][pos.getZ()];
     }

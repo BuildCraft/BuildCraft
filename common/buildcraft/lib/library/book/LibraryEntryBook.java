@@ -18,10 +18,10 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.library.LibraryDatabase_Neptune;
-import buildcraft.lib.library.LibraryEntryData;
+import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.misc.data.ZipFileHelper;
 
-public class LibraryEntryBook implements LibraryEntryData {
+public class LibraryEntryBook implements ILibraryEntryData {
     public static final String KIND = "book";
     private final List<String> pages = new ArrayList<>();
 

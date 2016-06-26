@@ -18,13 +18,13 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageLibraryTransferEntry implements IMessage {
     private LibraryEntryHeader header;
-    private LibraryEntryData data;
+    private ILibraryEntryData data;
 
     /** Constructor used by forge- do not use! */
     @Deprecated
     public MessageLibraryTransferEntry() {}
 
-    public MessageLibraryTransferEntry(LibraryEntryHeader header, LibraryEntryData data) {
+    public MessageLibraryTransferEntry(LibraryEntryHeader header, ILibraryEntryData data) {
         this.header = header;
         this.data = data;
     }
@@ -37,7 +37,7 @@ public class MessageLibraryTransferEntry implements IMessage {
             byte[] bytes = new byte[length];
             packet.readBytes(bytes);
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            Entry<LibraryEntryHeader, LibraryEntryData> entry = LibraryDatabase_Neptune.load(bais);
+            Entry<LibraryEntryHeader, ILibraryEntryData> entry = LibraryDatabase_Neptune.load(bais);
             header = entry.getKey();
             data = entry.getValue();
         } catch (IOException io) {

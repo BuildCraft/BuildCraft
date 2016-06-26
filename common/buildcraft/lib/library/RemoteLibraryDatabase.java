@@ -12,7 +12,7 @@ public class RemoteLibraryDatabase extends LibraryDatabase_Neptune {
     private final Set<LibraryEntryHeader> headers = new HashSet<>();
 
     @Override
-    public boolean addNew(LibraryEntryHeader header, LibraryEntryData data) {
+    public boolean addNew(LibraryEntryHeader header, ILibraryEntryData data) {
         return headers.add(header);
     }
 

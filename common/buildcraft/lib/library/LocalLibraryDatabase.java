@@ -61,7 +61,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
 
     public void readAll() {
         List<String> endings = new ArrayList<>();
-        for (String key : BCLibDatabase.REGISTERED_TYPES.keySet()) {
+        for (String key : BCLibDatabase.FILE_HANDLERS.keySet()) {
             endings.add("." + key);
         }
         for (File in : inDirectories) {
@@ -92,14 +92,14 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         String name = file.getName();
         String[] split = name.split("\\.");
         String last = split[split.length - 1];
-        LibraryEntryType type = BCLibDatabase.REGISTERED_TYPES.get(last);
+        ILibraryEntryType type = BCLibDatabase.FILE_HANDLERS.get(last);
         if (type == null) {
             return;
         }
         try (FileInputStream fis = new FileInputStream(file)) {
-            Entry<LibraryEntryHeader, LibraryEntryData> loaded = load(fis);
+            Entry<LibraryEntryHeader, ILibraryEntryData> loaded = load(fis);
             LibraryEntryHeader header = loaded.getKey();
-            LibraryEntryData data = loaded.getValue();
+            ILibraryEntryData data = loaded.getValue();
             entries.put(header, data);
             BCLog.logger.info("[lib.library] Added a library entry " + header);
         } catch (IOException io) {
@@ -111,7 +111,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
     }
 
     @Override
-    public boolean addNew(LibraryEntryHeader header, LibraryEntryData data) {
+    public boolean addNew(LibraryEntryHeader header, ILibraryEntryData data) {
         if (super.addNew(header, data)) {
             save(header, data);
             return true;
@@ -120,7 +120,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         }
     }
 
-    protected void save(LibraryEntryHeader header, LibraryEntryData data) {
+    protected void save(LibraryEntryHeader header, ILibraryEntryData data) {
         String name = header.name.replace('/', '-').replace("\\", "-") + " - ";
         name += header.creation.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
@@ -148,7 +148,7 @@ public class LocalLibraryDatabase extends LibraryDatabase_Neptune {
         return outDirectory;
     }
 
-    public LibraryEntryData getEntry(LibraryEntryHeader header) {
+    public ILibraryEntryData getEntry(LibraryEntryHeader header) {
         return entries.get(header);
     }
 
