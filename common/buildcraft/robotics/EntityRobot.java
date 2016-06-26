@@ -1037,10 +1037,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                         this.setLastAttacker(par1Entity);
 
                         if (knockback > 0) {
-                            par1Entity.addVelocity(
-                                   -MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F, 
-                                    0.1D, 
-                                    MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F);
+                            par1Entity.addVelocity(-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F, 0.1D, MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F);
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
                             this.setSprinting(false);
@@ -1435,7 +1432,20 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
+        left.add("Robot:");
+        if (board != null) {
+            if (board.getNBTHandler() != null) {
+                left.add("  " + board.getNBTHandler().getID());
+            } else {
+                left.add("  " + board.getClass());
+            }
+        } else {
+            left.add("  Unknown type");
+        }
+        if (getBattery() != null) {
+            left.add("  Battery " + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF");
+        }
+
         left.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
         left.add("AI tree:");
         AIRobot aiRobot = mainAI;
