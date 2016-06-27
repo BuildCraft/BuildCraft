@@ -18,10 +18,9 @@ public interface IItemTransactor {
      * items.
      * 
      * @param stacks The stacks to insert. Must not be null!
-     * @param allOrNone If true then either all of the stacks will be completely inserted, or none at all.
      * @param simulate If true then the in-world state of this will not be changed.
      * @return The overflow stacks. Will be an empty list if all of it was accepted. */
-    List<ItemStack> insertAll(List<ItemStack> stacks, boolean simulate);
+    List<ItemStack> insert(List<ItemStack> stacks, boolean simulate);
 
     /** Extracts a number of items that match the given filter
      * 

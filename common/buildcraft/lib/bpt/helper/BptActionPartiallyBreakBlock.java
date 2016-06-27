@@ -4,9 +4,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
+import buildcraft.api.bpt.IBptReader;
 import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BptActionPartiallyBreakBlock implements IBptAction {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "partial_break_block");
@@ -20,15 +21,14 @@ public class BptActionPartiallyBreakBlock implements IBptAction {
 
     public BptActionPartiallyBreakBlock(NBTTagCompound nbt) {
         breakProgress = nbt.getInteger("breakProgress");
-        int[] pos = nbt.getIntArray("pos");
-        this.pos = new BlockPos(pos[0], pos[1], pos[2]);
+        this.pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("breakProgress", breakProgress);
-        nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
+        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
         return nbt;
     }
 
@@ -42,11 +42,11 @@ public class BptActionPartiallyBreakBlock implements IBptAction {
         builder.getWorld().sendBlockBreakProgress(pos.hashCode(), pos, breakProgress);
     }
 
-    public enum Deserializer implements IUniqueReader<IBptAction> {
+    public enum Deserializer implements IBptReader<IBptAction> {
         INSTANCE;
 
         @Override
-        public IBptAction deserialize(NBTTagCompound nbt) {
+        public IBptAction deserialize(NBTTagCompound nbt, IBuilderAccessor accessor) {
             return new BptActionPartiallyBreakBlock(nbt);
         }
     }

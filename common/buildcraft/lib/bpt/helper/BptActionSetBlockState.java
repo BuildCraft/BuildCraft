@@ -1,35 +1,50 @@
 package buildcraft.lib.bpt.helper;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.IUniqueReader;
 import buildcraft.api.bpt.IBptAction;
+import buildcraft.api.bpt.IBptReader;
 import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.SoundUtil;
 
 public class BptActionSetBlockState implements IBptAction {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib", "set_block_state");
     private final IBlockState state;
     private final BlockPos pos;
+    private final IRequestedItem reqItem;
 
-    public BptActionSetBlockState(NBTTagCompound nbt) {
-        String regName = nbt.getString("block");
-        int meta = nbt.getByte("meta");
-        int[] pos = nbt.getIntArray("pos");
-        Block block = Block.REGISTRY.getObject(new ResourceLocation(regName));
-        this.state = block.getStateFromMeta(meta);// FIXME
-        this.pos = new BlockPos(pos[0], pos[1], pos[2]);
-    }
-
-    public BptActionSetBlockState(IBlockState state, BlockPos pos) {
+    public BptActionSetBlockState(IBlockState state, BlockPos pos, IRequestedItem reqItem) {
         this.state = state;
         this.pos = pos;
+        this.reqItem = reqItem;
+    }
+
+    public BptActionSetBlockState(NBTTagCompound nbt, IBuilderAccessor accessor) {
+        String regName = nbt.getString("block");
+        Block block = Block.REGISTRY.getObject(new ResourceLocation(regName));
+        this.state = NBTUtils.readBlockStateProperties(block.getDefaultState(), nbt.getCompoundTag("state"));
+        this.pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+        reqItem = accessor.requestStack(stack);
+        reqItem.lock();
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setString("block", state.getBlock().getRegistryName().toString());
+        nbt.setTag("state", NBTUtils.writeBlockStateProperties(state));
+        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+        nbt.setTag("stack", reqItem.getRequested().serializeNBT());
+        return nbt;
     }
 
     @Override
@@ -39,25 +54,21 @@ public class BptActionSetBlockState implements IBptAction {
 
     @Override
     public void run(IBuilderAccessor builder) {
-        builder.getWorld().setBlockState(pos, state);
-        SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
+        if (reqItem.lock()) {// Just make sure...
+            builder.getWorld().setBlockState(pos, state);
+            SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
+            reqItem.use();
+        } else {
+            BCLog.logger.warn("[lib.bpt.action] Failed to aquire a lock on " + reqItem + "!");
+        }
     }
 
-    @Override
-    public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("block", state.getBlock().getRegistryName().toString());
-        nbt.setByte("meta", (byte) state.getBlock().getMetaFromState(state));
-        nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
-        return nbt;
-    }
-
-    public enum Deserializer implements IUniqueReader<IBptAction> {
+    public enum Deserializer implements IBptReader<IBptAction> {
         INSTANCE;
 
         @Override
-        public IBptAction deserialize(NBTTagCompound nbt) {
-            return new BptActionSetBlockState(nbt);
+        public IBptAction deserialize(NBTTagCompound nbt, IBuilderAccessor accessor) {
+            return new BptActionSetBlockState(nbt, accessor);
         }
     }
 }

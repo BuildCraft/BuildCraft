@@ -126,18 +126,11 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             }
             try {
                 SchematicBlock schematic = BlueprintAPI.deserializeSchematicBlock(schematicNBT);
-                IBuilderAccessor playerBuilder = new BuilderPlayer(player);
-                boolean failed = false;
+                BuilderPlayer playerBuilder = new BuilderPlayer(player);
                 for (IBptTask task : schematic.createTasks(playerBuilder, place)) {
                     task.receivePower(playerBuilder, Integer.MAX_VALUE);
-                    if (!task.isDone(playerBuilder)) {
-                        player.addChatMessage(new TextComponentString("A task failed!"));
-                        failed = true;
-                    }
                 }
-                if (failed) {
-                    return EnumActionResult.FAIL;
-                }
+                playerBuilder.build();
                 return EnumActionResult.SUCCESS;
             } catch (SchematicException e) {
                 e.printStackTrace();

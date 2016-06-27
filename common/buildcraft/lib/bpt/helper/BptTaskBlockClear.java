@@ -14,11 +14,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.lib.bpt.builder.RequestedFree.FreeItem;
+import buildcraft.lib.misc.NBTUtils;
 
 public class BptTaskBlockClear extends BptTaskSimple {
     public static final ResourceLocation ID = new ResourceLocation("buildcraftlib:bpt_block_clear");
     private final BlockPos pos;
     private final int ticks;
+    private boolean hasSent = false;
 
     public static BptTaskBlockClear create(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
@@ -36,8 +39,8 @@ public class BptTaskBlockClear extends BptTaskSimple {
     public BptTaskBlockClear(NBTTagCompound nbt) {
         super(nbt.getCompoundTag("super"));
         this.ticks = nbt.getInteger("ticks");
-        int[] pos = nbt.getIntArray("pos");
-        this.pos = new BlockPos(pos[0], pos[1], pos[2]);
+        this.pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        this.hasSent = nbt.getBoolean("hasSent");
     }
 
     @Override
@@ -45,7 +48,8 @@ public class BptTaskBlockClear extends BptTaskSimple {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("super", super.serializeNBT());
         nbt.setInteger("ticks", ticks);
-        nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
+        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+        nbt.setBoolean("hasSent", hasSent);
         return nbt;
     }
 
@@ -66,12 +70,15 @@ public class BptTaskBlockClear extends BptTaskSimple {
 
     @Override
     protected void onReceiveFullPower(IBuilderAccessor builder) {
-        int[] ticks = builder.startPowerAnimation(new Vec3d(pos), required, 0);
-        int start = ticks[0];
-        int end = ticks[1];
-        for (int i = 0; i < end - start; i++) {
-            builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) i, pos), start + i);
+        if (!hasSent) {
+            int[] anim = builder.startPowerAnimation(new Vec3d(pos), required, 0);
+            int start = anim[0];
+            int end = anim[1];
+            for (int i = 0; i < end - start; i++) {
+                builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) i, pos), start + i);
+            }
+            builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos, FreeItem.NO_ITEM), end);
+            hasSent = true;
         }
-        builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos), end);
     }
 }

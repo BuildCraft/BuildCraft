@@ -59,4 +59,8 @@ public class DelayedList<E> {
     public List<List<E>> getAllElements() {
         return elements;
     }
+
+    public void clear() {
+        elements.clear();
+    }
 }

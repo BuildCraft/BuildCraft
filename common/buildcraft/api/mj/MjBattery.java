@@ -32,6 +32,19 @@ public class MjBattery implements INBTSerializable<NBTTagCompound> {
         this.milliJoules += milliJoules;
     }
 
+    /** Attempts to add power, but only if this is not already full.
+     * 
+     * @param milliJoules The power to add.
+     * @return True if the power was accepted. */
+    public boolean addPowerChecking(int milliJoules) {
+        if (isFull()) {
+            return false;
+        } else {
+            addPower(milliJoules);
+            return true;
+        }
+    }
+
     public int extractPower(int min, int max) {
         if (milliJoules < min) return 0;
         int extracting = Math.min(milliJoules, max);
@@ -57,10 +70,14 @@ public class MjBattery implements INBTSerializable<NBTTagCompound> {
 
     public void tick(World world, Vec3d position) {
         if (milliJoules > capacity) {
-            int diff = milliJoules - capacity;
-            int lost = MathHelper.ceiling_double_int(diff / 30.0);
-            milliJoules -= lost;
-            MjAPI.EFFECT_MANAGER.createPowerLossEffect(world, position, lost);
+            losePower(world, position);
         }
+    }
+
+    protected void losePower(World world, Vec3d position) {
+        int diff = milliJoules - capacity;
+        int lost = MathHelper.ceiling_double_int(diff / 30.0);
+        milliJoules -= lost;
+        MjAPI.EFFECT_MANAGER.createPowerLossEffect(world, position, lost);
     }
 }

@@ -3,9 +3,9 @@ package buildcraft.lib.inventory;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -13,8 +13,8 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 
 public class ItemTransactorHelper {
-    public static IItemTransactor getTransactor(TileEntity tile, EnumFacing face) {
-        IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
+    public static IItemTransactor getTransactor(ICapabilityProvider cap, EnumFacing face) {
+        IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
         if (handler == null) {
             return NoSpaceTransactor.INSTANCE;
         }
@@ -33,7 +33,7 @@ public class ItemTransactorHelper {
         }
 
         @Override
-        public List<ItemStack> insertAll(List<ItemStack> stacks, boolean simulate) {
+        public List<ItemStack> insert(List<ItemStack> stacks, boolean simulate) {
             return stacks;
         }
 

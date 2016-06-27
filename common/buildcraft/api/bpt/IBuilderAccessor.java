@@ -23,8 +23,6 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.permission.PlayerOwner;
 
 // TODO: What does this encompass? Is this just a context, or is it everything?
@@ -58,24 +56,54 @@ public interface IBuilderAccessor {
     // FIXME Ambiguous timings doc!
     int[] startPowerAnimation(Vec3d target, int milliJoules, int delay);
 
-    /** Requests a single item stack */
-    IRequestedStack requestStack(IStackFilter filter, int amunt);
+    /** Requests a single item stack. */
+    IRequestedItem requestStack(ItemStack stack);
 
-    IRequestedFluid requestFluid(IFluidFilter filter, int amount);
+    /** Requests a (single) {@link ItemStack} that would be required to place the given {@link IBlockState}. */
+    IRequestedItem requestStackForBlock(IBlockState state);
+
+    IRequestedFluid requestFluid(FluidStack fluid);
 
     void addAction(IBptAction action, int delay);
 
-    // TODO: What does this do? It doesn't make sense atm
-    public interface IRequestedStack {
-        ItemStack getRequested();
+    /** Designates *something* that can be requested. Use a child interface rather than this directly.
+     *
+     * @param <T> */
+    public interface IRequested {
 
+        /** Attempts to fully reserve the stack, but without actually using it.
+         * 
+         * @return True if this stack was available and has been properly reserved, or if this has been previously
+         *         locked.
+         * @throws IllegalStateException if this has already been locked, and {@link #release()} has been called
+         *             successfully. */
+        boolean lock() throws IllegalStateException;
+
+        /** @return True if this stack is currently locked, or it has already been used. */
+        boolean isLocked();
+
+        /** Uses up the stack, unlocking it and making this request useless. Future calls to {@link #lock()} will throw
+         * an {@link IllegalStateException}.
+         * 
+         * @throws IllegalStateException if this was not locked previously. */
+        void use() throws IllegalStateException;
+
+        /** Unlocks this request WITHOUT using it up. Note that this never throws, so it is safe to call this at any
+         * time. */
         void release();
     }
 
-    // TODO: What does this do? It doesn't make sense atm
-    public interface IRequestedFluid {
-        FluidStack getRequested();
+    /** An item stack that has preciously been requested. This starts off unlocked (it may or may not actually
+     * exist). */
+    public interface IRequestedItem extends IRequested {
+        /** @return The {@link ItemStack} that was requested. */
+        ItemStack getRequested();
+    }
 
-        void release();
+    /** A fluid stack that has preciously been requested. This starts off unlocked (it may or may not actually
+     * exist). */
+    public interface IRequestedFluid extends IRequested {
+        /** @return The {@link FluidStack} that was requested */
+        FluidStack getRequested();
     }
 }

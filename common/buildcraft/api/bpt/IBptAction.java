@@ -1,7 +1,7 @@
 package buildcraft.api.bpt;
 
-import buildcraft.api.IUniqueWriter;
+import buildcraft.api.IBptWriter;
 
-public interface IBptAction extends IUniqueWriter {
+public interface IBptAction extends IBptWriter {
     void run(IBuilderAccessor builder);
 }

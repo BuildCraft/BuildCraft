@@ -4,12 +4,10 @@ import java.util.Set;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.IUniqueWriter;
-
 /** Represents a task that a builder can do to build part of its schematic. This should cache its {@link IBuilderAccessor}.
  * 
  * @date Created on 10 Apr 2016 by AlexIIL */
-public interface IBptTask extends IUniqueWriter {
+public interface IBptTask extends IBptWriter {
     Set<EnumFacing> getRequiredSolidFaces(IBuilderAccessor builder);
 
     /** Checks to see if this task part has already been done, or has just completed. */

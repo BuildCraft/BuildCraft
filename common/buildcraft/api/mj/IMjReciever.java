@@ -2,12 +2,12 @@ package buildcraft.api.mj;
 
 /** Designates a machine that can receive power. */
 public interface IMjReciever extends IMjConductor {
-    /** Creates a request that signifies what power this wants. */
-    MjPowerRequest createRequest();
+    /** @return The number of millijoules that this receiver currently wants, and can accept. */
+    int getPowerRequested();
 
     /** Receives power. You are encouraged to either:
      * <ul>
-     * <li>Use up all power immediately
+     * <li>Use up all power immediately, or when you next tick.
      * <li>Store all power in something like an {@link MjBattery} for later usage.
      * <li>Refuse all power (if you have no more work to do or your {@link MjBattery} is full).
      * </ul>

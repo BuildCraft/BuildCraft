@@ -27,7 +27,7 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
     @Override
     public Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
         if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, builder.getOwner(), PermissionUtil.createFrom(builder.getWorld(), pos))) {
-            return ImmutableList.of(new BptTaskBlockStandalone(pos, state));
+            return ImmutableList.of(new BptTaskBlockStandalone(pos, state, builder));
         } else {
             return ImmutableList.of();
         }

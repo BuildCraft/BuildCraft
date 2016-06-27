@@ -15,16 +15,13 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -42,22 +39,23 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.block.BlockArchitect_Neptune;
+import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
+import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.bpt.Blueprint;
+import buildcraft.lib.bpt.LibraryEntryBlueprint;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
+import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.BoxIterator;
-import buildcraft.lib.nbt.NBTSquishDebugging;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
-import buildcraft.test.lib.nbt.NbtSquisherTester;
 
 public class TileArchitect_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
@@ -77,6 +75,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
+    private String name = "<unnamed>";
 
     public TileArchitect_Neptune() {}
 
@@ -219,24 +218,15 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
                 bpt.rotate(Axis.Y, rotation);
             }
 
-            NBTTagCompound nbt = bpt.serializeNBT();
-            NBTSquishDebugging.debug = true;
-            try {
-                byte[] bytes = NbtSquisherTester.test(nbt);
-                BCLog.logger.info("Wrote " + bytes.length + " bytes");
+            LibraryEntryBlueprint data = new LibraryEntryBlueprint(bpt);
+            LibraryEntryHeader header = new LibraryEntryHeader(name, LibraryEntryBlueprint.KIND, LocalDateTime.now(), getOwner());
+            BCLibDatabase.LOCAL_DB.addNew(header, data);
 
-                DateFormat format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+            BptStorage storage = new BptStorage(header);
+            ItemStack stack = storage.save();
 
-                String now = format.format(Date.from(Instant.now()));
-                now = now.replace(' ', '_');
-                now = now.replace('/', '.');
-                now = now.replace('\\', '.');
-                BCLog.logger.info("Now = " + now);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+            invBptIn.setStackInSlot(0, null);
+            invBptOut.setStackInSlot(0, stack);
         } else {
             // Template tpl = new Template();
             throw new IllegalStateException("// TODO: This :D");

@@ -24,26 +24,25 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class MultiBlueprint<B extends BlueprintBase> implements INBTSerializable<NBTTagCompound> {
     private final B[] blueprints;
-    private final String type;
     private final Function<NBTTagCompound, B> loader;
 
     public static MultiBlueprint<Blueprint> createMultiBlueprint(Blueprint[] blueprints) {
-        return new MultiBlueprint<>("bpt", blueprints, Blueprint::new);
+        return new MultiBlueprint<>(blueprints, Blueprint::new);
     }
 
     public static MultiBlueprint<Template> createMultiTemplate(Template[] templates) {
-        return new MultiBlueprint<>("tpl", templates, Template::new);
+        return new MultiBlueprint<>(templates, Template::new);
     }
 
     public static MultiBlueprint<?> loadMultiBlueprint(NBTTagCompound nbt) {
         String type = nbt.getString("type");
         int size = nbt.getInteger("subs");
         if ("bpt".equals(type)) {
-            MultiBlueprint<Blueprint> multi = new MultiBlueprint<>("bpt", new Blueprint[size], Blueprint::new);
+            MultiBlueprint<Blueprint> multi = new MultiBlueprint<>(new Blueprint[size], Blueprint::new);
             multi.deserializeNBT(nbt);
             return multi;
         } else if ("tpl".equals(type)) {
-            MultiBlueprint<Template> multi = new MultiBlueprint<>("tpl", new Template[size], Template::new);
+            MultiBlueprint<Template> multi = new MultiBlueprint<>(new Template[size], Template::new);
             multi.deserializeNBT(nbt);
             return multi;
         } else {
@@ -51,8 +50,7 @@ public class MultiBlueprint<B extends BlueprintBase> implements INBTSerializable
         }
     }
 
-    protected MultiBlueprint(String type, B[] blueprints, Function<NBTTagCompound, B> loader) {
-        this.type = type;
+    protected MultiBlueprint(B[] blueprints, Function<NBTTagCompound, B> loader) {
         this.blueprints = blueprints;
         this.loader = loader;
     }

@@ -28,7 +28,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     public ItemHandlerManager() {
         for (EnumPipePart part : EnumPipePart.VALUES) {
-            wrappers.put(part, new Wrapper(part.face));
+            wrappers.put(part, new Wrapper());
         }
     }
 
@@ -36,13 +36,24 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         if (parts == null) {
             parts = new EnumPipePart[0];
         }
-        Set<EnumPipePart> visited = EnumSet.noneOf(EnumPipePart.class);
-        for (EnumPipePart part : parts) {
-            if (part == null) part = EnumPipePart.CENTER;
-            if (visited.add(part)) {
-                Wrapper wrapper = wrappers.get(part);
-                wrapper.handlers.add(handler);
-                wrapper.genWrapper();
+        IItemHandlerModifiable external = handler;
+        if (access == EnumAccess.NONE) {
+            external = null;
+        } else if (access == EnumAccess.EXTRACT) {
+            external = new WrappedItemHandlerExtract(handler);
+        } else if (access == EnumAccess.INSERT) {
+            external = new WrappedItemHandlerInsert(handler);
+        }
+
+        if (external != null) {
+            Set<EnumPipePart> visited = EnumSet.noneOf(EnumPipePart.class);
+            for (EnumPipePart part : parts) {
+                if (part == null) part = EnumPipePart.CENTER;
+                if (visited.add(part)) {
+                    Wrapper wrapper = wrappers.get(part);
+                    wrapper.handlers.add(external);
+                    wrapper.genWrapper();
+                }
             }
         }
         handlers.put(key, handler);
@@ -86,13 +97,8 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
     }
 
     private static class Wrapper {
-        private final EnumFacing face;
         private final List<IItemHandlerModifiable> handlers = new ArrayList<>();
-        private CombinedInvWrapper combined = null;// FIXME: This should be an IItemTransactor
-
-        public Wrapper(EnumFacing face) {
-            this.face = face;
-        }
+        private CombinedInvWrapper combined = null;// FIXME: This should be an IItemTransactor as well.
 
         public void genWrapper() {
             IItemHandlerModifiable[] arr = new IItemHandlerModifiable[handlers.size()];

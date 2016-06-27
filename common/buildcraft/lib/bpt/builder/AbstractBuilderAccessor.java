@@ -27,10 +27,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.bpt.BlueprintAPI;
+import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IStackFilter;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
@@ -61,9 +60,9 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
 
-        List<List<IBptAction>> actions = this.actions.getAllElements();
+        List<List<IBptAction>> allActions = actions.getAllElements();
         NBTTagList list = new NBTTagList();
-        for (List<IBptAction> innerActions : actions) {
+        for (List<IBptAction> innerActions : allActions) {
             NBTTagList innerList = new NBTTagList();
 
             for (IBptAction action : innerActions) {
@@ -96,44 +95,42 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
 
     @Override
     public int startBlockAnimation(Vec3d target, IBlockState state, int delay) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+        // TODO use the animation manager!
         return 0;
     }
 
     @Override
     public int startItemStackAnimation(Vec3d target, ItemStack display, int delay) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
+        // TODO use the animation manager!
         return 0;
     }
 
     @Override
     public int[] startFluidAnimation(Vec3d target, FluidStack fluid, int delay) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
-        return null;
+        // TODO use the animation manager!
+        return new int[] { 0, 0 };
     }
 
     @Override
     public int[] startPowerAnimation(Vec3d target, int milliJoules, int delay) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
-        return null;
+        // TODO use the animation manager!
+        return new int[] { 0, 0 };
     }
 
     @Override
-    public IRequestedStack requestStack(IStackFilter filter, int amunt) {
-        // TODO Auto-generated method stub
+    public IRequestedItem requestStack(ItemStack stack) {
+        if (getPermissions().contains(BptPermissions.FREE_MATERIALS)) {
+            return new RequestedFree.FreeItem(stack);
+        }
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override
-    public IRequestedFluid requestFluid(IFluidFilter filter, int amount) {
-        // TODO Auto-generated method stub
+    public IRequestedFluid requestFluid(FluidStack fluid) {
+        if (getPermissions().contains(BptPermissions.FREE_MATERIALS)) {
+            return new RequestedFree.FreeFluid(fluid);
+        }
         throw new AbstractMethodError("Implement this!");
-        return null;
     }
 
     @Override

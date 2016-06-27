@@ -88,7 +88,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
     }
 
     @Override
-    public List<ItemStack> insertAll(List<ItemStack> stacks, boolean simulate) {
+    public List<ItemStack> insert(List<ItemStack> stacks, boolean simulate) {
         // WRANING: SLOW IMPL
         return stacks;
     }

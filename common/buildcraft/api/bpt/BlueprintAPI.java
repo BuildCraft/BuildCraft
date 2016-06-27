@@ -21,7 +21,7 @@ public class BlueprintAPI {
     private static final Map<ResourceLocation, SchematicFactoryNBTBlock> nbtBlockFactories = new HashMap<>();
     private static final Map<ResourceLocation, SchematicFactoryNBTEntity> nbtEntityFactories = new HashMap<>();
     private static final Map<ResourceLocation, IBptTaskDeserializer> taskDeserializers = new HashMap<>();
-    private static final Map<ResourceLocation, IUniqueReader<IBptAction>> actionDeserializers = new HashMap<>();
+    private static final Map<ResourceLocation, IBptReader<IBptAction>> actionDeserializers = new HashMap<>();
 
     public static void registerWorldBlockSchematic(Block block, SchematicFactoryWorldBlock factory) {
         worldBlockFactories.put(block.getRegistryName(), factory);
@@ -74,11 +74,11 @@ public class BlueprintAPI {
         return taskDeserializers.get(identifier);
     }
 
-    public static void registerActionDeserializer(ResourceLocation identifier, IUniqueReader<IBptAction> deserializer) {
+    public static void registerActionDeserializer(ResourceLocation identifier, IBptReader<IBptAction> deserializer) {
         actionDeserializers.put(identifier, deserializer);
     }
 
-    public static IUniqueReader<IBptAction> getActionDeserializer(ResourceLocation identifier) {
+    public static IBptReader<IBptAction> getActionDeserializer(ResourceLocation identifier) {
         return actionDeserializers.get(identifier);
     }
 
@@ -92,7 +92,7 @@ public class BlueprintAPI {
     public static IBptAction deserializeAction(NBTTagCompound nbt) {
         String id = nbt.getString("id");
         NBTTagCompound data = nbt.getCompoundTag("data");
-        IUniqueReader<IBptAction> reader = getActionDeserializer(new ResourceLocation(id));
+        IBptReader<IBptAction> reader = getActionDeserializer(new ResourceLocation(id));
         if (reader != null) {
             return reader.deserialize(data);
         } else {

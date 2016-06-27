@@ -14,6 +14,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package buildcraft.builders.item;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.state.IBlockState;
@@ -27,20 +29,21 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.core.IFluidFilter;
-import buildcraft.api.core.IStackFilter;
+import buildcraft.lib.bpt.builder.RequestedFree.FreeItem;
+import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
 public class BuilderPlayer implements IBuilderAccessor {
     private static final ImmutableSet<BptPermissions> PERMISSIONS_CREATIVE, PERMISSIONS_SURVIVAL;
 
     static {
-        PERMISSIONS_CREATIVE = ImmutableSet.of(BptPermissions.USE_ITEMS, BptPermissions.FREE_MATERIALS);
-        PERMISSIONS_SURVIVAL = ImmutableSet.of(BptPermissions.USE_ITEMS);
+        PERMISSIONS_CREATIVE = ImmutableSet.of(BptPermissions.INSERT_ITEMS, BptPermissions.FREE_MATERIALS);
+        PERMISSIONS_SURVIVAL = ImmutableSet.of(BptPermissions.INSERT_ITEMS);
     }
 
     public final EntityPlayer player;
     private final PlayerOwner owner;
+    private final DelayedList<IBptAction> actions = new DelayedList<>();
 
     public BuilderPlayer(EntityPlayer player) {
         this.player = player;
@@ -92,37 +95,31 @@ public class BuilderPlayer implements IBuilderAccessor {
     }
 
     @Override
-    public IRequestedStack requestStack(IStackFilter filter, int amunt) {
-        return new IRequestedStack() {
-            @Override
-            public void release() {
-                throw new AbstractMethodError("Implement this!");
-            }
-
-            @Override
-            public ItemStack getRequested() {
-                throw new AbstractMethodError("Implement this!");
-            }
-        };
+    public IRequestedItem requestStack(ItemStack stack) {
+        return FreeItem.NO_ITEM;
     }
 
     @Override
-    public IRequestedFluid requestFluid(IFluidFilter filter, int amount) {
-        return new IRequestedFluid() {
-            @Override
-            public void release() {
-                throw new AbstractMethodError("Implement this!");
-            }
+    public IRequestedItem requestStackForBlock(IBlockState state) {
+        return FreeItem.NO_ITEM;
+    }
 
-            @Override
-            public FluidStack getRequested() {
-                throw new AbstractMethodError("Implement this!");
-            }
-        };
+    @Override
+    public IRequestedFluid requestFluid(FluidStack fluid) {
+        return null;
     }
 
     @Override
     public void addAction(IBptAction action, int delay) {
-        action.run(this);
+        actions.add(delay, action);
+    }
+
+    public void build() {
+        while (actions.getMaxDelay() > 0) {
+            List<IBptAction> thisTick = actions.advance();
+            for (IBptAction action : thisTick) {
+                action.run(this);
+            }
+        }
     }
 }

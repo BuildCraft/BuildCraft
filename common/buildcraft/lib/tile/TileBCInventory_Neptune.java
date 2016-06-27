@@ -16,8 +16,11 @@ package buildcraft.lib.tile;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
@@ -62,5 +65,21 @@ public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         itemManager.deserializeNBT(nbt.getCompoundTag("items"));
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemManager.hasCapability(capability, facing);
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemManager.getCapability(capability, facing);
+        }
+        return super.getCapability(capability, facing);
     }
 }

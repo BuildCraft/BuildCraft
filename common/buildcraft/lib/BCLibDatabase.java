@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.bpt.LibraryEntryBlueprint;
 import buildcraft.lib.library.*;
 import buildcraft.lib.library.book.LibraryEntryBook;
 import buildcraft.lib.library.book.LibraryStackHandlerBook;
@@ -58,6 +59,7 @@ public class BCLibDatabase {
                 .toFormatter();
 
         FILE_HANDLERS.put(LibraryEntryBook.KIND, LibraryEntryBook::new);
+        FILE_HANDLERS.put(LibraryEntryBlueprint.KIND, LibraryEntryBlueprint::new);
         STACK_HANDLERS.add(LibraryStackHandlerBook.INSTANCE);
     }
 
