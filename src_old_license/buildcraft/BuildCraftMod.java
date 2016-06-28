@@ -89,7 +89,7 @@ public class BuildCraftMod implements IBuildCraftMod {
         Entity entity;
 
         EntitySendRequest(Packet packet, Entity entity, int maxDistance) {
-            super(packet, entity.worldObj.provider.getDimensionId(), Utils.getVec(entity), maxDistance);
+            super(packet, entity.worldObj.provider.getDimension(), Utils.getVec(entity), maxDistance);
             this.entity = entity;
         }
     }
@@ -151,7 +151,7 @@ public class BuildCraftMod implements IBuildCraftMod {
     }
 
     public void sendToPlayers(Packet packet, World world, BlockPos pos, int maxDistance) {
-        addSendRequest(new LocationSendRequest(packet, world.provider.getDimensionId(), Utils.convertMiddle(pos), maxDistance));
+        addSendRequest(new LocationSendRequest(packet, world.provider.getDimension(), Utils.convertMiddle(pos), maxDistance));
     }
 
     public void sendToPlayersNear(Packet packet, TileEntity tile, int maxDistance) {
@@ -163,7 +163,7 @@ public class BuildCraftMod implements IBuildCraftMod {
     }
 
     public void sendToWorld(Packet packet, World world) {
-        addSendRequest(new WorldSendRequest(packet, world.provider.getDimensionId()));
+        addSendRequest(new WorldSendRequest(packet, world.provider.getDimension()));
     }
 
     public void sendToEntity(Packet packet, Entity entity) {

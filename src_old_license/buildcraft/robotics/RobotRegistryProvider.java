@@ -13,7 +13,7 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
 
     @Override
     public synchronized RobotRegistry getRegistry(World world) {
-        if (!registries.containsKey(world.provider.getDimensionId()) || registries.get(world.provider.getDimensionId()).world != world) {
+        if (!registries.containsKey(world.provider.getDimension()) || registries.get(world.provider.getDimension()).world != world) {
 
             RobotRegistry newRegistry = (RobotRegistry) world.getPerWorldStorage().loadData(RobotRegistry.class, "robotRegistry");
 
@@ -30,11 +30,11 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
 
             MinecraftForge.EVENT_BUS.register(newRegistry);
 
-            registries.put(world.provider.getDimensionId(), newRegistry);
+            registries.put(world.provider.getDimension(), newRegistry);
 
             return newRegistry;
         }
 
-        return registries.get(world.provider.getDimensionId());
+        return registries.get(world.provider.getDimension());
     }
 }

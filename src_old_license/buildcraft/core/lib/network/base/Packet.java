@@ -30,7 +30,7 @@ public abstract class Packet {
     }
 
     public Packet(World world) {
-        this(world.provider.getDimensionId());
+        this(world.provider.getDimension());
         tempWorld = world;
     }
 

@@ -2,8 +2,10 @@ package buildcraft.lib.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiIcon implements ISimpleDrawable {
@@ -38,12 +40,7 @@ public class GuiIcon implements ISimpleDrawable {
 
     @Override
     public void drawAt(int x, int y) {
-        bindTexture();
-        int width = this.width;
-        int height = this.height;
-        int tileWidth = 256;
-        int tileHeight = 256;
-        Gui.drawScaledCustomSizeModalRect(x, y, u, v, width, height, width, height, tileWidth, tileHeight);
+        this.drawScaledInside(x, y, this.width, this.height);
     }
 
     public void drawScaledInside(IPositionedElement element) {
@@ -57,6 +54,22 @@ public class GuiIcon implements ISimpleDrawable {
         int tileWidth = 256;
         int tileHeight = 256;
         Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, vHeight, width, height, tileWidth, tileHeight);
+    }
+
+    public void drawCustomQuad(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        bindTexture();
+        double uWidth = this.width;
+        double vHeight = this.height;
+        double tileWidth = 256;
+        double tileHeight = 256;
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vertexbuffer.pos(x1, y1, 0.0D).tex( u           / tileWidth, (v + vHeight) / tileHeight).endVertex();
+        vertexbuffer.pos(x2, y2, 0.0D).tex((u + uWidth) / tileWidth, (v + vHeight) / tileHeight).endVertex();
+        vertexbuffer.pos(x3, y3, 0.0D).tex((u + uWidth) / tileWidth,  v            / tileHeight).endVertex();
+        vertexbuffer.pos(x4, y4, 0.0D).tex( u           / tileWidth,  v            / tileHeight).endVertex();
+        tessellator.draw();
     }
 
     public void drawCutInside(IPositionedElement element) {

@@ -32,14 +32,14 @@ public class PacketGuiReturn extends Packet {
         this.obj = obj;
         this.extraData = null;
         this.tempWorld = obj.getWorldBC();
-        this.dimensionId = tempWorld.provider.getDimensionId();
+        this.dimensionId = tempWorld.provider.getDimension();
     }
 
     public PacketGuiReturn(IGuiReturnHandler obj, byte[] extraData) {
         this.obj = obj;
         this.extraData = extraData;
         this.tempWorld = obj.getWorldBC();
-        this.dimensionId = tempWorld.provider.getDimensionId();
+        this.dimensionId = tempWorld.provider.getDimension();
     }
 
     @Override

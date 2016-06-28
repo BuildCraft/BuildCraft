@@ -58,7 +58,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
     public void tick(World world) {
         Packet packet = null;
         Side side = world.isRemote ? Side.CLIENT : Side.SERVER;
-        int dimId = world.provider.getDimensionId();
+        int dimId = world.provider.getDimension();
         Queue<Packet> queue = getQueue(side, dimId);
         // BCLog.logger.info("Ticking world " + dimId + " at " + side + " with " + queue.size() + " packets");
         while ((packet = queue.poll()) != null) {
@@ -69,7 +69,7 @@ public final class PacketHandler extends SimpleChannelInboundHandler<Packet> {
 
     public void unload(World world) {
         Side side = world.isRemote ? Side.CLIENT : Side.SERVER;
-        int dimId = world.provider.getDimensionId();
+        int dimId = world.provider.getDimension();
         Queue<Packet> queue = getQueue(side, dimId);
         queue.clear();
     }

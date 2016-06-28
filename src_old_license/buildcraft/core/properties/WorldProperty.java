@@ -23,7 +23,7 @@ public abstract class WorldProperty implements IWorldProperty {
     }
 
     private DimensionProperty getDimension(World world) {
-        int id = world.provider.getDimensionId() * 2;
+        int id = world.provider.getDimension() * 2;
 
         if (world.isRemote) {
             id++;

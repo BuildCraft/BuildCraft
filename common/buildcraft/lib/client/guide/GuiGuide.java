@@ -99,8 +99,6 @@ public class GuiGuide extends GuiScreen {
     };
 
     // REMOVE FROM HERE...
-    private static final int BOOK_DOUBLE_WIDTH = 386, BOOK_DOUBLE_HEIGHT = 248;
-
     private static final int PEN_HIDDEN_Y = 0, PEN_HIDDEN_X = 4, PEN_HIDDEN_WIDTH = 10;
     private static final int PEN_HIDDEN_HEIGHT_MIN = 5, PEN_HIDDEN_HEIGHT_MAX = 15;
     // TO HERE
@@ -113,7 +111,7 @@ public class GuiGuide extends GuiScreen {
     // private static final int PEN_HIDDEN_BOX_Y_MAX = 0;
 
     private static final float PEN_HOVER_TIME = 9f;
-    private static final float BOOK_OPEN_TIME = 20f;
+    private static final float BOOK_OPEN_TIME = 10f; // 20
 
     public final MousePosition mouse = new MousePosition();
 
@@ -229,8 +227,8 @@ public class GuiGuide extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        minX = (width - BOOK_DOUBLE_WIDTH) / 2;
-        minY = (height - BOOK_DOUBLE_HEIGHT) / 2;
+        minX = (width - PAGE_LEFT.width * 2) / 2;
+        minY = (height - BOOK_COVER.height) / 2;
         mouse.setMousePosition(mouseX, mouseY);
         try {
             if (isOpen) {
@@ -277,15 +275,29 @@ public class GuiGuide extends GuiScreen {
 
             int coverWidth = (int) (sin * BOOK_COVER.width);
             sin = 1 - sin;
+            float offset = sin * 50;
             int bindingWidth = (int) (sin * BOOK_BINDING.width);
 
             mc.renderEngine.bindTexture(RIGHT_PAGE);
             PAGE_RIGHT.drawAt(minX + BOOK_COVER.width - PAGE_RIGHT.width, minY);
 
             mc.renderEngine.bindTexture(COVER);
-            BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
 
-            BOOK_BINDING.drawScaledInside(minX + coverWidth, minY, bindingWidth, BOOK_BINDING.height);
+//            BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
+//            BOOK_COVER.drawCustomQuad(
+//                    minX, minY + BOOK_COVER.height,
+//                    minX + coverWidth, minY + BOOK_COVER.height,
+//                    minX + coverWidth, minY,
+//                    minX, minY
+//            ); // like drawScaledInside, but using drawCustomQuad
+            BOOK_COVER.drawCustomQuad(
+                    minX, minY + BOOK_COVER.height,
+                    minX + coverWidth, minY + BOOK_COVER.height + offset,
+                    minX + coverWidth, minY - offset,
+                    minX, minY
+            );
+
+            BOOK_BINDING.drawScaledInside((int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
 
         } else if (openingAngle == 0) {
             minX = (width - BOOK_COVER.width) / 2;
@@ -301,18 +313,31 @@ public class GuiGuide extends GuiScreen {
             int bindingWidth = (int) ((1 - sin) * BOOK_BINDING.width);
 
             int penHeight = (int) (sin * PEN_HIDDEN_HEIGHT_MIN);
+            float offset = (1 - sin) * 50;
 
-            minX = (width - BOOK_COVER.width - pageWidth) / 2;
+            minX = (width - PAGE_LEFT.width - pageWidth) / 2;
             minY = (height - BOOK_COVER.height) / 2;
 
             mc.renderEngine.bindTexture(RIGHT_PAGE);
             PAGE_RIGHT.drawAt(minX + pageWidth + bindingWidth, minY);
 
             mc.renderEngine.bindTexture(LEFT_PAGE);
-            PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
+//            PAGE_LEFT.drawCustomQuad(
+//                    minX + bindingWidth, minY + PAGE_LEFT.height + offset,
+//                    minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
+//                    minX + bindingWidth + pageWidth, minY,
+//                    minX + bindingWidth, minY - offset
+//            );
+            PAGE_LEFT.drawCustomQuad(
+                    minX + bindingWidth, minY + PAGE_LEFT.height + offset,
+                    minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
+                    minX + bindingWidth + pageWidth, minY,
+                    minX + bindingWidth, minY - offset
+            );
+//            PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
             mc.renderEngine.bindTexture(COVER);
-            BOOK_BINDING.drawScaledInside(minX, minY, bindingWidth, BOOK_BINDING.height);
+            BOOK_BINDING.drawScaledInside((int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
 
             mc.renderEngine.bindTexture(ICONS_2);
             drawTexturedModalRect(minX + pageWidth + bindingWidth - (PEN_HIDDEN_WIDTH / 2), minY - penHeight, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, penHeight);
