@@ -50,14 +50,14 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
         }
     }
 
-    @Override
-    public ItemStack slotClick(int slotNum, int mouseButton, ClickType clickType, EntityPlayer player) {
-        Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
-        if (slot instanceof IPhantomSlot) {
-            return slotClickPhantom(slot, mouseButton, clickType, player);
-        }
-        return super.slotClick(slotNum, mouseButton, clickType, player);
-    }
+//    @Override
+//    public ItemStack slotClick(int slotNum, int mouseButton, ClickType clickType, EntityPlayer player) {
+//        Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
+//        if (slot instanceof IPhantomSlot) {
+//            return slotClickPhantom(slot, mouseButton, clickType, player);
+//        }
+//        return super.slotClick(slotNum, mouseButton, clickType, player);
+//    }
 
     private ItemStack slotClickPhantom(Slot slot, int mouseButton, ClickType clickType, EntityPlayer player) {
         ItemStack stack = null;
