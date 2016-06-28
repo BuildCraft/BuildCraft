@@ -22,7 +22,7 @@ apply plugin: 'forge' // adds the forge dependency
 apply plugin: 'maven' // for uploading to a maven repo
 apply plugin: 'checkstyle'
 
-version = "7.1.16"
+version = "7.1.17"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
@@ -30,7 +30,7 @@ ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/m
 ext.priv = parseConfig(file('private.properties'))
 
 minecraft {
-    version = "1.7.10-10.13.4.1490-1.7.10" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
+    version = "1.7.10-10.13.4.1614-1.7.10" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
