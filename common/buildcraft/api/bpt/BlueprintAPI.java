@@ -12,8 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 
-import buildcraft.api.IUniqueReader;
-
 public class BlueprintAPI {
     private static final Map<ResourceLocation, SchematicFactoryWorldBlock> worldBlockFactories = new HashMap<>();
     private static final BiMap<Class<? extends Entity>, ResourceLocation> entityClassTypes = HashBiMap.create();
@@ -89,12 +87,12 @@ public class BlueprintAPI {
         return nbt;
     }
 
-    public static IBptAction deserializeAction(NBTTagCompound nbt) {
+    public static IBptAction deserializeAction(NBTTagCompound nbt, IBuilderAccessor accessor) {
         String id = nbt.getString("id");
         NBTTagCompound data = nbt.getCompoundTag("data");
         IBptReader<IBptAction> reader = getActionDeserializer(new ResourceLocation(id));
         if (reader != null) {
-            return reader.deserialize(data);
+            return reader.deserialize(data, accessor);
         } else {
             return null;
         }

@@ -56,14 +56,14 @@ public interface IBuilderAccessor {
     // FIXME Ambiguous timings doc!
     int[] startPowerAnimation(Vec3d target, int milliJoules, int delay);
 
-    /** Requests a single item stack. */
+    /** Requests a single item stack. Can be null, in which case a  */
     IRequestedItem requestStack(ItemStack stack);
 
     /** Requests a (single) {@link ItemStack} that would be required to place the given {@link IBlockState}. */
     IRequestedItem requestStackForBlock(IBlockState state);
 
     IRequestedFluid requestFluid(FluidStack fluid);
-
+    
     void addAction(IBptAction action, int delay);
 
     /** Designates *something* that can be requested. Use a child interface rather than this directly.
