@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 
-//import buildcraft.api.IUniqueReader;
+import buildcraft.api.IUniqueReader;
 
 public class BlueprintAPI {
     private static final Map<ResourceLocation, SchematicFactoryWorldBlock> worldBlockFactories = new HashMap<>();
@@ -94,8 +94,7 @@ public class BlueprintAPI {
         NBTTagCompound data = nbt.getCompoundTag("data");
         IBptReader<IBptAction> reader = getActionDeserializer(new ResourceLocation(id));
         if (reader != null) {
-//            return reader.deserialize(data); // FIXME: Anton
-            return null; // FIXME: Anton
+            return reader.deserialize(data);
         } else {
             return null;
         }
