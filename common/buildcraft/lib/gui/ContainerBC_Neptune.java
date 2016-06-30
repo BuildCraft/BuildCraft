@@ -1,12 +1,13 @@
 package buildcraft.lib.gui;
 
-import buildcraft.api.core.BCDebugging;
-import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.gui.slots.IPhantomSlot;
-import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.net.MessageWidget;
-import buildcraft.lib.net.command.IPayloadWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
@@ -14,12 +15,17 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.gui.slots.IPhantomSlot;
+import buildcraft.core.lib.gui.slots.SlotBase;
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.MessageWidget;
+import buildcraft.lib.net.command.IPayloadWriter;
 
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
@@ -30,7 +36,7 @@ public abstract class ContainerBC_Neptune extends Container {
     public ContainerBC_Neptune(EntityPlayer player) {
         this.player = player;
     }
-    
+
     protected void addFullPlayerInventory(int startY) {
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
@@ -79,23 +85,78 @@ public abstract class ContainerBC_Neptune extends Container {
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickType, EntityPlayer player) {
         Slot slot = slotId < 0 ? null : this.inventorySlots.get(slotId);
+        if (slot == null) {
+            return super.slotClick(slotId, dragType, clickType, player);
+        }
+        // FIXME: this is all implemented because vanilla doesn't respect IItemHandler.getStackInSlot not allowing
+        // modifications!
+        // (Container:372 increases the stack size without setting it back to the slot)
+        ItemStack playerStack = player.inventory.getItemStack();
+        if (clickType == ClickType.CLONE) {
+            if (!player.capabilities.isCreativeMode) {
+                return null;
+            }
+            if (playerStack == null) {
+                ItemStack in = safeCopy(slot.getStack());
+                player.inventory.setItemStack(in);
+                return in;
+            }
+        }
+        if (slot instanceof SlotBase) {
+            SlotBase slotB = (SlotBase) slot;
+            ItemStack slotStack = slotB.getStack();
+            if (clickType == ClickType.PICKUP) {
+                if (playerStack == null) {
+                    if (slotStack == null) {
+                        return null;
+                    }
+                    slotB.putStack(null);
+                    player.inventory.setItemStack(slotStack);
+                    return slotStack;
+                } else if (slotStack == null) {
+                    // put down
+                    playerStack = slotB.insert(playerStack, false);
+                    player.inventory.setItemStack(playerStack);
+                    return playerStack;
+                } else if (StackUtil.canMerge(playerStack, slotStack)) {
+                    // put down
+                    playerStack = slotB.insert(playerStack, false);
+                    player.inventory.setItemStack(playerStack);
+                    return playerStack;
+                } else {
+                    // swap
+                    slotB.putStack(null);
+                    if (slotB.insert(playerStack, false) != null) {
+                        // if we couldn't fully put it in reset it
+                        slotB.putStack(slotStack);
+                        return playerStack;
+                    } else {
+                        player.inventory.setItemStack(slotStack);
+                        return slotStack;
+                    }
+                }
+            }
+        }
         if (slot instanceof IPhantomSlot) {
             ItemStack itemStack = null;
-            ItemStack stackHeld = player.inventory.getItemStack();
-            if(stackHeld != null) {
-                ItemStack copy = stackHeld.copy();
+            if (playerStack != null) {
+                ItemStack copy = playerStack.copy();
                 copy.stackSize = 1;
-                if(ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
+                if (ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
                     copy.stackSize += slot.getStack().stackSize;
                 }
                 slot.putStack(copy);
             } else {
                 slot.putStack(null);
             }
-            itemStack = stackHeld;
+            itemStack = playerStack;
             return itemStack;
         }
         return super.slotClick(slotId, dragType, clickType, player);
+    }
+
+    public static ItemStack safeCopy(ItemStack in) {
+        return in == null ? null : in.copy();
     }
 
     public void handleWidgetMessage(int widgetId, PacketBuffer payload, Side side) {

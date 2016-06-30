@@ -10,27 +10,22 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
+
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecartChest;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.entity.item.EntityPainting;
+import net.minecraft.entity.item.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -38,13 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -52,98 +41,25 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.blueprints.BlueprintDeployer;
-import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.blueprints.ISchematicRegistry;
-import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.blueprints.*;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.builders.BlockArchitect;
-import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuilder;
-import buildcraft.builders.BlockConstructionMarker;
-import buildcraft.builders.BlockFiller;
-import buildcraft.builders.BlockFrame;
-import buildcraft.builders.BlockQuarry;
-import buildcraft.builders.BlueprintServerDatabase;
-import buildcraft.builders.BuilderProxy;
-import buildcraft.builders.BuilderProxyClient;
-import buildcraft.builders.BuilderTooltipHandler;
-import buildcraft.builders.BuildersGuiHandler;
-import buildcraft.builders.EntityMechanicalArm;
-import buildcraft.builders.HeuristicBlockDetection;
-import buildcraft.builders.ItemBlueprintStandard;
-import buildcraft.builders.ItemBlueprintTemplate;
-import buildcraft.builders.ItemConstructionMarker;
-import buildcraft.builders.LibraryBlueprintTypeHandler;
-import buildcraft.builders.LibraryBookTypeHandler;
-import buildcraft.builders.LibraryDatabase;
-import buildcraft.builders.TileArchitect;
-import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.TileBuilder;
-import buildcraft.builders.TileConstructionMarker;
-import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileQuarry;
+import buildcraft.builders.*;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
-import buildcraft.builders.schematics.SchematicAir;
-import buildcraft.builders.schematics.SchematicArmorStand;
-import buildcraft.builders.schematics.SchematicBanner;
-import buildcraft.builders.schematics.SchematicBed;
-import buildcraft.builders.schematics.SchematicBrewingStand;
-import buildcraft.builders.schematics.SchematicBuilderLike;
-import buildcraft.builders.schematics.SchematicCactus;
-import buildcraft.builders.schematics.SchematicCustomStackFloored;
-import buildcraft.builders.schematics.SchematicDirt;
-import buildcraft.builders.schematics.SchematicDoor;
-import buildcraft.builders.schematics.SchematicEnderChest;
-import buildcraft.builders.schematics.SchematicFactoryBlock;
-import buildcraft.builders.schematics.SchematicFactoryEntity;
-import buildcraft.builders.schematics.SchematicFactoryMask;
-import buildcraft.builders.schematics.SchematicFarmland;
-import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicGlassPane;
-import buildcraft.builders.schematics.SchematicGravel;
-import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicJukebox;
-import buildcraft.builders.schematics.SchematicLever;
-import buildcraft.builders.schematics.SchematicLog;
-import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
-import buildcraft.builders.schematics.SchematicPortal;
-import buildcraft.builders.schematics.SchematicQuartz;
-import buildcraft.builders.schematics.SchematicRail;
-import buildcraft.builders.schematics.SchematicRedstoneLamp;
-import buildcraft.builders.schematics.SchematicRedstoneWire;
-import buildcraft.builders.schematics.SchematicRotatedPillar;
-import buildcraft.builders.schematics.SchematicSeeds;
-import buildcraft.builders.schematics.SchematicSignLike;
-import buildcraft.builders.schematics.SchematicSkull;
-import buildcraft.builders.schematics.SchematicTripwire;
-import buildcraft.builders.schematics.SchematicVine;
+import buildcraft.builders.schematics.*;
 import buildcraft.builders.statements.BuildersActionProvider;
-import buildcraft.core.BCRegistry;
-import buildcraft.core.CompatHooks;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.InterModComms;
-import buildcraft.core.TileMarker;
-import buildcraft.core.TilePathMarker;
+import buildcraft.core.*;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.schematics.*;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
-import buildcraft.core.builders.schematics.SchematicCustomStack;
-import buildcraft.core.builders.schematics.SchematicIgnore;
-import buildcraft.core.builders.schematics.SchematicStandalone;
-import buildcraft.core.builders.schematics.SchematicTileCreative;
-import buildcraft.core.builders.schematics.SchematicTreatAsOther;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 
-//@Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Builders",
-//        dependencies = DefaultProps.DEPENDENCY_CORE)
+// @Mod(name = "BuildCraft Builders", version = DefaultProps.VERSION, useMetadata = false, modid =
+// "BuildCraft|Builders",
+// dependencies = DefaultProps.DEPENDENCY_CORE)
+@Deprecated
 public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Builders")
@@ -214,20 +130,16 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
-        BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory", "\"$MINECRAFT" + File.separator + "config" + File.separator
-            + "buildcraft" + File.separator + "blueprints" + File.separator + "server\"", "DEPRECATED - USED ONLY FOR COMPATIBILITY",
-                ConfigManager.RestartRequirement.GAME);
-        BuildCraftCore.mainConfigManager.register("blueprints.clientDatabaseDirectory", "\"$MINECRAFT" + File.separator + "blueprints\"",
-                "Location for the client blueprint database (used by the Electronic Library).", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory", "\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator + "blueprints" + File.separator + "server\"",
+                "DEPRECATED - USED ONLY FOR COMPATIBILITY", ConfigManager.RestartRequirement.GAME);
+        BuildCraftCore.mainConfigManager.register("blueprints.clientDatabaseDirectory", "\"$MINECRAFT" + File.separator + "blueprints\"", "Location for the client blueprint database (used by the Electronic Library).",
+                ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.register("general.markerRange", 64, "Set the maximum marker range.", ConfigManager.RestartRequirement.NONE);
-        BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?",
-                ConfigManager.RestartRequirement.NONE);
-        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?",
-                ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?", ConfigManager.RestartRequirement.NONE);
 
-        BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?",
-                ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?", ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").setShowInGui(false);
         BuildCraftCore.mainConfigManager.get("general.markerRange").setMinValue(8).setMaxValue(64);
@@ -353,14 +265,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
         BCRegistry.INSTANCE.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder", "net.minecraft.src.builders.TileBuilder");
         BCRegistry.INSTANCE.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect", "net.minecraft.src.builders.TileTemplate");
         BCRegistry.INSTANCE.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker", "net.minecraft.src.builders.TilePathMarker");
-        BCRegistry.INSTANCE.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary",
-                "net.minecraft.src.builders.TileBlueprintLibrary");
+        BCRegistry.INSTANCE.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary", "net.minecraft.src.builders.TileBlueprintLibrary");
 
         constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
         BCRegistry.INSTANCE.registerBlock(constructionMarkerBlock.setUnlocalizedName("constructionMarkerBlock"), ItemConstructionMarker.class, false);
 
-        BCRegistry.INSTANCE.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker",
-                "net.minecraft.src.builders.TileConstructionMarker");
+        BCRegistry.INSTANCE.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker", "net.minecraft.src.builders.TileConstructionMarker");
 
         SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -564,19 +474,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         BlueprintDeployer.instance = new RealBlueprintDeployer();
 
-        architectAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.architect",
-                "architectAchievement", 11, 2, BuildCraftBuilders.architectBlock, BuildCraftCore.goldGearAchievement));
-        builderAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.builder",
-                "builderAchievement", 13, 2, BuildCraftBuilders.builderBlock, architectAchievement));
-        blueprintAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.blueprint",
-                "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement));
-        templateAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.template",
-                "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement));
-        libraryAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.blueprintLibrary",
-                "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement));
-        chunkDestroyerAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement(
-                "buildcraft|builders:achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, quarryBlock,
-                BuildCraftCore.diamondGearAchievement));
+        architectAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.architect", "architectAchievement", 11, 2, BuildCraftBuilders.architectBlock, BuildCraftCore.goldGearAchievement));
+        builderAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.builder", "builderAchievement", 13, 2, BuildCraftBuilders.builderBlock, architectAchievement));
+        blueprintAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement));
+        templateAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement));
+        libraryAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement));
+        chunkDestroyerAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("buildcraft|builders:achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, quarryBlock, BuildCraftCore.diamondGearAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
@@ -610,8 +513,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
     }
 
     public static void loadRecipes() {
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(quarryBlock), "ipi", "gig", "dDd", 'i', "gearIron", 'p', "dustRedstone", 'g', "gearGold",
-                'd', "gearDiamond", 'D', Items.DIAMOND_PICKAXE);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(quarryBlock), "ipi", "gig", "dDd", 'i', "gearIron", 'p', "dustRedstone", 'g', "gearGold", 'd', "gearDiamond", 'D', Items.DIAMOND_PICKAXE);
 
         BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i', "dyeBlack", 'p', Items.PAPER);
 
@@ -621,17 +523,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
             BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l', "gearGold", 'r', Blocks.REDSTONE_TORCH);
         }
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearGold", 'C', Blocks.CHEST);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearGold", 'C', Blocks.CHEST);
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', Blocks.CHEST);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', Blocks.CHEST);
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock,
-                'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem, 1));
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow", 'c', Blocks.CRAFTING_TABLE, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem,
+                1));
 
-        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B', new ItemStack(blueprintItem), 'b',
-                Blocks.BOOKSHELF, 'i', "ingotIron", 'g', "gearIron", 'r', Items.REDSTONE);
+        BCRegistry.INSTANCE.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B', new ItemStack(blueprintItem), 'b', Blocks.BOOKSHELF, 'i', "ingotIron", 'g', "gearIron", 'r', Items.REDSTONE);
     }
 
     @Mod.EventHandler

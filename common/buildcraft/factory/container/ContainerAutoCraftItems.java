@@ -32,6 +32,7 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
         addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));
 
         if (!tile.getWorld().isRemote) {
+            // Delta system test
             tile.deltaProgress.addDelta(0, 200, 100);
             tile.deltaProgress.addDelta(200, 220, -100);
         }

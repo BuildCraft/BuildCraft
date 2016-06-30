@@ -1,17 +1,7 @@
 /* Copyright (c) 2016 AlexIIL and the BuildCraft team
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.tile;
 
 import java.util.Arrays;
@@ -20,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import buildcraft.core.lib.utils.CraftingUtils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -32,8 +21,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.misc.ItemStackKey;
@@ -72,6 +63,14 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         super.readFromNBT(nbt);
     }
 
+    protected void enableBindings() {
+        crafting.enableBindings();
+    }
+
+    protected void disableBindings() {
+        crafting.disableBindings();
+    }
+
     @Override
     public void update() {
         deltaManager.tick();
@@ -79,6 +78,9 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+        super.onSlotChange(handler, slot, before, after);
+        String h = handler == invBlueprint ? "bpt" : (handler == invMaterials ? "mat" : (handler == invResult) ? "res" : "?");
+        BCLog.logger.info("onSlotChange ( " + h + ", " + slot + ", " + before + ", " + after + " )");
         if (handler == invMaterials) {
             ItemStackKey keyBefore = new ItemStackKey(before);
             ItemStackKey keyAfter = new ItemStackKey(after);
@@ -99,7 +101,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
                 TIntHashSet set = itemStackCache.get(keyAfter);
                 set.add(slot);
             }
-        } else if(handler == invBlueprint) {
+        } else if (handler == invBlueprint) {
             this.updateRecipe();
         }
     }
@@ -119,14 +121,23 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         }
     }
 
-    protected class WorkbenchCrafting extends InventoryCrafting {
+    protected abstract class WorkbenchCrafting extends InventoryCrafting {
         protected final CraftingSlot[] craftingSlots;
 
         public WorkbenchCrafting(int width, int height) {
             super(null, width, height);
             this.craftingSlots = new CraftingSlot[width * height];
-            for(int i = 0; i < this.craftingSlots.length; i++){
-                this.craftingSlots[i] = new CraftingSlotItem(i);
+        }
+
+        public void enableBindings() {
+            for (int i = 0; i < craftingSlots.length; i++) {
+                craftingSlots[i] = craftingSlots[i].getBoundVersion();
+            }
+        }
+
+        public void disableBindings() {
+            for (int i = 0; i < craftingSlots.length; i++) {
+                craftingSlots[i] = craftingSlots[i].getUnboundVersion();
             }
         }
 
@@ -171,10 +182,16 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
         /** Removes up to the specified count from the inventory */
         public abstract ItemStack use(int count);
+
+        public abstract CraftingSlot getBoundVersion();
+
+        public abstract CraftingSlot getUnboundVersion();
     }
 
-    protected class CraftingSlotItem extends CraftingSlot {
-        public CraftingSlotItem(int slot) {
+    protected class CraftSlotItem extends CraftingSlot {
+        private final CraftSlotItemBound bound = new CraftSlotItemBound(this);
+
+        public CraftSlotItem(int slot) {
             super(slot);
         }
 
@@ -185,31 +202,75 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
         @Override
         public void set(ItemStack stack) {
-            invBlueprint.setStackInSlot(slot, stack);
+            // Shouldn't really be called, this is the UNBOUND version
+            throw new IllegalStateException("Tried to set the UNBOUND slot!");
         }
 
         @Override
         public ItemStack use(int count) {
-            ItemStack target = get();
-            if (target == null) {
-                // Why was this even called? We already know there's nothing here...
+            // Shouldn't really be called, this is the UNBOUND version
+            throw new IllegalStateException("Tried to use from the UNBOUND slot!");
+        }
+
+        @Override
+        public CraftingSlot getBoundVersion() {
+            bound.rebind();
+            return bound;
+        }
+
+        @Override
+        public CraftingSlot getUnboundVersion() {
+            return this;
+        }
+    }
+
+    protected class CraftSlotItemBound extends CraftingSlot {
+        protected final CraftSlotItem nonBound;
+        protected int bound = -1;
+
+        public CraftSlotItemBound(CraftSlotItem from) {
+            super(from.slot);
+            nonBound = from;
+        }
+
+        protected void rebind() {
+
+        }
+
+        @Override
+        public void set(ItemStack stack) {
+            if (bound != -1) {
+                invMaterials.setStackInSlot(bound, stack);
+            }
+        }
+
+        @Override
+        public ItemStack get() {
+            if (bound != -1) {
+                return invMaterials.getStackInSlot(bound);
+            } else {
                 return null;
             }
-            ItemStackKey targetKey = new ItemStackKey(target);
-            TIntHashSet set = itemStackCache.get(targetKey);
-            if (set == null) {
-                // No items found :(
+        }
+
+        @Override
+        public ItemStack use(int count) {
+            if (bound != -1) {
+                return invMaterials.extractItem(bound, count, false);
+            } else {
                 return null;
             }
-            int slotToUse = set.iterator().next();
-            ItemStack current = invMaterials.getStackInSlot(slotToUse);
-            if (current == null) {
-                // Something bad happened to the caching stuffs.
-                return null;
-            }
-            ItemStack split = current.splitStack(count);
-            invMaterials.setStackInSlot(slotToUse, current);
-            return split;
+        }
+
+        @Override
+        public CraftingSlot getBoundVersion() {
+            rebind();
+            return this;
+        }
+
+        @Override
+        public CraftingSlot getUnboundVersion() {
+            return nonBound;
         }
     }
 }
