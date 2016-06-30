@@ -30,7 +30,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.bpt.*;
+import buildcraft.api.bpt.BlueprintAPI;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.api.bpt.SchematicException;
+import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+import buildcraft.builders.bpt.player.BuilderPlayer;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
 
@@ -127,10 +131,7 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             try {
                 SchematicBlock schematic = BlueprintAPI.deserializeSchematicBlock(schematicNBT);
                 BuilderPlayer playerBuilder = new BuilderPlayer(player);
-                for (IBptTask task : schematic.createTasks(playerBuilder, place)) {
-                    task.receivePower(playerBuilder, Integer.MAX_VALUE);
-                }
-                playerBuilder.build();
+                playerBuilder.build(schematic, place);
                 return EnumActionResult.SUCCESS;
             } catch (SchematicException e) {
                 e.printStackTrace();

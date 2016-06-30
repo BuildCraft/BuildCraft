@@ -40,7 +40,7 @@ import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
-public enum LibEventDistributor {
+public enum BCLibEventDist {
     INSTANCE;
 
     @SubscribeEvent

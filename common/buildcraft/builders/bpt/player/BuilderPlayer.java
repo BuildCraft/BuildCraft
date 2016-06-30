@@ -12,28 +12,28 @@
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
-package buildcraft.builders.item;
+package buildcraft.builders.bpt.player;
 
-import java.util.List;
+import java.util.LinkedList;
 
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.bpt.BptPermissions;
-import buildcraft.api.bpt.IBptAction;
-import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.api.bpt.*;
 import buildcraft.lib.bpt.builder.RequestedFree.FreeItem;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
-public class BuilderPlayer implements IBuilderAccessor {
+public class BuilderPlayer implements IBuilderAccessor, ITickable {
     private static final ImmutableSet<BptPermissions> PERMISSIONS_CREATIVE, PERMISSIONS_SURVIVAL;
 
     static {
@@ -43,7 +43,9 @@ public class BuilderPlayer implements IBuilderAccessor {
 
     public final EntityPlayer player;
     private final PlayerOwner owner;
-    private final DelayedList<IBptAction> actions = new DelayedList<>();
+    private final DelayedList<IBptAction> queuedActions = new DelayedList<>();
+    // Linked list so we can rotate tasks around.
+    private final LinkedList<IBptTask> tasks = new LinkedList<>();
 
     public BuilderPlayer(EntityPlayer player) {
         this.player = player;
@@ -96,11 +98,12 @@ public class BuilderPlayer implements IBuilderAccessor {
 
     @Override
     public IRequestedItem requestStack(ItemStack stack) {
-        return FreeItem.NO_ITEM;
+        return new FreeItem(stack);
     }
 
     @Override
     public IRequestedItem requestStackForBlock(IBlockState state) {
+        // TODO: work out the itemstack from the state
         return FreeItem.NO_ITEM;
     }
 
@@ -111,15 +114,31 @@ public class BuilderPlayer implements IBuilderAccessor {
 
     @Override
     public void addAction(IBptAction action, int delay) {
-        actions.add(delay, action);
+        queuedActions.add(delay, action);
     }
 
-    public void build() {
-        while (actions.getMaxDelay() > 0) {
-            List<IBptAction> thisTick = actions.advance();
-            for (IBptAction action : thisTick) {
-                action.run(this);
+    @Override
+    public void update() {
+        // Tick up to 5 tasks
+        int toTick = Math.min(5, tasks.size());
+        for (int i = 0; i < toTick; i++) {
+            IBptTask task = tasks.pollFirst();
+            if (task != null) {
+                task.receivePower(this, 1000);
+                if (!task.isDone(this)) {
+                    tasks.addLast(task);
+                }
             }
+        }
+
+        for (IBptAction action : queuedActions.advance()) {
+            action.run(this);
+        }
+    }
+
+    public void build(SchematicBlock schematic, BlockPos place) {
+        for (IBptTask task : schematic.createTasks(this, place)) {
+            tasks.addLast(task);
         }
     }
 }

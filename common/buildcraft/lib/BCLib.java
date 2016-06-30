@@ -57,7 +57,7 @@ public class BCLib {
         BCMessageHandler.fmlPreInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, LibProxy.getProxy());
 
-        MinecraftForge.EVENT_BUS.register(LibEventDistributor.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
     }
 
     @Mod.EventHandler
@@ -83,6 +83,6 @@ public class BCLib {
 
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartedEvent evt) {
-        LibEventDistributor.onServerStarted(evt);
+        BCLibEventDist.onServerStarted(evt);
     }
 }

@@ -52,7 +52,7 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
             NBTTagList innerList = (NBTTagList) list.get(delay);
             for (int j = 0; j < innerList.tagCount(); j++) {
                 NBTTagCompound tag = innerList.getCompoundTagAt(j);
-                actions.add(delay, BlueprintAPI.deserializeAction(tag));
+                actions.add(delay, BlueprintAPI.deserializeAction(tag, this));
             }
         }
     }

@@ -10,13 +10,15 @@ import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.lib.bpt.helper.BptActionIItemHandlerSetStack;
+import buildcraft.lib.bpt.helper.BptActionSetBlockState;
 import buildcraft.lib.bpt.helper.BptTaskSimple;
 import buildcraft.lib.misc.NBTUtils;
 
@@ -25,10 +27,10 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
     private final BlockPos pos;
     private final IBlockState state;
     private final IRequestedItem[] reqItem = new IRequestedItem[28];
-    private final boolean[] hasSent = new boolean[28];
+    private final boolean[] hasSent = new boolean[29];
 
     public BptTaskPlaceAndFillChest(BlockPos pos, IBlockState state, ItemStack[] stacks, IBuilderAccessor accessor) {
-        super(10);
+        super(1000 + costOf(stacks));
         this.pos = pos;
         this.state = state;
         Arrays.fill(hasSent, false);
@@ -36,6 +38,19 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
         for (int i = 0; i < 27; i++) {
             reqItem[i + 1] = accessor.requestStack(stacks[i]);
         }
+    }
+
+    private static int costOf(ItemStack[] stacks) {
+        int c = 0;
+        for (ItemStack s : stacks) {
+            if (s != null) {
+                // 1 MJ per full stack
+                // * 27 = 27 MJ per full chest
+                // but this is in milli MJ so its /1000
+                c += (s.stackSize * 100) / 64;
+            }
+        }
+        return c;
     }
 
     public BptTaskPlaceAndFillChest(NBTTagCompound nbt, IBuilderAccessor accessor) {
@@ -85,10 +100,25 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
 
     @Override
     public boolean isDone(IBuilderAccessor builder) {
-        TileEntity tile = builder.getWorld().getTileEntity(pos);
-
-        throw new AbstractMethodError("Implement this!");
-
+        return hasSent[28];
+        //
+        // TileEntity tile = builder.getWorld().getTileEntity(pos);
+        // if (tile instanceof TileEntityChest) {
+        // TileEntityChest chest = (TileEntityChest) tile;
+        // for (int i = 0; i < 27; i++) {
+        // IRequestedItem requested = reqItem[i + 1];
+        // if (requested != null && requested.getRequested() != null) {
+        // ItemStack wanted = requested.getRequested();
+        // ItemStack existing = chest.getStackInSlot(i);
+        // if (!ItemStack.areItemStacksEqual(wanted, existing)) {
+        // return false;
+        // }
+        // }
+        // }
+        // return true;
+        // } else {
+        // return false;
+        // }
     }
 
     @Override
@@ -98,6 +128,32 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
 
     @Override
     protected void onReceiveFullPower(IBuilderAccessor builder) {
-        throw new AbstractMethodError("Implement this!");
+        Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        if (!hasSent[0]) {
+            int delay = builder.startBlockAnimation(to, state, 0);
+            builder.addAction(new BptActionSetBlockState(state, pos, reqItem[0]), delay);
+            // builder.addAction(new BptActionChestOpen(pos), delay + 1);
+            hasSent[0] = true;
+            return;
+        }
+        for (int i = 1; i < 28; i++) {
+            if (!hasSent[i]) {
+                IRequestedItem requested = reqItem[i];
+                if (requested == null || requested.getRequested() == null) {
+                    hasSent[i] = true;
+                    continue;
+                }
+                if (requested.lock()) {
+                    int delay = builder.startItemStackAnimation(to, requested.getRequested(), 0);
+                    builder.addAction(new BptActionIItemHandlerSetStack(pos, i, requested), delay);
+                    hasSent[i] = true;
+                    return;
+                }
+            }
+        }
+        if (!hasSent[28]) {
+            // builder.addAction(new BptActionChestClose(pos), 1);
+            hasSent[28] = true;
+        }
     }
 }

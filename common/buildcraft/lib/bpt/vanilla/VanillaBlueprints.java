@@ -76,7 +76,7 @@ public class VanillaBlueprints {
 
     private static SchematicFactoryNBTBlock createChestBlockNBT(Block block) {
         return (nbt) -> {
-            SchematicBlockSimpleSet schematic = new SchematicBlockSimpleSet(nbt);
+            SchematicChest schematic = new SchematicChest(nbt);
             if (schematic.block != block) {
                 throw new SchematicException("Expected " + block.getRegistryName() + " but got " + schematic.block.getRegistryName());
             }
