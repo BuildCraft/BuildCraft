@@ -14,13 +14,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package buildcraft.factory.gui;
 
-import net.minecraft.util.ResourceLocation;
-
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
@@ -46,10 +48,18 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
         GuiRectangle progress = RECT_PROGRESS.createProgress(p, 1);
         ICON_PROGRESS.drawCutInside(progress.offset(rootElement));
 
-        double dyI = dynamic;
         fontRendererObj.drawString("Start = " + delta.getStatic(true), 10, 10, -1);
-        fontRendererObj.drawString("Dyn   = " + dyI, 10, 20, -1);
+        fontRendererObj.drawString("Dyn   = " + dynamic, 10, 20, -1);
         fontRendererObj.drawString("End   = " + delta.getStatic(false), 10, 30, -1);
         fontRendererObj.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
+        if(container.tile.currentRecipe != null) {
+            RenderHelper.enableGUIStandardItemLighting();
+            ItemStack output = container.tile.currentRecipe.getRecipeOutput();
+            int x = rootElement.getX() + 93;
+            int y = rootElement.getY() + 27;
+            this.itemRender.renderItemAndEffectIntoGUI(this.mc.thePlayer, output, x, y);
+            this.itemRender.renderItemOverlayIntoGUI(this.mc.fontRendererObj, output, x, y, null);
+            RenderHelper.enableStandardItemLighting();
+        }
     }
 }

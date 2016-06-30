@@ -43,21 +43,21 @@ public class PipeExtensionListener {
             return;
         }
 
-        if (!requests.containsKey(world.provider.getDimensionId())) {
-            requests.put(world.provider.getDimensionId(), new HashSet<PipeExtensionRequest>());
+        if (!requests.containsKey(world.provider.getDimension())) {
+            requests.put(world.provider.getDimension(), new HashSet<PipeExtensionRequest>());
         }
         PipeExtensionRequest r = new PipeExtensionRequest();
         r.stack = stack;
         r.pos = pos;
         r.o = o;
         r.h = h;
-        requests.get(world.provider.getDimensionId()).add(r);
+        requests.get(world.provider.getDimension()).add(r);
     }
 
     @SubscribeEvent
     public void tick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimensionId())) {
-            HashSet<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimensionId());
+        if (event.phase == TickEvent.Phase.END && requests.containsKey(event.world.provider.getDimension())) {
+            HashSet<PipeExtensionRequest> rSet = requests.get(event.world.provider.getDimension());
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
                 Vec3d target = Utils.convert(r.pos);

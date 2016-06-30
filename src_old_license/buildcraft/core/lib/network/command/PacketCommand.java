@@ -49,7 +49,7 @@ public class PacketCommand extends Packet {
         }
 
         tempWorld = handler.getWorld(target);
-        dimensionId = tempWorld.provider.getDimensionId();
+        dimensionId = tempWorld.provider.getDimension();
     }
 
     @Override

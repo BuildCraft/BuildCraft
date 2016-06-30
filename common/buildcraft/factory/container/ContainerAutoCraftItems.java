@@ -14,10 +14,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 package buildcraft.factory.container;
 
+import buildcraft.core.lib.gui.slots.SlotBase;
+import buildcraft.core.lib.gui.slots.SlotOutput;
+import buildcraft.core.lib.gui.slots.SlotPhantom;
+import buildcraft.core.lib.gui.slots.SlotUntouchable;
+import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.factory.gui.SlotWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.lib.gui.ContainerBCTile;
+import net.minecraft.inventory.Slot;
 
 public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchItems> {
     private static final int PLAYER_INV_START = 115;
@@ -26,9 +33,22 @@ public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchIt
         super(player, tile);
         addFullPlayerInventory(PLAYER_INV_START);
 
+        for (int x = 0; x < 9; x++) {
+            addSlotToContainer(new SlotBase(tile.invMaterials, x, 8 + x * 18, 84));
+        }
+
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
+                addSlotToContainer(new SlotPhantom(tile.invBlueprint, x + y * 3, 30 + x * 18, 17 + y * 18));
+            }
+        }
+
+//        addSlotToContainer(new SlotUntouchable(craftResult, 0, 93, 27));
+        addSlotToContainer(new SlotOutput(tile.invResult, 0, 124, 35));
+
         if (!tile.getWorld().isRemote) {
             tile.deltaProgress.addDelta(0, 200, 100);
-            tile.deltaProgress.addDelta(200, 210, -100);
+            tile.deltaProgress.addDelta(200, 220, -100);
         }
     }
 

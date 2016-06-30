@@ -1,24 +1,25 @@
 package buildcraft.lib.gui;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
-import net.minecraft.network.PacketBuffer;
-
-import net.minecraftforge.fml.relauncher.Side;
-
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.command.IPayloadWriter;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ContainerBC_Neptune extends Container {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.container");
@@ -72,6 +73,29 @@ public abstract class ContainerBC_Neptune extends Container {
                 BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickType, EntityPlayer player) {
+        Slot slot = slotId < 0 ? null : this.inventorySlots.get(slotId);
+        if (slot instanceof IPhantomSlot) {
+            ItemStack itemStack = null;
+            ItemStack stackHeld = player.inventory.getItemStack();
+            if(stackHeld != null) {
+                ItemStack copy = stackHeld.copy();
+                copy.stackSize = 1;
+                if(ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
+                    copy.stackSize += slot.getStack().stackSize;
+                }
+                slot.putStack(copy);
+            } else {
+                slot.putStack(null);
+            }
+            itemStack = stackHeld;
+            return itemStack;
+        }
+        return super.slotClick(slotId, dragType, clickType, player);
     }
 
     public void handleWidgetMessage(int widgetId, PacketBuffer payload, Side side) {

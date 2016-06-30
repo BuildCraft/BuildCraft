@@ -494,7 +494,7 @@ public class BuildCraftCore extends BuildCraftMod {
         BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
 
         BuildCraftAPI.registerWorldProperty("freepath", new WorldPropertyIsFreePath());
-        
+
         // Landmarks are often caught incorrectly, making building them counter-productive.
         SchematicRegistry.INSTANCE.registerSchematicBlock(markerBlock, SchematicIgnore.class);
         SchematicRegistry.INSTANCE.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
@@ -707,7 +707,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     public void worldTickEvent(WorldTickEvent event) {
         if (event.side == Side.CLIENT) return;
-        int dimId = event.world.provider.getDimensionId();
+        int dimId = event.world.provider.getDimension();
         if (worldsNeedingUpdate.contains(dimId)) {
             worldsNeedingUpdate.remove(dimId);
             for (Object obj : event.world.loadedTileEntityList) {
@@ -721,6 +721,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
     @SubscribeEvent
     public void playerJoinWorld(EntityJoinWorldEvent event) {
-        worldsNeedingUpdate.add(event.world.provider.getDimensionId());
+        worldsNeedingUpdate.add(event.world.provider.getDimension());
     }
 }

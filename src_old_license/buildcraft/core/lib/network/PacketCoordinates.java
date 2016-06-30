@@ -24,7 +24,7 @@ public abstract class PacketCoordinates extends Packet {
     public PacketCoordinates(TileEntity tile) {
         this.tile = tile;
         this.tempWorld = tile.getWorld();
-        this.dimensionId = tempWorld.provider.getDimensionId();
+        this.dimensionId = tempWorld.provider.getDimension();
         this.pos = tile.getPos();
     }
 

@@ -23,7 +23,7 @@ public class PacketTileUpdate extends PacketUpdate {
     public PacketTileUpdate(TileEntity tile, ISerializable ser) {
         super(ser);
         tempWorld = tile.getWorld();
-        dimensionId = tile.getWorld().provider.getDimensionId();
+        dimensionId = tile.getWorld().provider.getDimension();
         pos = tile.getPos();
     }
 

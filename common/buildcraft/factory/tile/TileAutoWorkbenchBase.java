@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import buildcraft.core.lib.utils.CraftingUtils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -43,12 +44,12 @@ import gnu.trove.set.hash.TIntHashSet;
 
 public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     protected WorkbenchCrafting crafting = createCrafting();
-    protected final IItemHandlerModifiable invBlueprint;
-    protected final IItemHandlerModifiable invMaterials;
-    protected final IItemHandlerModifiable invResult;
+    public final IItemHandlerModifiable invBlueprint;
+    public final IItemHandlerModifiable invMaterials;
+    public final IItemHandlerModifiable invResult;
     protected final Map<ItemStackKey, TIntHashSet> itemStackCache;
 
-    protected IRecipe currentRecipe;
+    public IRecipe currentRecipe;
 
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", EnumNetworkVisibility.GUI_ONLY);
 
@@ -98,7 +99,13 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
                 TIntHashSet set = itemStackCache.get(keyAfter);
                 set.add(slot);
             }
+        } else if(handler == invBlueprint) {
+            this.updateRecipe();
         }
+    }
+
+    public void updateRecipe() {
+        this.currentRecipe = CraftingUtils.findMatchingRecipe(this.crafting, worldObj);
     }
 
     @Override
@@ -118,6 +125,9 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         public WorkbenchCrafting(int width, int height) {
             super(null, width, height);
             this.craftingSlots = new CraftingSlot[width * height];
+            for(int i = 0; i < this.craftingSlots.length; i++){
+                this.craftingSlots[i] = new CraftingSlotItem(i);
+            }
         }
 
         @Override
@@ -175,7 +185,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
 
         @Override
         public void set(ItemStack stack) {
-            throw new IllegalStateException("Not yet implemented!");
+            invBlueprint.setStackInSlot(slot, stack);
         }
 
         @Override
