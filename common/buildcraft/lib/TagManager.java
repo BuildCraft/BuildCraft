@@ -277,11 +277,16 @@ public class TagManager {
         // BC Factory Item Blocks
         registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
+        registerTag("item.block.mining_well").reg("mining_well").locale("miningWellBlock").model("mining_well");
+        registerTag("item.block.plain_pipe").reg("plain_pipe").locale("plainPipeBlock").model("plain_pipe");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
+        registerTag("block.mining_well").reg("mining_well").oldReg("miningWellBlock").locale("miningWellBlock").model("mining_well");
+        registerTag("block.plain_pipe").reg("plain_pipe").oldReg("plainPipeBlock").locale("plainPipeBlock").model("plain_pipe");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
+        registerTag("tile.mining_well").reg("mining_well");
 
         endBatch(prependTags("factory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
