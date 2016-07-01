@@ -44,7 +44,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
         fontRendererObj.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
         if(container.tile.currentRecipe != null) {
             RenderHelper.enableGUIStandardItemLighting();
-            ItemStack output = container.tile.currentRecipe.getRecipeOutput();
+            ItemStack output = container.tile.getOutput();
             int x = rootElement.getX() + 93;
             int y = rootElement.getY() + 27;
             this.itemRender.renderItemAndEffectIntoGUI(this.mc.thePlayer, output, x, y);

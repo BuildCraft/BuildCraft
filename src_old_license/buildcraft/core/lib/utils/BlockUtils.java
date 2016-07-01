@@ -7,7 +7,6 @@ package buildcraft.core.lib.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -19,28 +18,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketExplosion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.Chunk.EnumCreateEntityType;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.FakePlayerUtil;
 
 public final class BlockUtils {
     /** Deactivate constructor */
@@ -163,7 +160,7 @@ public final class BlockUtils {
             return true;
         }
 
-        if (isUnbreakableBlock(world, pos, block)) {
+        if (isUnbreakableBlock(world, pos, state)) {
             return false;
         }
 
@@ -179,29 +176,24 @@ public final class BlockUtils {
         return true;
     }
 
-    public static float getBlockHardnessMining(World world, BlockPos pos, Block b) {
-        IBlockState state = world.getBlockState(pos);
-        if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
-            EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pos).get();
-            float relativeHardness = b.getPlayerRelativeBlockHardness(world.getBlockState(pos), fakePlayer, world, pos);
-            if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
-                                            // is < 0.0F.
+    public static float getBlockHardnessMining(World world, BlockPos pos, IBlockState state) {
+        if (world instanceof WorldServer /* && !BuildCraftCore.miningAllowPlayerProtectedBlocks */) {
+            EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) world, pos).get();
+            float relativeHardness = state.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
+            if (relativeHardness <= 0.0F) {
+                // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness is < 0.0F.
                 return -1.0F;
             }
         }
-        return b.getBlockHardness(state, world, pos);
+        return state.getBlockHardness(world, pos);
     }
 
-    public static boolean isUnbreakableBlock(World world, BlockPos pos, Block b) {
-        if (b == null) {
-            return false;
-        }
-
-        return getBlockHardnessMining(world, pos, b) < 0;
+    public static boolean isUnbreakableBlock(World world, BlockPos pos, IBlockState state) {
+        return getBlockHardnessMining(world, pos, state) < 0;
     }
 
     public static boolean isUnbreakableBlock(World world, BlockPos pos) {
-        return isUnbreakableBlock(world, pos, world.getBlockState(pos).getBlock());
+        return isUnbreakableBlock(world, pos, world.getBlockState(pos));
     }
 
     /** Returns true if a block cannot be harvested without a tool. */
@@ -285,16 +277,22 @@ public final class BlockUtils {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).connection.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
-                        null));
+                ((EntityPlayerMP) player).connection.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(), null));
             }
         }
     }
 
+    @Deprecated
     public static int computeBlockBreakEnergy(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        float hardness = state.getBlock().getBlockHardness(state, world, pos);
+        float hardness = state.getBlockHardness(world, pos);
         return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier * ((hardness + 1) * 2));
+    }
+
+    public static int computeBlockBreakPower(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        float hardness = state.getBlockHardness(world, pos);
+        return (int) Math.floor(BuilderAPI.BREAK_POWER * ((hardness + 1) * 2));
     }
 
     /** The following functions let you avoid unnecessary chunk loads, which is nice. */

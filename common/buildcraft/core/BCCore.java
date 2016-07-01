@@ -6,12 +6,15 @@ package buildcraft.core;
 
 import java.io.File;
 
+import net.minecraft.init.Blocks;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.list.ListTooltipHandler;
@@ -66,6 +69,8 @@ public class BCCore {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, CoreProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
+
+        OreDictionary.registerOre("craftingTableWood", Blocks.CRAFTING_TABLE);
     }
 
     @Mod.EventHandler

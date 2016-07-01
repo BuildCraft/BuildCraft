@@ -121,6 +121,10 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
         }
     }
 
+    public ItemStack getOutput() {
+        return currentRecipe.getCraftingResult(crafting);
+    }
+
     protected abstract class WorkbenchCrafting extends InventoryCrafting {
         protected final CraftingSlot[] craftingSlots;
 
