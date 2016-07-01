@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "buildcraftfactory:mining_well/main"
+        "model": "buildcraftfactory:mining_well"
     },
     "variants": {
         "facing": {
@@ -10,6 +10,6 @@
             "west": {"y": 270},
             "north": {"y": 0}
         },
-        "inventory": [{"model": "buildcraftfactory:mining_well/main"}]
+        "inventory": [{"model": "buildcraftfactory:mining_well"}]
     }
 }

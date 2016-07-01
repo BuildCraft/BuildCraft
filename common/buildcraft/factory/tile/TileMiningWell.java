@@ -26,7 +26,7 @@ import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable, ITileLed {
     private int progress = 0;
     private BlockPos currentPos = null;
     // Used to check if this has completed all work
@@ -170,5 +170,27 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
     @Override
     public boolean acceptsControlMode(Mode mode) {
         return mode == Mode.Off || mode == Mode.On;
+    }
+
+    // ITileLed
+
+    @Override
+    public boolean isDone() {
+        return isComplete;
+    }
+
+    @Override
+    public int getPowerLevel() {
+        return (int) ((float)battery.getContained() / battery.getCapacity() * 4);
+    }
+
+    @Override
+    public int getX() {
+        return 12;
+    }
+
+    @Override
+    public int getY() {
+        return 5;
     }
 }

@@ -6,8 +6,11 @@ package buildcraft.factory;
 
 import buildcraft.factory.block.BlockAutoWorkbenchItems;
 import buildcraft.factory.block.BlockMiningWell;
+import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockPlainPipe;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
+import buildcraft.factory.tile.TileMiningWell;
+import buildcraft.factory.tile.TilePump;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.material.Material;
@@ -15,6 +18,7 @@ import net.minecraft.block.material.Material;
 public class BCFactoryBlocks {
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
     public static BlockMiningWell miningWell;
+    public static BlockPump pump;
     public static BlockPlainPipe plainPipe;
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
@@ -23,9 +27,11 @@ public class BCFactoryBlocks {
         // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
         autoWorkbenchItems = BlockBCBase_Neptune.register(new BlockAutoWorkbenchItems(Material.ROCK, "block.autoworkbench.item"));
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
+        pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
         plainPipe = BlockBCBase_Neptune.register(new BlockPlainPipe(Material.ROCK, "block.plain_pipe"));
 
         TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
-        TileBC_Neptune.registerTile(buildcraft.factory.tile.TileMiningWell.class, "tile.mining_well");
+        TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
+        TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
     }
 }
