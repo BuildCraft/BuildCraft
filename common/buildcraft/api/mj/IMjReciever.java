@@ -12,7 +12,7 @@ public interface IMjReciever extends IMjConductor {
      * <li>Refuse all power (if you have no more work to do or your {@link MjBattery} is full).
      * </ul>
      * 
-     * @param milliJoules The number of milliwatts to add
+     * @param milliJoules The number of millijoules to add.
      * @param simulate If true then just pretend you received power- don't actually change any of your internal state.
      * @return True if all the power was accepted, false if not. */
     boolean receivePower(int milliJoules, boolean simulate);
