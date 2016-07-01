@@ -1,14 +1,14 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-		"model": "buildcraftcore:default_cube_all",
-		"textures": {
-			"particle":"buildcrafttransport:blocks/filtered_buffer/default",
-			"all":"buildcrafttransport:blocks/filtered_buffer/default"
-		}
-	},
-	"variants": {
-	    "normal": [{}],
-	    "inventory": [{}]
-	}
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftcore:default_cube_all",
+        "textures": {
+            "particle":"buildcrafttransport:blocks/filtered_buffer/default",
+            "all":"buildcrafttransport:blocks/filtered_buffer/default"
+        }
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{}]
+    }
 }

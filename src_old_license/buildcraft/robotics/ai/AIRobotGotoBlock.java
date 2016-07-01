@@ -127,13 +127,13 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
             BlockPos next = path.getFirst();
             if (isFirst || PathFinding.isFreeForPath(robot.worldObj, next)) {
-            	lastBlock = next;
+                lastBlock = next;
                 setDestination(robot, Utils.convertMiddle(next));
                 prevDistance = Double.MAX_VALUE;
                 robot.aimItemAt(next);
-			} else if (skipLastIfNotSoft && path.size() == 1) {
-				lastBlockInPath = lastBlock;
-			} else {
+            } else if (skipLastIfNotSoft && path.size() == 1) {
+                lastBlockInPath = lastBlock;
+            } else {
                 // Path invalid!
                 path = null;
 

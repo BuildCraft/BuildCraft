@@ -1,6 +1,6 @@
 {
-	"parent":"item/generated",
-	"textures": {
-		"layer0": "buildcraftsilicon:items/redstoneCrystal"
-	}
+    "parent":"item/generated",
+    "textures": {
+        "layer0": "buildcraftsilicon:items/redstoneCrystal"
+    }
 }

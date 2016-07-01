@@ -1,7 +1,7 @@
 {
     "parent": "block/cube",
     "display": {
-    	"comment": "Taken from block/orientable",
+        "comment": "Taken from block/orientable",
         "firstperson_righthand": {
             "rotation": [ 0, 135, 0 ],
             "translation": [ 0, 0, 0 ],

@@ -42,8 +42,8 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
                     return stack.getItem() instanceof ItemSword;
                 }
             }));
-		} else if (robot.getHeldItem() != null && robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
-			startDelegateAI(new AIRobotGotoStationAndUnload(robot));
+        } else if (robot.getHeldItem() != null && robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+            startDelegateAI(new AIRobotGotoStationAndUnload(robot));
         } else {
             startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
                 @Override

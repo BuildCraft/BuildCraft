@@ -1,16 +1,15 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-	    "transform":"forge:default-block"
-	},
-	"variants": {
-	    "type": {
-	        "assembly_table": { "model":"buildcraftsilicon:table/assembly.obj" },
-	        "advanced_crafting_table": { "model":"buildcraftsilicon:table/advanced_crafting.obj" },
-	        "integration_table": { "model":"buildcraftsilicon:table/integration.obj" },
-	        "programming_table": { "model":"buildcraftsilicon:table/programming.obj" },
-	        "charging_table": { "model":"buildcraftsilicon:table/charging.obj" }
-	    }
-	}
+    "forge_marker": 1,
+    "defaults": {
+        "transform":"forge:default-block"
+    },
+    "variants": {
+        "type": {
+            "assembly_table": { "model":"buildcraftsilicon:table/assembly.obj" },
+            "advanced_crafting_table": { "model":"buildcraftsilicon:table/advanced_crafting.obj" },
+            "integration_table": { "model":"buildcraftsilicon:table/integration.obj" },
+            "programming_table": { "model":"buildcraftsilicon:table/programming.obj" },
+            "charging_table": { "model":"buildcraftsilicon:table/charging.obj" }
+        }
+    }
 }
-	

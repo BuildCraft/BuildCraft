@@ -1,10 +1,10 @@
 {
-	"parent":"buildcraftcore:item/engineblock",
-	"textures":{
-		"particle":"buildcraftenergy:blocks/engine/inv/iron/back",
-		"base":"buildcraftenergy:blocks/engine/inv/iron/back",
-		"front":"buildcraftenergy:blocks/engine/inv/iron/side",
-		"chamber":"buildcraftcore:blocks/engine/inv/chamber_base",
-		"trunk":"buildcraftcore:blocks/engine/inv/trunk_blue"
-	}
+    "parent":"buildcraftcore:item/engineblock",
+    "textures":{
+        "particle":"buildcraftenergy:blocks/engine/inv/iron/back",
+        "base":"buildcraftenergy:blocks/engine/inv/iron/back",
+        "front":"buildcraftenergy:blocks/engine/inv/iron/side",
+        "chamber":"buildcraftcore:blocks/engine/inv/chamber_base",
+        "trunk":"buildcraftcore:blocks/engine/inv/trunk_blue"
+    }
 }

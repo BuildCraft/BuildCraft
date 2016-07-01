@@ -208,19 +208,19 @@ public class BuildCraftTransport extends BuildCraftMod {
                     ConfigManager.RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
                 //@formatter:off
-					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.grass).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.leaves).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.leaves2).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.mob_spawner).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.monster_egg).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.redstone_lamp).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.double_stone_slab).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab).toString(),
-					Block.blockRegistry.getNameForObject(Blocks.sponge).toString()
-					//@formatter:on
+                    Block.blockRegistry.getNameForObject(Blocks.end_portal_frame).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.grass).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.leaves).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.leaves2).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.mob_spawner).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.monster_egg).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.redstone_lamp).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.double_stone_slab).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab).toString(),
+                    Block.blockRegistry.getNameForObject(Blocks.sponge).toString()
+                    //@formatter:on
             }, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
             BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false,
                     "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);

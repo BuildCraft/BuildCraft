@@ -1,6 +1,6 @@
 {
-	"parent":"item/generated",
-	"textures": {
-		"layer0":"buildcraftrobotics:items/board/red"
-	}
+    "parent":"item/generated",
+    "textures": {
+        "layer0":"buildcraftrobotics:items/board/red"
+    }
 }

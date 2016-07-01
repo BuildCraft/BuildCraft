@@ -23,6 +23,6 @@
         "particle": "buildcraftfactory:blocks/tank/side_stacked",
         "up": "buildcraftfactory:blocks/tank/topbottom",
         "down": "buildcraftfactory:blocks/tank/topbottom",
-	    "side": "buildcraftfactory:blocks/tank/side_stacked"
+        "side": "buildcraftfactory:blocks/tank/side_stacked"
     }
 }
