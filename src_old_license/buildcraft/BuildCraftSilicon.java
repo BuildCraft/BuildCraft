@@ -45,6 +45,7 @@ import buildcraft.silicon.TileProgrammingTable;
 
 //@Mod(name = "BuildCraft Silicon", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
+@Deprecated
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")
     public static BuildCraftSilicon instance;

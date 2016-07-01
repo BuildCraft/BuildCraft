@@ -74,6 +74,7 @@ import buildcraft.energy.worldgen.OilPopulate;
 
 //@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
+@Deprecated
 public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Energy")
