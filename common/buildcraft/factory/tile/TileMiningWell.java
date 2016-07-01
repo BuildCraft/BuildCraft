@@ -18,6 +18,7 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.factory.BCFactoryBlocks;
@@ -75,9 +76,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
                         if (stack.stackSize > 0) {
                             stack.stackSize -= Utils.addToRandomInjectableAround(worldObj, pos, null, stack);
                         }
-                        if (stack.stackSize > 0) {
-                            spawnEntityItem(stack);
-                        }
+                        InvUtils.dropItemUp(getWorld(), stack, getPos());
                     }
                 }
                 worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
@@ -94,19 +93,6 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
                 worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (progress * 9) / target);
             }
         }
-    }
-
-    public void spawnEntityItem(ItemStack stack) {
-        float y = worldObj.rand.nextFloat() * 1.0F - 0.5F + 0.5F;
-        float x = worldObj.rand.nextFloat() * 1.0F - 0.5F + 0.5F;
-        float z = worldObj.rand.nextFloat() * 1.0F - 0.5F + 0.5F;
-        EntityItem entityItem = new EntityItem(worldObj, pos.getX() + x, pos.getY() + y + 0.5F, pos.getZ() + z, stack);
-        entityItem.setDefaultPickupDelay();
-        entityItem.motionX = entityItem.motionY = entityItem.motionZ = 0;
-        entityItem.motionX = (float) worldObj.rand.nextGaussian() * 0.02F - 0.01F;
-        entityItem.motionY = (float) worldObj.rand.nextGaussian() * 0.02F;
-        entityItem.motionZ = (float) worldObj.rand.nextGaussian() * 0.02F - 0.01F;
-        worldObj.spawnEntityInWorld(entityItem);
     }
 
     @Override

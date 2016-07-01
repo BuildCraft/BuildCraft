@@ -144,7 +144,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
     public final void redrawBlock() {
         if (hasWorldObj()) {
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(pos, state, state, 0);
         }
     }
 

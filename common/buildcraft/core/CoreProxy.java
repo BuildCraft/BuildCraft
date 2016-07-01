@@ -73,7 +73,6 @@ public abstract class CoreProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerVolume.class, RenderMarkerVolume.INSTANCE);
-            // ClientRegistry.bindTileEntitySpecialRenderer(TileMarkerPath.class, RenderMarkerPath.INSTANCE);
 
             MinecraftForge.EVENT_BUS.register(RenderTickListener.INSTANCE);
         }

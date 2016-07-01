@@ -4,15 +4,15 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory.gui;
 
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftfactory:textures/gui/autobench_item.png");
@@ -42,7 +42,7 @@ public class GuiAutoCraftItems extends GuiBC8<ContainerAutoCraftItems> {
         fontRendererObj.drawString("Dyn   = " + dynamic, 10, 20, -1);
         fontRendererObj.drawString("End   = " + delta.getStatic(false), 10, 30, -1);
         fontRendererObj.drawString("Count = " + delta.changingEntries.size(), 10, 40, -1);
-        if(container.tile.currentRecipe != null) {
+        if (container.tile.currentRecipe != null) {
             RenderHelper.enableGUIStandardItemLighting();
             ItemStack output = container.tile.getOutput();
             int x = rootElement.getX() + 93;

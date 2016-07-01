@@ -15,9 +15,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -90,6 +91,25 @@ public final class InvUtils {
 
     /* STACK DROPS */
     public static void dropItems(World world, ItemStack stack, BlockPos pos) {
+        if (stack == null || stack.stackSize <= 0) {
+            return;
+        }
+
+        float f1 = 0.7F;
+        double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+        double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+        double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
+        EntityItem entity = new EntityItem(world, pos.getX() + d, pos.getY() + d1, pos.getZ() + d2, stack);
+
+        entity.motionX = world.rand.nextDouble() * 0.02 - 0.01;
+        entity.motionY = world.rand.nextDouble() * 0.01 + 0.01;
+        entity.motionZ = world.rand.nextDouble() * 0.02 - 0.01;
+        entity.setDefaultPickupDelay();
+
+        world.spawnEntityInWorld(entity);
+    }
+
+    public static void dropItemUp(World world, ItemStack stack, BlockPos pos) {
         if (stack == null || stack.stackSize <= 0) {
             return;
         }
