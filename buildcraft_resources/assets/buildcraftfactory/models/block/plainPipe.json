@@ -13,7 +13,7 @@
         }
     ],
     "textures": {
-	    "particle": "buildcraftfactory:blocks/plainPipe/default",
+        "particle": "buildcraftfactory:blocks/plainPipe/default",
         "all": "buildcraftfactory:blocks/plainPipe/default"
     }
 }

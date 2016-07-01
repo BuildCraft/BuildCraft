@@ -84,8 +84,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
     @Override
     public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isClient()) {
-			if ("areaLoaded".equals(command)) {
+        if (side.isClient()) {
+            if ("areaLoaded".equals(command)) {
                 currentAreaSelection = new ZonePlan();
                 currentAreaSelection.readData(stream);
                 gui.refreshSelectedArea();
@@ -129,8 +129,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
         int mapStartX = map.chunkStartX << 4;
         int mapStartZ = map.chunkStartZ << 4;
 
-		for (int j = 0; j < height; ++j) {
-        	for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 int x = Math.round(startX + i * blocksPerPixel);
                 int z = Math.round(startZ + j * blocksPerPixel);
                 int ix = x - mapStartX;

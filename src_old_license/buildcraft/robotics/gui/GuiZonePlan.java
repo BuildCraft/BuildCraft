@@ -111,7 +111,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         getContainer().currentAreaSelection = new ZonePlan();
 
         cx = zonePlan.getPos().getX();
-		cz = zonePlan.getPos().getZ();
+        cz = zonePlan.getPos().getZ();
 
         resetNullSlots(16);
 

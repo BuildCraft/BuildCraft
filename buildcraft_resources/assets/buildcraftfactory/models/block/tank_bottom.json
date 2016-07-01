@@ -2,6 +2,6 @@
     "parent": "buildcraftfactory:block/tank",
     "textures": {
         "particle": "buildcraftfactory:blocks/tank/side",
-	    "side": "buildcraftfactory:blocks/tank/side"
+        "side": "buildcraftfactory:blocks/tank/side"
     }
 }

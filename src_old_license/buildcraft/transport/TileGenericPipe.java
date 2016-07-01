@@ -292,7 +292,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         sideProperties.writeToNBT(nbt);
-		return nbt;
+        return nbt;
     }
 
     @Override
@@ -703,7 +703,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         nbt.setByteArray("net-data", bytes);
-		SPacketUpdateTileEntity tileUpdate = new SPacketUpdateTileEntity(getPos(), 0, nbt);
+        SPacketUpdateTileEntity tileUpdate = new SPacketUpdateTileEntity(getPos(), 0, nbt);
         return tileUpdate;
     }
 

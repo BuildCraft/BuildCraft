@@ -7,10 +7,10 @@
     },
     "variants": {
         "facing": {
-			"east":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":270   },
-			"north": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":180  },
-			"west":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":90 },
-			"south": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":0 }
-		}
+            "east":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":270   },
+            "north": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":180  },
+            "west":  { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":90 },
+            "south": { "submodel":"buildcraftfactory:energy_heater/main.obj", "y":0 }
+        }
     }
 }

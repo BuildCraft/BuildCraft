@@ -286,31 +286,31 @@ public abstract class BlockBuildCraftBase extends Block {
         return super.collisionRayTrace(blockState, worldIn, pos, start, end);
     }
 
-	@Nullable
-	@Override
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
-		IBlockState state = world.getBlockState(pos);
-		AxisAlignedBB[] aabbs = getBoxes(world, pos, state);
-		RayTraceResult closest = null;
-		for (AxisAlignedBB aabb : aabbs) {
-			aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
+    @Nullable
+    @Override
+    public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end) {
+        IBlockState state = world.getBlockState(pos);
+        AxisAlignedBB[] aabbs = getBoxes(world, pos, state);
+        RayTraceResult closest = null;
+        for (AxisAlignedBB aabb : aabbs) {
+            aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
 
-			RayTraceResult mop = aabb.calculateIntercept(start, end);
-			if (mop != null) {
-				if (closest == null || mop.hitVec.distanceTo(start) < closest.hitVec.distanceTo(start)) {
-					closest = mop;
-				}
-			}
-		}
-		if (closest == null) {
-			return null;
-		} else {
-			return new RayTraceResult(closest.hitVec, closest.sideHit, pos);
-		}
-	}
+            RayTraceResult mop = aabb.calculateIntercept(start, end);
+            if (mop != null) {
+                if (closest == null || mop.hitVec.distanceTo(start) < closest.hitVec.distanceTo(start)) {
+                    closest = mop;
+                }
+            }
+        }
+        if (closest == null) {
+            return null;
+        } else {
+            return new RayTraceResult(closest.hitVec, closest.sideHit, pos);
+        }
+    }
 
     @Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
         if (!isCollidable()) {
             return;
         } else {

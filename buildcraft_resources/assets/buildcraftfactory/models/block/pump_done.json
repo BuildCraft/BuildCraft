@@ -1,7 +1,7 @@
 {
     "parent": "block/cube_all",
     "textures": {
-		"particle": "buildcraftfactory:blocks/pump/side_done",
+        "particle": "buildcraftfactory:blocks/pump/side_done",
         "up": "buildcraftfactory:blocks/pump/top",
         "down": "buildcraftfactory:blocks/pump/bottom",
         "north": "buildcraftfactory:blocks/pump/side_done",

@@ -1,6 +1,6 @@
 {
-	"parent":"buildcraftbuilders:block/led_power",
-	"textures": {
-		"led":"buildcraftbuilders:blocks/led_red_0_3"
-	}
+    "parent":"buildcraftbuilders:block/led_power",
+    "textures": {
+        "led":"buildcraftbuilders:blocks/led_red_0_3"
+    }
 }

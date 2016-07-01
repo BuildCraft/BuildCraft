@@ -19,8 +19,8 @@ import buildcraft.api.core.IWorldProperty;
  * http://www.policyalmanac.org/games/aStarTutorial.htm . */
 public class PathFinding implements IIterableAlgorithm {
 
-	private static IWorldProperty FREE_FOR_PATH = BuildCraftAPI.getWorldProperty("freepath");
-	
+    private static IWorldProperty FREE_FOR_PATH = BuildCraftAPI.getWorldProperty("freepath");
+
     public static int PATH_ITERATIONS = 1000;
 
     private World world;
@@ -200,7 +200,7 @@ public class PathFinding implements IIterableAlgorithm {
     }
 
     public static boolean isFreeForPath(World world, BlockPos pos){
-    	return FREE_FOR_PATH.get(world, pos);
+        return FREE_FOR_PATH.get(world, pos);
     }
     
     private boolean endReached(int x, int y, int z) {

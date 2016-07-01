@@ -1,6 +1,6 @@
 {
-	 "parent": "block/cube_all",
+     "parent": "block/cube_all",
     "textures": {
-    	"all": "buildcraftbuilders:blocks/builder/blockRemover"
+        "all": "buildcraftbuilders:blocks/builder/blockRemover"
     }
 }

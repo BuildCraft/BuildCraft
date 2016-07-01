@@ -27,20 +27,20 @@ public class AIRobotShutdown extends AIRobot {
         robot.motionZ = motionZ;
     }
 
-	private boolean isBlocked(float yOffset) {
-		return robot.worldObj.getCollidingBoundingBoxes(robot,
-				robot.getEntityBoundingBox().addCoord(robot.motionX, yOffset, robot.motionZ)).size() > 0;
-	}
+    private boolean isBlocked(float yOffset) {
+        return robot.worldObj.getCollidingBoundingBoxes(robot,
+                robot.getEntityBoundingBox().addCoord(robot.motionX, yOffset, robot.motionZ)).size() > 0;
+    }
 
     @Override
     public void update() {
         if (skip == 0) {
-			if (!isBlocked(-0.075f)) {
+            if (!isBlocked(-0.075f)) {
                 robot.motionY = -0.075f;
             } else {
-				while (isBlocked(0)) {
-					robot.posY += 0.075f;
-				}
+                while (isBlocked(0)) {
+                    robot.posY += 0.075f;
+                }
                 robot.motionY = 0f;
                 if (robot.motionX != 0 || robot.motionZ != 0) {
                     robot.motionX = 0f;

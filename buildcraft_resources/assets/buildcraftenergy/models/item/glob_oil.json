@@ -1,6 +1,6 @@
 {
-	"parent":"item/generated",
-	"textures": {
-		"layer0":"buildcraftenergy:items/glob_oil"
-	}
+    "parent":"item/generated",
+    "textures": {
+        "layer0":"buildcraftenergy:items/glob_oil"
+    }
 }
