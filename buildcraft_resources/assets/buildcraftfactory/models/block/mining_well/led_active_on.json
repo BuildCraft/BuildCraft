@@ -1,6 +1,6 @@
 {
-    "parent":"buildcraftcore:block/led_active",
+    "parent": "buildcraftcore:block/led_active",
     "textures": {
-        "led":"buildcraftcore:blocks/led_green_on"
+        "led": "buildcraftcore:blocks/led_green_on"
     }
 }

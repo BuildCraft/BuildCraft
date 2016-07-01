@@ -7,6 +7,7 @@ package buildcraft.core.lib.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -53,7 +54,7 @@ public final class BlockUtils {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer(world, owner).get();
+        EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
         ArrayList<ItemStack> returnList = new ArrayList<>();
@@ -182,7 +183,7 @@ public final class BlockUtils {
         IBlockState state = world.getBlockState(pos);
         if (world instanceof WorldServer && !BuildCraftCore.miningAllowPlayerProtectedBlocks) {
             EntityPlayer fakePlayer = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pos).get();
-            float relativeHardness = b.getPlayerRelativeBlockHardness(fakePlayer, world, pos);
+            float relativeHardness = b.getPlayerRelativeBlockHardness(world.getBlockState(pos), fakePlayer, world, pos);
             if (relativeHardness <= 0.0F) { // Forge's getPlayerRelativeBlockHardness hook returns 0.0F if the hardness
                                             // is < 0.0F.
                 return -1.0F;
@@ -284,7 +285,7 @@ public final class BlockUtils {
             }
 
             if (player.getDistanceSq(pos) < 4096) {
-                ((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
+                ((EntityPlayerMP) player).connection.sendPacket(new SPacketExplosion(x, y, z, 3f, explosion.getAffectedBlockPositions(),
                         null));
             }
         }
