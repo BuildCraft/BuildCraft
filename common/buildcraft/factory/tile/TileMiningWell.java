@@ -185,12 +185,12 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
     }
 
     @Override
-    public int getX() {
+    public int getLedsX() {
         return 12;
     }
 
     @Override
-    public int getY() {
+    public int getLedsY() {
         return 5;
     }
 }
