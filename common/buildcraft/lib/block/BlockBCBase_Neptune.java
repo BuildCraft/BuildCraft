@@ -52,13 +52,17 @@ public class BlockBCBase_Neptune extends Block {
 
     // IBlockState
 
+    protected void addProperties(List<IProperty<?>> properties) {
+        if(this instanceof IBlockWithFacing) {
+            properties.add(PROP_FACING);
+        }
+    }
+
     @Override
     protected BlockStateContainer createBlockState() {
-        if(this instanceof IBlockWithFacing) {
-            return new BlockStateContainer(this, PROP_FACING);
-        } else {
-            return new BlockStateContainer(this);
-        }
+        List<IProperty<?>> properties = new ArrayList<>();
+        addProperties(properties);
+        return new BlockStateContainer(this, properties.toArray(new IProperty<?>[0]));
     }
 
     @Override
