@@ -37,7 +37,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable {
         if(hardness == 0) {
             hardness = 0.1F;
         }
-        progress += 1000 / hardness;
+        progress += 10 / hardness;
         if(progress > 100) {
             progress = 0;
             if(!worldObj.isAirBlock(currentPos)) {
