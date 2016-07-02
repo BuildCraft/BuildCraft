@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import buildcraft.factory.block.BlockAutoWorkbenchItems;
+import buildcraft.factory.block.*;
 import buildcraft.factory.block.BlockMiningWell;
-import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockPlainPipe;
+import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
@@ -20,6 +20,7 @@ public class BCFactoryBlocks {
     public static BlockMiningWell miningWell;
     public static BlockPump pump;
     public static BlockPlainPipe plainPipe;
+    public static BlockTube tube;
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
 
@@ -29,6 +30,7 @@ public class BCFactoryBlocks {
         miningWell = BlockBCBase_Neptune.register(new BlockMiningWell(Material.ROCK, "block.mining_well"));
         pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
         plainPipe = BlockBCBase_Neptune.register(new BlockPlainPipe(Material.ROCK, "block.plain_pipe"));
+        tube = BlockBCBase_Neptune.register(new BlockTube(Material.ROCK, "block.tube"));
 
         TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");

@@ -43,7 +43,7 @@ public class MjBattery implements INBTSerializable<NBTTagCompound> {
     }
 
     public void addPower(int milliJoules) {
-        this.milliJoules += milliJoules;
+        this.milliJoules = Math.min(this.milliJoules + milliJoules, capacity);
     }
 
     /** Attempts to add power, but only if this is not already full.

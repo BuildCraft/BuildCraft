@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "buildcraftfactory:plain_pipe" }
+        "normal": {"model": "buildcraftfactory:plain_pipe"}
     }
 }

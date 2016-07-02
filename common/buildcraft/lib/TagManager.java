@@ -270,12 +270,14 @@ public class TagManager {
         registerTag("item.block.mining_well").reg("mining_well").locale("miningWellBlock").model("mining_well");
         registerTag("item.block.pump").reg("pump").locale("pumpBlock").model("pump");
         registerTag("item.block.plain_pipe").reg("plain_pipe").locale("plainPipeBlock").model("plain_pipe");
+        registerTag("item.block.tube").reg("tube").locale("tubeBlock").model("tube");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
         registerTag("block.mining_well").reg("mining_well").oldReg("miningWellBlock").locale("miningWellBlock").model("mining_well");
         registerTag("block.pump").reg("pump").oldReg("pumpBlock").locale("pumpBlock").model("pump");
         registerTag("block.plain_pipe").reg("plain_pipe").oldReg("plainPipeBlock").locale("plainPipeBlock").model("plain_pipe");
+        registerTag("block.tube").reg("tube").oldReg("tubeBlock").locale("tubeBlock").model("tube");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
         registerTag("tile.mining_well").reg("mining_well");

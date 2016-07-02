@@ -19,7 +19,7 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
     private static final int COLOUR_STATUS_DONE = 0xFF_1f_10_1b; // black-ish
 
     private static final int BLOCK_LIGHT_STATUS_OFF = 0x0;
-    private static final int BLOCK_LIGHT_STATUS_TODO = 0xF;
+    private static final int BLOCK_LIGHT_STATUS_TODO = 0x1;
 
     private static final double POWER = 2.5 / 16.0;
     private static final double STATUS = 4.5 / 16.0;
