@@ -23,11 +23,11 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.fluids.Tank;
 
 import io.netty.buffer.ByteBuf;
 

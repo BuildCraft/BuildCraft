@@ -8,6 +8,8 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
+/** Designates a tile entity that is made up of multiple {@link ITileRenderPart}. Although it might also have other
+ * components. */
 public abstract class RenderMultiTile<T extends TileEntity> extends FastTESR<T> {
     protected final List<ITileRenderPart<? super T>> parts = new ArrayList<>();
 

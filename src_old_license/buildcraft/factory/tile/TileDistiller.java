@@ -29,8 +29,8 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.lib.fluids.Tank;
 
 public class TileDistiller extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank in, outGas, outLiquid;

@@ -8,8 +8,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 
 public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {

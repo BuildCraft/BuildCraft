@@ -16,7 +16,7 @@ import net.minecraft.world.WorldSettings;
 import buildcraft.core.builders.BuilderItemMetaPair;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.lib.fluids.Tank;
+import buildcraft.lib.fluids.Tank;
 
 public class BuildingSlotMapIterator {
     public static int MAX_PER_ITEM = 512;

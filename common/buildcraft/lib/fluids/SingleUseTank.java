@@ -1,8 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.fluids;
+/* Copyright (c) 2016 AlexIIL and the BuildCraft team
+ * 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+package buildcraft.lib.fluids;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -59,5 +59,9 @@ public class SingleUseTank extends Tank {
     public void readTankFromNBT(NBTTagCompound nbt) {
         super.readTankFromNBT(nbt);
         acceptedFluid = FluidRegistry.getFluid(nbt.getString("acceptedFluid"));
+    }
+
+    public String getDebugString() {
+        return getFluidAmount() + " / " + capacity + " MB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
     }
 }

@@ -22,13 +22,13 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.client.CoreIconProvider;
-import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.config.OverridableConfigOption;
+import buildcraft.lib.fluids.Tank;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 

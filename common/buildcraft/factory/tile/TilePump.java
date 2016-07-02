@@ -3,6 +3,7 @@ package buildcraft.factory.tile;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.fluid.FluidStorage;
+import buildcraft.lib.fluids.SingleUseTank;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class TilePump extends TileMiner {
-    private FluidStorage fluidStorage = new FluidStorage("tank", 16000, this);
+    private SingleUseTank fluidStorage = new SingleUseTank("tank", 16000, this);
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
 
     public void rebuildQueue() {
@@ -147,7 +148,7 @@ public class TilePump extends TileMiner {
         progress += battery.extractPower(0, target - progress);
         if(progress >= target) {
             progress = 0;
-            fluidStorage.add(BlockUtils.drainBlock(worldObj, currentPos, true));
+            fluidStorage.fill(BlockUtils.drainBlock(worldObj, currentPos, true), true);
             currentPos = getNextIndexToPump(true);
             if(currentPos.getY() < 0) {
                 setComplete(true);
@@ -214,7 +215,7 @@ public class TilePump extends TileMiner {
 
     @SideOnly(Side.CLIENT)
     public float getFluidPercentFilledForRender() {
-        float val = fluidStorage.getAmount() / (float) fluidStorage.getCapacity();
+        float val = fluidStorage.getFluidAmount() / (float) fluidStorage.getCapacity();
         return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 
