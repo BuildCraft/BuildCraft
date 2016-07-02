@@ -28,11 +28,11 @@ import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.SingleUseTank;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.fluids.SingleUseTank;
 
 import io.netty.buffer.ByteBuf;
 

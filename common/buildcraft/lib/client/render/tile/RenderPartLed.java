@@ -12,6 +12,8 @@ import net.minecraftforge.client.model.ModelLoader;
 
 import buildcraft.lib.client.model.MutableVertex;
 
+/** A variable sized LED that can render somewhere in a TESR. Passing a resolver instance will let you modify the
+ * location, colour, lightmap, and size of the single LED. */
 public class RenderPartLed<T extends TileEntity> implements ITileRenderPart<T> {
     /** The centre of this LED. */
     public final MutableVertex center = new MutableVertex();

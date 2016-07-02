@@ -1,8 +1,8 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.fluids;
+/* Copyright (c) 2016 AlexIIL and the BuildCraft team
+ * 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+package buildcraft.lib.fluids;
 
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -17,7 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
-import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
@@ -56,15 +55,18 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     }
 
     public boolean isEmpty() {
-        return getFluid() == null || getFluid().amount <= 0;
+        FluidStack fluidStack = getFluid();
+        return fluidStack == null || fluidStack.amount <= 0;
     }
 
     public boolean isFull() {
-        return getFluid() != null && getFluid().amount >= getCapacity();
+        FluidStack fluidStack = getFluid();
+        return fluidStack != null && fluidStack.amount >= getCapacity();
     }
 
     public Fluid getFluidType() {
-        return getFluid() != null ? getFluid().getFluid() : null;
+        FluidStack fluidStack = getFluid();
+        return fluidStack != null ? fluidStack.getFluid() : null;
     }
 
     @Override
@@ -101,8 +103,12 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         return this;
     }
 
+    /** Writes some additional information to the nbt, for example {@link SingleUseTank} will write out the filtering
+     * fluid. */
     public void writeTankToNBT(NBTTagCompound nbt) {}
 
+    /** Reads some additional information to the nbt, for example {@link SingleUseTank} will read in the filtering
+     * fluid. */
     public void readTankFromNBT(NBTTagCompound nbt) {}
 
     public ToolTip getToolTip() {
@@ -112,13 +118,12 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     protected void refreshTooltip() {
         toolTip.clear();
         int amount = 0;
-        if (getFluid() != null && getFluid().amount > 0) {
-            ToolTipLine fluidName = new ToolTipLine(getFluid().getFluid().getLocalizedName(getFluid()), TextFormatting.WHITE);
-            fluidName.setSpacing(2);
-            toolTip.add(fluidName);
-            amount = getFluid().amount;
+        FluidStack fluidStack = getFluid();
+        if (fluidStack != null && fluidStack.amount > 0) {
+            toolTip.add(TextFormatting.WHITE + fluidStack.getFluid().getLocalizedName(fluidStack));
+            amount = fluidStack.amount;
         }
-        toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
+        toolTip.add(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity()));
     }
 
     @Override
@@ -138,9 +143,10 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     }
 
     public String getContentsString() {
-        if (fluid == null || fluid.amount <= 0) {
+        FluidStack fluidStack = getFluid();
+        if (fluidStack == null || fluidStack.amount <= 0) {
             return "Empty";
         }
-        return (fluid.amount / 1000.0) + "B of " + fluid.getLocalizedName();
+        return (fluidStack.amount / 1000.0) + "B of " + fluidStack.getLocalizedName();
     }
 }

@@ -154,7 +154,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
 
     private void setComplete(boolean isComplete) {
         this.isComplete = isComplete;
-        if (worldObj.isRemote) {
+        if (!worldObj.isRemote) {
             sendNetworkUpdate(NET_LED_STATUS);
         }
     }

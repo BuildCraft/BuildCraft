@@ -22,6 +22,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.fluids.Tank;
+
 /** Provides a simple way to save+load and send+recieve data for any number of tanks. This also attempts to fill all of
  * the tanks one by one via the {@link #fill(EnumFacing, FluidStack, boolean)} and
  * {@link #drain(EnumFacing, FluidStack, boolean)} methods. */

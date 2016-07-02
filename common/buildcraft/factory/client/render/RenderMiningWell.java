@@ -50,7 +50,7 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
             boolean more = tile.hasWork();
             boolean paused = tile.getControlMode() == Mode.Off;
             part.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
-            part.center.lightf(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
+            part.center.lighti(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
         }));
     }
 
