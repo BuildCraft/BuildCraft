@@ -10,6 +10,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
+import io.netty.buffer.ByteBuf;
+
 public class MjBattery implements INBTSerializable<NBTTagCompound> {
     private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("###0.###");
 
@@ -30,6 +32,14 @@ public class MjBattery implements INBTSerializable<NBTTagCompound> {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         milliJoules = nbt.getInteger("stored");
+    }
+
+    public void writeToBuffer(ByteBuf buffer) {
+        buffer.writeInt(milliJoules);
+    }
+
+    public void readFromBuffer(ByteBuf buffer) {
+        milliJoules = buffer.readInt();
     }
 
     public void addPower(int milliJoules) {

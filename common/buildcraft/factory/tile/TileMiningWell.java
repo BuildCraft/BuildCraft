@@ -1,11 +1,12 @@
 package buildcraft.factory.tile;
 
+import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IControllable;
@@ -24,9 +27,12 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
-public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable, ITileLed {
+public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+    public static final int NET_LED_STATUS = 10;
+
     private int progress = 0;
     private BlockPos currentPos = null;
     // Used to check if this has completed all work
@@ -43,17 +49,27 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
 
     @Override
     public void update() {
-        if (worldObj.isRemote || isComplete || mode != Mode.On) {
+        if (worldObj.isRemote || mode != Mode.On) {
             return;
         }
+        battery.tick(getWorld(), getPos());
+
         // test with the output of a stone engine
         battery.addPower(1000);// remove this
+
+        if (worldObj.rand.nextDouble() > 0.9) {
+            sendNetworkUpdate(NET_LED_STATUS);
+        }
+
+        if (isComplete) {
+            return;
+        }
 
         initCurrentPos();
 
         IBlockState state = worldObj.getBlockState(currentPos);
         if (BlockUtils.isUnbreakableBlock(getWorld(), currentPos)) {
-            isComplete = true;
+            setComplete(true);
             return;
         }
 
@@ -66,7 +82,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
                 BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(worldObj, currentPos, state, FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) worldObj).get());
                 MinecraftForge.EVENT_BUS.post(breakEvent);
                 if (breakEvent.isCanceled()) {
-                    isComplete = true;
+                    setComplete(true);
                     return;
                 }
                 List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, currentPos, pos);
@@ -86,7 +102,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
             worldObj.scheduleUpdate(currentPos, BCFactoryBlocks.plainPipe, 100);
             currentPos = currentPos.down();
             if (currentPos.getY() < 0) {
-                isComplete = true;
+                setComplete(true);
             }
         } else {
             if (!worldObj.isAirBlock(currentPos)) {
@@ -136,6 +152,44 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
         }
     }
 
+    private void setComplete(boolean isComplete) {
+        this.isComplete = isComplete;
+        if (worldObj.isRemote) {
+            sendNetworkUpdate(NET_LED_STATUS);
+        }
+    }
+
+    // Networking
+
+    @Override
+    public void writePayload(int id, PacketBuffer buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                writePayload(NET_LED_STATUS, buffer, side);
+            } else if (id == NET_LED_STATUS) {
+                boolean[] flags = { isComplete, mode == Mode.On };
+                MessageUtil.writeBooleanArray(buffer, flags);
+                battery.writeToBuffer(buffer);
+            }
+        }
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+        super.readPayload(id, buffer, side);
+        if (side == Side.CLIENT) {
+            if (id == NET_RENDER_DATA) {
+                readPayload(NET_LED_STATUS, buffer, side);
+            } else if (id == NET_LED_STATUS) {
+                boolean[] flags = MessageUtil.readBooleanArray(buffer, 2);
+                isComplete = flags[0];
+                mode = flags[1] ? Mode.On : Mode.Off;
+                battery.readFromBuffer(buffer);
+            }
+        }
+    }
+
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
@@ -172,25 +226,17 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
         return mode == Mode.Off || mode == Mode.On;
     }
 
-    // ITileLed
+    // Rendering
 
     @Override
-    public boolean isDone() {
-        return isComplete;
+    @SideOnly(Side.CLIENT)
+    public boolean hasFastRenderer() {
+        return true;
     }
 
-    @Override
-    public int getPowerLevel() {
-        return (int) ((float)battery.getContained() / battery.getCapacity() * 4);
-    }
-
-    @Override
-    public int getLedsX() {
-        return 12;
-    }
-
-    @Override
-    public int getLedsY() {
-        return 5;
+    @SideOnly(Side.CLIENT)
+    public float getPercentFilledForRender() {
+        float val = battery.getContained() / (float) battery.getCapacity();
+        return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 }

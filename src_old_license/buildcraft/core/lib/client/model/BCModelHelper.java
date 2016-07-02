@@ -15,6 +15,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
+import buildcraft.lib.client.model.MutableQuad;
+
 public class BCModelHelper {
     public static final int U_MIN = 0;
     public static final int U_MAX = 1;

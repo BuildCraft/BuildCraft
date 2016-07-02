@@ -26,6 +26,7 @@ import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.lib.client.model.MutableQuad;
 
 public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int U_MIN = 0;

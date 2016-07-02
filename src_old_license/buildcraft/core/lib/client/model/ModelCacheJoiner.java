@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
 import buildcraft.core.lib.client.model.ModelCache.IModelGenerator;
+import buildcraft.lib.client.model.MutableQuad;
 
 public class ModelCacheJoiner<K> implements IModelCache<K> {
     private final IModelCache<K> mainCache;

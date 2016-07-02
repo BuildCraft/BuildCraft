@@ -19,8 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;

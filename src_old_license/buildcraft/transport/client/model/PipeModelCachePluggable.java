@@ -13,7 +13,7 @@ import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.core.lib.client.model.IModelCache;
 import buildcraft.core.lib.client.model.ModelCache;
 import buildcraft.core.lib.client.model.ModelCacheMultipleSame;
-import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.PipePluggableState;
 
 public class PipeModelCachePluggable {

@@ -21,8 +21,8 @@ import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.lib.client.model.MutableQuad;
 
 import javax.vecmath.Matrix4f;
 

@@ -24,8 +24,8 @@ import net.minecraftforge.client.model.IModel;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 

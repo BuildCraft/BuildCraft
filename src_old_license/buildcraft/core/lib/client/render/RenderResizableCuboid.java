@@ -35,9 +35,9 @@ import net.minecraft.world.IBlockAccess;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.FacingRotationHelper;
-import buildcraft.core.lib.client.model.MutableQuad;
-import buildcraft.core.lib.client.model.MutableVertex;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableVertex;
 
 public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     public interface IBlockLocation {

@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
+import buildcraft.lib.client.model.MutableQuad;
+
 /** An adding {@link IModelCache} that takes a single key and adds all of the sub-keys given by the
  * {@link IModelKeyMultipleSameMapper}
  * 

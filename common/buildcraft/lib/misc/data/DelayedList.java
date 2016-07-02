@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 /** Implements a delayed list of something- stuff that can be postponed for later retrieval. A specialised ordered queue
  * really. */
 public class DelayedList<E> {
-    private final List<List<E>> elements;
+    protected final List<List<E>> elements;
     private final Supplier<List<E>> innerListSupplier;
 
     public DelayedList() {
@@ -18,9 +18,16 @@ public class DelayedList<E> {
     }
 
     public static <E> DelayedList<E> createConcurrent() {
-        return new DelayedList<>(Collections.synchronizedList(new ArrayList<>()), () -> {
+        return new DelayedList<E>(Collections.synchronizedList(new ArrayList<>()), () -> {
             return Collections.synchronizedList(new ArrayList<>());
-        });
+        }) {
+            @Override
+            public List<E> advance() {
+                synchronized (this.elements) {
+                    return super.advance();
+                }
+            }
+        };
     }
 
     private DelayedList(List<List<E>> actualList, Supplier<List<E>> innerList) {
@@ -38,7 +45,7 @@ public class DelayedList<E> {
      * 
      * @return The elements that are no longer on a delay. */
     public List<E> advance() {
-        if (elements.size() == 0) {
+        if (elements.isEmpty()) {
             return ImmutableList.of();
         }
         return elements.remove(0);

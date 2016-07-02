@@ -1,4 +1,4 @@
-package buildcraft.core.lib.client.model;
+package buildcraft.lib.client.model;
 
 import java.util.Arrays;
 
@@ -216,12 +216,12 @@ public class MutableQuad {
     /** @see MutableVertex#normalv(Vector3f) */ public MutableQuad normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec)); return this;}
     public MutableQuad normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z)); return this;}
 
-    public MutableQuad colourv(Vector4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec)); return this;};
+    public MutableQuad colourv(Tuple4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec)); return this;};
     public MutableQuad colourf(float r, float g, float b, float a) {Arrays.stream(verticies).forEach(v -> v.colourf(r,g,b,a)); return this;}
     public MutableQuad colouri(int rgba) {Arrays.stream(verticies).forEach(v -> v.colouri(rgba)); return this;}
     public MutableQuad colouri(int r, int g, int b, int a) {Arrays.stream(verticies).forEach(v -> v.colouri(r, g, b, a)); return this;}
 
-    public MutableQuad lightv(Vector2f vec) {for (MutableVertex v : verticies) v.lightv(vec); return this;}
+    public MutableQuad lightv(Tuple2f vec) {for (MutableVertex v : verticies) v.lightv(vec); return this;}
     public MutableQuad lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky); return this;}
     public MutableQuad lighti(int combined) {for (MutableVertex v : verticies) v.lighti(combined); return this;}
     public MutableQuad lighti(int block, int sky) {for (MutableVertex v : verticies) v.lighti(block, sky); return this;}

@@ -1,4 +1,4 @@
-package buildcraft.core.lib.client.model;
+package buildcraft.lib.client.model;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,22 +75,51 @@ public class MutableVertex {
 
     private static Set<String> failedStrings = new HashSet<>();
 
+    // Rendering
+
     public void render(VertexBuffer vb) {
         VertexFormat vf = vb.getVertexFormat();
         for (VertexFormatElement vfe : vf.getElements()) {
-            if (vfe.getUsage() == EnumUsage.POSITION) vb.pos(position[0], position[1], position[2]);
-            else if (vfe.getUsage() == EnumUsage.NORMAL) vb.normal(normal[0], normal[1], normal[2]);
-            else if (vfe.getUsage() == EnumUsage.COLOR) vb.color(colour[0], colour[1], colour[2], colour[3]);
+            if (vfe.getUsage() == EnumUsage.POSITION) renderPosition(vb);
+            else if (vfe.getUsage() == EnumUsage.NORMAL) renderNormal(vb);
+            else if (vfe.getUsage() == EnumUsage.COLOR) renderColour(vb);
             else if (vfe.getUsage() == EnumUsage.UV) {
-                if (vfe.getIndex() == 0) vb.tex(uv[0], uv[1]);
-                else if (vfe.getIndex() == 1) vb.lightmap(lighti()[0], lighti()[1]);
+                if (vfe.getIndex() == 0) renderTex(vb);
+                else if (vfe.getIndex() == 1) renderLightMap(vb);
             }
         }
         vb.endVertex();
     }
 
+    public void renderPosition(VertexBuffer vb) {
+        vb.pos(position[0], position[1], position[2]);
+    }
+
+    public void renderNormal(VertexBuffer vb) {
+        vb.normal(normal[0], normal[1], normal[2]);
+    }
+
+    public void renderColour(VertexBuffer vb) {
+        vb.color(colour[0], colour[1], colour[2], colour[3]);
+    }
+
+    public void renderTex(VertexBuffer vb) {
+        vb.tex(uv[0], uv[1]);
+    }
+
+    public void renderLightMap(VertexBuffer vb) {
+        int[] lighti = lighti();
+        vb.lightmap(lighti[0] << 4, lighti[1] << 4);
+    }
+
+    // Mutating
+
     public MutableVertex positionv(Tuple3f vec) {
         return positionf(vec.x, vec.y, vec.z);
+    }
+
+    public MutableVertex positiond(double x, double y, double z) {
+        return positionf((float) x, (float) y, (float) z);
     }
 
     public MutableVertex positionf(float x, float y, float z) {
@@ -108,7 +137,7 @@ public class MutableVertex {
      * 
      * @see #normalf(float, float, float)
      * @implNote This calls {@link #normalf(float, float, float)} internally, so refer to that for more warnings. */
-    public MutableVertex normalv(Vector3f vec) {
+    public MutableVertex normalv(Tuple3f vec) {
         return normalf(vec.x, vec.y, vec.z);
     }
 
@@ -129,7 +158,7 @@ public class MutableVertex {
         return new Vector3f(normal);
     }
 
-    public MutableVertex colourv(Vector4f vec) {
+    public MutableVertex colourv(Tuple4f vec) {
         return colourf(vec.x, vec.y, vec.z, vec.w);
     };
 
@@ -149,8 +178,8 @@ public class MutableVertex {
         return colourf((r & 0xFF) / 255f, (g & 0xFF) / 255f, (b & 0xFF) / 255f, (a & 0xFF) / 255f);
     }
 
-    public Vector4f colourv() {
-        return new Vector4f(colour);
+    public Point4f colourv() {
+        return new Point4f(colour);
     }
 
     public int colourRGBA() {
@@ -162,7 +191,7 @@ public class MutableVertex {
         // @formatter:on
     }
 
-    public MutableVertex texv(Vector2f vec) {
+    public MutableVertex texv(Tuple2f vec) {
         return texf(vec.x, vec.y);
     }
 
@@ -172,8 +201,8 @@ public class MutableVertex {
         return this;
     }
 
-    public Vector2f tex() {
-        return new Vector2f(uv);
+    public Point2f tex() {
+        return new Point2f(uv);
     }
 
     public MutableVertex lightv(Tuple2f vec) {

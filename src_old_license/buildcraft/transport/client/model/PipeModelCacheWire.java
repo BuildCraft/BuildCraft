@@ -19,14 +19,9 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.client.model.BCModelHelper;
-import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.core.lib.client.model.IModelCache;
-import buildcraft.core.lib.client.model.ModelCache;
-import buildcraft.core.lib.client.model.ModelCacheBuilder;
-import buildcraft.core.lib.client.model.ModelCacheMultipleSame;
-import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.PipeRenderState;
 
 import javax.vecmath.Vector3f;

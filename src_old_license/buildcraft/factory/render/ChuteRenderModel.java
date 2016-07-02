@@ -12,7 +12,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.core.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableQuad;
 
 import javax.vecmath.Vector3f;
 

@@ -14,10 +14,10 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.PipeIconProvider;
 

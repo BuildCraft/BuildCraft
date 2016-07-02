@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
+import buildcraft.lib.client.model.MutableQuad;
+
 public interface IModelCache<K> {
     void appendAsMutable(K key, List<MutableQuad> quads);
 

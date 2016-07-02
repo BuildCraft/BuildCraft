@@ -25,8 +25,8 @@ import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.client.model.MutableQuad;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.client.model.MutableQuad;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
