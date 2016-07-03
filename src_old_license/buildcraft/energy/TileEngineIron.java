@@ -27,11 +27,11 @@ import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
-import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.statements.IBlockDefaultTriggers;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankManager;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler, IBlockDefaultTriggers {
     public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 10;

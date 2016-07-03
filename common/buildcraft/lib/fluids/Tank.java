@@ -7,6 +7,9 @@ package buildcraft.lib.fluids;
 import java.util.Locale;
 import java.util.function.Predicate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -31,25 +34,29 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         }
     };
 
+    @Nonnull
     private final String name;
+
+    @Nonnull
     private final Predicate<FluidStack> filter;
 
     /** Creates a tank with the given name and capacity (in milli buckets) with no filter set (so any fluid can go into
      * the tank) */
-    public Tank(String name, int capacity, TileEntity tile) {
+    public Tank(@Nonnull String name, int capacity, TileEntity tile) {
         this(name, capacity, tile, null);
     }
 
     /** Creates a tank with the given name and capacity (in milli buckets) with the specified filter set. If the filter
      * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
      * null. */
-    public Tank(String name, int capacity, TileEntity tile, Predicate<FluidStack> filter) {
+    public Tank(@Nonnull String name, int capacity, TileEntity tile, @Nullable Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
-        this.filter = filter;
+        this.filter = filter == null ? ((f) -> true) : filter;
     }
 
+    @Nonnull
     public String getTankName() {
         return name;
     }
@@ -128,13 +135,13 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (filter == null || filter.test(resource)) return super.fill(resource, doFill);
+        if (filter.test(resource)) return super.fill(resource, doFill);
         return 0;
     }
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || filter == null || filter.test(fluid)) super.setFluid(fluid);
+        if (fluid == null || filter.test(fluid)) super.setFluid(fluid);
     }
 
     @Override

@@ -1,30 +1,30 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.fluids;
+/* Copyright (c) 2016 AlexIIL and the BuildCraft team
+ * 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
+ * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+package buildcraft.lib.fluids;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import com.google.common.collect.ForwardingList;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.fluids.Tank;
+import io.netty.buffer.ByteBuf;
 
-/** Provides a simple way to save+load and send+recieve data for any number of tanks. This also attempts to fill all of
+/** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
  * the tanks one by one via the {@link #fill(EnumFacing, FluidStack, boolean)} and
  * {@link #drain(EnumFacing, FluidStack, boolean)} methods. */
 public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, INBTSerializable<NBTTagCompound> {
@@ -43,7 +43,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     }
 
     @Override
-    public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+    public int fill(FluidStack resource, boolean doFill) {
         for (Tank tank : tanks) {
             int used = tank.fill(resource, doFill);
             if (used > 0) {
@@ -54,7 +54,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
         if (resource == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     }
 
     @Override
-    public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+    public FluidStack drain(int maxDrain, boolean doDrain) {
         for (Tank tank : tanks) {
             FluidStack drained = tank.drain(maxDrain, doDrain);
             if (drained != null && drained.amount > 0) {
@@ -82,20 +82,10 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     }
 
     @Override
-    public boolean canFill(EnumFacing from, Fluid fluid) {
-        return true;
-    }
-
-    @Override
-    public boolean canDrain(EnumFacing from, Fluid fluid) {
-        return true;
-    }
-
-    @Override
-    public FluidTankInfo[] getTankInfo(EnumFacing from) {
-        FluidTankInfo[] info = new FluidTankInfo[size()];
+    public IFluidTankProperties[] getTankProperties() {
+        IFluidTankProperties[] info = new IFluidTankProperties[size()];
         for (int i = 0; i < size(); i++) {
-            info[i] = get(i).getInfo();
+            info[i] = get(i).getTankProperties()[0];
         }
         return info;
     }

@@ -1,9 +1,9 @@
 package buildcraft.api.mj;
 
 /** Designates a machine that can receive power. */
-public interface IMjReciever extends IMjConductor {
-    /** @return The number of millijoules that this receiver currently wants, and can accept. */
-    int getPowerRequested();
+public interface IMjReceiver extends IMjConnector {
+    /** @return The number of microjoules that this receiver currently wants, and can accept. */
+    long getPowerRequested();
 
     /** Receives power. You are encouraged to either:
      * <ul>
@@ -12,8 +12,8 @@ public interface IMjReciever extends IMjConductor {
      * <li>Refuse all power (if you have no more work to do or your {@link MjBattery} is full).
      * </ul>
      * 
-     * @param milliJoules The number of millijoules to add.
+     * @param microJoules The number of micro joules to add.
      * @param simulate If true then just pretend you received power- don't actually change any of your internal state.
      * @return True if all the power was accepted, false if not. */
-    boolean receivePower(int milliJoules, boolean simulate);
+    boolean receivePower(long microJoules, boolean simulate);
 }

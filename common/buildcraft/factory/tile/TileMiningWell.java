@@ -17,6 +17,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
@@ -38,7 +39,7 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
     // Used to check if this has completed all work
     private boolean isComplete = false;
     private Mode mode = Mode.On;
-    private final MjBattery battery = new MjBattery(1000_000);
+    private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
 
     private void initCurrentPos() {
         if (currentPos == null) {
@@ -52,10 +53,13 @@ public class TileMiningWell extends TileBC_Neptune implements ITickable, IHasWor
         if (worldObj.isRemote || mode != Mode.On) {
             return;
         }
-        battery.tick(getWorld(), getPos());
 
         // test with the output of a stone engine
-        battery.addPower(1000);// remove this
+        if (!battery.isFull()) {
+            battery.addPower(MjAPI.MJ);// remove this
+        }
+
+        battery.tick(getWorld(), getPos());
 
         if (worldObj.rand.nextDouble() > 0.9) {
             sendNetworkUpdate(NET_LED_STATUS);

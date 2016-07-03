@@ -1,10 +1,7 @@
 package buildcraft.api.mj;
 
-import java.text.DecimalFormat;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -12,73 +9,73 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 import io.netty.buffer.ByteBuf;
 
+/** Provides a basic implementation of a simple battery. Note that you should call {@link #tick(World, BlockPos)} or
+ * {@link #tick(World, Vec3d)} every tick to allow for losing excess power. */
 public class MjBattery implements INBTSerializable<NBTTagCompound> {
-    private static final DecimalFormat DOUBLE_FORMAT = new DecimalFormat("###0.###");
+    private final long capacity;
+    private long microJoules = 0;
 
-    private final int capacity;
-    private int milliJoules = 0;
-
-    public MjBattery(int capacity) {
+    public MjBattery(long capacity) {
         this.capacity = capacity;
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("stored", milliJoules);
+        nbt.setLong("stored", microJoules);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        milliJoules = nbt.getInteger("stored");
+        microJoules = nbt.getLong("stored");
     }
 
     public void writeToBuffer(ByteBuf buffer) {
-        buffer.writeInt(milliJoules);
+        buffer.writeLong(microJoules);
     }
 
     public void readFromBuffer(ByteBuf buffer) {
-        milliJoules = buffer.readInt();
+        microJoules = buffer.readLong();
     }
 
-    public void addPower(int milliJoules) {
-        this.milliJoules += milliJoules;
+    public void addPower(long microJoulesToAdd) {
+        this.microJoules += microJoulesToAdd;
     }
 
     /** Attempts to add power, but only if this is not already full.
      * 
-     * @param milliJoules The power to add.
+     * @param microJoulesToAdd The power to add.
      * @return True if the power was accepted. */
-    public boolean addPowerChecking(int milliJoules) {
+    public boolean addPowerChecking(int microJoulesToAdd) {
         if (isFull()) {
             return false;
         } else {
-            addPower(milliJoules);
+            addPower(microJoulesToAdd);
             return true;
         }
     }
 
-    public int extractAll() {
+    public long extractAll() {
         return extractPower(0, capacity);
     }
 
-    public int extractPower(int min, int max) {
-        if (milliJoules < min) return 0;
-        int extracting = Math.min(milliJoules, max);
-        milliJoules -= extracting;
+    public long extractPower(long min, long max) {
+        if (microJoules < min) return 0;
+        long extracting = Math.min(microJoules, max);
+        microJoules -= extracting;
         return extracting;
     }
 
     public boolean isFull() {
-        return milliJoules >= capacity;
+        return microJoules >= capacity;
     }
 
-    public int getContained() {
-        return milliJoules;
+    public long getContained() {
+        return microJoules;
     }
 
-    public int getCapacity() {
+    public long getCapacity() {
         return capacity;
     }
 
@@ -87,23 +84,23 @@ public class MjBattery implements INBTSerializable<NBTTagCompound> {
     }
 
     public void tick(World world, Vec3d position) {
-        if (milliJoules > capacity) {
+        if (microJoules > capacity) {
             losePower(world, position);
         }
     }
 
     protected void losePower(World world, Vec3d position) {
-        int diff = milliJoules - capacity;
-        int lost = MathHelper.ceiling_double_int(diff / 30.0);
-        milliJoules -= lost;
+        long diff = microJoules - capacity;
+        long lost = ceilDivide(diff, 32);
+        microJoules -= lost;
         MjAPI.EFFECT_MANAGER.createPowerLossEffect(world, position, lost);
     }
 
-    public String getDebugString() {
-        return formatMj(milliJoules) + " / " + formatMj(capacity) + " MJ";
+    private static long ceilDivide(long val, long by) {
+        return (val / by) + (val % by == 0 ? 0 : 1);
     }
 
-    public static String formatMj(int mj) {
-        return DOUBLE_FORMAT.format(mj / 1000.0);
+    public String getDebugString() {
+        return MjAPI.formatMj(microJoules) + " / " + MjAPI.formatMj(capacity) + " Mj";
     }
 }

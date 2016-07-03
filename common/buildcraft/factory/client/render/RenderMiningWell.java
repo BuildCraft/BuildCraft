@@ -43,14 +43,14 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
             float percentFilled = tile.getPercentFilledForRender();
             int colourIndex = (int) (percentFilled * (COLOUR_POWER.length - 1));
             part.center.colouri(COLOUR_POWER[colourIndex]);
-            part.center.lightf(percentFilled, 0);
+            part.center.lightf(percentFilled > 0.01 ? 1 : 0, 0);
         }));
         parts.add(new RenderPartLed<>((tile, part) -> {
             part.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
             boolean more = tile.hasWork();
             boolean paused = tile.getControlMode() == Mode.Off;
             part.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
-            part.center.lightf(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
+            part.center.lighti(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
         }));
     }
 

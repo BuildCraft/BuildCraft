@@ -10,8 +10,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.enums.EnumEnergyStage;
-import buildcraft.api.mj.IMjConductor;
-import buildcraft.api.mj.IMjReciever;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjConnectorType;
+import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.core.lib.BlockTileCache;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -20,10 +21,10 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
     private static final int[] PULSE_FREQUENCIES = { 60, 45, 35, 25, 15, 50 };
 
-    private final IMjConductor conductor = new IMjConductor() {
+    private final IMjConnector conductor = new IMjConnector() {
         @Override
-        public boolean canConnect(IMjConductor other) {
-            return other instanceof IMjReciever;
+        public boolean canConnect(IMjConnector other) {
+            return other instanceof IMjReceiver;
         }
     };
     private EnumFacing currentDirection = EnumFacing.UP;
@@ -31,7 +32,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     protected final BlockTileCache[] infrontBuffer = new BlockTileCache[getMaxEngineCarryDist() + 1];
     // refreshed from above, but is guaranteed to be non-null and contain non-null.
     protected TileEngineBase_BC8[] enginesInFront = new TileEngineBase_BC8[0];
-    protected IMjReciever receiverBuffer = null;
+    protected IMjReceiver receiverBuffer = null;
     private int milliJoulesHeld;
     private float pulseStage = 0;
 
@@ -78,9 +79,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                     engines[num++] = forwardEngine;
                 } else break;
             } else {
-                IMjConductor c = tile.getCapability(MjAPI.CAP_CONDUCTOR, currentDirection.getOpposite());
-                if (c instanceof IMjReciever && c.canConnect(conductor)) {
-                    receiverBuffer = (IMjReciever) c;
+                IMjConnector c = tile.getCapability(MjAPI.CAP_CONDUCTOR, currentDirection.getOpposite());
+                if (c instanceof IMjReceiver && c.canConnect(conductor)) {
+                    receiverBuffer = (IMjReceiver) c;
                 }
                 break;
             }

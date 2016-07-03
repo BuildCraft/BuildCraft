@@ -50,7 +50,6 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.inventory.IInventoryListener;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -64,6 +63,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.NBTUtils;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable, IInventoryListener {

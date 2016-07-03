@@ -23,9 +23,9 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankManager;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggable {
     public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
