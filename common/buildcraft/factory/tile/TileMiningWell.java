@@ -4,6 +4,7 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.factory.BCFactoryBlocks;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.FakePlayerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -16,6 +17,9 @@ import net.minecraftforge.event.world.BlockEvent;
 import java.util.List;
 
 public class TileMiningWell extends TileMiner {
+    public static SpriteHolderRegistry.SpriteHolder TUBE_END_TEXTURE = null;
+    public static SpriteHolderRegistry.SpriteHolder TUBE_SIDE_TEXTURE = null;
+
     @Override
     protected void mine() {
         IBlockState state = worldObj.getBlockState(currentPos);
@@ -49,8 +53,6 @@ public class TileMiningWell extends TileMiner {
                 worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
                 worldObj.destroyBlock(currentPos, false);
             }
-            worldObj.setBlockState(currentPos, getBlockForDown().getDefaultState());
-            worldObj.scheduleUpdate(currentPos, getBlockForDown(), 100);
             currentPos = currentPos.down();
             if (currentPos.getY() < 0) {
                 setComplete(true);
@@ -63,8 +65,8 @@ public class TileMiningWell extends TileMiner {
     }
 
     @Override
-    protected Block getBlockForDown() {
-        return BCFactoryBlocks.plainPipe;
+    protected int getTubeOffset() {
+        return 1;
     }
 
     @Override

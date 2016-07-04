@@ -1,12 +1,9 @@
 package buildcraft.factory.client.render;
 
-import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable.Mode;
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.lib.client.render.tile.RenderMultiTile;
-import buildcraft.lib.client.render.tile.RenderPartLed;
-import net.minecraft.block.state.IBlockState;
+import buildcraft.lib.client.render.tile.RenderPartElement;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -37,21 +34,21 @@ public class RenderPump extends RenderMultiTile<TilePump> {
     private int dX = 1, dZ = 0;
 
     public RenderPump() {
-        parts.add(new RenderPartLed<>((tile, part) -> {
+        parts.add(new RenderPartElement<>((tile, part) -> {
             part.center.positiond(ledX + dX * POWER, Y, ledZ + dZ * POWER);
             float percentFilled = tile.getPercentFilledForRender();
             int colourIndex = (int) (percentFilled * (COLOUR_POWER.length - 1));
             part.center.colouri(COLOUR_POWER[colourIndex]);
             part.center.lightf(percentFilled, 0);
         }));
-        parts.add(new RenderPartLed<>((tile, part) -> {
+        parts.add(new RenderPartElement<>((tile, part) -> {
             part.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
             boolean more = tile.hasWork();
             boolean paused = tile.getControlMode() == Mode.Off;
             part.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
             part.center.lightf(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
         }));
-        parts.add(new RenderPartLed<>((tile, part) -> {
+        parts.add(new RenderPartElement<>((tile, part) -> {
             float percentFilled = tile.getFluidPercentFilledForRender();
             part.center.positiond(ledX + dX * 0.0 / 16.0, 6.0 / 16.0 + percentFilled * 4.0 / 2.0 / 16.0, ledZ + dZ * 0.0 / 16.0);
             part.sizeY = percentFilled * 4.0 / 16.0F;
