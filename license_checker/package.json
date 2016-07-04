@@ -1,0 +1,8 @@
+{
+    "name": "bc-license-checker",
+    "version": "0.0.1",
+    "dependencies": {
+        "nodegit": "latest",
+        "request": "latest"
+    }
+}
