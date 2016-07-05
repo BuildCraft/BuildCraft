@@ -4,7 +4,6 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
@@ -19,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
     public static final int NET_LED_STATUS = 10;
 
     protected int progress = 0;

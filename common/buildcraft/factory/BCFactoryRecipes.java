@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -37,6 +38,16 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
+        if (Utils.isRegistered(BCFactoryBlocks.tank)) {
+            ItemStack out = new ItemStack(BCFactoryBlocks.tank);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+            builder.add("ggg");
+            builder.add("g g");
+            builder.add("ggg");
+            builder.map('g', "blockGlassColorless");
+            GameRegistry.addRecipe(builder.build());
+        }
+
         if (Utils.isRegistered(BCFactoryBlocks.pump)) {
             ItemStack out = new ItemStack(BCFactoryBlocks.pump);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
@@ -51,13 +62,16 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.tank)) {
-            ItemStack out = new ItemStack(BCFactoryBlocks.tank);
+        if (Utils.isRegistered(BCFactoryBlocks.floodGate)) {
+            ItemStack out = new ItemStack(BCFactoryBlocks.floodGate);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
-            builder.add("ggg");
-            builder.add("g g");
-            builder.add("ggg");
-            builder.map('g', "blockGlassColorless");
+            builder.add("igi");
+            builder.add("btb");
+            builder.add("ibi");
+            builder.map('i', "ingotIron");
+            builder.map('g', "gearIron");
+            builder.map('b', Blocks.IRON_BARS);
+            builder.map('t', BCFactoryBlocks.tank);
             GameRegistry.addRecipe(builder.build());
         }
     }
