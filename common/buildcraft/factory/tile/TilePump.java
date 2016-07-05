@@ -2,9 +2,7 @@ package buildcraft.factory.tile;
 
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.fluids.IHasTank;
 import buildcraft.lib.fluids.SingleUseTank;
-import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

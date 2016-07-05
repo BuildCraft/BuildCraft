@@ -60,8 +60,4 @@ public class SingleUseTank extends Tank {
         super.readTankFromNBT(nbt);
         acceptedFluid = FluidRegistry.getFluid(nbt.getString("acceptedFluid"));
     }
-
-    public String getDebugString() {
-        return getFluidAmount() + " / " + capacity + " MB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
-    }
 }

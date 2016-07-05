@@ -200,4 +200,8 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         }
         return 0xFF_00_00_00;
     }
+
+    public String getDebugString() {
+        return getFluidAmount() + " / " + capacity + " MB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
+    }
 }
