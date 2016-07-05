@@ -1,12 +1,8 @@
 package buildcraft.factory.tile;
 
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.fluid.FluidStorage;
 import buildcraft.lib.fluids.SingleUseTank;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -21,7 +17,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class TilePump extends TileMiner {
-    private SingleUseTank fluidStorage = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
+    private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
     private boolean canPump = false;
@@ -167,7 +163,7 @@ public class TilePump extends TileMiner {
 //            return;
 //        }
         isComplete = false;
-        if(fluidStorage.isFull()) {
+        if(tank.isFull()) {
             setComplete(true);
             return;
         }
@@ -194,18 +190,18 @@ public class TilePump extends TileMiner {
             return;
         }
 
-        if(fluidStorage.getAcceptedFluid() != pumpingFluid && !fluidStorage.isEmpty()) {
+        if(tank.getAcceptedFluid() != pumpingFluid && !tank.isEmpty()) {
             this.setComplete(true);
             return;
         }
         progress += battery.extractPower(0, target - progress);
         if(progress >= target) {
             progress = 0;
-//            fluidStorage.fill(BlockUtils.drainBlock(worldObj, currentPos, true), true);
+//            tank.fill(BlockUtils.drainBlock(worldObj, currentPos, true), true);
             FluidStack drain = BlockUtils.drainBlock(worldObj, currentPos, false);
             if(drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid()) && canPump) {
                 worldObj.setBlockToAir(currentPos);
-                fluidStorage.fill(drain, true);
+                tank.fill(drain, true);
             }
             updatePos();
             if(currentPos.getY() < 0) {
@@ -220,13 +216,13 @@ public class TilePump extends TileMiner {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        fluidStorage.deserializeNBT(nbt.getCompoundTag("tank"));
+        tank.deserializeNBT(nbt.getCompoundTag("tank"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setTag("fluid_sotrage", fluidStorage.serializeNBT());
+        nbt.setTag("tank", tank.serializeNBT());
         return nbt;
     }
 
@@ -239,7 +235,7 @@ public class TilePump extends TileMiner {
             if(id == NET_RENDER_DATA) {
                 writePayload(NET_LED_STATUS, buffer, side);
             } else if(id == NET_LED_STATUS) {
-                fluidStorage.writeToBuffer(buffer);
+                tank.writeToBuffer(buffer);
             }
         }
     }
@@ -251,7 +247,7 @@ public class TilePump extends TileMiner {
             if(id == NET_RENDER_DATA) {
                 readPayload(NET_LED_STATUS, buffer, side);
             } else if(id == NET_LED_STATUS) {
-                fluidStorage.readFromBuffer(buffer);
+                tank.readFromBuffer(buffer);
             }
         }
     }
@@ -259,17 +255,17 @@ public class TilePump extends TileMiner {
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         super.getDebugInfo(left, right, side);
-        left.add("fluid = " + fluidStorage.getDebugString());
+        left.add("fluid = " + tank.getDebugString());
     }
 
     @SideOnly(Side.CLIENT)
     public float getFluidPercentFilledForRender() {
-        float val = fluidStorage.getFluidAmount() / (float) fluidStorage.getCapacity();
+        float val = tank.getFluidAmount() / (float) tank.getCapacity();
         return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 
     @SideOnly(Side.CLIENT)
     public int getFluidColorForRender() {
-        return fluidStorage.getFluidColor();
+        return tank.getFluidColor();
     }
 }

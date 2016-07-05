@@ -6,12 +6,14 @@ package buildcraft.factory;
 
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
+import buildcraft.factory.client.render.RenderTank;
 import buildcraft.factory.client.render.RenderTube;
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.factory.gui.GuiAutoCraftItems;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
+import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.client.render.tile.RenderMultiRenderers;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,6 +81,7 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
             TilePump.TUBE_END_TEXTURE = SpriteHolderRegistry.getHolder(new ResourceLocation("buildcraftfactory", "blocks/tube/end"));
             TilePump.TUBE_SIDE_TEXTURE = SpriteHolderRegistry.getHolder(new ResourceLocation("buildcraftfactory", "blocks/tube/side"));
             ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderMultiRenderers(new RenderPump(), new RenderTube()));
+            ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
         }
     }
 }
