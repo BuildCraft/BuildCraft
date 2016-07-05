@@ -1,21 +1,32 @@
 package buildcraft.factory.tile;
 
+import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.FluidUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[]{EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
@@ -24,6 +35,9 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     private boolean[] sidesBlocked = new boolean[5];
     private final Tank tank = new Tank("tank", 2000, this);
+    private int delayIndex = 0;
+    private int tick = 120;
+    private TreeMap<Integer, Deque<BlockPos>> layerQueues = new TreeMap<>();
 
     public static int getIndexFromSide(EnumFacing side) {
         return Arrays.binarySearch(SIDE_INDEXES, side);
@@ -37,6 +51,80 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         sidesBlocked[getIndexFromSide(side)] = blocked;
     }
 
+    public int getCurrentDelay() {
+        return REBUILD_DELAYS[delayIndex];
+    }
+
+    private Deque<BlockPos> getLayerQueue(int layer) {
+        Deque<BlockPos> pumpQueue = layerQueues.get(layer);
+
+        if(pumpQueue == null) {
+            pumpQueue = new LinkedList<>();
+            layerQueues.put(layer, pumpQueue);
+        }
+
+        return pumpQueue;
+    }
+
+    private void rebuildQueue() {
+        layerQueues.clear();
+
+        Set<BlockPos> visitedBlocks = new HashSet<>();
+        Deque<BlockPos> blocksFound = new LinkedList<>();
+
+        tryAddToQueue(pos, visitedBlocks, blocksFound);
+
+        while(!blocksFound.isEmpty()) {
+            Deque<BlockPos> blocksToExpand = blocksFound;
+            blocksFound = new LinkedList<>();
+
+            for(BlockPos index : blocksToExpand) {
+                tryAddToQueue(index, visitedBlocks, blocksFound);
+            }
+        }
+    }
+
+    private void tryAddToQueue(BlockPos blockPos, Set<BlockPos> visitedBlocks, Deque<BlockPos> blocksFound) {
+        for(EnumFacing side : EnumFacing.VALUES) {
+            if(side != EnumFacing.UP && !isSideBlocked(side)) {
+                BlockPos currentPos = blockPos.offset(side);
+
+                if(currentPos.getY() < 0 || currentPos.getY() > 255) {
+                    return;
+                }
+                if(visitedBlocks.add(currentPos)) {
+                    if((currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) * (currentPos.getZ() - pos.getZ()) > 64 * 64) {
+                        return;
+                    }
+
+                    if(worldObj.isAirBlock(currentPos) || worldObj.getBlockState(currentPos).getBlock() instanceof BlockFloodGate) {
+                        blocksFound.add(currentPos);
+                        if(!(worldObj.getBlockState(currentPos).getBlock() instanceof BlockFloodGate)) {
+                            getLayerQueue(currentPos.getY()).addLast(currentPos);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private BlockPos getNext() {
+        if(layerQueues.isEmpty()) {
+            return null;
+        }
+
+        Deque<BlockPos> bottomLayer = layerQueues.firstEntry().getValue();
+
+        if(bottomLayer != null) {
+            if(bottomLayer.isEmpty()) {
+                bottomLayer = layerQueues.pollFirstEntry().getValue();
+            }
+            return bottomLayer.pollFirst();
+        }
+
+        return null;
+    }
+
     // ITickable
 
     @Override
@@ -46,6 +134,25 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         }
 
         TankUtils.popFluidAround(worldObj, pos);
+
+
+        tick++;
+        if(tick % 16 == 0) {
+            FluidStack fluid = tank.drain(1000, false);
+            if(fluid != null && fluid.amount == 1000) {
+                BlockPos current = getNext();
+                if(current != null) {
+                    worldObj.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
+                    tank.drain(1000, true);
+                    delayIndex = 0;
+                }
+            }
+        }
+
+        if(tick % getCurrentDelay() == 0) {
+            delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
+            rebuildQueue();
+        }
 
         sendNetworkUpdate(NET_FLOOD_GATE); // TODO: optimize
     }

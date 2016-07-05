@@ -1,7 +1,7 @@
 {
     "parent": "block/cube_all",
     "textures": {
-    "particle": "buildcraftfactory:blocks/flood_gate/side",
+    "particle": "buildcraftfactory:blocks/flood_gate/open",
         "up": "buildcraftfactory:blocks/flood_gate/top",
         "down": "buildcraftfactory:blocks/flood_gate/open",
         "north": "buildcraftfactory:blocks/flood_gate/open",
