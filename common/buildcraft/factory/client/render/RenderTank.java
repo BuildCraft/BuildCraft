@@ -20,7 +20,7 @@ public class RenderTank extends RenderMultiTile<TileTank> {
         parts.add(new RenderPartElement<>((tile, part) -> {
             part.sizeY = ((double)tile.tank.getFluidAmount() / tile.tank.getCapacity()) * 16.0 / 16.0;
             if(part.sizeY != 0) {
-                part.sizeX = part.sizeZ = 10.0 / 16.0;
+                part.sizeX = part.sizeZ = 12.0 / 16.0 * 0.99;
             } else {
                 part.sizeX = part.sizeZ = 0;
             }
