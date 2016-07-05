@@ -1,5 +1,5 @@
 {
-    "parent": "buildcraftfactory:block/plain_pipe",
+    "parent": "buildcraftfactory:block/tank",
     "display": {
         "gui": {
             "rotation": [30, 225, 0],

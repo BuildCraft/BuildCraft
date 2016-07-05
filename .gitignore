@@ -30,3 +30,7 @@ run_server
 #Custom code to inject the the dev environment
 custom
 
+#licnse_checker
+license_checker/local/**
+license_checker/node_modules
+
