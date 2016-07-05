@@ -6,12 +6,14 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Point3f;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /** A variable sized element (like LED) that can render somewhere in a TESR. Passing a resolver instance will let you modify the
  * location, colour, lightmap, and size of the single element. */
@@ -21,6 +23,7 @@ public class RenderPartElement<T extends TileEntity> implements ITileRenderPart<
     public double sizeX = 1 / 16.0, sizeY = 1 / 16.0, sizeZ = 1 / 16.0;
     public ResourceLocation topTexture = null, bottomTexture = null, northTexture = null, southTexture = null, eastTexture = null, westTexture = null;
     private final BiConsumer<T, RenderPartElement<T>> resolver;
+    public Function<EnumFacing, Boolean> shouldSideBeRendered = side -> true;
 
     public RenderPartElement(BiConsumer<T, RenderPartElement<T>> resolver) {
         this.resolver = resolver;
@@ -39,12 +42,12 @@ public class RenderPartElement<T extends TileEntity> implements ITileRenderPart<
 
         resolver.accept(tile, this);
 
-        renderElement(buffer, center, sizeX, sizeY, sizeZ, this);
+        renderElement(buffer, center, sizeX, sizeY, sizeZ, shouldSideBeRendered, this);
     }
 
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components of
      * the vertex. */
-    public static void renderElement(VertexBuffer vb, MutableVertex center, double sizeX, double sizeY, double sizeZ, RenderPartElement renderPartElement) {
+    public static void renderElement(VertexBuffer vb, MutableVertex center, double sizeX, double sizeY, double sizeZ, Function<EnumFacing, Boolean> shouldSideBeRendered, RenderPartElement renderPartElement) {
         Point3f pos = center.position();
         double x = pos.x;
         double y = pos.y;
@@ -55,40 +58,52 @@ public class RenderPartElement<T extends TileEntity> implements ITileRenderPart<
         double rZ = sizeZ / 2;
 
         // TOP
-        vertex(vb, center, x - rX, y + rY, z - rZ, 0, 0, renderPartElement.topTexture);
-        vertex(vb, center, x + rX, y + rY, z - rZ, 0, 1, renderPartElement.topTexture);
-        vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.topTexture);
-        vertex(vb, center, x - rX, y + rY, z + rZ, 1, 0, renderPartElement.topTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.UP)) {
+            vertex(vb, center, x - rX, y + rY, z + rZ, 1, 0, renderPartElement.topTexture);
+            vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.topTexture);
+            vertex(vb, center, x + rX, y + rY, z - rZ, 0, 1, renderPartElement.topTexture);
+            vertex(vb, center, x - rX, y + rY, z - rZ, 0, 0, renderPartElement.topTexture);
+        }
 
         // BOTTOM
-        vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.bottomTexture);
-        vertex(vb, center, x + rX, y - rY, z - rZ, 0, 1, renderPartElement.bottomTexture);
-        vertex(vb, center, x + rX, y - rY, z + rZ, 1, 1, renderPartElement.bottomTexture);
-        vertex(vb, center, x - rX, y - rY, z + rZ, 1, 0, renderPartElement.bottomTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.DOWN)) {
+            vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.bottomTexture);
+            vertex(vb, center, x + rX, y - rY, z - rZ, 0, 1, renderPartElement.bottomTexture);
+            vertex(vb, center, x + rX, y - rY, z + rZ, 1, 1, renderPartElement.bottomTexture);
+            vertex(vb, center, x - rX, y - rY, z + rZ, 1, 0, renderPartElement.bottomTexture);
+        }
 
         // NORTH
-        vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.northTexture);
-        vertex(vb, center, x - rX, y + rY, z - rZ, 0, 1, renderPartElement.northTexture);
-        vertex(vb, center, x - rX, y + rY, z + rZ, 1, 1, renderPartElement.northTexture);
-        vertex(vb, center, x - rX, y - rY, z + rZ, 1, 0, renderPartElement.northTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.NORTH)) {
+            vertex(vb, center, x - rX, y - rY, z + rZ, 1, 0, renderPartElement.northTexture);
+            vertex(vb, center, x - rX, y + rY, z + rZ, 1, 1, renderPartElement.northTexture);
+            vertex(vb, center, x - rX, y + rY, z - rZ, 0, 1, renderPartElement.northTexture);
+            vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.northTexture);
+        }
 
         // SOUTH
-        vertex(vb, center, x + rX, y - rY, z - rZ, 0, 0, renderPartElement.southTexture);
-        vertex(vb, center, x + rX, y + rY, z - rZ, 0, 1, renderPartElement.southTexture);
-        vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.southTexture);
-        vertex(vb, center, x + rX, y - rY, z + rZ, 1, 0, renderPartElement.southTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.SOUTH)) {
+            vertex(vb, center, x + rX, y - rY, z - rZ, 0, 0, renderPartElement.southTexture);
+            vertex(vb, center, x + rX, y + rY, z - rZ, 0, 1, renderPartElement.southTexture);
+            vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.southTexture);
+            vertex(vb, center, x + rX, y - rY, z + rZ, 1, 0, renderPartElement.southTexture);
+        }
 
         // EAST
-        vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.eastTexture);
-        vertex(vb, center, x - rX, y + rY, z - rZ, 0, 1, renderPartElement.eastTexture);
-        vertex(vb, center, x + rX, y + rY, z - rZ, 1, 1, renderPartElement.eastTexture);
-        vertex(vb, center, x + rX, y - rY, z - rZ, 1, 0, renderPartElement.eastTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.EAST)) {
+            vertex(vb, center, x - rX, y - rY, z - rZ, 0, 0, renderPartElement.eastTexture);
+            vertex(vb, center, x - rX, y + rY, z - rZ, 0, 1, renderPartElement.eastTexture);
+            vertex(vb, center, x + rX, y + rY, z - rZ, 1, 1, renderPartElement.eastTexture);
+            vertex(vb, center, x + rX, y - rY, z - rZ, 1, 0, renderPartElement.eastTexture);
+        }
 
         // WEST
-        vertex(vb, center, x - rX, y - rY, z + rZ, 0, 0, renderPartElement.westTexture);
-        vertex(vb, center, x - rX, y + rY, z + rZ, 0, 1, renderPartElement.westTexture);
-        vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.westTexture);
-        vertex(vb, center, x + rX, y - rY, z + rZ, 1, 0, renderPartElement.westTexture);
+        if(shouldSideBeRendered.apply(EnumFacing.WEST)) {
+            vertex(vb, center, x + rX, y - rY, z + rZ, 1, 0, renderPartElement.westTexture);
+            vertex(vb, center, x + rX, y + rY, z + rZ, 1, 1, renderPartElement.westTexture);
+            vertex(vb, center, x - rX, y + rY, z + rZ, 0, 1, renderPartElement.westTexture);
+            vertex(vb, center, x - rX, y - rY, z + rZ, 0, 0, renderPartElement.westTexture);
+        }
     }
 
     private static void vertex(VertexBuffer vb, MutableVertex center, double x, double y, double z, double u, double v, ResourceLocation texture) {

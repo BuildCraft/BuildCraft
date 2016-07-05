@@ -1,7 +1,9 @@
 package buildcraft.factory.tile;
 
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.fluids.IHasTank;
 import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -17,7 +19,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
+public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IHasTank {
     public static final int NET_TANK = 10;
 
     public SingleUseTank tank = new SingleUseTank("tank", 16000, this);
@@ -83,5 +85,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("fluid = " + tank.getDebugString());
+    }
+
+    // IHasTank
+
+    @Override
+    public Tank getTank() {
+        return tank;
     }
 }

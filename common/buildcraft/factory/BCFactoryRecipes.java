@@ -36,5 +36,29 @@ public class BCFactoryRecipes {
             builder.map('p', Items.IRON_PICKAXE);
             GameRegistry.addRecipe(builder.build());
         }
+
+        if (Utils.isRegistered(BCFactoryBlocks.pump)) {
+            ItemStack out = new ItemStack(BCFactoryBlocks.pump);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+            builder.add("iri");
+            builder.add("igi");
+            builder.add("tbt");
+            builder.map('i', "ingotIron");
+            builder.map('r', "dustRedstone");
+            builder.map('g', "gearIron");
+            builder.map('b', Items.BUCKET);
+            builder.map('t', BCFactoryBlocks.tank);
+            GameRegistry.addRecipe(builder.build());
+        }
+
+        if (Utils.isRegistered(BCFactoryBlocks.tank)) {
+            ItemStack out = new ItemStack(BCFactoryBlocks.tank);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+            builder.add("ggg");
+            builder.add("g g");
+            builder.add("ggg");
+            builder.map('g', "blockGlassColorless");
+            GameRegistry.addRecipe(builder.build());
+        }
     }
 }

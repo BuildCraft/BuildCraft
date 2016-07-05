@@ -2,7 +2,10 @@ package buildcraft.factory.tile;
 
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.fluids.IHasTank;
 import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -16,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.util.*;
 
-public class TilePump extends TileMiner {
+public class TilePump extends TileMiner implements IHasTank {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
@@ -155,6 +158,13 @@ public class TilePump extends TileMiner {
     }
 
     @Override
+    public void update() {
+        super.update();
+
+        TankUtils.pushFluidAround(worldObj, pos);
+    }
+
+    @Override
     public void mine() {
 //        System.out.println(currentPos);
 //        IBlockState state = worldObj.getBlockState(currentPos);
@@ -267,5 +277,12 @@ public class TilePump extends TileMiner {
     @SideOnly(Side.CLIENT)
     public int getFluidColorForRender() {
         return tank.getFluidColor();
+    }
+
+    // IHasTank
+
+    @Override
+    public Tank getTank() {
+        return tank;
     }
 }
