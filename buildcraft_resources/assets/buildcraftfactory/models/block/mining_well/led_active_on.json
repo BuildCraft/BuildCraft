@@ -1,6 +1,0 @@
-{
-    "parent": "buildcraftfactory:block/mining_well/led_active",
-    "textures": {
-        "led": "buildcraftcore:blocks/led_green_on"
-    }
-}

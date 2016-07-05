@@ -10,7 +10,7 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.lib.client.render.tile.RenderMultiTile;
-import buildcraft.lib.client.render.tile.RenderPartLed;
+import buildcraft.lib.client.render.tile.RenderPartElement;
 
 public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
@@ -19,7 +19,7 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
     private static final int COLOUR_STATUS_DONE = 0xFF_1f_10_1b; // black-ish
 
     private static final int BLOCK_LIGHT_STATUS_OFF = 0x0;
-    private static final int BLOCK_LIGHT_STATUS_TODO = 0xF;
+    private static final int BLOCK_LIGHT_STATUS_TODO = 0x1;
 
     private static final double POWER = 2.5 / 16.0;
     private static final double STATUS = 4.5 / 16.0;
@@ -38,14 +38,14 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
     private int dX = 1, dZ = 0;
 
     public RenderMiningWell() {
-        parts.add(new RenderPartLed<>((tile, part) -> {
+        parts.add(new RenderPartElement<>((tile, part) -> {
             part.center.positiond(ledX + dX * POWER, Y, ledZ + dZ * POWER);
             float percentFilled = tile.getPercentFilledForRender();
             int colourIndex = (int) (percentFilled * (COLOUR_POWER.length - 1));
             part.center.colouri(COLOUR_POWER[colourIndex]);
             part.center.lightf(percentFilled, 0);
         }));
-        parts.add(new RenderPartLed<>((tile, part) -> {
+        parts.add(new RenderPartElement<>((tile, part) -> {
             part.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
             boolean more = tile.hasWork();
             boolean paused = tile.getControlMode() == Mode.Off;

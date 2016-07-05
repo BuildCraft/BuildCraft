@@ -240,10 +240,10 @@ public final class BlockUtils {
                 }
                 return fluidBlock.drain(world, pos, doDrain);
             } else {
-                int level = (Integer) state.getValue(BlockLiquid.LEVEL);
-                if (level != 0) {
-                    return null;
-                }
+                int level = state.getValue(BlockLiquid.LEVEL);
+//                if (level != 0) {
+//                    return null;
+//                }
 
                 if (doDrain) {
                     world.setBlockToAir(pos);

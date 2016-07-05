@@ -1,10 +1,10 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "buildcraftfactory:pump/main"
+        "model": "buildcraftfactory:pump"
     },
     "variants": {
-        "inventory": [{"model": "buildcraftfactory:pump/main"}],
-        "normal": [{"model": "buildcraftfactory:pump/main"}]
+        "inventory": [{"model": "buildcraftfactory:pump"}],
+        "normal": [{"model": "buildcraftfactory:pump"}]
     }
 }
