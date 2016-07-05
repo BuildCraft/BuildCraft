@@ -10,7 +10,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,7 +21,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, IHasTank {
+public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final int NET_TANK = 10;
 
     public SingleUseTank tank = new SingleUseTank("tank", 16000, this);
@@ -87,10 +89,21 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         left.add("fluid = " + tank.getDebugString());
     }
 
-    // IHasTank
+    // Capabilities
 
     @Override
-    public Tank getTank() {
-        return tank;
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return (T) tank;
+        }
+        return super.getCapability(capability, facing);
     }
 }

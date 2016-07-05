@@ -27,6 +27,7 @@ public class RenderPartElement<T extends TileEntity> implements ITileRenderPart<
 
     public RenderPartElement(BiConsumer<T, RenderPartElement<T>> resolver) {
         this.resolver = resolver;
+        center.lightf(1, 0);
     }
 
     public RenderPartElement(double x, double y, double z, BiConsumer<T, RenderPartElement<T>> resolver) {

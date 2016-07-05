@@ -11,15 +11,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.*;
 
-public class TilePump extends TileMiner implements IHasTank {
+public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
@@ -279,10 +281,21 @@ public class TilePump extends TileMiner implements IHasTank {
         return tank.getFluidColor();
     }
 
-    // IHasTank
+    // Capabilities
 
     @Override
-    public Tank getTank() {
-        return tank;
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return (T) tank;
+        }
+        return super.getCapability(capability, facing);
     }
 }
