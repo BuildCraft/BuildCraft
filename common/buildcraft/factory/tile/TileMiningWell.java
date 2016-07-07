@@ -1,20 +1,20 @@
 package buildcraft.factory.tile;
 
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.factory.BCFactoryBlocks;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.misc.FakePlayerUtil;
-import net.minecraft.block.Block;
+import java.util.List;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
-import java.util.List;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.misc.FakePlayerUtil;
 
 public class TileMiningWell extends TileMiner {
     public static SpriteHolderRegistry.SpriteHolder TUBE_END_TEXTURE = null;

@@ -4,7 +4,8 @@ import java.util.Set;
 
 import net.minecraft.util.EnumFacing;
 
-/** Represents a task that a builder can do to build part of its schematic. This should cache its {@link IBuilderAccessor}.
+/** Represents a task that a builder can do to build part of its schematic. This should cache its
+ * {@link IBuilderAccessor}.
  * 
  * @date Created on 10 Apr 2016 by AlexIIL */
 public interface IBptTask extends IBptWriter {
@@ -15,8 +16,8 @@ public interface IBptTask extends IBptWriter {
 
     /** @param milliJoules The number of milli joules to receive
      * @return The number of milliJoules left over */
-    int receivePower(IBuilderAccessor builder, int milliJoules);
+    long receivePower(IBuilderAccessor builder, long microJoules);
 
     /** @return */
-    int getRequiredMilliJoules(IBuilderAccessor builder);
+    long getRequiredMicroJoules(IBuilderAccessor builder);
 }

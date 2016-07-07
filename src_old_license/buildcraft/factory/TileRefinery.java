@@ -31,11 +31,11 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.fluids.TankManager;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver, IDebuggable {
 

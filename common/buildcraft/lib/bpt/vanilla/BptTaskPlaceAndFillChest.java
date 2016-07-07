@@ -17,6 +17,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.bpt.helper.BptActionIItemHandlerSetStack;
 import buildcraft.lib.bpt.helper.BptActionSetBlockState;
 import buildcraft.lib.bpt.helper.BptTaskSimple;
@@ -30,7 +31,7 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
     private final boolean[] hasSent = new boolean[29];
 
     public BptTaskPlaceAndFillChest(BlockPos pos, IBlockState state, ItemStack[] stacks, IBuilderAccessor accessor) {
-        super(1000 + costOf(stacks));
+        super(MjAPI.MJ + costOf(stacks));
         this.pos = pos;
         this.state = state;
         Arrays.fill(hasSent, false);
@@ -46,8 +47,7 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
             if (s != null) {
                 // 1 MJ per full stack
                 // * 27 = 27 MJ per full chest
-                // but this is in milli MJ so its /1000
-                c += (s.stackSize * 100) / 64;
+                c += (s.stackSize * MjAPI.MJ) / 64;
             }
         }
         return c;

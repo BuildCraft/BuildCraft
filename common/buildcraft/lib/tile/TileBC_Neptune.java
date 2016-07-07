@@ -45,17 +45,21 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver {
+    private static int netId = 0;
+
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
-    public static final int NET_RENDER_DATA = 0;
+    public static final int NET_RENDER_DATA = netId++;
     /** Used for sending all data in the GUI. Basically what has been omitted from {@link #NET_RENDER_DATA} that is
      * shown in the GUI. */
-    public static final int NET_GUI_DATA = 1;
+    public static final int NET_GUI_DATA = netId++;
 
-    public static final int NET_REN_DELTA_SINGLE = 2;
-    public static final int NET_REN_DELTA_CLEAR = 3;
-    public static final int NET_GUI_DELTA_SINGLE = 4;
-    public static final int NET_GUI_DELTA_CLEAR = 5;
+    public static final int NET_REN_DELTA_SINGLE = netId++;
+    public static final int NET_REN_DELTA_CLEAR = netId++;
+    public static final int NET_GUI_DELTA_SINGLE = netId++;
+    public static final int NET_GUI_DELTA_CLEAR = netId++;
+
+    public static final int NET_IDS = netId;
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();

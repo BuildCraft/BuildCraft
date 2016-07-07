@@ -126,6 +126,10 @@ public class BuilderPlayer implements IBuilderAccessor, ITickable {
         }
     }
 
+    public boolean hasMore() {
+        return tasks.size() > 0 || queuedActions.getMaxDelay() > 0;
+    }
+
     public void build(SchematicBlock schematic, BlockPos place) {
         for (IBptTask task : schematic.createTasks(this, place)) {
             tasks.addLast(task);
