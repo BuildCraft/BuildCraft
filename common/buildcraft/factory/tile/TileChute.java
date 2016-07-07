@@ -79,7 +79,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
         return inventory;
     }
 
-    private static void putStackInInventory(EnumFacing side, IInventory inventory, ItemStack itemStack) {
+    private static ItemStack putStackInInventory(EnumFacing side, IInventory inventory, ItemStack itemStack) {
         int slotIndexes[] = IntStream.rangeClosed(0, inventory.getSizeInventory() - 1).toArray();
         if(inventory instanceof ISidedInventory) {
             slotIndexes = ((ISidedInventory) inventory).getSlotsForFace(side);
@@ -104,13 +104,14 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
                 break;
             }
         }
+        return itemStack;
     }
 
     private void putInInventory(EnumFacing side, IInventory inventory) {
         for(int i = 0; i < 4; i++) {
             if(inv.getStackInSlot(i) != null) {
                 ItemStack itemStack = inv.getStackInSlot(i).copy();
-                putStackInInventory(side, inventory, itemStack);
+                itemStack = putStackInInventory(side, inventory, itemStack);
                 inv.setStackInSlot(i, itemStack);
             }
         }
@@ -174,7 +175,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
             progress += 1000; // can be free because of gravity
         }
         progress += battery.extractPower(0, target - progress);
-        
+
         if (progress >= target) {
             progress = 0;
             int radius = 3;
