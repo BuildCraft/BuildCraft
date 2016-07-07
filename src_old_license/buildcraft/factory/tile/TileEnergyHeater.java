@@ -29,8 +29,8 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.BlockBuildCraftBase;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankManager;
 
 public class TileEnergyHeater extends TileBuildCraft implements IFluidHandler, IHasWork, IControllable, IDebuggable, IInventory {
     private final Tank in, out;

@@ -1,12 +1,12 @@
 package buildcraft.builders.bpt.player;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
@@ -17,7 +17,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 public enum PlayerBptBuilderManager {
     INSTANCE;
 
-    private final Map<UUID, TIntObjectHashMap<BuilderPlayer>> playerBuilders = new HashMap<>();
+    /** Map of dimension -> ( player -> builder ) */
+    private final TIntObjectHashMap<Map<UUID, BuilderPlayer>> playerBuilders = new TIntObjectHashMap<>();
 
     public void onPlayerTick(PlayerTickEvent event) {
         if (event.phase == Phase.START || event.side == Side.CLIENT) {
@@ -25,6 +26,10 @@ public enum PlayerBptBuilderManager {
         }
         EntityPlayer player = event.player;
         UUID uuid = player.getPersistentID();
+    }
+
+    public void onPlayerChangeDim(PlayerChangedDimensionEvent event) {
+
     }
 
     public void onPlayerSave(PlayerLoggedOutEvent event) {

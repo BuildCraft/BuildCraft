@@ -77,7 +77,7 @@ public class DeltaManager {
         final int index = deltas.get(from.visibility).indexOf(from);
         if (index == -1) throw new IllegalArgumentException("Unknown delta!");
 
-        sender.sendDeltaMessage(gui, type, buffer -> {
+        sender.sendDeltaMessage(gui, type, (buffer) -> {
             buffer.writeByte(index);
             writer.write(buffer);
         });

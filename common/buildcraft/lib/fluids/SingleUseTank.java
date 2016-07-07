@@ -4,8 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.fluids;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -14,7 +17,7 @@ public class SingleUseTank extends Tank {
 
     private Fluid acceptedFluid;
 
-    public SingleUseTank(String name, int capacity, TileEntity tile) {
+    public SingleUseTank(@Nonnull String name, int capacity, TileEntity tile) {
         super(name, capacity, tile);
     }
 

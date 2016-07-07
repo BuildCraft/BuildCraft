@@ -24,6 +24,6 @@ public class RenderMachineWave<T extends TileEntity> implements ITileRenderPart<
     @Override
     public void render(T tile, VertexBuffer buffer) {
         // TODO: Sine wave (Make the tile return something?)
-        RenderPartElement.renderElement(buffer, centerStart, SIZE, SIZE, SIZE, new RenderPartElement(null)); // FIXME: new instance creation and method should be private
+        RenderPartCube.renderElement(buffer, centerStart, SIZE, SIZE, SIZE, new RenderPartCube(null)); // FIXME: new instance creation and method should be private
     }
 }

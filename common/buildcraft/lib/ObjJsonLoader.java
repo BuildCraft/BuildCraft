@@ -169,6 +169,7 @@ class ItemTransformVec3fDeserializer implements JsonDeserializer<ItemTransformVe
     private static final org.lwjgl.util.vector.Vector3f TRANSLATION_DEFAULT = new org.lwjgl.util.vector.Vector3f(0.0F, 0.0F, 0.0F);
     private static final org.lwjgl.util.vector.Vector3f SCALE_DEFAULT = new org.lwjgl.util.vector.Vector3f(1.0F, 1.0F, 1.0F);
 
+    @Override
     public ItemTransformVec3f deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException
     {
         JsonObject jsonobject = p_deserialize_1_.getAsJsonObject();
@@ -216,6 +217,7 @@ class ItemTransformVec3fDeserializer implements JsonDeserializer<ItemTransformVe
 
 class ItemCameraTransformsDeserializer implements JsonDeserializer<ItemCameraTransforms>
 {
+    @Override
     public ItemCameraTransforms deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException
     {
         JsonObject jsonobject = p_deserialize_1_.getAsJsonObject();

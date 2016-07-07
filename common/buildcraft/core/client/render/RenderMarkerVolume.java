@@ -21,9 +21,9 @@ import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.LaserData_BC8;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
 
 public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolume> {
@@ -69,7 +69,7 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(LASER_TYPE, one, two, SCALE);
-        LaserRenderer_BC8.renderLaser(data);
+        LaserRenderer_BC8.renderLaserGlList(data);
     }
 
     private static Vec3d offset(Vec3d vec, EnumFacing face) {

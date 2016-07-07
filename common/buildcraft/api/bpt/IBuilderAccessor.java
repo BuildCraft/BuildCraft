@@ -44,7 +44,7 @@ public interface IBuilderAccessor {
     /** @return The number of ticks the animation will take. It is an array {start, end} of the power flowing
      *         timings. */
     // FIXME Ambiguous timings doc!
-    int[] startPowerAnimation(Vec3d target, int milliJoules, int delay);
+    int[] startPowerAnimation(Vec3d target, long microJoules, int delay);
 
     /** Requests a single item stack. Can be null, in which case a  */
     IRequestedItem requestStack(ItemStack stack);

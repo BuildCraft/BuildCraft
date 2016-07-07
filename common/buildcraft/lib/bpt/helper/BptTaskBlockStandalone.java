@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.misc.NBTUtils;
 
 public class BptTaskBlockStandalone extends BptTaskSimple {
@@ -29,7 +30,7 @@ public class BptTaskBlockStandalone extends BptTaskSimple {
     }
 
     public BptTaskBlockStandalone(BlockPos pos, IBlockState state, IRequestedItem item) {
-        super(500);
+        super(MjAPI.MJ / 2);
         this.pos = pos;
         this.state = state;
         this.reqItem = item;

@@ -5,14 +5,19 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
+import net.minecraftforge.client.model.animation.FastTESR;
+
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.factory.BCFactoryBlocks;
 import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.lib.client.render.tile.RenderMultiTile;
-import buildcraft.lib.client.render.tile.RenderPartElement;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.tile.RenderPartCube;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
+public class RenderMiningWell extends FastTESR<TileMiningWell> {
     private static final int[] COLOUR_POWER = new int[16];
     private static final int COLOUR_STATUS_ON = 0xFF_77_DD_77; // a light green
     private static final int COLOUR_STATUS_PAUSED = 0xFF_47_B3_FF; // a light orange
@@ -25,6 +30,9 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
     private static final double STATUS = 4.5 / 16.0;
     private static final double Y = 5.5 / 16.0;
 
+    private static final RenderPartCube LED_POWER, LED_STATUS;
+    private static final LaserType TUBE_LASER;
+
     static {
         for (int i = 0; i < COLOUR_POWER.length; i++) {
             int c = (i * 0x40) / COLOUR_POWER.length;
@@ -32,56 +40,76 @@ public class RenderMiningWell extends RenderMultiTile<TileMiningWell> {
             int colour = (0xFF << 24) + (c << 16) + (c << 8) + r;
             COLOUR_POWER[i] = colour;
         }
+        LED_POWER = new RenderPartCube();
+        LED_STATUS = new RenderPartCube();
+
+        SpriteHolder spriteTubeMiddle = SpriteHolderRegistry.getHolder("buildcraftfactory:blocks/mining_well/tube");
+        LaserRow cap = new LaserRow(spriteTubeMiddle, 0, 8, 8, 16);
+        LaserRow middle = new LaserRow(spriteTubeMiddle, 0, 0, 16, 8);
+
+        LaserRow[] middles = { middle };
+
+        TUBE_LASER = new LaserType(cap, middle, middles, null, cap);
     }
 
-    private double ledX, ledZ;
-    private int dX = 1, dZ = 0;
-
-    public RenderMiningWell() {
-        parts.add(new RenderPartElement<>((tile, part) -> {
-            part.center.positiond(ledX + dX * POWER, Y, ledZ + dZ * POWER);
-            float percentFilled = tile.getPercentFilledForRender();
-            int colourIndex = (int) (percentFilled * (COLOUR_POWER.length - 1));
-            part.center.colouri(COLOUR_POWER[colourIndex]);
-            part.center.lightf(percentFilled, 0);
-        }));
-        parts.add(new RenderPartElement<>((tile, part) -> {
-            part.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
-            boolean more = tile.hasWork();
-            boolean paused = tile.getControlMode() == Mode.Off;
-            part.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
-            part.center.lightf(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
-        }));
+    /** TODO: Call this! */
+    public static void textureStitchPost() {
+        LED_POWER.setWhiteTex();
+        LED_STATUS.setWhiteTex();
     }
+
+    private final RenderTube tubeRenderer = new RenderTube(TUBE_LASER);
+
+    public RenderMiningWell() {}
 
     @Override
     public void renderTileEntityFast(TileMiningWell tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+        buffer.setTranslation(x, y, z);
         EnumFacing facing = EnumFacing.NORTH;
         IBlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (state.getBlock() == BCFactoryBlocks.miningWell) {
             facing = state.getValue(BuildCraftProperties.BLOCK_FACING);
         }
 
+        final int dX, dZ;
+        final double ledX, ledZ;
+
         if (facing.getAxis() == Axis.X) {
             dX = 0;
             dZ = facing.getAxisDirection().getOffset();
             ledZ = 0.5;
             if (facing == EnumFacing.EAST) {
-                ledX = 15.6 / 16.0;
+                ledX = 15.8 / 16.0;
             } else {
-                ledX = 0.4 / 16.0;
+                ledX = 0.2 / 16.0;
             }
         } else {
             dX = -facing.getAxisDirection().getOffset();
             dZ = 0;
             ledX = 0.5;
             if (facing == EnumFacing.SOUTH) {
-                ledZ = 15.6 / 16.0;
+                ledZ = 15.8 / 16.0;
             } else {
-                ledZ = 0.4 / 16.0;
+                ledZ = 0.2 / 16.0;
             }
         }
 
-        super.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
+        LED_POWER.center.positiond(ledX + dX * POWER, Y, ledZ + dZ * POWER);
+        float percentFilled = tile.getPercentFilledForRender();
+        int colourIndex = (int) (percentFilled * (COLOUR_POWER.length - 1));
+        LED_POWER.center.colouri(COLOUR_POWER[colourIndex]);
+        LED_POWER.center.lightf(percentFilled > 0.01 ? 1 : 0, 0);
+
+        LED_POWER.render(buffer);
+
+        LED_STATUS.center.positiond(ledX + dX * STATUS, Y, ledZ + dZ * STATUS);
+        boolean more = tile.hasWork();
+        boolean paused = tile.getControlMode() == Mode.Off;
+        LED_STATUS.center.colouri(more ? (paused ? COLOUR_STATUS_PAUSED : COLOUR_STATUS_ON) : COLOUR_STATUS_DONE);
+        LED_STATUS.center.lighti(more ? (BLOCK_LIGHT_STATUS_TODO) : BLOCK_LIGHT_STATUS_OFF, 0);
+
+        LED_STATUS.render(buffer);
+
+        tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
     }
 }

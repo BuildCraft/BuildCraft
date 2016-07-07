@@ -25,13 +25,14 @@ public class BptTaskBlockClear extends BptTaskSimple {
 
     public static BptTaskBlockClear create(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        int milliJoules = (int) (state.getBlockHardness(world, pos) * 1000);
-        int ticks = milliJoules / 200;
-        return new BptTaskBlockClear(milliJoules, ticks, pos);
+        // TODO: replace this with BlockUtils.computeBlockBreakPower after it has been converted to long MJ
+        long microJoules = (long) (state.getBlockHardness(world, pos) * 1000);
+        int ticks = (int) (microJoules / 200_000);
+        return new BptTaskBlockClear(microJoules, ticks, pos);
     }
 
-    private BptTaskBlockClear(int milliJoules, int ticks, BlockPos pos) {
-        super(milliJoules);
+    private BptTaskBlockClear(long microJoules, int ticks, BlockPos pos) {
+        super(microJoules);
         this.ticks = ticks;
         this.pos = pos;
     }

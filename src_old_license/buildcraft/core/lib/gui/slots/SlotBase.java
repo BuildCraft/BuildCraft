@@ -25,6 +25,11 @@ public class SlotBase extends SlotItemHandler implements IToolTipProvider {
         return true;
     }
 
+    @Override
+    public boolean isItemValid(ItemStack stack) {
+        return true;
+    }
+
     /** @return the toolTips */
     @Override
     public ToolTip getToolTip() {

@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;

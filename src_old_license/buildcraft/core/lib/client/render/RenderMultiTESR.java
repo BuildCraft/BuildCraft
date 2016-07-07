@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
+@Deprecated
 public class RenderMultiTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
     private final TileEntitySpecialRenderer<T>[] renderers;
 

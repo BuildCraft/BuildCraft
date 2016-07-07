@@ -6,38 +6,38 @@ import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilderAccessor;
 
 public abstract class BptTaskSimple implements IBptTask {
-    public final int required;
-    private int stored;
+    public final long required;
+    private long stored;
 
-    public BptTaskSimple(int required) {
+    public BptTaskSimple(long required) {
         this.required = required;
     }
 
     public BptTaskSimple(NBTTagCompound nbt) {
-        this.required = nbt.getInteger("required");
-        this.stored = nbt.getInteger("stored");
+        this.required = nbt.getLong("required");
+        this.stored = nbt.getLong("stored");
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("required", required);
-        nbt.setInteger("stored", stored);
+        nbt.setLong("required", required);
+        nbt.setLong("stored", stored);
         return nbt;
     }
 
     @Override
-    public int receivePower(IBuilderAccessor builder, int milliJoules) {
-        int accepted = Math.min(getRequiredMilliJoules(builder), milliJoules);
+    public long receivePower(IBuilderAccessor builder, long microJoules) {
+        long accepted = Math.min(getRequiredMicroJoules(builder), microJoules);
         this.stored += accepted;
         if (stored >= required) {
             onReceiveFullPower(builder);
         }
-        return milliJoules - accepted;
+        return microJoules - accepted;
     }
 
     @Override
-    public int getRequiredMilliJoules(IBuilderAccessor builder) {
+    public long getRequiredMicroJoules(IBuilderAccessor builder) {
         return required - stored;
     }
 

@@ -10,7 +10,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import io.netty.buffer.ByteBuf;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -22,9 +24,13 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+import io.netty.buffer.ByteBuf;
 
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
@@ -39,27 +45,31 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         }
     };
 
+    @Nonnull
     private final String name;
+
+    @Nonnull
     private final Predicate<FluidStack> filter;
 
     protected static Map<Fluid, Integer> fluidColors = new HashMap<>();
 
     /** Creates a tank with the given name and capacity (in milli buckets) with no filter set (so any fluid can go into
      * the tank) */
-    public Tank(String name, int capacity, TileEntity tile) {
+    public Tank(@Nonnull String name, int capacity, TileEntity tile) {
         this(name, capacity, tile, null);
     }
 
     /** Creates a tank with the given name and capacity (in milli buckets) with the specified filter set. If the filter
      * returns true for a given fluidstack then it will be allowed in the tank. The given fluidstack will NEVER be
      * null. */
-    public Tank(String name, int capacity, TileEntity tile, Predicate<FluidStack> filter) {
+    public Tank(@Nonnull String name, int capacity, TileEntity tile, @Nullable Predicate<FluidStack> filter) {
         super(capacity);
         this.name = name;
         this.tile = tile;
-        this.filter = filter;
+        this.filter = filter == null ? ((f) -> true) : filter;
     }
 
+    @Nonnull
     public String getTankName() {
         return name;
     }
@@ -138,13 +148,13 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (filter == null || filter.test(resource)) return super.fill(resource, doFill);
+        if (filter.test(resource)) return super.fill(resource, doFill);
         return 0;
     }
 
     @Override
     public void setFluid(FluidStack fluid) {
-        if (fluid == null || filter == null || filter.test(fluid)) super.setFluid(fluid);
+        if (fluid == null || filter.test(fluid)) super.setFluid(fluid);
     }
 
     @Override
@@ -171,14 +181,15 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
         super.readFromNBT(tankData);
     }
 
+    @SideOnly(Side.CLIENT)
     public int getFluidColor() {
-        if(getFluidType() != null) {
-            if(!fluidColors.containsKey(getFluidType())) {
+        if (getFluidType() != null) {
+            if (!fluidColors.containsKey(getFluidType())) {
                 try {
                     TextureMap map = Minecraft.getMinecraft().getTextureMapBlocks();
                     String flow = getFluidType().getFlowing().toString();
                     TextureAtlasSprite sprite;
-                    if(map.getTextureExtry(flow) != null) {
+                    if (map.getTextureExtry(flow) != null) {
                         sprite = map.getTextureExtry(flow);
                     } else {
                         sprite = map.registerSprite(getFluidType().getFlowing());
@@ -192,7 +203,7 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
                     int g = ((int) bytes[2]) & 0xFF;
                     int b = ((int) bytes[3]) & 0xFF;
                     fluidColors.put(getFluidType(), ((a & 0xff) << 24) + ((b & 0xff) << 16) + ((g & 0xff) << 8) + (r & 0xff));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
