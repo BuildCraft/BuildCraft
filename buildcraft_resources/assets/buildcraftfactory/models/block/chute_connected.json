@@ -20,6 +20,7 @@
         "top_bottom": "buildcraftfactory:blocks/chute/top_bottom",
         "top_side": "buildcraftfactory:blocks/chute/top_side",
         "bottom": "buildcraftfactory:blocks/chute/bottom",
-        "side": "buildcraftfactory:blocks/chute/side"
+        "side": "buildcraftfactory:blocks/chute/side",
+        "side2": "buildcraftfactory:blocks/chute/side2"
     }
 }
