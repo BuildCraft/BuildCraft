@@ -1,12 +1,8 @@
 package buildcraft.factory.block;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.factory.FactoryGuis;
-import buildcraft.factory.tile.TileChute;
-import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -18,10 +14,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import scala.actors.threadpool.Arrays;
 
-import java.util.List;
-import java.util.Map;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.factory.FactoryGuis;
+import buildcraft.factory.tile.TileChute;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
@@ -63,13 +62,14 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
-        properties.addAll(Arrays.asList(new IProperty[]{CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH, CONNECTED_SOUTH}));
+        properties.addAll(CONNECTED_MAP.values());
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        for(EnumFacing side : EnumFacing.values()) {
-            state = state.withProperty(CONNECTED_MAP.get(side), TileChute.getInventoryAtPosition(world, pos.offset(side)) != null && side != state.getProperties().get(getFacingProperty()));
+        for (EnumFacing side : EnumFacing.values()) {
+            boolean has = TileChute.hasInventoryAtPosition(world, pos.offset(side), side);
+            state = state.withProperty(CONNECTED_MAP.get(side), has && side != state.getValue(getFacingProperty()));
         }
         return state;
     }

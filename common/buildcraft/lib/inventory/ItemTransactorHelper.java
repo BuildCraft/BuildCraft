@@ -14,6 +14,9 @@ import buildcraft.api.inventory.IItemTransactor;
 
 public class ItemTransactorHelper {
     public static IItemTransactor getTransactor(ICapabilityProvider cap, EnumFacing face) {
+        if (cap == null) {
+            return NoSpaceTransactor.INSTANCE;
+        }
         IItemHandler handler = cap.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, face);
         if (handler == null) {
             return NoSpaceTransactor.INSTANCE;
