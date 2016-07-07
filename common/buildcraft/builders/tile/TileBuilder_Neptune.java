@@ -32,17 +32,13 @@ import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
 public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable {
-    private static int netId = NET_IDS_INV;
-
-    public static final int NET_BOX = netId++;
-    public static final int NET_PATH = netId++;
-    public static final int NET_ANIM_ITEM = netId++;
-    public static final int NET_ANIM_BLOCK = netId++;
-    public static final int NET_ANIM_FLUID = netId++;
-    public static final int NET_ANIM_POWER = netId++;
-    public static final int NET_ANIM_STATE = netId++;
-
-    public static final int NET_IDS_BUILDER = netId;
+    public static final int NET_BOX = 10;
+    public static final int NET_PATH = 11;
+    public static final int NET_ANIM_ITEM = 12;
+    public static final int NET_ANIM_BLOCK = 13;
+    public static final int NET_ANIM_FLUID = 14;
+    public static final int NET_ANIM_POWER = 15;
+    public static final int NET_ANIM_STATE = 16;
 
     public final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
     private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);

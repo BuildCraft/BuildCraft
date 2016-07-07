@@ -20,8 +20,6 @@ import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackChangeCallback;
 
 public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
-    public static final int NET_IDS_INV = TileBC_Neptune.NET_IDS;
-
     protected final ItemHandlerManager itemManager = new ItemHandlerManager();
 
     public TileBCInventory_Neptune() {

@@ -86,6 +86,7 @@ public class TilePump extends TileMiner {
             }
             // System.out.println(index);
             currentPos = index;
+            goToYLevel(currentPos.getY());
             canPump = true;
         } else {
             System.out.println(":-(");
@@ -189,6 +190,7 @@ public class TilePump extends TileMiner {
             if (worldObj.isAirBlock(pumpPos.down()) || BlockUtils.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
                 timeWithoutFluid = 0;
                 currentPos = pumpPos.down();
+                this.goToYLevel(currentPos.getY());
             } else {
                 isComplete = true;
             }

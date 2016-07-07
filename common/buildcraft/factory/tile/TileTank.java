@@ -1,47 +1,47 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.lib.fluids.SingleUseTank;
-import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.io.IOException;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-import java.util.List;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final int NET_TANK = 10;
-
     public Tank tank = new SingleUseTank("tank", 16000, this);
 
     // ITickable
 
     @Override
     public void update() {
-        if(worldObj.isRemote) {
+        if (worldObj.isRemote) {
             return;
         }
 
         TileEntity tileDown = worldObj.getTileEntity(pos.down());
-        if(tileDown != null && tileDown instanceof TileTank) {
+        if (tileDown != null && tileDown instanceof TileTank) {
             TileTank tile = (TileTank) tileDown;
             int used = tile.tank.fill(tank.getFluid(), true);
 
             if (used > 0) {
                 tank.drain(used, true);
-                sendNetworkUpdate(NET_TANK);
-                tile.sendNetworkUpdate(NET_TANK);
+                sendNetworkUpdate(NET_RENDER_DATA);
+                tile.sendNetworkUpdate(NET_RENDER_DATA);
             }
         }
 
-        sendNetworkUpdate(NET_TANK); // TODO: optimize
+        sendNetworkUpdate(NET_RENDER_DATA); // TODO: optimize
     }
 
     // NBT
@@ -59,12 +59,12 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
         return nbt;
     }
 
-    // Netwokring
+    // Networking
 
     @Override
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if(side == Side.SERVER && id == NET_TANK) {
+        if (side == Side.SERVER && id == NET_RENDER_DATA) {
             tank.writeToBuffer(buffer);
         }
     }
@@ -72,7 +72,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     @Override
     public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
         super.readPayload(id, buffer, side);
-        if(side == Side.CLIENT && id == NET_TANK) {
+        if (side == Side.CLIENT && id == NET_RENDER_DATA) {
             tank.readFromBuffer(buffer);
         }
     }
@@ -88,7 +88,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -96,7 +96,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);
