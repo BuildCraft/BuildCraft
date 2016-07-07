@@ -21,7 +21,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.config.DetailedConfigOption;
 
 /** Use {@link LaserRenderer_BC8} now */

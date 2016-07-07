@@ -18,8 +18,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.LaserData_BC8;
-import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.VecUtil;
@@ -238,7 +238,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
         Vec3d one = offset(from, to);
         Vec3d two = offset(to, from);
         LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_PATH_CONNECTED, one, two, RENDER_SCALE);
-        LaserRenderer_BC8.renderLaser(data);
+        LaserRenderer_BC8.renderLaserGlList(data);
     }
 
     @SideOnly(Side.CLIENT)

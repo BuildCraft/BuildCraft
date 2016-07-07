@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
@@ -66,15 +67,15 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     private PlayerOwner owner;
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
-        final int netId;
+        final int id;
         if (type == EnumDeltaMessage.ADD_SINGLE) {
-            netId = gui ? NET_GUI_DELTA_SINGLE : NET_REN_DELTA_SINGLE;
+            id = gui ? NET_GUI_DELTA_SINGLE : NET_REN_DELTA_SINGLE;
         } else if (type == EnumDeltaMessage.SET_VALUE) {
-            netId = gui ? NET_GUI_DELTA_CLEAR : NET_REN_DELTA_CLEAR;
+            id = gui ? NET_GUI_DELTA_CLEAR : NET_REN_DELTA_CLEAR;
         } else {
             throw new IllegalArgumentException("Unknown delta message type " + type);
         }
-        this.createAndSendMessage(gui, netId, writer);
+        this.createAndSendMessage(gui, id, writer);
     });
 
     public TileBC_Neptune() {}
@@ -175,6 +176,8 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                 buffer.writeShort(id);
                 this.writePayload(id, buffer, side);
             });
+        } else {
+            BCLog.logger.warn("Did not have a world at " + getPos() + "!");
         }
         return null;
     }
@@ -201,7 +204,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
+    public final NBTTagCompound getUpdateTag() {
         MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
         ByteBuf buf = Unpooled.buffer();
         message.toBytes(buf);
@@ -238,7 +241,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     // ######################
 
     public void writePayload(int id, PacketBuffer buffer, Side side) {
-        // Send a Render Data packet as well as the gui packet
+        // write render data with gui data
         if (id == NET_GUI_DATA) {
             writePayload(NET_RENDER_DATA, buffer, side);
         }
@@ -253,7 +256,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @throws IOException if something went wrong */
     public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        // Send a Render Data packet as well as the gui packet
+        // read render data with gui data
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side);
         }
@@ -264,7 +267,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
             else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
-
         }
     }
 

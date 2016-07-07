@@ -92,9 +92,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        BCLog.logger.info("insertItem ( " + slot + ", " + stack + ", " + (simulate ? "simulated" : "real") + " )");
         if (badSlotIndex(slot)) {
-            BCLog.logger.info("  -- bad slot!");
             return stack;
         }
         if (checker.canSet(slot, safeCopy(stack))) {
@@ -115,7 +113,6 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             }
             return safeCopy(result.toReturn);
         } else {
-            BCLog.logger.info("  -- cannot set!");
             return stack;
         }
     }
@@ -181,11 +178,9 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     private void setStackInternal(int slot, ItemStack stack) {
-        BCLog.logger.info("setStackInternal ( " + slot + ", " + stack + " )");
         ItemStack before = stacks[slot];
         if (!ItemStack.areItemStacksEqual(before, stack)) {
             stacks[slot] = safeCopy(stack);
-            BCLog.logger.info("  -- changed from " + before);
             // Transactor calc
             if (stack == null && firstUsed == slot) {
                 for (int s = firstUsed; s < getSlots(); s++) {

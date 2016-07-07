@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.StackUtil;
 
 /** Defines a way of inserting items into an inventory - this can be overridden to have different rules with stack
@@ -21,26 +20,19 @@ public interface StackInsertionFunction {
      * themselves IS taken into account, so this has an effective upper limit of 64. */
     public static StackInsertionFunction getInsertionFunction(int maxStackSize) {
         return (slot, addingTo, toInsert) -> {
-            BCLog.logger.info("");
-            BCLog.logger.info("Current " + addingTo + ", inserting " + toInsert);// debug
-
             if (toInsert == null) {
-                BCLog.logger.info("nothing...");
                 return new InsertionResult(addingTo, null);
             }
 
             if (addingTo == null) {
                 int maxSize = Math.min(maxStackSize, toInsert.getMaxStackSize());
                 if (toInsert.stackSize <= maxSize) {
-                    BCLog.logger.info("correctSize");
                     return new InsertionResult(toInsert, null);
                 } else {
                     ItemStack inserted = toInsert.splitStack(maxSize);
-                    BCLog.logger.info("tooBig");
                     return new InsertionResult(inserted, toInsert);
                 }
             } else if (addingTo.stackSize == maxStackSize) {
-                BCLog.logger.info("tooBig");
                 return new InsertionResult(addingTo, toInsert);
             } else if (StackUtil.canMerge(addingTo, toInsert)) {
                 ItemStack complete = addingTo.copy();
@@ -48,17 +40,14 @@ public interface StackInsertionFunction {
                 int maxSize = Math.min(maxStackSize, complete.getMaxStackSize());
                 if (count <= maxSize) {
                     complete.stackSize = count;
-                    BCLog.logger.info("allInOne");
                     return new InsertionResult(complete, null);
                 } else {
                     complete.stackSize = maxSize;
                     ItemStack leftOver = toInsert.copy();
                     leftOver.stackSize = count - maxSize;
-                    BCLog.logger.info("someIn");
                     return new InsertionResult(complete, leftOver);
                 }
             }
-            BCLog.logger.info("overran");
             return new InsertionResult(addingTo, toInsert);
         };
     }
@@ -78,7 +67,6 @@ public interface StackInsertionFunction {
         public InsertionResult(ItemStack toSet, ItemStack toReturn) {
             this.toSet = toSet;
             this.toReturn = toReturn;
-            BCLog.logger.info("Setting to " + toSet + ", returning " + toReturn);// debug
         }
     }
 }

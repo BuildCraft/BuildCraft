@@ -1,74 +1,77 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.io.IOException;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
-import java.util.List;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
+import buildcraft.lib.migrate.BCVersion;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
-public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
+public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
     public static final int NET_LED_STATUS = 10;
 
     protected int progress = 0;
     protected BlockPos currentPos = null;
-    public double tubeY = 0; // TODO: replace with delta
-    // Used to check if this has completed all work
+
+    public final DeltaInt deltaTubeLength = deltaManager.addDelta("tubeY", EnumNetworkVisibility.RENDER);
+
     protected boolean isComplete = false;
     protected Mode mode = Mode.On;
-    protected final MjBattery battery = new MjBattery(1000_000);
+    protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
 
     protected void initCurrentPos() {
         if (currentPos == null) {
             currentPos = getPos();
             currentPos = currentPos.down();
+            goToYLevel(currentPos.getY());
         }
     }
 
     protected abstract void mine();
 
-    protected int getTubeOffset() {
+    public double getTubeOffset() {
         return 0;
     }
 
     @Override
     public void update() {
-        if (worldObj.isRemote || mode != Mode.On) {
+        deltaManager.tick();
+
+        if (worldObj.isRemote) {
             return;
         }
-        battery.tick(getWorld(), getPos());
 
-        // test with the output of a stone engine
-        battery.addPower(1000);// remove this
-
-        // if (worldObj.rand.nextDouble() > 0.9) { // is this correct?
-        if(true) {
-            sendNetworkUpdate(NET_LED_STATUS);
+        if (!battery.isFull()) {
+            // test with the output of a stone engine
+            battery.addPower(MjAPI.MJ);// remove this
         }
 
-        if(tubeY == 0) {
-            tubeY = pos.getY();
-        } else {
-            double diff = currentPos.getY() - tubeY + this.getTubeOffset();
-            if(Math.abs(diff) <= 0.01) {
-                tubeY = currentPos.getY() + this.getTubeOffset();
-            } else if(diff > 0) {
-                tubeY += Math.max(diff * 0.05, 0.01);
-            } else {
-                tubeY += Math.min(diff * 0.05, -0.01);
-            }
+        battery.tick(getWorld(), getPos());
+
+        if (mode != Mode.On) {
+            return;
+        }
+
+        // if (worldObj.rand.nextDouble() > 0.9) { // is this correct?
+        if (true) {
+            sendNetworkUpdate(NET_LED_STATUS);
         }
 
         if (isComplete) {
@@ -77,7 +80,31 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
 
         initCurrentPos();
 
-        mine();
+        if (hasTubeStopped()) {
+            mine();
+        }
+    }
+
+    protected int getCurrentYLevel() {
+        return getPos().getY() - 1 - deltaTubeLength.getStatic(false);
+    }
+
+    protected boolean isAtYlevel(int wanted) {
+        return wanted == getCurrentYLevel();
+    }
+
+    protected boolean hasTubeStopped() {
+        return deltaTubeLength.changingEntries.isEmpty();
+    }
+
+    protected void goToYLevel(int wanted) {
+        int length = getPos().getY() - wanted - 1;
+        int current = deltaTubeLength.getStatic(true);
+        int diff = length - current;
+        if (diff != 0) {
+            deltaTubeLength.addDelta(0, 50 * diff, diff);
+            BCLog.logger.info("Adding a delta " + diff);
+        }
     }
 
     @Override
@@ -94,7 +121,6 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         currentPos = new BlockPos(nbt.getInteger("currentX"), nbt.getInteger("currentY"), nbt.getInteger("currentZ"));
-        tubeY = nbt.getDouble("tubeY");
         progress = nbt.getInteger("progress");
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
@@ -106,7 +132,6 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
         nbt.setInteger("currentX", currentPos.getX());
         nbt.setInteger("currentY", currentPos.getY());
         nbt.setInteger("currentZ", currentPos.getZ());
-        nbt.setDouble("tubeY", tubeY);
         nbt.setInteger("progress", progress);
         nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
@@ -131,7 +156,6 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
                 boolean[] flags = { isComplete, mode == Mode.On };
                 MessageUtil.writeBooleanArray(buffer, flags);
                 battery.writeToBuffer(buffer);
-                buffer.writeDouble(tubeY);
             }
         }
     }
@@ -147,7 +171,6 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
                 isComplete = flags[0];
                 mode = flags[1] ? Mode.On : Mode.Off;
                 battery.readFromBuffer(buffer);
-                tubeY = buffer.readDouble();
             }
         }
     }
@@ -157,7 +180,7 @@ public abstract class TileMiner  extends TileBC_Neptune implements ITickable, IH
         left.add("");
         left.add("battery = " + battery.getDebugString());
         left.add("current = " + currentPos);
-        left.add("tube = " + tubeY);
+        left.add("tube = " + deltaTubeLength.getStatic(false));
         left.add("isComplete = " + isComplete);
         left.add("mode = " + mode);
         left.add("progress = " + progress);

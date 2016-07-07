@@ -47,9 +47,9 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.lib.LibProxy;
 import buildcraft.lib.client.render.DetatchedRenderer;
-import buildcraft.lib.client.render.LaserData_BC8;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
-import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.VecUtil;
@@ -283,7 +283,7 @@ public enum RenderTickListener {
         }
         profiler.endStartSection("render");
         for (LaserData_BC8 laser : toRender) {
-            LaserRenderer_BC8.renderLaser(laser);
+            LaserRenderer_BC8.renderLaserGlList(laser);
         }
         profiler.endSection();
     }

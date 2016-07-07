@@ -4,9 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.client;
 
-import buildcraft.lib.client.render.LaserData_BC8.LaserRow;
-import buildcraft.lib.client.render.LaserData_BC8.LaserSide;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
