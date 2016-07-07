@@ -20,6 +20,7 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.factory.block.BlockChute;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.ItemTransactorHelper.NoSpaceTransactor;
@@ -74,6 +75,27 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
         }
     }
 
+    private void putItemsFromGround(EnumFacing currentSide) {
+        int radius = 3;
+        BlockPos offset = new BlockPos(currentSide.getDirectionVec());
+        offset = new BlockPos(offset.getX() * radius, offset.getY() * radius, offset.getZ() * radius);
+        AxisAlignedBB aabb = new AxisAlignedBB(this.pos, this.pos).expandXyz(radius).offset(offset);
+        List<EntityItem> entityItems = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        int index = 0, max = 3;
+        for (EntityItem entityItem : entityItems) {
+            ItemStack stack = entityItem.getEntityItem();
+            stack = inv.insert(stack, false, false);
+            if (stack == null) {
+                entityItem.setDead();
+            } else {
+                entityItem.setEntityItemStack(stack);
+            }
+            if (index++ >= max) {
+                break;
+            }
+        }
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
@@ -97,12 +119,16 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
             return;
         }
 
+        if (!(worldObj.getBlockState(pos).getBlock() instanceof BlockChute)) {
+            return;
+        }
+
         battery.tick(getWorld(), getPos());
 
         // test with the output of a stone engine
         battery.addPower(1000); // remove this
 
-        EnumFacing currentSide = (EnumFacing) worldObj.getBlockState(pos).getProperties().get(BlockBCBase_Neptune.BLOCK_FACING_6);
+        EnumFacing currentSide = worldObj.getBlockState(pos).getValue(BlockBCBase_Neptune.BLOCK_FACING_6);
 
         int target = 100000;
         if (currentSide == EnumFacing.UP.getOpposite()) {
@@ -112,24 +138,7 @@ public class TileChute extends TileBCInventory_Neptune implements ITickable, IDe
 
         if (progress >= target) {
             progress = 0;
-            int radius = 3;
-            BlockPos offset = new BlockPos(currentSide.getDirectionVec());
-            offset = new BlockPos(offset.getX() * radius, offset.getY() * radius, offset.getZ() * radius);
-            AxisAlignedBB aabb = new AxisAlignedBB(this.pos, this.pos).expandXyz(radius).offset(offset);
-            List<EntityItem> entityItems = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
-            int index = 0, max = 3;
-            for (EntityItem entityItem : entityItems) {
-                ItemStack stack = entityItem.getEntityItem();
-                stack = ItemTransactorHelper.getTransactor(this, currentSide).insert(stack, false, false);
-                if (stack == null) {
-                    entityItem.setDead();
-                } else {
-                    entityItem.setEntityItemStack(stack);
-                }
-                if (index++ >= max) {
-                    break;
-                }
-            }
+            putItemsFromGround(currentSide);
         }
 
         putInInventories(currentSide);
