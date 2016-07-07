@@ -1,4 +1,4 @@
-package buildcraft.lib.client.render;
+package buildcraft.lib.client.render.laser;
 
 import java.util.Objects;
 

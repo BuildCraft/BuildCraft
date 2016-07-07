@@ -20,8 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.Box;
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.LaserData_BC8;
-import buildcraft.lib.client.render.LaserRenderer_BC8;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerConnection;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -235,7 +235,7 @@ public class VolumeConnection extends MarkerConnection<VolumeConnection> {
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
         LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, one, two, RENDER_SCALE);
-        LaserRenderer_BC8.renderLaser(data);
+        LaserRenderer_BC8.renderLaserGlList(data);
     }
 
     @SideOnly(Side.CLIENT)

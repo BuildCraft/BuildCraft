@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.client.BuildCraftLaserManager;
-import buildcraft.lib.client.render.LaserData_BC8.LaserType;
+import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.net.MessageMarker;
 

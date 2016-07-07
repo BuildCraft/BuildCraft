@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -29,6 +30,8 @@ public class BCFactory {
         BCFactoryBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, FactoryProxy_BC8.getProxy());
+        
+        MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
     }
 
     @Mod.EventHandler
