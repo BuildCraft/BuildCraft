@@ -5,11 +5,13 @@
 package buildcraft.factory;
 
 import buildcraft.factory.block.*;
+import buildcraft.factory.block.BlockChute;
 import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.block.BlockMiningWell;
 import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockTank;
 import buildcraft.factory.tile.*;
+import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
@@ -24,6 +26,7 @@ public class BCFactoryBlocks {
     public static BlockPump pump;
     public static BlockFloodGate floodGate;
     public static BlockTank tank;
+    public static BlockChute chute;
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
 
@@ -34,11 +37,13 @@ public class BCFactoryBlocks {
         pump = BlockBCBase_Neptune.register(new BlockPump(Material.ROCK, "block.pump"));
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
+        chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
 
         TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");
         TileBC_Neptune.registerTile(TilePump.class, "tile.pump");
         TileBC_Neptune.registerTile(TileFloodGate.class, "tile.flood_gate");
         TileBC_Neptune.registerTile(TileTank.class, "tile.tank");
+        TileBC_Neptune.registerTile(TileChute.class, "tile.chute");
     }
 }

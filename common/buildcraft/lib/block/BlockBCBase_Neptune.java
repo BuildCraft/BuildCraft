@@ -30,13 +30,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class BlockBCBase_Neptune extends Block {
     private static List<BlockBCBase_Neptune> registeredBlocks = new ArrayList<>();
-    private static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+    public static final BuildCraftProperty<EnumFacing> BLOCK_FACING_6 = BuildCraftProperties.BLOCK_FACING_6;
 
-    /** The tag used to identify this in the {@link TagManager} */
+    /**
+     * The tag used to identify this in the {@link TagManager}
+     */
     public final String id;
 
     public BlockBCBase_Neptune(Material material, String id) {
@@ -50,11 +54,15 @@ public class BlockBCBase_Neptune extends Block {
         }
     }
 
+    public BuildCraftProperty<EnumFacing> getFacingProperty() {
+        return (this instanceof IBlockWithFacing) ? (((IBlockWithFacing) this).canPlacedVertical() ? BLOCK_FACING_6 : PROP_FACING) : null;
+    }
+
     // IBlockState
 
     protected void addProperties(List<IProperty<?>> properties) {
         if(this instanceof IBlockWithFacing) {
-            properties.add(PROP_FACING);
+            properties.add(getFacingProperty());
         }
     }
 
@@ -69,7 +77,7 @@ public class BlockBCBase_Neptune extends Block {
     public int getMetaFromState(IBlockState state) {
         int meta = 0;
         if(this instanceof IBlockWithFacing) {
-            meta |= state.getValue(PROP_FACING).getHorizontalIndex() & 3;
+            meta |= state.getValue(getFacingProperty()).getIndex() & 4;
         }
         return meta;
     }
@@ -78,7 +86,7 @@ public class BlockBCBase_Neptune extends Block {
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = getDefaultState();
         if(this instanceof IBlockWithFacing) {
-            state = state.withProperty(PROP_FACING, EnumFacing.getHorizontal(meta & 3));
+            state = state.withProperty(getFacingProperty(), EnumFacing.getFront(meta & 4));
         }
         return state;
     }
@@ -86,8 +94,8 @@ public class BlockBCBase_Neptune extends Block {
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot) {
         if(this instanceof IBlockWithFacing) {
-            EnumFacing facing = state.getValue(PROP_FACING);
-            state = state.withProperty(PROP_FACING, rot.rotate(facing));
+            EnumFacing facing = state.getValue(getFacingProperty());
+            state = state.withProperty(getFacingProperty(), rot.rotate(facing));
         }
         return state;
     }
@@ -95,8 +103,8 @@ public class BlockBCBase_Neptune extends Block {
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirror) {
         if(this instanceof IBlockWithFacing) {
-            EnumFacing facing = state.getValue(PROP_FACING);
-            state = state.withProperty(PROP_FACING, mirror.mirror(facing));
+            EnumFacing facing = state.getValue(getFacingProperty());
+            state = state.withProperty(getFacingProperty(), mirror.mirror(facing));
         }
         return state;
     }
@@ -104,12 +112,26 @@ public class BlockBCBase_Neptune extends Block {
     // Others
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState state = super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if(this instanceof IBlockWithFacing) {
             EnumFacing orientation = placer.getHorizontalFacing();
-            world.setBlockState(pos, state.withProperty(PROP_FACING, orientation.getOpposite()));
+            if(((IBlockWithFacing) this).canPlacedVertical()) {
+                if(MathHelper.abs((float) placer.posX - (float) pos.getX()) < 2.0F && MathHelper.abs((float) placer.posZ - (float) pos.getZ()) < 2.0F) {
+                    double y = placer.posY + (double) placer.getEyeHeight();
+
+                    if(y - (double) pos.getY() > 2.0D) {
+                        orientation = EnumFacing.DOWN;
+                    }
+
+                    if((double) pos.getY() - y > 0.0D) {
+                        orientation = EnumFacing.UP;
+                    }
+                }
+            }
+            state = state.withProperty(getFacingProperty(), orientation.getOpposite());
         }
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        return state;
     }
 
     public static <B extends BlockBCBase_Neptune> B register(B block) {
@@ -125,12 +147,12 @@ public class BlockBCBase_Neptune extends Block {
     }
 
     public static <B extends BlockBCBase_Neptune> B register(B block, boolean force, Function<B, ItemBlockBC_Neptune> itemBlockConstructor) {
-        if (RegistryHelper.registerBlock(block, force)) {
+        if(RegistryHelper.registerBlock(block, force)) {
             registeredBlocks.add(block);
             MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
-            if (itemBlockConstructor != null) {
+            if(itemBlockConstructor != null) {
                 ItemBlockBC_Neptune item = itemBlockConstructor.apply(block);
-                if (item != null) {
+                if(item != null) {
                     ItemManager.register(item, true);
                 }
             }

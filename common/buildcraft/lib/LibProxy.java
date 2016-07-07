@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -92,6 +93,7 @@ public abstract class LibProxy implements IGuiHandler {
         void fmlPreInit() {
             super.fmlPreInit();
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
+            ModelLoaderRegistry.registerLoader(ObjJsonLoader.INSTANCE);
         }
 
         @Override
