@@ -14,7 +14,7 @@ import buildcraft.lib.client.render.tile.RenderPartCube;
 
 public class RenderTank extends FastTESR<TileTank> {
     public RenderTank() {
-        // TODO: optimize
+        // TODO: Use a fluid renderer
         parts.add(new RenderPartCube<>((tile, part) -> {
             part.sizeY = ((double) tile.tank.getFluidAmount() / tile.tank.getCapacity()) * 16.0 / 16.0;
             if (part.sizeY != 0) {

@@ -23,7 +23,7 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.factory.block.BlockChute;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.inventory.ItemTransactorHelper;
-import buildcraft.lib.inventory.ItemTransactorHelper.NoSpaceTransactor;
+import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
