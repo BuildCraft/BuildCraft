@@ -19,9 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -97,9 +95,19 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         return;
                     }
 
-                    if(worldObj.isAirBlock(currentPos) || worldObj.getBlockState(currentPos).getBlock() instanceof BlockFloodGate) {
+                    Block block = worldObj.getBlockState(currentPos).getBlock();
+                    Fluid fluid = null;
+                    if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+                        fluid = FluidRegistry.LAVA;
+                    } else if(block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+                        fluid = FluidRegistry.WATER;
+                    } else if(block instanceof BlockFluidBase) {
+                        fluid = ((BlockFluidBase) block).getFluid();
+                    }
+
+                    if(worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || (this.tank.getFluidType() != null && this.tank.getFluidType() == fluid)) {
                         blocksFound.add(currentPos);
-                        if(!(worldObj.getBlockState(currentPos).getBlock() instanceof BlockFloodGate)) {
+                        if(worldObj.isAirBlock(currentPos)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
