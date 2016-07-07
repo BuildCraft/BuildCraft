@@ -74,5 +74,17 @@ public class BCFactoryRecipes {
             builder.map('t', BCFactoryBlocks.tank);
             GameRegistry.addRecipe(builder.build());
         }
+
+        if (Utils.isRegistered(BCFactoryBlocks.chute)) {
+            ItemStack out = new ItemStack(BCFactoryBlocks.chute);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
+            builder.add("ici");
+            builder.add("igi");
+            builder.add(" i ");
+            builder.map('i', "ingotIron");
+            builder.map('g', "gearStone");
+            builder.map('c', Blocks.CHEST);
+            GameRegistry.addRecipe(builder.build());
+        }
     }
 }
