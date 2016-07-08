@@ -4,6 +4,8 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import buildcraft.lib.marker.MarkerConnection;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -21,6 +23,8 @@ import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
 
+import java.util.Arrays;
+
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
         super(id);
@@ -31,7 +35,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         EnumActionResult result = EnumActionResult.PASS;
         if (!world.isRemote) {
             for (MarkerCache<?> cache : MarkerCache.CACHES) {
-                if (interactCache(cache.getSubCache(world), player)) {
+                if (interactCache(cache.getSubCache(world), player, player.isSneaking())) {
                     result = EnumActionResult.SUCCESS;
                     player.swingArm(hand);
                     break;
@@ -41,12 +45,16 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         return ActionResult.newResult(result, stack);
     }
 
-    private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
+    private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player, boolean remove) {
         MarkerLineInteraction best = null;
         Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d playerLook = player.getLookVec();
         for (BlockPos marker : cache.getAllMarkers()) {
-            for (BlockPos possible : cache.getValidConnections(marker)) {
+            ImmutableList<BlockPos> possibles = cache.getValidConnections(marker);
+            if(remove && cache.getConnection(marker) != null) {
+                possibles = ImmutableList.copyOf(cache.getConnection(marker).getMarkerPositions());
+            }
+            for (BlockPos possible : possibles) {
                 MarkerLineInteraction interaction = new MarkerLineInteraction(marker, possible, playerPos, playerLook);
                 if (interaction.didInteract()) {
                     best = interaction.getBetter(best);
@@ -54,7 +62,9 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             }
         }
         if (best != null) {
-            if (cache.tryConnect(best.marker1, best.marker2)) {
+            if(remove) {
+                cache.removeConnection(best.marker1, best.marker2);
+            } else if (cache.tryConnect(best.marker1, best.marker2)) {
                 return true;
             } else if (cache.tryConnect(best.marker2, best.marker1)) {
                 return true;
