@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.lib.item.IItemBuildCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -39,7 +40,7 @@ public abstract class LibProxy implements IGuiHandler {
         return proxy;
     }
 
-    void postRegisterItem(ItemBC_Neptune item) {}
+    void postRegisterItem(IItemBuildCraft item) {}
 
     void postRegisterBlock(BlockBCBase_Neptune block) {}
 
@@ -85,7 +86,7 @@ public abstract class LibProxy implements IGuiHandler {
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends LibProxy {
         @Override
-        public void postRegisterItem(ItemBC_Neptune item) {
+        public void postRegisterItem(IItemBuildCraft item) {
             item.postRegisterClient();
         }
 

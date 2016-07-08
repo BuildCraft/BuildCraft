@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+import buildcraft.lib.item.IItemBuildCraft;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
@@ -47,8 +48,8 @@ public class RegistryHelper {
     public static boolean registerItem(Item item, boolean forced) {
         if (forced || isEnabled(getActiveMod(), "items", item.getRegistryName().getResourcePath())) {
             GameRegistry.register(item);
-            if (item instanceof ItemBC_Neptune) {
-                ItemBC_Neptune itemBc = (ItemBC_Neptune) item;
+            if (item instanceof IItemBuildCraft) {
+                IItemBuildCraft itemBc = (IItemBuildCraft) item;
                 LibProxy.getProxy().postRegisterItem(itemBc);
             }
             return true;
