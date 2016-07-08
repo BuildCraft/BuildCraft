@@ -147,6 +147,9 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                 @Override
                 public int fill(FluidStack resource, boolean doFill) {
                     int result = 0;
+                    if(resource == null) {
+                        return result;
+                    }
                     FluidStack copy = resource.copy();
                     for(Tank tank : getTanks()) {
                         int filled = tank.fill(copy, doFill);

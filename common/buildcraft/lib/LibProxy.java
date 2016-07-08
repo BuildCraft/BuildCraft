@@ -16,6 +16,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -29,7 +30,6 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
-import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
 public abstract class LibProxy implements IGuiHandler {
