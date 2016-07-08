@@ -96,14 +96,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     }
 
                     Block block = worldObj.getBlockState(currentPos).getBlock();
-                    Fluid fluid = null;
-                    if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-                        fluid = FluidRegistry.LAVA;
-                    } else if(block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
-                        fluid = FluidRegistry.WATER;
-                    } else if(block instanceof BlockFluidBase) {
-                        fluid = ((BlockFluidBase) block).getFluid();
-                    }
+                    Fluid fluid = BlockUtils.getFluidWithFlowing(block);
 
                     if(worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || (this.tank.getFluidType() != null && this.tank.getFluidType() == fluid)) {
                         blocksFound.add(currentPos);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -67,8 +68,8 @@ public class TilePump extends TileMiner {
         }
     }
 
-    private void updatePos() {
-        if (pumpLayerQueues.isEmpty() && true) {
+    private void updatePos(boolean remove) {
+        if (pumpLayerQueues.isEmpty()) {
             rebuildQueue();
         }
         Deque<BlockPos> topLayer = null;
@@ -78,12 +79,19 @@ public class TilePump extends TileMiner {
         if (topLayer != null && !topLayer.isEmpty()) {
             // currentPos = topLayer.pollLast();
             BlockPos index = null;
-            while (index == null || (index.getX() == pos.getX() && index.getY() == currentPos.getY() && index.getZ() == pos.getZ() && !topLayer.isEmpty())) {
+//            System.out.println("123 " + topLayer.size());
+            long nanoTime = System.nanoTime();
+            while (index == null || (index.getX() == pos.getX() && index.getY() == currentPos.getY() && index.getZ() == pos.getZ() && topLayer.size() > 1)) {
                 if (index != null) {
                     topLayer.addFirst(index);
                 }
-                index = topLayer.pollLast();
+                index = topLayer.peekLast();
+                if(remove) {
+                    topLayer.removeLast();
+                }
             }
+//            System.out.println(System.nanoTime() - nanoTime);
+//            System.out.println("456 " + topLayer.size());
             // System.out.println(index);
             currentPos = index;
             goToYLevel(currentPos.getY());
@@ -153,7 +161,7 @@ public class TilePump extends TileMiner {
         if (currentPos == null) {
             currentPos = pos.down();
             goToYLevel(currentPos.getY());
-            updatePos();
+            updatePos(true);
             // currentPos = getNextIndexToPump(true);
         }
     }
@@ -178,13 +186,9 @@ public class TilePump extends TileMiner {
             setComplete(true);
             return;
         }
-        if (currentPos == null) {
-            updatePos();
-            return;
-        }
         int target = 1000; // TODO: add 2 zeroes
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtils.getFluidWithFlowing(worldObj.getBlockState(pumpPos).getBlock());
 
         if (timeWithoutFluid >= 200) {
             if (worldObj.isAirBlock(pumpPos.down()) || BlockUtils.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
@@ -213,9 +217,20 @@ public class TilePump extends TileMiner {
             FluidStack drain = BlockUtils.drainBlock(worldObj, currentPos, false);
             if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid()) && canPump) {
                 worldObj.setBlockToAir(currentPos);
+//                worldObj.setBlockState(currentPos, Blocks.STONE.getDefaultState());
                 tank.fill(drain, true);
+                for(Deque<BlockPos> layer : pumpLayerQueues.values()) {
+                    for(Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext(); ) {
+                        BlockPos pos = iterator.next();
+                        if(pos == currentPos) {
+                            iterator.remove();
+                        }
+                    }
+                }
+                updatePos(true);
+            } else {
+                updatePos(false);
             }
-            updatePos();
             if (currentPos.getY() < 0) {
                 setComplete(true);
             }
