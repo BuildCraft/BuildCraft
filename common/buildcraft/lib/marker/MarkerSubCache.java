@@ -103,15 +103,6 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
         }
     }
 
-    public void removeConnection(BlockPos pos1, BlockPos pos2) {
-        for(MarkerConnection connection : getConnections()) {
-            BlockPos[] positions = (BlockPos[]) connection.getMarkerPositions().toArray(new BlockPos[0]);
-            if(Arrays.binarySearch(positions, pos1) >= 0 && Arrays.binarySearch(positions, pos2) >= 0) {
-                deinitConnection(new HashSet<>(Arrays.asList(positions)));
-            }
-        }
-    }
-
     public ImmutableList<BlockPos> getAllMarkers() {
         return ImmutableList.copyOf(tileCache.keySet());
     }
