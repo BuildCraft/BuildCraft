@@ -156,6 +156,11 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     }
 
     private void initConnection(C connection, Set<BlockPos> lastSeen) {
+        for(MarkerConnection<C> currentConnection : getConnections()) {
+            if(currentConnection.getMarkerPositions().containsAll(connection.getMarkerPositions())) {
+                deinitConnection(new HashSet<>(currentConnection.getMarkerPositions()));
+            }
+        }
         connectionToPos.put(connection, lastSeen);
         for (BlockPos p : lastSeen) {
             posToConnection.put(p, connection);

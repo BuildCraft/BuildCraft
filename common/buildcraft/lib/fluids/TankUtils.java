@@ -22,4 +22,21 @@ public class TankUtils {
             }
         }
     }
+    public static void popFluidAround(IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        Tank tank = (Tank) tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        for(EnumFacing side : EnumFacing.values()) {
+            TileEntity tileToPop = world.getTileEntity(pos.offset(side));
+            if(tileToPop != null && tileToPop.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+                Tank tankToPop = (Tank) tileToPop.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                if(tankToPop.getFluid() != null) {
+                    int used = tank.fill(tankToPop.getFluid(), true);
+
+                    if(used > 0) {
+                        tankToPop.drain(used, true);
+                    }
+                }
+            }
+        }
+    }
 }

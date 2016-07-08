@@ -219,7 +219,7 @@ public class TagManager {
         // BC Core ItemBlocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
-        registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/alpha/");
+        registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/");
         // BC Core Blocks
         registerTag("block.decorated").reg("decorated").locale("decorated");
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
@@ -269,18 +269,24 @@ public class TagManager {
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
         registerTag("item.block.mining_well").reg("mining_well").locale("miningWellBlock").model("mining_well");
         registerTag("item.block.pump").reg("pump").locale("pumpBlock").model("pump");
+        registerTag("item.block.flood_gate").reg("flood_gate").locale("floodGateBlock").model("flood_gate");
         registerTag("item.block.tank").reg("tank").locale("tankBlock").model("tank");
+        registerTag("item.block.chute").reg("chute").locale("chuteBlock").model("chute");
         // BC Factory Blocks
         registerTag("block.plastic").reg("plastic").locale("plasticBlock").model("plastic");
         registerTag("block.autoworkbench.item").reg("autoworkbench_item").oldReg("autoWorkbenchBlock").locale("autoWorkbenchBlock").model("autoworkbench_item");
         registerTag("block.mining_well").reg("mining_well").oldReg("miningWellBlock").locale("miningWellBlock").model("mining_well");
         registerTag("block.pump").reg("pump").oldReg("pumpBlock").locale("pumpBlock").model("pump");
+        registerTag("block.flood_gate").reg("flood_gate").oldReg("floodGateBlock").locale("floodGateBlock").model("flood_gate");
         registerTag("block.tank").reg("tank").oldReg("tankBlock").locale("tankBlock").model("tank");
+        registerTag("block.chute").reg("chute").oldReg("chuteBlock").locale("chuteBlock").model("chute");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
         registerTag("tile.mining_well").reg("mining_well");
         registerTag("tile.pump").reg("pump");
+        registerTag("tile.flood_gate").reg("flood_gate");
         registerTag("tile.tank").reg("tank");
+        registerTag("tile.chute").reg("chute");
 
         endBatch(prependTags("factory:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

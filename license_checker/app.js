@@ -116,15 +116,18 @@ var commands = {
 
                                             patcheses.forEach((patches) => {
                                                 patches.forEach((patch) => {
-                                                    var path = patch.newFile().path();
-
-                                                    if(fileNicks[path]) {
-                                                        if(fileNicks[path].indexOf(nick) == -1) {
-                                                            fileNicks[path].push(nick);
+                                                    function addPath(path) {
+                                                        if(fileNicks[path]) {
+                                                            if(fileNicks[path].indexOf(nick) == -1) {
+                                                                fileNicks[path].push(nick);
+                                                            }
+                                                        } else {
+                                                            fileNicks[path] = [nick];
                                                         }
-                                                    } else {
-                                                        fileNicks[path] = [nick];
                                                     }
+
+                                                    addPath(patch.oldFile().path());
+                                                    addPath(patch.newFile().path());
                                                 });
                                             });
 

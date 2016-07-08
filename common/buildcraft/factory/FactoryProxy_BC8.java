@@ -9,6 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -18,8 +19,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
 import buildcraft.factory.container.ContainerAutoCraftItems;
+import buildcraft.factory.container.ContainerChute;
 import buildcraft.factory.gui.GuiAutoCraftItems;
+import buildcraft.factory.gui.GuiChute;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
+import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 
@@ -38,6 +42,12 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
             if (tile instanceof TileAutoWorkbenchItems) {
                 TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
                 return new ContainerAutoCraftItems(player, workbench);
+            }
+        }
+        if (ID == FactoryGuis.CHUTE.ordinal()) {
+            if (tile instanceof TileChute) {
+                TileChute chute = (TileChute) tile;
+                return new ContainerChute(player, chute);
             }
         }
         return null;
@@ -66,6 +76,12 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
                     return new GuiAutoCraftItems(new ContainerAutoCraftItems(player, workbench));
                 }
             }
+            if (ID == FactoryGuis.CHUTE.ordinal()) {
+                if (tile instanceof TileChute) {
+                    TileChute chute = (TileChute) tile;
+                    return new GuiChute(new ContainerChute(player, chute));
+                }
+            }
             return null;
         }
 
@@ -74,6 +90,7 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
             ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
             // ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+            OBJLoader.INSTANCE.addDomain("buildcraftfactory");
         }
     }
 }
