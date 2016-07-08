@@ -84,8 +84,21 @@ public class BlockTank extends BlockBCTile_Neptune {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileTank tile = (TileTank) world.getTileEntity(pos);
-        if(heldItem == null) {
+        TileTank tile = null;
+        BlockPos currentPos = pos;
+        while(true) {
+            TileTank currentTile = (world.getTileEntity(currentPos) instanceof TileTank) ? (TileTank) world.getTileEntity(currentPos) : null;
+            if(currentTile != null) {
+                tile = currentTile;
+                if(!currentTile.tank.isFull()) {
+                    break;
+                }
+            } else {
+                break;
+            }
+            currentPos = currentPos.up();
+        }
+        if(heldItem == null || tile == null) {
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
         return FluidUtil.interactWithFluidHandler(heldItem, tile.tank, player);
