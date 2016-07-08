@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.MessageUtil;
 
@@ -89,6 +90,8 @@ public enum BCLibEventDist {
     public void serverTick(ServerTickEvent event) {
         if (event.phase == Phase.START) {
             MessageUtil.preTick();
+        } else {
+            BCAdvDebugging.INSTANCE.onServerPostTick();
         }
     }
 

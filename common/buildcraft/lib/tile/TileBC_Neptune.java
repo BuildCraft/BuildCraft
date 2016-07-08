@@ -26,11 +26,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
+import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.debug.IAdvDebugTarget;
 import buildcraft.lib.delta.DeltaManager;
 import buildcraft.lib.delta.DeltaManager.EnumDeltaMessage;
 import buildcraft.lib.migrate.BCVersion;
@@ -45,7 +49,7 @@ import buildcraft.lib.permission.PlayerOwner;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver {
+public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget {
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
     public static final int NET_RENDER_DATA = 0;
@@ -58,7 +62,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_GUI_DELTA_SINGLE = 4;
     public static final int NET_GUI_DELTA_CLEAR = 5;
 
+    /** Used for detailed debugging for inspecting every part of the current tile. For example, tanks use this to
+     * display which other tanks makeup the whole structure. */
     public static final int NET_ADV_DEBUG = 6;
+    public static final int NET_ADV_DEBUG_DISABLE = 7;
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
@@ -292,5 +299,43 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
         nbt.setTag("deltas", deltaManager.writeToNBT());
         return nbt;
+    }
+
+    // ##################
+    //
+    // Advanced debugging
+    //
+    // ##################
+
+    public boolean isBeingDebugged() {
+        return BCAdvDebugging.isBeingDebugged(this);
+    }
+
+    public void enableDebugging() {
+        if (getWorld() == null || getWorld().isRemote) {
+            return;
+        }
+        BCAdvDebugging.setCurrentDebugTarget(this);
+    }
+
+    @Override
+    public void disableDebugging() {
+        sendNetworkUpdate(NET_ADV_DEBUG_DISABLE);
+    }
+
+    @Override
+    public boolean doesExistInWorld() {
+        return hasWorldObj() && getWorld().getTileEntity(getPos()) == this;
+    }
+
+    @Override
+    public void sendDebugState() {
+        sendNetworkUpdate(NET_ADV_DEBUG);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IDetachedRenderer getDebugRenderer() {
+        return null;
     }
 }
