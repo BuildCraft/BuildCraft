@@ -1,6 +1,7 @@
 package buildcraft.factory.tile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,14 +10,20 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.tile.TileBC_Neptune;
+
+import javax.annotation.Nullable;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     public Tank tank = new SingleUseTank("tank", 16000, this);
@@ -97,7 +104,91 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return (T) tank;
+            //noinspection unchecked
+            return (T) new IFluidHandler() {
+                @Override
+                public IFluidTankProperties[] getTankProperties() {
+                    return tank.getTankProperties();
+                }
+
+                private Tank getTank(BlockPos currentPos) {
+                    TileTank tile = (worldObj.getTileEntity(currentPos) instanceof TileTank) ? (TileTank) worldObj.getTileEntity(currentPos) : null;
+                    if(tile != null && (tile.tank.getFluidType() == tank.getFluidType() || tile.tank.getFluidType() == null || tank.getFluidType() == null)) {
+                        return tile.tank;
+                    }
+                    return null;
+                }
+
+                private List<Tank> getTanks() {
+                    List<Tank> tanks = new ArrayList<>();
+                    BlockPos currentPos = pos;
+                    while(true) {
+                        Tank tank = getTank(currentPos);
+                        if(tank != null) {
+                            tanks.add(tank);
+                        } else {
+                            break;
+                        }
+                        currentPos = currentPos.up();
+                    }
+                    currentPos = pos.down();
+                    while(true) {
+                        Tank tank = getTank(currentPos);
+                        if(tank != null) {
+                            tanks.add(tank);
+                        } else {
+                            break;
+                        }
+                        currentPos = currentPos.down();
+                    }
+                    return tanks;
+                }
+
+                @Override
+                public int fill(FluidStack resource, boolean doFill) {
+                    int result = 0;
+                    FluidStack copy = resource.copy();
+                    for(Tank tank : getTanks()) {
+                        int filled = tank.fill(copy, doFill);
+                        result += filled;
+                        copy.amount -= filled;
+                        if(copy.amount <= 0) {
+                            break;
+                        }
+                    }
+                    return result;
+                }
+
+                @Nullable
+                @Override
+                public FluidStack drain(FluidStack resource, boolean doDrain) {
+                    FluidStack result = null;
+                    for(Tank tank : getTanks()) {
+                        FluidStack drained = tank.drain(resource, doDrain);
+                        if(result == null) {
+                            result = drained;
+                        } else if(drained != null) {
+                            result.amount += drained.amount;
+                        }
+                    }
+                    return result;
+                }
+
+                @Nullable
+                @Override
+                public FluidStack drain(int maxDrain, boolean doDrain) {
+                    FluidStack result = null;
+                    for(Tank tank : getTanks()) {
+                        FluidStack drained = tank.drain(maxDrain, doDrain);
+                        if(result == null) {
+                            result = drained;
+                        } else if(drained != null) {
+                            result.amount += drained.amount;
+                        }
+                    }
+                    return result;
+                }
+            };
         }
         return super.getCapability(capability, facing);
     }
