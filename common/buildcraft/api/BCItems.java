@@ -15,8 +15,9 @@ import buildcraft.api.core.BCLog;
 public class BCItems {
     private static final boolean DEBUG = BCDebugging.shouldDebugLog("api.items");
 
-    // The ONLY item in BC LIB, and has other rules for when its enabled.
+    // The (optional) items in BC LIB, and has other rules for when they are enabled.
     public static final Item LIB_GUIDE;
+    public static final Item LIB_DEBUGGER;
 
     // BC Core
     public static final Item CORE_WRENCH;
@@ -66,6 +67,7 @@ public class BCItems {
         }
         final String lib = "lib";
         LIB_GUIDE = getRegisteredItem(lib, "guide");
+        LIB_DEBUGGER = getRegisteredItem(lib, "debugger");
         // core
         final String core = "core";
         CORE_WRENCH = getRegisteredItem(core, "wrench");
