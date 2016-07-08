@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +25,6 @@ public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
-    private boolean canPump = false;
 
     private void rebuildQueue() {
         pumpLayerQueues.clear();
@@ -68,7 +68,7 @@ public class TilePump extends TileMiner {
     }
 
     private void updatePos() {
-        if (pumpLayerQueues.isEmpty() && true) {
+        if (pumpLayerQueues.isEmpty()) {
             rebuildQueue();
         }
         Deque<BlockPos> topLayer = null;
@@ -76,57 +76,19 @@ public class TilePump extends TileMiner {
             topLayer = pumpLayerQueues.lastEntry().getValue();
         }
         if (topLayer != null && !topLayer.isEmpty()) {
-            // currentPos = topLayer.pollLast();
             BlockPos index = null;
-            while (index == null || (index.getX() == pos.getX() && index.getY() == currentPos.getY() && index.getZ() == pos.getZ() && !topLayer.isEmpty())) {
+            while (index == null || (index.getX() == pos.getX() && index.getY() == currentPos.getY() && index.getZ() == pos.getZ() && topLayer.size() > 1)) {
                 if (index != null) {
                     topLayer.addFirst(index);
                 }
                 index = topLayer.pollLast();
             }
-            // System.out.println(index);
             currentPos = index;
             goToYLevel(currentPos.getY());
-            canPump = true;
         } else {
-            System.out.println(":-(");
             rebuildQueue();
-            canPump = false;
         }
     }
-
-    // private BlockPos getNextIndexToPump(boolean remove) {
-    // if(pumpLayerQueues.isEmpty()) {
-    // rebuildQueue();
-    // }
-    // Deque<BlockPos> topLayer = null;
-    // if(!pumpLayerQueues.isEmpty()) {
-    // topLayer = pumpLayerQueues.lastEntry().getValue();
-    // }
-    // if(topLayer != null) {
-    // if(topLayer.isEmpty()) {
-    // rebuildQueue();
-    // }
-    // while(topLayer.isEmpty() && pumpLayerQueues.size() != 0) {
-    // topLayer = pumpLayerQueues.pollLastEntry().getValue();
-    // }
-    // BlockPos index = null;
-    // while(index == null || (index.getX() == pos.getX() && index.getZ() == pos.getZ() && currentPos.getY() ==
-    // index.getY() && topLayer.size() > 0)) {
-    // rebuildQueue();
-    // if(index != null) {
-    // topLayer.addFirst(index);
-    // }
-    // index = topLayer.peekLast();
-    // if(remove) {
-    // return topLayer.removeLast();
-    // }
-    // }
-    // return index;
-    // } else {
-    // return currentPos;
-    // }
-    // }
 
     private boolean canDrainBlock(IBlockState state, BlockPos pos, Fluid fluid) {
         FluidStack fluidStack = BlockUtils.drainBlock(state, worldObj, pos, false);
@@ -154,7 +116,6 @@ public class TilePump extends TileMiner {
             currentPos = pos.down();
             goToYLevel(currentPos.getY());
             updatePos();
-            // currentPos = getNextIndexToPump(true);
         }
     }
 
@@ -167,32 +128,21 @@ public class TilePump extends TileMiner {
 
     @Override
     public void mine() {
-        // System.out.println(currentPos);
-        // IBlockState state = worldObj.getBlockState(currentPos);
-        // if(!BlockUtils.isFullFluidBlock(state, worldObj, currentPos) && !worldObj.isAirBlock(currentPos)) {
-        // this.isComplete = true;
-        // return;
-        // }
-        isComplete = false;
         if (tank.isFull()) {
             setComplete(true);
             return;
         }
-        if (currentPos == null) {
-            updatePos();
-            return;
-        }
         int target = 1000; // TODO: add 2 zeroes
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtils.getFluidWithFlowing(worldObj.getBlockState(pumpPos).getBlock());
 
-        if (timeWithoutFluid >= 200) {
+        if (timeWithoutFluid >= 30) {
             if (worldObj.isAirBlock(pumpPos.down()) || BlockUtils.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
                 timeWithoutFluid = 0;
                 currentPos = pumpPos.down();
                 this.goToYLevel(currentPos.getY());
             } else {
-                isComplete = true;
+                setComplete(true);
             }
             return;
         }
@@ -203,25 +153,33 @@ public class TilePump extends TileMiner {
         }
 
         if (tank.getAcceptedFluid() != pumpingFluid && !tank.isEmpty()) {
-            this.setComplete(true);
+            setComplete(true);
             return;
         }
         progress += battery.extractPower(0, target - progress);
         if (progress >= target) {
             progress = 0;
-            // tank.fill(BlockUtils.drainBlock(worldObj, currentPos, true), true);
-            FluidStack drain = BlockUtils.drainBlock(worldObj, currentPos, false);
-            if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid()) && canPump) {
-                worldObj.setBlockToAir(currentPos);
-                tank.fill(drain, true);
+            if (!pumpLayerQueues.isEmpty()) {
+                FluidStack drain = BlockUtils.drainBlock(worldObj, currentPos, false);
+                if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid())) {
+                    worldObj.setBlockToAir(currentPos);
+                    tank.fill(drain, true);
+                    for(Deque<BlockPos> layer : pumpLayerQueues.values()) {
+                        for(Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext(); ) {
+                            BlockPos pos = iterator.next();
+                            if(pos == currentPos) {
+                                iterator.remove();
+                            }
+                        }
+                    }
+                    updatePos();
+                }
+            } else {
+                updatePos();
             }
-            updatePos();
             if (currentPos.getY() < 0) {
                 setComplete(true);
             }
-        }
-        if (!isComplete) {
-            setComplete(false);
         }
     }
 

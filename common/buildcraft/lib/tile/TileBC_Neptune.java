@@ -170,7 +170,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final MessageUpdateTile createNetworkUpdate(final int id) {
         if (hasWorldObj()) {
             final Side side = worldObj.isRemote ? Side.CLIENT : Side.SERVER;
-            return new MessageUpdateTile(getPos(), buffer -> {
+            return new MessageUpdateTile(getPos(), this.getClass().getName(), buffer -> {
                 buffer.writeShort(id);
                 this.writePayload(id, buffer, side);
             });
@@ -182,7 +182,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public final void createAndSendMessage(boolean gui, int id, IPayloadWriter writer) {
         if (hasWorldObj()) {
-            MessageUpdateTile message = new MessageUpdateTile(getPos(), buffer -> {
+            MessageUpdateTile message = new MessageUpdateTile(getPos(), this.getClass().getName(), buffer -> {
                 buffer.writeShort(id);
                 writer.write(buffer);
             });

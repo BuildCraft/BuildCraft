@@ -214,7 +214,7 @@ public final class BlockUtils {
             }
             return false;
         } else if (block instanceof BlockLiquid) {
-            int level = (Integer) state.getValue(BlockLiquid.LEVEL);
+            int level = state.getValue(BlockLiquid.LEVEL);
             return level == 0;
         }
         return false;
@@ -224,13 +224,25 @@ public final class BlockUtils {
         return FluidRegistry.lookupFluidForBlock(block);
     }
 
+    public static Fluid getFluidWithFlowing(Block block) {
+        Fluid fluid = null;
+        if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+            fluid = FluidRegistry.LAVA;
+        } else if(block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+            fluid = FluidRegistry.WATER;
+        } else if(block instanceof BlockFluidBase) {
+            fluid = ((BlockFluidBase) block).getFluid();
+        }
+        return fluid;
+    }
+
     public static FluidStack drainBlock(World world, BlockPos pos, boolean doDrain) {
         return drainBlock(world.getBlockState(pos), world, pos, doDrain);
     }
 
     public static FluidStack drainBlock(IBlockState state, World world, BlockPos pos, boolean doDrain) {
         Block block = state.getBlock();
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+        Fluid fluid = getFluidWithFlowing(block);
 
         if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
             if (block instanceof IFluidBlock) {

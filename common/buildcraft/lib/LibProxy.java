@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import buildcraft.lib.item.IItemBuildCraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -13,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -38,7 +40,7 @@ public abstract class LibProxy implements IGuiHandler {
         return proxy;
     }
 
-    void postRegisterItem(ItemBC_Neptune item) {}
+    void postRegisterItem(IItemBuildCraft item) {}
 
     void postRegisterBlock(BlockBCBase_Neptune block) {}
 
@@ -84,7 +86,7 @@ public abstract class LibProxy implements IGuiHandler {
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends LibProxy {
         @Override
-        public void postRegisterItem(ItemBC_Neptune item) {
+        public void postRegisterItem(IItemBuildCraft item) {
             item.postRegisterClient();
         }
 
@@ -92,6 +94,7 @@ public abstract class LibProxy implements IGuiHandler {
         void fmlPreInit() {
             super.fmlPreInit();
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
+            ModelLoaderRegistry.registerLoader(ObjJsonLoader.INSTANCE);
         }
 
         @Override

@@ -12,11 +12,11 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.factory.TileChute;
 
-public class GuiChute extends GuiContainer {
+public class GuiChuteOld extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/hopper_gui.png");
 
-    public GuiChute(EntityPlayer player, TileChute tile) {
+    public GuiChuteOld(EntityPlayer player, TileChute tile) {
         super(new ContainerChute(player, tile));
     }
 

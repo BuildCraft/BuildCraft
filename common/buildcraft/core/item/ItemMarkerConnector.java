@@ -4,6 +4,14 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.PositionUtil.Line;
+import buildcraft.lib.misc.PositionUtil.LineSkewResult;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -12,14 +20,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.item.ItemBC_Neptune;
-import buildcraft.lib.marker.MarkerCache;
-import buildcraft.lib.marker.MarkerSubCache;
-import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.PositionUtil.Line;
-import buildcraft.lib.misc.PositionUtil.LineSkewResult;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
@@ -46,7 +46,8 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         Vec3d playerPos = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         Vec3d playerLook = player.getLookVec();
         for (BlockPos marker : cache.getAllMarkers()) {
-            for (BlockPos possible : cache.getValidConnections(marker)) {
+            ImmutableList<BlockPos> possibles = cache.getValidConnections(marker);
+            for (BlockPos possible : possibles) {
                 MarkerLineInteraction interaction = new MarkerLineInteraction(marker, possible, playerPos, playerLook);
                 if (interaction.didInteract()) {
                     best = interaction.getBetter(best);

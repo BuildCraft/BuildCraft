@@ -18,7 +18,7 @@ import buildcraft.factory.gui.ContainerEnergyHeater;
 import buildcraft.factory.gui.ContainerHeatExchange;
 import buildcraft.factory.gui.ContainerRefinery;
 import buildcraft.factory.gui.GuiAutoCrafting;
-import buildcraft.factory.gui.GuiChute;
+import buildcraft.factory.gui.GuiChuteOld;
 import buildcraft.factory.gui.GuiDistiller;
 import buildcraft.factory.gui.GuiEnergyHeater;
 import buildcraft.factory.gui.GuiHeatExchanger;
@@ -60,7 +60,7 @@ public class FactoryGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileChute)) {
                     return null;
                 } else {
-                    return new GuiChute(player, (TileChute) tile);
+                    return new GuiChuteOld(player, (TileChute) tile);
                 }
 
             case GuiIds.ENERGY_HEATER: {
