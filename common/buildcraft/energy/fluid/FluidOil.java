@@ -13,4 +13,14 @@ public class FluidOil extends BCFluid {
     public MapColor getMapColor() {
         return MapColor.BLACK;
     }
+
+    @Override
+    public boolean isFlammable() {
+        return true; // FIXME: not working because fluid is not full block
+    }
+
+    @Override
+    public int getLightOpacity() {
+        return 8;
+    }
 }

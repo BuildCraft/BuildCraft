@@ -1,18 +1,15 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.FluidUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -95,12 +92,16 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                         return;
                     }
 
-                    Block block = worldObj.getBlockState(currentPos).getBlock();
+                    IBlockState blockState = worldObj.getBlockState(currentPos);
+
+                    Block block = blockState.getBlock();
                     Fluid fluid = BlockUtils.getFluidWithFlowing(block);
 
-                    if(worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || (this.tank.getFluidType() != null && this.tank.getFluidType() == fluid)) {
+                    boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
+
+                    if(worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
-                        if(worldObj.isAirBlock(currentPos)) {
+                        if(worldObj.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
@@ -134,7 +135,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             return;
         }
 
-        TankUtils.popFluidAround(worldObj, pos);
+        TankUtils.pullFluidAround(worldObj, pos);
 
 
         tick++;
@@ -169,6 +170,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             sides[i] = SIDE_INDEXES[i].toString().toLowerCase() + "(" + sidesBlocked[i] + ")";
         }
         left.add("sides = " + String.join(" ", (CharSequence[]) sides));
+        left.add("delay = " + getCurrentDelay());
     }
 
     // NBT

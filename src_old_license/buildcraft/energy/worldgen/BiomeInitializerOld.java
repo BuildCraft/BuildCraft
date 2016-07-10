@@ -9,21 +9,21 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftEnergy;
 
-public class BiomeInitializer {
+public class BiomeInitializerOld {
 
-    public BiomeInitializer() {}
+    public BiomeInitializerOld() {}
 
     @SubscribeEvent
     public void initBiomes(WorldTypeEvent.InitBiomeGens event) {
         int i;
         if (BuildCraftEnergy.biomeOilDesert != null) {
             for (i = 0; i < event.newBiomeGens.length; i++) {
-                event.newBiomeGens[i] = new GenLayerAddOilDesert(event.seed, 1500L, event.newBiomeGens[i]);
+                event.newBiomeGens[i] = new GenLayerAddOilDesertOldOld(event.seed, 1500L, event.newBiomeGens[i]);
             }
         }
         if (BuildCraftEnergy.biomeOilOcean != null) {
             for (i = 0; i < event.newBiomeGens.length; i++) {
-                event.newBiomeGens[i] = new GenLayerAddOilOcean(event.seed, 1500L, event.newBiomeGens[i]);
+                event.newBiomeGens[i] = new GenLayerAddOilOceanOldOld(event.seed, 1500L, event.newBiomeGens[i]);
             }
         }
     }

@@ -8,22 +8,22 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenOcean;
 import net.minecraftforge.common.BiomeDictionary;
 
-public final class BiomeGenOilOcean extends BiomeGenOcean {
+public final class BiomeGenOilOceanOld extends BiomeGenOcean {
 
     protected static final BiomeGenBase.Height height_OilOcean = new BiomeGenBase.Height(0.1F, 0.2F);
 
-    private BiomeGenOilOcean(int id) {
+    private BiomeGenOilOceanOld(int id) {
         super(id);
         setBiomeName("Ocean Oil Field");
         setColor(112);
         setHeight(height_Oceans);
     }
 
-    public static BiomeGenOilOcean makeBiome(int id) {
-        BiomeGenOilOcean biome = new BiomeGenOilOcean(id);
+    public static BiomeGenOilOceanOld makeBiome(int id) {
+        BiomeGenOilOceanOld biome = new BiomeGenOilOceanOld(id);
         BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.WATER);
-        OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
-        OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+        OilPopulateOld.INSTANCE.excessiveBiomes.add(biome.biomeID);
+        OilPopulateOld.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
         return biome;
     }
 }

@@ -8,11 +8,11 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraftforge.common.BiomeDictionary;
 
-public final class BiomeGenOilDesert extends BiomeGenDesert {
+public final class BiomeGenOilDesertOld extends BiomeGenDesert {
 
     protected static final BiomeGenBase.Height height_OilDesert = new BiomeGenBase.Height(0.1F, 0.2F);
 
-    private BiomeGenOilDesert(int id) {
+    private BiomeGenOilDesertOld(int id) {
         super(id);
         setColor(16421912);
         setBiomeName("Desert Oil Field");
@@ -21,11 +21,11 @@ public final class BiomeGenOilDesert extends BiomeGenDesert {
         setHeight(height_OilDesert);
     }
 
-    public static BiomeGenOilDesert makeBiome(int id) {
-        BiomeGenOilDesert biome = new BiomeGenOilDesert(id);
+    public static BiomeGenOilDesertOld makeBiome(int id) {
+        BiomeGenOilDesertOld biome = new BiomeGenOilDesertOld(id);
         BiomeDictionary.registerBiomeType(biome, BiomeDictionary.Type.SANDY);
-        OilPopulate.INSTANCE.excessiveBiomes.add(biome.biomeID);
-        OilPopulate.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
+        OilPopulateOld.INSTANCE.excessiveBiomes.add(biome.biomeID);
+        OilPopulateOld.INSTANCE.surfaceDepositBiomes.add(biome.biomeID);
         return biome;
     }
 }

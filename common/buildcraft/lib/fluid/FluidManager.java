@@ -35,10 +35,11 @@ public class FluidManager {
             registeredFluids.add(fluid);
             FluidRegistry.registerFluid(fluid);
 
-            Material material = new MaterialLiquid(fluid.getMapColor());
+            Material material = new BCMaterialFluid(fluid.getMapColor(), fluid.isFlammable());
             Block block = new BCFluidBlock(fluid, material);
             block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getName());
             block.setUnlocalizedName("blockFluid_" + fluid.getName());
+            block.setLightOpacity(fluid.getLightOpacity());
             GameRegistry.register(block);
             GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
             fluid.setBlock(block);

@@ -10,4 +10,12 @@ public abstract class BCFluid extends Fluid {
     }
 
     public abstract MapColor getMapColor();
+
+    public boolean isFlammable() {
+        return false;
+    }
+
+    public int getLightOpacity() {
+        return 0;
+    }
 }
