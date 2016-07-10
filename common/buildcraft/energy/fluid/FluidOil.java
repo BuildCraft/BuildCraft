@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation;
 public class FluidOil extends BCFluid {
     public FluidOil(String fluidName, ResourceLocation still, ResourceLocation flowing) {
         super(fluidName, still, flowing);
+        setDensity(800);
+        setViscosity(10000);
     }
 
     @Override
