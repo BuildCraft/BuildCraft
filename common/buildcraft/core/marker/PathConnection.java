@@ -217,10 +217,6 @@ public class PathConnection extends MarkerConnection<PathConnection> {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderInWorld() {
-        if(positions.isEmpty()) {
-            return;
-        }
-
         BlockPos last = null;
         for (BlockPos p : positions) {
             if (last == null) {

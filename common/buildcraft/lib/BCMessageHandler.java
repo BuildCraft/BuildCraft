@@ -24,10 +24,8 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.library.network.MessageLibraryDBIndex;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
-import buildcraft.lib.net.MessageCommand;
-import buildcraft.lib.net.MessageMarker;
-import buildcraft.lib.net.MessageUpdateTile;
-import buildcraft.lib.net.MessageWidget;
+import buildcraft.lib.net.*;
+import buildcraft.lib.particle.MessageParticleVanilla;
 
 public enum BCMessageHandler {
     INSTANCE;
@@ -50,6 +48,7 @@ public enum BCMessageHandler {
         addMessageType(MessageLibraryTransferEntry.class, MessageLibraryTransferEntry.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryRequest.class, MessageLibraryRequest.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageLibraryDBIndex.class, MessageLibraryDBIndex.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageParticleVanilla.class, MessageParticleVanilla.Handler.INSTANCE, Side.CLIENT);
     }
 
     public static void fmlPostInit() {

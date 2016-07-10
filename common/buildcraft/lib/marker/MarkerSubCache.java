@@ -13,13 +13,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
-import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.MessageMarker;
 import buildcraft.lib.tile.TileMarker;
 
 public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
+    public static final boolean DEBUG_FULL = BCDebugging.shouldDebugComplex("lib.marker.full");
+
     public final int cacheId;
     public final int dimensionId;
     public final boolean isServer;
@@ -55,7 +58,7 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             }
         }
     }
-    
+
     public boolean hasLoadedOrUnloadedMarker(BlockPos pos) {
         return tileCache.containsKey(pos);
     }
@@ -68,6 +71,9 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     public void loadMarker(BlockPos pos, TileMarker<C> marker) {
         boolean did = tileCache.containsKey(pos);
         tileCache.put(pos, marker);
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Set a marker at " + pos + " as " + marker);
+        }
         if (isServer && !did) {
             MessageMarker message = new MessageMarker();
             message.add = true;
@@ -85,6 +91,9 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     }
 
     public void removeMarker(BlockPos pos) {
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Removed a marker at " + pos);
+        }
         tileCache.remove(pos);
         C connection = getConnection(pos);
         if (connection != null) {
@@ -125,6 +134,11 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
 
     public void refreshConnection(C connection) {
         Set<BlockPos> lastSeen = connectionToPos.get(connection);
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Refreshing a connection");
+            BCLog.logger.info("[lib.marker.full]    - Old = " + lastSeen);
+            BCLog.logger.info("[lib.marker.full]    - New = " + connection.getMarkerPositions());
+        }
         if (lastSeen == null) {
             // Why did you call this?
             addConnection(connection);
@@ -133,13 +147,14 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             lastSeen = new HashSet<>(connection.getMarkerPositions());
             invalid.removeAll(lastSeen);
             deinitConnection(invalid);
-            if (lastSeen.size() > 0) {
-                initConnection(connection, lastSeen);
-            }
+            initConnection(connection, lastSeen);
         }
     }
 
     private void deinitConnection(Set<BlockPos> set) {
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Tearing down all connections in " + set);
+        }
         for (BlockPos p : set) {
             posToConnection.remove(p);
         }
@@ -156,10 +171,11 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     }
 
     private void initConnection(C connection, Set<BlockPos> lastSeen) {
-        for(MarkerConnection<C> currentConnection : getConnections()) {
-            if(currentConnection.getMarkerPositions().containsAll(connection.getMarkerPositions())) {
-                deinitConnection(new HashSet<>(currentConnection.getMarkerPositions()));
-            }
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Setting up a connection with " + lastSeen);
+        }
+        if (lastSeen.size() < 2) {
+            return;
         }
         connectionToPos.put(connection, lastSeen);
         for (BlockPos p : lastSeen) {
