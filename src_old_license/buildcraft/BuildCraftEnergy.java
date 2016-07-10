@@ -67,10 +67,10 @@ import buildcraft.energy.statements.EnergyStatementProvider;
 import buildcraft.energy.statements.TriggerCoolantBelowThreshold;
 import buildcraft.energy.statements.TriggerEngineHeat;
 import buildcraft.energy.statements.TriggerFuelBelowThreshold;
-import buildcraft.energy.worldgen.BiomeGenOilDesert;
-import buildcraft.energy.worldgen.BiomeGenOilOcean;
-import buildcraft.energy.worldgen.BiomeInitializer;
-import buildcraft.energy.worldgen.OilPopulate;
+import buildcraft.energy.worldgen.BiomeGenOilDesertOld;
+import buildcraft.energy.worldgen.BiomeGenOilOceanOld;
+import buildcraft.energy.worldgen.BiomeInitializerOld;
+import buildcraft.energy.worldgen.OilPopulateOld;
 
 //@Mod(name = "BuildCraft Energy", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
 //        dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -81,8 +81,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
     public static BuildCraftEnergy instance;
 
     public static boolean spawnOilSprings = true;
-    public static BiomeGenOilDesert biomeOilDesert;
-    public static BiomeGenOilOcean biomeOilOcean;
+    public static BiomeGenOilDesertOld biomeOilDesert;
+    public static BiomeGenOilOceanOld biomeOilOcean;
 
     public static FluidDefinition oil;
     public static FluidDefinition fuel;
@@ -122,13 +122,13 @@ public class BuildCraftEnergy extends BuildCraftMod {
         BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", ConfigManager.RestartRequirement.GAME);
         BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
 
-        setBiomeList(OilPopulate.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs", new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
+        setBiomeList(OilPopulateOld.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs", new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
 
-        setBiomeList(OilPopulate.INSTANCE.excessiveBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excessiveOilIDs", new String[] {},
+        setBiomeList(OilPopulateOld.INSTANCE.excessiveBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excessiveOilIDs", new String[] {},
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.", RestartRequirement.GAME));
 
-        setBiomeList(OilPopulate.INSTANCE.excludedBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excludeOilIDs", new String[] { BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
+        setBiomeList(OilPopulateOld.INSTANCE.excludedBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excludeOilIDs", new String[] { BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
                 "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
         BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME);
@@ -148,7 +148,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                 BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
                 BuildCraftCore.mainConfiguration.save();
             }
-            biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertBiomeId);
+            biomeOilDesert = BiomeGenOilDesertOld.makeBiome(oilDesertBiomeId);
         }
 
         if (oilOceanBiomeId > 0) {
@@ -158,7 +158,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                 BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
                 BuildCraftCore.mainConfiguration.save();
             }
-            biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
+            biomeOilOcean = BiomeGenOilOceanOld.makeBiome(oilOceanBiomeId);
         }
 
         // Only register oil and fuel if factory is NOT loaded, as then factory controls all refining stuffs.
@@ -298,8 +298,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         if (BuildCraftCore.modifyWorld) {
-            MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
-            MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
+            MinecraftForge.EVENT_BUS.register(OilPopulateOld.INSTANCE);
+            MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializerOld());
         }
     }
 

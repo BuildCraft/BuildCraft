@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -85,9 +86,9 @@ public class BlockTank extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileTank tile = (TileTank) world.getTileEntity(pos);
-        if(heldItem == null) {
+        if(heldItem == null || tile == null) {
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
-        return FluidUtil.interactWithFluidHandler(heldItem, tile.tank, player);
+        return FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player);
     }
 }

@@ -11,7 +11,7 @@ import net.minecraft.world.gen.layer.IntCache;
 
 import buildcraft.core.lib.utils.SimplexNoise;
 
-public abstract class GenLayerBiomeReplacer extends GenLayer {
+public abstract class GenLayerBiomeReplacerOld extends GenLayer {
 
     public static final int OFFSET_RANGE = 500000;
     protected final double xOffset;
@@ -27,8 +27,8 @@ public abstract class GenLayerBiomeReplacer extends GenLayer {
      * @param noiseThreshold The strength the field must reach to replace the biome. Larger numbers result in smaller
      *            patches.
      * @param newBiomeId */
-    public GenLayerBiomeReplacer(final long worldSeed, final long seed, final GenLayer parent, double noiseScale, double noiseThreshold,
-            int newBiomeId) {
+    public GenLayerBiomeReplacerOld(final long worldSeed, final long seed, final GenLayer parent, double noiseScale, double noiseThreshold,
+                                    int newBiomeId) {
         super(seed);
         this.parent = parent;
         this.noiseScale = noiseScale;

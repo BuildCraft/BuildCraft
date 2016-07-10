@@ -9,17 +9,17 @@ import net.minecraft.world.gen.layer.GenLayer;
 
 import buildcraft.BuildCraftEnergy;
 
-public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
+public class GenLayerAddOilDesertOldOld extends GenLayerBiomeReplacerOld {
 
-    public static final double NOISE_FIELD_SCALE = 0.0005;
-    public static final double NOISE_FIELD_THRESHOLD = 0.9;
+    protected static final double NOISE_FIELD_SCALE = 0.001;
+    protected static final double NOISE_FIELD_THRESHOLD = 0.7;
 
-    public GenLayerAddOilOcean(final long worldSeed, final long seed, final GenLayer parent) {
-        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, BuildCraftEnergy.biomeOilOcean.biomeID);
+    public GenLayerAddOilDesertOldOld(final long worldSeed, final long seed, final GenLayer parent) {
+        super(worldSeed, seed, parent, NOISE_FIELD_SCALE, NOISE_FIELD_THRESHOLD, BuildCraftEnergy.biomeOilDesert.biomeID);
     }
 
     @Override
     protected boolean canReplaceBiome(int biomeId) {
-        return biomeId == BiomeGenBase.ocean.biomeID;
+        return biomeId == BiomeGenBase.desert.biomeID;
     }
 }

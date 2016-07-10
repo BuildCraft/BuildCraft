@@ -11,7 +11,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.core.IMCHandler;
 import buildcraft.energy.fuels.CoolantManager;
-import buildcraft.energy.worldgen.OilPopulate;
+import buildcraft.energy.worldgen.OilPopulateOld;
 
 public class IMCHandlerEnergy extends IMCHandler {
     @Override
@@ -34,7 +34,7 @@ public class IMCHandlerEnergy extends IMCHandler {
             if (id >= BiomeGenBase.getBiomeGenArray().length) {
                 throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
             }
-            OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
+            OilPopulateOld.INSTANCE.surfaceDepositBiomes.add(id);
         } catch (Exception ex) {
             BCLog.logger.warn(String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
         }
@@ -48,7 +48,7 @@ public class IMCHandlerEnergy extends IMCHandler {
             if (id >= BiomeGenBase.getBiomeGenArray().length) {
                 throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
             }
-            OilPopulate.INSTANCE.excludedBiomes.add(id);
+            OilPopulateOld.INSTANCE.excludedBiomes.add(id);
         } catch (Exception ex) {
             BCLog.logger.warn(String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
         }

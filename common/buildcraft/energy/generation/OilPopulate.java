@@ -2,23 +2,19 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.energy.worldgen;
+package buildcraft.energy.generation;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
+import buildcraft.energy.BCEnergy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockHelper;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -29,20 +25,20 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.api.enums.EnumSpring;
-import buildcraft.api.properties.BuildCraftProperties;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
+@SuppressWarnings("Duplicates")
 public final class OilPopulate {
-
     public static final OilPopulate INSTANCE = new OilPopulate();
-    public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0], new Object[0]);
+    public static final EventType EVENT_TYPE = EnumHelper.addEnum(EventType.class, "BUILDCRAFT_OIL", new Class[0]);
     private static final byte LARGE_WELL_HEIGHT = 16;
     private static final byte MEDIUM_WELL_HEIGHT = 6;
-    public final Set<Integer> excessiveBiomes = new HashSet<>();
-    public final Set<Integer> surfaceDepositBiomes = new HashSet<>();
-    public final Set<Integer> excludedBiomes = new HashSet<>();
+    public final Set<String> excessiveBiomeNames = new HashSet<>(Arrays.asList("Desert Oil Field", "Ocean Oil Field"));
+    public final Set<String> surfaceDepositBiomeNames = new HashSet<>();
+    public final Set<String> excludedBiomeNames = new HashSet<>(Arrays.asList("Hell", "The End"));
 
     private enum GenType {
         LARGE,
@@ -51,21 +47,20 @@ public final class OilPopulate {
         NONE
     }
 
-    private OilPopulate() {
-        // BuildCraftCore.debugWorldgen = true;
-    }
-
     @SubscribeEvent
     public void populate(PopulateChunkEvent.Pre event) {
-        boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
-                EVENT_TYPE);
+        boolean doGen = TerrainGen.populate(
+                event.getGenerator(), event.getWorld(), event.getRand(),
+                event.getChunkX(), event.getChunkZ(), event.isHasVillageGenerated(),
+                EVENT_TYPE
+        );
 
         if (!doGen) {
             event.setResult(Result.ALLOW);
             return;
         }
 
-        generateOil(event.world, event.rand, event.chunkX, event.chunkZ);
+        generateOil(event.getWorld(), event.getRand(), event.getChunkX(), event.getChunkZ());
     }
 
     public void generateOil(World world, Random rand, int chunkX, int chunkZ) {
@@ -74,21 +69,18 @@ public final class OilPopulate {
         int x = chunkX * 16 + 8 + rand.nextInt(16);
         int z = chunkZ * 16 + 8 + rand.nextInt(16);
 
-        BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(x, 0, z));
+        Biome biome = world.getBiome(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
-        if (excludedBiomes.contains(biome.biomeID)) {
+        if (excludedBiomeNames.contains(biome.getBiomeName())) {
             return;
         }
 
-        boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID);
+        boolean oilBiome = surfaceDepositBiomeNames.contains(biome.getBiomeName());
 
         double bonus = oilBiome ? 3.0 : 1.0;
-        bonus *= BuildCraftEnergy.oilWellScalar;
-        if (excessiveBiomes.contains(biome.biomeID)) {
+        if (excessiveBiomeNames.contains(biome.getBiomeName()) || true) {
             bonus *= 30.0;
-        } else if (BuildCraftCore.debugWorldgen) {
-            bonus *= 20.0;
         }
         GenType type = GenType.NONE;
         if (rand.nextDouble() <= 0.0004 * bonus) {
@@ -150,7 +142,7 @@ public final class OilPopulate {
 
                         if (distance <= radiusSq) {
                             BlockPos pos = new BlockPos(poolX + wellX, poolY + wellY, poolZ + wellZ);
-                            world.setBlockState(pos, BuildCraftEnergy.oil.block.getDefaultState(), distance == radiusSq ? 3 : 2);
+                            world.setBlockState(pos, BCEnergy.oil.getBlock().getDefaultState(), distance == radiusSq ? 3 : 2);
                         }
                     }
                 }
@@ -168,8 +160,8 @@ public final class OilPopulate {
             }
             generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
-            boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null
-                && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25);
+            boolean makeSpring = type == GenType.LARGE /*&& BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null
+                && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25)*/; // TODO: replace with not deprecated
 
             // Generate Spout
             int baseY;
@@ -181,12 +173,12 @@ public final class OilPopulate {
 
             BlockPos well = new BlockPos(wellX, baseY, wellZ);
 
-            if (makeSpring && world.getBlockState(well).getBlock() == Blocks.bedrock) {
-                IBlockState state = BuildCraftCore.springBlock.getDefaultState();
-                state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
-                world.setBlockState(well, state, 3);
-            }
-            IBlockState oil = BuildCraftEnergy.oil.block.getDefaultState();
+//            if (makeSpring && world.getBlockState(well).getBlock() == Blocks.BEDROCK) {
+//                IBlockState state = BuildCraftCore.springBlock.getDefaultState();
+//                state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
+//                world.setBlockState(well, state, 3);
+//            } // TODO: reanimate
+            IBlockState oil = BCEnergy.oil.getBlock().getDefaultState();
             for (int y = 1; y <= maxHeight - baseY; ++y) {
                 world.setBlockState(well.up(y), oil, 3);
             }
@@ -215,11 +207,11 @@ public final class OilPopulate {
     }
 
     public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
-        BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(x, y, z));
+        Biome biome = world.getBiome(new BlockPos(x, y, z));
         generateSurfaceDeposit(world, rand, biome, x, y, z, radius);
     }
 
-    private void generateSurfaceDeposit(World world, Random rand, BiomeGenBase biome, int x, int y, int z, int radius) {
+    private void generateSurfaceDeposit(World world, Random rand, Biome biome, int x, int y, int z, int radius) {
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
 
         // Center
@@ -263,32 +255,33 @@ public final class OilPopulate {
     private boolean isReplaceableFluid(World world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block
-                .getMaterial() != Material.lava;
+                .getMaterial(world.getBlockState(pos)) != Material.LAVA;
     }
 
     private boolean isOil(World world, int x, int y, int z) {
         Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        return block == BuildCraftEnergy.oil.block;
+        return block == BCEnergy.oil.getBlock();
     }
 
     @SuppressWarnings("unchecked")
-    private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
+    private boolean isReplaceableForLake(World world, Biome biome, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         if (world.isAirBlock(pos)) {
             return true;
         }
 
-        Block block = world.getBlockState(pos).getBlock();
+        final IBlockState blockState = world.getBlockState(pos);
+        Block block = blockState.getBlock();
 
         if (block == biome.fillerBlock || block == biome.topBlock) {
             return true;
         }
 
-        if (!block.getMaterial().blocksMovement()) {
+        if (!block.getMaterial(blockState).blocksMovement()) {
             return true;
         }
 
-        if (block.isReplaceableOreGen(world, pos, BlockHelper.forBlock(Blocks.stone))) {
+        if (block.isReplaceableOreGen(blockState, world, pos, state -> state.getBlock() == Blocks.STONE)) {
             return true;
         }
 
@@ -296,7 +289,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (!block.isOpaqueCube()) {
+        if (!block.isOpaqueCube(blockState)) {
             return true;
         }
 
@@ -311,7 +304,7 @@ public final class OilPopulate {
         return isOil(world, x + 1, y, z) && isOil(world, x - 1, y, z) && isOil(world, x, y, z + 1) && isOil(world, x, y, z - 1);
     }
 
-    private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
+    private void setOilWithProba(World world, Biome biome, Random rand, float proba, int x, int y, int z, int depth) {
         if (rand.nextFloat() <= proba && !world.isAirBlock(new BlockPos(x, y - depth - 1, z))) {
             if (isOilAdjacent(world, x, y, z)) {
                 setOilColumnForLake(world, biome, x, y, z, depth, 3);
@@ -319,14 +312,14 @@ public final class OilPopulate {
         }
     }
 
-    private void setOilColumnForLake(World world, BiomeGenBase biome, int x, int y, int z, int depth, int update) {
+    private void setOilColumnForLake(World world, Biome biome, int x, int y, int z, int depth, int update) {
         if (isReplaceableForLake(world, biome, x, y + 1, z)) {
             if (!world.isAirBlock(new BlockPos(x, y + 2, z))) {
                 return;
             }
             BlockPos pos = new BlockPos(x, y, z);
             if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.down(), EnumFacing.UP)) {
-                world.setBlockState(pos, BuildCraftEnergy.oil.block.getDefaultState(), update);
+                world.setBlockState(pos, BCEnergy.oil.getBlock().getDefaultState(), update);
             } else {
                 return;
             }
@@ -339,7 +332,7 @@ public final class OilPopulate {
                 if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
-                world.setBlockState(down, BuildCraftEnergy.oil.block.getDefaultState(), 2);
+                world.setBlockState(down, BCEnergy.oil.getBlock().getDefaultState(), 2);
             }
         }
     }
@@ -354,9 +347,10 @@ public final class OilPopulate {
         int trimmedZ = z & 15;
 
         for (; y > 0; --y) {
-            Block block = chunk.getBlock(trimmedX, y, trimmedZ);
+            final IBlockState blockState = chunk.getBlockState(trimmedX, y, trimmedZ);
+            Block block = blockState.getBlock();
 
-            if (block.isAir(world, pos)) {
+            if (block.isAir(blockState, world, pos)) {
                 continue;
             }
 
@@ -372,7 +366,7 @@ public final class OilPopulate {
                 return y;
             }
 
-            if (!block.getMaterial().blocksMovement()) {
+            if (!block.getMaterial(blockState).blocksMovement()) {
                 continue;
             }
 
