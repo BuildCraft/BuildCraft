@@ -32,7 +32,7 @@ public class BCTransport {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, TransportProxy_BC8.getProxy());
 
         // TODO: move from here
-        ContainerFilteredBuffer.preInit();
+        TransportSprites.preInit();
     }
 
     @Mod.EventHandler

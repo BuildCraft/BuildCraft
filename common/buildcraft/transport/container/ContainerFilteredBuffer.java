@@ -9,6 +9,7 @@ import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.transport.TransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,11 +17,6 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerFilteredBuffer extends ContainerBCTile<TileFilteredBuffer> {
     private static final int PLAYER_INV_START = 86;
-    private static SpriteHolderRegistry.SpriteHolder emptyFilterSlotHolder;
-
-    public static void preInit() {
-        emptyFilterSlotHolder = SpriteHolderRegistry.getHolder("buildcrafttransport:gui/empty_filtered_buffer_slot");
-    }
 
     public ContainerFilteredBuffer(EntityPlayer player, TileFilteredBuffer tile) {
         super(player, tile);
@@ -31,7 +27,12 @@ public class ContainerFilteredBuffer extends ContainerBCTile<TileFilteredBuffer>
             SlotPhantom phantom = new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
                 @Override
                 public TextureAtlasSprite getBackgroundSprite() {
-                    return emptyFilterSlotHolder.getSprite();
+                    return TransportSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();
+                }
+
+                @Override
+                public boolean canAdjust() {
+                    return false;
                 }
             };
             addSlotToContainer(phantom);

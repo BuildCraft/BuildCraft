@@ -9,6 +9,7 @@ import java.util.*;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -133,7 +134,9 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     @Override
     protected void drawForegroundLayer() {
+        GlStateManager.translate(-guiLeft, -guiTop, 0);
         textField.drawTextBox();
+        GlStateManager.translate(guiLeft, guiTop, 0);
     }
 
     private boolean isCarryingNonEmptyList() {
