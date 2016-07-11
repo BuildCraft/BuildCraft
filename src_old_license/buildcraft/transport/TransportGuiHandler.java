@@ -25,7 +25,7 @@ import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiEmeraldFluidPipe;
 import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe;
-import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.gui.GuiFilteredBufferOld;
 import buildcraft.transport.gui.GuiGateInterface;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeItemsEmerald;
@@ -95,7 +95,7 @@ public class TransportGuiHandler implements IGuiHandler {
 
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-                return new GuiFilteredBuffer(player, filteredBuffer);
+                return new GuiFilteredBufferOld(player, filteredBuffer);
             }
 
             if (!(tile instanceof IPipeTile)) {
