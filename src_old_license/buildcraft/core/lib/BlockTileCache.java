@@ -6,15 +6,13 @@ package buildcraft.core.lib;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.lib.utils.Utils;
 
-// replaced by BlockWorldState
-@Deprecated
 public final class BlockTileCache {
 
     private IBlockState state = null;

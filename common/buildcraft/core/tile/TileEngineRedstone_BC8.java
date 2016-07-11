@@ -5,13 +5,17 @@
 package buildcraft.core.tile;
 
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.types.EngineType;
 import buildcraft.core.lib.utils.AverageDouble;
+import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // TODO: Fix these numbers as they are probably completely wrong
     public static final int[] MILLIWATTS_PROVIDED = { 35, 50, 75, 100, 0 };
-
+    private static final long[] MICRO_JOULES = {};
+    
     private EnumEnergyStage stage = EnumEnergyStage.BLUE;
     private AverageDouble powerAvg = new AverageDouble(10);
     private long lastChange = 0;
@@ -38,7 +42,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // }
 
     @Override
-    protected void sendPower(int power) {
+    protected void sendPower(long power) {
 
     }
 
@@ -80,5 +84,10 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
                 }
             }
         }
+    }
+
+    @Override
+    protected IMjConnector createConnector() {
+        return new EngineConnector(EngineType.REDSTONE);
     }
 }
