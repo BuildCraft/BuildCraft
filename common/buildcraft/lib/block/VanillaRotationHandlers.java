@@ -99,6 +99,7 @@ public class VanillaRotationHandlers {
             EnumFacing currentSide = state.getValue(BlockDirectional.FACING);
             int ord = getOrdinal(currentSide, ALL_SIDES) + 1;
             world.setBlockState(pos, state.withProperty(BlockDirectional.FACING, ALL_SIDES[ord % 6]));
+            return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
     }

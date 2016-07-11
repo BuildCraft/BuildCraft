@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,13 +20,18 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.blocks.CustomPaintHelper;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.ParticleUtil;
+import buildcraft.lib.misc.SoundUtil;
+import buildcraft.lib.misc.VecUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -60,7 +64,8 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         Brush brush = new Brush(stack);
-        if (brush.useOnBlock(world, pos, world.getBlockState(pos), facing)) {
+        Vec3d hitPos = VecUtil.add(new Vec3d(hitX, hitY, hitZ), pos);
+        if (brush.useOnBlock(world, pos, world.getBlockState(pos), hitPos, facing)) {
             ItemStack newStack = brush.save(stack);
             if (newStack != null) {
                 player.setHeldItem(hand, newStack);
@@ -165,12 +170,21 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
             return (usesLeft <= 0 || colour == null) ? 0 : colour.getMetadata() + 1;
         }
 
-        public boolean useOnBlock(World world, BlockPos pos, IBlockState state, EnumFacing side) {
-            if (colour == null || usesLeft <= 0) return false;
-            Block block = state.getBlock();
-            if (block.recolorBlock(world, pos, side, colour)) {
+        public boolean useOnBlock(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing side) {
+            if (colour != null && usesLeft <= 0) {
+                return false;
+            }
+
+            EnumActionResult result = CustomPaintHelper.INSTANCE.attemptPaintBlock(world, pos, state, hitPos, side, colour);
+
+            if (result == EnumActionResult.SUCCESS) {
+                ParticleUtil.showChangeColour(world, hitPos, colour);
+                SoundUtil.playChangeColour(world, pos, colour);
                 usesLeft--;
-                if (usesLeft <= 0) colour = null;
+                if (usesLeft <= 0) {
+                    colour = null;
+                    usesLeft = 0;
+                }
                 return true;
             }
             return false;

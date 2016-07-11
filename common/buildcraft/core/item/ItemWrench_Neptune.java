@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import buildcraft.api.blocks.CustomRotationHelper;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.SoundUtil;
 
 public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     public ItemWrench_Neptune(String id) {
@@ -36,14 +37,16 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
 
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return EnumActionResult.PASS;
-        }
+        // FIXME: Disabled world check as it doesn't allow us to swing the player's arm!
+        // if (world.isRemote) {
+        // return EnumActionResult.PASS;
+        // }
         IBlockState state = world.getBlockState(pos);
         state = state.getActualState(world, pos);
         EnumActionResult result = CustomRotationHelper.INSTANCE.attemptRotateBlock(world, pos, state, side);
         if (result == EnumActionResult.SUCCESS) {
             wrenchUsed(player, hand, stack, new RayTraceResult(new Vec3d(hitX, hitY, hitZ), side, pos));
+            SoundUtil.playSlideSound(world, pos, state);
         }
         return result;
     }

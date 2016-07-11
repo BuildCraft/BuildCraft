@@ -8,9 +8,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldSavedData;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtils;
 
 public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends MarkerConnection<C>> extends WorldSavedData {
+    protected static final boolean DEBUG_FULL = MarkerSubCache.DEBUG_FULL;
+
     protected final List<BlockPos> markerPositions = new ArrayList<>();
     protected final List<List<BlockPos>> markerConnections = new ArrayList<>();
     private S subCache;
@@ -38,25 +41,63 @@ public abstract class MarkerSavedData<S extends MarkerSubCache<C>, C extends Mar
                 inner.add(NBTUtils.readBlockPos(positionList.get(j)));
             }
         }
+
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Reading from NBT (" + mapName + ")");
+            BCLog.logger.info("[lib.marker.full]  - Positions:");
+            for (BlockPos pos : markerPositions) {
+                BCLog.logger.info("[lib.marker.full]   - " + pos);
+            }
+            BCLog.logger.info("[lib.marker.full]  - Connections:");
+            for (List<BlockPos> list : markerConnections) {
+                BCLog.logger.info("[lib.marker.full]   - Single Connection:");
+                for (BlockPos pos : list) {
+                    BCLog.logger.info("[lib.marker.full]     - " + pos);
+                }
+            }
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        markerPositions.clear();
+        markerConnections.clear();
+
+        markerPositions.addAll(subCache.getAllMarkers());
+        for (C connection : subCache.getConnections()) {
+            markerConnections.add(new ArrayList<>(connection.getMarkerPositions()));
+        }
+
         NBTTagList positionList = new NBTTagList();
-        for (BlockPos p : subCache.getAllMarkers()) {
+        for (BlockPos p : markerPositions) {
             positionList.appendTag(NBTUtils.writeBlockPos(p));
         }
         nbt.setTag("positions", positionList);
 
         NBTTagList connectionList = new NBTTagList();
-        for (C connection : subCache.getConnections()) {
+        for (List<BlockPos> connection : markerConnections) {
             NBTTagList inner = new NBTTagList();
-            for (BlockPos p : connection.getMarkerPositions()) {
+            for (BlockPos p : connection) {
                 inner.appendTag(NBTUtils.writeBlockPos(p));
             }
             connectionList.appendTag(inner);
         }
         nbt.setTag("connections", connectionList);
+
+        if (DEBUG_FULL) {
+            BCLog.logger.info("[lib.marker.full] Writing to NBT (" + mapName + ")");
+            BCLog.logger.info("[lib.marker.full]  - Positions:");
+            for (BlockPos pos : markerPositions) {
+                BCLog.logger.info("[lib.marker.full]   - " + pos);
+            }
+            BCLog.logger.info("[lib.marker.full]  - Connections:");
+            for (List<BlockPos> list : markerConnections) {
+                BCLog.logger.info("[lib.marker.full]   - Single Connection:");
+                for (BlockPos pos : list) {
+                    BCLog.logger.info("[lib.marker.full]     - " + pos);
+                }
+            }
+        }
 
         return nbt;
     }

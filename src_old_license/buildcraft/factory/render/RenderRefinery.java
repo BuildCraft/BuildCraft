@@ -154,13 +154,13 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            bindTexture(TextureMap.locationBlocksTexture);
+            bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             if (liquid1 != null && liquid1.amount > 0) {
                 int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, FluidRenderer.FluidType.STILL, TANK_SIZE);
 
                 if (list1 != null) {
-                    bindTexture(TextureMap.locationBlocksTexture);
+                    bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     RenderUtils.setGLColorFromInt(color1);
                     GL11.glPushMatrix();
                     GL11.glTranslatef(-0.25f, 0, -0.25f);
@@ -179,7 +179,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
                     GL11.glTranslatef(-0.25f, 0, 0.25f);
                     GL11.glScalef(0.99f, 0.99f, 0.99f);
                     GL11.glTranslatef(-0.25f, -0.5f, -0.25f);
-                    bindTexture(TextureMap.locationBlocksTexture);
+                    bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     RenderUtils.setGLColorFromInt(color2);
                     GL11.glCallList(list2[getDisplayListIndex(tile.tanks[1])]);
                     GL11.glPopMatrix();
@@ -194,7 +194,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer<TileRefinery> {
                     GL11.glTranslatef(0.25f, 0, 0);
                     GL11.glScalef(0.99f, 0.99f, 0.99f);
                     GL11.glTranslatef(-0.25f, -0.5f, -0.25f);
-                    bindTexture(TextureMap.locationBlocksTexture);
+                    bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     RenderUtils.setGLColorFromInt(colorResult);
                     GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
                     GL11.glPopMatrix();
