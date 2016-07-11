@@ -28,8 +28,10 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer> {
 
     @Override
     protected void drawForegroundLayer() {
+        int x = guiLeft;
+        int y = guiTop;
         String title = I18n.format("tile.filteredBufferBlock.name");
         int xPos = (xSize - fontRendererObj.getStringWidth(title)) / 2;
-        fontRendererObj.drawString(title, xPos, 10, 0x404040);
+        fontRendererObj.drawString(title, x + xPos, y + 10, 0x404040);
     }
 }

@@ -73,10 +73,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        drawForegroundLayer();
-
         GlStateManager.translate(-guiLeft, -guiTop, 0);
         mouse.setMousePosition(mouseX, mouseY);
+
+        drawForegroundLayer();
 
         for (IGuiElement element : guiElements) {
             element.drawForeground();

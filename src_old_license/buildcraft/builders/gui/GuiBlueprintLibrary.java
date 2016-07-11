@@ -76,7 +76,9 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     @Override
     protected void drawForegroundLayer() {
         String title = BCStringUtils.localize("tile.libraryBlock.name");
-        fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        int x = guiLeft;
+        int y = guiTop;
+        fontRendererObj.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);
 
         int off = scrollbar.getPosition();
         for (int i = off; i < (off + 12); i++) {
@@ -91,8 +93,8 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
                 name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
             }
 
-            int l1 = 8;
-            int i2 = 22;
+            int l1 = x + 8;
+            int i2 = y + 22;
             int yOff = i2 + 9 * (i - off);
 
             if (header.equals(selected)) {
@@ -102,7 +104,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             GuiIcon icon = getIcon(status);
             if (icon != null) {
                 RenderUtils.setGLColorFromInt(-1);
-                icon.drawAt(8 + 146 + 1, yOff);
+                icon.drawAt(x + 8 + 146 + 1, yOff);
             }
 
             while (fontRendererObj.getStringWidth(name) > (160 - 9)) {
@@ -110,7 +112,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             }
 
             int colour = /* LibraryAPI.getHandlerFor(header.kind).getTextColor() */0;
-            fontRendererObj.drawString(name, 9, 23 + 9 * (i - off), colour);
+            fontRendererObj.drawString(name, x + 9, y + 23 + 9 * (i - off), colour);
         }
     }
 
