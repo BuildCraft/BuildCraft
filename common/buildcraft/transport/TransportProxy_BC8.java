@@ -13,6 +13,9 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+
 public abstract class TransportProxy_BC8 implements IGuiHandler {
     @SidedProxy
     private static TransportProxy_BC8 proxy;

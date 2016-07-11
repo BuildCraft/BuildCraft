@@ -11,16 +11,23 @@ public enum MjSimpleType implements IMjConnectorType {
     /** The proper power - used for doing redstone tasks fast, or more complex tasks like powering a robot or a
      * builder. */
     POWER_KINETIC,
+    /** Short-distance wireless transport. */
+    POWER_LASER,
 
     // Redstone top level types -- the most basic 2 categories that redstone machines can fit into
     REDSTONE_PRODUCER(POWER_REDSTONE),
     REDSTONE_CONSUMER(POWER_REDSTONE),
     // REDSTONE_TRANSPORTER; -- by design you cannot transport redstone power
 
-    // Kinetic Top level types -- the most basic 3 categories that a machine can fit into
+    // Kinetic top level types -- the most basic 3 categories that a machine can fit into
     KINETIC_PRODUCER(POWER_KINETIC),
     KINETIC_CONSUMER(POWER_KINETIC),
     KINETIC_TRANSPORTER(POWER_KINETIC),
+
+    // Laser top level types -- the most basic 3 categories that a machine can fit into
+    LASER_PRODUCER(POWER_LASER),
+    LASER_CONSUMER(POWER_LASER),
+    LASER_TRANSPORTER(POWER_LASER),
 
     // Different types of producers
     RS_PRODUCER_ENGINE(REDSTONE_PRODUCER),
@@ -29,6 +36,9 @@ public enum MjSimpleType implements IMjConnectorType {
     KN_PRODUCER_GENERATOR(KINETIC_PRODUCER),
 
     // Different types of consumers
+    /** A machine that can accept redstone power to get the job done. The most expensive example of this is the pump. */
+    RS_CONSUMER_MACHINE(REDSTONE_CONSUMER),
+
     KN_COSUMER_MACHINE(KINETIC_CONSUMER),
 
     // Different types of transporters
@@ -38,7 +48,11 @@ public enum MjSimpleType implements IMjConnectorType {
     KN_TRANSPORT_STORAGE(KINETIC_TRANSPORTER),
 
     /** Some sort of transporter that teleports between 2 places. */
-    KN_TRANSPORT_TELEPORT(KINETIC_TRANSPORTER);
+    KN_TRANSPORT_TELEPORT(KINETIC_TRANSPORTER),
+
+    LA_TRANSPORTER_CONVERT(LASER_TRANSPORTER),
+
+    ;
 
     /** Stores this, its parents, its parents parents, etc. Basically allows for not recursing when trying to find out
      * if it is a type or not. */

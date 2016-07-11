@@ -42,6 +42,7 @@ public class BCCore {
 
     static {
         BCLibItems.enableGuide();
+        BCLibItems.enableDebugger();
     }
 
     @Mod.EventHandler

@@ -2,6 +2,8 @@ package buildcraft.lib.engine;
 
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -11,7 +13,6 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjConnectorType;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.core.lib.BlockTileCache;
@@ -21,19 +22,16 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     /* BLUE, GREEN, YELLOW, RED, OVERHEAT, BLACK */
     private static final int[] PULSE_FREQUENCIES = { 60, 45, 35, 25, 15, 50 };
 
-    private final IMjConnector conductor = new IMjConnector() {
-        @Override
-        public boolean canConnect(IMjConnector other) {
-            return other instanceof IMjReceiver;
-        }
-    };
+    @Nonnull
+    public final IMjConnector conductor = createConnector();
+
     private EnumFacing currentDirection = EnumFacing.UP;
     // Keep a buffer of what tiles are infront of us.
     protected final BlockTileCache[] infrontBuffer = new BlockTileCache[getMaxEngineCarryDist() + 1];
     // refreshed from above, but is guaranteed to be non-null and contain non-null.
     protected TileEngineBase_BC8[] enginesInFront = new TileEngineBase_BC8[0];
     protected IMjReceiver receiverBuffer = null;
-    private int milliJoulesHeld;
+    private long microJoulesHeld;
     private float pulseStage = 0;
 
     public TileEngineBase_BC8() {
@@ -79,9 +77,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
                     engines[num++] = forwardEngine;
                 } else break;
             } else {
-                IMjConnector c = tile.getCapability(MjAPI.CAP_CONDUCTOR, currentDirection.getOpposite());
-                if (c instanceof IMjReceiver && c.canConnect(conductor)) {
-                    receiverBuffer = (IMjReceiver) c;
+                IMjReceiver c = tile.getCapability(MjAPI.CAP_RECEIVER, currentDirection.getOpposite());
+                if (c != null && c.canConnect(conductor) && conductor.canConnect(c)) {
+                    receiverBuffer = c;
                 }
                 break;
             }
@@ -95,8 +93,8 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
         if (pulseStage > 0.8) {
             float multiplier = 1 - pulseStage;
-            int power = MathHelper.floor_float(multiplier * milliJoulesHeld);
-            milliJoulesHeld -= power;
+            int power = MathHelper.floor_float(multiplier * microJoulesHeld);
+            microJoulesHeld -= power;
             sendPower(power);
         }
     }
@@ -110,7 +108,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         }
     }
 
-    protected void sendPower(int power) {
+    protected void sendPower(long power) {
         if (receiverBuffer == null || !receiverBuffer.receivePower(power, false)) {
             MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, power);
         }
@@ -124,9 +122,13 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         return worldObj.isBlockPowered(getPos());
     }
 
-    protected void addPower(int milliJoules) {
-        milliJoulesHeld += milliJoules;
+    protected void addPower(long microJoules) {
+        microJoulesHeld += microJoules;
     }
+
+    /** Creates a connector that uses this engine. You are encouraged to use {@link EngineConnector} */
+    @Nonnull
+    protected abstract IMjConnector createConnector();
 
     public abstract EnumEnergyStage getEnergyStage();
 
@@ -139,7 +141,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
      *         that are facing the same direction. */
     public abstract int getMaxEngineCarryDist();
 
-    /** Checks to see if this can carry power through the given engine. */
+    /** Checks to see if this can carry power through the given engine, or can carry power from the given engine. */
     protected abstract boolean canCarryOver(TileEngineBase_BC8 engine);
 
 }
