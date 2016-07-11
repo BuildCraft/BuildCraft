@@ -14,13 +14,13 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.transport.TileFilteredBuffer;
 
-public class GuiFilteredBuffer extends GuiContainer {
+public class GuiFilteredBufferOld extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filteredBuffer_gui.png");
     IInventory playerInventory;
     TileFilteredBuffer filteredBuffer;
 
-    public GuiFilteredBuffer(EntityPlayer player, TileFilteredBuffer filteredBuffer) {
+    public GuiFilteredBufferOld(EntityPlayer player, TileFilteredBuffer filteredBuffer) {
         super(new ContainerFilteredBuffer(player, filteredBuffer));
 
         this.playerInventory = player.inventory;

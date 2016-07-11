@@ -104,8 +104,8 @@ public abstract class ContainerBC_Neptune extends Container {
          * slotB.putStack(slotStack); return playerStack; } else { player.inventory.setItemStack(slotStack); return
          * slotStack; } } } } */
         if (slot instanceof IPhantomSlot) {
-            ItemStack itemStack = null;
-            if (playerStack != null) {
+            ItemStack itemStack;
+            if (playerStack != null && (slot.getStack() == null || ((IPhantomSlot) slot).canAdjust())) {
                 ItemStack copy = playerStack.copy();
                 copy.stackSize = 1;
                 if (ItemStack.areItemsEqual(copy, slot.getStack()) && ItemStack.areItemStackTagsEqual(copy, slot.getStack())) {
