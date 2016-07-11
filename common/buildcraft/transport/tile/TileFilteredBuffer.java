@@ -1,11 +1,13 @@
 package buildcraft.transport.tile;
 
+import net.minecraft.item.ItemStack;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
-import net.minecraft.item.ItemStack;
+import buildcraft.lib.tile.item.StackInsertionFunction;
 
 public class TileFilteredBuffer extends TileBCInventory_Neptune {
     public final ItemHandlerSimple invFilter;
@@ -13,14 +15,15 @@ public class TileFilteredBuffer extends TileBCInventory_Neptune {
 
     public TileFilteredBuffer() {
         invFilter = addInventory("filter", 9, ItemHandlerManager.EnumAccess.NONE);
-        invMain = addInventory("main", new ItemHandlerSimple(9, this::onSlotChange) {
-            @Override
-            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-                if(invFilter.getStackInSlot(slot) != null  && StackUtil.canMerge(invFilter.getStackInSlot(slot), stack)) {
-                    return super.insertItem(slot, stack, simulate);
-                }
-                return stack;
-            }
-        }, ItemHandlerManager.EnumAccess.INSERT, EnumPipePart.VALUES);
+        ItemHandlerSimple handler = new ItemHandlerSimple(9, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onSlotChange);
+        invMain = addInventory("main", handler, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
+    }
+
+    private boolean canInsert(int slot, ItemStack stack) {
+        if (stack == null) {
+            return true;
+        }
+        ItemStack filterStack = invFilter.getStackInSlot(slot);
+        return filterStack != null && StackUtil.canMerge(filterStack, stack);
     }
 }
