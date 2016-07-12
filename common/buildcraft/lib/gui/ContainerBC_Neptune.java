@@ -35,16 +35,20 @@ public abstract class ContainerBC_Neptune extends Container {
         this.player = player;
     }
 
-    protected void addFullPlayerInventory(int startY) {
+    protected void addFullPlayerInventory(int startX, int startY) {
         for (int sy = 0; sy < 3; sy++) {
             for (int sx = 0; sx < 9; sx++) {
-                addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, startY + sy * 18));
+                addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, startX + sx * 18, startY + sy * 18));
             }
         }
 
         for (int sx = 0; sx < 9; sx++) {
-            addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, startY + 58));
+            addSlotToContainer(new Slot(player.inventory, sx, startX + sx * 18, startY + 58));
         }
+    }
+
+    protected void addFullPlayerInventory(int startY) {
+        addFullPlayerInventory(8, startY);
     }
 
     protected <W extends Widget_Neptune<?>> W addWidget(W widget) {
