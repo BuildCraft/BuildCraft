@@ -66,7 +66,7 @@ public class SpringPopulate {
 
 			world.setBlock(posX, y + 1, posZ, BuildCraftCore.springBlock);
 
-			for (int j = y + 2; j < world.getActualHeight(); j++) {
+			for (int j = y + 2; j < world.getHeight(); j++) {
 				if (world.isAirBlock(posX, j, posZ)) {
 					break;
 				} else {

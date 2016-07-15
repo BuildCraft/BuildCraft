@@ -34,6 +34,7 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
 	private static final AxisAlignedBB[][] boxes = {
@@ -256,4 +257,11 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	public abstract String getUnlocalizedName(int metadata);
 
 	public abstract TileEntity createTileEntity(World world, int metadata);
+
+	/**
+	 * Checks to see if this block has an engine tile for the given metadata.
+	 * 
+	 * Used for checking in {@link Utils#isRegistered(net.minecraft.item.ItemStack)}
+	 */
+	public abstract boolean hasEngine(int meta);
 }

@@ -53,6 +53,9 @@ public class BlockEngine extends BlockEngineBase {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
+	    if (engineTiles[metadata] == null) {
+	        return null;
+	    }
 		try {
 			return (TileEntity) engineTiles[metadata].newInstance();
 		} catch (Exception e) {
@@ -71,6 +74,7 @@ public class BlockEngine extends BlockEngineBase {
 		}
 	}
 
+	@Override
 	public boolean hasEngine(int meta) {
 		return engineTiles[meta] != null;
 	}

@@ -124,7 +124,7 @@ public final class OilPopulate {
 				wellHeight = LARGE_WELL_HEIGHT;
 			}
 			int maxHeight = groundLevel + wellHeight;
-			if (maxHeight >= world.getActualHeight() - 1) {
+			if (maxHeight >= world.getHeight() - 1) {
 				return;
 			}
 

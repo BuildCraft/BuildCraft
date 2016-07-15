@@ -44,6 +44,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.internal.IFramePipeConnection;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.engines.BlockEngineBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
@@ -80,7 +81,14 @@ public final class Utils {
 	}
 
 	public static boolean isRegistered(ItemStack stack) {
-		return stack != null && isRegistered(stack.getItem());
+	    if (stack == null) {
+	        return false;
+	    }
+	    Block block = Block.getBlockFromItem(stack.getItem());
+	    if (block instanceof BlockEngineBase) {
+	        return isRegistered(block) && ((BlockEngineBase) block).hasEngine(stack.getItemDamage());
+	    }
+	    return isRegistered(stack.getItem());
 	}
 
 	/**

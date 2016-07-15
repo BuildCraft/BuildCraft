@@ -103,7 +103,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IHasW
 
 		if (getBattery().useEnergy(craftingResult.energyCost, craftingResult.energyCost, false) > 0) {
 			CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
-			result.fill(r.crafted.copy(), true);
+			if (r != null && r.crafted != null) {
+			    // Shouldn't really happen, but its not properly documented
+			    result.fill(r.crafted.copy(), true);
+			}
 		}
 	}
 
