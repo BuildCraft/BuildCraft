@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import buildcraft.robotics.MessageZonePlannerMapChunkRequest;
+import buildcraft.robotics.MessageZonePlannerMapChunkResponse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
@@ -53,6 +55,8 @@ public enum BCMessageHandler {
 
     public static void fmlPostInit() {
         netWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bc-lib");
+        netWrapper.registerMessage(MessageZonePlannerMapChunkRequest.Handler.class, MessageZonePlannerMapChunkRequest.class, 123, Side.SERVER); // TODO: move it form here
+        netWrapper.registerMessage(MessageZonePlannerMapChunkResponse.Handler.class, MessageZonePlannerMapChunkResponse.class, 124, Side.CLIENT);
         Collections.sort(handlers);
         if (DEBUG) {
             BCLog.logger.info("[lib.messages] Sorted list of messages:");
