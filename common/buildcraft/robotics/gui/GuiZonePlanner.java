@@ -32,7 +32,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private float startMouseY = 0;
     private float startPositionX = 0;
     private float startPositionZ = 0;
-    private float camY = 0;
+    private float camY = 256;
     private float scaleSpeed = 0;
     private float positionX = 0;
     private float positionZ = 0;
@@ -41,6 +41,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
+        BlockPos tilePos = container.tile.getPos();
+        positionX = tilePos.getX();
+        positionZ = tilePos.getZ();
     }
 
     private static void vertex(double x, double y, double z) {
@@ -124,7 +127,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
         if (wheel != 0) {
-            scaleSpeed -= wheel / 50F;
+            scaleSpeed -= wheel / 30F;
         }
         super.handleMouseInput();
     }
@@ -141,8 +144,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        float deltaX = startMouseX - mouseX;
-        float deltaY = startMouseY - mouseY;
+        float deltaX = mouseX - startMouseX;
+        float deltaY = mouseY - startMouseY;
         float s = 0.3F;
         positionX = startPositionX - deltaX * s;
         positionZ = startPositionZ - deltaY * s;
@@ -168,7 +171,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int offsetY = 9;
         int sizeX = 213;
         int sizeY = 100;
-        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT/* | GL11.GL_COLOR_BUFFER_BIT*/); // TODO: remove
+        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT); // TODO: save depth buffer?
+        GL11.glPushMatrix();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
@@ -185,26 +189,26 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glLoadIdentity();
         RenderHelper.enableStandardItemLighting();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        GL11.glRotatef(90, 1, 0, 0);
-        BlockPos tilePos = container.tile.getPos();
-        GL11.glTranslatef(-tilePos.getX() + positionX, -camY - 256, -tilePos.getZ() + positionZ);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_BLEND); // FIXME: blending
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glRotatef(90, 1, 0, 0); // look down
+        GL11.glTranslatef(-positionX, -camY, -positionZ);
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        for(int chunkX = (tilePos.getX() >> 4) - 8; chunkX < (tilePos.getX() >> 4) + 8; chunkX++) {
-            for(int chunkZ = (tilePos.getZ() >> 4) - 8; chunkZ < (tilePos.getZ() >> 4) + 8; chunkZ++) {
+        int chunkBaseX = (int)positionX >> 4;
+        int chunkBaseZ = (int)positionZ >> 4;
+        int radius = 8;
+        for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
+            for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
                 GL11.glCallList(drawChunk(chunkX, chunkZ));
             }
         }
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glViewport(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         GL11.glPopMatrix();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glPopMatrix();
         RenderHelper.disableStandardItemLighting();
     }
 }
