@@ -6,7 +6,9 @@ package buildcraft.robotics.gui;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.robotics.ZonePlannerMapData;
 import buildcraft.robotics.ZonePlannerMapDataClient;
+import buildcraft.robotics.ZonePlannerMapRenderer;
 import buildcraft.robotics.container.ContainerZonePlanner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -27,7 +29,6 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
     private static final int SIZE_X = 256, SIZE_Y = 228;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
-    private Map<Pair<Integer, Integer>, Integer> chunkListIndexes = new HashMap<>();
     private float startMouseX = 0;
     private float startMouseY = 0;
     private float startPositionX = 0;
@@ -44,83 +45,6 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         BlockPos tilePos = container.tile.getPos();
         positionX = tilePos.getX();
         positionZ = tilePos.getZ();
-    }
-
-    private static void vertex(double x, double y, double z) {
-        GL11.glVertex3d(x, y, z);
-    }
-
-    public void renderCube(double x, double y, double z) {
-        double rX = 1;
-        double rY = 1;
-        double rZ = 1;
-
-        GL11.glNormal3d(0, 1, 0);
-        vertex(x - rX, y + rY, z + rZ);
-        vertex(x + rX, y + rY, z + rZ);
-        vertex(x + rX, y + rY, z - rZ);
-        vertex(x - rX, y + rY, z - rZ);
-
-        GL11.glNormal3d(0, -1, 0);
-        vertex(x - rX, y - rY, z - rZ);
-        vertex(x + rX, y - rY, z - rZ);
-        vertex(x + rX, y - rY, z + rZ);
-        vertex(x - rX, y - rY, z + rZ);
-
-        GL11.glNormal3d(-1, 0, 0);
-        vertex(x - rX, y - rY, z + rZ);
-        vertex(x - rX, y + rY, z + rZ);
-        vertex(x - rX, y + rY, z - rZ);
-        vertex(x - rX, y - rY, z - rZ);
-
-        GL11.glNormal3d(1, 0, 0);
-        vertex(x + rX, y - rY, z - rZ);
-        vertex(x + rX, y + rY, z - rZ);
-        vertex(x + rX, y + rY, z + rZ);
-        vertex(x + rX, y - rY, z + rZ);
-
-        GL11.glNormal3d(0, 0, -1);
-        vertex(x - rX, y - rY, z - rZ);
-        vertex(x - rX, y + rY, z - rZ);
-        vertex(x + rX, y + rY, z - rZ);
-        vertex(x + rX, y - rY, z - rZ);
-
-        GL11.glNormal3d(0, 0, 1);
-        vertex(x + rX, y - rY, z + rZ);
-        vertex(x + rX, y + rY, z + rZ);
-        vertex(x - rX, y + rY, z + rZ);
-        vertex(x - rX, y - rY, z + rZ);
-    }
-
-    @SuppressWarnings("PointlessBitwiseExpression")
-    private int drawChunk(int chunkX, int chunkZ) {
-        Pair<Integer, Integer> chunkPosPair = Pair.of(chunkX, chunkZ);
-        if(chunkListIndexes.containsKey(chunkPosPair)) {
-            return chunkListIndexes.get(chunkPosPair);
-        }
-        int listIndexEmpty = GL11.glGenLists(1);
-        GL11.glNewList(listIndexEmpty, GL11.GL_COMPILE);
-        // noting, wait for chunk data
-        GL11.glEndList();
-        chunkListIndexes.put(chunkPosPair, listIndexEmpty);
-        ZonePlannerMapDataClient.instance.getChunk(container.tile.getWorld(), chunkX, chunkZ, zonePlannerMapChunk -> {
-            int listIndex = GL11.glGenLists(1);
-            GL11.glNewList(listIndex, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_QUADS);
-            for(BlockPos pos : zonePlannerMapChunk.data.keySet()) {
-                int color = zonePlannerMapChunk.data.get(pos);
-                int r = (color >> 16) & 0xFF;
-                int g = (color >> 8) & 0xFF;
-                int b = (color >> 0) & 0xFF;
-                int a = (color >> 24) & 0xFF;
-                GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, a / (double)0xFF);
-                renderCube(chunkX * 16 + pos.getX(), pos.getY(), chunkZ * 16 + pos.getZ());
-            }
-            GL11.glEnd();
-            GL11.glEndList();
-            chunkListIndexes.put(chunkPosPair, listIndex);
-        });
-        return listIndexEmpty;
     }
 
     @Override
@@ -198,7 +122,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int radius = 8;
         for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
-                GL11.glCallList(drawChunk(chunkX, chunkZ));
+                GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(container.tile.getWorld(), chunkX, chunkZ));
             }
         }
         GL11.glEnable(GL11.GL_TEXTURE_2D);
