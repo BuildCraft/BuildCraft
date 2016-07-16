@@ -34,7 +34,7 @@ public class MessageZonePlannerMapChunkRequest implements IMessage {
         @Override
         public IMessage onMessage(MessageZonePlannerMapChunkRequest message, MessageContext ctx) {
             ctx.getServerHandler().playerEntity.mcServer.addScheduledTask(() -> {
-                ZonePlannerMapDataServer.instance.loadChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkX, message.chunkZ, zonePlannerMapChunk -> {
+                ZonePlannerMapDataServer.instance.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkX, message.chunkZ, zonePlannerMapChunk -> {
                     BCMessageHandler.netWrapper.sendTo(new MessageZonePlannerMapChunkResponse(message.chunkX, message.chunkZ, zonePlannerMapChunk), ctx.getServerHandler().playerEntity);
                 });
             });
