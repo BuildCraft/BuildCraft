@@ -8,8 +8,6 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
@@ -70,7 +68,7 @@ public enum DetatchedRenderer {
 
     public void renderWorldLastEvent(EntityPlayer player, float partialTicks) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         for (RenderMatrixType type : RenderMatrixType.values()) {
             List<IDetachedRenderer> rendersForType = this.renders.get(type);
@@ -96,9 +94,5 @@ public enum DetatchedRenderer {
 
     public static void fromWorldOriginPost() {
         GL11.glPopMatrix();
-
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 }
