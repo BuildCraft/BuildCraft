@@ -64,7 +64,7 @@ public class MessageWidget implements IMessage {
             EntityPlayer player = LibProxy.getProxy().getPlayerForContext(ctx);
             if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
                 ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                container.handleWidgetMessage(widgetId, message.payload, ctx.side);
+                container.handleWidgetMessage(ctx, widgetId, message.payload, ctx.side);
             }
             return null;
         }

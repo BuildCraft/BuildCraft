@@ -1,6 +1,7 @@
 package buildcraft.lib.gui.widget;
 
 import java.io.IOException;
+import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -8,12 +9,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 
 /** Defines a widget that represents a phantom slot. */
@@ -32,7 +35,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLIENT_TO_SERVER_CLICK) {
             byte flags = buffer.readByte();
@@ -68,7 +71,7 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataClient(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_SERVER_TO_CLIENT_ITEM) {
             stack = buffer.readItemStackFromBuffer();
@@ -107,15 +110,15 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
     protected void onSetStack() {}
 
     @SideOnly(Side.CLIENT)
-    public class GuiElementPhantomSlot<G extends GuiBC8<C>, C extends ContainerBC_Neptune> extends GuiElementSimple<G, C> {
+    public class GuiElementPhantomSlot<G extends GuiBC8<?>> extends GuiElementSimple<G> {
         private final ToolTip tooltip = GuiUtil.createToolTip(gui, this::getStack);
 
-        public GuiElementPhantomSlot(G gui, IPositionedElement parent, GuiRectangle position) {
+        public GuiElementPhantomSlot(G gui, IGuiPosition parent, GuiRectangle position) {
             super(gui, parent, position);
         }
 
         @Override
-        public void drawForeground() {
+        public void drawForeground(float partialTicks) {
             RenderHelper.enableGUIStandardItemLighting();
             gui.mc.getRenderItem().renderItemAndEffectIntoGUI(getStack(), getX(), getY());
             RenderHelper.disableStandardItemLighting();
@@ -154,11 +157,11 @@ public class WidgetPhantomSlot extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public ToolTip getToolTip() {
+        public void addToolTips(List<ToolTip> tooltips) {
             if (getStack() != null && contains(gui.mouse)) {
-                return tooltip;
+                tooltips.add(tooltip);
+                tooltip.refresh();
             }
-            return null;
         }
     }
 }

@@ -42,8 +42,6 @@ public class RenderTank extends FastTESR<TileTank> {
 
     @Override
     public void renderTileEntityFast(TileTank tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-        GL11.glEnable(GL11.GL_CULL_FACE);
         super.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
-        // GL11.glDisable(GL11.GL_CULL_FACE); // FIXME: Why I can't disable it here?
     }
 }

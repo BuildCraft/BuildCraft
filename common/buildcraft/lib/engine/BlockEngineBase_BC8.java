@@ -13,17 +13,19 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
-public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune {
+public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile_Neptune implements ICustomRotationHandler {
     private final Map<E, Supplier<? extends TileEngineBase_BC8>> engineTileConstructors = new EnumMap<>(getEngineProperty().getValueClass());
 
     public BlockEngineBase_BC8(Material material, String id) {
@@ -35,15 +37,19 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
         setDefaultState(defaultState);
     }
 
+    // Engine directly related methods
+
     public void registerEngine(E type, Supplier<? extends TileEngineBase_BC8> constructor) {
         engineTileConstructors.put(type, constructor);
     }
 
     public abstract IProperty<E> getEngineProperty();
 
-    protected abstract E getEngineType(int meta);
+    public abstract E getEngineType(int meta);
 
     public abstract String getUnlocalizedName(E engine);
+
+    // BlockState
 
     @Override
     protected BlockStateContainer createBlockState() {
@@ -73,13 +79,32 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
         return state;
     }
 
+    // Misc Block Overrides
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         IBlockState state = getStateFromMeta(meta);
         E engineType = state.getValue(getEngineProperty());
-        Supplier<? extends TileEntity> constructor = engineTileConstructors.get(engineType);
-        if (constructor == null) return null;
-        TileEntity tile = constructor.get();
+        Supplier<? extends TileEngineBase_BC8> constructor = engineTileConstructors.get(engineType);
+        if (constructor == null) {
+            return null;
+        }
+        TileEngineBase_BC8 tile = constructor.get();
         tile.setWorldObj(world);
         return tile;
     }
@@ -91,5 +116,17 @@ public abstract class BlockEngineBase_BC8<E extends Enum<E>> extends BlockBCTile
                 list.add(new ItemStack(item, 1, engine.ordinal()));
             }
         }
+    }
+
+    // ICustomRotationHandler
+
+    @Override
+    public EnumActionResult attemptRotation(World world, BlockPos pos, IBlockState state, EnumFacing sideWrenched) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEngineBase_BC8) {
+            TileEngineBase_BC8 engine = (TileEngineBase_BC8) tile;
+            return engine.attemptRotation();
+        }
+        return EnumActionResult.FAIL;
     }
 }

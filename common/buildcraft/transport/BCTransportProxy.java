@@ -1,8 +1,5 @@
 package buildcraft.transport;
 
-import buildcraft.transport.container.ContainerFilteredBuffer;
-import buildcraft.transport.gui.GuiFilteredBuffer;
-import buildcraft.transport.tile.TileFilteredBuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -13,14 +10,15 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.transport.container.ContainerFilteredBuffer;
+import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.tile.TileFilteredBuffer;
 
-public abstract class TransportProxy_BC8 implements IGuiHandler {
+public abstract class BCTransportProxy implements IGuiHandler {
     @SidedProxy
-    private static TransportProxy_BC8 proxy;
+    private static BCTransportProxy proxy;
 
-    public static TransportProxy_BC8 getProxy() {
+    public static BCTransportProxy getProxy() {
         return proxy;
     }
 
@@ -41,15 +39,24 @@ public abstract class TransportProxy_BC8 implements IGuiHandler {
         return null;
     }
 
+    public void fmlPreInit() {}
+
     public void fmlInit() {}
 
+    public void fmlPostInit() {}
+
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends TransportProxy_BC8 {
+    public static class ServerProxy extends BCTransportProxy {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends TransportProxy_BC8 {
+    public static class ClientProxy extends BCTransportProxy {
+        @Override
+        public void fmlPreInit() {
+            TransportSprites.preInit();
+        }
+
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));

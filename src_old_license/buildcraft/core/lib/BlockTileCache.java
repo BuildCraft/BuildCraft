@@ -32,6 +32,7 @@ public final class BlockTileCache {
         refresh();
     }
 
+    /** Force-refreshes this cache. */
     public void refresh() {
         tile = null;
         state = null;

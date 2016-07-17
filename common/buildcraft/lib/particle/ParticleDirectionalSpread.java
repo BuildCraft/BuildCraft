@@ -3,56 +3,38 @@ package buildcraft.lib.particle;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
 public enum ParticleDirectionalSpread implements IParticlePositionPipe {
-    MINIMAL(2),
-    DECREASED(7),
-    ALL(13);
+    SMALL(0.01),
+    MEDIUM(0.02),
+    LARGE(0.04),
+    MASSIVE(0.08);
 
-    private static final double MOTION_MAX_DIFF = 0.02;
+    private final double motionDiff;
 
-    public static ParticleDirectionalSpread getForOption() {
-        GameSettings gs = Minecraft.getMinecraft().gameSettings;
-        int count = gs.particleSetting % 3;
-        if (count == 0) {
-            return ALL;
-        } else if (count == 1) {
-            return DECREASED;
-        }
-        return MINIMAL;
-    }
-
-    private final int numExpanses;
-
-    private ParticleDirectionalSpread(int numExpanses) {
-        this.numExpanses = numExpanses;
+    private ParticleDirectionalSpread(double motionDiff) {
+        this.motionDiff = motionDiff;
     }
 
     @Override
     public List<ParticlePosition> pipe(ParticlePosition pos) {
         List<ParticlePosition> list = new ArrayList<>();
 
-        for (int i = 0; i < numExpanses; i++) {
-            Vec3d nMotion = modifyMotion(pos.motion, pos.idealMotion);
-            list.add(new ParticlePosition(pos.position, nMotion, pos.idealMotion));
-        }
+        Vec3d nMotion = modifyMotion(pos.motion);
+        list.add(new ParticlePosition(pos.position, nMotion));
 
         return list;
     }
 
-    private Vec3d modifyMotion(Vec3d motion, EnumFacing idealMotion) {
-        double dx = getDelta(idealMotion == null ? 0 : idealMotion.getFrontOffsetX());
-        double dy = getDelta(idealMotion == null ? 0 : idealMotion.getFrontOffsetY());
-        double dz = getDelta(idealMotion == null ? 0 : idealMotion.getFrontOffsetZ());
+    private Vec3d modifyMotion(Vec3d motion) {
+        double dx = getRandom();
+        double dy = getRandom();
+        double dz = getRandom();
         return motion.addVector(dx, dy, dz);
     }
 
-    private double getDelta(int o) {
-        double subtract = -o / 2.0 + 0.5;
-        return (Math.random() - subtract) * MOTION_MAX_DIFF * 2;
+    private double getRandom() {
+        return (Math.random() - 0.5) * motionDiff;
     }
 }

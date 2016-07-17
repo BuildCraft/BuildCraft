@@ -23,8 +23,8 @@ import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.IPositionedElement;
-import buildcraft.lib.gui.MousePosition;
+import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.MousePosition;
 
 public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;

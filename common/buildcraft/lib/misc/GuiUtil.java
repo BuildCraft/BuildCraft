@@ -14,7 +14,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.IGuiElement;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {
     public static ToolTip createToolTip(GuiBC8<?> gui, Supplier<ItemStack> stackRef) {
@@ -33,7 +33,7 @@ public class GuiUtil {
     }
 
     /** Draws multiple elements, one after each other. */
-    public static <D> void drawVerticallyAppending(IGuiElement element, Iterable<? extends D> iterable, IVerticalAppendingDrawer<D> drawer) {
+    public static <D> void drawVerticallyAppending(IGuiPosition element, Iterable<? extends D> iterable, IVerticalAppendingDrawer<D> drawer) {
         int x = element.getX();
         int y = element.getY();
         for (D drawable : iterable) {

@@ -1,10 +1,6 @@
-package buildcraft.lib.gui;
+package buildcraft.lib.gui.pos;
 
-public interface IPositionedElement {
-    int getX();
-
-    int getY();
-
+public interface IPositionedElement extends IGuiPosition {
     int getWidth();
 
     int getHeight();
@@ -12,6 +8,12 @@ public interface IPositionedElement {
     default boolean contains(int x, int y) {
         if (x < getX() || x > getX()) return false;
         if (y < getY() || y > getY()) return false;
+        return true;
+    }
+
+    default boolean contains(IGuiPosition position) {
+        if (position.getX() < getX() || position.getX() > getX() + getWidth()) return false;
+        if (position.getY() < getY() || position.getY() > getY() + getHeight()) return false;
         return true;
     }
 
@@ -25,7 +27,8 @@ public interface IPositionedElement {
         return "[x = " + getX() + ", y = " + getY() + ", w = " + getWidth() + ", h = " + getHeight() + "]";
     }
 
-    default IPositionedElement offset(IPositionedElement by) {
+    @Override
+    default IPositionedElement offset(IGuiPosition by) {
         IPositionedElement containing = this;
         return new IPositionedElement() {
             @Override
@@ -50,6 +53,7 @@ public interface IPositionedElement {
         };
     }
 
+    @Override
     default IPositionedElement offset(int x, int y) {
         IPositionedElement containing = this;
         return new IPositionedElement() {

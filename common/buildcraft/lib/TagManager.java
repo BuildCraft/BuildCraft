@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 /** Stores several types of "tag" (strings) for BuildCraft. A central place for all of them to init in. Refer to the
  * "static" block for all of the tag ID's
  * 
@@ -22,8 +24,8 @@ public class TagManager {
     public static Item getItem(String id) {
         String regTag = getTag(id, EnumTagType.REGISTRY_NAME);
         ResourceLocation loc = new ResourceLocation(regTag);
-        if (Item.REGISTRY.containsKey(loc)) {
-            return Item.REGISTRY.getObject(loc);
+        if (ForgeRegistries.ITEMS.containsKey(loc)) {
+            return ForgeRegistries.ITEMS.getValue(loc);
         } else {
             return null;
         }
@@ -202,6 +204,7 @@ public class TagManager {
 
         startBatch(); // lib
         registerTag("item.guide").reg("guide").locale("guide").model("guide").tab("vanilla.misc");
+        registerTag("item.debugger").reg("debugger").locale("debugger").model("debugger").tab("vanilla.misc");
         endBatch(prependTags("lib:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// core
@@ -220,6 +223,7 @@ public class TagManager {
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
         registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/");
+        registerTag("item.block.engine.bc").reg("engine").locale("engineBlock").model("engine/");
         // BC Core Blocks
         registerTag("block.decorated").reg("decorated").locale("decorated");
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
@@ -232,6 +236,7 @@ public class TagManager {
         // BC Core Tiles
         registerTag("tile.marker.volume").reg("marker.volume").oldReg("buildcraft.builders.Marker", "Marker");
         registerTag("tile.marker.path").reg("marker.path");
+        registerTag("tile.engine.wood").reg("engine.wood");
 
         endBatch(prependTags("core:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
@@ -259,6 +264,7 @@ public class TagManager {
         // BC Energy Item Blocks
         // BC Energy Blocks
         // BC Energy Tiles
+        registerTag("tile.engine.stone").reg("engine.stone");
 
         endBatch(prependTags("energy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

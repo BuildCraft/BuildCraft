@@ -4,47 +4,26 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.tile;
 
+import java.util.List;
+
+import net.minecraft.util.EnumFacing;
+
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.types.EngineType;
-import buildcraft.core.lib.utils.AverageDouble;
+import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // TODO: Fix these numbers as they are probably completely wrong
-    public static final int[] MILLIWATTS_PROVIDED = { 35, 50, 75, 100, 0 };
-    private static final long[] MICRO_JOULES = {};
-    
+    private static final long[] MICRO_JOULES = { 10_000, 20_000, 40_000, 80_000, 160_000, 0 };
+
     private EnumEnergyStage stage = EnumEnergyStage.BLUE;
-    private AverageDouble powerAvg = new AverageDouble(10);
+    private AverageInt powerAvg = new AverageInt(10);
     private long lastChange = 0;
 
     public TileEngineRedstone_BC8() {}
-
-    // @Override
-    // public NBTTagCompound writeToNBT(int stage) {
-    // NBTTagCompound nbt = super.writeToNBT(stage);
-    // if (stage == 0) {
-    // nbt.setTag("stage", NBTUtils.writeEnum(this.stage));
-    // nbt.setTag("average", powerAvg.serializeNBT());
-    // }
-    // return nbt;
-    // }
-    //
-    // @Override
-    // public void readFromNBT(int stage, NBTTagCompound nbt) {
-    // super.readFromNBT(stage, nbt);
-    // if (stage == 0) {
-    // this.stage = NBTUtils.readEnum(nbt.getTag("stage"), EnumEnergyStage.class);
-    // powerAvg.deserializeNBT(nbt.getCompoundTag("average"));
-    // }
-    // }
-
-    @Override
-    protected void sendPower(long power) {
-
-    }
 
     @Override
     public EnumEnergyStage getEnergyStage() {
@@ -65,29 +44,50 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     public void update() {
         super.update();
         if (cannotUpdate()) return;
-        powerAvg.tick();
-        double average = powerAvg.getAverage();
-        if (average > 1) {
-            if (worldObj.getTotalWorldTime() > lastChange + 100) {
-                if (stage != EnumEnergyStage.OVERHEAT) {
-                    stage = EnumEnergyStage.VALUES[stage.ordinal() + 1];
-                    lastChange = worldObj.getTotalWorldTime();
-                    redrawBlock();
-                }
-            }
-        } else if (average < 0.5) {
-            if (worldObj.getTotalWorldTime() > lastChange + 20) {
-                if (stage != EnumEnergyStage.BLUE) {
-                    stage = EnumEnergyStage.VALUES[stage.ordinal() - 1];
-                    lastChange = worldObj.getTotalWorldTime();
-                    redrawBlock();
-                }
-            }
+        if (worldObj.isRemote) return;
+
+        long target = MICRO_JOULES[getEnergyStage().ordinal()];
+
+        if (isActive()) {
+            addPower(target);
+            // powerAvg.push((int) target);
         }
+
+        // powerAvg.tick();
+        // double average = powerAvg.getAverage();
+        // if (average > 0.7 * target) {
+        // if (worldObj.getTotalWorldTime() > lastChange + 100) {
+        // if (stage != EnumEnergyStage.OVERHEAT) {
+        // stage = EnumEnergyStage.VALUES[stage.ordinal() + 1];
+        // lastChange = worldObj.getTotalWorldTime();
+        // redrawBlock();
+        // }
+        // }
+        // } else if (average < 0.3 * target) {
+        // if (worldObj.getTotalWorldTime() > lastChange + 20) {
+        // if (stage != EnumEnergyStage.BLUE) {
+        // stage = EnumEnergyStage.VALUES[stage.ordinal() - 1];
+        // lastChange = worldObj.getTotalWorldTime();
+        // redrawBlock();
+        // }
+        // }
+        // }
     }
 
     @Override
     protected IMjConnector createConnector() {
         return new EngineConnector(EngineType.REDSTONE);
+    }
+
+    @Override
+    protected boolean hasFuelToBurn() {
+        return true;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        super.getDebugInfo(left, right, side);
+        left.add("");
+        left.add("Average = " + powerAvg.getAverage());
     }
 }

@@ -34,7 +34,7 @@ public class LaserCompiledBuffer {
 
             // TEX_2S
             int lmap = ia[INT_STRIDE * i + 1];
-            buffer.lightmap(lmap & 0xFFFF, (lmap >> 16) & 0xFFFF);
+            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
 
             buffer.endVertex();
         }

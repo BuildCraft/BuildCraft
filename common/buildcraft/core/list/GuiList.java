@@ -53,14 +53,14 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
                 final WidgetListSlot listSlot = arr[slot];
                 GuiRectangle rectangle = new GuiRectangle(8 + slot * 18, 32 + line * 34, 16, 16);
 
-                guiElements.add(listSlot.new GuiElementPhantomSlot<GuiList, ContainerList>(this, rootElement, rectangle) {
+                guiElements.add(listSlot.new GuiElementPhantomSlot<GuiList>(this, rootElement, rectangle) {
                     @Override
                     protected boolean shouldDrawHighlight() {
                         return listSlot.slotIndex == 0 || !gui.container.lines[listSlot.lineIndex].isOneStackMode();
                     }
 
                     @Override
-                    public void drawBackground() {
+                    public void drawBackground(float partialTicks) {
                         if (!shouldDrawHighlight()) {
                             ICON_HIGHLIGHT.drawAt(this);
                         }

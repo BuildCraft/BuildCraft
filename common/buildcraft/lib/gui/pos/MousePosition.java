@@ -1,7 +1,7 @@
-package buildcraft.lib.gui;
+package buildcraft.lib.gui.pos;
 
-public final class MousePosition implements IPositionedElement {
-    private int x, y;
+public final class MousePosition implements IGuiPosition {
+    private int x = -10, y = -10;
 
     public void setMousePosition(int mouseX, int mouseY) {
         this.x = mouseX;
@@ -16,16 +16,6 @@ public final class MousePosition implements IPositionedElement {
     @Override
     public int getY() {
         return y;
-    }
-
-    @Override
-    public int getWidth() {
-        return 0;
-    }
-
-    @Override
-    public int getHeight() {
-        return 0;
     }
 
     @Override

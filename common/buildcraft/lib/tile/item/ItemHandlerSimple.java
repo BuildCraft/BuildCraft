@@ -95,10 +95,10 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (badSlotIndex(slot)) {
             return stack;
         }
-        if (checker.canSet(slot, safeCopy(stack))) {
+        if (canSet(slot, stack)) {
             ItemStack current = stacks[slot];
             InsertionResult result = insertor.modifyForInsertion(slot, safeCopy(current), safeCopy(stack));
-            if (!checker.canSet(slot, safeCopy(result.toSet))) {
+            if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)", new IllegalStateException("Confilicting Insertion!"));
                 CrashReportCategory cat = report.makeCategory("Inventory details");
@@ -168,13 +168,21 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             // Its safe to throw here
             throw new IndexOutOfBoundsException("Slot index out of range: " + slot);
         }
-        if (checker.canSet(slot, safeCopy(stack))) {
+        if (canSet(slot, stack)) {
             setStackInternal(slot, stack);
         } else {
             // Someone miss-called this. Woops. Looks like they didn't call insert.
             // If this is *somehow* called from vanilla code then its probably a vanilla bug
             throw new IllegalStateException("Attempted to set stack[" + slot + "] when it was invalid! (" + stack + ")");
         }
+    }
+
+    public final boolean canSet(int slot, ItemStack stack) {
+        ItemStack copied = safeCopy(stack);
+        if (copied == null) {
+            return true;
+        }
+        return checker.canSet(slot, copied);
     }
 
     private void setStackInternal(int slot, ItemStack stack) {

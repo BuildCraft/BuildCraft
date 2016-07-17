@@ -23,7 +23,7 @@ import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.IPositionedElement;
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.RemoteLibraryDatabase;
@@ -35,10 +35,10 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private static final GuiIcon SCROLLBAR_BACKGROUND = new GuiIcon(TEXTURE, 244, 0, 6, 110);
     private static final GuiIcon SCROLLBAR_ITSELF = new GuiIcon(TEXTURE, 250, 0, 6, 12);
     private static final GuiIcon ICON_UPLOAD = new GuiIcon(TEXTURE, 0, 220, 7, 8);
-    private static final GuiIcon ICON_DOWNLOAD = new GuiIcon(ICON_UPLOAD, 7, 0);
+    private static final GuiIcon ICON_DOWNLOAD = ICON_UPLOAD.offset(7, 0);
 
     private GuiButton deleteButton;
-    private final ScrollbarElement<GuiBlueprintLibrary, ContainerBlueprintLibrary> scrollbar;
+    private final ScrollbarElement<GuiBlueprintLibrary> scrollbar;
     public LibraryEntryHeader selected = null;
 
     public GuiBlueprintLibrary(EntityPlayer player, TileLibrary_Neptune library) {
@@ -50,7 +50,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
         xSize = 244;
         ySize = 220;
 
-        IPositionedElement parent = rootElement.offset(163, 21);
+        IGuiPosition parent = rootElement.offset(163, 21);
         scrollbar = new ScrollbarElement<>(this, parent, height, SCROLLBAR_BACKGROUND, SCROLLBAR_ITSELF);
 
     }

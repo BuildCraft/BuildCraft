@@ -14,6 +14,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -29,6 +30,7 @@ import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 
@@ -122,14 +124,14 @@ public class BlockBCBase_Neptune extends Block {
         if (this instanceof IBlockWithFacing) {
             EnumFacing orientation = placer.getHorizontalFacing();
             if (((IBlockWithFacing) this).canPlacedVertical()) {
-                if (MathHelper.abs((float) placer.posX - (float) pos.getX()) < 2.0F && MathHelper.abs((float) placer.posZ - (float) pos.getZ()) < 2.0F) {
-                    double y = placer.posY + (double) placer.getEyeHeight();
+                if (MathHelper.abs((float) placer.posX - pos.getX()) < 2.0F && MathHelper.abs((float) placer.posZ - pos.getZ()) < 2.0F) {
+                    double y = placer.posY + placer.getEyeHeight();
 
-                    if (y - (double) pos.getY() > 2.0D) {
+                    if (y - pos.getY() > 2.0D) {
                         orientation = EnumFacing.DOWN;
                     }
 
-                    if ((double) pos.getY() - y > 0.0D) {
+                    if (pos.getY() - y > 0.0D) {
                         orientation = EnumFacing.UP;
                     }
                 }
@@ -147,16 +149,16 @@ public class BlockBCBase_Neptune extends Block {
         return register(block, force, ItemBlockBC_Neptune::new);
     }
 
-    public static <B extends BlockBCBase_Neptune> B register(B block, Function<B, ItemBlockBC_Neptune> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, Function<B, I> itemBlockConstructor) {
         return register(block, false, itemBlockConstructor);
     }
 
-    public static <B extends BlockBCBase_Neptune> B register(B block, boolean force, Function<B, ItemBlockBC_Neptune> itemBlockConstructor) {
+    public static <B extends BlockBCBase_Neptune, I extends Item & IItemBuildCraft> B register(B block, boolean force, Function<B, I> itemBlockConstructor) {
         if (RegistryHelper.registerBlock(block, force)) {
             registeredBlocks.add(block);
             MigrationManager.INSTANCE.addBlockMigration(block, TagManager.getMultiTag(block.id, EnumTagTypeMulti.OLD_REGISTRY_NAME));
             if (itemBlockConstructor != null) {
-                ItemBlockBC_Neptune item = itemBlockConstructor.apply(block);
+                I item = itemBlockConstructor.apply(block);
                 if (item != null) {
                     ItemManager.register(item, true);
                 }

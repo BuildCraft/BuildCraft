@@ -6,11 +6,14 @@ package buildcraft.core;
 
 import net.minecraft.block.material.Material;
 
+import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.block.BlockDecoration;
 import buildcraft.core.block.BlockEngine_BC8;
 import buildcraft.core.block.BlockMarkerPath;
 import buildcraft.core.block.BlockMarkerVolume;
 import buildcraft.core.item.ItemBlockDecorated;
+import buildcraft.core.item.ItemEngine_BC8;
+import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerPath;
 import buildcraft.core.tile.TileMarkerVolume;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -28,11 +31,11 @@ public class BCCoreBlocks {
         markerPath = BlockBCBase_Neptune.register(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
         decorated = BlockBCBase_Neptune.register(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);
 
-        // engine = BlockBuildCraftBase_BC8.register(new BlockEngine_BC8(Material.IRON, "block.engine.bc"),
-        // ItemEngine_BC8<EnumEngineType>::new);
+        engine = BlockBCBase_Neptune.register(new BlockEngine_BC8(Material.IRON, "block.engine.bc"), ItemEngine_BC8<EnumEngineType>::new);
+        engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
 
-        // engine.registerEngine(EnumEngineType.WOOD, TileEngineRedstone_BC8::new);
         TileBC_Neptune.registerTile(TileMarkerVolume.class, "tile.marker.volume");
         TileBC_Neptune.registerTile(TileMarkerPath.class, "tile.marker.path");
+        TileBC_Neptune.registerTile(TileEngineRedstone_BC8.class, "tile.engine.wood");
     }
 }

@@ -8,43 +8,41 @@ import java.util.stream.Stream;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 
+import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
+import buildcraft.lib.gui.ledger.LedgerOwnership;
+import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.MousePosition;
+import buildcraft.lib.gui.pos.PositionCallable;
+import buildcraft.lib.gui.widget.WidgetOwnership;
+
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     public final C container;
     public final MousePosition mouse = new MousePosition();
-    public final IPositionedElement rootElement = new IPositionedElement() {
-        @Override
-        public int getX() {
-            return GuiBC8.this.guiLeft;
-        }
-
-        @Override
-        public int getY() {
-            return GuiBC8.this.guiTop;
-        }
-
-        @Override
-        public int getWidth() {
-            return GuiBC8.this.width;
-        }
-
-        @Override
-        public int getHeight() {
-            return GuiBC8.this.height;
-        }
-    };
+    public final RootPosition rootElement = new RootPosition(this);
 
     protected final List<IGuiElement> guiElements = new ArrayList<>();
+    protected final LedgerManager_Neptune ledgersLeft, ledgersRight;
     private final GuiElementToolTips tooltips = new GuiElementToolTips(this);
+    private float lastPartialTicks;
 
     public GuiBC8(C container) {
         super(container);
         this.container = container;
+        ledgersLeft = new LedgerManager_Neptune(this, rootElement.offset(0, 5), false);
+        IPositionedElement rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, () -> 5));
+        ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
     }
 
     @Override
     public void initGui() {
         super.initGui();
         guiElements.clear();
+        ledgersLeft.ledgers.clear();
+        ledgersRight.ledgers.clear();
+        if (container instanceof ContainerBCTile<?>) {
+            WidgetOwnership widget = ((ContainerBCTile<?>) container).ownershipWidget;
+            ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, widget));
+        }
     }
 
     // Protected -> Public
@@ -61,13 +59,24 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        ledgersLeft.update();
+        ledgersRight.update();
+    }
+
+    @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        this.lastPartialTicks = partialTicks;
         mouse.setMousePosition(mouseX, mouseY);
 
         drawBackgroundLayer(partialTicks);
 
+        ledgersLeft.drawBackground(partialTicks);
+        ledgersRight.drawBackground(partialTicks);
+
         for (IGuiElement element : guiElements) {
-            element.drawBackground();
+            element.drawBackground(partialTicks);
         }
     }
 
@@ -78,11 +87,14 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
         drawForegroundLayer();
 
+        ledgersLeft.drawForeground(lastPartialTicks);
+        ledgersRight.drawForeground(lastPartialTicks);
+
         for (IGuiElement element : guiElements) {
-            element.drawForeground();
+            element.drawForeground(lastPartialTicks);
         }
 
-        tooltips.drawForeground();
+        tooltips.drawForeground(lastPartialTicks);
 
         GlStateManager.translate(guiLeft, guiTop, 0);
     }
@@ -96,6 +108,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         for (IGuiElement element : guiElements) {
             element.onMouseClicked(mouseButton);
         }
+
+        ledgersLeft.onMouseClicked(mouseButton);
+        ledgersRight.onMouseClicked(mouseButton);
     }
 
     @Override
@@ -107,6 +122,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         for (IGuiElement element : guiElements) {
             element.onMouseDragged(clickedMouseButton, timeSinceLastClick);
         }
+
+        ledgersLeft.onMouseDragged(clickedMouseButton, timeSinceLastClick);
+        ledgersRight.onMouseDragged(clickedMouseButton, timeSinceLastClick);
     }
 
     @Override
@@ -118,9 +136,40 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         for (IGuiElement element : guiElements) {
             element.onMouseReleased(state);
         }
+
+        ledgersLeft.onMouseReleased(state);
+        ledgersRight.onMouseReleased(state);
     }
 
-    protected void drawBackgroundLayer(float particlTicks) {}
+    protected void drawBackgroundLayer(float partialTicks) {}
 
     protected void drawForegroundLayer() {}
+
+    public static final class RootPosition implements IPositionedElement {
+        public final GuiBC8<?> gui;
+
+        public RootPosition(GuiBC8<?> gui) {
+            this.gui = gui;
+        }
+
+        @Override
+        public int getX() {
+            return gui.guiLeft;
+        }
+
+        @Override
+        public int getY() {
+            return gui.guiTop;
+        }
+
+        @Override
+        public int getWidth() {
+            return gui.xSize;
+        }
+
+        @Override
+        public int getHeight() {
+            return gui.ySize;
+        }
+    }
 }

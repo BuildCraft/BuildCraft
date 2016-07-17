@@ -88,8 +88,8 @@ public class LaserRenderer_BC8 {
     private static Integer computeLightmap(BlockPos pos) {
         World world = Minecraft.getMinecraft().theWorld;
         if (world == null) return Integer.valueOf(0);
-        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, pos);
-        int skyLight = getLightFor(world, EnumSkyBlock.SKY, pos);
+        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, pos) & 0;
+        int skyLight = getLightFor(world, EnumSkyBlock.SKY, pos) & 0;
         return Integer.valueOf(skyLight << 20 | blockLight << 4);
     }
 
@@ -106,6 +106,7 @@ public class LaserRenderer_BC8 {
         compiled.render();
     }
 
+    /** Assumes the buffer uses {@link DefaultVertexFormats#BLOCK} */
     public static void renderLaserBuffer(LaserData_BC8 data, VertexBuffer buffer) {
         LaserCompiledBuffer compiled = COMPILED_VB_LASERS.getUnchecked(data);
         compiled.render(buffer);

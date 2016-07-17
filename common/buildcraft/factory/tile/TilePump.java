@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.*;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -17,14 +16,22 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.types.MachineType;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
+import buildcraft.lib.mj.MjReciverBatteryWrapper;
 
 public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<>();
     private int timeWithoutFluid = 0;
+
+    @Override
+    protected IMjReceiver createMjReceiver() {
+        return new MjReciverBatteryWrapper(battery, MachineType.PUMP);
+    }
 
     private void rebuildQueue() {
         pumpLayerQueues.clear();
@@ -164,10 +171,10 @@ public class TilePump extends TileMiner {
                 if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid())) {
                     worldObj.setBlockToAir(currentPos);
                     tank.fill(drain, true);
-                    for(Deque<BlockPos> layer : pumpLayerQueues.values()) {
-                        for(Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext(); ) {
+                    for (Deque<BlockPos> layer : pumpLayerQueues.values()) {
+                        for (Iterator<BlockPos> iterator = layer.iterator(); iterator.hasNext();) {
                             BlockPos pos = iterator.next();
-                            if(pos == currentPos) {
+                            if (pos == currentPos) {
                                 iterator.remove();
                             }
                         }

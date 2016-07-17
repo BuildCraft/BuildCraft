@@ -24,11 +24,14 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.permission.EnumProtectionStatus;
+import buildcraft.api.permission.IPlayerOwned;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
@@ -49,7 +52,7 @@ import buildcraft.lib.permission.PlayerOwner;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget {
+public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
     public static final int NET_RENDER_DATA = 0;
@@ -70,6 +73,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
     private PlayerOwner owner;
+    private EnumProtectionStatus protectionStatus;
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
@@ -137,12 +141,23 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock());
     }
 
+    @Override
     public PlayerOwner getOwner() {
         return owner;
     }
 
+    @Override
+    public EnumProtectionStatus getStatus() {
+        return protectionStatus;
+    }
+
+    public void setStatus(EnumProtectionStatus status) {
+        protectionStatus = status;
+        sendNetworkGuiUpdate(NET_GUI_DATA);
+    }
+
     public PermissionUtil.PermissionBlock getPermBlock() {
-        return new PermissionBlock(getOwner(), getPos());
+        return new PermissionBlock(this, getPos());
     }
 
     // ##################
@@ -164,6 +179,16 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (hasWorldObj()) {
             MessageUpdateTile message = createNetworkUpdate(id);
             MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+        }
+    }
+
+    public final void sendNetworkGuiUpdate(int id) {
+        if (hasWorldObj()) {
+            BCLog.logger.info("Sending a GUI update " + id);
+            for (EntityPlayer player : usingPlayers) {
+                BCLog.logger.info("   - " + player.getDisplayNameString());
+                sendNetworkUpdate(id, player);
+            }
         }
     }
 
@@ -226,16 +251,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         byte[] bytes = tag.getByteArray("d");
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
         try {
-            receivePayload(worldObj.isRemote ? Side.CLIENT : Side.SERVER, new PacketBuffer(buf));
+            int id = buf.readUnsignedShort();
+            readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public final IMessage receivePayload(Side side, PacketBuffer buffer) throws IOException {
+    public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
-        readPayload(id, buffer, side);
+        readPayload(id, buffer, ctx.side);
         return null;
     }
 
@@ -248,7 +274,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         // write render data with gui data
         if (id == NET_GUI_DATA) {
+
             writePayload(NET_RENDER_DATA, buffer, side);
+
+            if (side == Side.SERVER) {
+                if (owner == null || owner.getOwner() == null) {
+                    buffer.writeByte(0);
+                } else {
+                    buffer.writeByte(1);
+                    owner.writeToByteBuf(buffer);
+                }
+                if (protectionStatus == null) {
+                    buffer.writeByte(10);
+                } else {
+                    buffer.writeByte(protectionStatus.permissionLevel);
+                }
+            }
         }
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -264,6 +305,21 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         // read render data with gui data
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side);
+
+            if (side == Side.CLIENT) {
+                byte hasOwner = buffer.readByte();
+                if (hasOwner == 1) {
+                    owner = PlayerOwner.read(buffer);
+                } else {
+                    owner = null;
+                }
+                byte permLevel = buffer.readByte();
+                if (permLevel == 10) {
+                    protectionStatus = null;
+                } else {
+                    protectionStatus = EnumProtectionStatus.get(permLevel);
+                }
+            }
         }
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
@@ -289,6 +345,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             migrateOldNBT(version, nbt);
         }
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
+        if (nbt.hasKey("owner")) {
+            owner = PlayerOwner.read(nbt.getCompoundTag("owner"));
+        }
     }
 
     protected void migrateOldNBT(int version, NBTTagCompound nbt) {}
@@ -298,6 +357,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         super.writeToNBT(nbt);
         nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
         nbt.setTag("deltas", deltaManager.writeToNBT());
+        if (owner != null && owner.getOwner() != null) {
+            nbt.setTag("owner", owner.writeToNBT());
+        }
         return nbt;
     }
 

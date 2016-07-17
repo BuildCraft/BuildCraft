@@ -4,6 +4,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,17 +16,23 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.UsernameCache;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.permission.IOwner;
 import buildcraft.lib.misc.WorkerThreadUtil;
 
-public final class PlayerOwner {
+public final class PlayerOwner implements IOwner {
     private static final LoadingCache<UUID, PlayerOwner> CACHE_UUID;
     private static final LoadingCache<String, PlayerOwner> CACHE_NAME;
+
+    @Nonnull
+    private static final UUID NULL_PLAYER_UUID = new UUID(0, 0);
 
     static {
         CACHE_UUID = CacheBuilder.newBuilder().build(CacheLoader.from(PlayerOwner::new));
@@ -192,7 +200,7 @@ public final class PlayerOwner {
             } else {
                 // Uh oh, thats not good- somehow two separate entries exist with the same properties.
                 // Don't require a debug symbol b/c I'm interested in if this actually happens in the wild
-                String data = "[N=" + System.identityHashCode(fromName) + ", E=" + System.identityHashCode(fromUUID) + "]";
+                String data = "[N=" + System.identityHashCode(fromName) + ", O=" + System.identityHashCode(fromUUID) + "]";
                 BCLog.logger.warn("[lib.perm.owner] Found 2 different (but identical) PlayerOwner objects! Odd...  " + data);
                 CACHE_NAME.put(name, fromUUID);
                 return fromUUID;
@@ -206,5 +214,34 @@ public final class PlayerOwner {
             return "owner [ null ]";
         }
         return "owner [ " + owner.getId() + ", " + owner.getName() + " ]";
+    }
+
+    @Override
+    public EntityPlayer getPlayer(MinecraftServer server) {
+        PlayerList playerList = server.getPlayerList();
+        if (playerList == null) {
+            return null;
+        }
+        return playerList.getPlayerByUUID(getPlayerUUID());
+    }
+
+    @Nonnull
+    @Override
+    public UUID getPlayerUUID() {
+        UUID id = owner.getId();
+        if (id == null) {
+            return NULL_PLAYER_UUID;
+        }
+        return id;
+    }
+
+    @Nonnull
+    @Override
+    public String getPlayerName() {
+        String name = owner.getName();
+        if (name == null) {
+            return "[unknown]";
+        }
+        return name;
     }
 }

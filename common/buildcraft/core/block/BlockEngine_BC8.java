@@ -24,7 +24,7 @@ public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
     }
 
     @Override
-    protected EnumEngineType getEngineType(int meta) {
+    public EnumEngineType getEngineType(int meta) {
         return EnumEngineType.fromMeta(meta);
     }
 

@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableList;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+// This *might* be useful in the future - although I don't really know.
+@Deprecated
 public class ParticlePipeManager {
     private static final TIntObjectHashMap<Supplier<IParticlePositionPipe>> PIPE_TYPES = new TIntObjectHashMap<>();
 
