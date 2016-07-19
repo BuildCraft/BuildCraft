@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.container;
 
+import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.lib.gui.ContainerBCTile;
 import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.robotics.tile.TileZonePlanner;
@@ -16,28 +17,11 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
         super(player, tile);
         addFullPlayerInventory(PLAYER_INV_START_X, PLAYER_INV_START_Y);
 
-//        for (int i = 0; i < 9; i++) {
-//            // Filtered Buffer filter slots
-//            SlotPhantom phantom = new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
-//                @Override
-//                public TextureAtlasSprite getBackgroundSprite() {
-//                    return RoboticsSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();
-//                }
-//
-//                @Override
-//                public boolean canAdjust() {
-//                    return false;
-//                }
-//            };
-//            addSlotToContainer(phantom);
-//            // Filtered Buffer inventory slots
-//            addSlotToContainer(new SlotBase(tile.invMain, i, 8 + i * 18, 61) {
-//                @Override
-//                public boolean isItemValid(ItemStack stack) {
-//                    return phantom.getHasStack() && StackUtil.canMerge(phantom.getStack(), stack);
-//                }
-//            });
-//        }
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                addSlotToContainer(new SlotBase(tile.invPaintbrushes, x * 4 + y, 8 + x * 18, 146 + y * 18));
+            }
+        }
     }
 
     @Override

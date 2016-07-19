@@ -119,7 +119,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glPushMatrix();
         GL11.glTranslatef(-positionX, -camY, -positionZ);
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+//        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("buildcraft", "block.png"));
         int chunkBaseX = (int)positionX >> 4;
         int chunkBaseZ = (int)positionZ >> 4;
         int radius = 8;
@@ -178,16 +179,17 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int r = (color >> 16) & 0xFF;
             int g = (color >> 8) & 0xFF;
             int b = (color >> 0) & 0xFF;
+            //noinspection unused
             int a = (color >> 24) & 0xFF;
             GL11.glColor4d(r / (double)0xFF + 0.3, g / (double)0xFF + 0.3, b / (double)0xFF + 0.3, 0.7);
-            ZonePlannerMapRenderer.instance.drawCube(found.getX(), found.getY(), found.getZ());
+            ZonePlannerMapRenderer.instance.drawCube(found.getX(), found.getY(), found.getZ(), 1);
             GL11.glEnd();
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+//        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
