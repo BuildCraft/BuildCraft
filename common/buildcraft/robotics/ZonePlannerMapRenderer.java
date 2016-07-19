@@ -12,10 +12,10 @@ public class ZonePlannerMapRenderer {
     public static ZonePlannerMapRenderer instance = new ZonePlannerMapRenderer();
     private Map<Pair<Integer, Integer>, Integer> chunkListIndexes = new HashMap<>();
 
-    private void renderCube(double x, double y, double z) {
-        double rX = 1;
-        double rY = 1;
-        double rZ = 1;
+    public void drawCube(double x, double y, double z) {
+        double rX = 0.5;
+        double rY = 0.5;
+        double rZ = 0.5;
 
         GL11.glNormal3d(0, 1, 0);
         GL11.glVertex3d(x - rX, y + rY, z + rZ);
@@ -76,7 +76,7 @@ public class ZonePlannerMapRenderer {
                 int b = (color >> 0) & 0xFF;
                 int a = (color >> 24) & 0xFF;
                 GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, a / (double)0xFF);
-                renderCube(chunkX * 16 + pos.getX(), pos.getY(), chunkZ * 16 + pos.getZ());
+                drawCube(chunkX * 16 + pos.getX(), pos.getY(), chunkZ * 16 + pos.getZ());
             }
             GL11.glEnd();
             GL11.glEndList();

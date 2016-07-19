@@ -6,7 +6,7 @@ package buildcraft.robotics.gui;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.robotics.ZonePlannerMapData;
+import buildcraft.robotics.ZonePlannerMapChunk;
 import buildcraft.robotics.ZonePlannerMapDataClient;
 import buildcraft.robotics.ZonePlannerMapRenderer;
 import buildcraft.robotics.container.ContainerZonePlanner;
@@ -15,15 +15,16 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 
+import javax.vecmath.Vector3d;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
@@ -85,6 +86,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         ICON_GUI.drawAt(rootElement);
     }
 
+    @SuppressWarnings("PointlessBitwiseExpression")
     @Override
     protected void drawForegroundLayer() {
         camY += scaleSpeed;
@@ -114,6 +116,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         RenderHelper.enableStandardItemLighting();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glRotatef(90, 1, 0, 0); // look down
+        GL11.glPushMatrix();
         GL11.glTranslatef(-positionX, -camY, -positionZ);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -125,8 +128,68 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(container.tile.getWorld(), chunkX, chunkZ));
             }
         }
+
+        FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
+        FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
+        IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
+
+        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
+        GL11.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
+
+        FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
+        FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
+
+        GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
+        GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
+
+        Vector3d rayStart = new Vector3d(positionNearBuffer.get(0), positionNearBuffer.get(1), positionNearBuffer.get(2));
+        Vector3d rayPosition = new Vector3d(rayStart);
+        Vector3d rayDirection = new Vector3d(positionFarBuffer.get(0), positionFarBuffer.get(1), positionFarBuffer.get(2));
+        rayDirection.sub(rayStart);
+        rayDirection.normalize();
+        rayDirection.scale(0.1);
+        BlockPos found = null;
+        int color = 0;
+
+        for(int i = 0; i < 10000; i++) {
+            int chunkX = (int)rayPosition.getX() >> 4;
+            int chunkZ = (int)rayPosition.getZ() >> 4;
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkX, chunkZ);
+            if(zonePlannerMapChunk != null) {
+                BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
+                if(zonePlannerMapChunk.data.containsKey(pos)) {
+                    found = new BlockPos(pos.getX() + chunkX * 16, pos.getY(), pos.getZ() + chunkZ * 16);
+                    color = zonePlannerMapChunk.data.get(pos);
+                    break;
+                }
+            } else {
+                break;
+            }
+            rayPosition.add(rayDirection);
+        }
+
+        if(found != null) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            GL11.glBegin(GL11.GL_QUADS);
+            int r = (color >> 16) & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = (color >> 0) & 0xFF;
+            int a = (color >> 24) & 0xFF;
+            GL11.glColor4d(r / (double)0xFF + 0.3, g / (double)0xFF + 0.3, b / (double)0xFF + 0.3, 0.7);
+            ZonePlannerMapRenderer.instance.drawCube(found.getX(), found.getY(), found.getZ());
+            GL11.glEnd();
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+        }
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glViewport(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);

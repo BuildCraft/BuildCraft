@@ -23,4 +23,12 @@ public abstract class ZonePlannerMapData {
             });
         }
     }
+
+    public ZonePlannerMapChunk getLoadedChunk(int chunkX, int chunkZ) {
+        Pair<Integer, Integer> chunkPosPair = Pair.of(chunkX, chunkZ);
+        if(data.containsKey(chunkPosPair)) {
+            return data.get(chunkPosPair);
+        }
+        return null;
+    }
 }
