@@ -2,41 +2,39 @@ package buildcraft.robotics;
 
 import buildcraft.lib.BCMessageHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageZonePlannerMapChunkRequest implements IMessage {
-    private int chunkX;
-    private int chunkZ;
+    private ChunkPos chunkPos;
 
     public MessageZonePlannerMapChunkRequest() {
     }
 
-    public MessageZonePlannerMapChunkRequest(int chunkX, int chunkZ) {
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
+    public MessageZonePlannerMapChunkRequest(ChunkPos chunkPos) {
+        this.chunkPos = chunkPos;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        chunkX = buf.readInt();
-        chunkZ = buf.readInt();
+        chunkPos = new ChunkPos(buf.readInt(), buf.readInt());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(chunkX);
-        buf.writeInt(chunkZ);
+        buf.writeInt(chunkPos.chunkXPos);
+        buf.writeInt(chunkPos.chunkZPos);
     }
 
-    public static class Handler implements IMessageHandler<MessageZonePlannerMapChunkRequest, IMessage> {
+    public static enum Handler implements IMessageHandler<MessageZonePlannerMapChunkRequest, IMessage> {
+        INSTANCE;
+
         @Override
         public IMessage onMessage(MessageZonePlannerMapChunkRequest message, MessageContext ctx) {
-            ctx.getServerHandler().playerEntity.mcServer.addScheduledTask(() -> {
-                ZonePlannerMapDataServer.instance.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkX, message.chunkZ, zonePlannerMapChunk -> {
-                    BCMessageHandler.netWrapper.sendTo(new MessageZonePlannerMapChunkResponse(message.chunkX, message.chunkZ, zonePlannerMapChunk), ctx.getServerHandler().playerEntity);
-                });
+            ZonePlannerMapDataServer.instance.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkPos, zonePlannerMapChunk -> {
+                BCMessageHandler.netWrapper.sendTo(new MessageZonePlannerMapChunkResponse(message.chunkPos, zonePlannerMapChunk), ctx.getServerHandler().playerEntity);
             });
             return null;
         }

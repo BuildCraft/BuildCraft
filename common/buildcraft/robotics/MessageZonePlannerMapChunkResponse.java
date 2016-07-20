@@ -1,34 +1,33 @@
 package buildcraft.robotics;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class MessageZonePlannerMapChunkResponse implements IMessage {
-    private int chunkX;
-    private int chunkZ;
+    private ChunkPos chunkPos;
     private ZonePlannerMapChunk data;
 
     public MessageZonePlannerMapChunkResponse() {
     }
 
-    public MessageZonePlannerMapChunkResponse(int chunkX, int chunkZ, ZonePlannerMapChunk data) {
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
+    public MessageZonePlannerMapChunkResponse(ChunkPos chunkPos, ZonePlannerMapChunk data) {
+        this.chunkPos = chunkPos;
         this.data = data;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        chunkX = buf.readInt();
-        chunkZ = buf.readInt();
+        chunkPos = new ChunkPos(buf.readInt(), buf.readInt());
         int size = buf.readInt();
         data = new ZonePlannerMapChunk();
         for(int i = 0; i < size; i++) {
@@ -40,8 +39,8 @@ public class MessageZonePlannerMapChunkResponse implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(chunkX);
-        buf.writeInt(chunkZ);
+        buf.writeInt(chunkPos.chunkXPos);
+        buf.writeInt(chunkPos.chunkZPos);
         buf.writeInt(data.data.size());
         for(BlockPos pos : data.data.keySet()) {
             int color = data.data.get(pos);
@@ -52,18 +51,17 @@ public class MessageZonePlannerMapChunkResponse implements IMessage {
         }
     }
 
-    public static class Handler implements IMessageHandler<MessageZonePlannerMapChunkResponse, IMessage> {
+    public static enum Handler implements IMessageHandler<MessageZonePlannerMapChunkResponse, IMessage> {
+        INSTANCE;
+
         @Override
         public IMessage onMessage(MessageZonePlannerMapChunkResponse message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                for(Pair<Pair<Integer, Integer>, Consumer<ZonePlannerMapChunk>> pendingRequest : new ArrayList<>(ZonePlannerMapDataClient.instance.pendingRequests)) {
-                    Pair<Integer, Integer> chunkPosPair = pendingRequest.getLeft();
-                    Consumer<ZonePlannerMapChunk> consumer = pendingRequest.getRight();
-                    if(chunkPosPair.equals(Pair.of(message.chunkX, message.chunkZ))) {
-                        consumer.accept(message.data);
-                    }
+            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.instance.pendingRequests.get(message.chunkPos);
+            if(queue != null) {
+                for(Consumer<ZonePlannerMapChunk> consumer : queue) {
+                    consumer.accept(message.data);
                 }
-            });
+            }
             return null;
         }
     }

@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
 
+import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.robotics.ZonePlannerMapChunk;
@@ -13,8 +14,10 @@ import buildcraft.robotics.container.ContainerZonePlanner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -38,6 +41,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private float scaleSpeed = 0;
     private float positionX = 0;
     private float positionZ = 0;
+    boolean canDrag = false;
+    private BlockPos lastSelected = null;
 
     public GuiZonePlanner(ContainerZonePlanner container) {
         super(container);
@@ -46,6 +51,18 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         BlockPos tilePos = container.tile.getPos();
         positionX = tilePos.getX();
         positionZ = tilePos.getZ();
+    }
+
+    private ItemStack getCurrentStack() {
+        return mc.thePlayer.inventory.getItemStack();
+    }
+
+    private ItemStack getPaintbrush() {
+        ItemStack currentStack = getCurrentStack();
+        if(currentStack != null && currentStack.getItem() instanceof ItemPaintbrush_BC8) {
+            return currentStack;
+        }
+        return null;
     }
 
     @Override
@@ -60,15 +77,24 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        startPositionX = positionX;
-        startPositionZ = positionZ;
-        startMouseX = mouseX;
-        startMouseY = mouseY;
+        canDrag = false;
+        if(getPaintbrush() != null) {
+            ;
+        } else if(getCurrentStack() == null) {
+            startPositionX = positionX;
+            startPositionZ = positionZ;
+            startMouseX = mouseX;
+            startMouseY = mouseY;
+            canDrag = true;
+        }
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        if(!canDrag) {
+            return;
+        }
         float deltaX = mouseX - startMouseX;
         float deltaY = mouseY - startMouseY;
         float s = 0.3F;
@@ -119,14 +145,14 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glPushMatrix();
         GL11.glTranslatef(-positionX, -camY, -positionZ);
         GL11.glDisable(GL11.GL_BLEND);
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("buildcraft", "block.png"));
         int chunkBaseX = (int)positionX >> 4;
         int chunkBaseZ = (int)positionZ >> 4;
         int radius = 8;
         for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
-                GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(container.tile.getWorld(), chunkX, chunkZ));
+                GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(container.tile.getWorld(), new ChunkPos(chunkX, chunkZ)));
             }
         }
 
@@ -156,7 +182,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         for(int i = 0; i < 10000; i++) {
             int chunkX = (int)rayPosition.getX() >> 4;
             int chunkZ = (int)rayPosition.getZ() >> 4;
-            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkX, chunkZ);
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ChunkPos(chunkX, chunkZ));
             if(zonePlannerMapChunk != null) {
                 BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
                 if(zonePlannerMapChunk.data.containsKey(pos)) {
@@ -182,15 +208,14 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             //noinspection unused
             int a = (color >> 24) & 0xFF;
             GL11.glColor4d(r / (double)0xFF + 0.3, g / (double)0xFF + 0.3, b / (double)0xFF + 0.3, 0.7);
-            ZonePlannerMapRenderer.instance.drawCube(found.getX(), found.getY(), found.getZ(), 1);
+            ZonePlannerMapRenderer.instance.drawBlockCuboid(found.getX(), found.getY(), found.getZ(), 1);
             GL11.glEnd();
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
+        lastSelected = found;
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -199,5 +224,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPopMatrix();
         RenderHelper.disableStandardItemLighting();
+        GL11.glColor4d(1, 1, 1, 1);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 }
