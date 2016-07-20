@@ -31,18 +31,17 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         ledgersLeft = new LedgerManager_Neptune(this, rootElement.offset(0, 5), false);
         IPositionedElement rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, () -> 5));
         ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
+
+        if (container instanceof ContainerBCTile<?>) {
+            WidgetOwnership widget = ((ContainerBCTile<?>) container).ownershipWidget;
+            ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, widget));
+        }
     }
 
     @Override
     public void initGui() {
         super.initGui();
         guiElements.clear();
-        ledgersLeft.ledgers.clear();
-        ledgersRight.ledgers.clear();
-        if (container instanceof ContainerBCTile<?>) {
-            WidgetOwnership widget = ((ContainerBCTile<?>) container).ownershipWidget;
-            ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, widget));
-        }
     }
 
     // Protected -> Public

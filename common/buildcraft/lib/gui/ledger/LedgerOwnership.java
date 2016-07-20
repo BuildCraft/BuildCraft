@@ -25,7 +25,7 @@ public class LedgerOwnership extends Ledger_Neptune {
     public static final SpriteHolder SPRITE_NO_AUTOMATION;
 
     static {
-        // TODO: Draw these sprites!
+        // TODO: Think about these sprites!
         SPRITE_ANYONE = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "anyone");
         SPRITE_OWNER_ONLY = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "owner_only");
         SPRITE_NO_AUTOMATION = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "no_auto");

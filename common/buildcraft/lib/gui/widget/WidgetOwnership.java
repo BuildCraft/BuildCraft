@@ -23,8 +23,6 @@ public class WidgetOwnership extends Widget_Neptune<ContainerBCTile<?>> {
         super(container);
     }
 
-    // TODO: Add protection status changing
-
     public void incrementStatus() {
         if (isRemote()) {
             this.sendWidgetData((buffer) -> {
@@ -32,7 +30,9 @@ public class WidgetOwnership extends Widget_Neptune<ContainerBCTile<?>> {
             });
         } else {
             EnumProtectionStatus status = getStatus();
-            setStatus(status.next());
+            if (status != EnumProtectionStatus.NO_AUTOMATION) {
+                setStatus(status.next());
+            }
         }
     }
 
@@ -43,7 +43,9 @@ public class WidgetOwnership extends Widget_Neptune<ContainerBCTile<?>> {
             });
         } else {
             EnumProtectionStatus status = getStatus();
-            setStatus(status.last());
+            if (status != EnumProtectionStatus.ANYONE) {
+                setStatus(status.last());
+            }
         }
     }
 
