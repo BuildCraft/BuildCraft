@@ -4,9 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.gui;
 
+import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.robotics.ZonePlan;
 import buildcraft.robotics.ZonePlannerMapChunk;
 import buildcraft.robotics.ZonePlannerMapDataClient;
 import buildcraft.robotics.ZonePlannerMapRenderer;
@@ -14,6 +16,7 @@ import buildcraft.robotics.container.ContainerZonePlanner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -65,6 +68,14 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         return null;
     }
 
+    private ItemPaintbrush_BC8.Brush getPaintbrushBrush() {
+        ItemStack paintbrush = getPaintbrush();
+        if(paintbrush != null) {
+            return BCCoreItems.paintbrush.getBrushFromStack(paintbrush);
+        }
+        return null;
+    }
+
     @Override
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
@@ -78,8 +89,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         canDrag = false;
-        if(getPaintbrush() != null) {
-            ;
+        if(getPaintbrush() != null && getPaintbrushBrush() != null) {
+            if(lastSelected != null) {
+                // TODO: dragging
+                final ZonePlan layer = container.tile.layers[getPaintbrushBrush().colour.getMetadata()];
+                layer.set(lastSelected.getX(), lastSelected.getZ(), !layer.get(lastSelected.getX(), lastSelected.getZ()));
+            }
         } else if(getCurrentStack() == null) {
             startPositionX = positionX;
             startPositionZ = positionZ;
@@ -177,7 +192,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         rayDirection.normalize();
         rayDirection.scale(0.1);
         BlockPos found = null;
-        int color = 0;
+        int foundColor = 0;
 
         for(int i = 0; i < 10000; i++) {
             int chunkX = (int)rayPosition.getX() >> 4;
@@ -187,7 +202,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                 BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
                 if(zonePlannerMapChunk.data.containsKey(pos)) {
                     found = new BlockPos(pos.getX() + chunkX * 16, pos.getY(), pos.getZ() + chunkZ * 16);
-                    color = zonePlannerMapChunk.data.get(pos);
+                    foundColor = zonePlannerMapChunk.data.get(pos);
                     break;
                 }
             } else {
@@ -202,19 +217,64 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
             GL11.glBegin(GL11.GL_QUADS);
-            int r = (color >> 16) & 0xFF;
-            int g = (color >> 8) & 0xFF;
-            int b = (color >> 0) & 0xFF;
+            int r = (foundColor >> 16) & 0xFF;
+            int g = (foundColor >> 8) & 0xFF;
+            int b = (foundColor >> 0) & 0xFF;
             //noinspection unused
-            int a = (color >> 24) & 0xFF;
+            int a = (foundColor >> 24) & 0xFF;
             GL11.glColor4d(r / (double)0xFF + 0.3, g / (double)0xFF + 0.3, b / (double)0xFF + 0.3, 0.7);
-            ZonePlannerMapRenderer.instance.drawBlockCuboid(found.getX(), found.getY(), found.getZ(), 1);
+            ZonePlannerMapRenderer.instance.drawBlockCuboid(found.getX(), found.getY(), found.getZ());
             GL11.glEnd();
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBegin(GL11.GL_QUADS);
+        // FIXME: rendering not visible chunks
+        for(int i = 0; i < container.tile.layers.length; i++) {
+            if(getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() != i) {
+                continue;
+            }
+            ZonePlan layer = container.tile.layers[i];
+            for(ChunkPos chunkPos : layer.getChunkPoses()) {
+                for(int blockX = chunkPos.getXStart(); blockX < chunkPos.getXEnd(); blockX++) {
+                    for(int blockZ = chunkPos.getZStart(); blockZ < chunkPos.getZEnd(); blockZ++) {
+                        if(layer.get(blockX, blockZ)) {
+                            int height = 256;
+                            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkPos);
+                            if(zonePlannerMapChunk != null) {
+                                int finalBlockX = blockX;
+                                int finalBlockZ = blockZ;
+                                BlockPos pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> {
+                                    return blockPos.getX() == finalBlockX - chunkPos.chunkXPos * 16 && blockPos.getZ() == finalBlockZ - chunkPos.chunkZPos * 16;
+                                }).findFirst().orElse(null);
+                                if(pos != null) {
+                                    height = pos.getY();
+                                }
+                            }
+                            int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+                            int r = (color >> 16) & 0xFF;
+                            int g = (color >> 8) & 0xFF;
+                            int b = (color >> 0) & 0xFF;
+                            //noinspection unused
+                            int a = (color >> 24) & 0xFF;
+                            GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, 0.3);
+                            ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
+                        }
+                    }
+                }
+            }
+        }
+        GL11.glEnd();
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
         lastSelected = found;
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);

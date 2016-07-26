@@ -17,10 +17,10 @@ public class ZonePlannerMapRenderer {
         GL11.glVertex3d(x, y, z);
     }
 
-    public void drawBlockCuboid(double x, double y, double z, double height) {
-        double rX = 0.5;
+    public void drawBlockCuboid(double x, double y, double z, double height, double radius) {
+        double rX = radius;
         double rY = height * 0.5;
-        double rZ = 0.5;
+        double rZ = radius;
 
         y -= rY;
 
@@ -59,6 +59,14 @@ public class ZonePlannerMapRenderer {
         vertex(x + rX, y + rY, z + rZ, 0, height);
         vertex(x - rX, y + rY, z + rZ, 1, height);
         vertex(x - rX, y - rY, z + rZ, 1, 0);
+    }
+
+    public void drawBlockCuboid(double x, double y, double z, double height) {
+        drawBlockCuboid(x, y, z, height, 0.5);
+    }
+
+    public void drawBlockCuboid(double x, double y, double z) {
+        drawBlockCuboid(x, y, z, 1);
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")
