@@ -44,8 +44,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private float scaleSpeed = 0;
     private float positionX = 0;
     private float positionZ = 0;
-    boolean canDrag = false;
+    private boolean canDrag = false;
     private BlockPos lastSelected = null;
+    private BlockPos selectionStartXZ = null;
+    private ZonePlan bufferLayer = null;
 
     public GuiZonePlanner(ContainerZonePlanner container) {
         super(container);
@@ -89,11 +91,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         canDrag = false;
-        if(getPaintbrush() != null && getPaintbrushBrush() != null) {
+        if(getPaintbrush() != null) {
             if(lastSelected != null) {
-                // TODO: dragging
-                final ZonePlan layer = container.tile.layers[getPaintbrushBrush().colour.getMetadata()];
-                layer.set(lastSelected.getX(), lastSelected.getZ(), !layer.get(lastSelected.getX(), lastSelected.getZ()));
+                selectionStartXZ = lastSelected;
             }
         } else if(getCurrentStack() == null) {
             startPositionX = positionX;
@@ -108,6 +108,17 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         if(!canDrag) {
+            if(lastSelected != null && getPaintbrushBrush() != null) {
+                bufferLayer = new ZonePlan(container.tile.layers[getPaintbrushBrush().colour.getMetadata()]);
+                if(selectionStartXZ != null && getPaintbrushBrush() != null && lastSelected != null) {
+                    final ZonePlan layer = container.tile.layers[getPaintbrushBrush().colour.getMetadata()];
+                    for(int x = Math.min(selectionStartXZ.getX(), lastSelected.getX()); x < Math.max(selectionStartXZ.getX(), lastSelected.getX()); x++) {
+                        for(int z = Math.min(selectionStartXZ.getZ(), lastSelected.getZ()); z < Math.max(selectionStartXZ.getZ(), lastSelected.getZ()); z++) {
+                            bufferLayer.set(x, z, !layer.get(x, z));
+                        }
+                    }
+                }
+            }
             return;
         }
         float deltaX = mouseX - startMouseX;
@@ -120,6 +131,11 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
+        selectionStartXZ = null;
+        if(getPaintbrushBrush() != null && bufferLayer != null) {
+            container.tile.layers[getPaintbrushBrush().colour.getMetadata()] = bufferLayer;
+        }
+        bufferLayer = null;
     }
 
     @Override
@@ -235,36 +251,43 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBegin(GL11.GL_QUADS);
-        // FIXME: rendering not visible chunks
+
         for(int i = 0; i < container.tile.layers.length; i++) {
             if(getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() != i) {
                 continue;
             }
             ZonePlan layer = container.tile.layers[i];
-            for(ChunkPos chunkPos : layer.getChunkPoses()) {
-                for(int blockX = chunkPos.getXStart(); blockX < chunkPos.getXEnd(); blockX++) {
-                    for(int blockZ = chunkPos.getZStart(); blockZ < chunkPos.getZEnd(); blockZ++) {
-                        if(layer.get(blockX, blockZ)) {
-                            int height = 256;
-                            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkPos);
-                            if(zonePlannerMapChunk != null) {
-                                int finalBlockX = blockX;
-                                int finalBlockZ = blockZ;
-                                BlockPos pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> {
-                                    return blockPos.getX() == finalBlockX - chunkPos.chunkXPos * 16 && blockPos.getZ() == finalBlockZ - chunkPos.chunkZPos * 16;
-                                }).findFirst().orElse(null);
-                                if(pos != null) {
-                                    height = pos.getY();
+            if(getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() == i && bufferLayer != null) {
+                layer = bufferLayer;
+            }
+            for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
+                for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
+                    ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
+                    for(int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
+                        for(int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
+                            if(layer.get(blockX, blockZ)) {
+                                int height = 256;
+                                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkPos);
+                                if(zonePlannerMapChunk != null) {
+                                    int finalBlockX = blockX;
+                                    int finalBlockZ = blockZ;
+                                    BlockPos pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> {
+                                        //noinspection CodeBlock2Expr // it's too long
+                                        return blockPos.getX() == finalBlockX - chunkPos.chunkXPos * 16 && blockPos.getZ() == finalBlockZ - chunkPos.chunkZPos * 16;
+                                    }).findFirst().orElse(null);
+                                    if(pos != null) {
+                                        height = pos.getY();
+                                    }
                                 }
+                                int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+                                int r = (color >> 16) & 0xFF;
+                                int g = (color >> 8) & 0xFF;
+                                int b = (color >> 0) & 0xFF;
+                                //noinspection unused
+                                int a = (color >> 24) & 0xFF;
+                                GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, 0.3);
+                                ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
                             }
-                            int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
-                            int r = (color >> 16) & 0xFF;
-                            int g = (color >> 8) & 0xFF;
-                            int b = (color >> 0) & 0xFF;
-                            //noinspection unused
-                            int a = (color >> 24) & 0xFF;
-                            GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, 0.3);
-                            ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
                         }
                     }
                 }

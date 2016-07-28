@@ -22,6 +22,14 @@ import java.util.Set;
 public class ZonePlan implements IZone, INetworkLoadable_BC8 {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
 
+    public ZonePlan() {}
+
+    public ZonePlan(ZonePlan old) {
+        for(ChunkPos chunkPos : old.chunkMapping.keySet()) {
+            chunkMapping.put(chunkPos, new ZoneChunk(old.chunkMapping.get(chunkPos)));
+        }
+    }
+
     public boolean get(int x, int z) {
         int xChunk = x >> 4;
         int zChunk = z >> 4;
@@ -162,7 +170,7 @@ public class ZonePlan implements IZone, INetworkLoadable_BC8 {
         for (int i = 0; i < size; i++) {
             ChunkPos key = new ChunkPos(buf.readInt(), buf.readInt());
             ZoneChunk value = new ZoneChunk();
-            value.readData(buf);
+            value.readFromByteBuf(buf);
             chunkMapping.put(key, value);
         }
         return this;
@@ -174,7 +182,7 @@ public class ZonePlan implements IZone, INetworkLoadable_BC8 {
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
             buf.writeInt(e.getKey().chunkXPos);
             buf.writeInt(e.getKey().chunkZPos);
-            e.getValue().writeData(buf);
+            e.getValue().writeToByteBuf(buf);
         }
     }
 }
