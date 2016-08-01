@@ -27,7 +27,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 
-public class GuiArchitect extends GuiBuildCraft {
+public class GuiArchitectOld extends GuiBuildCraft {
 
     private static final int TEXT_X = 90;
     private static final int TEXT_Y = 62;
@@ -44,7 +44,7 @@ public class GuiArchitect extends GuiBuildCraft {
 
     private GuiTextField textField;
 
-    public GuiArchitect(EntityPlayer player, TileArchitect architect) {
+    public GuiArchitectOld(EntityPlayer player, TileArchitect architect) {
         super(new ContainerArchitect(player, architect), architect, TEXTURE);
         this.architect = architect;
         xSize = 256;
