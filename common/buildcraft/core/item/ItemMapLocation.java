@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -59,6 +61,13 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
+    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+        for (MapLocationType type : MapLocationType.values()) {
+            subItems.add(new ItemStack(item, 1, type.meta));
+        }
+    }
+
+    @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
         NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -72,37 +81,43 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         MapLocationType type = MapLocationType.getFromStack(stack);
         switch (type) {
             case SPOT: {
-                int x = cpt.getInteger("x");
-                int y = cpt.getInteger("y");
-                int z = cpt.getInteger("z");
-                EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
+                if(cpt.hasKey("x") && cpt.hasKey("y") && cpt.hasKey("z") && cpt.hasKey("side")) {
+                    int x = cpt.getInteger("x");
+                    int y = cpt.getInteger("y");
+                    int z = cpt.getInteger("z");
+                    EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
-                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                }
                 break;
             }
             case AREA: {
-                int x = cpt.getInteger("xMin");
-                int y = cpt.getInteger("yMin");
-                int z = cpt.getInteger("zMin");
-                int xLength = cpt.getInteger("xMax") - x + 1;
-                int yLength = cpt.getInteger("yMax") - y + 1;
-                int zLength = cpt.getInteger("zMax") - z + 1;
+                if(cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax") && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
+                    int x = cpt.getInteger("xMin");
+                    int y = cpt.getInteger("yMin");
+                    int z = cpt.getInteger("zMin");
+                    int xLength = cpt.getInteger("xMax") - x + 1;
+                    int yLength = cpt.getInteger("yMax") - y + 1;
+                    int zLength = cpt.getInteger("zMax") - z + 1;
 
-                strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                }
                 break;
             }
             case PATH:
             case PATH_REPEATING: {
-                NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
+                if(cpt.hasKey("path")) {
+                    NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
 
-                if (pathNBT.tagCount() > 0) {
-                    BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
+                    if(pathNBT.tagCount() > 0) {
+                        BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
 
-                    int x = first.getX();
-                    int y = first.getY();
-                    int z = first.getZ();
+                        int x = first.getX();
+                        int y = first.getY();
+                        int z = first.getZ();
 
-                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
+                        strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
+                    }
                 }
                 break;
             }
@@ -111,7 +126,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
         }
         if (type != MapLocationType.CLEAN) {
-            strings.add(BCStringUtils.localize("buildcraft.item.maplocation.nonclean.usage"));
+            strings.add(BCStringUtils.localize("buildcraft.item.nonclean.usage"));
         }
     }
 

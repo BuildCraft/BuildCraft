@@ -11,6 +11,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -61,6 +65,17 @@ public class ItemBlueprint extends ItemBC_Neptune {
             // TODO: localization
             tooltip.add(header.name + " created by " + header.author.getOwnerName() + " on " + header.creation.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace("T", " "));
         }
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote) {
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+        if (player.isSneaking() && stack.getMetadata() == META_USED) {
+            return new ActionResult<>(EnumActionResult.SUCCESS, new ItemStack(stack.getItem(), 1, META_CLEAN));
+        }
+        return new ActionResult<>(EnumActionResult.PASS, stack);
     }
 
     public static class BptStorage {
