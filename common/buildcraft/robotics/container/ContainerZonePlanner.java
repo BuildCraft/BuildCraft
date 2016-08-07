@@ -4,10 +4,12 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.robotics.container;
 
+import buildcraft.core.BCCoreItems;
 import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.lib.gui.ContainerBCTile;
-import net.minecraft.entity.player.EntityPlayer;
 import buildcraft.robotics.tile.TileZonePlanner;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
     private static final int PLAYER_INV_START_X = 88;
@@ -19,7 +21,12 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
 
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
-                addSlotToContainer(new SlotBase(tile.invPaintbrushes, x * 4 + y, 8 + x * 18, 146 + y * 18));
+                addSlotToContainer(new SlotBase(tile.invPaintbrushes, x * 4 + y, 8 + x * 18, 146 + y * 18) {
+                    @Override
+                    public boolean isItemValid(ItemStack stack) {
+                        return stack.getItem() == BCCoreItems.paintbrush;
+                    }
+                });
             }
         }
     }

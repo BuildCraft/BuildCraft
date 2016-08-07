@@ -758,7 +758,7 @@ public final class Utils {
         }
     }
 
-    public static class AxisOrder implements INetworkLoadable_BC8 {
+    public static class AxisOrder implements INetworkLoadable_BC8<AxisOrder> {
         public final EnumFacing first, second, third;
 
         public AxisOrder() {
@@ -798,7 +798,7 @@ public final class Utils {
         }
 
         @Override
-        public Object readFromByteBuf(ByteBuf buf) {
+        public AxisOrder readFromByteBuf(ByteBuf buf) {
             return new AxisOrder(EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()]);
         }
 

@@ -257,7 +257,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
                 box.readData(buffer);
             } else if (id == NET_RENDER_DATA) {
                 if(buffer.readBoolean()) {
-                    boxIterator = (BoxIterator) new BoxIterator().readFromByteBuf(buffer);
+                    boxIterator = new BoxIterator().readFromByteBuf(buffer);
                 } else {
                     boxIterator = null;
                 }

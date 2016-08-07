@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.BitSet;
 import java.util.Random;
 
-public class ZoneChunk implements INetworkLoadable_BC8 {
+public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
 
     public BitSet property;
     private boolean fullSet = false;
@@ -112,7 +112,7 @@ public class ZoneChunk implements INetworkLoadable_BC8 {
     }
 
     @Override
-    public Object readFromByteBuf(ByteBuf buf) {
+    public ZoneChunk readFromByteBuf(ByteBuf buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
             property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(buf));

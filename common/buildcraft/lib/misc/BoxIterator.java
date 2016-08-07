@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 
-public class BoxIterator implements INetworkLoadable_BC8 {
+public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
     private final BlockPos min, max;
     private final boolean invert, repeat;
     private AxisOrder order;
@@ -139,8 +139,8 @@ public class BoxIterator implements INetworkLoadable_BC8 {
     }
 
     @Override
-    public Object readFromByteBuf(ByteBuf buf) {
-        return new BoxIterator(NetworkUtils.readBlockPos(buf), NetworkUtils.readBlockPos(buf), buf.readBoolean(), buf.readBoolean(), (AxisOrder) new AxisOrder().readFromByteBuf(buf), NetworkUtils.readBlockPos(buf));
+    public BoxIterator readFromByteBuf(ByteBuf buf) {
+        return new BoxIterator(NetworkUtils.readBlockPos(buf), NetworkUtils.readBlockPos(buf), buf.readBoolean(), buf.readBoolean(), new AxisOrder().readFromByteBuf(buf), NetworkUtils.readBlockPos(buf));
     }
 
     @Override

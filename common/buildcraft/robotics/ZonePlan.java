@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class ZonePlan implements IZone, INetworkLoadable_BC8 {
+public class ZonePlan implements IZone, INetworkLoadable_BC8<ZonePlan> {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
 
     public ZonePlan() {}
@@ -164,7 +164,7 @@ public class ZonePlan implements IZone, INetworkLoadable_BC8 {
     }
 
     @Override
-    public Object readFromByteBuf(ByteBuf buf) {
+    public ZonePlan readFromByteBuf(ByteBuf buf) {
         chunkMapping.clear();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {

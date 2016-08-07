@@ -19,7 +19,8 @@ public class ZonePlannerMapChunk {
         Chunk chunk = world.getChunkFromChunkCoords(chunkPos.chunkXPos, chunkPos.chunkZPos);
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
-                BlockPos pos = new BlockPos(x, 0xFF, z);
+                BlockPos pos = world.getTopSolidOrLiquidBlock(chunkPos.getBlock(0, 0, 0).add(x, 0, z));
+                pos = new BlockPos(pos.getX(), pos.getY(), pos.getZ()).subtract(chunkPos.getBlock(0, 0, 0));
                 int color = 0;
                 while(pos.getY() > 0 && color == 0) {
                     IBlockState state = chunk.getBlockState(pos);
