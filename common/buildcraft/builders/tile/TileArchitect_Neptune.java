@@ -117,8 +117,8 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             return;
         }
         if (scanning && isValid) {
-            int target = shouldScanDetails ? 30 : 10;
-            int back = 3;
+            int target = shouldScanDetails ? 2 : 1;
+            int back = shouldScanDetails ? 1 : 0;
             if (progress == 0) {
                 deltaProgress.addDelta(0, target, 100);
                 deltaProgress.addDelta(target, target + back, -100);
