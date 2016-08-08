@@ -8,6 +8,7 @@ import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.robotics.ZonePlan;
 import buildcraft.robotics.ZonePlannerMapChunk;
 import buildcraft.robotics.ZonePlannerMapDataClient;
@@ -36,6 +37,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner.png");
     private static final int SIZE_X = 256, SIZE_Y = 228;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
+    private static final GuiIcon ICON_PROGRESS_INPUT = new GuiIcon(TEXTURE_BASE, 9, 228, 28, 9);
+    private static final GuiIcon ICON_PROGRESS_OUTPUT = new GuiIcon(TEXTURE_BASE, 0, 228, 9, 28);
+    private static final GuiRectangle RECT_PROGRESS_INPUT = new GuiRectangle(44, 128, 28, 9);
+    private static final GuiRectangle RECT_PROGRESS_OUTPUT = new GuiRectangle(236, 45, 9, 28);
     private float startMouseX = 0;
     private float startMouseY = 0;
     private float startPositionX = 0;
@@ -142,6 +147,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     @Override
     protected void drawBackgroundLayer(float partialTicks) {
         ICON_GUI.drawAt(rootElement);
+
+        ICON_PROGRESS_INPUT.drawCutInside(RECT_PROGRESS_INPUT.createProgress(container.tile.deltaProgressInput.getDynamic(partialTicks) / 100, 1).offset(rootElement));
+        ICON_PROGRESS_OUTPUT.drawCutInside(RECT_PROGRESS_OUTPUT.createProgress(1, container.tile.deltaProgressOutput.getDynamic(partialTicks) / 100).offset(rootElement));
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")

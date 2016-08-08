@@ -5,7 +5,10 @@
 package buildcraft.robotics.container;
 
 import buildcraft.core.BCCoreItems;
+import buildcraft.core.item.ItemMapLocation;
+import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.core.lib.gui.slots.SlotBase;
+import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.robotics.tile.TileZonePlanner;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +27,37 @@ public class ContainerZonePlanner extends ContainerBCTile<TileZonePlanner> {
                 addSlotToContainer(new SlotBase(tile.invPaintbrushes, x * 4 + y, 8 + x * 18, 146 + y * 18) {
                     @Override
                     public boolean isItemValid(ItemStack stack) {
-                        return stack.getItem() == BCCoreItems.paintbrush;
+                        return stack.getItem() instanceof ItemPaintbrush_BC8;
                     }
                 });
             }
         }
+        addSlotToContainer(new SlotBase(tile.invInputPaintbrush, 0, 8, 125) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack.getItem() instanceof ItemPaintbrush_BC8;
+            }
+        });
+        addSlotToContainer(new SlotBase(tile.invInputMapLocation, 0, 26, 125) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack.getItem() instanceof ItemMapLocation && stack.getTagCompound() != null && stack.getTagCompound().hasKey("chunkMapping") && stack.stackSize == 1;
+            }
+        });
+        addSlotToContainer(new SlotOutput(tile.invInputResult, 0, 74, 125));
+        addSlotToContainer(new SlotBase(tile.invOutputPaintbrush, 0, 233, 9) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack.getItem() instanceof ItemPaintbrush_BC8;
+            }
+        });
+        addSlotToContainer(new SlotBase(tile.invOutputMapLocation, 0, 233, 27) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack.getItem() instanceof ItemMapLocation && stack.stackSize == 1;
+            }
+        });
+        addSlotToContainer(new SlotOutput(tile.invOutputResult, 0, 233, 75));
     }
 
     @Override
