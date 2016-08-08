@@ -134,6 +134,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         selectionStartXZ = null;
         if(getPaintbrushBrush() != null && bufferLayer != null) {
             container.tile.layers[getPaintbrushBrush().colour.getMetadata()] = bufferLayer;
+            container.tile.sendLayerToServer(getPaintbrushBrush().colour.getMetadata());
         }
         bufferLayer = null;
     }

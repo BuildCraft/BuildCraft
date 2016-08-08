@@ -29,6 +29,7 @@ public class BCRobotics {
 
         BCMessageHandler.addMessageType(MessageZonePlannerMapChunkRequest.class, MessageZonePlannerMapChunkRequest.Handler.INSTANCE, Side.SERVER);
         BCMessageHandler.addMessageType(MessageZonePlannerMapChunkResponse.class, MessageZonePlannerMapChunkResponse.Handler.INSTANCE, Side.CLIENT);
+        BCMessageHandler.addMessageType(MessageZonePlannerLayer.class, MessageZonePlannerLayer.Handler.INSTANCE, Side.SERVER);
 
         // TODO: move from here
         RoboticsSprites.preInit();
