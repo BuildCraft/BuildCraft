@@ -86,7 +86,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     @Override
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
-        if (wheel != 0) {
+        if(wheel != 0) {
             scaleSpeed -= wheel / 30F;
         }
         super.handleMouseInput();
@@ -157,6 +157,23 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
     protected void drawForegroundLayer() {
         camY += scaleSpeed;
         scaleSpeed *= 0.7F;
+        {
+            ChunkPos chunkPos = new ChunkPos((int) positionX >> 4, (int) positionZ >> 4);
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(chunkPos);
+            BlockPos pos = null;
+            if(zonePlannerMapChunk != null) {
+                pos = zonePlannerMapChunk.data
+                        .keySet()
+                        .stream()
+                        .filter(blockPos ->
+                                blockPos.getX() == (int) positionX - chunkPos.getXStart() && blockPos.getZ() == (int) positionZ - chunkPos.getZStart()
+                        ).findAny()
+                        .orElse(null);
+            }
+            if(pos != null && pos.getY() + 10 > camY) {
+                camY = Math.max(camY, pos.getY() + 10);
+            }
+        }
         int x = guiLeft;
         int y = guiTop;
         int offsetX = 8;
@@ -187,8 +204,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("buildcraft", "block.png"));
-        int chunkBaseX = (int)positionX >> 4;
-        int chunkBaseZ = (int)positionZ >> 4;
+        int chunkBaseX = (int) positionX >> 4;
+        int chunkBaseZ = (int) positionZ >> 4;
         int radius = 8;
         for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
@@ -220,8 +237,8 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int foundColor = 0;
 
         for(int i = 0; i < 10000; i++) {
-            int chunkX = (int)rayPosition.getX() >> 4;
-            int chunkZ = (int)rayPosition.getZ() >> 4;
+            int chunkX = (int) rayPosition.getX() >> 4;
+            int chunkZ = (int) rayPosition.getZ() >> 4;
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ChunkPos(chunkX, chunkZ));
             if(zonePlannerMapChunk != null) {
                 BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
@@ -247,7 +264,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             int b = (foundColor >> 0) & 0xFF;
             //noinspection unused
             int a = (foundColor >> 24) & 0xFF;
-            GL11.glColor4d(r / (double)0xFF + 0.3, g / (double)0xFF + 0.3, b / (double)0xFF + 0.3, 0.7);
+            GL11.glColor4d(r / (double) 0xFF + 0.3, g / (double) 0xFF + 0.3, b / (double) 0xFF + 0.3, 0.7);
             ZonePlannerMapRenderer.instance.drawBlockCuboid(found.getX(), found.getY(), found.getZ());
             GL11.glEnd();
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
@@ -294,7 +311,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 int b = (color >> 0) & 0xFF;
                                 //noinspection unused
                                 int a = (color >> 24) & 0xFF;
-                                GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, 0.3);
+                                GL11.glColor4d(r / (double) 0xFF, g / (double) 0xFF, b / (double) 0xFF, 0.3);
                                 ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
                             }
                         }
