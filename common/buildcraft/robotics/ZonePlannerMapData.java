@@ -13,9 +13,9 @@ public abstract class ZonePlannerMapData {
 
     public abstract void loadChunk(World world, ChunkPos chunkPos, Consumer<ZonePlannerMapChunk> callback);
 
-    public void getChunk(World world, ChunkPos chunkPos, Consumer<ZonePlannerMapChunk> callback) {
-        if(data.containsKey(chunkPos)) {
-            callback.accept(data.get(chunkPos));
+    public void getChunk(World world, ChunkPos chunkPos, int dimensionalId, Consumer<ZonePlannerMapChunk> callback) {
+        if(getLoadedChunk(chunkPos, dimensionalId) != null) {
+            callback.accept(getLoadedChunk(chunkPos, dimensionalId));
         } else {
             loadChunk(world, chunkPos, zonePlannerMapChunk -> {
                 data.put(chunkPos, zonePlannerMapChunk);
@@ -24,9 +24,11 @@ public abstract class ZonePlannerMapData {
         }
     }
 
-    public ZonePlannerMapChunk getLoadedChunk(ChunkPos chunkPos) {
-        if(data.containsKey(chunkPos)) {
-            return data.get(chunkPos);
+    public ZonePlannerMapChunk getLoadedChunk(ChunkPos chunkPos, int dimensionalId) {
+        for(Map.Entry<ChunkPos, ZonePlannerMapChunk> chunkPosZonePlannerMapChunkEntry : data.entrySet()) {
+            if(chunkPosZonePlannerMapChunkEntry.getKey().equals(chunkPos) && chunkPosZonePlannerMapChunkEntry.getValue().dimensionalId == dimensionalId) {
+                return chunkPosZonePlannerMapChunkEntry.getValue();
+            }
         }
         return null;
     }

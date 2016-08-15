@@ -1,8 +1,10 @@
 package buildcraft.robotics;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 public class ZonePlannerMapRenderer {
     public static ZonePlannerMapRenderer instance = new ZonePlannerMapRenderer();
-    private Map<ChunkPos, Integer> chunkListIndexes = new HashMap<>();
+    private Map<Pair<ChunkPos, Integer>, Integer> chunkListIndexes = new HashMap<>();
 
     private static void vertex(double x, double y, double z, double u, double v) {
         GL11.glTexCoord2d(u, v);
@@ -71,15 +73,15 @@ public class ZonePlannerMapRenderer {
 
     @SuppressWarnings("PointlessBitwiseExpression")
     public int drawChunk(World world, ChunkPos chunkPos) {
-        if(chunkListIndexes.containsKey(chunkPos)) {
-            return chunkListIndexes.get(chunkPos);
+        if(chunkListIndexes.containsKey(Pair.of(chunkPos, world.provider.getDimension()))) {
+            return chunkListIndexes.get(Pair.of(chunkPos, world.provider.getDimension()));
         }
         int listIndexEmpty = GL11.glGenLists(1);
         GL11.glNewList(listIndexEmpty, GL11.GL_COMPILE);
         // noting, wait for chunk data
         GL11.glEndList();
-        chunkListIndexes.put(chunkPos, listIndexEmpty);
-        ZonePlannerMapDataClient.instance.getChunk(world, chunkPos, zonePlannerMapChunk -> {
+        chunkListIndexes.put(Pair.of(chunkPos, world.provider.getDimension()), listIndexEmpty);
+        ZonePlannerMapDataClient.instance.getChunk(world, chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), zonePlannerMapChunk -> {
             int listIndex = GL11.glGenLists(1);
             GL11.glNewList(listIndex, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUADS);
@@ -94,7 +96,7 @@ public class ZonePlannerMapRenderer {
             }
             GL11.glEnd();
             GL11.glEndList();
-            chunkListIndexes.put(chunkPos, listIndex);
+            chunkListIndexes.put(Pair.of(chunkPos, world.provider.getDimension()), listIndex);
         });
         return listIndexEmpty;
     }

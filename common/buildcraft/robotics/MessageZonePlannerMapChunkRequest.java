@@ -33,7 +33,7 @@ public class MessageZonePlannerMapChunkRequest implements IMessage {
 
         @Override
         public IMessage onMessage(MessageZonePlannerMapChunkRequest message, MessageContext ctx) {
-            ZonePlannerMapDataServer.instance.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkPos, zonePlannerMapChunk -> {
+            ZonePlannerMapDataServer.instance.getChunk(ctx.getServerHandler().playerEntity.worldObj, message.chunkPos, ctx.getServerHandler().playerEntity.worldObj.provider.getDimension(), zonePlannerMapChunk -> {
                 BCMessageHandler.netWrapper.sendTo(new MessageZonePlannerMapChunkResponse(message.chunkPos, zonePlannerMapChunk), ctx.getServerHandler().playerEntity);
             });
             return null;

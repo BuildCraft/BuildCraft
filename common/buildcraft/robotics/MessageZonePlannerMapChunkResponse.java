@@ -28,8 +28,9 @@ public class MessageZonePlannerMapChunkResponse implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         chunkPos = new ChunkPos(buf.readInt(), buf.readInt());
-        int size = buf.readInt();
         data = new ZonePlannerMapChunk();
+        data.dimensionalId = buf.readInt();
+        int size = buf.readInt();
         for(int i = 0; i < size; i++) {
             BlockPos pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
             int colors = buf.readInt();
@@ -41,6 +42,7 @@ public class MessageZonePlannerMapChunkResponse implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(chunkPos.chunkXPos);
         buf.writeInt(chunkPos.chunkZPos);
+        buf.writeInt(data.dimensionalId);
         buf.writeInt(data.data.size());
         for(BlockPos pos : data.data.keySet()) {
             int color = data.data.get(pos);
@@ -56,7 +58,7 @@ public class MessageZonePlannerMapChunkResponse implements IMessage {
 
         @Override
         public IMessage onMessage(MessageZonePlannerMapChunkResponse message, MessageContext ctx) {
-            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.instance.pendingRequests.get(message.chunkPos);
+            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.instance.pendingRequests.get(Pair.of(message.chunkPos, message.data.dimensionalId));
             if(queue != null) {
                 for(Consumer<ZonePlannerMapChunk> consumer : queue) {
                     consumer.accept(message.data);
