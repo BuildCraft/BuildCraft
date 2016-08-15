@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBptReader;
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.SoundUtil;

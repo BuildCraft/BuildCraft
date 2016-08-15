@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.bpt.helper.BptActionIItemHandlerSetStack;
 import buildcraft.lib.bpt.helper.BptActionSetBlockState;
@@ -129,6 +129,7 @@ public class BptTaskPlaceAndFillChest extends BptTaskSimple {
     @Override
     protected void onReceiveFullPower(IBuilderAccessor builder) {
         Vec3d to = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        // THIS IS ALL SOOOO WRONG!
         if (!hasSent[0]) {
             int delay = builder.startBlockAnimation(to, state, 0);
             builder.addAction(new BptActionSetBlockState(state, pos, reqItem[0]), delay);

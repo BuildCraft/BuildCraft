@@ -7,11 +7,9 @@ import net.minecraft.world.World;
 
 import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.Schematic.DefaultBptActions;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
-import buildcraft.lib.misc.PermissionUtil;
-import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
+import buildcraft.api.bpt.Schematic.PreBuildAction;
 
 /** Provides an implementation of {@link DefaultBptActions#REQUIRE_AIR} */
 public enum VanillaBlockClearer implements PreBuildAction {
@@ -29,8 +27,7 @@ public enum VanillaBlockClearer implements PreBuildAction {
         if (world.isAirBlock(pos)) {
             return ImmutableList.of();
         }
-        PermissionBlock target = PermissionUtil.createFrom(world, pos);
-        if (PermissionUtil.hasPermission(PermissionUtil.PERM_DESTROY, builder.getOwner(), target)) {
+        if (builder.hasPermissionToEdit(pos)) {
             return ImmutableList.of(BptTaskBlockClear.create(world, pos));
         }
         return ImmutableList.of();

@@ -4,6 +4,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public abstract class Schematic {
     /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
@@ -24,7 +25,9 @@ public abstract class Schematic {
     public abstract void rotate(Axis axis, Rotation rotation);
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
-     * builder, but should provide tasks for the builder to complete.
+     * builder, but should provide tasks for the builder to complete. <br>
+     * Note that {@link IBuilderAccessor#hasPermissionToEdit(BlockPos)} has already been called, and this will only be
+     * called if it returned true.
      * 
      * @param builder The builder that will execute the tasks
      * @param pos The position to build this schematic at
@@ -38,6 +41,13 @@ public abstract class Schematic {
      *         {@link DefaultBptActions#REQUIRE_AIR} if you just want air, or {@link DefaultBptActions#LEAVE} if you
      *         don't need to make any changes to the existing block. */
     public abstract PreBuildAction createClearingTask(IBuilderAccessor builder, BlockPos pos);
+
+    /** Attempts to either build this schematic completely, or leave the world untouched.
+     * 
+     * @param provider The material provider
+     * @param pos The position to build at
+     * @return True if this built completely, false if nothing changed. */
+    public abstract boolean buildImmediatly(World world, IMaterialProvider provider, BlockPos pos);
 
     public enum EnumPreBuildAction {
         LEAVE,

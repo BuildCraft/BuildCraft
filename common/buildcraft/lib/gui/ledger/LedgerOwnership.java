@@ -6,7 +6,7 @@ import net.minecraft.client.resources.I18n;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.permission.EnumProtectionStatus;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
@@ -19,21 +19,9 @@ import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.gui.widget.WidgetOwnership;
 
 public class LedgerOwnership extends Ledger_Neptune {
-    private static final String TEXT_SPRITE_START = "buildcraftlib:icons/ownership_";
-    public static final SpriteHolder SPRITE_ANYONE;
-    public static final SpriteHolder SPRITE_OWNER_ONLY;
-    public static final SpriteHolder SPRITE_NO_AUTOMATION;
-
-    static {
-        // TODO: Think about these sprites!
-        SPRITE_ANYONE = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "anyone");
-        SPRITE_OWNER_ONLY = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "owner_only");
-        SPRITE_NO_AUTOMATION = SpriteHolderRegistry.getHolder(TEXT_SPRITE_START + "no_auto");
-    }
-
-    public static void fmlPreInitClient() {
-        // Just to init the sprites
-    }
+    public static final SpriteHolder SPRITE_ANYONE = LibSprites.USABLE_ANYONE;
+    public static final SpriteHolder SPRITE_OWNER_ONLY = LibSprites.USABLE_OWNER_ONLY;
+    public static final SpriteHolder SPRITE_NO_AUTOMATION = LibSprites.USABLE_NO_AUTO;
 
     private final WidgetOwnership widget;
     private final IPositionedElement clickableArea;

@@ -25,15 +25,15 @@ public class GuiIcon implements ISimpleDrawable {
     }
 
     public GuiIcon(ResourceLocation texture, int u, int v, int width, int height) {
-        this(new RawSprite(texture, u, u, u + width, v + height, 256), 256);
+        this(new RawSprite(texture, u, v, u + width, v + height, 256), 256);
     }
 
     public GuiIcon offset(int u, int v) {
-        RawSprite raw = ((RawSprite) sprite);
-        float uMin = raw.uMin + u / textureSize;
-        float vMin = raw.vMin + v / textureSize;
-        float uMax = raw.uMax + u / textureSize;
-        float vMax = raw.vMax + v / textureSize;
+        RawSprite raw = (RawSprite) sprite;
+        float uMin = raw.uMin + u / (float) textureSize;
+        float vMin = raw.vMin + v / (float) textureSize;
+        float uMax = raw.uMax + u / (float) textureSize;
+        float vMax = raw.vMax + v / (float) textureSize;
         return new GuiIcon(new RawSprite(raw.location, uMin, vMin, uMax, vMax), textureSize);
     }
 
@@ -46,11 +46,15 @@ public class GuiIcon implements ISimpleDrawable {
         this.drawScaledInside(x, y, this.width, this.height);
     }
 
+    public void drawAt(double x, double y) {
+        this.drawScaledInside(x, y, this.width, this.height);
+    }
+
     public void drawScaledInside(IPositionedElement element) {
         drawScaledInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
-    public void drawScaledInside(int x, int y, int drawnWidth, int drawnHeight) {
+    public void drawScaledInside(double x, double y, double drawnWidth, double drawnHeight) {
         draw(sprite, x, y, x + drawnWidth, y + drawnHeight);
     }
 
@@ -79,24 +83,24 @@ public class GuiIcon implements ISimpleDrawable {
         drawCutInside(element.getX(), element.getY(), element.getWidth(), element.getHeight());
     }
 
-    public void drawCutInside(int x, int y, int displayWidth, int displayHeight) {
+    public void drawCutInside(double x, double y, double displayWidth, double displayHeight) {
         // NEW
         sprite.bindTexture();
 
         displayWidth = Math.min(this.width, displayWidth);
         displayHeight = Math.min(this.height, displayHeight);
 
-        int xMin = x;
-        int yMin = y;
+        double xMin = x;
+        double yMin = y;
 
-        int xMax = x + displayWidth;
-        int yMax = y + displayHeight;
+        double xMax = x + displayWidth;
+        double yMax = y + displayHeight;
 
         double uMin = sprite.getInterpU(0);
         double vMin = sprite.getInterpV(0);
 
-        double uMax = sprite.getInterpU(Math.min(1, displayWidth / (double) textureSize));
-        double vMax = sprite.getInterpV(Math.min(1, displayHeight / (double) textureSize));
+        double uMax = sprite.getInterpU(Math.min(1, displayWidth / textureSize));
+        double vMax = sprite.getInterpV(Math.min(1, displayHeight / textureSize));
 
         Tessellator tess = Tessellator.getInstance();
         VertexBuffer vb = tess.getBuffer();
@@ -110,7 +114,7 @@ public class GuiIcon implements ISimpleDrawable {
         tess.draw();
     }
 
-    public static void draw(ISprite sprite, int xMin, int yMin, int xMax, int yMax) {
+    public static void draw(ISprite sprite, double xMin, double yMin, double xMax, double yMax) {
         sprite.bindTexture();
 
         double uMin = sprite.getInterpU(0);

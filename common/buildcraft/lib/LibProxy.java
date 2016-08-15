@@ -28,6 +28,7 @@ import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
+import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
 import buildcraft.lib.gui.ledger.Ledger_Neptune;
@@ -100,8 +101,7 @@ public abstract class LibProxy implements IGuiHandler {
             // FIXME TEMP!
             ModelLoaderRegistry.registerLoader(ObjJsonLoader.INSTANCE);
             // various sprite registers
-            Ledger_Neptune.fmlPreInitClient();
-            LedgerOwnership.fmlPreInitClient();
+            LibSprites.fmlPreInitClient();
         }
 
         @Override

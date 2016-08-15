@@ -2,6 +2,7 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
@@ -34,5 +35,13 @@ public class ItemTransactorHelper {
             return (IItemTransactor) handler;
         }
         return new ItemHandlerWrapper(handler);
+    }
+
+    @Nonnull
+    public static IItemTransactor getTransactor(InventoryPlayer inventory) {
+        if (inventory == null) {
+            return NoSpaceTransactor.INSTANCE;
+        }
+        return new InventoryWrapper(inventory);
     }
 }

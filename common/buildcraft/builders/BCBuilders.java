@@ -4,7 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -30,8 +29,6 @@ public class BCBuilders {
         BCBuildersBlocks.preInit();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BuildersProxy_Neptune.getProxy());
-
-        MinecraftForge.EVENT_BUS.register(BCBuildersEventDist.INSTANCE);
     }
 
     @Mod.EventHandler

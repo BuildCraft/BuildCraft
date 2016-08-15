@@ -66,6 +66,16 @@
                 "type": "item",
                 "sub_type": "tool"
             }
+        },
+        {
+            "title": "item.paintbrush.name",
+            "item_stack": "(buildcraftcore:paintbrush)",
+            "page": "paintbrush.md",
+            "type_tags": 
+            {
+                "type": "item",
+                "sub_type": "tool"
+            }
         }
     ]
 }

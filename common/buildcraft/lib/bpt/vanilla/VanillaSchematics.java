@@ -12,13 +12,15 @@ import buildcraft.api.bpt.SchematicFactoryNBTBlock;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
 import buildcraft.lib.bpt.helper.SchematicBlockSimpleSet;
 
-public class VanillaBlueprints {
+public class VanillaSchematics {
     private static final Block[] STANDARD_BLOCKS = { //
         Blocks.ACACIA_FENCE, Blocks.ACACIA_FENCE_GATE, Blocks.ACACIA_STAIRS, //
         Blocks.BIRCH_FENCE, Blocks.BIRCH_FENCE_GATE, Blocks.BIRCH_STAIRS, //
         Blocks.PLANKS, Blocks.LOG, Blocks.LOG2,//
         Blocks.BOOKSHELF,//
-        Blocks.COBBLESTONE, Blocks.STONE, Blocks.STONEBRICK, Blocks.END_STONE//
+        Blocks.COBBLESTONE, Blocks.STONE, Blocks.STONEBRICK, Blocks.END_STONE,//
+        Blocks.WOOL, Blocks.CLAY, Blocks.STAINED_HARDENED_CLAY, Blocks.STAINED_GLASS,//
+        Blocks.STAINED_GLASS_PANE, Blocks.GLASS_PANE,//
     };
 
     private static final Block[] CHEST_BLOCKS = {//

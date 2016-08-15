@@ -4,11 +4,9 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.SchematicBlock;
-import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+import buildcraft.api.bpt.*;
 
 public class SchematicAir extends SchematicBlock {
     public static final SchematicAir INSTANCE = new SchematicAir();
@@ -26,5 +24,11 @@ public class SchematicAir extends SchematicBlock {
     @Override
     public PreBuildAction createClearingTask(IBuilderAccessor builder, BlockPos pos) {
         return DefaultBptActions.REQUIRE_AIR;
+    }
+
+    @Override
+    public boolean buildImmediatly(World world, IMaterialProvider provider, BlockPos pos) {
+        world.setBlockToAir(pos);
+        return true;
     }
 }

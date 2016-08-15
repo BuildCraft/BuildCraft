@@ -14,7 +14,7 @@ public class ParticlePipeManager {
 
     static {
         // Just use ints rather than a full registry - its simpler
-        PIPE_TYPES.put(0, ParticleDirectionalSpread::getForOption);
+        PIPE_TYPES.put(0, ParticleCountMultiplier::getForOption);
     }
 
     public static IParticlePositionPipe construct(int[] types) {

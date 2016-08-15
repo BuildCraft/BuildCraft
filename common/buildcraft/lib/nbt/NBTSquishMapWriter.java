@@ -139,8 +139,7 @@ class NBTSquishMapWriter {
 
         if (!strings.isEmpty()) {
             // Sort strings beforehand. I don't know if this makes a difference or not, but it might help gzip to
-            // compress
-            // Similar strings more (as they are closer).
+            // compress similar strings more (as they are closer).
             Collections.sort(strings);
             NBTSquishDebugging.log(() -> "\nString dictionary size = " + strings.size());
             buf.writeShort(strings.size());

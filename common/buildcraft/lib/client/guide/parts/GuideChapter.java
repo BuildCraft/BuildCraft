@@ -14,7 +14,7 @@ public abstract class GuideChapter extends GuidePart {
     public static final int MAX_HOVER_DISTANCE = 20;
 
     public final PageLine chapter;
-    private int hoverProgress = 0;
+    private int hoverProgress = 0, hoverProgessLast = 0;
     protected EnumGuiSide lastDrawn = null;
 
     public enum EnumGuiSide {
@@ -70,24 +70,24 @@ public abstract class GuideChapter extends GuidePart {
         return renderLine(current, chapter, x, y, width, height, -1);
     }
 
-    public EnumGuiSide draw(int index) {
+    public EnumGuiSide draw(int index, float partialTicks) {
         IFontRenderer font = gui.getCurrentFont();
         String text = chapter.text;
-        int hoverWidth = getHoverWidth();
-        int width = font.getStringWidth(text) + hoverWidth;
+        float hoverWidth = getHoverWidth(partialTicks);
+        float width = font.getStringWidth(text) + hoverWidth;
         int colour = COLOURS[index % COLOURS.length];
 
         int y = gui.minY + 20 * (index + 1);
         if (lastDrawn == EnumGuiSide.LEFT) {
-            int x = gui.minX - width - 4 + 11;
+            float x = gui.minX - width - 4 + 11;
 
             RenderUtils.setGLColorFromInt(colour);
             GuiGuide.CHAPTER_MARKER_LEFT.drawAt(x - 5, y - 4);
-            int oX = x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
+            float oX = x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
             GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(oX, y - 4, width + 4, 16);
             RenderUtils.setGLColorFromInt(-1);
 
-            font.drawString(text, x, y, 0);
+            font.drawString(text, (int) x, y, 0);
         } else if (lastDrawn == EnumGuiSide.RIGHT) {
             int x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
 
@@ -96,7 +96,7 @@ public abstract class GuideChapter extends GuidePart {
             GuiGuide.CHAPTER_MARKER_RIGHT.drawAt(x + width + 4, y - 4);
             RenderUtils.setGLColorFromInt(-1);
 
-            font.drawString(text, x + 4 + hoverWidth, y, 0);
+            font.drawString(text, (int) (x + 4 + hoverWidth), y, 0);
         }
         return lastDrawn;
     }
@@ -104,7 +104,7 @@ public abstract class GuideChapter extends GuidePart {
     protected boolean isMouseInside() {
         IFontRenderer font = gui.getCurrentFont();
         String text = chapter.text;
-        int width = font.getStringWidth(text) + getHoverWidth();
+        int width = (int) (font.getStringWidth(text) + getHoverWidth(0));
 
         int y = gui.minY + 20 * (gui.getChapterIndex(this) + 1);
 
@@ -126,8 +126,9 @@ public abstract class GuideChapter extends GuidePart {
         return false;
     }
 
-    private int getHoverWidth() {
-        return (hoverProgress * MAX_HOVER_DISTANCE) / MAX_HOWEVER_PROGRESS;
+    private float getHoverWidth(float partialTicks) {
+        float prog = partialTicks * hoverProgress + (1 - partialTicks) * hoverProgessLast;
+        return (prog * MAX_HOVER_DISTANCE) / MAX_HOWEVER_PROGRESS;
     }
 
     public boolean handleClick() {
@@ -141,6 +142,7 @@ public abstract class GuideChapter extends GuidePart {
 
     @Override
     public void updateScreen() {
+        hoverProgessLast = hoverProgress;
         if (isMouseInside()) {
             hoverProgress++;
             if (hoverProgress > MAX_HOWEVER_PROGRESS) {

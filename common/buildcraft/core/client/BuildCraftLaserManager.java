@@ -15,6 +15,7 @@ public class BuildCraftLaserManager {
     public static final LaserType MARKER_VOLUME_CONNECTED;
     public static final LaserType MARKER_VOLUME_POSSIBLE;
     public static final LaserType MARKER_VOLUME_SIGNAL;
+
     public static final LaserType MARKER_PATH_CONNECTED;
     public static final LaserType MARKER_PATH_POSSIBLE;
 
@@ -59,14 +60,19 @@ public class BuildCraftLaserManager {
         }
         {
             SpriteHolder sprite = SpriteHolderRegistry.getHolder("buildcraftcore:lasers/marker_volume_possible");
-            LaserRow capStart = new LaserRow(sprite, 0, 0, 4, 4);
-            LaserRow start = new LaserRow(sprite, 0, 0, 16, 4);
+            LaserRow capStart = new LaserRow(sprite, 0, 0, 1, 1);
+            LaserRow start = new LaserRow(sprite, 0, 0, 16, 1);
             LaserRow[] middle = { //
-                new LaserRow(sprite, 0, 4, 16, 8),//
-                new LaserRow(sprite, 0, 8, 16, 12)//
+                new LaserRow(sprite, 0, 1, 16, 2), new LaserRow(sprite, 0, 2, 16, 3),//
+                new LaserRow(sprite, 0, 3, 16, 4), new LaserRow(sprite, 0, 4, 16, 5),//
+                new LaserRow(sprite, 0, 5, 16, 6), new LaserRow(sprite, 0, 6, 16, 7),//
+                new LaserRow(sprite, 0, 7, 16, 8), new LaserRow(sprite, 0, 8, 16, 9),//
+                new LaserRow(sprite, 0, 9, 16, 10), new LaserRow(sprite, 0, 10, 16, 11),//
+                new LaserRow(sprite, 0, 11, 16, 12), new LaserRow(sprite, 0, 12, 16, 13),//
+                new LaserRow(sprite, 0, 13, 16, 14), new LaserRow(sprite, 0, 14, 16, 15),//
             };
-            LaserRow end = new LaserRow(sprite, 0, 12, 16, 16);
-            LaserRow capEnd = new LaserRow(sprite, 12, 12, 16, 16);
+            LaserRow end = new LaserRow(sprite, 0, 15, 16, 16);
+            LaserRow capEnd = new LaserRow(sprite, 15, 15, 16, 16);
             MARKER_VOLUME_POSSIBLE = new LaserType(capStart, start, middle, end, capEnd);
         }
         {

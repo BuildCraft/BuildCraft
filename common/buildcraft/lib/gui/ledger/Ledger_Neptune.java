@@ -8,7 +8,7 @@ import net.minecraft.client.resources.I18n;
 
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
-import buildcraft.lib.client.sprite.SpriteHolderRegistry;
+import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteSplit;
 import buildcraft.lib.gui.*;
@@ -18,8 +18,8 @@ import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 
 public abstract class Ledger_Neptune implements ITooltipElement {
-    public static final SpriteHolder SPRITE_EXP_NEG = SpriteHolderRegistry.getHolder("buildcraftlib:icons/ledger_left");
-    public static final SpriteHolder SPRITE_EXP_POS = SpriteHolderRegistry.getHolder("buildcraftlib:icons/ledger_right");
+    public static final SpriteHolder SPRITE_EXP_NEG = LibSprites.LEDGER_LEFT;
+    public static final SpriteHolder SPRITE_EXP_POS = LibSprites.LEDGER_RIGHT;
 
     public static final SpriteSplit SPRITE_SPLIT_NEG = new SpriteSplit(SPRITE_EXP_NEG, 4, 4, 12, 12, 16);
     public static final SpriteSplit SPRITE_SPLIT_POS = new SpriteSplit(SPRITE_EXP_POS, 4, 4, 12, 12, 16);
@@ -29,10 +29,6 @@ public abstract class Ledger_Neptune implements ITooltipElement {
 
     public static final int CLOSED_WIDTH = LEDGER_GAP + 16 + LEDGER_GAP;
     public static final int CLOSED_HEIGHT = LEDGER_GAP + 16 + LEDGER_GAP;
-
-    public static void fmlPreInitClient() {
-        // Just to init the sprites
-    }
 
     public final LedgerManager_Neptune manager;
 

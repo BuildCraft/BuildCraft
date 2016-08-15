@@ -100,9 +100,9 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
         // TODO use the animation manager!
         return new int[] { 0, 0 };
     }
-
+    
     @Override
-    public int[] startPowerAnimation(Vec3d target, int milliJoules, int delay) {
+    public int[] startPowerAnimation(Vec3d target, long microJoules, int delay) {
         // TODO use the animation manager!
         return new int[] { 0, 0 };
     }

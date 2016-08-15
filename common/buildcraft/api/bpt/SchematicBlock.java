@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.PermissionUtil;
 
 public abstract class SchematicBlock extends Schematic {
     public final Block block;
@@ -61,9 +60,5 @@ public abstract class SchematicBlock extends Schematic {
         if (axis == Axis.Y) {
             state = state.withRotation(rotation);
         }
-    }
-
-    public static boolean canEdit(IBuilderAccessor builder, BlockPos pos) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, builder.getOwner(), PermissionUtil.createFrom(builder.getWorld(), pos));
     }
 }
