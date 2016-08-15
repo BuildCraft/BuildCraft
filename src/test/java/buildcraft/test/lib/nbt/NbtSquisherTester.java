@@ -1,6 +1,5 @@
 package buildcraft.test.lib.nbt;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -8,7 +7,6 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.GZIPOutputStream;
 
 import com.google.common.base.Stopwatch;
 
@@ -28,7 +26,7 @@ public class NbtSquisherTester {
     public void testSimpleNBT() throws IOException {
         NBTTagCompound nbt = genNbt();
 
-        spool(100, nbt);
+        spool(200, nbt);
 
         NBTSquishDebugging.debug = true;
         test(nbt);
@@ -248,14 +246,6 @@ public class NbtSquisherTester {
         return item;
     }
 
-    private static byte[] compress(byte[] bytes) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (GZIPOutputStream out = new GZIPOutputStream(baos)) {
-            out.write(bytes);
-        }
-        return baos.toByteArray();
-    }
-
     public static void printBytesData(String name, byte[] bytes) {
         String formatted = DecimalFormat.getInstance().format(bytes.length);
         System.out.print(name + "(" + pad(formatted, 13) + ") |");
@@ -267,14 +257,14 @@ public class NbtSquisherTester {
     }
 
     private static String padMilliseconds(long name, int l) {
-        return pad(NumberFormat.getInstance().format(name), l);
+        return pad(NumberFormat.getInstance().format(name), l) + "ms ";
     }
 
     private static String pad(String name, int l) {
         while (name.length() < l) {
             name = " " + name;
         }
-        return name + "ms ";
+        return name;
     }
 
     private static void printByte(byte[] bytes, int i) {
