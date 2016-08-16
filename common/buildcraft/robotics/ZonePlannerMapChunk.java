@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
@@ -13,15 +12,13 @@ import java.util.Map;
 
 public class ZonePlannerMapChunk {
     public Map<BlockPos, Integer> data = new HashMap<>();
-    public int dimensionalId = 0;
 
-    public ZonePlannerMapChunk load(World world, ChunkPos chunkPos) {
-        dimensionalId = world.provider.getDimension();
+    public ZonePlannerMapChunk load(World world, ZonePlannerMapChunkKey zonePlannerMapChunkKey) {
         data.clear();
-        Chunk chunk = world.getChunkFromChunkCoords(chunkPos.chunkXPos, chunkPos.chunkZPos);
+        Chunk chunk = world.getChunkFromChunkCoords(zonePlannerMapChunkKey.chunkPos.chunkXPos, zonePlannerMapChunkKey.chunkPos.chunkZPos);
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
-                BlockPos pos = new BlockPos(x, 255, z);
+                BlockPos pos = new BlockPos(x, zonePlannerMapChunkKey.level * ZonePlannerMapChunkKey.LEVEL_HEIGHT, z);
                 int color = 0;
                 while(pos.getY() > 0 && color == 0) {
                     IBlockState state = chunk.getBlockState(pos);

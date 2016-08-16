@@ -2,9 +2,7 @@ package buildcraft.robotics;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 public class ZonePlannerMapRenderer {
     public static ZonePlannerMapRenderer instance = new ZonePlannerMapRenderer();
-    private Map<Pair<ChunkPos, Integer>, Integer> chunkListIndexes = new HashMap<>();
+    private Map<ZonePlannerMapChunkKey, Integer> chunkListIndexes = new HashMap<>();
 
     private static void vertex(double x, double y, double z, double u, double v) {
         GL11.glTexCoord2d(u, v);
@@ -72,16 +70,16 @@ public class ZonePlannerMapRenderer {
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")
-    public int drawChunk(World world, ChunkPos chunkPos) {
-        if(chunkListIndexes.containsKey(Pair.of(chunkPos, world.provider.getDimension()))) {
-            return chunkListIndexes.get(Pair.of(chunkPos, world.provider.getDimension()));
+    public int drawChunk(ZonePlannerMapChunkKey zonePlannerMapChunkKey) {
+        if(chunkListIndexes.containsKey(zonePlannerMapChunkKey)) {
+            return chunkListIndexes.get(zonePlannerMapChunkKey);
         }
         int listIndexEmpty = GL11.glGenLists(1);
         GL11.glNewList(listIndexEmpty, GL11.GL_COMPILE);
         // noting, wait for chunk data
         GL11.glEndList();
-        chunkListIndexes.put(Pair.of(chunkPos, world.provider.getDimension()), listIndexEmpty);
-        ZonePlannerMapDataClient.instance.getChunk(world, chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), zonePlannerMapChunk -> {
+        chunkListIndexes.put(zonePlannerMapChunkKey, listIndexEmpty);
+        ZonePlannerMapDataClient.instance.getChunk(Minecraft.getMinecraft().theWorld, zonePlannerMapChunkKey, zonePlannerMapChunk -> {
             int listIndex = GL11.glGenLists(1);
             GL11.glNewList(listIndex, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUADS);
@@ -92,11 +90,11 @@ public class ZonePlannerMapRenderer {
                 int b = (color >> 0) & 0xFF;
                 int a = (color >> 24) & 0xFF;
                 GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, a / (double)0xFF);
-                drawBlockCuboid(chunkPos.chunkXPos * 16 + pos.getX(), pos.getY(), chunkPos.chunkZPos * 16 + pos.getZ(), pos.getY());
+                drawBlockCuboid(zonePlannerMapChunkKey.chunkPos.chunkXPos * 16 + pos.getX(), pos.getY(), zonePlannerMapChunkKey.chunkPos.chunkZPos * 16 + pos.getZ(), pos.getY());
             }
             GL11.glEnd();
             GL11.glEndList();
-            chunkListIndexes.put(Pair.of(chunkPos, world.provider.getDimension()), listIndex);
+            chunkListIndexes.put(zonePlannerMapChunkKey, listIndex);
         });
         return listIndexEmpty;
     }
