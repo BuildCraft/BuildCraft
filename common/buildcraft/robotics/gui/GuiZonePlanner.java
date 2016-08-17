@@ -14,6 +14,7 @@ import buildcraft.robotics.container.ContainerZonePlanner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -182,6 +183,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         }
         int x = guiLeft;
         int y = guiTop;
+        if(lastSelected != null) {
+            String text = "X: " + lastSelected.getX() + " Y: " + lastSelected.getY() + " Z: " + lastSelected.getZ();
+            fontRendererObj.drawString(text, x + 130, y + 130, 0x404040);
+        }
         int offsetX = 8;
         int offsetY = 9;
         int sizeX = 213;
@@ -219,44 +224,47 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             }
         }
 
-        FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
-        FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
-        IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
-
-        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
-        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
-        GL11.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
-
-        FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
-        FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
-
-        GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
-        GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
-
-        Vector3d rayStart = new Vector3d(positionNearBuffer.get(0), positionNearBuffer.get(1), positionNearBuffer.get(2));
-        Vector3d rayPosition = new Vector3d(rayStart);
-        Vector3d rayDirection = new Vector3d(positionFarBuffer.get(0), positionFarBuffer.get(1), positionFarBuffer.get(2));
-        rayDirection.sub(rayStart);
-        rayDirection.normalize();
-        rayDirection.scale(0.1);
         BlockPos found = null;
         int foundColor = 0;
 
-        for(int i = 0; i < 10000; i++) {
-            int chunkX = (int) rayPosition.getX() >> 4;
-            int chunkZ = (int) rayPosition.getZ() >> 4;
-            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
-            if(zonePlannerMapChunk != null) {
-                BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
-                if(zonePlannerMapChunk.data.containsKey(pos)) {
-                    found = new BlockPos(pos.getX() + chunkX * 16, pos.getY(), pos.getZ() + chunkZ * 16);
-                    foundColor = zonePlannerMapChunk.data.get(pos);
+        if(Mouse.getX() / scaledResolution.getScaleFactor() > x + offsetX && Mouse.getX() / scaledResolution.getScaleFactor() < x + offsetX + sizeX && scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() > y + offsetY && scaledResolution.getScaledHeight() - Mouse.getY() / scaledResolution.getScaleFactor() < y + offsetY + sizeY) {
+            FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(16);
+            FloatBuffer modelViewBuffer = BufferUtils.createFloatBuffer(16);
+            IntBuffer viewportBuffer = BufferUtils.createIntBuffer(16);
+
+            GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
+            GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
+            GL11.glGetInteger(GL11.GL_VIEWPORT, viewportBuffer);
+
+            FloatBuffer positionNearBuffer = BufferUtils.createFloatBuffer(3);
+            FloatBuffer positionFarBuffer = BufferUtils.createFloatBuffer(3);
+
+            GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 0f, modelViewBuffer, projectionBuffer, viewportBuffer, positionNearBuffer);
+            GLU.gluUnProject(Mouse.getX(), Mouse.getY(), 1f, modelViewBuffer, projectionBuffer, viewportBuffer, positionFarBuffer);
+
+            Vector3d rayStart = new Vector3d(positionNearBuffer.get(0), positionNearBuffer.get(1), positionNearBuffer.get(2));
+            Vector3d rayPosition = new Vector3d(rayStart);
+            Vector3d rayDirection = new Vector3d(positionFarBuffer.get(0), positionFarBuffer.get(1), positionFarBuffer.get(2));
+            rayDirection.sub(rayStart);
+            rayDirection.normalize();
+            rayDirection.scale(0.1);
+
+            for(int i = 0; i < 10000; i++) {
+                int chunkX = (int) rayPosition.getX() >> 4;
+                int chunkZ = (int) rayPosition.getZ() >> 4;
+                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
+                if(zonePlannerMapChunk != null) {
+                    BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
+                    if(zonePlannerMapChunk.data.containsKey(pos)) {
+                        found = new BlockPos(pos.getX() + chunkX * 16, pos.getY(), pos.getZ() + chunkZ * 16);
+                        foundColor = zonePlannerMapChunk.data.get(pos);
+                        break;
+                    }
+                } else {
                     break;
                 }
-            } else {
-                break;
+                rayPosition.add(rayDirection);
             }
-            rayPosition.add(rayDirection);
         }
 
         if(found != null) {
