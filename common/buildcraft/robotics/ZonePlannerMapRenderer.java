@@ -1,16 +1,15 @@
 package buildcraft.robotics;
 
+import buildcraft.lib.CachedMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ZonePlannerMapRenderer {
     public static ZonePlannerMapRenderer instance = new ZonePlannerMapRenderer();
-    private Map<ZonePlannerMapChunkKey, Integer> chunkListIndexes = new HashMap<>();
+    private Map<ZonePlannerMapChunkKey, Integer> chunkListIndexes = new CachedMap<>(ZonePlannerMapData.TIMEOUT);
 
     private static void vertex(double x, double y, double z, double u, double v) {
         GL11.glTexCoord2d(u, v);
