@@ -17,9 +17,10 @@ public class VanillaSchematics {
         Blocks.ACACIA_FENCE, Blocks.ACACIA_FENCE_GATE, Blocks.ACACIA_STAIRS, //
         Blocks.BIRCH_FENCE, Blocks.BIRCH_FENCE_GATE, Blocks.BIRCH_STAIRS, //
         Blocks.PLANKS, Blocks.LOG, Blocks.LOG2,//
-        Blocks.BOOKSHELF,//
+        Blocks.BOOKSHELF, Blocks.GLOWSTONE,//
         Blocks.COBBLESTONE, Blocks.STONE, Blocks.STONEBRICK, Blocks.END_STONE,//
         Blocks.WOOL, Blocks.CLAY, Blocks.STAINED_HARDENED_CLAY, Blocks.STAINED_GLASS,//
+        Blocks.GLASS, Blocks.ANVIL, Blocks.CLAY,//
         Blocks.STAINED_GLASS_PANE, Blocks.GLASS_PANE,//
     };
 
@@ -30,6 +31,8 @@ public class VanillaSchematics {
     // TODO: this all wants to be replaced with mostly-json
 
     public static void fmlInit() {
+        BlueprintAPI.registerWorldBlockSchematic(Blocks.AIR, SchematicAir.FACTORY_WORLD);
+        BlueprintAPI.registerNbtBlockSchematic(Blocks.AIR, SchematicAir.FACTORY_NBT);
         for (Block block : STANDARD_BLOCKS) {
             BlueprintAPI.registerWorldBlockSchematic(block, createStandardBlockWorld(block));
             BlueprintAPI.registerNbtBlockSchematic(block, createStandardBlockNBT(block));

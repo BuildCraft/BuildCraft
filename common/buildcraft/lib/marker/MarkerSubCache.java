@@ -1,7 +1,9 @@
 package buildcraft.lib.marker;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -26,9 +28,9 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
     public final int cacheId;
     public final int dimensionId;
     public final boolean isServer;
-    private final Map<BlockPos, C> posToConnection = new HashMap<>();
-    private final Map<C, Set<BlockPos>> connectionToPos = new IdentityHashMap<>();
-    private final Map<BlockPos, TileMarker<C>> tileCache = new HashMap<>();
+    private final Map<BlockPos, C> posToConnection = new ConcurrentHashMap<>();
+    private final Map<C, Set<BlockPos>> connectionToPos = new ConcurrentHashMap<>();
+    private final Map<BlockPos, Optional<TileMarker<C>>> tileCache = new ConcurrentHashMap<>();
 
     public MarkerSubCache(World world, int cacheId) {
         this.isServer = !world.isRemote;
@@ -65,12 +67,17 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
 
     @Nullable
     public TileMarker<C> getMarker(BlockPos pos) {
-        return tileCache.get(pos);
+        Optional<TileMarker<C>> op = tileCache.get(pos);
+        if (op == null) {
+            return null;
+        } else {
+            return op.orElse(null);
+        }
     }
 
-    public void loadMarker(BlockPos pos, TileMarker<C> marker) {
+    public void loadMarker(BlockPos pos, @Nullable TileMarker<C> marker) {
         boolean did = tileCache.containsKey(pos);
-        tileCache.put(pos, marker);
+        tileCache.put(pos, Optional.ofNullable(marker));
         if (DEBUG_FULL) {
             BCLog.logger.info("[lib.marker.full] Set a marker at " + pos + " as " + marker);
         }
@@ -116,23 +123,27 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
         return ImmutableList.copyOf(tileCache.keySet());
     }
 
+    @Nullable
     public C getConnection(BlockPos pos) {
         return posToConnection.get(pos);
     }
 
-    public void destroyConnection(C connection) {
+    public void destroyConnection(@Nullable C connection) {
+        if (connection == null) {
+            return;
+        }
         Set<BlockPos> set = connectionToPos.remove(connection);
         if (set != null) {
             deinitConnection(set);
         }
     }
 
-    public void addConnection(C connection) {
+    public void addConnection(@Nonnull C connection) {
         Set<BlockPos> lastSeen = new HashSet<>(connection.getMarkerPositions());
         initConnection(connection, lastSeen);
     }
 
-    public void refreshConnection(C connection) {
+    public void refreshConnection(@Nonnull C connection) {
         Set<BlockPos> lastSeen = connectionToPos.get(connection);
         if (DEBUG_FULL) {
             BCLog.logger.info("[lib.marker.full] Refreshing a connection");

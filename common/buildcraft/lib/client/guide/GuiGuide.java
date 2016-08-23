@@ -389,11 +389,11 @@ public class GuiGuide extends GuiScreen {
                 PEN_ANGLED.drawAt(mouse.getX() - 2, mouse.getY() - PEN_ANGLED.height - 2);
             }
         } else {
-            int height = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
+            int h = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
 
             // Draw pen
             mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - height, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, height);
+            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - h, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, h);
 
             if (tooltipStack != null) {
                 renderToolTip(tooltipStack, mouse.getX(), mouse.getY());

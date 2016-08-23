@@ -20,6 +20,7 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
@@ -100,7 +101,7 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
         // TODO use the animation manager!
         return new int[] { 0, 0 };
     }
-    
+
     @Override
     public int[] startPowerAnimation(Vec3d target, long microJoules, int delay) {
         // TODO use the animation manager!
@@ -113,6 +114,15 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
             return new RequestedFree.FreeItem(stack);
         }
         throw new AbstractMethodError("Implement this!");
+    }
+
+    @Override
+    public IRequestedItem requestStackForBlock(IBlockState state) {
+        ItemStack wanted = StackUtil.getItemStackForState(state);
+        if (wanted == null) {
+            throw new IllegalStateException("Unknown item block " + state);
+        }
+        return requestStack(wanted);
     }
 
     @Override

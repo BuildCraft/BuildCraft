@@ -5,11 +5,10 @@
 package buildcraft.builders;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import buildcraft.builders.bpt.PerSaveBptStorage;
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.RegistryHelper;
@@ -22,7 +21,7 @@ public class BCBuilders {
     public static BCBuilders INSTANCE = null;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCBuildersItems.preInit();
@@ -32,13 +31,23 @@ public class BCBuilders {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BuildersProxy_Neptune.getProxy().fmlInit();
         BCBuildersRecipes.init();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
 
+    }
+
+    @Mod.EventHandler
+    public static void onServerStarting(FMLServerStartingEvent event) {
+        PerSaveBptStorage.onServerStart(event);
+    }
+
+    @Mod.EventHandler
+    public static void onServerStopping(FMLServerStoppingEvent event) {
+        PerSaveBptStorage.onServerStopping();
     }
 }

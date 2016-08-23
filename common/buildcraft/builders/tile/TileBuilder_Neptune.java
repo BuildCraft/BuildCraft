@@ -7,10 +7,13 @@ package buildcraft.builders.tile;
 import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -19,14 +22,23 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.core.Box;
+import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
+import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.misc.BoxIterator;
+import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -42,7 +54,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     public final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
     private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    private final IItemHandlerModifiable invResources = addInventory("resources", 28, EnumAccess.INSERT, EnumPipePart.VALUES);
+    private final IItemHandlerModifiable invResources = addInventory("resources", 28, EnumAccess.NONE, EnumPipePart.VALUES);
 
     private final Tank[] tanks = new Tank[] {//
         new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),//
@@ -55,9 +67,13 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
 
-    private TileBuilderAccessor builder = null;
+    private final BuilderAccessor builder = new BuilderAccessor(this);
     private List<BlockPos> path = null;
     private Box box = null;
+    private BoxIterator boxIter = null;
+    private Blueprint currentBpt = null;
+    private Rotation rotation = null;
+    private BlockPos start;
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -65,18 +81,69 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             // Update bpt + builder
             if (after == null) {
                 // builder.releaseAll();
-                builder = null;
-                animation.reset();
+                // animation.reset();
             }
         }
     }
 
+    private int cooldown = 0;
+
     @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        if (builder != null) {
-            builder.update();
-            animation.update();
+        builder.update();
+        animation.update();
+        if (worldObj.isRemote) {
+            // client stuffs
+        } else {
+            // server stuffs
+            if (currentBpt != null) {
+                BlockPos next = boxIter.getCurrent();
+                boxIter.advance();
+                SchematicBlock schematic = currentBpt.getSchematicAt(next);
+                BlockPos buildAt = start.add(next);
+
+                // Remove the current block
+                IBlockState current = getWorld().getBlockState(buildAt);
+                if (!current.getBlock().isAir(current, getWorld(), buildAt)) {
+                    SoundUtil.playBlockBreak(getWorld(), buildAt, current);
+                }
+                getWorld().setBlockToAir(buildAt);
+
+                // And build the new one
+                schematic.buildImmediatly(getWorld(), builder, buildAt);
+
+                if (boxIter.hasFinished()) {
+                    currentBpt = null;
+                    boxIter = null;
+                    rotation = null;
+                    start = null;
+                }
+            } else {
+                cooldown--;
+            }
+
+            // TODO: Work out what is happening with rotations and offsets and positions...
+
+            if (cooldown <= 0 && currentBpt == null) {
+                ItemStack bpt = invBlueprint.getStackInSlot(0);
+                if (bpt != null && bpt.getItem() == BCBuildersItems.blueprint) {
+                    BptStorage storage = BCBuildersItems.blueprint.createStorage(bpt);
+                    currentBpt = new Blueprint(storage.getSaved());
+                    EnumFacing thisFacing = getWorld().getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
+                    rotation = PositionUtil.getRotatedFacing(currentBpt.facing, thisFacing, Axis.Y);
+                    currentBpt.rotate(Axis.Y, rotation);
+
+                    BlockPos bptPos = getPos().add(thisFacing.getOpposite().getDirectionVec());
+
+                    start = bptPos.add(currentBpt.offset);
+                    BlockPos max = currentBpt.size.add(-1, -1, -1);
+                    BlockPos end = start.add(max);
+                    box = new Box(start, end);
+                    boxIter = new BoxIterator(BlockPos.ORIGIN, max, EnumAxisOrder.XZY.defaultOrder, true);
+                    cooldown = 3000;
+                }
+            }
         }
     }
 

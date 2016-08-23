@@ -54,6 +54,25 @@ public class PositionUtil {
         return x != z;
     }
 
+    /** Finds a rotation that {@link #rotateFacing(EnumFacing, Axis, Rotation)} will use on "from" to get "to", with a
+     * given axis around. */
+    public static Rotation getRotatedFacing(EnumFacing from, EnumFacing to, Axis axis) {
+        if (from.getAxis() == axis || to.getAxis() == axis) {
+            throw new IllegalArgumentException("Cannot rotate around " + axis + " with " + from + " and " + to);
+        }
+        if (from == to) {
+            return Rotation.NONE;
+        }
+        if (from.getOpposite() == to) {
+            return Rotation.CLOCKWISE_180;
+        }
+        if (from.rotateAround(axis) == to) {
+            return Rotation.CLOCKWISE_90;
+        } else {
+            return Rotation.COUNTERCLOCKWISE_90;
+        }
+    }
+
     /** Rotates a given {@link EnumFacing} by the given rotation, in a given axis. This relies on the behaviour defined
      * in {@link EnumFacing#rotateAround(Axis)}. */
     public static EnumFacing rotateFacing(EnumFacing from, Axis axis, Rotation rotation) {

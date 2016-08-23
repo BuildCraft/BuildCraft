@@ -14,14 +14,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.lib.tile.item.StackChangeCallback;
 
+// TODO: move all methods in this to ItemHandlerManager
+@Deprecated
 public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
-    protected final ItemHandlerManager itemManager = new ItemHandlerManager();
-
     public TileBCInventory_Neptune() {
 
     }

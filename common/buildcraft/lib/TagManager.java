@@ -255,6 +255,7 @@ public class TagManager {
         // BC Builders Tiles
         registerTag("tile.architect").reg("architect");
         registerTag("tile.library").reg("library");
+        registerTag("tile.builder").reg("builder");
 
         endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

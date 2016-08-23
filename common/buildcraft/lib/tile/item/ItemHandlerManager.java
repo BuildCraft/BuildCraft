@@ -104,7 +104,6 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
             IItemHandlerModifiable[] arr = new IItemHandlerModifiable[handlers.size()];
             arr = handlers.toArray(arr);
             combined = new CombinedInvWrapper(arr);
-
         }
     }
 }

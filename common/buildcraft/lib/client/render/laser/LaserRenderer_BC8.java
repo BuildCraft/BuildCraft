@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -94,11 +93,20 @@ public class LaserRenderer_BC8 {
     }
 
     private static int getLightFor(World world, EnumSkyBlock type, BlockPos pos) {
-        int val = world.getLightFor(type, pos);
-        for (EnumFacing face : EnumFacing.values()) {
-            val = Math.max(val, world.getLightFor(type, pos.offset(face)));
+        int sum = 0;
+        int count = 0;
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    int light = world.getLightFor(type, pos.add(x, y, z));
+                    if (light > 0) {
+                        sum += light;
+                        count++;
+                    }
+                }
+            }
         }
-        return val;
+        return count == 0 ? 0 : sum / count;
     }
 
     public static void renderLaserGlList(LaserData_BC8 data) {

@@ -78,7 +78,7 @@ public class MessageMarker implements IMessage {
         }
 
         @SideOnly(Side.CLIENT)
-        private void handleClient(MessageMarker message, MessageContext ctx) {
+        private static void handleClient(MessageMarker message, MessageContext ctx) {
             World world = Minecraft.getMinecraft().theWorld;
             if (world == null) {
                 if (DEBUG) {

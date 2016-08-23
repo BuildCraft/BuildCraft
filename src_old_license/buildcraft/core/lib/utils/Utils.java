@@ -46,6 +46,10 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
 
+/**
+ * Use buildcraft.lib.misc.*Util instead of this
+ */
+@Deprecated
 public final class Utils {
     // Commonly used vectors
     public static final BlockPos POS_ZERO = BlockPos.ORIGIN;

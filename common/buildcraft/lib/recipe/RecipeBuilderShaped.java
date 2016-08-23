@@ -90,7 +90,7 @@ public class RecipeBuilderShaped {
             objs[offset++] = Character.valueOf(c);
             objs[offset++] = objects.get(c);
         }
-        BCLog.logger.info("Rotated from " + shape + " to " + Arrays.toString(objs));
+        BCLog.logger.info("Rotated from " + Arrays.toString(createRecipeObjectArray()) + " to " + Arrays.toString(objs));
         return new ShapedOreRecipe(result, objs);
     }
 }

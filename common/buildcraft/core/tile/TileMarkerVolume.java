@@ -65,6 +65,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     public void switchSignals() {
         if (!worldObj.isRemote) {
             showSignals = !showSignals;
+            markDirty();
             sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
         }
     }

@@ -42,7 +42,7 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     @Override
     public void invalidate() {
         super.invalidate();
-        getLocalCache().removeMarker(getPos());
+        // getLocalCache().removeMarker(getPos());
     }
 
     @Override

@@ -10,7 +10,8 @@ import buildcraft.api.bpt.*;
 
 public class SchematicAir extends SchematicBlock {
     public static final SchematicAir INSTANCE = new SchematicAir();
-    public static final SchematicFactoryWorldBlock FACTORY = (world, pos) -> INSTANCE;
+    public static final SchematicFactoryWorldBlock FACTORY_WORLD = (world, pos) -> INSTANCE;
+    public static final SchematicFactoryNBTBlock FACTORY_NBT = (nbt) -> INSTANCE;
 
     private SchematicAir() {
         super(Blocks.AIR);

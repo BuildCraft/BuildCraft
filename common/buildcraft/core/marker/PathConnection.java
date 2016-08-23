@@ -83,6 +83,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
                     a.add(p);
                 }
             }
+            loop = false;
             PathConnection conA = new PathConnection(subCache);
             PathConnection conB = new PathConnection(subCache);
             conA.positions.addAll(a);

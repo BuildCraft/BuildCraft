@@ -59,12 +59,12 @@ class NBTSquishMapWriter {
         if (!complex.isEmpty()) flags |= FLAG_HAS_COMPLEX;
 
         final int flags2 = flags;
-        NBTSquishDebugging.log(() -> "\nUsed flags = " + Integer.toBinaryString(flags2));
+        NBTSquishDebugging.log("\nUsed flags = " + Integer.toBinaryString(flags2));
         buf.writeInt(flags);
 
         if (!bytes.isEmpty()) {
             bytes.sort();
-            NBTSquishDebugging.log(() -> "\nByte dictionary size = " + bytes.size());
+            NBTSquishDebugging.log("\nByte dictionary size = " + bytes.size());
             buf.writeShort(bytes.size());
             for (byte b : bytes.toArray()) {
                 buf.writeByte(b);
@@ -73,7 +73,7 @@ class NBTSquishMapWriter {
 
         if (!shorts.isEmpty()) {
             shorts.sort();
-            NBTSquishDebugging.log(() -> "\nShort dictionary size = " + shorts.size());
+            NBTSquishDebugging.log("\nShort dictionary size = " + shorts.size());
             buf.writeShort(shorts.size());
             for (short s : shorts.toArray()) {
                 buf.writeShort(s);
@@ -81,7 +81,7 @@ class NBTSquishMapWriter {
         }
         if (!ints.isEmpty()) {
             ints.sort();
-            NBTSquishDebugging.log(() -> "\nInt dictionary size = " + ints.size());
+            NBTSquishDebugging.log("\nInt dictionary size = " + ints.size());
             buf.writeShort(ints.size());
             for (int i : ints.toArray()) {
                 buf.writeInt(i);
@@ -90,7 +90,7 @@ class NBTSquishMapWriter {
 
         if (!longs.isEmpty()) {
             longs.sort();
-            NBTSquishDebugging.log(() -> "\nLong dictionary size = " + longs.size());
+            NBTSquishDebugging.log("\nLong dictionary size = " + longs.size());
             buf.writeShort(longs.size());
             for (long l : longs.toArray()) {
                 buf.writeLong(l);
@@ -99,7 +99,7 @@ class NBTSquishMapWriter {
 
         if (!floats.isEmpty()) {
             floats.sort();
-            NBTSquishDebugging.log(() -> "\nFloat dictionary size = " + floats.size());
+            NBTSquishDebugging.log("\nFloat dictionary size = " + floats.size());
             buf.writeShort(floats.size());
             for (float f : floats.toArray()) {
                 buf.writeFloat(f);
@@ -107,7 +107,7 @@ class NBTSquishMapWriter {
         }
         if (!doubles.isEmpty()) {
             doubles.sort();
-            NBTSquishDebugging.log(() -> "\nDouble dictionary size = " + doubles.size());
+            NBTSquishDebugging.log("\nDouble dictionary size = " + doubles.size());
             buf.writeShort(doubles.size());
             for (double d : doubles.toArray()) {
                 buf.writeDouble(d);
@@ -116,7 +116,7 @@ class NBTSquishMapWriter {
 
         if (!byteArrays.isEmpty()) {
             // We don't sort arrays because they are more expensive. (and its not a one liner :P)
-            NBTSquishDebugging.log(() -> "\nByte Array dictionary size = " + byteArrays.size());
+            NBTSquishDebugging.log("\nByte Array dictionary size = " + byteArrays.size());
             buf.writeShort(byteArrays.size());
             for (TByteArrayList ba : byteArrays) {
                 buf.writeShort(ba.size());
@@ -127,7 +127,7 @@ class NBTSquishMapWriter {
         }
 
         if (!intArrays.isEmpty()) {
-            NBTSquishDebugging.log(() -> "\nInt Array dictionary size = " + intArrays.size());
+            NBTSquishDebugging.log("\nInt Array dictionary size = " + intArrays.size());
             buf.writeShort(intArrays.size());
             for (TIntArrayList ia : intArrays) {
                 buf.writeShort(ia.size());
@@ -141,18 +141,18 @@ class NBTSquishMapWriter {
             // Sort strings beforehand. I don't know if this makes a difference or not, but it might help gzip to
             // compress similar strings more (as they are closer).
             Collections.sort(strings);
-            NBTSquishDebugging.log(() -> "\nString dictionary size = " + strings.size());
+            NBTSquishDebugging.log("\nString dictionary size = " + strings.size());
             buf.writeShort(strings.size());
             for (String s : strings) {
                 byte[] stringBytes = s.getBytes(StandardCharsets.UTF_8);
-                NBTSquishDebugging.log(() -> "\n  " + stringBytes.length + " bytes for \"" + s + "\"");
+                NBTSquishDebugging.log("\n  " + stringBytes.length + " bytes for \"" + s + "\"");
                 buf.writeShort(stringBytes.length);
                 buf.writeBytes(stringBytes);
             }
         }
 
         if (!complex.isEmpty()) {
-            NBTSquishDebugging.log(() -> "\nComplex dictionary size = " + complex.size());
+            NBTSquishDebugging.log("\nComplex dictionary size = " + complex.size());
             buf.writeShort(complex.size());
             for (NBTBase nbt : complex) {
                 if (nbt instanceof NBTTagList) {
@@ -168,7 +168,7 @@ class NBTSquishMapWriter {
 
     private void writeList(WrittenType type, NBTTagList list, ByteBuf buf) {
         boolean pack = shouldPackList(list);
-        NBTSquishDebugging.log(() -> "\n  List tag count = " + list.tagCount() + ", writing it " + (pack ? "PACKED" : "NORMAL"));
+        NBTSquishDebugging.log("\n  List tag count = " + list.tagCount() + ", writing it " + (pack ? "PACKED" : "NORMAL"));
         if (pack) {
             writeListPacked(type, buf, list);
         } else {
@@ -186,13 +186,13 @@ class NBTSquishMapWriter {
 
     private void writeCompound(WrittenType type, NBTTagCompound compound, ByteBuf buf) {
         WrittenType stringType = WrittenType.getForSize(map.strings.size());
-        NBTSquishDebugging.log(() -> "\n  Compound tag count = " + compound.getSize());
+        NBTSquishDebugging.log("\n  Compound tag count = " + compound.getSize());
         buf.writeByte(COMPLEX_COMPOUND);
         buf.writeShort(compound.getSize());
         for (String key : compound.getKeySet()) {
             NBTBase nbt = compound.getTag(key);
             int index = map.indexOfTag(nbt);
-            NBTSquishDebugging.log(() -> "\n             \"" + key + "\" -> " + index + " (" + safeToString(nbt) + ")");
+            NBTSquishDebugging.log("\n             \"" + key + "\" -> " + index + " (" + safeToString(nbt) + ")");
             stringType.writeIndex(buf, map.strings.indexOf(key));
             type.writeIndex(buf, index);
         }
@@ -227,18 +227,18 @@ class NBTSquishMapWriter {
             entries.add(entry);
         }
         entries.sort(Comparator.reverseOrder());
-        NBTSquishDebugging.log(() -> "\n    " + entries.size() + " List entries");
+        NBTSquishDebugging.log("\n    " + entries.size() + " List entries");
         buf.writeShort(entries.size());
 
         TIntArrayList sortedIndexes = new TIntArrayList();
         int i = 0;
         for (IndexEntry entry : entries) {
             final int j = i;
-            NBTSquishDebugging.log(() -> {
-                NBTBase base = map.getTagForWriting(entry.index);
-                String n = safeToString(base);
-                return "\n      List entry #" + j + " = " + entry.count + "x" + entry.index + " (" + n + ")";
-            });
+
+            NBTBase base = map.getTagForWriting(entry.index);
+            String n = safeToString(base);
+            NBTSquishDebugging.log("\n      List entry #" + j + " = " + entry.count + "x" + entry.index + " (" + n + ")");
+            
             sortedIndexes.add(entry.index);
             type.writeIndex(buf, entry.index);
             i++;
@@ -262,7 +262,7 @@ class NBTSquishMapWriter {
             }
             sortedIndexes.remove(0, Math.min(sortedIndexes.size(), maxVal));
             byte[] bitsetBytes = bitset.getBytes();
-            NBTSquishDebugging.log(() -> "\n      List bitset #" + (bitset.bits - 1));
+            NBTSquishDebugging.log("\n      List bitset #" + (bitset.bits - 1));
             buf.writeShort(bitsetBytes.length);
             buf.writeBytes(bitsetBytes);
             nextData = nextNextData;

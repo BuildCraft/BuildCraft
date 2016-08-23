@@ -12,17 +12,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 
-public class BlockBuilder_Neptune extends BlockBCTile_Neptune {
-    public static final IProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
+public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<EnumBlueprintType> PROP_BPT = BuildCraftProperties.BLUEPRINT_TYPE;
 
     public BlockBuilder_Neptune(Material material, String id) {
@@ -40,34 +39,6 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune {
         return new BlockStateContainer(this, PROP_FACING, PROP_BPT);
     }
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        int meta = 0;
-        meta |= state.getValue(PROP_FACING).getHorizontalIndex() & 3;
-        return meta;
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        IBlockState state = getDefaultState();
-        state = state.withProperty(PROP_FACING, EnumFacing.getHorizontal(meta & 3));
-        return state;
-    }
-
-    @Override
-    public IBlockState withRotation(IBlockState state, Rotation rot) {
-        EnumFacing facing = state.getValue(PROP_FACING);
-        state = state.withProperty(PROP_FACING, rot.rotate(facing));
-        return state;
-    }
-
-    @Override
-    public IBlockState withMirror(IBlockState state, Mirror mirror) {
-        EnumFacing facing = state.getValue(PROP_FACING);
-        state = state.withProperty(PROP_FACING, mirror.mirror(facing));
-        return state;
-    }
-
     // Others
 
     @Override
@@ -79,7 +50,6 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune {
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return null;
+        return new TileBuilder_Neptune();
     }
-
 }

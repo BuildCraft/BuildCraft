@@ -22,11 +22,31 @@ import buildcraft.lib.nbt.NBTSquishDebugging;
 import buildcraft.lib.nbt.NbtSquisher;
 
 public class NbtSquisherTester {
+    private final NBTTagCompound nbt = genNbt();
+
+    public static void spool(int times, NBTTagCompound nbt) {
+        for (int i = 0; i < times; i++) {
+            if (i % 10 == 0) {
+                System.out.println("Spooling [ " + i + "/" + times + " ]");
+            }
+            try {
+                warm(nbt);
+            } catch (IOException io) {
+                throw new Error(io);
+            }
+        }
+    }
+
+    public static void warm(NBTTagCompound nbt) throws IOException {
+        NbtSquisher.expand(NbtSquisher.squishVanillaUncompressed(nbt));
+        NbtSquisher.expand(NbtSquisher.squishVanilla(nbt));
+        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1Uncompressed(nbt));
+        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1(nbt));
+    }
+
     @Test
     public void testSimpleNBT() throws IOException {
-        NBTTagCompound nbt = genNbt();
-
-        spool(200, nbt);
+        spool(100, nbt);
 
         NBTSquishDebugging.debug = true;
         test(nbt);
@@ -119,26 +139,6 @@ public class NbtSquisherTester {
 
         nbt.setTag("bpt", bpt);
         return nbt;
-    }
-
-    public static void spool(int times, NBTTagCompound nbt) {
-        for (int i = 0; i < times; i++) {
-            if (i % 10 == 0) {
-                System.out.println("Spooling [ " + i + "/" + times + " ]");
-            }
-            try {
-                warm(nbt);
-            } catch (IOException io) {
-                throw new Error(io);
-            }
-        }
-    }
-
-    public static void warm(NBTTagCompound nbt) throws IOException {
-        NbtSquisher.expand(NbtSquisher.squishVanillaUncompressed(nbt));
-        NbtSquisher.expand(NbtSquisher.squishVanilla(nbt));
-        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1Uncompressed(nbt));
-        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1(nbt));
     }
 
     public static byte[] test(NBTTagCompound nbt) throws IOException {
