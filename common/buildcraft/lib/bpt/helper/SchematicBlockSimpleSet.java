@@ -1,7 +1,10 @@
 package buildcraft.lib.bpt.helper;
 
+import java.util.Collection;
+
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,7 +26,11 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
+    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
+        IBlockState current = builder.getWorld().getBlockState(pos);
+        if (current.equals(state)) {
+            return ImmutableList.of();
+        }
         return ImmutableList.of(new BptTaskBlockStandalone(pos, state, builder));
     }
 
@@ -42,6 +49,10 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
 
     @Override
     public PreBuildAction createClearingTask(IBuilderAccessor builder, BlockPos pos) {
+        IBlockState current = builder.getWorld().getBlockState(pos);
+        if (current.equals(state)) {
+            return DefaultBptActions.LEAVE;
+        }
         return DefaultBptActions.REQUIRE_AIR;
     }
 }

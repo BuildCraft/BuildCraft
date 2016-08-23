@@ -1,5 +1,7 @@
 package buildcraft.lib.bpt.vanilla;
 
+import java.util.Collection;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
@@ -54,7 +56,7 @@ public class SchematicChest extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
+    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
         return ImmutableList.of(new BptTaskPlaceAndFillChest(pos, state, stacks, builder));
     }
 
@@ -97,6 +99,11 @@ public class SchematicChest extends SchematicBlock {
             }
         }
         return true;
+    }
+
+    @Override
+    public int getTimeCost() {
+        return 80;
     }
 
     @Override

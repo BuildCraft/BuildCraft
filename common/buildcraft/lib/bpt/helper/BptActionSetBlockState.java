@@ -2,6 +2,7 @@ package buildcraft.lib.bpt.helper;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -55,8 +56,13 @@ public class BptActionSetBlockState implements IBptAction {
     @Override
     public void run(IBuilderAccessor builder) {
         if (reqItem.lock()) {// Just make sure...
-            builder.getWorld().setBlockState(pos, state);
-            SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
+            if (state.getBlock() == Blocks.AIR) {
+                SoundUtil.playBlockBreak(builder.getWorld(), pos, builder.getWorld().getBlockState(pos));
+                builder.getWorld().setBlockToAir(pos);
+            } else {
+                builder.getWorld().setBlockState(pos, state);
+                SoundUtil.playBlockPlace(builder.getWorld(), pos, state);
+            }
             reqItem.use();
         } else {
             BCLog.logger.warn("[lib.bpt.action] Failed to aquire a lock on " + reqItem + "!");

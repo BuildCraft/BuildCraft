@@ -1,5 +1,7 @@
 package buildcraft.lib.bpt.vanilla;
 
+import java.util.Collection;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.init.Blocks;
@@ -18,7 +20,7 @@ public class SchematicAir extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
+    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
         return ImmutableList.of();
     }
 
@@ -31,5 +33,10 @@ public class SchematicAir extends SchematicBlock {
     public boolean buildImmediatly(World world, IMaterialProvider provider, BlockPos pos) {
         world.setBlockToAir(pos);
         return true;
+    }
+
+    @Override
+    public int getTimeCost() {
+        return 1;
     }
 }

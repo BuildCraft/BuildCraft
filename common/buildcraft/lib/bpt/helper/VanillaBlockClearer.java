@@ -1,5 +1,7 @@
 package buildcraft.lib.bpt.helper;
 
+import java.util.Collection;
+
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.math.BlockPos;
@@ -22,14 +24,16 @@ public enum VanillaBlockClearer implements PreBuildAction {
     }
 
     @Override
-    public Iterable<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
+    public Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
         World world = builder.getWorld();
         if (world.isAirBlock(pos)) {
             return ImmutableList.of();
         }
-        if (builder.hasPermissionToEdit(pos)) {
-            return ImmutableList.of(BptTaskBlockClear.create(world, pos));
-        }
-        return ImmutableList.of();
+        return ImmutableList.of(BptTaskBlockClear.create(world, pos));
+    }
+
+    @Override
+    public int getTimeCost() {
+        return 0;
     }
 }

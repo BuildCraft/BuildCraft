@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.lib.bpt.builder.AbstractBuilderAccessor;
@@ -20,13 +21,13 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     private final TileBuilder_Neptune tile;
 
     public BuilderAccessor(TileBuilder_Neptune tile) {
-        super(tile.getOwner(), tile.getWorld(), tile.animation);
+        super(tile.getOwner(), tile.animation);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
     }
 
     public BuilderAccessor(TileBuilder_Neptune tile, NBTTagCompound nbt) {
-        super(tile.getOwner(), tile.getWorld(), tile.animation, nbt);
+        super(tile.getOwner(), tile.animation, nbt);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
     }
@@ -41,6 +42,11 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     @Override
     public Vec3d getBuilderPosition() {
         return vec;
+    }
+
+    @Override
+    public World getWorld() {
+        return tile.getWorld();
     }
 
     @Override

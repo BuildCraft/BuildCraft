@@ -75,8 +75,9 @@ public class BptTaskBlockClear extends BptTaskSimple {
             int[] anim = builder.startPowerAnimation(new Vec3d(pos), required, 0);
             int start = anim[0];
             int end = anim[1];
-            for (int i = 0; i < end - start; i++) {
-                builder.addAction(new BptActionPartiallyBreakBlock((i + 1) / (float) i, pos), start + i);
+            for (int i = start; i < end; i++) {
+                int j = i - start;
+                builder.addAction(new BptActionPartiallyBreakBlock((j + 1) / (float) j, pos), i);
             }
             builder.addAction(new BptActionSetBlockState(Blocks.AIR.getDefaultState(), pos, FreeItem.NO_ITEM), end);
             hasSent = true;

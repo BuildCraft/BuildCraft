@@ -5,13 +5,15 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
-import net.minecraft.block.state.IBlockState;
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +24,9 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import buildcraft.api.bpt.IBptTask;
+import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
+import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.MjAPI;
@@ -29,16 +34,17 @@ import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.core.Box;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
+import buildcraft.lib.bpt.helper.VanillaBlockClearer;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.misc.PositionUtil;
-import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -46,11 +52,13 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
-    public static final int NET_ANIM_ITEM = 12;
-    public static final int NET_ANIM_BLOCK = 13;
-    public static final int NET_ANIM_FLUID = 14;
-    public static final int NET_ANIM_POWER = 15;
-    public static final int NET_ANIM_STATE = 16;
+    public static final int NET_CLEAR = 12;
+    public static final int NET_BUILD = 13;
+    public static final int NET_ANIM_ITEM = 14;
+    public static final int NET_ANIM_BLOCK = 15;
+    public static final int NET_ANIM_FLUID = 16;
+    public static final int NET_ANIM_POWER = 17;
+    public static final int NET_ANIM_STATE = 18;
 
     public final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
     private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
@@ -68,12 +76,17 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
 
     private final BuilderAccessor builder = new BuilderAccessor(this);
+    private final Deque<Pair<IBptTask, BlockPos>> tasks = new LinkedList<>();
+    private final Set<BlockPos> blocksCompleted = new HashSet<>();
+    private final Map<BlockPos, List<IBptTask>> blockTasks = new HashMap<>();
+
     private List<BlockPos> path = null;
     private Box box = null;
     private BoxIterator boxIter = null;
     private Blueprint currentBpt = null;
     private Rotation rotation = null;
     private BlockPos start;
+    private boolean hasFinishedPreBuild = false;
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -97,33 +110,70 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             // client stuffs
         } else {
             // server stuffs
-            if (currentBpt != null) {
-                BlockPos next = boxIter.getCurrent();
-                boxIter.advance();
-                SchematicBlock schematic = currentBpt.getSchematicAt(next);
-                BlockPos buildAt = start.add(next);
-
-                // Remove the current block
-                IBlockState current = getWorld().getBlockState(buildAt);
-                if (!current.getBlock().isAir(current, getWorld(), buildAt)) {
-                    SoundUtil.playBlockBreak(getWorld(), buildAt, current);
+            for (int i = 0; i < 10 & i < tasks.size(); i++) {
+                Pair<IBptTask, BlockPos> pair = tasks.removeFirst();
+                IBptTask task = pair.getLeft();
+                BlockPos buildAt = pair.getRight();
+                Set<EnumFacing> required = task.getRequiredSolidFaces(builder);
+                boolean has = true;
+                for (EnumFacing face : required) {
+                    BlockPos req = buildAt.offset(face);
+                    if (box.contains(req)) {
+                        if (!blocksCompleted.contains(req)) {
+                            has &= getWorld().isSideSolid(req, face.getOpposite());
+                        }
+                    } else {// Not in the building box
+                        has &= getWorld().isSideSolid(req, face.getOpposite());
+                    }
                 }
-                getWorld().setBlockToAir(buildAt);
+                if (has) {
+                    task.receivePower(builder, MjAPI.MJ * 40);
+                    if (!task.isDone(builder)) {
+                        tasks.addLast(pair);
+                    }
+                } else {
+                    tasks.addLast(pair);
+                }
+            }
 
-                // And build the new one
-                schematic.buildImmediatly(getWorld(), builder, buildAt);
+            if (currentBpt != null) {
+                if (!hasFinishedPreBuild) {
+                    if (boxIter.hasFinished()) {
+                        if (tasks.isEmpty()) {
+                            boxIter = new BoxIterator(BlockPos.ORIGIN, box.size().add(-1, -1, -1), EnumAxisOrder.XZY.defaultOrder, true);
+                            hasFinishedPreBuild = true;
+                        }
+                    } else {
+                        int clears = 100;
+                        while (clears > 0) {
+                            clears -= clearSingle();
+                            if (boxIter.hasFinished()) {
+                                break;
+                            }
+                        }
+                    }
+                } else {
 
-                if (boxIter.hasFinished()) {
-                    currentBpt = null;
-                    boxIter = null;
-                    rotation = null;
-                    start = null;
+                    int builds = 100;
+                    while (builds > 0) {
+                        builds -= buildSingle();
+                        builds -= 30;
+                        if (boxIter.hasFinished()) {
+                            break;
+                        }
+                    }
+
+                    if (boxIter.hasFinished()) {
+                        currentBpt = null;
+                        boxIter = null;
+                        rotation = null;
+                        start = null;
+                        blocksCompleted.clear();
+                    }
                 }
             } else {
                 cooldown--;
             }
-
-            // TODO: Work out what is happening with rotations and offsets and positions...
 
             if (cooldown <= 0 && currentBpt == null) {
                 ItemStack bpt = invBlueprint.getStackInSlot(0);
@@ -144,6 +194,53 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                     cooldown = 3000;
                 }
             }
+        }
+    }
+
+    private int clearSingle() {
+        BlockPos next = boxIter.getCurrent();
+        boxIter.advance();
+        SchematicBlock schematic = currentBpt.getSchematicAt(next);
+        BlockPos buildAt = start.add(next);
+
+        if (canEditOther(buildAt)) {
+            PreBuildAction action = schematic.createClearingTask(builder, buildAt);
+            int cost = MathUtils.clamp(action.getTimeCost(), 1, 100);
+            if (action.getType() == EnumPreBuildAction.REQUIRE_AIR) {
+                action = VanillaBlockClearer.INSTANCE;
+            }
+
+            Collection<IBptTask> clears = action.getTasks(builder, buildAt);
+            for (IBptTask task : clears) {
+                tasks.add(Pair.of(task, buildAt));
+            }
+            createAndSendMessage(false, NET_CLEAR, (buffer) -> {
+                buffer.writeBlockPos(buildAt);
+            });
+            return cost + clears.size() * 4;
+        } else {
+            return 1;
+        }
+    }
+
+    private int buildSingle() {
+        BlockPos next = boxIter.getCurrent();
+        boxIter.advance();
+        SchematicBlock schematic = currentBpt.getSchematicAt(next);
+        BlockPos buildAt = start.add(next);
+
+        if (canEditOther(buildAt)) {
+            int cost = MathUtils.clamp(schematic.getTimeCost(), 1, 100);
+            Collection<IBptTask> builds = schematic.createTasks(builder, buildAt);
+            for (IBptTask task : builds) {
+                tasks.add(Pair.of(task, buildAt));
+            }
+            createAndSendMessage(false, NET_BUILD, (buffer) -> {
+                buffer.writeBlockPos(buildAt);
+            });
+            return cost + builds.size() * 4;
+        } else {
+            return 1;
         }
     }
 
@@ -193,6 +290,13 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
             } else if (id == NET_PATH) {
 
+            } else if (id == NET_CLEAR || id == NET_BUILD) {
+                BlockPos changeAt = buffer.readBlockPos();
+                double x = changeAt.getX() + 0.5;
+                double y = changeAt.getY() + 0.5;
+                double z = changeAt.getZ() + 0.5;
+                EnumParticleTypes type = id == NET_CLEAR ? EnumParticleTypes.SMOKE_NORMAL : EnumParticleTypes.CLOUD;
+                worldObj.spawnParticle(type, x, y, z, 0, 0, 0);
             }
             // All animation types
             else if (id == NET_ANIM_ITEM) animation.receiveMessage(EnumBuilderAnimMessage.ITEM, buffer);
