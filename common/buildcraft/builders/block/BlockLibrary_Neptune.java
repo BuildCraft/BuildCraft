@@ -26,11 +26,8 @@ import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
 public class BlockLibrary_Neptune extends BlockBCTile_Neptune implements IBlockWithFacing {
-    private static final BuildCraftProperty<EnumFacing> PROP_FACING = BuildCraftProperties.BLOCK_FACING;
-
     public BlockLibrary_Neptune(Material material, String id) {
         super(material, id);
-        setDefaultState(getDefaultState().withProperty(PROP_FACING, EnumFacing.NORTH));
     }
 
     @Override
