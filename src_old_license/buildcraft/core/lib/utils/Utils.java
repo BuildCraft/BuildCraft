@@ -4,39 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.util.*;
-
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector3f;
-
-import buildcraft.api.core.INetworkLoadable_BC8;
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.*;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
@@ -47,6 +16,34 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.*;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3f;
+import java.util.*;
 
 public final class Utils {
     // Commonly used vectors
@@ -807,6 +804,21 @@ public final class Utils {
             buf.writeInt(first.ordinal());
             buf.writeInt(second.ordinal());
             buf.writeInt(third.ordinal());
+        }
+
+        public AxisOrder readFromNBT(NBTTagCompound tag) {
+            if(tag == null) {
+                return null;
+            }
+            return new AxisOrder(EnumFacing.values()[tag.getInteger("first")], EnumFacing.values()[tag.getInteger("second")], EnumFacing.values()[tag.getInteger("third")]);
+        }
+
+        public NBTTagCompound writeToNBT() {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setInteger("first", first.ordinal());
+            tag.setInteger("second", second.ordinal());
+            tag.setInteger("third", third.ordinal());
+            return tag;
         }
     }
 

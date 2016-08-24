@@ -1,0 +1,15 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftbuilders:quarry/main"
+    },
+    "variants": {
+        "facing": {
+            "east": {"y": 90},
+            "south": {"y": 180},
+            "west": {"y": 270},
+            "north": {"y": 0}
+        },
+        "inventory": [{}]
+    }
+}

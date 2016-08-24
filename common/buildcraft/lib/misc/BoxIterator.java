@@ -6,6 +6,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.Utils.AxisOrder;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
@@ -151,5 +152,23 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
         buf.writeBoolean(repeat);
         order.writeToByteBuf(buf);
         NetworkUtils.writeBlockPos(buf, current);
+    }
+
+    public BoxIterator readFromNBT(NBTTagCompound tag) {
+        if(tag == null) {
+            return null;
+        }
+        return new BoxIterator(NBTUtils.readBlockPos(tag.getCompoundTag("min")), NBTUtils.readBlockPos(tag.getCompoundTag("max")), tag.getBoolean("invert"), tag.getBoolean("repeat"), new AxisOrder().readFromNBT(tag.getCompoundTag("order")), NBTUtils.readBlockPos(tag.getCompoundTag("current")));
+    }
+
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setTag("min", NBTUtils.writeBlockPos(min));
+        tag.setTag("max", NBTUtils.writeBlockPos(max));
+        tag.setBoolean("invert", invert);
+        tag.setBoolean("repeat", repeat);
+        tag.setTag("order", order.writeToNBT());
+        tag.setTag("current", NBTUtils.writeBlockPos(current));
+        return tag;
     }
 }

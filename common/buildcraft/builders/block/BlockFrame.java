@@ -4,6 +4,7 @@ import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.rotation.RotationUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -47,7 +48,8 @@ public class BlockFrame extends BlockBCBase_Neptune {
     }
 
     private boolean isConnected(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return world.getBlockState(pos.offset(side)).getBlock() instanceof BlockFrame;
+        Block block = world.getBlockState(pos.offset(side)).getBlock();
+        return block instanceof BlockFrame || block instanceof BlockQuarry;
     }
 
     @Override

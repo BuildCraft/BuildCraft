@@ -1,12 +1,12 @@
 {
-    "parent":"block/cube",
-    "textures":{
-        "particle":"buildcraftbuilders:blocks/quarry/side",
-        "down":"buildcraftbuilders:blocks/quarry/bottom",
-        "up":"buildcraftbuilders:blocks/quarry/top",
-        "north":"buildcraftbuilders:blocks/quarry/side",
-        "east":"buildcraftbuilders:blocks/quarry/front",
-        "south":"buildcraftbuilders:blocks/quarry/side",
-        "west":"buildcraftbuilders:blocks/quarry/back"
+    "parent": "block/cube",
+    "textures": {
+        "particle": "buildcraftbuilders:blocks/quarry/side",
+        "down": "buildcraftbuilders:blocks/quarry/bottom",
+        "up": "buildcraftbuilders:blocks/quarry/top",
+        "north": "buildcraftbuilders:blocks/quarry/front",
+        "east": "buildcraftbuilders:blocks/quarry/side",
+        "south": "buildcraftbuilders:blocks/quarry/back",
+        "west": "buildcraftbuilders:blocks/quarry/side"
     }
 }
