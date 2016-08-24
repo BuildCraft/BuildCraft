@@ -126,7 +126,11 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                     final ZonePlan layer = container.tile.layers[getPaintbrushBrush().colour.getMetadata()];
                     for(int x = Math.min(selectionStartXZ.getX(), lastSelected.getX()); x < Math.max(selectionStartXZ.getX(), lastSelected.getX()); x++) {
                         for(int z = Math.min(selectionStartXZ.getZ(), lastSelected.getZ()); z < Math.max(selectionStartXZ.getZ(), lastSelected.getZ()); z++) {
-                            bufferLayer.set(x, z, !layer.get(x, z));
+                            if(clickedMouseButton == 0) {
+                                bufferLayer.set(x, z, true);
+                            } else if(clickedMouseButton == 1) {
+                                bufferLayer.set(x, z, false);
+                            }
                         }
                     }
                 }
@@ -300,33 +304,37 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             if(getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() == i && bufferLayer != null) {
                 layer = bufferLayer;
             }
-            for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
-                for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
-                    ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
-                    for(int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
-                        for(int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
-                            if(layer.get(blockX, blockZ)) {
-                                int height = 256;
-                                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
-                                if(zonePlannerMapChunk != null) {
-                                    int finalBlockX = blockX;
-                                    int finalBlockZ = blockZ;
-                                    BlockPos pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> {
-                                        //noinspection CodeBlock2Expr // it's too long
-                                        return blockPos.getX() == finalBlockX - chunkPos.chunkXPos * 16 && blockPos.getZ() == finalBlockZ - chunkPos.chunkZPos * 16;
-                                    }).findFirst().orElse(null);
-                                    if(pos != null) {
-                                        height = pos.getY();
+            if(!layer.getChunkPoses().isEmpty()) {
+                for(int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
+                    for(int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
+                        ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
+                        if(layer.hasChunk(chunkPos)) {
+                            for(int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
+                                for(int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
+                                    if(layer.get(blockX, blockZ)) {
+                                        int height = 256;
+                                        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
+                                        if(zonePlannerMapChunk != null) {
+                                            int finalBlockX = blockX;
+                                            int finalBlockZ = blockZ;
+                                            BlockPos pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> {
+                                                //noinspection CodeBlock2Expr // it's too long
+                                                return blockPos.getX() == finalBlockX - chunkPos.chunkXPos * 16 && blockPos.getZ() == finalBlockZ - chunkPos.chunkZPos * 16;
+                                            }).findFirst().orElse(null);
+                                            if(pos != null) {
+                                                height = pos.getY();
+                                            }
+                                        }
+                                        int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+                                        int r = (color >> 16) & 0xFF;
+                                        int g = (color >> 8) & 0xFF;
+                                        int b = (color >> 0) & 0xFF;
+                                        //noinspection unused
+                                        int a = (color >> 24) & 0xFF;
+                                        GL11.glColor4d(r / (double) 0xFF, g / (double) 0xFF, b / (double) 0xFF, 0.3);
+                                        ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
                                     }
                                 }
-                                int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
-                                int r = (color >> 16) & 0xFF;
-                                int g = (color >> 8) & 0xFF;
-                                int b = (color >> 0) & 0xFF;
-                                //noinspection unused
-                                int a = (color >> 24) & 0xFF;
-                                GL11.glColor4d(r / (double) 0xFF, g / (double) 0xFF, b / (double) 0xFF, 0.3);
-                                ZonePlannerMapRenderer.instance.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
                             }
                         }
                     }
