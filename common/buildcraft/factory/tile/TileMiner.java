@@ -10,6 +10,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -168,11 +169,11 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                readPayload(NET_LED_STATUS, buffer, side);
+                readPayload(NET_LED_STATUS, buffer, side, ctx);
             } else if (id == NET_LED_STATUS) {
                 boolean[] flags = MessageUtil.readBooleanArray(buffer, 2);
                 isComplete = flags[0];

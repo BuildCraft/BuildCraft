@@ -10,10 +10,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.LibProxy;
 import buildcraft.lib.misc.data.DelayedList;
+
+import io.netty.buffer.ByteBuf;
 
 public class MessageUtil {
     private static final DelayedList<Runnable> DELAYED_TASKS = DelayedList.createConcurrent();
@@ -124,5 +128,22 @@ public class MessageUtil {
             arr[i] = readNullableBlockPos(buffer, existsArray[i]);
         }
         return arr;
+    }
+
+    public static void sendReturnMessage(MessageContext context, IMessage reply) {
+        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            BCMessageHandler.netWrapper.sendTo(reply, playerMP);
+        } else if (player != null) {
+            BCMessageHandler.netWrapper.sendToServer(reply);
+        }
+    }
+
+    public static PacketBuffer asPacketBuffer(ByteBuf buf) {
+        if (buf instanceof PacketBuffer) {
+            return (PacketBuffer) buf;
+        }
+        return new PacketBuffer(buf);
     }
 }

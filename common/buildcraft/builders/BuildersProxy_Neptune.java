@@ -4,6 +4,9 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.container.ContainerArchitect;
+import buildcraft.builders.gui.GuiArchitect;
+import buildcraft.builders.tile.TileArchitect_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +38,12 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
                 return new ContainerBlueprintLibrary(player, library);
             }
         }
+        if (ID == BuildersGuis.ARCHITECT.ordinal()) {
+            if (tile instanceof TileArchitect_Neptune) {
+                TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
+                return new ContainerArchitect(player, library);
+            }
+        }
         return null;
     }
 
@@ -55,14 +64,18 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-
             if (ID == BuildersGuis.LIBRARY.ordinal()) {
                 if (tile instanceof TileLibrary_Neptune) {
                     TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
                     return new GuiBlueprintLibrary(player, library);
                 }
             }
-
+            if (ID == BuildersGuis.ARCHITECT.ordinal()) {
+                if (tile instanceof TileArchitect_Neptune) {
+                    TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
+                    return new GuiArchitect(new ContainerArchitect(player, library));
+                }
+            }
             return null;
         }
     }

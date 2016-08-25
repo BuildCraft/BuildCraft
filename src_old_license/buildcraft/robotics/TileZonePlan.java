@@ -30,6 +30,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.gui.ContainerZonePlan;
 import buildcraft.robotics.map.MapWorld;
+import buildcraft.robotics.zone.ZonePlan;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
 

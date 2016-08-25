@@ -300,6 +300,7 @@ public class TagManager {
         startBatch();// transport
         // BC Transport Items
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
+        // BC Transport Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");
         // BC Transport Blocks
         registerTag("block.filtered_buffer").reg("filtered_buffer").oldReg("filteredBufferBlock").locale("filteredBufferBlock").model("filtered_buffer");
@@ -307,6 +308,17 @@ public class TagManager {
         registerTag("tile.filtered_buffer").reg("filtered_buffer");
 
         endBatch(prependTags("transport:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
+        startBatch();// robotics
+        // BC Robotics Items
+        // BC Robotics Item Blocks
+        registerTag("item.block.zone_planner").reg("zone_planner").locale("zonePlannerBlock").model("zone_planner");
+        // BC Robotics Blocks
+        registerTag("block.zone_planner").reg("zone_planner").oldReg("zonePlannerBlock").locale("zonePlannerBlock").model("zone_planner");
+        // BC Robotics Tiles
+        registerTag("tile.zone_planner").reg("zone_planner");
+
+        endBatch(prependTags("robotics:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         endBatch(prependTags("buildcraft", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(setTab("buildcraft.main")));
     }

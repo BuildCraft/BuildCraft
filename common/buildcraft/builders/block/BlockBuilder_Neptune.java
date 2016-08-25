@@ -4,9 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
+import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -22,21 +23,19 @@ import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockWithFacing {
-    public static final IProperty<EnumBlueprintType> PROP_BPT = BuildCraftProperties.BLUEPRINT_TYPE;
+    public static final IProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
 
     public BlockBuilder_Neptune(Material material, String id) {
         super(material, id);
-        IBlockState state = getDefaultState();
-        state = state.withProperty(PROP_FACING, EnumFacing.NORTH);
-        state = state.withProperty(PROP_BPT, EnumBlueprintType.NONE);
-        setDefaultState(state);
+        setDefaultState(getDefaultState().withProperty(BLUEPRINT_TYPE, EnumBlueprintType.NONE));
     }
 
-    // IBlockState
+    // BlockState
 
     @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, PROP_FACING, PROP_BPT);
+    protected void addProperties(List<IProperty<?>> properties) {
+        super.addProperties(properties);
+        properties.add(BLUEPRINT_TYPE);
     }
 
     // Others

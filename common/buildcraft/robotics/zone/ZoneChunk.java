@@ -2,25 +2,30 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.zone;
 
-import java.util.BitSet;
-import java.util.Random;
+import buildcraft.api.core.INetworkLoadable_BC8;
+import buildcraft.core.lib.utils.BitSetUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.core.ISerializable;
-import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
+import java.util.BitSet;
+import java.util.Random;
 
-public class ZoneChunk implements ISerializable {
+public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
 
     public BitSet property;
     private boolean fullSet = false;
 
     public ZoneChunk() {}
+
+    public ZoneChunk(ZoneChunk old) {
+        if(old.property != null) {
+            property = BitSet.valueOf(old.property.toLongArray());
+        }
+    }
 
     public boolean get(int xChunk, int zChunk) {
         if (fullSet) {
@@ -107,20 +112,22 @@ public class ZoneChunk implements ISerializable {
     }
 
     @Override
-    public void readData(ByteBuf stream) {
-        int flags = stream.readUnsignedByte();
+    public ZoneChunk readFromByteBuf(ByteBuf buf) {
+        int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
-            property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(stream));
+            property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(buf));
         }
         fullSet = (flags & 2) != 0;
+
+        return this;
     }
 
     @Override
-    public void writeData(ByteBuf stream) {
+    public void writeToByteBuf(ByteBuf buf) {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
-        stream.writeByte(flags);
+        buf.writeByte(flags);
         if (property != null) {
-            NetworkUtils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+            NetworkUtils.writeByteArray(buf, BitSetUtils.toByteArray(property));
         }
     }
 }

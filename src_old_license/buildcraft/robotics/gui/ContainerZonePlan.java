@@ -21,8 +21,8 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
-import buildcraft.robotics.ZonePlan;
 import buildcraft.robotics.map.MapWorld;
+import buildcraft.robotics.zone.ZonePlan;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
     private static final int MAX_PACKET_LENGTH = 30000;

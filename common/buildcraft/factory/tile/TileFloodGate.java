@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.IOException;
@@ -206,8 +207,8 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
         if(side == Side.CLIENT && id == NET_FLOOD_GATE) {
             tank.readFromBuffer(buffer);
             sidesBlocked = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);

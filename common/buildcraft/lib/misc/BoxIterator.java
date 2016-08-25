@@ -1,18 +1,43 @@
 package buildcraft.lib.misc;
 
+import buildcraft.api.core.IBox;
+import buildcraft.api.core.INetworkLoadable_BC8;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.Utils.AxisOrder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.core.IBox;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.lib.utils.Utils.AxisOrder;
-
-public class BoxIterator {
+public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
     private final BlockPos min, max;
     private final boolean invert, repeat;
     private AxisOrder order;
     private BlockPos current;
+
+    public BoxIterator() {
+        min = max = null;
+        invert = repeat = false;
+    }
+
+    private BoxIterator(BlockPos min, BlockPos max, boolean invert, boolean repeat, AxisOrder order, BlockPos current) {
+        this.min = min;
+        this.max = max;
+        this.invert = invert;
+        this.repeat = repeat;
+        this.order = order;
+        this.current = current;
+    }
+
+    public BoxIterator(BoxIterator old) {
+        this.min = old.min;
+        this.max = old.max;
+        this.invert = old.invert;
+        this.repeat = old.repeat;
+        this.order = old.order;
+        this.current = old.current;
+    }
 
     public BoxIterator(IBox box, AxisOrder order, boolean invert) {
         this(box.min(), box.max(), order, invert);
@@ -41,6 +66,26 @@ public class BoxIterator {
 
     public BlockPos getCurrent() {
         return current;
+    }
+
+    public BlockPos getMin() {
+        return min;
+    }
+
+    public BlockPos getMax() {
+        return max;
+    }
+
+    public boolean isInvert() {
+        return invert;
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public AxisOrder getOrder() {
+        return order;
     }
 
     public void advance() {
@@ -91,5 +136,20 @@ public class BoxIterator {
 
     public boolean hasFinished() {
         return current == null;
+    }
+
+    @Override
+    public BoxIterator readFromByteBuf(ByteBuf buf) {
+        return new BoxIterator(NetworkUtils.readBlockPos(buf), NetworkUtils.readBlockPos(buf), buf.readBoolean(), buf.readBoolean(), new AxisOrder().readFromByteBuf(buf), NetworkUtils.readBlockPos(buf));
+    }
+
+    @Override
+    public void writeToByteBuf(ByteBuf buf) {
+        NetworkUtils.writeBlockPos(buf, min);
+        NetworkUtils.writeBlockPos(buf, max);
+        buf.writeBoolean(invert);
+        buf.writeBoolean(repeat);
+        order.writeToByteBuf(buf);
+        NetworkUtils.writeBlockPos(buf, current);
     }
 }

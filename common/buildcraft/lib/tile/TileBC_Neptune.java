@@ -254,16 +254,20 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public final void createAndSendMessage(boolean gui, int id, IPayloadWriter writer) {
         if (hasWorldObj()) {
-            MessageUpdateTile message = new MessageUpdateTile(getPos(), buffer -> {
-                buffer.writeShort(id);
-                writer.write(buffer);
-            });
+            IMessage message = createMessage(id, writer);
             if (gui) {
                 MessageUtil.sendToPlayers(usingPlayers, message);
             } else {
                 MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
             }
         }
+    }
+
+    public final IMessage createMessage(int id, IPayloadWriter writer) {
+        return new MessageUpdateTile(getPos(), buffer -> {
+            buffer.writeShort(id);
+            writer.write(buffer);
+        });
     }
 
     @Override
@@ -292,7 +296,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
         try {
             int id = buf.readUnsignedShort();
-            readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
+            readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -301,7 +305,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
-        readPayload(id, buffer, ctx.side);
+        readPayload(id, buffer, ctx.side, ctx);
         return null;
     }
 
@@ -340,11 +344,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
-    /** @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+    /** @param ctx The context. Will be null if this is a generic update payload
+     * @throws IOException if something went wrong */
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         // read render data with gui data
         if (id == NET_GUI_DATA) {
-            readPayload(NET_RENDER_DATA, buffer, side);
+            readPayload(NET_RENDER_DATA, buffer, side, ctx);
 
             if (side == Side.CLIENT) {
                 byte hasOwner = buffer.readByte();
