@@ -211,7 +211,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glTranslatef(-positionX, -camY, -positionZ);
         GlStateManager.disableBlend();
         GlStateManager.disableAlpha();
-        Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("buildcraftrobotics", "block.png"));
+        Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation("buildcraftrobotics", "textures/gui/block.png"));
         int chunkBaseX = (int) positionX >> 4;
         int chunkBaseZ = (int) positionZ >> 4;
         int radius = 8;
