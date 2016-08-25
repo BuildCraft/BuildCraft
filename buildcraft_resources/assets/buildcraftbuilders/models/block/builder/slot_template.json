@@ -1,18 +1,18 @@
 {
     "textures": {
-        "template":"buildcraftbuilders:blocks/builder/slot_template"
-    },    
-    "elements":[
+        "template": "buildcraftbuilders:blocks/builder/slot_template"
+    },
+    "elements": [
         {
-            "from":[8, 4, 3],
-            "to":[18, 6, 13],
+            "from": [8, 4, 3],
+            "to": [18, 6, 13],
             "faces": {
-                "down":  { "texture":"#template", "uv":[3, 3, 13, 13] },
-                "up":    { "texture":"#template", "uv":[3, 3, 13, 13] },
-                "north": { "texture":"#template", "uv":[3, 0, 13, 2] },
-                "south": { "texture":"#template", "uv":[3, 0, 13, 2] },
-                "west":  { "texture":"#template", "uv":[3, 0, 13, 2] },
-                "east":  { "texture":"#template", "uv":[3, 0, 13, 2] }
+                "down": {"texture": "#template", "uv": [3, 3, 13, 13]},
+                "up": {"texture": "#template", "uv": [3, 3, 13, 13]},
+                "north": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "south": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "west": {"texture": "#template", "uv": [3, 0, 13, 2]},
+                "east": {"texture": "#template", "uv": [3, 0, 13, 2]}
             }
         }
     ]

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -50,34 +52,31 @@ import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 public class TileArchitect_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
-    private static final int BLOCKS_PER_TICK = 1;
 
-    protected final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
-    protected final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
 
     public boolean shouldScanEntities = false;
     /** Details- if true then this will create a blueprint, otherwise it will be a template. */
     private boolean shouldScanDetails = true;
     private final Box box = new Box();
-    private List<SchematicEntityOffset> blueprintScannedEntitites;
+    private List<SchematicEntityOffset> blueprintScannedEntities;
     private SchematicBlock[][][] blueprintScannedBlocks;
     private boolean[][][] templateScannedBlocks;
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
-    private String name = "<unnamed>";
+    public String name = "<unnamed>";
+    protected int progress = 0;
+    public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     public TileArchitect_Neptune() {}
-
-    private int maxBlocksPerTick() {
-        return shouldScanDetails ? BLOCKS_PER_TICK : BLOCKS_PER_TICK * 3;
-    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invBptIn) {
-            if (after != null) {
+            if (after != null) { // TODO: check item
                 scanning = true;
             } else {
                 scanning = false;
@@ -99,8 +98,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             box.reset();
             box.setMin(provider.min());
             box.setMax(provider.max());
-            provider.removeFromWorld();
-            scanning = true;// TEMP!
+//            provider.removeFromWorld(); // TODO: uncomment
             isValid = true;
             sendNetworkUpdate(NET_BOX);
         } else {
@@ -113,26 +111,33 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
 
     @Override
     public void update() {
+        deltaProgress.tick();
+
         if (worldObj.isRemote) {
             return;
         }
         if (scanning && isValid) {
-            scanMultipleBlocks();
+            int target = shouldScanDetails ? 2 : 1;
+            int back = shouldScanDetails ? 1 : 0;
+            if (progress == 0) {
+                deltaProgress.addDelta(0, target, 100);
+                deltaProgress.addDelta(target, target + back, -100);
+            }
+            if (progress < target + back) {
+                progress++;
+                return;
+            }
+            progress = 0;
+            scanSingleBlock();
             if (!scanning) {
                 if (shouldScanEntities) {
                     scanEntities();
                 }
                 finishScanning();
             }
-        }
-    }
-
-    private void scanMultipleBlocks() {
-        for (int i = maxBlocksPerTick(); i > 0; i--) {
-            scanSingleBlock();
-            if (!scanning) {
-                break;
-            }
+        } else if (progress != -1) {
+            progress = -1;
+            deltaProgress.setValue(0);
         }
     }
 
@@ -160,6 +165,8 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             buffer.writeBlockPos(worldScanPos);
         });
 
+        sendNetworkUpdate(NET_RENDER_DATA);
+
         // Move scanPos along
         boxIterator.advance();
 
@@ -185,7 +192,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     }
 
     private void scanEntities() {
-        blueprintScannedEntitites = new ArrayList<>();
+        blueprintScannedEntities = new ArrayList<>();
         // TODO: Scan all entities
     }
 
@@ -196,9 +203,9 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             direction = state.getValue(BlockArchitect_Neptune.PROP_FACING);
         }
         if (shouldScanDetails) {
-            Blueprint bpt = new Blueprint(blueprintScannedBlocks, blueprintScannedEntitites);
+            Blueprint bpt = new Blueprint(blueprintScannedBlocks, blueprintScannedEntities);
             blueprintScannedBlocks = null;
-            blueprintScannedEntitites = null;
+            blueprintScannedEntities = null;
             Rotation rotation = Rotation.NONE;
             while (direction != EnumFacing.NORTH) {
                 direction = direction.rotateY();
@@ -221,6 +228,8 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             // Template tpl = new Template();
             throw new IllegalStateException("// TODO: This :D");
         }
+
+        sendNetworkUpdate(NET_RENDER_DATA);
     }
 
     @Override
@@ -229,6 +238,13 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         if (side == Side.SERVER) {
             if (id == NET_BOX) {
                 box.writeData(buffer);
+            } else if (id == NET_RENDER_DATA) {
+                if(boxIterator != null) {
+                    buffer.writeBoolean(true);
+                    boxIterator.writeToByteBuf(buffer);
+                } else {
+                    buffer.writeBoolean(false);
+                }
             }
         }
     }
@@ -239,6 +255,12 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         if (side == Side.CLIENT) {
             if (id == NET_BOX) {
                 box.readData(buffer);
+            } else if (id == NET_RENDER_DATA) {
+                if(buffer.readBoolean()) {
+                    boxIterator = new BoxIterator().readFromByteBuf(buffer);
+                } else {
+                    boxIterator = null;
+                }
             } else if (id == NET_SCAN) {
                 BlockPos pos = buffer.readBlockPos();
                 double x = pos.getX() + 0.5;
@@ -264,10 +286,29 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
-        left.add("Box:");
+        left.add("box:");
         left.add(" - min = " + box.min());
         left.add(" - max = " + box.max());
-        left.add("Scanning = " + scanning);
-        left.add("Scan Pos = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+        left.add("scanning = " + scanning);
+        left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+        left.add("progress = " + progress);
+    }
+
+    public double getAllProgress() {
+        if(boxIterator != null && boxIterator.getCurrent() != null) {
+            // TODO: optimize?
+            BoxIterator copy = new BoxIterator(boxIterator);
+            int count = 0;
+            while(copy.getCurrent() != null) {
+                copy.advance();
+                count++;
+            }
+            count--;
+            BlockPos boxSize = new Box(boxIterator.getMin(), boxIterator.getMax()).size();
+            int all = boxSize.getX() * boxSize.getY() * boxSize.getZ();
+            return (int) ((float) (all - count) / all * 100);
+        } else {
+            return 0;
+        }
     }
 }

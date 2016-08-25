@@ -77,9 +77,13 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         return EnumActionResult.FAIL;
     }
 
+    public Brush getBrushFromStack(ItemStack stack) {
+        return new Brush(stack);
+    }
+
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        Brush brush = new Brush(stack);
+        Brush brush = getBrushFromStack(stack);
         String colourComponent = "";
         if (brush.colour != null) {
             String colourLocale = I18n.translateToLocal(brush.colour.getUnlocalizedName());

@@ -9,10 +9,12 @@ import java.util.*;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
 
+import buildcraft.api.core.INetworkLoadable_BC8;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -756,8 +758,18 @@ public final class Utils {
         }
     }
 
-    public static class AxisOrder {
+    public static class AxisOrder implements INetworkLoadable_BC8<AxisOrder> {
         public final EnumFacing first, second, third;
+
+        public AxisOrder() {
+            first = second = third = null;
+        }
+
+        private AxisOrder(EnumFacing first, EnumFacing second, EnumFacing third) {
+            this.first = first;
+            this.second = second;
+            this.third = third;
+        }
 
         /** Creates an axis order that will scan axis in the order given, going in the directions specified by
          * positiveFirst, positiveSecond and positiveThird. If all are true then it will start at the smallest one and
@@ -766,12 +778,6 @@ public final class Utils {
             this.first = getFacing(order.first, positiveFirst ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
             this.second = getFacing(order.second, positiveSecond ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
             this.third = getFacing(order.third, positiveThird ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
-        }
-
-        private AxisOrder(EnumFacing first, EnumFacing second, EnumFacing third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
         }
 
         @Override
@@ -789,6 +795,18 @@ public final class Utils {
 
         public AxisOrder invertThird() {
             return new AxisOrder(first, second, third.getOpposite());
+        }
+
+        @Override
+        public AxisOrder readFromByteBuf(ByteBuf buf) {
+            return new AxisOrder(EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()]);
+        }
+
+        @Override
+        public void writeToByteBuf(ByteBuf buf) {
+            buf.writeInt(first.ordinal());
+            buf.writeInt(second.ordinal());
+            buf.writeInt(third.ordinal());
         }
     }
 

@@ -14,7 +14,7 @@ import buildcraft.builders.gui.ContainerArchitect;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
 import buildcraft.builders.gui.ContainerBuilder;
 import buildcraft.builders.gui.ContainerFiller;
-import buildcraft.builders.gui.GuiArchitect;
+import buildcraft.builders.gui.GuiArchitectOld;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
@@ -37,7 +37,7 @@ public class BuildersGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileArchitect)) {
                     return null;
                 }
-                return new GuiArchitect(player, (TileArchitect) tile);
+                return new GuiArchitectOld(player, (TileArchitect) tile);
 
             case GuiIds.BLUEPRINT_LIBRARY:
                 if (!(tile instanceof TileBlueprintLibrary)) {
