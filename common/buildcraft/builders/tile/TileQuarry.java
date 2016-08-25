@@ -9,8 +9,10 @@ import buildcraft.api.mj.types.MachineType;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.Box;
+import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoxIterator;
+import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
@@ -24,7 +26,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
@@ -36,6 +41,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private BlockPos min;
     private BlockPos max;
     private BoxIterator boxIterator;
+    private Task currentTask = null; // TODO: NBT
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
 
     public TileQuarry() {
@@ -69,33 +75,38 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
+         if (!battery.isFull()) {
+             // test with the output of a stone engine
+             battery.addPower(MjAPI.MJ); // remove this
+         }
+
         if(min == null || max == null) {
             return;
         }
 
-        for(int x = min.getX(); x <= max.getX(); x++) {
-            for(int z = min.getZ(); z <= max.getZ(); z++) {
-                BlockPos pos = new BlockPos(x, min.getY(), z);
-                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                Block block = worldObj.getBlockState(pos).getBlock();
-                if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
-                    if(worldObj.destroyBlock(pos, true)) {
-                        return;
-                    }
-                }
-                if(shouldBeFrame && block == Blocks.AIR) {
-                    boolean found = false;
-                    for(int i = 8; i >= 0; i--) {
-                        ItemStack stackInSlot = invFrames.getStackInSlot(i);
-                        if(stackInSlot != null) {
-                            worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
-                            invFrames.setStackInSlot(i, stackInSlot.stackSize > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.stackSize - 1) : null);
-                            found = true;
-                            break;
+        if(currentTask != null) {
+            if(currentTask.addEnergy(battery.extractPower(0, currentTask.getTarget() - currentTask.getEnergy()))) {
+                currentTask = null;
+            }
+            return;
+        }
+
+        for(int i = 0; i < 2; i++) { // 2 iterations: first is removing blocks, second is adding frames
+            for(int x = min.getX(); x <= max.getX(); x++) {
+                for(int z = min.getZ(); z <= max.getZ(); z++) {
+                    BlockPos pos = new BlockPos(x, min.getY(), z);
+                    boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
+                    Block block = worldObj.getBlockState(pos).getBlock();
+                    if(i == 0) {
+                        if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                            currentTask = new TaskBreakBlock(pos);
+                            return;
                         }
-                    }
-                    if(found) {
-                        return;
+                    } else if(i == 1) {
+                            if(shouldBeFrame && block == Blocks.AIR) {
+                                currentTask = new TaskAddFrame(pos);
+                                return;
+                            }
                     }
                 }
             }
@@ -139,10 +150,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if(mjCapHelper.hasCapability(capability, facing)) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
+        return mjCapHelper.hasCapability(capability, facing) || super.hasCapability(capability, facing);
     }
 
     @Override
@@ -151,5 +159,103 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return mjCapHelper.getCapability(capability, facing);
         }
         return super.getCapability(capability, facing);
+    }
+
+    private abstract class Task {
+        protected long energy = 0;
+
+        protected abstract long getTarget();
+
+        /**
+         * @return true means that task is canceled
+         */
+        protected abstract boolean energyReceived();
+
+        protected abstract void finish();
+
+        public long getEnergy() {
+            return energy;
+        }
+
+        /**
+         * @return true means that task is canceled
+         */
+        public boolean addEnergy(long count) {
+            if(count == 0) {
+                return false;
+            }
+            energy += count;
+            if(energy >= getTarget()) {
+                finish();
+                return true;
+            } else {
+                return energyReceived();
+            }
+        }
+    }
+
+    private class TaskBreakBlock extends Task {
+        BlockPos pos;
+
+        public TaskBreakBlock(BlockPos pos) {
+            this.pos = pos;
+        }
+
+        @Override
+        protected long getTarget() {
+            return BlockUtils.computeBlockBreakPower(worldObj, pos);
+        }
+
+        @Override
+        protected boolean energyReceived() {
+            if(!worldObj.isAirBlock(pos)) {
+                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, (int) (energy * 9 / getTarget()));
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        protected void finish() {
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(worldObj, pos, worldObj.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) worldObj).get());
+            MinecraftForge.EVENT_BUS.post(breakEvent);
+            if(!breakEvent.isCanceled()) {
+                worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
+                worldObj.destroyBlock(pos, false);
+            }
+        }
+    }
+
+    private class TaskAddFrame extends Task {
+        BlockPos pos;
+
+        public TaskAddFrame(BlockPos pos) {
+            this.pos = pos;
+        }
+
+        @Override
+        protected long getTarget() {
+            return 10000000;
+        }
+
+        @Override
+        protected boolean energyReceived() {
+            return !worldObj.isAirBlock(pos);
+        }
+
+        @Override
+        protected void finish() {
+            if(worldObj.isAirBlock(pos)) {
+                for(int slot = 8; slot >= 0; slot--) {
+                    ItemStack stackInSlot = invFrames.getStackInSlot(slot);
+                    if(stackInSlot != null) {
+                        worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
+                        invFrames.setStackInSlot(slot, stackInSlot.stackSize > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.stackSize - 1) : null);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
