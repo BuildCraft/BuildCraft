@@ -11,7 +11,8 @@ import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.bpt.IMaterialProvider;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtils;
 
@@ -28,7 +29,7 @@ public class BptActionIItemHandlerSetStack implements IBptAction {
         this.item = requested;
     }
 
-    public BptActionIItemHandlerSetStack(NBTTagCompound nbt, IBuilderAccessor accessor) {
+    public BptActionIItemHandlerSetStack(NBTTagCompound nbt, IMaterialProvider accessor) {
         this.pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
         this.slot = nbt.getInteger("slot");
         ItemStack stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("requested"));

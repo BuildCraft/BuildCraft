@@ -6,12 +6,16 @@ package buildcraft.core.lib.gui;
 
 import java.io.IOException;
 import java.util.Collection;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -20,6 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
@@ -31,9 +36,10 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.lib.gui.ContainerBC_Neptune;
-import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.Widget_Neptune;
 
+// TODO: Rewrite all methods from this into GuiBC8
+@Deprecated
 public abstract class GuiBuildCraft extends GuiContainer {
 
     public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraftcore:textures/gui/ledger.png");
@@ -235,8 +241,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         int top = this.guiTop;
         int realMouseX = mouseX - left;
         int realMouseY = mouseY - top;
-        return realMouseX >= slot.xDisplayPosition - 1 && realMouseX < slot.xDisplayPosition + 16 + 1 && realMouseY >= slot.yDisplayPosition - 1
-            && realMouseY < slot.yDisplayPosition + 16 + 1;
+        return realMouseX >= slot.xDisplayPosition - 1 && realMouseX < slot.xDisplayPosition + 16 + 1 && realMouseY >= slot.yDisplayPosition - 1 && realMouseY < slot.yDisplayPosition + 16 + 1;
     }
 
     // / MOUSE CLICKS

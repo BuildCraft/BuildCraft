@@ -11,6 +11,8 @@ import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.robotics.*;
 import buildcraft.robotics.container.ContainerZonePlanner;
+import buildcraft.robotics.zone.*;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;

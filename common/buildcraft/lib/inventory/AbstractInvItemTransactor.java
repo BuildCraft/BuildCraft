@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.core.lib.inventory.filters.StackFilter;
+import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.list.array.TIntArrayList;
 
@@ -102,12 +103,38 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             filter = StackFilter.ALL;
         }
 
-        for (int slot = 0; slot < getSlots(); slot++) {
-            ItemStack possible = extract(slot, filter, min, max, simulate);
+        int slots = getSlots();
+        TIntArrayList valids = new TIntArrayList();
+        int totalSize = 0;
+        ItemStack toExtract = null;
+
+        for (int slot = 0; slot < slots; slot++) {
+            ItemStack possible = extract(slot, filter, 1, max - totalSize, true);
             if (possible != null) {
-                return possible;
+                if (toExtract == null) {
+                    toExtract = possible.copy();
+                }
+                if (StackUtil.canMerge(toExtract, possible)) {
+                    totalSize += possible.stackSize;
+                    valids.add(slot);
+                    if (totalSize >= max) {
+                        break;
+                    }
+                }
             }
         }
-        return null;
+
+        ItemStack total = null;
+        if (min <= totalSize) {
+            for (int slot : valids.toArray()) {
+                ItemStack extracted = extract(slot, filter, 1, max - (total == null ? 0 : total.stackSize), simulate);
+                if (total == null) {
+                    total = extracted;
+                } else {
+                    total.stackSize += extracted.stackSize;
+                }
+            }
+        }
+        return total;
     }
 }

@@ -4,12 +4,11 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.bpt.IBuilderAccessor.IRequested;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedFluid;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.bpt.IMaterialProvider.IRequested;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedFluid;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
 
 public class RequestedFree implements IRequested {
-
     @Override
     public boolean lock() throws IllegalStateException {
         return true;

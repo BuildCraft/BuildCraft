@@ -2,12 +2,17 @@ package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
+import buildcraft.api.mj.types.MachineType;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.Box;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import net.minecraft.block.Block;
@@ -19,21 +24,29 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
+    private final MjBattery battery;
+    private final MjCapabilityHelper mjCapHelper;
     private final Box box = new Box();
     private BlockPos min;
     private BlockPos max;
     private BoxIterator boxIterator;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
 
+    public TileQuarry() {
+        battery = new MjBattery(1600L * MjAPI.MJ);
+        mjCapHelper = new MjCapabilityHelper(new MjReciverBatteryWrapper(battery, MachineType.QUARRY));
+    }
+
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
         super.onPlacedBy(placer, stack);
-        if (placer.worldObj.isRemote) {
+        if(placer.worldObj.isRemote) {
             return;
         }
         EnumFacing facing = worldObj.getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
@@ -98,6 +111,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         if(boxIterator != null) {
             nbt.setTag("box_iterator", boxIterator.writeToNBT());
         }
+        nbt.setTag("mj_battery", battery.serializeNBT());
         return nbt;
     }
 
@@ -108,16 +122,34 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         min = NBTUtils.readBlockPos(nbt.getTag("min"));
         max = NBTUtils.readBlockPos(nbt.getTag("max"));
         boxIterator = new BoxIterator().readFromNBT(nbt.getCompoundTag("box_iterator"));
+        battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
     }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
+        left.add("battery = " + battery.getDebugString());
         left.add("box:");
         left.add(" - min = " + box.min());
         left.add(" - max = " + box.max());
         left.add("min = " + min);
         left.add("max = " + max);
         left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(mjCapHelper.hasCapability(capability, facing)) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if(mjCapHelper.hasCapability(capability, facing)) {
+            return mjCapHelper.getCapability(capability, facing);
+        }
+        return super.getCapability(capability, facing);
     }
 }

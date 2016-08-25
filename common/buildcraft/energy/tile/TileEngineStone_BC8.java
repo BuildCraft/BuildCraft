@@ -4,24 +4,48 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy.tile;
 
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.api.mj.types.EngineType;
+import buildcraft.lib.delta.DeltaInt;
+import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
+import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.lib.tile.item.StackInsertionFunction;
 
 public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
-    public static final int MILLIWATTS_PER_TICK = 1000;
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1);
+    public static final long MJ_PER_TICK = 1 * MjAPI.MJ;
+
+    public final DeltaInt deltaFuelLeft = deltaManager.addDelta("fuel_left", EnumNetworkVisibility.GUI_ONLY);
+    private final ItemHandlerSimple itemHandler = new ItemHandlerSimple(1, this::canInsert, StackInsertionFunction.getDefaultInserter(), this::onChange);
     private ItemStack currentFuel;
     private int ticksLeft = 0;
 
     public TileEngineStone_BC8() {}
+
+    // Item handler listeners
+
+    private boolean canInsert(int slot, ItemStack stack) {
+        return slot == 0 && TileEntityFurnace.getItemBurnTime(stack) > 0;
+    }
+
+    private void onChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+        markDirty();
+    }
+
+    // Capability
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
@@ -34,9 +58,13 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return facing != getCurrentDirection();
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return facing != getCurrentDirection();
+        }
         return super.hasCapability(capability, facing);
     }
+
+    // Engine overrides
 
     @Override
     public EnumEnergyStage getEnergyStage() {
@@ -55,18 +83,41 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     public void update() {
-        if (cannotUpdate()) return;
+        super.update();
+        if (cannotUpdate() || worldObj.isRemote) return;
         if (ticksLeft > 0) {
             ticksLeft--;
-            addPower(MILLIWATTS_PER_TICK);
+            addPower(MJ_PER_TICK);
+            changeHeat(TEMP_ENGINE_ENERGY, TEMP_CHANGE_HEAT);
         }
-        if (ticksLeft <= 0) {
+        if (ticksLeft <= 0 && isActive()) {
             ItemStack potentialFuel = itemHandler.extractItem(0, 1, true);
-            int value = GameRegistry.getFuelValue(potentialFuel);
+            int value = TileEntityFurnace.getItemBurnTime(potentialFuel);
             if (value > 0) {
                 currentFuel = itemHandler.extractItem(0, 1, false);
-                ticksLeft += GameRegistry.getFuelValue(currentFuel);
+                int burnTime = TileEntityFurnace.getItemBurnTime(currentFuel);
+                ticksLeft += burnTime;
+                deltaFuelLeft.addDelta(0, burnTime, 100);
+                deltaFuelLeft.addDelta(burnTime, burnTime + 10, -100);
             }
         }
+    }
+
+    @Override
+    protected IMjConnector createConnector() {
+        return new EngineConnector(EngineType.STIRLING);
+    }
+
+    @Override
+    protected boolean hasFuelToBurn() {
+        return ticksLeft > 0 || itemHandler.getStackInSlot(0) != null;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        super.getDebugInfo(left, right, side);
+
+        left.add("");
+        left.add("  - " + itemHandler.getStackInSlot(0));
     }
 }

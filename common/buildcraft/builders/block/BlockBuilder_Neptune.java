@@ -4,16 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.block;
 
-import buildcraft.api.enums.EnumBlueprintType;
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
+import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
+import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final IProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
@@ -23,10 +30,7 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockW
         setDefaultState(getDefaultState().withProperty(BLUEPRINT_TYPE, EnumBlueprintType.NONE));
     }
 
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return null;
-    }
+    // BlockState
 
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
@@ -34,4 +38,17 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockW
         properties.add(BLUEPRINT_TYPE);
     }
 
+    // Others
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        EnumFacing orientation = placer.getHorizontalFacing();
+        world.setBlockState(pos, state.withProperty(PROP_FACING, orientation.getOpposite()));
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileBuilder_Neptune();
+    }
 }

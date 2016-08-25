@@ -37,7 +37,8 @@ public enum GuideManager {
 
     public void load() {
         entries.clear();
-        for (Entry<JsonEntry, ILoadableResource> entry : GuideEntryLoader.loadAll().entrySet()) {
+        Map<JsonEntry, ILoadableResource> loaded = GuideEntryLoader.loadAll();
+        for (Entry<JsonEntry, ILoadableResource> entry : loaded.entrySet()) {
             entries.put(new PageEntry(entry.getKey()), entry.getValue());
         }
         reloadLang();
@@ -79,11 +80,6 @@ public enum GuideManager {
             }
         }
     }
-
-    // TODO:
-    // - contents page
-    // - loading from item stacks
-    // -
 
     public ImmutableSet<PageEntry> getAllEntries() {
         return ImmutableSet.copyOf(entries.keySet());

@@ -30,7 +30,7 @@ import buildcraft.lib.marker.MarkerCache;
 @Mod(modid = BCCore.MODID,
      name = "BuildCraft Core",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.9.4]",
+     acceptedMinecraftVersions = "[1.10.2]",
      dependencies = "required-after:buildcraftlib",
      guiFactory = "buildcraft.core.config.ConfigManager")
 //@formatter:on
@@ -42,20 +42,22 @@ public class BCCore {
 
     static {
         BCLibItems.enableGuide();
+        BCLibItems.enableDebugger();
     }
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
         BCLog.logger.info("");
         BCLog.logger.info("Starting BuildCraft " + BCLib.VERSION);
         BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2016");
         BCLog.logger.info("http://www.mod-buildcraft.com");
         BCLog.logger.info("");
 
-        File cfgBase = evt.getModConfigurationDirectory();
-        RegistryHelper.setRegistryConfig(MODID, new File(cfgBase, "objects.cfg"));
+        File cfgFolder = evt.getModConfigurationDirectory();
+        cfgFolder = new File(cfgFolder, "buildcraft");
+        RegistryHelper.setRegistryConfig(MODID, new File(cfgFolder, "objects.cfg"));
 
-        BCCoreConfig.preInit(cfgBase);
+        BCCoreConfig.preInit(cfgFolder);
         CoreProxy.getProxy().fmlPreInit();
 
         CreativeTabManager.createTab("buildcraft.main");
@@ -74,7 +76,7 @@ public class BCCore {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         CoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
@@ -85,7 +87,7 @@ public class BCCore {
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
         CoreProxy.getProxy().fmlPostInit();
     }
 }

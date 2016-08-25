@@ -35,7 +35,7 @@ import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
-import buildcraft.robotics.ZonePlan;
+import buildcraft.robotics.zone.ZonePlan;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 

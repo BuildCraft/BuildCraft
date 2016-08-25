@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.bpt.IBptTask;
-import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.api.bpt.IMaterialProvider;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 
@@ -23,7 +23,7 @@ public class SchematicBlockJSON extends SchematicBlock {
     }
 
     @Override
-    public Iterable<IBptTask> createTasks(IBuilderAccessor builder) {
+    public Iterable<IBptTask> createTasks(IMaterialProvider builder) {
         return null;
     }
 }

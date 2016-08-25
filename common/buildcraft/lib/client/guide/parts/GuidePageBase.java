@@ -96,7 +96,7 @@ public abstract class GuidePageBase extends GuidePart {
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_BACK_HOVERED;
                 }
-                icon.drawCutInside(turnBox);
+                icon.drawAt(turnBox);
             }
             // Page index
             String text = (index + 1) + " / " + numPages;
@@ -111,7 +111,7 @@ public abstract class GuidePageBase extends GuidePart {
                 if (turnBox.contains(gui.mouse)) {
                     icon = GuiGuide.TURN_FORWARDS_HOVERED;
                 }
-                icon.drawScaledInside(turnBox);
+                icon.drawAt(turnBox);
             }
             // Page index
             if (index + 1 <= numPages) {

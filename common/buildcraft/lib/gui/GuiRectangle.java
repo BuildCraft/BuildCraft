@@ -2,6 +2,8 @@ package buildcraft.lib.gui;
 
 import net.minecraft.util.math.MathHelper;
 
+import buildcraft.lib.gui.pos.IPositionedElement;
+
 public class GuiRectangle implements IPositionedElement {
     public final int x, y, width, height;
 

@@ -23,8 +23,8 @@ import buildcraft.lib.client.guide.parts.GuidePageBase;
 import buildcraft.lib.client.guide.parts.GuidePageContents;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.IPositionedElement;
-import buildcraft.lib.gui.MousePosition;
+import buildcraft.lib.gui.pos.IPositionedElement;
+import buildcraft.lib.gui.pos.MousePosition;
 
 public class GuiGuide extends GuiScreen {
     public static final ResourceLocation ICONS_1 = Gui.ICONS;
@@ -90,7 +90,7 @@ public class GuiGuide extends GuiScreen {
 
     public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_STAGE, ORDER_MOD_TYPE, ORDER_MOD };
 
-    public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.u + PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.v + PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
+    public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 
     public static final TypeOrder[] SORTING_TYPES = { //
         new TypeOrder(ETypeTag.TYPE, ETypeTag.SUB_TYPE),//
@@ -283,19 +283,14 @@ public class GuiGuide extends GuiScreen {
 
             mc.renderEngine.bindTexture(COVER);
 
-//            BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
-//            BOOK_COVER.drawCustomQuad(
-//                    minX, minY + BOOK_COVER.height,
-//                    minX + coverWidth, minY + BOOK_COVER.height,
-//                    minX + coverWidth, minY,
-//                    minX, minY
-//            ); // like drawScaledInside, but using drawCustomQuad
-            BOOK_COVER.drawCustomQuad(
-                    minX, minY + BOOK_COVER.height,
-                    minX + coverWidth, minY + BOOK_COVER.height + offset,
-                    minX + coverWidth, minY - offset,
-                    minX, minY
-            );
+            // BOOK_COVER.drawScaledInside(minX, minY, coverWidth, BOOK_COVER.height);
+            // BOOK_COVER.drawCustomQuad(
+            // minX, minY + BOOK_COVER.height,
+            // minX + coverWidth, minY + BOOK_COVER.height,
+            // minX + coverWidth, minY,
+            // minX, minY
+            // ); // like drawScaledInside, but using drawCustomQuad
+            BOOK_COVER.drawCustomQuad(minX, minY + BOOK_COVER.height, minX + coverWidth, minY + BOOK_COVER.height + offset, minX + coverWidth, minY - offset, minX, minY);
 
             BOOK_BINDING.drawScaledInside((int) (minX + coverWidth - bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
 
@@ -322,19 +317,14 @@ public class GuiGuide extends GuiScreen {
             PAGE_RIGHT.drawAt(minX + pageWidth + bindingWidth, minY);
 
             mc.renderEngine.bindTexture(LEFT_PAGE);
-//            PAGE_LEFT.drawCustomQuad(
-//                    minX + bindingWidth, minY + PAGE_LEFT.height + offset,
-//                    minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
-//                    minX + bindingWidth + pageWidth, minY,
-//                    minX + bindingWidth, minY - offset
-//            );
-            PAGE_LEFT.drawCustomQuad(
-                    minX + bindingWidth, minY + PAGE_LEFT.height + offset,
-                    minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
-                    minX + bindingWidth + pageWidth, minY,
-                    minX + bindingWidth, minY - offset
-            );
-//            PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
+            // PAGE_LEFT.drawCustomQuad(
+            // minX + bindingWidth, minY + PAGE_LEFT.height + offset,
+            // minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height,
+            // minX + bindingWidth + pageWidth, minY,
+            // minX + bindingWidth, minY - offset
+            // );
+            PAGE_LEFT.drawCustomQuad(minX + bindingWidth, minY + PAGE_LEFT.height + offset, minX + bindingWidth + pageWidth, minY + PAGE_LEFT.height, minX + bindingWidth + pageWidth, minY, minX + bindingWidth, minY - offset);
+            // PAGE_LEFT.drawScaledInside(minX + bindingWidth, minY, pageWidth, PAGE_LEFT.height);
 
             mc.renderEngine.bindTexture(COVER);
             BOOK_BINDING.drawScaledInside((int) (minX + bindingWidth * 0.5), (int) (minY - offset), bindingWidth, (int) (BOOK_BINDING.height + offset * 2));
@@ -372,7 +362,7 @@ public class GuiGuide extends GuiScreen {
 
         int chapterIndex = 0;
         for (GuideChapter chapter : chapters) {
-            chapter.draw(chapterIndex);
+            chapter.draw(chapterIndex, partialTicks);
             chapterIndex++;
         }
 
@@ -399,11 +389,11 @@ public class GuiGuide extends GuiScreen {
                 PEN_ANGLED.drawAt(mouse.getX() - 2, mouse.getY() - PEN_ANGLED.height - 2);
             }
         } else {
-            int height = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
+            int h = (int) (hoverStageLast * (1 - partialTicks) + hoverStageNext * partialTicks);
 
             // Draw pen
             mc.renderEngine.bindTexture(ICONS_2);
-            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - height, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, height);
+            drawTexturedModalRect(minX + PAGE_LEFT.width - PEN_HIDDEN_WIDTH / 2, minY - h, PEN_HIDDEN_X, PEN_HIDDEN_Y, PEN_HIDDEN_WIDTH, h);
 
             if (tooltipStack != null) {
                 renderToolTip(tooltipStack, mouse.getX(), mouse.getY());

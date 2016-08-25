@@ -34,3 +34,5 @@ custom
 license_checker/local/**
 license_checker/node_modules
 
+# For some annoying reason the tests creates a log file in "/logs/latest.txt"
+logs

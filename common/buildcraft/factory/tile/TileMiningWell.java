@@ -10,10 +10,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.types.MachineType;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.mj.MjReciverBatteryWrapper;
 
 public class TileMiningWell extends TileMiner {
     @Override
@@ -71,5 +74,10 @@ public class TileMiningWell extends TileMiner {
     public void onRemove() {
         super.onRemove();
         worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);
+    }
+
+    @Override
+    protected IMjReceiver createMjReceiver() {
+        return new MjReciverBatteryWrapper(battery, MachineType.MINING_WELL);
     }
 }

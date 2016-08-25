@@ -1,12 +1,5 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.mj.MjBattery;
-import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
-import buildcraft.lib.migrate.BCVersion;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.tile.TileBC_Neptune;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,12 +9,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
@@ -42,6 +39,8 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     protected boolean isComplete = false;
     protected Mode mode = Mode.On;
     protected final MjBattery battery = new MjBattery(MjAPI.MJ * 500);
+    protected final IMjReceiver mjReceiver = createMjReceiver();
+    protected final MjCapabilityHelper mjCapHelper = new MjCapabilityHelper(mjReceiver);
 
     protected void initCurrentPos() {
         if (currentPos == null) {
@@ -52,6 +51,8 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     protected abstract void mine();
+
+    protected abstract IMjReceiver createMjReceiver();
 
     public double getTubeOffset() {
         return 0;
@@ -65,10 +66,10 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
             return;
         }
 
-        if (!battery.isFull()) {
-            // test with the output of a stone engine
-            battery.addPower(MjAPI.MJ);// remove this
-        }
+        // if (!battery.isFull()) {
+        // test with the output of a stone engine
+        // battery.addPower(MjAPI.MJ);// remove this
+        // }
 
         battery.tick(getWorld(), getPos());
 
@@ -168,11 +169,11 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
-                readPayload(NET_LED_STATUS, buffer, side);
+                readPayload(NET_LED_STATUS, buffer, side, ctx);
             } else if (id == NET_LED_STATUS) {
                 boolean[] flags = MessageUtil.readBooleanArray(buffer, 2);
                 isComplete = flags[0];
@@ -219,6 +220,24 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
         return mode == Mode.Off || mode == Mode.On;
     }
 
+    // Capability
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (mjCapHelper.hasCapability(capability, facing)) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (mjCapHelper.hasCapability(capability, facing)) {
+            return mjCapHelper.getCapability(capability, facing);
+        }
+        return super.getCapability(capability, facing);
+    }
+
     // Rendering
 
     @Override
@@ -229,7 +248,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
 
     @SideOnly(Side.CLIENT)
     public float getPercentFilledForRender() {
-        float val = battery.getContained() / (float) battery.getCapacity();
+        float val = battery.getStored() / (float) battery.getCapacity();
         return val < 0 ? 0 : val > 1 ? 1 : val;
     }
 }

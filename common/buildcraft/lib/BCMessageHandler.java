@@ -9,15 +9,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import buildcraft.robotics.MessageZonePlannerMapChunkRequest;
-import buildcraft.robotics.MessageZonePlannerMapChunkResponse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -26,8 +22,11 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.library.network.MessageLibraryDBIndex;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.*;
 import buildcraft.lib.particle.MessageParticleVanilla;
+import buildcraft.robotics.zone.MessageZoneMapRequest;
+import buildcraft.robotics.zone.MessageZoneMapResponse;
 
 public enum BCMessageHandler {
     INSTANCE;
@@ -83,23 +82,11 @@ public enum BCMessageHandler {
             LibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
                 IMessage reply = from.onMessage(message, context);
                 if (reply != null) {
-                    BCMessageHandler.sendReturnMessage(context, reply);
+                    MessageUtil.sendReturnMessage(context, reply);
                 }
             });
             return null;
         };
-    }
-
-    public static void sendReturnMessage(MessageContext context, IMessage reply) {
-        // TODO This needs testing! IT MIGHT CRASH!
-        // (Never used)
-        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
-        if (player instanceof EntityPlayerMP) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) player;
-            netWrapper.sendTo(reply, playerMP);
-        } else if (player != null) {
-            netWrapper.sendToServer(reply);
-        }
     }
 
     public static class MessageTypeData<I extends IMessage, O extends IMessage> implements Comparable<MessageTypeData<?, ?>> {

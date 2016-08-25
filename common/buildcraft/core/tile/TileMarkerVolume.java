@@ -16,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -26,7 +27,6 @@ import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PermissionUtil;
-import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.tile.TileMarker;
 
@@ -66,6 +66,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     public void switchSignals() {
         if (!worldObj.isRemote) {
             showSignals = !showSignals;
+            markDirty();
             sendNetworkUpdate(showSignals ? NET_SIGNALS_ON : NET_SIGNALS_OFF);
         }
     }
@@ -89,8 +90,8 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_SIGNALS_ON) {
                 readNewSignalState(true);
@@ -115,12 +116,12 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     public void onManualConnectionAttempt(EntityPlayer player) {
-        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(getOwner(), getPos()))) {
+        if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock())) {
             MarkerSubCache<VolumeConnection> cache = this.getLocalCache();
             for (BlockPos other : cache.getValidConnections(getPos())) {
                 TileMarkerVolume tile = (TileMarkerVolume) cache.getMarker(other);
                 if (tile == null) continue;
-                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, new PermissionBlock(tile.getOwner(), other))) {
+                if (PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock())) {
                     cache.tryConnect(getPos(), other);
                 }
             }

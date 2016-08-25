@@ -34,10 +34,12 @@ public enum RenderUtils {
         }
     }
 
+    /** Takes ARGB */
     public static void setGLColorFromInt(int color) {
         setGLColorFromIntPlusAlpha(0xFF_00_00_00 | color);
     }
 
+    /** Takes ARGB */
     public static void setGLColorFromIntPlusAlpha(int color) {
         float alpha = (color >> 24 & 255) / 255.0F;
         float red = (color >> 16 & 255) / 255.0F;

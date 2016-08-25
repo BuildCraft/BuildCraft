@@ -1,9 +1,14 @@
 package buildcraft.api.bpt;
 
+import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public abstract class Schematic {
     /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
@@ -24,12 +29,14 @@ public abstract class Schematic {
     public abstract void rotate(Axis axis, Rotation rotation);
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
-     * builder, but should provide tasks for the builder to complete.
+     * builder, but should provide tasks for the builder to complete. <br>
+     * Note that {@link IBuilderAccessor#hasPermissionToEdit(BlockPos)} has already been called, and this will only be
+     * called if it returned true.
      * 
      * @param builder The builder that will execute the tasks
      * @param pos The position to build this schematic at
      * @return A collection of all the tasks you need doing to complete the schematic. */
-    public abstract Iterable<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos);
+    public abstract Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos);
 
     /** Clears the way for this schematic to build properly.
      * 
@@ -38,6 +45,19 @@ public abstract class Schematic {
      *         {@link DefaultBptActions#REQUIRE_AIR} if you just want air, or {@link DefaultBptActions#LEAVE} if you
      *         don't need to make any changes to the existing block. */
     public abstract PreBuildAction createClearingTask(IBuilderAccessor builder, BlockPos pos);
+
+    /** Attempts to either build this schematic completely, or leave the world untouched.
+     * 
+     * @param provider The material provider
+     * @param pos The position to build at
+     * @return True if this built completely, false if nothing changed. */
+    public abstract boolean buildImmediatly(World world, IMaterialProvider provider, BlockPos pos);
+
+    /** @return An approximate time cost. Values range between 1 and 100. Should be smaller for simple blocks (say air
+     *         or stone) but higher for complex blocks (like a chest or furnace) */
+    public int getTimeCost() {
+        return 20;
+    }
 
     public enum EnumPreBuildAction {
         LEAVE,
@@ -48,7 +68,11 @@ public abstract class Schematic {
     public interface PreBuildAction {
         EnumPreBuildAction getType();
 
-        Iterable<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos);
+        Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos);
+
+        /** @return A non-negative cost value for the clearing. This is just to limit the number of clearing actions per
+         *         tick, return a higher value if you need to do lots of things. (1 is the minimum, 100 is the max) */
+        int getTimeCost();
     }
 
     public enum DefaultBptActions implements PreBuildAction {
@@ -66,8 +90,16 @@ public abstract class Schematic {
         }
 
         @Override
-        public Iterable<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
+        public Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
+            if (type == EnumPreBuildAction.LEAVE) {
+                return ImmutableList.of();
+            }
             throw new IllegalStateException("You are responsible for creating tasks for " + type);
+        }
+
+        @Override
+        public int getTimeCost() {
+            return type == EnumPreBuildAction.LEAVE ? 1 : 24;
         }
     }
 }

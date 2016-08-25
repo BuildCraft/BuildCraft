@@ -45,6 +45,10 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
 import java.util.*;
 
+/**
+ * Use buildcraft.lib.misc.*Util instead of this
+ */
+@Deprecated
 public final class Utils {
     // Commonly used vectors
     public static final BlockPos POS_ZERO = BlockPos.ORIGIN;

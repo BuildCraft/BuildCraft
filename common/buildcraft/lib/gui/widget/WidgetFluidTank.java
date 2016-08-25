@@ -1,16 +1,19 @@
 package buildcraft.lib.gui.widget;
 
 import java.io.IOException;
+import java.util.List;
 
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte NET_CLICK = 0;
@@ -23,7 +26,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataServer(PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBuffer buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
             // TODO: Item interaction
@@ -32,20 +35,20 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @SideOnly(Side.CLIENT)
-    public IGuiElement createGuiElement(GuiBC8<ContainerBC_Neptune> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
+    public IGuiElement createGuiElement(GuiBC8<ContainerBC_Neptune> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
         return new GuiElementFluidTank(gui, parent, position, overlay);
     }
 
-    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<ContainerBC_Neptune>, ContainerBC_Neptune> {
+    private final class GuiElementFluidTank extends GuiElementSimple<GuiBC8<?>> {
         private final GuiIcon overlay;
 
-        public GuiElementFluidTank(GuiBC8<ContainerBC_Neptune> gui, IPositionedElement parent, GuiRectangle position, GuiIcon overlay) {
+        public GuiElementFluidTank(GuiBC8<?> gui, IGuiPosition parent, GuiRectangle position, GuiIcon overlay) {
             super(gui, parent, position);
             this.overlay = overlay;
         }
 
         @Override
-        public void drawBackground() {
+        public void drawBackground(float partialTicks) {
             // TODO!
         }
 
@@ -59,11 +62,12 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
         }
 
         @Override
-        public ToolTip getToolTip() {
+        public void addToolTips(List<ToolTip> tooltips) {
             if (contains(gui.mouse)) {
-                return tank.getToolTip();
+                ToolTip tooltip = tank.getToolTip();
+                tooltip.refresh();
+                tooltips.add(tooltip);
             }
-            return null;
         }
     }
 }

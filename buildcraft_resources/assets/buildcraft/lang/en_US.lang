@@ -323,6 +323,11 @@ gui.pipes.emerald.nonblocking.tip=Extraction continues with the next element in 
 gui.pipes.emzuli.title=Extraction Presets
 gui.pipes.emzuli.paint=Paint Items %s
 gui.pipes.emzuli.nopaint=Don't Paint Items
+gui.ledger.ownership=Owner
+gui.ledger.access=Access
+gui.ledger.access.public=Public
+gui.ledger.access.protected=Protected
+gui.ledger.access.private=Private
 
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket

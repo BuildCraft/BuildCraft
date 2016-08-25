@@ -15,6 +15,8 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
@@ -31,18 +33,18 @@ public class Blueprint extends BlueprintBase {
     private SchematicBlock[][][] contentBlocks;
     private List<SchematicEntityOffset> contentEntities;
 
-    public Blueprint(NBTTagCompound nbt) {
-        super(nbt);
-    }
-
-    private Blueprint(BlockPos size) {
-        super(size);
+    private Blueprint(BlockPos size, BlockPos offset) {
+        super(size, offset);
         contentBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
         contentEntities = new ArrayList<>();
     }
 
     public Blueprint(SchematicBlock[][][] blocks, List<SchematicEntityOffset> entities) {
-        super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length));
+        this(new BlockPos(0, 0, 0), blocks, entities);
+    }
+
+    public Blueprint(BlockPos offset, SchematicBlock[][][] blocks, List<SchematicEntityOffset> entities) {
+        super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length), offset);
         contentBlocks = blocks;
         if (entities == null) {
             contentEntities = new ArrayList<>();
@@ -52,15 +54,16 @@ public class Blueprint extends BlueprintBase {
     }
 
     public Blueprint(World world, BlockPos from, BlockPos size) throws SchematicException {
-        this(size);
+        this(size, new BlockPos(0, 0, 0));
         for (int x = 0; x < size.getX(); x++) {
             for (int y = 0; y < size.getY(); y++) {
                 for (int z = 0; z < size.getZ(); z++) {
                     BlockPos pos = from.add(x, y, z);
                     Block block = world.getBlockState(pos).getBlock();
                     SchematicFactoryWorldBlock factory = BlueprintAPI.getWorldBlockSchematic(block);
-                    if (factory != null) {
-                        contentBlocks[x][y][z] = factory.createFromWorld(world, pos);
+                    SchematicBlock schema = factory == null ? null : factory.createFromWorld(world, pos);
+                    if (schema != null) {
+                        contentBlocks[x][y][z] = schema;
                     } else {
                         contentBlocks[x][y][z] = SchematicAir.INSTANCE;
                     }
@@ -68,6 +71,30 @@ public class Blueprint extends BlueprintBase {
             }
         }
         // TODO: Entities
+    }
+
+    public Blueprint(NBTTagCompound nbt) {
+        super(nbt);
+        contentBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
+        contentEntities = new ArrayList<>();
+        NBTTagList blocks = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
+        int index = 0;
+        for (int x = 0; x < size.getX(); x++) {
+            for (int y = 0; y < size.getY(); y++) {
+                for (int z = 0; z < size.getZ(); z++) {
+                    NBTTagCompound comp = blocks.getCompoundTagAt(index);
+                    index++;
+                    try {
+                        contentBlocks[x][y][z] = BlueprintAPI.deserializeSchematicBlock(comp);
+                        if (contentBlocks[x][y][z] == null) {
+                            throw new SchematicException("Null schematic from " + comp);
+                        }
+                    } catch (SchematicException e) {
+                        throw new Error(e);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -93,7 +120,7 @@ public class Blueprint extends BlueprintBase {
         SchematicBlock[][][] newContentBlocks = new SchematicBlock[newSize.getX()][newSize.getY()][newSize.getZ()];
         Box to = new Box(BlockPos.ORIGIN, newSize.add(-1, -1, -1));
         BlockPos newMax = PositionUtil.rotatePos(size.add(-1, -1, -1), axis, rotation);
-        BlockPos arrayOffset = to.closestInsideTo(newMax).subtract(newMax);// FIXME: This might be the wrong offset!
+        BlockPos arrayOffset = to.closestInsideTo(newMax).subtract(newMax);
 
         for (int x = 0; x < contentBlocks.length; x++) {
             for (int y = 0; y < contentBlocks[x].length; y++) {

@@ -1,9 +1,9 @@
 package buildcraft.lib.marker;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
@@ -21,8 +21,8 @@ public abstract class MarkerCache<S extends MarkerSubCache<?>> {
 
     public final String name;
 
-    private final Map<Integer, S> cacheClient = new HashMap<>();
-    private final Map<Integer, S> cacheServer = new HashMap<>();
+    private final Map<Integer, S> cacheClient = new ConcurrentHashMap<>();
+    private final Map<Integer, S> cacheServer = new ConcurrentHashMap<>();
 
     public MarkerCache(String name) {
         this.name = name;

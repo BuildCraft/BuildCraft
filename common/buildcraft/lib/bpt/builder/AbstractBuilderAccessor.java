@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -20,23 +19,22 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.api.bpt.IBptAction;
 import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.lib.permission.PlayerOwner;
 
 public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITickable {
     private final PlayerOwner owner;
-    private final World world;
     private final DelayedList<IBptAction> actions = new DelayedList<>();
     private final BuilderAnimationManager animationManager;
-
-    public AbstractBuilderAccessor(PlayerOwner owner, World world, BuilderAnimationManager animationManager) {
+    
+    public AbstractBuilderAccessor(PlayerOwner owner, BuilderAnimationManager animationManager) {
         this.owner = owner;
-        this.world = world;
         this.animationManager = animationManager;
     }
 
-    public AbstractBuilderAccessor(PlayerOwner owner, World world, BuilderAnimationManager animation, NBTTagCompound nbt) {
-        this(owner, world, animation);
+    public AbstractBuilderAccessor(PlayerOwner owner, BuilderAnimationManager animation, NBTTagCompound nbt) {
+        this(owner, animation);
         NBTTagList list = (NBTTagList) nbt.getTag("actions");
         for (int delay = 0; delay < list.tagCount(); delay++) {
             NBTTagList innerList = (NBTTagList) list.get(delay);
@@ -74,24 +72,17 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
     }
 
     @Override
-    public World getWorld() {
-        return world;
-    }
-
-    @Override
     public PlayerOwner getOwner() {
         return owner;
     }
 
     @Override
     public int startBlockAnimation(Vec3d target, IBlockState state, int delay) {
-        // TODO use the animation manager!
         return 0;
     }
 
     @Override
     public int startItemStackAnimation(Vec3d target, ItemStack display, int delay) {
-        // TODO use the animation manager!
         return 0;
     }
 
@@ -102,9 +93,9 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
     }
 
     @Override
-    public int[] startPowerAnimation(Vec3d target, int milliJoules, int delay) {
+    public int[] startPowerAnimation(Vec3d target, long microJoules, int delay) {
         // TODO use the animation manager!
-        return new int[] { 0, 0 };
+        return new int[] { 0, 30 };
     }
 
     @Override
@@ -113,6 +104,15 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
             return new RequestedFree.FreeItem(stack);
         }
         throw new AbstractMethodError("Implement this!");
+    }
+
+    @Override
+    public IRequestedItem requestStackForBlock(IBlockState state) {
+        ItemStack wanted = StackUtil.getItemStackForState(state);
+        if (wanted == null) {
+            throw new IllegalStateException("Unknown item block " + state);
+        }
+        return requestStack(wanted);
     }
 
     @Override

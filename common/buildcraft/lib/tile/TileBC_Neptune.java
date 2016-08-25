@@ -19,19 +19,26 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.permission.EnumProtectionStatus;
+import buildcraft.api.permission.IPlayerOwned;
 import buildcraft.lib.TagManager;
 import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.debug.IAdvDebugTarget;
@@ -45,11 +52,12 @@ import buildcraft.lib.net.MessageUpdateTile;
 import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.permission.PlayerOwner;
+import buildcraft.lib.tile.item.ItemHandlerManager;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget {
+public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */
     public static final int NET_RENDER_DATA = 0;
@@ -67,9 +75,13 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_ADV_DEBUG = 6;
     public static final int NET_ADV_DEBUG_DISABLE = 7;
 
+    protected final CapabilityHelper caps = new CapabilityHelper();
+    protected final ItemHandlerManager itemManager = new ItemHandlerManager();
+
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
     private PlayerOwner owner;
+    private EnumProtectionStatus protectionStatus;
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
@@ -83,13 +95,21 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         this.createAndSendMessage(gui, id, writer);
     });
 
-    public TileBC_Neptune() {}
+    public TileBC_Neptune() {
+        caps.addProvider(itemManager);
+    }
 
     public static <T extends TileBC_Neptune> void registerTile(Class<T> tileClass, String id) {
         String regName = TagManager.getTag(id, EnumTagType.REGISTRY_NAME);
         String[] alternatives = TagManager.getMultiTag(id, EnumTagTypeMulti.OLD_REGISTRY_NAME);
         GameRegistry.registerTileEntityWithAlternatives(tileClass, regName, alternatives);
     }
+
+    // ##################
+    //
+    // Misc overridables
+    //
+    // ##################
 
     /** Checks to see if this tile can update. The base implementation only checks to see if it has a world. */
     public boolean cannotUpdate() {
@@ -126,6 +146,49 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         usingPlayers.remove(player);
     }
 
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return caps.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        return caps.getCapability(capability, facing);
+    }
+
+    // ##################
+    //
+    // Permission related
+    //
+    // ##################
+
+    @Override
+    public PlayerOwner getOwner() {
+        return owner;
+    }
+
+    @Override
+    public EnumProtectionStatus getStatus() {
+        return protectionStatus;
+    }
+
+    public void setStatus(EnumProtectionStatus status) {
+        protectionStatus = status;
+        sendNetworkGuiUpdate(NET_GUI_DATA);
+    }
+
+    public PermissionUtil.PermissionBlock getPermBlock() {
+        return new PermissionBlock(this, getPos());
+    }
+
+    public boolean canEditOther(BlockPos other) {
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getPermBlock(), PermissionUtil.createFrom(getWorld(), other));
+    }
+
+    public boolean canPlayerEdit(EntityPlayer player) {
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock());
+    }
+
     public boolean canInteractWith(EntityPlayer player) {
         if (worldObj.getTileEntity(getPos()) != this) {
             return false;
@@ -134,15 +197,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             return false;
         }
         // edit rather than view because you can normally change the contents from gui interaction
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, player, getPermBlock());
-    }
-
-    public PlayerOwner getOwner() {
-        return owner;
-    }
-
-    public PermissionUtil.PermissionBlock getPermBlock() {
-        return new PermissionBlock(getOwner(), getPos());
+        return canPlayerEdit(player);
     }
 
     // ##################
@@ -164,6 +219,16 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         if (hasWorldObj()) {
             MessageUpdateTile message = createNetworkUpdate(id);
             MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+        }
+    }
+
+    public final void sendNetworkGuiUpdate(int id) {
+        if (hasWorldObj()) {
+            BCLog.logger.info("Sending a GUI update " + id);
+            for (EntityPlayer player : usingPlayers) {
+                BCLog.logger.info("   - " + player.getDisplayNameString());
+                sendNetworkUpdate(id, player);
+            }
         }
     }
 
@@ -189,16 +254,20 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public final void createAndSendMessage(boolean gui, int id, IPayloadWriter writer) {
         if (hasWorldObj()) {
-            MessageUpdateTile message = new MessageUpdateTile(getPos(), buffer -> {
-                buffer.writeShort(id);
-                writer.write(buffer);
-            });
+            IMessage message = createMessage(id, writer);
             if (gui) {
                 MessageUtil.sendToPlayers(usingPlayers, message);
             } else {
                 MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
             }
         }
+    }
+
+    public final IMessage createMessage(int id, IPayloadWriter writer) {
+        return new MessageUpdateTile(getPos(), buffer -> {
+            buffer.writeShort(id);
+            writer.write(buffer);
+        });
     }
 
     @Override
@@ -226,16 +295,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         byte[] bytes = tag.getByteArray("d");
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
         try {
-            receivePayload(worldObj.isRemote ? Side.CLIENT : Side.SERVER, new PacketBuffer(buf));
+            int id = buf.readUnsignedShort();
+            readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public final IMessage receivePayload(Side side, PacketBuffer buffer) throws IOException {
+    public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
-        readPayload(id, buffer, side);
+        readPayload(id, buffer, ctx.side, ctx);
         return null;
     }
 
@@ -248,7 +318,22 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         // write render data with gui data
         if (id == NET_GUI_DATA) {
+
             writePayload(NET_RENDER_DATA, buffer, side);
+
+            if (side == Side.SERVER) {
+                if (owner == null || owner.getOwner() == null) {
+                    buffer.writeByte(0);
+                } else {
+                    buffer.writeByte(1);
+                    owner.writeToByteBuf(buffer);
+                }
+                if (protectionStatus == null) {
+                    buffer.writeByte(10);
+                } else {
+                    buffer.writeByte(protectionStatus.permissionLevel);
+                }
+            }
         }
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -259,11 +344,27 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
     }
 
-    /** @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
+    /** @param ctx The context. Will be null if this is a generic update payload
+     * @throws IOException if something went wrong */
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         // read render data with gui data
         if (id == NET_GUI_DATA) {
-            readPayload(NET_RENDER_DATA, buffer, side);
+            readPayload(NET_RENDER_DATA, buffer, side, ctx);
+
+            if (side == Side.CLIENT) {
+                byte hasOwner = buffer.readByte();
+                if (hasOwner == 1) {
+                    owner = PlayerOwner.read(buffer);
+                } else {
+                    owner = null;
+                }
+                byte permLevel = buffer.readByte();
+                if (permLevel == 10) {
+                    protectionStatus = null;
+                } else {
+                    protectionStatus = EnumProtectionStatus.get(permLevel);
+                }
+            }
         }
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) deltaManager.receiveDeltaData(false, EnumDeltaMessage.CURRENT_STATE, buffer);
@@ -289,6 +390,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             migrateOldNBT(version, nbt);
         }
         deltaManager.readFromNBT(nbt.getCompoundTag("deltas"));
+        if (nbt.hasKey("owner")) {
+            owner = PlayerOwner.read(nbt.getCompoundTag("owner"));
+        }
+        if (nbt.hasKey("items", Constants.NBT.TAG_COMPOUND)) {
+            itemManager.deserializeNBT(nbt.getCompoundTag("items"));
+        }
     }
 
     protected void migrateOldNBT(int version, NBTTagCompound nbt) {}
@@ -298,6 +405,14 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         super.writeToNBT(nbt);
         nbt.setInteger("data-version", BCVersion.CURRENT.dataVersion);
         nbt.setTag("deltas", deltaManager.writeToNBT());
+        if (owner != null && owner.getOwner() != null) {
+            nbt.setTag("owner", owner.writeToNBT());
+        }
+        NBTTagCompound items = itemManager.serializeNBT();
+        if (!items.hasNoTags()) {
+            nbt.setTag("items", items);
+        }
+
         return nbt;
     }
 

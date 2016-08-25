@@ -13,7 +13,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.guide.*;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
-import buildcraft.lib.client.guide.parts.*;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.GuiStack;
@@ -127,7 +126,7 @@ public class GuidePageContents extends GuidePageBase {
             int i = 0;
             for (GuiIcon icon : GuiGuide.ORDERS) {
                 if (gui.sortingOrderIndex == i) {
-                    icon = new GuiIcon(icon, 0, 14);
+                    icon = icon.offset(0, 14);
                 }
                 icon.drawAt(oX, oY);
                 oY += 14;

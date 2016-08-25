@@ -40,13 +40,13 @@ public class BCCoreConfig {
     private static Property propItemLifespan;
     private static Property propMarkerMaxDistance;
 
-    public static void preInit(File cfgFile) {
-        config = new Configuration(new File(cfgFile, "main.cfg"));
+    public static void preInit(File cfgFolder) {
+        config = new Configuration(new File(cfgFolder, "main.cfg"));
 
         detailedConfigManager = new FileConfigManager(" The buildcraft detailed configuration file. This contains a lot of miscelaneous options that have no "
             + "affect on gameplay.\n You should refer to the BC source code for a detailed description of what these do. (https://github.com/BuildCraft/BuildCraft)\n"
             + " This file will be overwritten every time that buildcraft starts, so there is no point in adding comments");
-        detailedConfigManager.setConfigFile(new File(cfgFile, "detailed.properties"));
+        detailedConfigManager.setConfigFile(new File(cfgFolder, "detailed.properties"));
 
         // Variables to make
         String general = Configuration.CATEGORY_GENERAL;

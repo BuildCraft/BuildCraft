@@ -10,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
@@ -165,7 +167,7 @@ public final class ListHandler {
                     }
                 }
                 if (handlersCustom.size() > 0) {
-                    for (Item i : Item.REGISTRY) {
+                    for (Item i : ForgeRegistries.ITEMS) {
                         List<ItemStack> examples = new ArrayList<>();
                         i.getSubItems(i, CreativeTabs.MISC, examples);
                         for (ItemStack s : examples) {

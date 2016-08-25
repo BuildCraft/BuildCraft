@@ -63,6 +63,7 @@ public final class InventoryWrapper extends AbstractInvItemTransactor {
                 return null;
             }
             int size = Math.min(current.stackSize, max);
+            current = current.copy();
             ItemStack other = current.splitStack(size);
             if (!simulate) {
                 if (current.stackSize <= 0) {

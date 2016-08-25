@@ -3,13 +3,13 @@ package buildcraft.lib.gui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.pos.IPositionedElement;
 
 @SideOnly(Side.CLIENT)
-public interface IGuiElement extends IPositionedElement {
-    default void drawBackground() {}
+public interface IGuiElement extends IPositionedElement, ITooltipElement {
+    default void drawBackground(float partialTicks) {}
 
-    default void drawForeground() {}
+    default void drawForeground(float partialTicks) {}
 
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseClicked(int button) {}
@@ -19,9 +19,4 @@ public interface IGuiElement extends IPositionedElement {
 
     /** This is called EVEN IF the mouse is not inside your width and height! */
     default void onMouseReleased(int button) {}
-
-    /** Helper method for creating a tooltip to be displayed as a gui element. */
-    default ToolTip getToolTip() {
-        return null;
-    }
 }

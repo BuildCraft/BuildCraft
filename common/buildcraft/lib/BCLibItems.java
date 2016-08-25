@@ -27,7 +27,7 @@ public class BCLibItems {
             guide = ItemManager.register(new ItemGuide("item.guide"), true);
         }
         if (enableDebugger) {
-            debugger = ItemManager.register(new ItemDebugger("item.guide"), true);
+            debugger = ItemManager.register(new ItemDebugger("item.debugger"), true);
         }
     }
 }

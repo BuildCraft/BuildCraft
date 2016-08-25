@@ -9,8 +9,8 @@ import java.io.IOException;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public interface IPayloadReceiver {
-    IMessage receivePayload(Side side, PacketBuffer buffer) throws IOException;
+    IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException;
 }

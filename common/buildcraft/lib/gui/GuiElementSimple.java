@@ -1,11 +1,13 @@
 package buildcraft.lib.gui;
 
-public class GuiElementSimple<G extends GuiBC8<C>, C extends ContainerBC_Neptune> implements IGuiElement {
+import buildcraft.lib.gui.pos.IGuiPosition;
+
+public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     public final G gui;
-    private final IPositionedElement parent;
+    private final IGuiPosition parent;
     private final GuiRectangle rectangle;
 
-    public GuiElementSimple(G gui, IPositionedElement parent, GuiRectangle rectangle) {
+    public GuiElementSimple(G gui, IGuiPosition parent, GuiRectangle rectangle) {
         this.gui = gui;
         this.parent = parent;
         this.rectangle = rectangle;

@@ -121,8 +121,11 @@ public class ItemSchematicSingle extends ItemBC_Neptune {
             try {
                 SchematicBlock schematic = BlueprintAPI.deserializeSchematicBlock(schematicNBT);
                 BuilderPlayer playerBuilder = new BuilderPlayer(player);
-                playerBuilder.build(schematic, place);
-                return EnumActionResult.SUCCESS;
+                if (schematic.buildImmediatly(world, playerBuilder, place)) {
+                    return EnumActionResult.SUCCESS;
+                } else {
+                    return EnumActionResult.FAIL;
+                }
             } catch (SchematicException e) {
                 e.printStackTrace();
                 return EnumActionResult.FAIL;

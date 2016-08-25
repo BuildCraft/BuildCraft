@@ -34,7 +34,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
-import buildcraft.robotics.ZonePlan;
+import buildcraft.robotics.zone.ZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 

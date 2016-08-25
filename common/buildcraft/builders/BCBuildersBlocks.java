@@ -8,6 +8,7 @@ import buildcraft.builders.block.*;
 import buildcraft.builders.block.BlockFrame;
 import buildcraft.builders.block.BlockQuarry;
 import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -29,7 +30,7 @@ public class BCBuildersBlocks {
         quarry = BlockBCBase_Neptune.register(new BlockQuarry(Material.ROCK, "block.quarry"));
 
         TileBC_Neptune.registerTile(TileArchitect_Neptune.class, "tile.architect");
-        // TODO: builder
+        TileBC_Neptune.registerTile(TileBuilder_Neptune.class, "tile.builder");
         TileBC_Neptune.registerTile(TileLibrary_Neptune.class, "tile.library");
         TileBC_Neptune.registerTile(TileQuarry.class, "tile.quarry");
     }

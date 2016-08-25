@@ -35,7 +35,7 @@ public class LaserCompiledList {
         public void vertex(double x, double y, double z, double u, double v, int lmap) {
             buffer.pos(x, y, z);
             buffer.tex(u, v);
-            buffer.lightmap(lmap >> 16 & 65535, lmap & 65535);
+            buffer.lightmap((lmap >> 16) & 0xFFFF, lmap & 0xFFFF);
             buffer.endVertex();
         }
 

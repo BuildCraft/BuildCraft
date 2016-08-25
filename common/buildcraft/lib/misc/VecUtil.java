@@ -2,6 +2,7 @@ package buildcraft.lib.misc;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -22,14 +23,12 @@ public class VecUtil {
     }
 
     public static Vec3d scale(Vec3d vec, double scale) {
-        return new Vec3d(vec.xCoord * scale, vec.yCoord * scale, vec.zCoord * scale);
+        return vec.scale(scale);
     }
 
     public static EnumFacing getFacing(Axis axis, boolean positive) {
-        if (axis == Axis.X) return positive ? EnumFacing.EAST : EnumFacing.WEST;
-        if (axis == Axis.Y) return positive ? EnumFacing.UP : EnumFacing.DOWN;
-        if (axis == Axis.Z) return positive ? EnumFacing.SOUTH : EnumFacing.NORTH;
-        return null;
+        AxisDirection dir = positive ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE;
+        return EnumFacing.getFacingFromAxis(dir, axis);
     }
 
     public static BlockPos absolute(BlockPos val) {

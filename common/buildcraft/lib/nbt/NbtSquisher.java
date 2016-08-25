@@ -93,7 +93,7 @@ public class NbtSquisher {
         NBTSquishMapWriter.write(map, buf);
         WrittenType type = map.getWrittenType();
         type.writeIndex(buf, map.indexOfTag(nbt));
-        NBTSquishDebugging.log(() -> "\nUsed type " + type + " (as there are " + map.size() + " object types)");
+        NBTSquishDebugging.log("\nUsed type " + type + " (as there are " + map.size() + " object types)");
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         return bytes;

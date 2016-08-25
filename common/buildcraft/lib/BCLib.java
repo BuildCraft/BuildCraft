@@ -17,7 +17,7 @@ import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
-import buildcraft.lib.bpt.vanilla.VanillaBlueprints;
+import buildcraft.lib.bpt.vanilla.VanillaSchematics;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
@@ -55,7 +55,7 @@ public class BCLib {
     public void init(FMLInitializationEvent evt) {
         LibProxy.getProxy().fmlInit();
 
-        VanillaBlueprints.fmlInit();
+        VanillaSchematics.fmlInit();
         VanillaListHandlers.fmlInit();
         VanillaPaintHandlers.fmlInit();
         VanillaRotationHandlers.fmlInit();

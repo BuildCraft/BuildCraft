@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ITickable;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -101,8 +102,8 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {
-        super.readPayload(id, buffer, side);
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA || id == NET_SELECTED) {
             boolean has = buffer.readBoolean();

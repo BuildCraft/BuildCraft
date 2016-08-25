@@ -16,6 +16,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCDebugging;
@@ -129,7 +130,7 @@ public abstract class ContainerBC_Neptune extends Container {
         return in == null ? null : in.copy();
     }
 
-    public void handleWidgetMessage(int widgetId, PacketBuffer payload, Side side) {
+    public void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
         if (widgetId < 0 || widgetId >= widgets.size()) {
             if (DEBUG) {
                 String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;
@@ -143,9 +144,9 @@ public abstract class ContainerBC_Neptune extends Container {
         Widget_Neptune<?> widget = widgets.get(widgetId);
         try {
             if (side == Side.SERVER) {
-                widget.handleWidgetDataServer(payload);
+                widget.handleWidgetDataServer(ctx, payload);
             } else if (side == Side.CLIENT) {
-                widget.handleWidgetDataClient(payload);
+                widget.handleWidgetDataClient(ctx, payload);
             }
         } catch (IOException io) {
             if (DEBUG) {

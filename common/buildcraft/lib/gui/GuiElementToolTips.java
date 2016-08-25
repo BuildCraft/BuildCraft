@@ -34,16 +34,18 @@ public class GuiElementToolTips implements IGuiElement {
     }
 
     @Override
-    public void drawForeground() {
+    public void drawForeground(float partialTicks) {
         List<ToolTip> tooltips = new ArrayList<>();
         for (IGuiElement elem : gui.guiElements) {
-            ToolTip tooltip = elem.getToolTip();
-            if (tooltip != null) {
-                tooltip.refresh();
-                tooltips.add(tooltip);
-            }
+            checkAndAddTooltip(tooltips, elem);
         }
+        checkAndAddTooltip(tooltips, gui.ledgersLeft);
+        checkAndAddTooltip(tooltips, gui.ledgersRight);
         GuiUtil.drawVerticallyAppending(this, tooltips, this::drawTooltip);
+    }
+
+    private static void checkAndAddTooltip(List<ToolTip> tooltips, ITooltipElement elem) {
+        elem.addToolTips(tooltips);
     }
 
     private int drawTooltip(ToolTip tooltip, int x, int y) {

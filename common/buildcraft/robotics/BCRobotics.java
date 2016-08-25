@@ -1,15 +1,18 @@
 package buildcraft.robotics;
 
-import buildcraft.core.BCCore;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.RegistryHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.RegistryHelper;
+import buildcraft.robotics.zone.MessageZoneMapRequest;
+import buildcraft.robotics.zone.MessageZoneMapResponse;
 
 @Mod(modid = BCRobotics.MODID, name = "BuildCraft Robotics", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCRobotics {
@@ -19,7 +22,7 @@ public class BCRobotics {
     public static BCRobotics INSTANCE = null;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         BCRoboticsItems.preInit();
@@ -27,22 +30,18 @@ public class BCRobotics {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, RoboticsProxy_BC8.getProxy());
 
-        BCMessageHandler.addMessageType(MessageZonePlannerMapChunkRequest.class, MessageZonePlannerMapChunkRequest.Handler.INSTANCE, Side.SERVER);
-        BCMessageHandler.addMessageType(MessageZonePlannerMapChunkResponse.class, MessageZonePlannerMapChunkResponse.Handler.INSTANCE, Side.CLIENT);
-        BCMessageHandler.addMessageType(MessageZonePlannerLayer.class, MessageZonePlannerLayer.Handler.INSTANCE, Side.SERVER);
-
-        // TODO: move from here
-        RoboticsSprites.preInit();
+        BCMessageHandler.addMessageType(MessageZoneMapRequest.class, MessageZoneMapRequest.Handler.INSTANCE, Side.SERVER);
+        BCMessageHandler.addMessageType(MessageZoneMapResponse.class, MessageZoneMapResponse.Handler.INSTANCE, Side.CLIENT);
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         RoboticsProxy_BC8.getProxy().fmlInit();
         BCRoboticsRecipes.init();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
 
     }
 }

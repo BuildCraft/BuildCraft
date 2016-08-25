@@ -29,15 +29,14 @@ public class BCTransport {
         BCTransportBlocks.preInit();
 
         // CreativeTabManager.setItem("buildcraft.pipe", BCCoreItems.wrench);
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, TransportProxy_BC8.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
-        // TODO: move from here
-        TransportSprites.preInit();
+        BCTransportProxy.getProxy().fmlPreInit();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        TransportProxy_BC8.getProxy().fmlInit();
+        BCTransportProxy.getProxy().fmlInit();
         BCTransportRecipes.init();
     }
 

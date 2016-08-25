@@ -25,6 +25,7 @@ public abstract class GuidePartItem extends GuidePart {
             if (STACK_RECT.offset(x, y).contains(gui.mouse)) {
                 gui.tooltipStack = stack;
             }
+            GlStateManager.color(1, 1, 1);
         }
     }
 

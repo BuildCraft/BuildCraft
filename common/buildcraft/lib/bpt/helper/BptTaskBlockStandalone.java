@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.bpt.IBuilderAccessor;
-import buildcraft.api.bpt.IBuilderAccessor.IRequestedItem;
+import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.lib.misc.NBTUtils;
 
