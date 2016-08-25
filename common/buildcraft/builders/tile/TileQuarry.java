@@ -28,7 +28,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private BlockPos min;
     private BlockPos max;
     private BoxIterator boxIterator;
-    public final IItemHandlerModifiable invFrames = addInventory("frames", 1, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -65,15 +65,23 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 BlockPos pos = new BlockPos(x, min.getY(), z);
                 boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
                 Block block = worldObj.getBlockState(pos).getBlock();
-                if(shouldBeFrame && block == Blocks.AIR) {
-                    ItemStack stackInSlot = invFrames.getStackInSlot(0);
-                    if(stackInSlot != null) {
-                        worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
-                        invFrames.setStackInSlot(0, stackInSlot.stackSize > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.stackSize - 1) : null);
-                    }
-                    return;
-                } else if(block != Blocks.AIR && (!shouldBeFrame || block != BCBuildersBlocks.frame)) {
+                if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
                     if(worldObj.destroyBlock(pos, true)) {
+                        return;
+                    }
+                }
+                if(shouldBeFrame && block == Blocks.AIR) {
+                    boolean found = false;
+                    for(int i = 8; i >= 0; i--) {
+                        ItemStack stackInSlot = invFrames.getStackInSlot(i);
+                        if(stackInSlot != null) {
+                            worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
+                            invFrames.setStackInSlot(i, stackInSlot.stackSize > 0 ? new ItemStack(stackInSlot.getItem(), stackInSlot.stackSize - 1) : null);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(found) {
                         return;
                     }
                 }
@@ -95,11 +103,11 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
         box.initialize(nbt.getCompoundTag("box"));
         min = NBTUtils.readBlockPos(nbt.getTag("min"));
         max = NBTUtils.readBlockPos(nbt.getTag("max"));
         boxIterator = new BoxIterator().readFromNBT(nbt.getCompoundTag("box_iterator"));
-        super.readFromNBT(nbt);
     }
 
     @Override

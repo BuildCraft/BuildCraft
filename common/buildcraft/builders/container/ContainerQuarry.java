@@ -15,12 +15,14 @@ public class ContainerQuarry extends ContainerBCTile<TileQuarry> {
         super(player, tile);
         addFullPlayerInventory(PLAYER_INV_START);
 
-        addSlotToContainer(new SlotBase(tile.invFrames, 0, 80, 18) {
-            @Override
-            public boolean isItemValid(ItemStack stack) {
-                return stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockFrame;
-            }
-        });
+        for(int i = 0; i < 9; i++) {
+            addSlotToContainer(new SlotBase(tile.invFrames, i, 8 + i * 18, 18) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    return stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockFrame;
+                }
+            });
+        }
     }
 
     @Override
