@@ -158,7 +158,7 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
         if(tag == null) {
             return null;
         }
-        return new BoxIterator(NBTUtils.readBlockPos(tag.getCompoundTag("min")), NBTUtils.readBlockPos(tag.getCompoundTag("max")), tag.getBoolean("invert"), tag.getBoolean("repeat"), new AxisOrder().readFromNBT(tag.getCompoundTag("order")), NBTUtils.readBlockPos(tag.getCompoundTag("current")));
+        return new BoxIterator(NBTUtils.readBlockPos(tag.getTag("min")), NBTUtils.readBlockPos(tag.getTag("max")), tag.getBoolean("invert"), tag.getBoolean("repeat"), new AxisOrder().readFromNBT(tag.getCompoundTag("order")), NBTUtils.readBlockPos(tag.getTag("current")));
     }
 
     public NBTTagCompound writeToNBT() {

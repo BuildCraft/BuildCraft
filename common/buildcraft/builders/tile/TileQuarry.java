@@ -29,9 +29,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
@@ -41,7 +43,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private BlockPos min;
     private BlockPos max;
     private BoxIterator boxIterator;
-    private Task currentTask = null; // TODO: NBT
+    private Task currentTask = null;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
 
     public TileQuarry() {
@@ -123,6 +125,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             nbt.setTag("box_iterator", boxIterator.writeToNBT());
         }
         nbt.setTag("mj_battery", battery.serializeNBT());
+        if(currentTask != null) {
+            nbt.setString("current_task_class", currentTask.getClass().getName());
+            nbt.setTag("current_task_data", currentTask.serializeNBT());
+        }
         return nbt;
     }
 
@@ -134,6 +140,18 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         max = NBTUtils.readBlockPos(nbt.getTag("max"));
         boxIterator = new BoxIterator().readFromNBT(nbt.getCompoundTag("box_iterator"));
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
+        if(nbt.hasKey("current_task_class")) {
+            try {
+                currentTask = (Task) Class.forName(nbt.getString("current_task_class")).getDeclaredConstructor(TileQuarry.class).newInstance(this);
+                if(nbt.hasKey("current_task_data")) {
+                    currentTask.deserializeNBT(nbt.getCompoundTag("current_task_data"));
+                }
+            } catch(ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        } else {
+            currentTask = null;
+        }
     }
 
     @Override
@@ -161,7 +179,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         return super.getCapability(capability, facing);
     }
 
-    private abstract class Task {
+    private abstract class Task implements INBTSerializable<NBTTagCompound> {
         protected long energy = 0;
 
         protected abstract long getTarget();
@@ -192,10 +210,25 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 return energyReceived();
             }
         }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setLong("energy", energy);
+            return nbt;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            energy = nbt.getLong("energy");
+        }
     }
 
     private class TaskBreakBlock extends Task {
         BlockPos pos;
+
+        TaskBreakBlock() {
+        }
 
         public TaskBreakBlock(BlockPos pos) {
             this.pos = pos;
@@ -225,10 +258,26 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 worldObj.destroyBlock(pos, false);
             }
         }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = super.serializeNBT();
+            nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+            return nbt;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            super.deserializeNBT(nbt);
+            pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        }
     }
 
     private class TaskAddFrame extends Task {
         BlockPos pos;
+
+        TaskAddFrame() {
+        }
 
         public TaskAddFrame(BlockPos pos) {
             this.pos = pos;
@@ -256,6 +305,19 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                     }
                 }
             }
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = super.serializeNBT();
+            nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
+            return nbt;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            super.deserializeNBT(nbt);
+            pos = NBTUtils.readBlockPos(nbt.getCompoundTag("pos"));
         }
     }
 }
