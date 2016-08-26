@@ -103,10 +103,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                             return;
                         }
                     } else if(i == 1) {
-                            if(shouldBeFrame && block == Blocks.AIR) {
-                                currentTask = new TaskAddFrame(pos);
-                                return;
-                            }
+                        if(shouldBeFrame && block == Blocks.AIR) {
+                            currentTask = new TaskAddFrame(pos);
+                            return;
+                        }
                     }
                 }
             }
