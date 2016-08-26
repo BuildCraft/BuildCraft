@@ -13,9 +13,9 @@ public abstract class HudRenderer {
     protected void setupTransforms() {}
 
     public static void moveToHeldStack(Minecraft mc, int slot) {
-        
+
     }
-    
+
     public final void render(Minecraft mc, EntityPlayerSP player) {
         if (shouldRender(mc, player)) {
             GL11.glPushMatrix();

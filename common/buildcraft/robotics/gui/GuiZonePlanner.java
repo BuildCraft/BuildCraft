@@ -13,7 +13,6 @@ import javax.vecmath.Vector3d;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.client.Minecraft;
@@ -176,7 +175,13 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
             BlockPos pos = null;
             if (zonePlannerMapChunk != null) {
-                pos = zonePlannerMapChunk.data.keySet().stream().filter(blockPos -> blockPos.getX() == (int) positionX - chunkPos.getXStart() && blockPos.getZ() == (int) positionZ - chunkPos.getZStart()).findAny().orElse(null);
+                pos = zonePlannerMapChunk.data.keySet()//
+                        .stream()//
+                        .filter((blockPos) -> {//
+                            return blockPos.getX() == (int) positionX - chunkPos.getXStart()//
+                                && blockPos.getZ() == (int) positionZ - chunkPos.getZStart();//
+                        }).findAny()//
+                        .orElse(null);
             }
             if (pos != null && pos.getY() + 10 > camY) {
                 camY = Math.max(camY, pos.getY() + 10);
@@ -198,8 +203,12 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GL11.glViewport((x + offsetX) * scaledResolution.getScaleFactor(), Minecraft.getMinecraft().displayHeight - (sizeY + y + offsetY) * scaledResolution.getScaleFactor(), sizeX * scaledResolution.getScaleFactor(), sizeY * scaledResolution
-                .getScaleFactor());
+        GL11.glViewport(//
+                (x + offsetX) * scaledResolution.getScaleFactor(),//
+                Minecraft.getMinecraft().displayHeight - (sizeY + y + offsetY) * scaledResolution.getScaleFactor(),//
+                sizeX * scaledResolution.getScaleFactor(),//
+                sizeY * scaledResolution.getScaleFactor()//
+        );
         GL11.glScalef(scaledResolution.getScaleFactor(), scaledResolution.getScaleFactor(), 1);
         GLU.gluPerspective(70.0F, (float) sizeX / sizeY, 1F, 1000.0F);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
