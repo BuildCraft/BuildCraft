@@ -34,4 +34,28 @@ public class VecUtil {
     public static BlockPos absolute(BlockPos val) {
         return new BlockPos(Math.abs(val.getX()), Math.abs(val.getY()), Math.abs(val.getZ()));
     }
+
+    public static Vec3d replaceValue(Vec3d old, Axis axis, double with) {
+        return new Vec3d(//
+                axis == Axis.X ? with : old.xCoord,//
+                axis == Axis.Y ? with : old.yCoord,//
+                axis == Axis.Z ? with : old.zCoord//
+        );
+    }
+
+    public static BlockPos replaceValue(Vec3i old, Axis axis, int with) {
+        return new BlockPos(//
+                axis == Axis.X ? with : old.getX(),//
+                axis == Axis.Y ? with : old.getY(),//
+                axis == Axis.Z ? with : old.getZ()//
+        );
+    }
+
+    public static double getValue(Vec3d from, Axis axis) {
+        return axis == Axis.X ? from.xCoord : axis == Axis.Y ? from.yCoord : from.zCoord;
+    }
+
+    public static int getValue(BlockPos from, Axis axis) {
+        return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
+    }
 }
