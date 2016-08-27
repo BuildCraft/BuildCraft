@@ -3,7 +3,7 @@ package buildcraft.builders.block;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.rotation.RotationUtils;
+import buildcraft.lib.misc.RotationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -94,7 +94,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
         AxisAlignedBB result = BASE_AABB;
         for(EnumFacing facing : Stream.of(EnumFacing.values()).filter(side -> isConnected(world, pos, side)).toArray(EnumFacing[]::new)) {
-            result = result.union(RotationUtils.rotateAABB(CONNECTION_AABB, facing));
+            result = result.union(RotationUtil.rotateAABB(CONNECTION_AABB, facing));
         }
         return result;
     }
@@ -104,7 +104,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         List<AxisAlignedBB> boxes = new ArrayList<>();
         boxes.add(BASE_AABB);
         for(EnumFacing facing : Stream.of(EnumFacing.values()).filter(side -> isConnected(world, pos, side)).toArray(EnumFacing[]::new)) {
-            boxes.add(RotationUtils.rotateAABB(CONNECTION_AABB, facing));
+            boxes.add(RotationUtil.rotateAABB(CONNECTION_AABB, facing));
         }
         for(AxisAlignedBB box : boxes) {
             AxisAlignedBB boxWithOffset = box.offset(pos);

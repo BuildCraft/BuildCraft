@@ -35,6 +35,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
@@ -105,7 +107,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                             return;
                         }
                     } else if(i == 1) {
-                        if(shouldBeFrame && block == Blocks.AIR) {
+                        if(shouldBeFrame && block == Blocks.AIR && IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
                             currentTask = new TaskAddFrame(pos);
                             return;
                         }
@@ -255,7 +257,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if(!breakEvent.isCanceled()) {
                 worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-                worldObj.destroyBlock(pos, false);
+                worldObj.destroyBlock(pos, true);
             }
         }
 
@@ -296,7 +298,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         @Override
         protected void finish() {
             if(worldObj.isAirBlock(pos)) {
-                for(int slot = 8; slot >= 0; slot--) {
+                for(int slot = invFrames.getSlots(); slot >= 0; slot--) {
                     ItemStack stackInSlot = invFrames.getStackInSlot(slot);
                     if(stackInSlot != null) {
                         worldObj.setBlockState(pos, BCBuildersBlocks.frame.getDefaultState());
@@ -317,7 +319,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             super.deserializeNBT(nbt);
-            pos = NBTUtils.readBlockPos(nbt.getCompoundTag("pos"));
+            pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
         }
     }
 }

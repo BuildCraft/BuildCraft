@@ -1,9 +1,9 @@
-package buildcraft.lib.rotation;
+package buildcraft.lib.misc;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public class RotationUtils {
+public class RotationUtil {
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
         if(facing == EnumFacing.DOWN) {
             return new AxisAlignedBB(aabb.minX, aabb.maxY, aabb.minZ, aabb.maxX, aabb.minY, aabb.maxZ);
