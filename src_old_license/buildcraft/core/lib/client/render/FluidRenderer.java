@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.core.lib.EntityResizableCuboid;
 
+@Deprecated
 public final class FluidRenderer {
     public static final FluidRenderer INSTANCE = new FluidRenderer();
 

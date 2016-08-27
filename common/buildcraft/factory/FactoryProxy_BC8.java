@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.factory.client.render.RenderMiningWell;
 import buildcraft.factory.client.render.RenderPump;
+import buildcraft.factory.client.render.RenderTank;
 import buildcraft.factory.container.ContainerAutoCraftItems;
 import buildcraft.factory.container.ContainerChute;
 import buildcraft.factory.gui.GuiAutoCraftItems;
@@ -26,6 +27,7 @@ import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
+import buildcraft.factory.tile.TileTank;
 
 public abstract class FactoryProxy_BC8 implements IGuiHandler {
     @SidedProxy
@@ -89,7 +91,7 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
         public void fmlInit() {
             ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderMiningWell());
             ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderPump());
-            // ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileTank.class, new RenderTank());
             OBJLoader.INSTANCE.addDomain("buildcraftfactory");
         }
     }
