@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.bpt.IBptTask;
@@ -36,7 +37,6 @@ import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
@@ -44,8 +44,9 @@ import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage
 import buildcraft.lib.bpt.helper.VanillaBlockClearer;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
-import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
@@ -141,7 +142,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 if (!hasFinishedPreBuild) {
                     if (boxIter.hasFinished()) {
                         if (tasks.isEmpty()) {
-                            boxIter = new BoxIterator(BlockPos.ORIGIN, box.size().add(-1, -1, -1), EnumAxisOrder.XZY.defaultOrder, true);
+                            boxIter = new BoxIterator(BlockPos.ORIGIN, box.size().add(-1, -1, -1), EnumAxisOrder.XZY.getMinToMaxOrder(), true);
                             hasFinishedPreBuild = true;
                         }
                     } else {
@@ -191,8 +192,9 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                     BlockPos max = currentBpt.size.add(-1, -1, -1);
                     BlockPos end = start.add(max);
                     box = new Box(start, end);
-                    boxIter = new BoxIterator(BlockPos.ORIGIN, max, EnumAxisOrder.XZY.defaultOrder, true);
+                    boxIter = new BoxIterator(BlockPos.ORIGIN, max, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
                     cooldown = 3000;
+                    sendNetworkUpdate(NET_RENDER_DATA);
                 }
             }
         }
@@ -270,7 +272,12 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 writePayload(NET_PATH, buffer, side);
                 writePayload(NET_ANIM_STATE, buffer, side);
             } else if (id == NET_BOX) {
-
+                if (box == null) {
+                    buffer.writeBoolean(false);
+                } else {
+                    buffer.writeBoolean(true);
+                    box.writeData(buffer);
+                }
             } else if (id == NET_PATH) {
 
             } else if (id == NET_ANIM_STATE) {
@@ -288,7 +295,12 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 readPayload(NET_PATH, buffer, side, ctx);
                 readPayload(NET_ANIM_STATE, buffer, side, ctx);
             } else if (id == NET_BOX) {
-
+                if (buffer.readBoolean()) {
+                    box = new Box();
+                    box.readData(buffer);
+                } else {
+                    box = null;
+                }
             } else if (id == NET_PATH) {
 
             } else if (id == NET_CLEAR || id == NET_BUILD) {
@@ -324,5 +336,12 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             return (T) tankManager;
         }
         return super.getCapability(capability, facing);
+    }
+
+    // Rendering
+
+    @SideOnly(Side.CLIENT)
+    public Box getBox() {
+        return box;
     }
 }

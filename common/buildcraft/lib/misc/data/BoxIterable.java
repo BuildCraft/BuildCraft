@@ -1,0 +1,31 @@
+package buildcraft.lib.misc.data;
+
+import net.minecraft.util.math.BlockPos;
+
+import buildcraft.api.core.IBox;
+
+public class BoxIterable implements Iterable<BlockPos> {
+    private final BlockPos min, max;
+    private final AxisOrder order;
+    private final boolean invert;
+
+    public BoxIterable(IBox box, AxisOrder order) {
+        this(box.max(), box.max(), order);
+    }
+
+    public BoxIterable(BlockPos min, BlockPos max, AxisOrder order) {
+        this(min, max, order, false);
+    }
+
+    public BoxIterable(BlockPos min, BlockPos max, AxisOrder order, boolean invert) {
+        this.min = min;
+        this.max = max;
+        this.order = order;
+        this.invert = invert;
+    }
+
+    @Override
+    public BoxIterator iterator() {
+        return new BoxIterator(min, max, order, invert);
+    }
+}

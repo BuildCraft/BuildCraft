@@ -4,10 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.client.render.RenderArchitect;
-import buildcraft.builders.container.ContainerArchitect;
-import buildcraft.builders.gui.GuiArchitect;
-import buildcraft.builders.tile.TileArchitect_Neptune;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -19,8 +15,14 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.builders.client.render.RenderArchitect;
+import buildcraft.builders.client.render.RenderBuilder;
+import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
+import buildcraft.builders.gui.GuiArchitect;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
+import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 
 public abstract class BuildersProxy_Neptune implements IGuiHandler {
@@ -80,11 +82,12 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
             }
             return null;
         }
-        
+
         @Override
         public void fmlInit() {
             super.fmlInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder_Neptune.class, new RenderBuilder());
         }
     }
 }

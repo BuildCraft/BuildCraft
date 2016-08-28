@@ -13,8 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-import buildcraft.core.lib.utils.Utils;
-
 public class PositionUtil {
     @Nullable
     public static EnumFacing getDirectFacingOffset(BlockPos from, BlockPos to) {
@@ -106,9 +104,9 @@ public class PositionUtil {
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
         EnumFacing newSouth = PositionUtil.rotateFacing(EnumFacing.SOUTH, axis, rotation);
 
-        rotated = Utils.withValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
-        rotated = Utils.withValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
-        rotated = Utils.withValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
 
         return rotated;
     }
@@ -126,9 +124,9 @@ public class PositionUtil {
         EnumFacing newUp = PositionUtil.rotateFacing(EnumFacing.UP, axis, rotation);
         EnumFacing newSouth = PositionUtil.rotateFacing(EnumFacing.SOUTH, axis, rotation);
 
-        rotated = Utils.withValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
-        rotated = Utils.withValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
-        rotated = Utils.withValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newEast.getAxis(), numEast * newEast.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newUp.getAxis(), numUp * newUp.getAxisDirection().getOffset());
+        rotated = VecUtil.replaceValue(rotated, newSouth.getAxis(), numSouth * newSouth.getAxisDirection().getOffset());
 
         return rotated;
     }

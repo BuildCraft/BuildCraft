@@ -22,6 +22,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.PipeRenderState;
 
 import javax.vecmath.Vector3f;
@@ -103,11 +104,11 @@ public class PipeModelCacheWire {
                 Vec3d start = pos;
                 Vec3d end = pos.add(centerSize);
                 if (positive) {
-                    start = Utils.withValue(start, axis, Utils.getValue(start, axis) + WIRE_WIDTH);
-                    end = Utils.withValue(end, axis, 1);
+                    start = VecUtil.replaceValue(start, axis, VecUtil.getValue(start, axis) + WIRE_WIDTH);
+                    end = VecUtil.replaceValue(end, axis, (double) 1);
                 } else {
-                    start = Utils.withValue(start, axis, 0);
-                    end = Utils.withValue(end, axis, Utils.getValue(end, axis) - WIRE_WIDTH);
+                    start = VecUtil.replaceValue(start, axis, (double) 0);
+                    end = VecUtil.replaceValue(end, axis, VecUtil.getValue(end, axis) - WIRE_WIDTH);
                 }
                 renderCuboid(unprocessed, start, end.subtract(start), sprite);
             } else {
@@ -124,11 +125,11 @@ public class PipeModelCacheWire {
                 Vec3d start = pos;
                 Vec3d end = pos.add(centerSize);
                 if (positive) {
-                    start = Utils.withValue(start, axis, Utils.getValue(start, axis) + WIRE_WIDTH);
-                    end = Utils.withValue(end, axis, CoreConstants.PIPE_MAX_POS);
+                    start = VecUtil.replaceValue(start, axis, VecUtil.getValue(start, axis) + WIRE_WIDTH);
+                    end = VecUtil.replaceValue(end, axis, (double) CoreConstants.PIPE_MAX_POS);
                 } else {
-                    start = Utils.withValue(start, axis, CoreConstants.PIPE_MIN_POS);
-                    end = Utils.withValue(end, axis, Utils.getValue(end, axis) - WIRE_WIDTH);
+                    start = VecUtil.replaceValue(start, axis, (double) CoreConstants.PIPE_MIN_POS);
+                    end = VecUtil.replaceValue(end, axis, VecUtil.getValue(end, axis) - WIRE_WIDTH);
                 }
                 Vec3d size = end.subtract(start);
                 if (size.lengthVector() > WIRE_WIDTH * 2) {
@@ -170,9 +171,9 @@ public class PipeModelCacheWire {
                 vFace = holder;
             }
             uvs[BuildCraftBakedModel.U_MIN] = sprite.getMinU();
-            uvs[BuildCraftBakedModel.U_MAX] = sprite.getInterpolatedU(Utils.getValue(size, uFace.getAxis()) * 16);
+            uvs[BuildCraftBakedModel.U_MAX] = sprite.getInterpolatedU(VecUtil.getValue(size, uFace.getAxis()) * 16);
             uvs[BuildCraftBakedModel.V_MIN] = sprite.getMinV();
-            uvs[BuildCraftBakedModel.V_MAX] = sprite.getInterpolatedV(Utils.getValue(size, vFace.getAxis()) * 16);
+            uvs[BuildCraftBakedModel.V_MAX] = sprite.getInterpolatedV(VecUtil.getValue(size, vFace.getAxis()) * 16);
             BCModelHelper.appendQuads(quads, BCModelHelper.createFace(face, center, radiusF, uvs));
         }
     }

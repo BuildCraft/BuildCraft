@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.VecUtil;
 
 public enum DefaultPipeConnection implements ICustomPipeConnection {
     INSTANCE;
@@ -23,10 +24,10 @@ public enum DefaultPipeConnection implements ICustomPipeConnection {
         // Invert the face (If it was up, we want to get the bottom of the block)
         if (face.getAxisDirection() == AxisDirection.POSITIVE) {
             Vec3d min = Utils.min(bb).subtract(Utils.convert(pos));
-            return (float) Utils.getValue(min, face.getAxis());
+            return (float) VecUtil.getValue(min, face.getAxis());
         } else {
             Vec3d max = Utils.max(bb).subtract(Utils.convert(pos));
-            return 1 - (float) Utils.getValue(max, face.getAxis());
+            return 1 - (float) VecUtil.getValue(max, face.getAxis());
         }
     }
 }

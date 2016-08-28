@@ -52,12 +52,11 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.RFBattery;
-import buildcraft.core.lib.utils.BCStringUtils;
-import buildcraft.core.lib.utils.BlockMiner;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
+import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 
 import io.netty.buffer.ByteBuf;
 
@@ -131,14 +130,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             if (miningBox == null || !miningBox.isInitialized()) {
                 miningBox = new Box(box.min(), box.max());
                 miningBox.contract(1);
-                miningBox.setMin(Utils.withValue(miningBox.min(), Axis.Y, 0));
+                miningBox.setMin(VecUtil.replaceValue(miningBox.min(), Axis.Y, 0));
                 miningBox.setMax(miningBox.max().add(0, 1, 0));
             }
 
             if (findTarget(false)) {
                 AxisAlignedBB union = miningBox.getBoundingBox().union(box.getBoundingBox());
                 if (!union.isVecInside(headPos)) {
-                    headPos = Utils.withValue(headPos, Axis.Y, miningBox.max().getY() - 2);
+                    headPos = VecUtil.replaceValue(headPos, Axis.Y, (double) (miningBox.max().getY() - 2));
                     BlockPos nearestPos = miningBox.closestInsideTo(Utils.convertFloor(headPos));
                     headPos = Utils.convert(nearestPos);
                 }
@@ -599,7 +598,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         if (ySize < 5) {
             ySize = 5;
-            box.setMax(Utils.withValue(box.max(), Axis.Y, box.min().getY() + ySize - 1));
+            box.setMax(VecUtil.replaceValue(box.max(), Axis.Y, box.min().getY() + ySize - 1));
         }
 
         if (useDefault) {
@@ -646,7 +645,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         Blueprint bpt = pqf.getBlueprint(box, worldObj);
         builder = new BptBuilderBlueprint(bpt, worldObj, box.min());
-        builder.setOrder(new Utils.AxisOrder(EnumAxisOrder.XZY, true, true, false));
+        builder.setOrder(new AxisOrder(EnumAxisOrder.XZY, true, true, false));
         speed = 0;
         stage = Stage.BUILDING;
         sendNetworkUpdate();

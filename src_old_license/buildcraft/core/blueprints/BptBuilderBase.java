@@ -33,11 +33,11 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.builders.*;
-import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -50,7 +50,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
     private long nextBuildDate = 0;
 
-    private Utils.AxisOrder order = Utils.EnumAxisOrder.XZY.defaultOrder;
+    private AxisOrder order = EnumAxisOrder.XZY.defaultOrder;
 
     public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
         this.blueprint = bluePrint;
@@ -64,11 +64,11 @@ public abstract class BptBuilderBase implements IAreaProvider {
         context = bluePrint.getContext(world, box);
     }
 
-    public void setOrder(Utils.AxisOrder order) {
+    public void setOrder(AxisOrder order) {
         if (order != null) this.order = order;
     }
 
-    public Utils.AxisOrder getOrder() {
+    public AxisOrder getOrder() {
         return order;
     }
 

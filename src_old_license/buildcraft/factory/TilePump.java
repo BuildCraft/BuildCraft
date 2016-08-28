@@ -33,6 +33,7 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.misc.VecUtil;
 
 import io.netty.buffer.ByteBuf;
 
@@ -410,7 +411,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         if (getPos() == null) return null;
-        return new Box(this).extendToEncompass(Utils.withValue(getPos(), Axis.Y, 0)).getBoundingBox();
+        return new Box(this).extendToEncompass(VecUtil.replaceValue(getPos(), Axis.Y, 0)).getBoundingBox();
     }
 
     @Override

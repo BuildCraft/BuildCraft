@@ -15,6 +15,7 @@ import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
@@ -76,14 +77,14 @@ public class PipeTransportRendererPower extends PipeTransportRenderer<PipeTransp
             }
 
             for (Axis axis : Axis.values()) {
-                double value = Utils.getValue(pow.clientDisplayFlowCentre, axis);
+                double value = VecUtil.getValue(pow.clientDisplayFlowCentre, axis);
                 while (value < 0) {
                     value += 16;
                 }
                 while (value > 16) {
                     value -= 16;
                 }
-                pow.clientDisplayFlowCentre = Utils.withValue(pow.clientDisplayFlowCentre, axis, value);
+                pow.clientDisplayFlowCentre = VecUtil.replaceValue(pow.clientDisplayFlowCentre, axis, value);
             }
             renderCenterPower(centerPower, pow.clientDisplayFlowCentre);
         }

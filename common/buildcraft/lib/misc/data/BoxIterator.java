@@ -1,42 +1,25 @@
-package buildcraft.lib.misc;
+package buildcraft.lib.misc.data;
 
-import buildcraft.api.core.IBox;
-import buildcraft.api.core.INetworkLoadable_BC8;
-import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.lib.utils.Utils.AxisOrder;
-import io.netty.buffer.ByteBuf;
+import java.util.Iterator;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 
-public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
+import buildcraft.api.core.IBox;
+import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.VecUtil;
+
+public class BoxIterator implements Iterator<BlockPos> {
     private final BlockPos min, max;
-    private final boolean invert, repeat;
+    private final boolean invert, repeat;// TODO: remove repeat if its not used in the future
     private AxisOrder order;
     private BlockPos current;
 
     public BoxIterator() {
         min = max = null;
         invert = repeat = false;
-    }
-
-    private BoxIterator(BlockPos min, BlockPos max, boolean invert, boolean repeat, AxisOrder order, BlockPos current) {
-        this.min = min;
-        this.max = max;
-        this.invert = invert;
-        this.repeat = repeat;
-        this.order = order;
-        this.current = current;
-    }
-
-    public BoxIterator(BoxIterator old) {
-        this.min = old.min;
-        this.max = old.max;
-        this.invert = old.invert;
-        this.repeat = old.repeat;
-        this.order = old.order;
-        this.current = old.current;
     }
 
     public BoxIterator(IBox box, AxisOrder order, boolean invert) {
@@ -52,6 +35,26 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
         this.current = getStart();
     }
 
+    public BoxIterator(NBTTagCompound nbt) {
+        min = NBTUtils.readBlockPos(nbt.getTag("min"));
+        max = NBTUtils.readBlockPos(nbt.getTag("max"));
+        invert = nbt.getBoolean("invert");
+        repeat = false;
+        order = AxisOrder.readNbt(nbt.getCompoundTag("order"));
+        current = NBTUtils.readBlockPos(nbt.getTag("current"));
+    }
+
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("min", NBTUtils.writeBlockPos(min));
+        nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        nbt.setBoolean("invert", invert);
+        // repeat
+        nbt.setTag("order", order.writeNbt());
+        nbt.setTag("current", NBTUtils.writeBlockPos(current));
+        return nbt;
+    }
+
     private BlockPos getStart() {
         BlockPos pos = BlockPos.ORIGIN;
         pos = replace(pos, order.first);
@@ -61,7 +64,7 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
 
     private BlockPos replace(BlockPos toReplace, EnumFacing facing) {
         BlockPos with = facing.getAxisDirection() == AxisDirection.POSITIVE ? min : max;
-        return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
+        return VecUtil.replaceValue(toReplace, facing.getAxis(), VecUtil.getValue(with, facing.getAxis()));
     }
 
     public BlockPos getCurrent() {
@@ -122,14 +125,14 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
 
     private static BlockPos increment(BlockPos pos, EnumFacing facing) {
         int diff = facing.getAxisDirection().getOffset();
-        int value = Utils.getValue(pos, facing.getAxis()) + diff;
-        return Utils.withValue(pos, facing.getAxis(), value);
+        int value = VecUtil.getValue(pos, facing.getAxis()) + diff;
+        return VecUtil.replaceValue(pos, facing.getAxis(), value);
     }
 
     private boolean shouldReset(BlockPos current, EnumFacing facing) {
-        int lstReturned = Utils.getValue(current, facing.getAxis());
+        int lstReturned = VecUtil.getValue(current, facing.getAxis());
         BlockPos goingTo = facing.getAxisDirection() == AxisDirection.POSITIVE ? max : min;
-        int to = Utils.getValue(goingTo, facing.getAxis());
+        int to = VecUtil.getValue(goingTo, facing.getAxis());
         if (facing.getAxisDirection() == AxisDirection.POSITIVE) return lstReturned > to;
         return lstReturned < to;
     }
@@ -138,18 +141,17 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
         return current == null;
     }
 
+    // Iterator
+
     @Override
-    public BoxIterator readFromByteBuf(ByteBuf buf) {
-        return new BoxIterator(NetworkUtils.readBlockPos(buf), NetworkUtils.readBlockPos(buf), buf.readBoolean(), buf.readBoolean(), new AxisOrder().readFromByteBuf(buf), NetworkUtils.readBlockPos(buf));
+    public boolean hasNext() {
+        return !hasFinished();
     }
 
     @Override
-    public void writeToByteBuf(ByteBuf buf) {
-        NetworkUtils.writeBlockPos(buf, min);
-        NetworkUtils.writeBlockPos(buf, max);
-        buf.writeBoolean(invert);
-        buf.writeBoolean(repeat);
-        order.writeToByteBuf(buf);
-        NetworkUtils.writeBlockPos(buf, current);
+    public BlockPos next() {
+        BlockPos c = current;
+        advance();
+        return c;
     }
 }
