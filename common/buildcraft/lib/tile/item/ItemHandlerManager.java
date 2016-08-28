@@ -98,7 +98,7 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
 
     private static class Wrapper {
         private final List<IItemHandlerModifiable> handlers = new ArrayList<>();
-        private CombinedInvWrapper combined = null;// FIXME: This should be an IItemTransactor as well.
+        private CombinedInvWrapper combined = null;// TODO: This should be an IItemTransactor as well.
 
         public void genWrapper() {
             IItemHandlerModifiable[] arr = new IItemHandlerModifiable[handlers.size()];

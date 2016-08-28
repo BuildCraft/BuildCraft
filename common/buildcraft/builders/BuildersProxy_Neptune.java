@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.client.render.RenderArchitect;
 import buildcraft.builders.client.render.RenderQuarry;
 import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.container.ContainerQuarry;
@@ -96,6 +97,7 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
 
         @Override
         public void fmlInit() {
+            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
         }
     }

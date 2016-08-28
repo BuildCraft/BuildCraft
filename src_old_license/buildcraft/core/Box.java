@@ -17,18 +17,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.NBTUtils;
 
 import io.netty.buffer.ByteBuf;
 
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox, ISerializable {
+    @Deprecated
     public enum Kind {
         LASER_RED,
         LASER_YELLOW,
@@ -38,9 +43,17 @@ public class Box implements IBox, ISerializable {
         BLUE_STRIPES,
     }
 
+    @Deprecated
     public Kind kind = Kind.LASER_RED;
+    @Deprecated
     public boolean isVisible = true;
+    @Deprecated
     public LaserData[] lasersData;
+
+    @SideOnly(Side.CLIENT)
+    public LaserData_BC8[] laserData;
+    @SideOnly(Side.CLIENT)
+    public BlockPos lastMin, lastMax;
 
     private BlockPos min, max;
 
