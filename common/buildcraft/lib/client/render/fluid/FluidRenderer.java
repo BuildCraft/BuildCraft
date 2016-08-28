@@ -200,7 +200,7 @@ public class FluidRenderer {
 
         /** If true, then X maps to U. Otherwise Z maps to U. */
         private final boolean ux;
-        /** If true, then Y maps to U. Otherwise Z maps to U. */
+        /** If true, then Y maps to V. Otherwise Z maps to V. */
         private final boolean vy;
 
         private TexMap(boolean ux, boolean vy) {
@@ -212,6 +212,7 @@ public class FluidRenderer {
          * 
          * (Uses {@link #ux} and {@link #vy} to determine how they are mapped). */
         private void apply(double x, double y, double z) {
+            // TODO: this doesn't work when the coord is exactly 1!
             x = (x % 1 + 1) % 1;
             y = (y % 1 + 1) % 1;
             z = (z % 1 + 1) % 1;

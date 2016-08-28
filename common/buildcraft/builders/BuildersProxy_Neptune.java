@@ -4,6 +4,7 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.client.render.RenderArchitect;
 import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.gui.GuiArchitect;
 import buildcraft.builders.tile.TileArchitect_Neptune;
@@ -12,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -77,6 +79,12 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
                 }
             }
             return null;
+        }
+        
+        @Override
+        public void fmlInit() {
+            super.fmlInit();
+            ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
         }
     }
 }

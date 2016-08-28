@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -23,8 +25,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.tile.TileBC_Neptune;
-
-import javax.annotation.Nullable;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     public Tank tank = new SingleUseTank("tank", 16000, this);
@@ -105,7 +105,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            //noinspection unchecked
+            // noinspection unchecked
             return (T) new IFluidHandler() {
                 @Override
                 public IFluidTankProperties[] getTankProperties() {
@@ -114,7 +114,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
 
                 private Tank getTank(BlockPos currentPos) {
                     TileTank tile = (worldObj.getTileEntity(currentPos) instanceof TileTank) ? (TileTank) worldObj.getTileEntity(currentPos) : null;
-                    if(tile != null && (tile.tank.getFluidType() == tank.getFluidType() || tile.tank.getFluidType() == null || tank.getFluidType() == null)) {
+                    if (tile != null && (tile.tank.getFluidType() == tank.getFluidType() || tile.tank.getFluidType() == null || tank.getFluidType() == null)) {
                         return tile.tank;
                     }
                     return null;
@@ -123,9 +123,9 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                 private List<Tank> getTanks() {
                     List<Tank> tanks = new ArrayList<>();
                     BlockPos currentPos = pos;
-                    while(true) {
+                    while (true) {
                         Tank tank = getTank(currentPos);
-                        if(tank != null) {
+                        if (tank != null) {
                             tanks.add(tank);
                         } else {
                             break;
@@ -133,9 +133,9 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                         currentPos = currentPos.up();
                     }
                     currentPos = pos.down();
-                    while(true) {
+                    while (true) {
                         Tank tank = getTank(currentPos);
-                        if(tank != null) {
+                        if (tank != null) {
                             tanks.add(tank);
                         } else {
                             break;
@@ -148,15 +148,15 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                 @Override
                 public int fill(FluidStack resource, boolean doFill) {
                     int result = 0;
-                    if(resource == null) {
+                    if (resource == null) {
                         return result;
                     }
                     FluidStack copy = resource.copy();
-                    for(Tank tank : getTanks()) {
+                    for (Tank tank : getTanks()) {
                         int filled = tank.fill(copy, doFill);
                         result += filled;
                         copy.amount -= filled;
-                        if(copy.amount <= 0) {
+                        if (copy.amount <= 0) {
                             break;
                         }
                     }
@@ -167,11 +167,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                 @Override
                 public FluidStack drain(FluidStack resource, boolean doDrain) {
                     FluidStack result = null;
-                    for(Tank tank : getTanks()) {
+                    for (Tank tank : getTanks()) {
                         FluidStack drained = tank.drain(resource, doDrain);
-                        if(result == null) {
+                        if (result == null) {
                             result = drained;
-                        } else if(drained != null) {
+                        } else if (drained != null) {
                             result.amount += drained.amount;
                         }
                     }
@@ -182,11 +182,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                 @Override
                 public FluidStack drain(int maxDrain, boolean doDrain) {
                     FluidStack result = null;
-                    for(Tank tank : getTanks()) {
+                    for (Tank tank : getTanks()) {
                         FluidStack drained = tank.drain(maxDrain, doDrain);
-                        if(result == null) {
+                        if (result == null) {
                             result = drained;
-                        } else if(drained != null) {
+                        } else if (drained != null) {
                             result.amount += drained.amount;
                         }
                     }
