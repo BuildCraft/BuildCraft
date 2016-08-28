@@ -89,10 +89,10 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
         return order;
     }
 
-    public void advance() {
+    public BlockPos advance() {
         if (current == null) {
             current = getStart();
-            return;
+            return getCurrent();
         }
         current = increment(current, order.first);
         if (shouldReset(current, order.first)) {
@@ -119,6 +119,7 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
                 }
             }
         }
+        return getCurrent();
     }
 
     private static BlockPos increment(BlockPos pos, EnumFacing facing) {
@@ -163,12 +164,18 @@ public class BoxIterator implements INetworkLoadable_BC8<BoxIterator> {
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("min", NBTUtils.writeBlockPos(min));
-        tag.setTag("max", NBTUtils.writeBlockPos(max));
+        if(min != null) {
+            tag.setTag("min", NBTUtils.writeBlockPos(min));
+        }
+        if(max != null) {
+            tag.setTag("max", NBTUtils.writeBlockPos(max));
+        }
         tag.setBoolean("invert", invert);
         tag.setBoolean("repeat", repeat);
         tag.setTag("order", order.writeToNBT());
-        tag.setTag("current", NBTUtils.writeBlockPos(current));
+        if(current != null) {
+            tag.setTag("current", NBTUtils.writeBlockPos(current));
+        }
         return tag;
     }
 }

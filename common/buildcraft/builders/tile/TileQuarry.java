@@ -2,6 +2,7 @@ package buildcraft.builders.tile;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -10,6 +11,8 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.misc.FakePlayerUtil;
@@ -17,36 +20,42 @@ import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
     private final MjCapabilityHelper mjCapHelper;
     private final Box box = new Box();
-    private BlockPos min;
-    private BlockPos max;
+    public BlockPos min;
+    public BlockPos max;
     private BoxIterator boxIterator;
     private Task currentTask = null;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
+    public Vec3d drillPos;
 
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
@@ -67,8 +76,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             box.reset();
             min = provider.min();
             max = provider.max();
-            box.setMin(new BlockPos(min.getX(), 0, min.getZ()));
-            box.setMax(new BlockPos(max.getX(), min.getY() - 1, max.getZ()));
+            box.setMin(new BlockPos(min.getX() + 1, 0, min.getZ() + 1));
+            box.setMax(new BlockPos(max.getX() - 1, min.getY() - 1, max.getZ() - 1));
             provider.removeFromWorld();
         }
     }
@@ -84,14 +93,15 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
              battery.addPower(MjAPI.MJ); // remove this
          }
 
-        if(min == null || max == null) {
+        if(min == null || max == null || box == null) {
             return;
         }
 
         if(currentTask != null) {
-            if(currentTask.addEnergy(battery.extractPower(0, currentTask.getTarget() - currentTask.getEnergy()))) {
+            if(currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getEnergy(), 1000000)))) {
                 currentTask = null;
             }
+            sendNetworkUpdate(NET_RENDER_DATA);
             return;
         }
 
@@ -103,17 +113,41 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                     Block block = worldObj.getBlockState(pos).getBlock();
                     if(i == 0) {
                         if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                            drillPos = null;
                             currentTask = new TaskBreakBlock(pos);
+                            sendNetworkUpdate(NET_RENDER_DATA);
                             return;
                         }
                     } else if(i == 1) {
-                        if(shouldBeFrame && block == Blocks.AIR && IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
-                            currentTask = new TaskAddFrame(pos);
+                        if(shouldBeFrame && block == Blocks.AIR) {
+                            drillPos = null;
+                            if(IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
+                                currentTask = new TaskAddFrame(pos);
+                                sendNetworkUpdate(NET_RENDER_DATA);
+                            }
                             return;
                         }
                     }
                 }
             }
+        }
+
+        if(boxIterator == null || drillPos == null) {
+            boxIterator = new BoxIterator(box, new Utils.AxisOrder(Utils.EnumAxisOrder.XZY, false, false, false), true);
+            while(worldObj.isAirBlock(boxIterator.getCurrent())) {
+                boxIterator.advance();
+            }
+            drillPos = new Vec3d(boxIterator.getCurrent());
+        }
+
+        if(boxIterator.getMin() != null && boxIterator.getMax() != null) {
+            if(!worldObj.isAirBlock(boxIterator.getCurrent())) {
+                currentTask = new TaskBreakBlock(boxIterator.getCurrent());
+            } else {
+                currentTask = new TaskMoveDrill(drillPos, new Vec3d(boxIterator.advance()));
+            }
+
+            sendNetworkUpdate(NET_RENDER_DATA);
         }
     }
 
@@ -121,8 +155,12 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         nbt.setTag("box", box.writeToNBT());
-        nbt.setTag("min", NBTUtils.writeBlockPos(min));
-        nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        if(min != null) {
+            nbt.setTag("min", NBTUtils.writeBlockPos(min));
+        }
+        if(max != null) {
+            nbt.setTag("max", NBTUtils.writeBlockPos(max));
+        }
         if(boxIterator != null) {
             nbt.setTag("box_iterator", boxIterator.writeToNBT());
         }
@@ -130,6 +168,9 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         if(currentTask != null) {
             nbt.setString("current_task_class", currentTask.getClass().getName());
             nbt.setTag("current_task_data", currentTask.serializeNBT());
+        }
+        if(drillPos != null) {
+            nbt.setTag("drill_pos", NBTUtils.writeVec3d(drillPos));
         }
         return nbt;
     }
@@ -154,6 +195,63 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         } else {
             currentTask = null;
         }
+        drillPos = NBTUtils.readVec3d(nbt.getTag("drill_pos"));
+    }
+
+    @Override
+    public void writePayload(int id, PacketBuffer buffer, Side side) {
+        super.writePayload(id, buffer, side);
+        if(id == NET_RENDER_DATA) {
+            buffer.writeBoolean(min != null);
+            if(min != null) {
+                buffer.writeBlockPos(min);
+            }
+            buffer.writeBoolean(max != null);
+            if(max != null) {
+                buffer.writeBlockPos(max);
+            }
+            buffer.writeBoolean(currentTask != null);
+            if(currentTask != null) {
+                buffer.writeString(currentTask.getClass().getName());
+                currentTask.writeToByteBuf(buffer);
+            }
+            buffer.writeBoolean(drillPos != null);
+            if(drillPos != null) {
+                NetworkUtils.writeVec3d(buffer, drillPos);
+            }
+        }
+    }
+
+    @Override
+    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        super.readPayload(id, buffer, side, ctx);
+        if(id == NET_RENDER_DATA) {
+            if(buffer.readBoolean()) {
+                min = buffer.readBlockPos();
+            } else {
+                min = null;
+            }
+            if(buffer.readBoolean()) {
+                max = buffer.readBlockPos();
+            } else {
+                max = null;
+            }
+            if(buffer.readBoolean()) {
+                try {
+                    currentTask = (Task) Class.forName(buffer.readStringFromBuffer(256)).getDeclaredConstructor(TileQuarry.class).newInstance(this);
+                    currentTask.readFromByteBuf(buffer);
+                } catch(InstantiationException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                currentTask = null;
+            }
+            if(buffer.readBoolean()) {
+                drillPos = NetworkUtils.readVec3d(buffer);
+            } else {
+                drillPos = null;
+            }
+        }
     }
 
     @Override
@@ -166,6 +264,14 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         left.add("min = " + min);
         left.add("max = " + max);
         left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+        if(currentTask != null) {
+            left.add("task:");
+            left.add(" - class = " + currentTask.getClass().getName());
+            left.add(" - energy = " + currentTask.getEnergy());
+        } else {
+            left.add("task = null");
+        }
+        left.add("drill = " + drillPos);
     }
 
     @Override
@@ -181,7 +287,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         return super.getCapability(capability, facing);
     }
 
-    private abstract class Task implements INBTSerializable<NBTTagCompound> {
+    private abstract class Task implements INBTSerializable<NBTTagCompound>, INetworkLoadable_BC8<Task> {
         protected long energy = 0;
 
         protected abstract long getTarget();
@@ -193,14 +299,14 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         protected abstract void finish();
 
-        public long getEnergy() {
+        public final long getEnergy() {
             return energy;
         }
 
         /**
          * @return true means that task is canceled
          */
-        public boolean addEnergy(long count) {
+        public final boolean addEnergy(long count) {
             if(count == 0) {
                 return false;
             }
@@ -224,15 +330,27 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         public void deserializeNBT(NBTTagCompound nbt) {
             energy = nbt.getLong("energy");
         }
+
+        @Override
+        public void writeToByteBuf(ByteBuf buf) {
+            buf.writeLong(energy);
+        }
+
+        @Override
+        public Task readFromByteBuf(ByteBuf buf) {
+            energy = buf.readLong();
+            return this;
+        }
     }
 
     private class TaskBreakBlock extends Task {
         BlockPos pos;
 
+        @SuppressWarnings("unused")
         TaskBreakBlock() {
         }
 
-        public TaskBreakBlock(BlockPos pos) {
+        TaskBreakBlock(BlockPos pos) {
             this.pos = pos;
         }
 
@@ -273,15 +391,31 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             super.deserializeNBT(nbt);
             pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
         }
+
+        @Override
+        public void writeToByteBuf(ByteBuf buf) {
+            super.writeToByteBuf(buf);
+            buf.writeInt(pos.getX());
+            buf.writeInt(pos.getY());
+            buf.writeInt(pos.getZ());
+        }
+
+        @Override
+        public Task readFromByteBuf(ByteBuf buf) {
+            super.readFromByteBuf(buf);
+            pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+            return this;
+        }
     }
 
     private class TaskAddFrame extends Task {
         BlockPos pos;
 
+        @SuppressWarnings("unused")
         TaskAddFrame() {
         }
 
-        public TaskAddFrame(BlockPos pos) {
+        TaskAddFrame(BlockPos pos) {
             this.pos = pos;
         }
 
@@ -320,6 +454,85 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         public void deserializeNBT(NBTTagCompound nbt) {
             super.deserializeNBT(nbt);
             pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
+        }
+
+        @Override
+        public void writeToByteBuf(ByteBuf buf) {
+            super.writeToByteBuf(buf);
+            buf.writeInt(pos.getX());
+            buf.writeInt(pos.getY());
+            buf.writeInt(pos.getZ());
+        }
+
+        @Override
+        public Task readFromByteBuf(ByteBuf buf) {
+            super.readFromByteBuf(buf);
+            pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+            return this;
+        }
+    }
+
+    private class TaskMoveDrill extends Task {
+        Vec3d from;
+        Vec3d to;
+
+        @SuppressWarnings("unused")
+        TaskMoveDrill() {
+        }
+
+        TaskMoveDrill(Vec3d from, Vec3d to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected long getTarget() {
+            return 10000000;
+        }
+
+        @Override
+        protected boolean energyReceived() {
+            drillPos = from.scale(1 - (double) energy / getTarget()).add(to.scale((double) energy / getTarget()));
+            return false;
+        }
+
+        @Override
+        protected void finish() {
+            drillPos = to;
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            NBTTagCompound nbt = super.serializeNBT();
+            nbt.setTag("from", NBTUtils.writeVec3d(from));
+            nbt.setTag("to", NBTUtils.writeVec3d(to));
+            return nbt;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            super.deserializeNBT(nbt);
+            from = NBTUtils.readVec3d(nbt.getTag("from"));
+            to = NBTUtils.readVec3d(nbt.getTag("to"));
+        }
+
+        @Override
+        public void writeToByteBuf(ByteBuf buf) {
+            super.writeToByteBuf(buf);
+            buf.writeDouble(from.xCoord);
+            buf.writeDouble(from.yCoord);
+            buf.writeDouble(from.zCoord);
+            buf.writeDouble(to.xCoord);
+            buf.writeDouble(to.yCoord);
+            buf.writeDouble(to.zCoord);
+        }
+
+        @Override
+        public Task readFromByteBuf(ByteBuf buf) {
+            super.readFromByteBuf(buf);
+            from = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            to = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            return this;
         }
     }
 }
