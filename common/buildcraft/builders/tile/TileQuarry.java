@@ -57,6 +57,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private Task currentTask = null;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
     public Vec3d drillPos;
+    public Vec3d prevDrillPos;
 
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
@@ -89,10 +90,11 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
-         if (!battery.isFull()) {
-             // test with the output of a stone engine
-             battery.addPower(MjAPI.MJ); // remove this
-         }
+
+        if(!battery.isFull()) {
+            // test with the output of a stone engine
+            battery.addPower(MjAPI.MJ); // remove this
+        }
 
         if(min == null || max == null || box == null) {
             return;
@@ -247,6 +249,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             } else {
                 currentTask = null;
             }
+            prevDrillPos = drillPos;
             if(buffer.readBoolean()) {
                 drillPos = NetworkUtils.readVec3d(buffer);
             } else {
