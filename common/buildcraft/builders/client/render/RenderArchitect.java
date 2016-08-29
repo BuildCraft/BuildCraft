@@ -19,4 +19,9 @@ public class RenderArchitect extends FastTESR<TileArchitect_Neptune> {
 
         vb.setTranslation(0, 0, 0);
     }
+
+    @Override
+    public boolean isGlobalRenderer(TileArchitect_Neptune te) {
+        return true;
+    }
 }

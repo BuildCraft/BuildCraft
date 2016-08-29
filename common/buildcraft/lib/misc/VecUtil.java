@@ -10,6 +10,8 @@ import net.minecraft.util.math.Vec3i;
 /** Class for dealing with {@link Vec3d}, {@link Vec3i}, {@link EnumFacing}, {@link Axis} conversions and additions.
  * This is for simple functions ONLY, {@link PositionUtil} is for complex interactions */
 public class VecUtil {
+    public static final BlockPos POS_ONE = new BlockPos(1, 1, 1);
+
     public static Vec3d add(Vec3d a, Vec3i b) {
         return a.addVector(b.getX(), b.getY(), b.getZ());
     }
@@ -57,5 +59,43 @@ public class VecUtil {
 
     public static int getValue(BlockPos from, Axis axis) {
         return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
+    }
+
+    // Min/Max
+
+    public static BlockPos min(BlockPos a, BlockPos b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return new BlockPos(//
+                Math.min(a.getX(), b.getX()),//
+                Math.min(a.getY(), b.getY()),//
+                Math.min(a.getZ(), b.getZ())//
+        );
+    }
+
+    public static BlockPos min(BlockPos a, BlockPos b, BlockPos c) {
+        return min(min(a, b), c);
+    }
+
+    public static BlockPos min(BlockPos a, BlockPos b, BlockPos c, BlockPos d) {
+        return min(min(a, b), min(c, d));
+    }
+
+    public static BlockPos max(BlockPos a, BlockPos b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return new BlockPos(//
+                Math.max(a.getX(), b.getX()),//
+                Math.max(a.getY(), b.getY()),//
+                Math.max(a.getZ(), b.getZ())//
+        );
+    }
+
+    public static BlockPos max(BlockPos a, BlockPos b, BlockPos c) {
+        return max(max(a, b), c);
+    }
+
+    public static BlockPos max(BlockPos a, BlockPos b, BlockPos c, BlockPos d) {
+        return max(max(a, b), max(c, d));
     }
 }

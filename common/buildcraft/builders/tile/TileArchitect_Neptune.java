@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -41,6 +42,7 @@ import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
@@ -302,11 +304,6 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public Box getScanningBox() {
-        return box;
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
@@ -316,5 +313,30 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         left.add(" - max = " + box.max());
         left.add("scanning = " + scanning);
         left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
+    }
+
+    // Rendering
+
+    @SideOnly(Side.CLIENT)
+    public Box getScanningBox() {
+        return box;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasFastRenderer() {
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return BoundingBoxUtil.makeFrom(getPos(), box);
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 }

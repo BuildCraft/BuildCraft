@@ -16,6 +16,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -44,6 +45,7 @@ import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage
 import buildcraft.lib.bpt.helper.VanillaBlockClearer;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -343,5 +345,23 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     @SideOnly(Side.CLIENT)
     public Box getBox() {
         return box;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasFastRenderer() {
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return BoundingBoxUtil.makeFrom(getPos(), box);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 }
