@@ -23,6 +23,7 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.VecUtil;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -38,11 +39,11 @@ public class BptBuilderTemplate extends BptBuilderBase {
     protected void internalInit() {
         BlockPos worldOffset = pos.subtract(blueprint.anchor);
         BlockPos bptMin = BlockPos.ORIGIN;
-        if (worldOffset.getY() < 0) bptMin = Utils.withValue(bptMin, Axis.Y, -worldOffset.getY());
+        if (worldOffset.getY() < 0) bptMin = VecUtil.replaceValue(bptMin, Axis.Y, -worldOffset.getY());
 
         BlockPos bptMax = blueprint.size.subtract(Utils.POS_ONE);
         if (worldOffset.add(bptMax).getY() >= context.world().getHeight()) {
-            bptMax = Utils.withValue(bptMax, Axis.Y, context.world().getHeight() - worldOffset.getY());
+            bptMax = VecUtil.replaceValue(bptMax, Axis.Y, context.world().getHeight() - worldOffset.getY());
         }
         /* Check to make sure the max is bigger than the min- if its not it means that the size was 0 for one of the
          * axis */

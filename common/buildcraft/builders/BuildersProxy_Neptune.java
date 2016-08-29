@@ -5,6 +5,7 @@
 package buildcraft.builders;
 
 import buildcraft.builders.client.render.RenderArchitect;
+import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderQuarry;
 import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.container.ContainerQuarry;
@@ -13,6 +14,7 @@ import buildcraft.builders.gui.GuiArchitect;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiQuarry;
 import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.builders.tile.TileQuarry;
 import net.minecraft.entity.player.EntityPlayer;
@@ -98,6 +100,7 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
         @Override
         public void fmlInit() {
             ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder_Neptune.class, new RenderBuilder());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
         }
     }

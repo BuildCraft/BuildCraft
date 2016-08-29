@@ -38,6 +38,7 @@ import buildcraft.core.lib.client.model.FacingRotationHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.misc.VecUtil;
 
 public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
     public interface IBlockLocation {
@@ -237,7 +238,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
-        double other = face.getAxisDirection() == AxisDirection.POSITIVE ? Utils.getValue(size, face.getAxis()) : 0;
+        double other = face.getAxisDirection() == AxisDirection.POSITIVE ? VecUtil.getValue(size, face.getAxis()) : 0;
 
         boolean flip = BCModelHelper.shouldInvertForRender(face);
 
@@ -266,9 +267,9 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         int U_ARRAY = minU ? U_MIN : U_MAX;
         int V_ARRAY = minV ? V_MIN : V_MAX;
 
-        Vec3d vertex = Utils.withValue(Utils.VEC_ZERO, u, ri.xyz[U_ARRAY]);
-        vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
-        vertex = Utils.withValue(vertex, face.getAxis(), other);
+        Vec3d vertex = VecUtil.replaceValue(Utils.VEC_ZERO, u, ri.xyz[U_ARRAY]);
+        vertex = VecUtil.replaceValue(vertex, v, ri.xyz[V_ARRAY]);
+        vertex = VecUtil.replaceValue(vertex, face.getAxis(), other);
 
         wr.pos(vertex.xCoord, vertex.yCoord, vertex.zCoord);
         wr.tex(ri.uv[U_ARRAY], ri.uv[V_ARRAY]);
@@ -394,7 +395,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
-        double other = face.getAxisDirection() == AxisDirection.POSITIVE ? Utils.getValue(size, face.getAxis()) : 0;
+        double other = face.getAxisDirection() == AxisDirection.POSITIVE ? VecUtil.getValue(size, face.getAxis()) : 0;
 
         /* Swap the face if this is positive: the renderer returns indexes that ALWAYS are for the negative face, so
          * light it properly this way */
@@ -406,7 +407,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         for (RenderInfo ri : renderInfoList) {
             ri = ri.offset(cuboid, face.getAxis());
-            double otherMoved = other + Utils.getValue(cuboid.getPositionVector(), face.getAxis());
+            double otherMoved = other + VecUtil.getValue(cuboid.getPositionVector(), face.getAxis());
 
             if (flip ? out : in) {
                 MutableQuad mutable = new MutableQuad(-1, face);
@@ -431,9 +432,9 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         int U_ARRAY = minU ? U_MIN : U_MAX;
         int V_ARRAY = minV ? V_MIN : V_MAX;
 
-        Vec3d vertex = Utils.withValue(Utils.VEC_ZERO, u, ri.xyz[U_ARRAY]);
-        vertex = Utils.withValue(vertex, v, ri.xyz[V_ARRAY]);
-        vertex = Utils.withValue(vertex, face.getAxis(), other);
+        Vec3d vertex = VecUtil.replaceValue(Utils.VEC_ZERO, u, ri.xyz[U_ARRAY]);
+        vertex = VecUtil.replaceValue(vertex, v, ri.xyz[V_ARRAY]);
+        vertex = VecUtil.replaceValue(vertex, face.getAxis(), other);
 
         mutable.positionv(Utils.convertFloat(vertex));
         mutable.colouri(0xFF_FF_FF_FF);
@@ -444,10 +445,10 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
 
-        float minU = sprite.getInterpolatedU(Utils.getValue(start, u) * 16);
-        float maxU = sprite.getInterpolatedU(Utils.getValue(end, u) * 16);
-        float minV = sprite.getInterpolatedV(Utils.getValue(start, v) * 16);
-        float maxV = sprite.getInterpolatedV(Utils.getValue(end, v) * 16);
+        float minU = sprite.getInterpolatedU(VecUtil.getValue(start, u) * 16);
+        float maxU = sprite.getInterpolatedU(VecUtil.getValue(end, u) * 16);
+        float minV = sprite.getInterpolatedV(VecUtil.getValue(start, v) * 16);
+        float maxV = sprite.getInterpolatedV(VecUtil.getValue(end, v) * 16);
 
         float[] uvarray = new float[] { minU, maxU, minV, maxV };
         if (flips % 2 == 1) {
@@ -467,12 +468,12 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Axis u = face.getAxis() == Axis.X ? Axis.Z : Axis.X;
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
 
-        double sizeU = Utils.getValue(size, u);
-        double sizeV = Utils.getValue(size, v);
-        double textureSizeU = Utils.getValue(texSize, u);
-        double textureSizeV = Utils.getValue(texSize, v);
-        double textureOffsetU = Utils.getValue(texOffset, u);
-        double textureOffsetV = Utils.getValue(texOffset, v);
+        double sizeU = VecUtil.getValue(size, u);
+        double sizeV = VecUtil.getValue(size, v);
+        double textureSizeU = VecUtil.getValue(texSize, u);
+        double textureSizeV = VecUtil.getValue(texSize, v);
+        double textureOffsetU = VecUtil.getValue(texOffset, u);
+        double textureOffsetV = VecUtil.getValue(texOffset, v);
 
         return getRenderInfos(uv, sizeU, sizeV, textureSizeU, textureSizeV, textureOffsetU, textureOffsetV);
     }

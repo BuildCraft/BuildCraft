@@ -67,16 +67,56 @@ public class GuiIcon implements ISimpleDrawable {
         double vMin = sprite.getInterpV(0);
         double vMax = sprite.getInterpV(1);
 
-        Tessellator tess = Tessellator.getInstance();
-        VertexBuffer vb = tess.getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        // Unfortunately we cannot use the vertex buffer directly (as it doesn't allow for texture4f)
+        GL11.glBegin(GL11.GL_QUADS);
 
-        vertex(vb, x1, y1, uMin, vMax);
-        vertex(vb, x2, y2, uMax, vMax);
-        vertex(vb, x3, y3, uMax, vMin);
-        vertex(vb, x4, y4, uMin, vMin);
+        double[] q = calcQ(x1, y1, x2, y2, x3, y3, x4, y4);
 
-        tess.draw();
+        vertDirect(x1, y1, uMin * q[0], vMax * q[0], 0, q[0]);
+        vertDirect(x2, y2, uMax * q[1], vMax * q[1], 0, q[1]);
+        vertDirect(x3, y3, uMax * q[2], vMin * q[2], 0, q[2]);
+        vertDirect(x4, y4, uMin * q[3], vMin * q[3], 0, q[3]);
+
+        GL11.glEnd();
+    }
+
+    private static double[] calcQ(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        // Method contents taken from http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0
+        // (or github https://github.com/bitlush/android-arbitrary-quadrilaterals-in-opengl-es-2-0 if the site is down)
+        // this code is by Keith Wood
+
+        double ax = x3 - x1;
+        double ay = y3 - y1;
+        double bx = x4 - x2;
+        double by = y4 - y2;
+
+        double cross = ax * by - ay * bx;
+
+        if (cross != 0) {
+            double cy = y1 - y2;
+            double cx = x1 - x2;
+
+            double s = (ax * cy - ay * cx) / cross;
+
+            if (s > 0 && s < 1) {
+                double t = (bx * cy - by * cx) / cross;
+
+                if (t > 0 && t < 1) {
+                    double q0 = 1 / (1 - t);
+                    double q1 = 1 / (1 - s);
+                    double q2 = 1 / t;
+                    double q3 = 1 / s;
+                    return new double[] { q0, q1, q2, q3 };
+                }
+            }
+        }
+        // in case (for some reason) some of the input was wrong then we will fail back to default rendering
+        return new double[] { 1, 1, 1, 1 };
+    }
+
+    private static void vertDirect(double x, double y, double s, double t, double r, double q) {
+        GL11.glTexCoord4d(s, t, r, q);
+        GL11.glVertex2d(x, y);
     }
 
     public void drawCutInside(IPositionedElement element) {
@@ -84,7 +124,6 @@ public class GuiIcon implements ISimpleDrawable {
     }
 
     public void drawCutInside(double x, double y, double displayWidth, double displayHeight) {
-        // NEW
         sprite.bindTexture();
 
         displayWidth = Math.min(this.width, displayWidth);
@@ -99,8 +138,8 @@ public class GuiIcon implements ISimpleDrawable {
         double uMin = sprite.getInterpU(0);
         double vMin = sprite.getInterpV(0);
 
-        double uMax = sprite.getInterpU(Math.min(1, displayWidth / textureSize));
-        double vMax = sprite.getInterpV(Math.min(1, displayHeight / textureSize));
+        double uMax = sprite.getInterpU(displayWidth / width);
+        double vMax = sprite.getInterpV(displayHeight / height);
 
         Tessellator tess = Tessellator.getInstance();
         VertexBuffer vb = tess.getBuffer();
@@ -118,9 +157,9 @@ public class GuiIcon implements ISimpleDrawable {
         sprite.bindTexture();
 
         double uMin = sprite.getInterpU(0);
-        double uMax = sprite.getInterpU(1);
-
         double vMin = sprite.getInterpV(0);
+
+        double uMax = sprite.getInterpU(1);
         double vMax = sprite.getInterpV(1);
 
         Tessellator tess = Tessellator.getInstance();

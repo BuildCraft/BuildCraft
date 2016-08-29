@@ -46,7 +46,7 @@ public class SchematicEntityOffset {
 
     public void mirror(Axis axis, BlockPos size) {
         schematic.mirror(axis);
-        double value = Utils.getValue(size, axis) - 1 - Utils.getValue(vec, axis);
-        vec = Utils.withValue(vec, axis, value);
+        double value = VecUtil.getValue(size, axis) - 1 - VecUtil.getValue(vec, axis);
+        vec = VecUtil.replaceValue(vec, axis, value);
     }
 }

@@ -18,8 +18,8 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.lib.utils.Utils.AxisOrder;
-import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 
 @RunWith(Theories.class)
 public class UtilsTester {

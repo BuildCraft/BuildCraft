@@ -12,11 +12,12 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.BoxIterator;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
@@ -133,7 +134,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         if(boxIterator == null || drillPos == null) {
-            boxIterator = new BoxIterator(box, new Utils.AxisOrder(Utils.EnumAxisOrder.XZY, false, false, false), true);
+            boxIterator = new BoxIterator(box, AxisOrder.getFor(EnumAxisOrder.XZY, AxisOrder.Inversion.NNN), true);
             while(worldObj.isAirBlock(boxIterator.getCurrent())) {
                 boxIterator.advance();
             }
@@ -181,7 +182,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         box.initialize(nbt.getCompoundTag("box"));
         min = NBTUtils.readBlockPos(nbt.getTag("min"));
         max = NBTUtils.readBlockPos(nbt.getTag("max"));
-        boxIterator = new BoxIterator().readFromNBT(nbt.getCompoundTag("box_iterator"));
+        boxIterator = new BoxIterator(nbt.getCompoundTag("box_iterator"));
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
         if(nbt.hasKey("current_task_class")) {
             try {

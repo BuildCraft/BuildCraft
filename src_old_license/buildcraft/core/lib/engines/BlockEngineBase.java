@@ -31,6 +31,7 @@ import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.client.render.ICustomHighlight;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.VecUtil;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
     private static final Map<EnumFacing, AxisAlignedBB[]> boxMap;
@@ -41,8 +42,8 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
             AxisAlignedBB[] array = new AxisAlignedBB[2];
             boolean pos = face.getAxisDirection() == AxisDirection.POSITIVE;
 
-            Vec3d pointA = Utils.withValue(Utils.VEC_ZERO, face.getAxis(), pos ? 0 : 0.5);
-            Vec3d pointB = Utils.withValue(Utils.VEC_ONE, face.getAxis(), pos ? 0.5 : 1);
+            Vec3d pointA = VecUtil.replaceValue(Utils.VEC_ZERO, face.getAxis(), pos ? 0 : 0.5);
+            Vec3d pointB = VecUtil.replaceValue(Utils.VEC_ONE, face.getAxis(), pos ? 0.5 : 1);
             array[0] = Utils.boundingBox(pointA, pointB);
 
             pointA = Utils.vec3(0.25).add(Utils.convert(face, 0.25));

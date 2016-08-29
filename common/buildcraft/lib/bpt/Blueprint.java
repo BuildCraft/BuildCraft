@@ -152,8 +152,8 @@ public class Blueprint extends BlueprintBase {
                     SchematicBlock schematic = contentBlocks[x][y][z];
                     schematic.mirror(axis);
                     BlockPos mirrored = new BlockPos(x, y, z);
-                    int value = Utils.getValue(size, axis) - 1 - Utils.getValue(mirrored, axis);
-                    mirrored = Utils.withValue(mirrored, axis, value);
+                    int value = VecUtil.getValue(size, axis) - 1 - VecUtil.getValue(mirrored, axis);
+                    mirrored = VecUtil.replaceValue(mirrored, axis, value);
                     newContentBlocks[mirrored.getX()][mirrored.getY()][mirrored.getZ()] = schematic;
                 }
             }

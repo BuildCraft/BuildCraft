@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -36,19 +37,22 @@ import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.block.BlockArchitect_Neptune;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
 import buildcraft.core.Box;
-import buildcraft.core.lib.utils.Utils.EnumAxisOrder;
 import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager;
-import buildcraft.lib.misc.BoxIterator;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.data.BoxIterator;
+import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
 public class TileArchitect_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 20;
     public static final int NET_SCAN = 21;
+
+    private static final int BLOCKS_PER_TICK = 3;
 
     public final IItemHandlerModifiable invBptIn = addInventory("bptIn", 1, EnumAccess.INSERT, EnumPipePart.VALUES);
     public final IItemHandlerModifiable invBptOut = addInventory("bptOut", 1, EnumAccess.EXTRACT, EnumPipePart.VALUES);
@@ -63,18 +67,22 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     private BoxIterator boxIterator;
     private boolean isValid = false;
     private boolean scanning = false;
+    private boolean shouldStartScanning = false;
     public String name = "<unnamed>";
-    protected int progress = 0;
     public final DeltaInt deltaProgress = deltaManager.addDelta("progress", DeltaManager.EnumNetworkVisibility.GUI_ONLY);
 
     public TileArchitect_Neptune() {}
+
+    private int maxBlocksPerTick() {
+        return shouldScanDetails ? BLOCKS_PER_TICK : BLOCKS_PER_TICK * 3;
+    }
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
         super.onSlotChange(handler, slot, before, after);
         if (handler == invBptIn) {
             if (after != null) { // TODO: check item
-                scanning = true;
+                shouldStartScanning = true;
             } else {
                 scanning = false;
             }
@@ -95,7 +103,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             box.reset();
             box.setMin(provider.min());
             box.setMax(provider.max());
-            // provider.removeFromWorld(); // TODO: uncomment
+            provider.removeFromWorld();
             isValid = true;
             sendNetworkUpdate(NET_BOX);
         } else {
@@ -113,28 +121,33 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         if (worldObj.isRemote) {
             return;
         }
-        if (scanning && isValid) {
-            int target = shouldScanDetails ? 2 : 1;
-            int back = shouldScanDetails ? 1 : 0;
-            if (progress == 0) {
-                deltaProgress.addDelta(0, target, 100);
-                deltaProgress.addDelta(target, target + back, -100);
-            }
-            if (progress < target + back) {
-                progress++;
-                return;
-            }
-            progress = 0;
-            scanSingleBlock();
+
+        if (shouldStartScanning && isValid) {
+            int size = box.size().getX() * box.size().getY() * box.size().getZ();
+            size /= maxBlocksPerTick();
+            deltaProgress.addDelta(0, size, 100);
+            deltaProgress.addDelta(size, size + 10, -100);
+            shouldStartScanning = false;
+            scanning = true;
+        }
+
+        if (scanning) {
+            scanMultipleBlocks();
             if (!scanning) {
                 if (shouldScanEntities) {
                     scanEntities();
                 }
                 finishScanning();
             }
-        } else if (progress != -1) {
-            progress = -1;
-            deltaProgress.setValue(0);
+        }
+    }
+
+    private void scanMultipleBlocks() {
+        for (int i = maxBlocksPerTick(); i > 0; i--) {
+            scanSingleBlock();
+            if (!scanning) {
+                break;
+            }
         }
     }
 
@@ -142,7 +155,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         BlockPos size = box.size();
         if (blueprintScannedBlocks == null) {
             blueprintScannedBlocks = new SchematicBlock[size.getX()][size.getY()][size.getZ()];
-            boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.defaultOrder, true);
+            boxIterator = new BoxIterator(box, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
             templateScannedBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
         }
 
@@ -227,15 +240,11 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
+            if (id == NET_RENDER_DATA) {
+                box.writeData(buffer);
+            }
             if (id == NET_BOX) {
                 box.writeData(buffer);
-            } else if (id == NET_RENDER_DATA) {
-                if (boxIterator != null) {
-                    buffer.writeBoolean(true);
-                    boxIterator.writeToByteBuf(buffer);
-                } else {
-                    buffer.writeBoolean(false);
-                }
             }
         }
     }
@@ -244,14 +253,10 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
-            if (id == NET_BOX) {
+            if (id == NET_RENDER_DATA) {
                 box.readData(buffer);
-            } else if (id == NET_RENDER_DATA) {
-                if (buffer.readBoolean()) {
-                    boxIterator = new BoxIterator().readFromByteBuf(buffer);
-                } else {
-                    boxIterator = null;
-                }
+            } else if (id == NET_BOX) {
+                box.readData(buffer);
             } else if (id == NET_SCAN) {
                 BlockPos pos = buffer.readBlockPos();
                 double x = pos.getX() + 0.5;
@@ -262,15 +267,41 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         }
     }
 
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setTag("box", box.writeToNBT());
+        if (boxIterator != null) {
+            nbt.setTag("iter", boxIterator.writeToNBT());
+        }
+        nbt.setBoolean("shouldStartScanning", shouldStartScanning);
+        nbt.setBoolean("scanning", scanning);
+        nbt.setBoolean("shouldScanDetails", shouldScanDetails);
+        nbt.setBoolean("shouldScanEntities", shouldScanEntities);
+        nbt.setBoolean("isValid", isValid);
+        nbt.setString("name", name);
+        return nbt;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        box.initialize(nbt.getCompoundTag("box"));
+        if (nbt.hasKey("iter")) {
+            boxIterator = new BoxIterator(nbt.getCompoundTag("iter"));
+        }
+        shouldStartScanning = nbt.getBoolean("shouldStartScanning");
+        scanning = nbt.getBoolean("scanning");
+        shouldScanDetails = nbt.getBoolean("shouldScanDetails");
+        shouldScanEntities = nbt.getBoolean("shouldScanEntities");
+        isValid = nbt.getBoolean("isValid");
+        name = nbt.getString("name");
+    }
+
     public void setScanDetails(boolean scanDetails) {
         if (!scanning) {
             shouldScanDetails = scanDetails;
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public Box getScanningBox() {
-        return box;
     }
 
     @Override
@@ -282,24 +313,30 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         left.add(" - max = " + box.max());
         left.add("scanning = " + scanning);
         left.add("current = " + (boxIterator == null ? null : boxIterator.getCurrent()));
-        left.add("progress = " + progress);
     }
 
-    public double getAllProgress() {
-        if (boxIterator != null && boxIterator.getCurrent() != null) {
-            // TODO: optimize?
-            BoxIterator copy = new BoxIterator(boxIterator);
-            int count = 0;
-            while (copy.getCurrent() != null) {
-                copy.advance();
-                count++;
-            }
-            count--;
-            BlockPos boxSize = new Box(boxIterator.getMin(), boxIterator.getMax()).size();
-            int all = boxSize.getX() * boxSize.getY() * boxSize.getZ();
-            return (int) ((float) (all - count) / all * 100);
-        } else {
-            return 0;
-        }
+    // Rendering
+
+    @SideOnly(Side.CLIENT)
+    public Box getScanningBox() {
+        return box;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasFastRenderer() {
+        return true;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return BoundingBoxUtil.makeFrom(getPos(), box);
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 }

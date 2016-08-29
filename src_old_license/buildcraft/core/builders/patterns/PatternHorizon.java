@@ -15,6 +15,7 @@ import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.VecUtil;
 
 public class PatternHorizon extends FillerPattern {
 
@@ -32,7 +33,7 @@ public class PatternHorizon extends FillerPattern {
         int yMax = world.getActualHeight();
         int zMax = (int) box.max().getZ();
 
-        Template bpt = new Template(Utils.withValue(box.size(), Axis.Y, yMax - yMin));
+        Template bpt = new Template(VecUtil.replaceValue(box.size(), Axis.Y, yMax - yMin));
 
         if (box.size().getY() > 0) {
             for (int x = xMin; x <= xMax; ++x) {

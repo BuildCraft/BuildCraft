@@ -24,6 +24,7 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.config.DetailedConfigOption;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
@@ -118,8 +119,8 @@ public class PipeModelCacheBase {
     private static void renderPipeCenterFace(float[] uvs, EnumFacing face, boolean smaller, List<MutableQuad> mutable, List<MutableQuad> mutableIn) {
         Vec3d radius = Utils.vec3(0.25);
         if (smaller) {
-            double smallerValue = Utils.getValue(radius, face.getAxis()) - 0.01f;
-            radius = Utils.withValue(radius, face.getAxis(), smallerValue);
+            double smallerValue = VecUtil.getValue(radius, face.getAxis()) - 0.01f;
+            radius = VecUtil.replaceValue(radius, face.getAxis(), smallerValue);
         }
 
         Tuple3f center = Utils.vec3f(0.5f);

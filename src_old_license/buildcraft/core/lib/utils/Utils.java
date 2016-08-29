@@ -5,7 +5,6 @@
 package buildcraft.core.lib.utils;
 
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
@@ -16,10 +15,10 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
-import com.google.common.collect.AbstractIterator;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.BoxIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -28,7 +27,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -45,9 +43,7 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3f;
 import java.util.*;
 
-/**
- * Use buildcraft.lib.misc.*Util instead of this
- */
+/** Use buildcraft.lib.misc.*Util instead of this */
 @Deprecated
 public final class Utils {
     // Commonly used vectors
@@ -114,14 +110,14 @@ public final class Utils {
             TileEntity tile = world.getTileEntity(newpos);
             ITransactor transactor = Transactor.getTransactorFor(tile, orientation.getOpposite());
             if (transactor != null && !(tile instanceof IEngine) && transactor.insert(stack, false).stackSize > 0) {// FIXME
-                                                                                                                    // WRONG
-                                                                                                                    // OMG
-                                                                                                                    // 1.9.4
-                                                                                                                    // port
-                                                                                                                    // messed
-                                                                                                                    // this
-                                                                                                                    // ITransactor
-                                                                                                                    // UP!
+                // WRONG
+                // OMG
+                // 1.9.4
+                // port
+                // messed
+                // this
+                // ITransactor
+                // UP!
                 return transactor.insert(stack, true).stackSize;
             }
         }
@@ -527,34 +523,6 @@ public final class Utils {
         return matrix;
     }
 
-    public static Vec3d withValue(Vec3d vector, Axis axis, double value) {
-        if (axis == Axis.X) return new Vec3d(value, vector.yCoord, vector.zCoord);
-        else if (axis == Axis.Y) return new Vec3d(vector.xCoord, value, vector.zCoord);
-        else if (axis == Axis.Z) return new Vec3d(vector.xCoord, vector.yCoord, value);
-        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-    }
-
-    public static double getValue(Vec3d vector, Axis axis) {
-        if (axis == Axis.X) return vector.xCoord;
-        else if (axis == Axis.Y) return vector.yCoord;
-        else if (axis == Axis.Z) return vector.zCoord;
-        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-    }
-
-    public static BlockPos withValue(BlockPos vector, Axis axis, int value) {
-        if (axis == Axis.X) return new BlockPos(value, vector.getY(), vector.getZ());
-        else if (axis == Axis.Y) return new BlockPos(vector.getX(), value, vector.getZ());
-        else if (axis == Axis.Z) return new BlockPos(vector.getX(), vector.getY(), value);
-        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-    }
-
-    public static int getValue(BlockPos vector, Axis axis) {
-        if (axis == Axis.X) return vector.getX();
-        else if (axis == Axis.Y) return vector.getY();
-        else if (axis == Axis.Z) return vector.getZ();
-        else throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
-    }
-
     public static Vec3d getVec(Entity entity) {
         return new Vec3d(entity.posX, entity.posY, entity.posZ);
     }
@@ -686,22 +654,6 @@ public final class Utils {
         return new BlockPos(-pos.getX(), -pos.getY(), -pos.getZ());
     }
 
-    public static EnumFacing getFacing(Axis axis, AxisDirection direction) {
-        if (axis == Axis.X) {
-            if (direction == AxisDirection.POSITIVE) {
-                return EnumFacing.EAST;
-            } else return EnumFacing.WEST;
-        } else if (axis == Axis.Z) {
-            if (direction == AxisDirection.POSITIVE) {
-                return EnumFacing.SOUTH;
-            } else return EnumFacing.NORTH;
-        } else {
-            if (direction == AxisDirection.POSITIVE) {
-                return EnumFacing.UP;
-            } else return EnumFacing.DOWN;
-        }
-    }
-
     /** Finds the closest block position in a set to the given position. Will return a random block position if server
      * are found within a similar distance */
     public static BlockPos findClosestTo(Set<BlockPos> set, BlockPos hint) {
@@ -737,179 +689,6 @@ public final class Utils {
         }
         if (closest.isEmpty()) return null;
         return closest.get(rand.nextInt(closest.size()));
-    }
-
-    public enum EnumAxisOrder {
-        XYZ(0, 1, 2),
-        XZY(0, 2, 1),
-        YXZ(1, 0, 2),
-        YZX(1, 2, 0),
-        ZXY(2, 0, 1),
-        ZYX(2, 1, 0);
-
-        public final Axis first, second, third;
-
-        public final AxisOrder defaultOrder;
-
-        private EnumAxisOrder(int a, int b, int c) {
-            this.first = Axis.values()[a];
-            this.second = Axis.values()[b];
-            this.third = Axis.values()[c];
-            this.defaultOrder = new AxisOrder(this, true, true, true);
-        }
-    }
-
-    public static class AxisOrder implements INetworkLoadable_BC8<AxisOrder> {
-        public final EnumFacing first, second, third;
-
-        public AxisOrder() {
-            first = second = third = null;
-        }
-
-        private AxisOrder(EnumFacing first, EnumFacing second, EnumFacing third) {
-            this.first = first;
-            this.second = second;
-            this.third = third;
-        }
-
-        /** Creates an axis order that will scan axis in the order given, going in the directions specified by
-         * positiveFirst, positiveSecond and positiveThird. If all are true then it will start at the smallest one and
-         * end up at the biggest one. */
-        public AxisOrder(EnumAxisOrder order, boolean positiveFirst, boolean positiveSecond, boolean positiveThird) {
-            this.first = getFacing(order.first, positiveFirst ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
-            this.second = getFacing(order.second, positiveSecond ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
-            this.third = getFacing(order.third, positiveThird ? AxisDirection.POSITIVE : AxisDirection.NEGATIVE);
-        }
-
-        @Override
-        public String toString() {
-            return first + ", " + second + ", " + third;
-        }
-
-        public AxisOrder invertFirst() {
-            return new AxisOrder(first.getOpposite(), second, third);
-        }
-
-        public AxisOrder invertSecond() {
-            return new AxisOrder(first, second.getOpposite(), third);
-        }
-
-        public AxisOrder invertThird() {
-            return new AxisOrder(first, second, third.getOpposite());
-        }
-
-        @Override
-        public AxisOrder readFromByteBuf(ByteBuf buf) {
-            return new AxisOrder(EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()], EnumFacing.values()[buf.readInt()]);
-        }
-
-        @Override
-        public void writeToByteBuf(ByteBuf buf) {
-            buf.writeInt(first.ordinal());
-            buf.writeInt(second.ordinal());
-            buf.writeInt(third.ordinal());
-        }
-
-        public AxisOrder readFromNBT(NBTTagCompound tag) {
-            if(tag == null) {
-                return null;
-            }
-            return new AxisOrder(EnumFacing.values()[tag.getInteger("first")], EnumFacing.values()[tag.getInteger("second")], EnumFacing.values()[tag.getInteger("third")]);
-        }
-
-        public NBTTagCompound writeToNBT() {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("first", first.ordinal());
-            tag.setInteger("second", second.ordinal());
-            tag.setInteger("third", third.ordinal());
-            return tag;
-        }
-    }
-
-    public static class BoxIterable implements Iterable<BlockPos> {
-        private final BlockPos min, max;
-        private final AxisOrder order;
-
-        public BoxIterable(BlockPos min, BlockPos max, AxisOrder order) {
-            this.min = min;
-            this.max = max;
-            this.order = order;
-        }
-
-        @Override
-        public BoxIterator iterator() {
-            return new BoxIterator(min, max, order);
-        }
-    }
-
-    public static class BoxIterator extends AbstractIterator<BlockPos> {
-        private final BlockPos min, max;
-        private final AxisOrder order;
-        private BlockPos lastReturned;
-
-        public BoxIterator(BlockPos min, BlockPos max, AxisOrder order) {
-            this.min = min;
-            this.max = max;
-            this.order = order;
-        }
-
-        /** Skips directly to this position. This can skip backwards or forwards, it doesn't matter. Skipping to null
-         * will reset this iterator if it has not finished. */
-        public void skipTo(BlockPos pos) {
-            lastReturned = pos;
-        }
-
-        @Override
-        protected BlockPos computeNext() {
-            if (lastReturned == null) {
-                lastReturned = getStart();
-                return lastReturned;
-            } else {
-                BlockPos nValue = lastReturned;
-
-                if (shouldIncrement(lastReturned, order.first)) {
-                    nValue = increment(nValue, order.first);
-                } else if (shouldIncrement(lastReturned, order.second)) {
-                    nValue = replace(nValue, order.first);
-                    nValue = increment(nValue, order.second);
-                } else if (shouldIncrement(lastReturned, order.third)) {
-                    nValue = replace(nValue, order.first);
-                    nValue = replace(nValue, order.second);
-                    nValue = increment(nValue, order.third);
-                } else {
-                    return endOfData();
-                }
-
-                lastReturned = nValue;
-                return lastReturned;
-            }
-        }
-
-        private BlockPos getStart() {
-            BlockPos pos = BlockPos.ORIGIN;
-            pos = replace(pos, order.first);
-            pos = replace(pos, order.second);
-            return replace(pos, order.third);
-        }
-
-        private BlockPos replace(BlockPos toReplace, EnumFacing facing) {
-            BlockPos with = facing.getAxisDirection() == AxisDirection.POSITIVE ? min : max;
-            return Utils.withValue(toReplace, facing.getAxis(), Utils.getValue(with, facing.getAxis()));
-        }
-
-        private static BlockPos increment(BlockPos pos, EnumFacing facing) {
-            int diff = facing.getAxisDirection().getOffset();
-            int value = Utils.getValue(pos, facing.getAxis()) + diff;
-            return Utils.withValue(pos, facing.getAxis(), value);
-        }
-
-        private boolean shouldIncrement(BlockPos lastReturned, EnumFacing facing) {
-            int lstReturned = Utils.getValue(lastReturned, facing.getAxis());
-            BlockPos goingTo = facing.getAxisDirection() == AxisDirection.POSITIVE ? max : min;
-            int to = Utils.getValue(goingTo, facing.getAxis());
-            if (facing.getAxisDirection() == AxisDirection.POSITIVE) return lstReturned < to;
-            return lstReturned > to;
-        }
     }
 
     /** Like {@link BlockPos#getAllInBox(BlockPos, BlockPos)} but can iterate in orders other than XYZ */

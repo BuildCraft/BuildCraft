@@ -109,8 +109,6 @@ public class Box implements IBox, ISerializable {
 
     public void initialize(NBTTagCompound nbt) {
         reset();
-        kind = Kind.values()[nbt.getShort("kind")];
-
         BlockPos min;
         BlockPos max;
         if (nbt.hasKey("xMin")) {
@@ -124,8 +122,6 @@ public class Box implements IBox, ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setByte("kind", (byte) kind.ordinal());
-
         if (min != null) nbt.setTag("min", NBTUtils.writeBlockPos(min));
         if (max != null) nbt.setTag("max", NBTUtils.writeBlockPos(max));
     }
