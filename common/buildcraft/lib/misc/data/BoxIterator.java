@@ -17,11 +17,6 @@ public class BoxIterator implements Iterator<BlockPos> {
     private AxisOrder order;
     private BlockPos current;
 
-    public BoxIterator() {
-        min = max = null;
-        invert = repeat = false;
-    }
-
     public BoxIterator(IBox box, AxisOrder order, boolean invert) {
         this(box.min(), box.max(), order, invert);
     }

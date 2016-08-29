@@ -12,15 +12,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SoundUtil {
+    public static void playBlockPlace(World world, BlockPos pos) {
+        playBlockPlace(world, pos, world.getBlockState(pos));
+    }
+
     public static void playBlockPlace(World world, BlockPos pos, IBlockState state) {
-        SoundType soundType = state.getBlock().getSoundType();
+        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getPlaceSound(), SoundCategory.BLOCKS, volume, pitch);
     }
 
+    public static void playBlockBreak(World world, BlockPos pos) {
+        playBlockBreak(world, pos, world.getBlockState(pos));
+    }
+
     public static void playBlockBreak(World world, BlockPos pos, IBlockState state) {
-        SoundType soundType = state.getBlock().getSoundType();
+        SoundType soundType = state.getBlock().getSoundType(state, world, pos, null);
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, volume, pitch);
@@ -39,6 +47,10 @@ public class SoundUtil {
         float volume = (soundType.getVolume() + 1.0F) / 2.0F;
         float pitch = soundType.getPitch() * 0.8F;
         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, volume, pitch);
+    }
+
+    public static void playSlideSound(World world, BlockPos pos) {
+        playSlideSound(world, pos, world.getBlockState(pos));
     }
 
     public static void playSlideSound(World world, BlockPos pos, IBlockState state) {
