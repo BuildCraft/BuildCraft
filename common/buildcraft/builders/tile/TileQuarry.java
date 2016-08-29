@@ -53,7 +53,7 @@ import java.util.stream.IntStream;
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
     private final MjCapabilityHelper mjCapHelper;
-    private final Box box = new Box();
+    private Box box = new Box();
     public BlockPos min;
     public BlockPos max;
     private BoxIterator boxIterator;
@@ -228,6 +228,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             if(drillPos != null) {
                 NetworkUtils.writeVec3d(buffer, drillPos);
             }
+            buffer.writeBoolean(box != null);
+            if(box != null) {
+                box.writeData(buffer);
+            }
         }
     }
 
@@ -259,6 +263,12 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 drillPos = NetworkUtils.readVec3d(buffer);
             } else {
                 drillPos = null;
+            }
+            if(buffer.readBoolean()) {
+                box = new Box();
+                box.readData(buffer);
+            } else {
+                box = null;
             }
         }
     }
@@ -301,7 +311,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return box == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(getPos(), box);
+        return BoundingBoxUtil.makeFrom(getPos(), box);
     }
 
     @Override
