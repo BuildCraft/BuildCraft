@@ -6,7 +6,6 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.CullTESR;
 import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class RenderQuarry extends CullTESR<TileQuarry> {
@@ -28,18 +27,24 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
 
     @Override
     public void renderTileEntityFast(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-        if(tile.min != null && tile.max != null && tile.drillPos != null && tile.prevDrillPos != null) {
+        if(tile.min != null && tile.max != null && tile.clientDrillPos != null && tile.prevClientDrillPos != null) {
             // this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks;
             buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
-            Vec3d interpolatedPos = tile.prevDrillPos.add(tile.drillPos.subtract(tile.prevDrillPos).scale(partialTicks));
+            Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
 
 //            LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(tile.getPos().getX() + 1, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), new Vec3d(tile.getPos().getX() + 2, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), 1 / 16D), buffer);
             LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ() + 4 / 16D), 1 / 16D), buffer);
             LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 12 / 16D), 1 / 16D), buffer);
             LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.max.getX() + 4 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
             LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.min.getX() + 12 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
+            LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
 
             buffer.setTranslation(0, 0, 0);
         }
+    }
+
+    @Override
+    public boolean isGlobalRenderer(TileQuarry tile) {
+        return true;
     }
 }

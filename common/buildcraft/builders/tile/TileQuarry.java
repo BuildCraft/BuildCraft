@@ -13,6 +13,7 @@ import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.AxisOrder;
@@ -31,6 +32,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
@@ -40,6 +42,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
@@ -57,7 +60,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private Task currentTask = null;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
     public Vec3d drillPos;
-    public Vec3d prevDrillPos;
+    public Vec3d clientDrillPos;
+    public Vec3d prevClientDrillPos;
 
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
@@ -87,6 +91,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     @Override
     public void update() {
         if(worldObj.isRemote) {
+            prevClientDrillPos = clientDrillPos;
+            clientDrillPos = drillPos;
             return;
         }
 
@@ -249,7 +255,6 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             } else {
                 currentTask = null;
             }
-            prevDrillPos = drillPos;
             if(buffer.readBoolean()) {
                 drillPos = NetworkUtils.readVec3d(buffer);
             } else {
@@ -289,6 +294,20 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return mjCapHelper.getCapability(capability, facing);
         }
         return super.getCapability(capability, facing);
+    }
+
+
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return box == null ? super.getRenderBoundingBox() : BoundingBoxUtil.makeFrom(getPos(), box);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
     }
 
     private abstract class Task implements INBTSerializable<NBTTagCompound>, INetworkLoadable_BC8<Task> {
