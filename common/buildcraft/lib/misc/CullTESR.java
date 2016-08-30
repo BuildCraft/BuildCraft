@@ -32,7 +32,7 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class CullTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
     @Override
-    public final void renderTileEntityAt(T tile, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityAt(T tile, double x, double y, double z, float partialTicks, int destroyStage) {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer VertexBuffer = tessellator.getBuffer();
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

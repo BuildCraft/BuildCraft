@@ -47,6 +47,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -57,7 +58,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public BlockPos min;
     public BlockPos max;
     private BoxIterator boxIterator;
-    private Task currentTask = null;
+    public Task currentTask = null;
     public final IItemHandlerModifiable invFrames = addInventory("frames", 9, ItemHandlerManager.EnumAccess.NONE, EnumPipePart.VALUES);
     public Vec3d drillPos;
     public Vec3d clientDrillPos;
@@ -66,6 +67,25 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     public TileQuarry() {
         battery = new MjBattery(1600L * MjAPI.MJ);
         mjCapHelper = new MjCapabilityHelper(new MjReciverBatteryWrapper(battery, MachineType.QUARRY));
+    }
+
+    public List<BlockPos> getFramePoses() {
+        List<BlockPos> framePoses = new ArrayList<>();
+        if(min != null && max != null) {
+            for(int x = min.getX(); x <= max.getX(); x++) {
+                framePoses.add(new BlockPos(x, min.getY(), max.getZ()));
+            }
+            for(int z = max.getZ() - 1; z > min.getZ(); z--) {
+                framePoses.add(new BlockPos(max.getX(), min.getY(), z));
+            }
+            for(int x = max.getX(); x >= min.getX(); x--) {
+                framePoses.add(new BlockPos(x, min.getY(), min.getZ()));
+            }
+            for(int z = min.getZ() + 1; z < max.getZ(); z++) {
+                framePoses.add(new BlockPos(min.getX(), min.getY(), z));
+            }
+        }
+        return framePoses;
     }
 
     @Override
@@ -114,30 +134,47 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
-        for(int i = 0; i < 2; i++) { // 2 iterations: first is removing blocks, second is adding frames
-            for(int x = min.getX(); x <= max.getX(); x++) {
-                for(int z = min.getZ(); z <= max.getZ(); z++) {
-                    BlockPos pos = new BlockPos(x, min.getY(), z);
-                    boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
-                    Block block = worldObj.getBlockState(pos).getBlock();
-                    if(i == 0) {
-                        if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
-                            drillPos = null;
-                            currentTask = new TaskBreakBlock(pos);
-                            sendNetworkUpdate(NET_RENDER_DATA);
-                            return;
-                        }
-                    } else if(i == 1) {
-                        if(shouldBeFrame && block == Blocks.AIR) {
-                            drillPos = null;
-                            if(IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
-                                currentTask = new TaskAddFrame(pos);
-                                sendNetworkUpdate(NET_RENDER_DATA);
-                            }
-                            return;
-                        }
-                    }
+        List<BlockPos> breakPoses = new ArrayList<>();
+
+        for(int x = min.getX(); x <= max.getX(); x++) {
+            for(int z = min.getZ(); z <= max.getZ(); z++) {
+                BlockPos pos = new BlockPos(x, min.getY(), z);
+                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
+                Block block = worldObj.getBlockState(pos).getBlock();
+                if((block != Blocks.AIR && !shouldBeFrame) || (block != BCBuildersBlocks.frame && block != Blocks.AIR && shouldBeFrame)) {
+                    breakPoses.add(pos);
                 }
+            }
+        }
+
+        if(breakPoses.size() > 0) {
+            double closestDistance = Integer.MAX_VALUE;
+            BlockPos closestPos = null;
+
+            for(BlockPos breakPos : breakPoses) {
+                double distance = breakPos.distanceSq(pos);
+
+                if(distance < closestDistance) {
+                    closestDistance = distance;
+                    closestPos = breakPos;
+                }
+            }
+
+            drillPos = null;
+            currentTask = new TaskBreakBlock(closestPos);
+            sendNetworkUpdate(NET_RENDER_DATA);
+            return;
+        }
+
+        for(BlockPos pos : getFramePoses()) {
+            Block block = worldObj.getBlockState(pos).getBlock();
+            if(block == Blocks.AIR) {
+                drillPos = null;
+                if(IntStream.range(0, invFrames.getSlots()).anyMatch(slot -> invFrames.getStackInSlot(slot) != null)) {
+                    currentTask = new TaskAddFrame(pos);
+                    sendNetworkUpdate(NET_RENDER_DATA);
+                }
+                return;
             }
         }
 
@@ -306,8 +343,6 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         return super.getCapability(capability, facing);
     }
 
-
-
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -323,7 +358,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     private abstract class Task implements INBTSerializable<NBTTagCompound>, INetworkLoadable_BC8<Task> {
         protected long energy = 0;
 
-        protected abstract long getTarget();
+        public abstract long getTarget();
 
         /**
          * @return true means that task is canceled
@@ -376,8 +411,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
     }
 
-    private class TaskBreakBlock extends Task {
-        BlockPos pos;
+    public class TaskBreakBlock extends Task {
+        public BlockPos pos;
 
         @SuppressWarnings("unused")
         TaskBreakBlock() {
@@ -388,7 +423,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        protected long getTarget() {
+        public long getTarget() {
             return BlockUtils.computeBlockBreakPower(worldObj, pos);
         }
 
@@ -441,8 +476,8 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
     }
 
-    private class TaskAddFrame extends Task {
-        BlockPos pos;
+    public class TaskAddFrame extends Task {
+        public BlockPos pos;
 
         @SuppressWarnings("unused")
         TaskAddFrame() {
@@ -453,7 +488,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        protected long getTarget() {
+        public long getTarget() {
             return 10000000;
         }
 
@@ -519,7 +554,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        protected long getTarget() {
+        public long getTarget() {
             return 10000000;
         }
 
