@@ -334,6 +334,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
 			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
 			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
+			FactoryProxyClient.drillArmTexture = terrainTextures.registerIcon("buildcraft:blockDrillArmTexture");
 		}
 	}
 

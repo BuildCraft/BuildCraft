@@ -40,4 +40,9 @@ public class FactoryProxy {
 			double l, double d, double e) {
         return new EntityBlock(w, i, j, k, l, d, e);
     }
+
+	public EntityBlock newDrillArm(World w, double i, double j, double k,
+			double l, double d, double e) {
+		return new EntityBlock(w, i, j, k, l, d, e);
+	}
 }
