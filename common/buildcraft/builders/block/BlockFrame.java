@@ -36,6 +36,7 @@ public class BlockFrame extends BlockBCBase_Neptune {
         super(material, id);
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     protected void addProperties(List<IProperty<?>> properties) {
         super.addProperties(properties);
