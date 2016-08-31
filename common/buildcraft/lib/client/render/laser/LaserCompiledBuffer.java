@@ -41,24 +41,29 @@ public class LaserCompiledBuffer {
     }
 
     public static class Builder implements ILaserRenderer {
-        private final int colour;
+        private final boolean useNormalColour;
         private final TDoubleArrayList doubleData = new TDoubleArrayList();
         private final TIntArrayList intData = new TIntArrayList();
         private int vertices = 0;
 
-        public Builder(int colour) {
-            this.colour = colour;
+        public Builder(boolean useNormalColour) {
+            this.useNormalColour = useNormalColour;
         }
 
         @Override
-        public void vertex(double x, double y, double z, double u, double v, int lmap) {
+        public void vertex(double x, double y, double z, double u, double v, int lmap, float nx, float ny, float nz, float diffuse) {
             // POSITION_3F
             doubleData.add(x);
             doubleData.add(y);
             doubleData.add(z);
 
             // COLOR_4UB
-            intData.add(colour);
+            if (useNormalColour) {
+                int c = (int) (diffuse * 0xFF);
+                intData.add(c | c << 8 | c << 16 | 0xFF << 24);
+            } else {
+                intData.add(0xFF_FF_FF_FF);
+            }
 
             // TEX_2F
             doubleData.add(u);

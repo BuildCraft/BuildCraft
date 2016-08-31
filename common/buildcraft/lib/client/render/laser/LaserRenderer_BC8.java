@@ -13,6 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -25,7 +28,7 @@ public class LaserRenderer_BC8 {
     private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_VB_LASERS;
     static final LoadingCache<BlockPos, Integer> CACHED_LIGHTMAP;
 
-    public static final VertexFormat POSITION_TEX_LMAP;
+    public static final VertexFormat FORMAT_LESS, FORMAT_ALL;
 
     static {
         COMPILED_GL_LASERS = CacheBuilder.newBuilder()//
@@ -42,10 +45,17 @@ public class LaserRenderer_BC8 {
                 .expireAfterWrite(1, TimeUnit.SECONDS)//
                 .build(CacheLoader.from(LaserRenderer_BC8::computeLightmap));
 
-        POSITION_TEX_LMAP = new VertexFormat();
-        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.POSITION_3F);
-        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.TEX_2F);
-        POSITION_TEX_LMAP.addElement(DefaultVertexFormats.TEX_2S);
+        FORMAT_LESS = new VertexFormat();
+        FORMAT_LESS.addElement(DefaultVertexFormats.POSITION_3F);
+        FORMAT_LESS.addElement(DefaultVertexFormats.TEX_2F);
+        FORMAT_LESS.addElement(DefaultVertexFormats.TEX_2S);
+
+        FORMAT_ALL = new VertexFormat();
+        FORMAT_ALL.addElement(DefaultVertexFormats.POSITION_3F);
+        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2F);
+        FORMAT_ALL.addElement(DefaultVertexFormats.TEX_2S);
+        FORMAT_ALL.addElement(DefaultVertexFormats.COLOR_4UB);
+        FORMAT_ALL.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.NORMAL, 3));
     }
 
     public static void clearModels() {
@@ -60,19 +70,19 @@ public class LaserRenderer_BC8 {
     }
 
     private static LaserCompiledList makeGlLaser(LaserData_BC8 data) {
-        LaserCompiledList.Builder renderer = new LaserCompiledList.Builder();
+        LaserCompiledList.Builder renderer = new LaserCompiledList.Builder(data.enableDiffuse);
         makeLaser(data, renderer);
         return renderer.build();
     }
 
     private static LaserCompiledBuffer makeVbLaser(LaserData_BC8 data) {
-        LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(0xFF_FF_FF_FF);
+        LaserCompiledBuffer.Builder renderer = new LaserCompiledBuffer.Builder(data.enableDiffuse);
         makeLaser(data, renderer);
         return renderer.build();
     }
 
     private static void makeLaser(LaserData_BC8 data, ILaserRenderer renderer) {
-        LaserContext ctx = new LaserContext(renderer, data);
+        LaserContext ctx = new LaserContext(renderer, data, data.enableDiffuse, data.doubleFace);
         CompiledLaserType type = compileType(data.laserType);
         type.bakeFor(ctx);
     }

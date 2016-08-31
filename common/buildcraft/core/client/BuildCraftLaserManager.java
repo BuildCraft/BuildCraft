@@ -24,6 +24,11 @@ public class BuildCraftLaserManager {
     public static final LaserType STRIPES_READ;
     public static final LaserType STRIPES_WRITE;
 
+    public static final LaserType POWER_LOW;// red
+    public static final LaserType POWER_MED;// yellow
+    public static final LaserType POWER_HIGH;// green
+    public static final LaserType POWER_FULL;// blue
+
     static {
         {
             SpriteHolder sprite = getSprite("marker_volume_connected");
@@ -69,8 +74,14 @@ public class BuildCraftLaserManager {
         MARKER_VOLUME_SIGNAL = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("marker_volume_signal"));
         MARKER_PATH_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("marker_path_possible"));
         MARKER_DEFAULT_POSSIBLE = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("marker_default_possible"));
+
         STRIPES_READ = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_read"));
         STRIPES_WRITE = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_write"));
+
+        POWER_LOW = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_low"));
+        POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_med"));
+        POWER_HIGH = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_high"));
+        POWER_FULL = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_full"));
     }
 
     private static SpriteHolder getSprite(String post) {
