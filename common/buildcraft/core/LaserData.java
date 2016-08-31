@@ -20,7 +20,7 @@ public class LaserData {
 	public Position tail = new Position(0, 0, 0);
 
 	@NetworkData
-	public boolean isVisible = true;
+	public boolean isVisible = false;
 
 	public double renderSize = 0;
 	public double angleY = 0;
