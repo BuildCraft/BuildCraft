@@ -71,7 +71,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 				} else if (inputs[i] instanceof Block) {
 					processedInput[i] = new ItemStack((Block) inputs[i], 1, OreDictionary.WILDCARD_VALUE);
 				} else if (inputs[i] instanceof Integer) {
-					processedInput[i] = inputs[i];
+					processedInput[i] = OreDictionary.getOres((Integer) inputs[i]);
 				} else {
 					throw new IllegalArgumentException("Unknown Object passed to recipe!");
 				}
