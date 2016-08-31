@@ -23,11 +23,13 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.JavaTools;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.BuildCraftPacket;
 
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
+	protected boolean disabled;
 
 	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
 		try {
@@ -95,5 +97,17 @@ public class BuildCraftMod {
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sendToServer crash", t);
 		}
+	}
+
+	protected boolean isDisabled(String modId) {
+		String[] disabledMods = BuildCraftCore.mainConfiguration
+				.get("general", "disabledMods", new String[0])
+				.getStringList();
+		for (String disabledMod : disabledMods) {
+			if (JavaTools.stripSurroundingQuotes(disabledMod).equals(modId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

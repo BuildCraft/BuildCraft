@@ -169,6 +169,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.serverDir",
 				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
@@ -258,6 +261,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		HeuristicBlockDetection.start();
 		
 		if (debugPrintSchematicList) {
@@ -277,6 +283,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
@@ -451,6 +460,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		if (isDisabled(evt.getModMetadata().modId)) {
+			disabled = true;
+			return;
+		}
 		templateItem = new ItemBlueprintTemplate();
 		templateItem.setUnlocalizedName("templateItem");
 		CoreProxy.proxy.registerItem(templateItem);
@@ -564,17 +577,26 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		if (disabled) {
+			return;
+		}
 		InterModComms.processIMC(event);
 	}
 
 	@Mod.EventHandler
 	public void serverStop(FMLServerStoppingEvent event) {
+		if (disabled) {
+			return;
+		}
 		TilePathMarker.clearAvailableMarkersList();
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
+		if (disabled) {
+			return;
+		}
 		if (evt.map.getTextureType() == 0) {
 			for (FillerPattern pattern : FillerPattern.patterns.values()) {
 				pattern.registerIcon(evt.map);
@@ -585,6 +607,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event) {
+		if (disabled) {
+			return;
+		}
 		if (event.map.getTextureType() == 1) {
 			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
@@ -592,6 +617,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		if (disabled) {
+			return;
+		}
 		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 		//		TileMarker.class.getCanonicalName());
 		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
@@ -608,6 +636,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
+		if (disabled) {
+			return;
+		}
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
 			if (mapping.name.equals("BuildCraft|Builders:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {
