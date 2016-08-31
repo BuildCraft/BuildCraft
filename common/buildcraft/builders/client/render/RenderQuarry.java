@@ -1,5 +1,6 @@
 package buildcraft.builders.client.render;
 
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.client.BuildCraftLaserManager;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -92,16 +94,58 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
         if(tile.min != null && tile.max != null && tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskAddFrame) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
             int index = tile.getFramePoses().indexOf(currentTask.pos);
-            if(index > 0) {
+            if(index > 1) {
                 double progress = (double) currentTask.getEnergy() / currentTask.getTarget() * (index - 1) / tile.getFramePoses().size();
-                double xProgress = (progress >= 0 && progress <= 0.25) ? progress * 4 :
+                double progress1 = (progress >= 0 && progress <= 0.25) ? progress * 4 :
                                    (progress >= 0.25 && progress <= 0.5) ? 1 :
                                    (progress >= 0.5 && progress <= 0.75) ? 1 - (progress - 0.5) * 4 :
                                    (progress >= 0.75 && progress <= 1) ? 0 : -1 /* not possible */;
-                double zProgress = (progress >= 0 && progress <= 0.25) ? 1 :
+                double progress2 = (progress >= 0 && progress <= 0.25) ? 1 :
                                    (progress >= 0.25 && progress <= 0.5) ? 1 - (progress - 0.25) * 4 :
                                    (progress >= 0.5 && progress <= 0.75) ? 0 :
                                    (progress >= 0.75 && progress <= 1) ? (progress - 0.75) * 4 : -1 /* not possible */;
+                double xProgress = -1;
+                double zProgress = -1;
+                EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
+                BlockPos firstPos = tile.getPos().offset(side);
+                switch(side) {
+                    case SOUTH:
+                        if(firstPos.getX() == tile.min.getX()) {
+                            xProgress = 1 - progress2;
+                            zProgress = progress1;
+                        } else {
+                            xProgress = progress2;
+                            zProgress = progress1;
+                        }
+                        break;
+                    case WEST:
+                        if(firstPos.getZ() == tile.min.getZ()) {
+                            xProgress = 1 - progress1;
+                            zProgress = 1 - progress2;
+                        } else {
+                            xProgress = 1 - progress1;
+                            zProgress = progress2;
+                        }
+                        break;
+                    case NORTH:
+                        if(firstPos.getX() == tile.min.getX()) {
+                            xProgress = 1 - progress2;
+                            zProgress = 1 - progress1;
+                        } else {
+                            xProgress = progress2;
+                            zProgress = 1 - progress1;
+                        }
+                        break;
+                    case EAST:
+                        if(firstPos.getZ() == tile.min.getZ()) {
+                            xProgress = progress1;
+                            zProgress = 1 - progress2;
+                        } else {
+                            xProgress = progress1;
+                            zProgress = progress2;
+                        }
+                        break;
+                }
                 double xResult = tile.min.getX() + (tile.max.getX() - tile.min.getX()) * xProgress;
                 double zResult = tile.min.getZ() + (tile.max.getZ() - tile.min.getZ()) * zProgress;
                 ItemStack stack = new ItemStack(BCBuildersBlocks.frame);

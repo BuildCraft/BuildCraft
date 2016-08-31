@@ -7,6 +7,7 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
 import buildcraft.api.mj.types.MachineType;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.core.Box;
@@ -48,8 +49,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
@@ -71,19 +75,46 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
     public List<BlockPos> getFramePoses() {
         List<BlockPos> framePoses = new ArrayList<>();
-        if(min != null && max != null) {
-            for(int x = min.getX(); x <= max.getX(); x++) {
-                framePoses.add(new BlockPos(x, min.getY(), max.getZ()));
+//        if(min != null && max != null) {
+//            for(int x = min.getX(); x <= max.getX(); x++) {
+//                framePoses.add(new BlockPos(x, min.getY(), max.getZ()));
+//            }
+//            for(int z = max.getZ() - 1; z > min.getZ(); z--) {
+//                framePoses.add(new BlockPos(max.getX(), min.getY(), z));
+//            }
+//            for(int x = max.getX(); x >= min.getX(); x--) {
+//                framePoses.add(new BlockPos(x, min.getY(), min.getZ()));
+//            }
+//            for(int z = min.getZ() + 1; z < max.getZ(); z++) {
+//                framePoses.add(new BlockPos(min.getX(), min.getY(), z));
+//            }
+//        }
+        Map<BlockPos, Boolean> placingMap = new HashMap<>();
+        for(int x = min.getX(); x <= max.getX(); x++) {
+            for(int z = min.getZ(); z <= max.getZ(); z++) {
+                BlockPos pos = new BlockPos(x, min.getY(), z);
+                boolean shouldBeFrame = x == min.getX() || x == max.getX() || z == min.getZ() || z == max.getZ();
+                if(shouldBeFrame) {
+                    placingMap.put(pos, false);
+                }
             }
-            for(int z = max.getZ() - 1; z > min.getZ(); z--) {
-                framePoses.add(new BlockPos(max.getX(), min.getY(), z));
-            }
-            for(int x = max.getX(); x >= min.getX(); x--) {
-                framePoses.add(new BlockPos(x, min.getY(), min.getZ()));
-            }
-            for(int z = min.getZ() + 1; z < max.getZ(); z++) {
-                framePoses.add(new BlockPos(min.getX(), min.getY(), z));
-            }
+        }
+        BlockPos first = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite());
+        placingMap.put(first, true);
+        framePoses.add(first); // "place" frame near quarry
+        BlockPos second = pos.offset(worldObj.getBlockState(pos).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite(), 2);
+        placingMap.put(second, true);
+        framePoses.add(second); // "place" frame in 2 block
+        while(placingMap.size() != framePoses.size()) {
+            BlockPos lastPlaced = framePoses.get(framePoses.size() - 1);
+            placingMap.keySet().stream()
+                    .filter(blockPos -> !placingMap.get(blockPos))
+                    .filter(blockPos -> Stream.of(EnumFacing.values())
+                            .anyMatch(side -> lastPlaced.offset(side).equals(blockPos)))
+                    .forEach(blockPos -> {
+                        placingMap.put(blockPos, true);
+                        framePoses.add(blockPos);
+                    });
         }
         return framePoses;
     }
@@ -324,6 +355,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             left.add("task:");
             left.add(" - class = " + currentTask.getClass().getName());
             left.add(" - energy = " + currentTask.getEnergy());
+            left.add(" - target = " + currentTask.getTarget());
         } else {
             left.add("task = null");
         }
@@ -489,7 +521,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         public long getTarget() {
-            return 10000000;
+            return Math.max(getFramePoses().indexOf(pos) * 3000000, 1000000);
         }
 
         @Override
