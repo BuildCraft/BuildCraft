@@ -3,7 +3,6 @@ package buildcraft.builders.client.render;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
@@ -23,6 +22,7 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;
     public static final LaserData_BC8.LaserType FRAME_BOTTOM;
     public static final LaserData_BC8.LaserType DRILL;
+    public static final LaserData_BC8.LaserType LASER;
 
     static {
         {
@@ -58,6 +58,17 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
             LaserData_BC8.LaserRow capEnd = new LaserData_BC8.LaserRow(sprite, 6, 0, 10, 4);
             DRILL = new LaserData_BC8.LaserType(capStart, start, middle, end, capEnd);
         }
+        {
+            SpriteHolderRegistry.SpriteHolder sprite = SpriteHolderRegistry.getHolder("buildcraftbuilders:blocks/quarry/laser");
+            LaserData_BC8.LaserRow capStart = new LaserData_BC8.LaserRow(sprite, 4, 4, 12, 12);
+            LaserData_BC8.LaserRow start = null;
+            LaserData_BC8.LaserRow[] middle = {
+                    new LaserData_BC8.LaserRow(sprite, 0, 4, 16, 12)
+            };
+            LaserData_BC8.LaserRow end = new LaserData_BC8.LaserRow(sprite, 0, 4, 16, 12);
+            LaserData_BC8.LaserRow capEnd = new LaserData_BC8.LaserRow(sprite, 4, 4, 12, 12);
+            LASER = new LaserData_BC8.LaserType(capStart, start, middle, end, capEnd);
+        }
     }
 
     public RenderQuarry() {}
@@ -81,7 +92,7 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
             TileQuarry.TaskBreakBlock currentTask = (TileQuarry.TaskBreakBlock) tile.currentTask;
             BlockPos pos = currentTask.pos;
 
-            LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 1 / 16D), buffer);
+            LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(LASER, new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 1 / 16D), buffer);
         }
 
         buffer.setTranslation(0, 0, 0);
