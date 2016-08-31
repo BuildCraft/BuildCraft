@@ -539,6 +539,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 
 	public void checkRedstonePower() {
 		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		tileCache = null;
+		checkOrienation = true;
 	}
 
 	public void onNeighborUpdate() {
