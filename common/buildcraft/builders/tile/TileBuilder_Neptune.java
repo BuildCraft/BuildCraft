@@ -107,6 +107,8 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     @Override
     public void update() {
+        if (true) return;// until tasks are done
+        
         battery.tick(getWorld(), getPos());
         builder.update();
         animation.update();

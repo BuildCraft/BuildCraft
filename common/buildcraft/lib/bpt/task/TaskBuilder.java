@@ -107,7 +107,7 @@ public final class TaskBuilder {
                 ).build()//
         );
         build.doWhen(//
-                build.requirement().lock(reqStack).after(post).target(BlockPos.ORIGIN),//
+                build.requirement().lock(reqStack).after(post, true).target(BlockPos.ORIGIN),//
                 (builder, pos) -> {
                     // put it into the tile or something like that
                 }//
@@ -131,12 +131,12 @@ public final class TaskBuilder {
                         }//
                 ).build()//
         );
-        RequirementBuilder requirement = build.requirement().after(post).target(BlockPos.ORIGIN);
+        RequirementBuilder requirement = build.requirement().after(post, true).target(BlockPos.ORIGIN);
         for (int index = 0; index < 27; index++) {
             final int i = index;
             reqStacks[i] = build.request("item#" + i, stacks[i]);
             post = build.subTask("item#" + i).doWhen(//
-                    build.requirement().after(post).lock(reqStacks[i]).target(BlockPos.ORIGIN).power(10_000),//
+                    build.requirement().after(post, true).lock(reqStacks[i]).target(BlockPos.ORIGIN).power(10_000),//
                     (builder, pos) -> {
                         TileEntity tile = builder.getWorld().getTileEntity(pos);
                         if (tile instanceof IInventory) {
@@ -146,14 +146,14 @@ public final class TaskBuilder {
                         // place item into chest
                     }//
             );
-            requirement.after(post);
+            requirement.after(post, true);
         }
         build.doWhen(requirement, (builder, pos) -> {
             // close chest
         });
     }
 
-    final TaskBuilder parent;
+    final TaskBuilder root;
     final String id;
     final Map<String, DelegateFluid> fluidRequests = new HashMap<>();
     final Map<String, DelegateItem> itemRequests = new HashMap<>();
@@ -171,7 +171,7 @@ public final class TaskBuilder {
     }
 
     private TaskBuilder(TaskBuilder parent, String id) {
-        this.parent = parent;
+        this.root = parent == null ? this : parent;
         this.id = id;
     }
 
@@ -198,7 +198,7 @@ public final class TaskBuilder {
     }
 
     public TaskBuilder subTask(String id) {
-        return new TaskBuilder(this, id);
+        return new TaskBuilder(root, id);
     }
 
     public RequirementBuilder requirement() {
@@ -275,11 +275,14 @@ public final class TaskBuilder {
     }
 
     /** Defines a requirement link that requires a {@link TaskDefinition}, {@link Action} or {@link WhileAction} to have
-     * completed before starting another one. */
+     * completed before starting another one. Note that if this is returned from
+     * {@link TaskBuilder#doIf(ICondition, Action, Action)} or
+     * {@link TaskBuilder#doIf(ICondition, TaskDefinition, TaskDefinition)} then this only requires one of the 2 tasks
+     * to have completed, not both. */
     public final class PostTask {
-        /** The objects that must have completed before this can be considered to have completed. Support only exists
-         * for instances of {@link TaskDefinition}, {@link Action} and {@link WhileAction} - other instances (and null)
-         * will throw an exception. These may be equal if only a single object really needs to be complete. */
+        /** Either of the objects that must have completed before this can be considered to have completed. Support only
+         * exists for instances of {@link TaskDefinition}, {@link Action} and {@link WhileAction} - other instances (and
+         * null) will throw an exception. These may be equal if only a single object really needs to be complete. */
         public final Object toCompleteA, toCompleteB;
 
         private PostTask(Object toComplete) {
@@ -309,24 +312,94 @@ public final class TaskBuilder {
         }
     }
 
+    /** Implements requirements. There are 5 stages:
+     * <ol>
+     * <li>Wait for other tasks to complete</li>
+     * <li>Lock some {@link IRequested} requests that will be used.</li>
+     * <li>Wait an arbitrary length of time</li>
+     * <li>Move the builder active head position to a specified location (there can only be one at a time, but some
+     * builders may do this instantly)</li>
+     * <li>Receive a certain amount of power.</li>
+     * </ol>
+    */
     public final class RequirementBuilder {
-        // @formatter:off
-        public RequirementBuilder target(Vec3d offset) { return this; }
+        Vec3d targetVec;
+        int ticksToWait = 0;
+        long microJoules;
+        final List<DelegateRequested> toLock = new ArrayList<>();
+        final List<PowerFunction> powerFunctions = new ArrayList<>();
+        final List<PostTask> successTasks = new ArrayList<>();
+        final List<PostTask> completeTasks = new ArrayList<>();
 
-        public RequirementBuilder target(BlockPos offset) { return this; }
+        /** Targets the builder at a particular place. These will be waited *after* the tasks have been completed and
+         * requests have been satisfied, and after the {@link #waitTicks(int)} time has been waited. (so stage 4) */
+        public RequirementBuilder target(Vec3d offset) {
+            targetVec = offset;
+            return this;
+        }
 
-        public RequirementBuilder wait(int ticks) { return this; }
+        /** Targets the builder at a particular place. These will be waited *after* the tasks have been completed and
+         * requests have been satisfied, and after the {@link #waitTicks(int)} time has been waited. (so stage 4) */
+        public RequirementBuilder target(BlockPos offset) {
+            return target(new Vec3d(offset).addVector(0.5, 0.5, 0.5));
+        }
 
-        public RequirementBuilder lock(IRequested req) { return this; }
+        /** Waits a certain number of ticks. These will be waited *after* the tasks have been completed and requests
+         * have been satisfied (so stage 3) */
+        public RequirementBuilder waitTicks(int ticks) {
+            ticksToWait += ticks;
+            if (ticksToWait < 0) {
+                ticksToWait = 0;
+            }
+            return this;
+        }
 
-        public RequirementBuilder power(long microJoules) { return this; }
+        /** Tries to lock a particular {@link IRequested} item or fluid. This is requested *after* the tasks have been
+         * completed. (so stage 2) */
+        public RequirementBuilder lock(IRequested req) {
+            toLock.add((DelegateRequested) req);
+            return this;
+        }
 
-        public RequirementBuilder power(PowerFunction function) { return this; }
+        /** Tries to acquire some power for building. This is requested *after* the tasks have been completed, the
+         * requests have been locked, the {@link #waitTicks(int)} time has been waited, and the builder has been
+         * positioned at the target. (so stage 5) */
+        public RequirementBuilder power(long microJoules) {
+            this.microJoules += microJoules;
+            return this;
+        }
 
-        public RequirementBuilder after(PostTask post) { return this; }
+        /** Tries to acquire some power for building. This is requested *after* the tasks have been completed, the
+         * requests have been locked, the {@link #waitTicks(int)} time has been waited, and the builder has been
+         * positioned at the target. (so stage 5).
+         * <p>
+         * The actual amount of power requested is evaluated lazily at the last possible opportunity. It is evaluated
+         * only once per schematic per block. */
+        public RequirementBuilder power(PowerFunction function) {
+            powerFunctions.add(function);
+            return this;
+        }
 
-        public RequirementDefinition build() { return null; }
-        // @formatter:on
+        /** Waits for another task to complete. This is the first part of the requirement, so no other requirements will
+         * start until either the given task completes (in which case it will move on if all tasks have been satisfied)
+         * or it will fail early if some of the required tasks failed to complete and requireSuccess is true.
+         * 
+         * @param post The task that should be waited on.
+         * @param requireSuccess If true then the task *must* be called and completed (for example the conditional in
+         *            {@link TaskBuilder}.doIfTrue or {@link TaskBuilder}.doIfFalse), but if its false then the task
+         *            must have either been completed or defined to not run. */
+        public RequirementBuilder after(PostTask post, boolean requireSuccess) {
+            if (requireSuccess) {
+                successTasks.add(post);
+            } else {
+                completeTasks.add(post);
+            }
+            return this;
+        }
+
+        public RequirementDefinition build() {
+            return new RequirementDefinition(this);
+        }
     }
 
     public static final class ConditionBuilder {

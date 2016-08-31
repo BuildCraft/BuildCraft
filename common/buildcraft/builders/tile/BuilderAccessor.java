@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.bpt.BptPermissions;
 import buildcraft.lib.bpt.builder.AbstractBuilderAccessor;
+import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.VecUtil;
 
@@ -40,11 +41,6 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     }
 
     @Override
-    public Vec3d getBuilderPosition() {
-        return vec;
-    }
-
-    @Override
     public World getWorld() {
         return tile.getWorld();
     }
@@ -57,5 +53,15 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     @Override
     public boolean hasPermissionToEdit(BlockPos pos) {
         return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, tile.getOwner(), PermissionUtil.createFrom(getWorld(), pos));
+    }
+
+    @Override
+    public long drainPower(long requested, TaskUsable requestor) {
+        return requested;// TODO: fix this!
+    }
+
+    @Override
+    public boolean target(Vec3d vec, TaskUsable requestor) {
+        return true; // The builder doesn't have a head position
     }
 }

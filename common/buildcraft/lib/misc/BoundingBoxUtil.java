@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
@@ -11,7 +13,7 @@ public class BoundingBoxUtil {
     /** Creates an {@link AxisAlignedBB} from a block pos and a box.
      * 
      * Note that additional must NOT be null, but the box can be. */
-    public static AxisAlignedBB makeFrom(BlockPos additional, IBox box) {
+    public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box) {
         if (box == null) {
             return new AxisAlignedBB(additional);
         } else {
@@ -23,8 +25,8 @@ public class BoundingBoxUtil {
 
     /** Creates an {@link AxisAlignedBB} from a block pos and 2 boxes
      * 
-     * Note that additional must NOT be null, but (either of) boxes can be. */
-    public static AxisAlignedBB makeFrom(BlockPos additional, IBox box1, IBox box2) {
+     * Note that additional must NOT be null, but (either of) the boxes can be. */
+    public static AxisAlignedBB makeFrom(BlockPos additional, @Nullable IBox box1, @Nullable IBox box2) {
         if (box1 == null) {
             return makeFrom(additional, box2);
         } else if (box2 == null) {

@@ -36,6 +36,6 @@ public final class TaskDefinition {
     }
 
     public TaskUsable createUsableTask() {
-        return new TaskUsable(this);
+        return new TaskUsable(null, this);
     }
 }
