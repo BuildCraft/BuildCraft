@@ -94,6 +94,10 @@ public class DockingStation implements IDockingStation {
 		return robotTaking;
 	}
 
+	public void invalidateRobotTakingEntity() {
+		robotTaking = null;
+	}
+
 	@Override
 	public long linkedId() {
 		return robotTakingId;

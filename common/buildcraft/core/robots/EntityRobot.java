@@ -946,6 +946,11 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
+	public void onChunkUnload() {
+		getRegistry().unloadRobot(this);
+	}
+
+	@Override
 	public boolean canBePushed() {
 		return false;
 	}
@@ -1079,4 +1084,5 @@ public class EntityRobot extends EntityRobotBase implements
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
+
 }

@@ -22,6 +22,8 @@ public interface IRobotRegistry {
 
 	void killRobot(EntityRobotBase robot);
 
+	void unloadRobot(EntityRobotBase robot);
+
 	EntityRobotBase getLoadedRobot(long id);
 
 	boolean isTaken(ResourceId resourceId);
