@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.LibProxy;
 import buildcraft.lib.misc.data.DelayedList;
@@ -145,5 +146,36 @@ public class MessageUtil {
             return (PacketBuffer) buf;
         }
         return new PacketBuffer(buf);
+    }
+
+    /** Checks to make sure that this buffer has been *completely* read (so that there are no readable bytes left
+     * over */
+    public static void ensureEmpty(ByteBuf buf, boolean throwError, String extra) {
+        int readableBytes = buf.readableBytes();
+        if (readableBytes > 0) {
+            // Get a (small) bit of the data
+            byte[] selection = new byte[readableBytes > 10 ? 10 : readableBytes];
+            buf.readBytes(selection);
+            StringBuilder sb = new StringBuilder();
+            for (byte b : selection) {
+                String h = Integer.toHexString(Byte.toUnsignedInt(b));
+                if (h.length() == 1) {
+                    sb.append(" 0");
+                } else {
+                    sb.append(" ");
+                }
+                sb.append(h);
+            }
+            if (readableBytes > 10) {
+                sb.append(" (+" + (readableBytes - 10) + ")");
+            }
+
+            IllegalStateException ex = new IllegalStateException("Did not fully read the data! [" + extra + "]" + sb);
+            if (throwError) {
+                throw ex;
+            } else {
+                BCLog.logger.warn(ex);
+            }
+        }
     }
 }

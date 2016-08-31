@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -209,7 +210,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
     public final void redrawBlock() {
         if (hasWorldObj()) {
-            IBlockState state = worldObj.getBlockState(getPos());
+            IBlockState state = worldObj.getBlockState(pos);
             worldObj.notifyBlockUpdate(pos, state, state, 0);
         }
     }
@@ -271,6 +272,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        handleUpdateTag(pkt.getNbtCompound());
+    }
+
+    @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
@@ -279,11 +285,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     @Override
     public final NBTTagCompound getUpdateTag() {
-        MessageUpdateTile message = createNetworkUpdate(NET_RENDER_DATA);
         ByteBuf buf = Unpooled.buffer();
-        message.toBytes(buf);
+        buf.writeShort(NET_RENDER_DATA);
+        writePayload(NET_RENDER_DATA, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
+
         NBTTagCompound nbt = super.getUpdateTag();
         nbt.setByteArray("d", bytes);
         return nbt;
@@ -294,9 +301,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         super.readFromNBT(tag);
         byte[] bytes = tag.getByteArray("d");
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
+
         try {
             int id = buf.readUnsignedShort();
             readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER, null);
+            // Make sure that we actually read the entire message rather than just discarding it
+            MessageUtil.ensureEmpty(buf, worldObj.isRemote, getClass().getSimpleName());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
