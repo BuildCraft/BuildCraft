@@ -831,4 +831,12 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler)
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
 	}
+	
+	protected boolean isBlockNeighborChange() {
+		return blockNeighborChange;
+	}
+
+	protected void setBlockNeighborChange(boolean blockNeighborChange) {
+		this.blockNeighborChange = blockNeighborChange;
+	}
 }

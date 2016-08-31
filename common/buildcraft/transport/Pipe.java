@@ -441,7 +441,64 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			notifyBlocksOfNeighborChange(side);
 		}
 	}
+	
+	protected void notifyBlocksOfNeighborChangeOnRedstoneOutput(ForgeDirection side) {
+		World world = container.getWorldObj();
+		int x = container.xCoord + side.offsetX;
+		int y = container.yCoord + side.offsetY;
+		int z = container.zCoord + side.offsetZ;
+		Pipe pipes[] = BlockGenericPipe.getBlockNeighboursAsPipes(world, x, y, z);
+		
+		//On gate redstone output change, neighbour change scheduling on pipes leads to wire flicker
+		//So if the only scheduled neighbour changes were from redstone, don't make them.
+		boolean oldNeighbourChanges[] = new boolean[6];
+		
+		for(int i = 0; i < 6; i++) {
+			if(pipes[i] != null) {
+				oldNeighbourChanges[i] = pipes[i].container.isBlockNeighborChange();
+			}
+		}
 
+		world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
+		
+		for(int i = 0; i < 6; i++) {
+			if(pipes[i] != null) {
+				pipes[i].container.setBlockNeighborChange(oldNeighbourChanges[i]);
+			}
+		}
+	}
+
+	protected void updateNeighborsOnRedstoneOutput(boolean needSelf) {
+		if (needSelf) {
+			World world = container.getWorldObj();
+			int x = container.xCoord;
+			int y = container.yCoord;
+			int z = container.zCoord;
+			Pipe pipes[] = BlockGenericPipe.getBlockNeighboursAsPipes(world, x, y, z);
+			
+			//On gate redstone output change, neighbour change scheduling on pipes leads to wire flicker
+			//So if the only scheduled neighbour changes were from redstone, don't make them.
+			boolean oldNeighbourChanges[] = new boolean[6];
+			
+			for(int i = 0; i < 6; i++) {
+				if(pipes[i] != null) {
+					oldNeighbourChanges[i] = pipes[i].container.isBlockNeighborChange();
+				}
+			}
+
+			world.notifyBlocksOfNeighborChange(x, y, z, BuildCraftTransport.genericPipeBlock);
+			
+			for(int i = 0; i < 6; i++) {
+				if(pipes[i] != null) {
+					pipes[i].container.setBlockNeighborChange(oldNeighbourChanges[i]);
+				}
+			}
+		}
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			notifyBlocksOfNeighborChangeOnRedstoneOutput(side);
+		}
+	}
+	
 	public void dropItem(ItemStack stack) {
 		InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
 	}

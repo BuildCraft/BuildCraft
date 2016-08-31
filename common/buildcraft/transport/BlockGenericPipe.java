@@ -46,6 +46,7 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.BlockIndex;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.BCLog;
+import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -1040,6 +1041,20 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		return ((TileGenericPipe) tile).pipe;
+	}
+	
+	public static Pipe[] getBlockNeighboursAsPipes(IBlockAccess blockAccess, int x, int y, int z) {
+		TileEntity entities[] = BlockUtil.getBlockNeighboursAsTileEntities(blockAccess, x, y, z);
+		Pipe pipes[] = new Pipe[6];
+		for(int i = 0; i < 6; i++) {
+			if (!(entities[i] instanceof TileGenericPipe) || entities[i].isInvalid()) {
+				pipes[i] = null;
+			} else {
+				pipes[i] = ((TileGenericPipe) entities[i]).pipe;
+			}
+		}
+		
+		return pipes;
 	}
 
 	public static boolean isFullyDefined(Pipe pipe) {
