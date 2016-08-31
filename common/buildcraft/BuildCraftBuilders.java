@@ -487,10 +487,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 4), "ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 4), "ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
