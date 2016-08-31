@@ -10,6 +10,7 @@ package buildcraft.core.gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
@@ -37,7 +39,11 @@ import buildcraft.core.gui.widgets.Widget;
 import buildcraft.core.render.RenderUtils;
 import buildcraft.core.utils.SessionVars;
 
-public abstract class GuiBuildCraft extends GuiContainer {
+import codechicken.nei.INEIGuiHandler;
+import codechicken.nei.TaggedInventoryArea;
+import codechicken.nei.VisiblityData;
+
+public abstract class GuiBuildCraft extends GuiContainer implements INEIGuiHandler {
 
 	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 	public final LedgerManager ledgerManager = new LedgerManager(this);
@@ -384,6 +390,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			return null;
 		}
 
+        public boolean ledgerOverlaps(int x, int y, int width, int height) {
+            return getAtPosition(x + width, y + height) != null || getAtPosition(x + width, y) != null || getAtPosition(x, y + height) != null || getAtPosition(x, y) != null;
+        }
+
 		protected void drawLedgers(int mouseX, int mouseY) {
 
 			int xPos = 8;
@@ -538,4 +548,30 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	public BuildCraftContainer getContainer() {
 		return container;
 	}
+
+    /* INEIGUIHANDLER */
+    @Override
+    public VisiblityData modifyVisiblity(GuiContainer gui, VisiblityData currentVisibility) {
+        return null;
+    }
+
+    @Override
+    public Iterable<Integer> getItemSpawnSlots(GuiContainer gui, ItemStack item) {
+        return null;
+    }
+
+    @Override
+    public List<TaggedInventoryArea> getInventoryAreas(GuiContainer gui) {
+        return null;
+    }
+
+    @Override
+    public boolean handleDragNDrop(GuiContainer gui, int mousex, int mousey, ItemStack draggedStack, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean hideItemPanelSlot(GuiContainer gui, int x, int y, int w, int h) {
+        return gui instanceof GuiBuildCraft && ((GuiBuildCraft) gui).ledgerManager.ledgerOverlaps(x, y, w, h);
+    }
 }
