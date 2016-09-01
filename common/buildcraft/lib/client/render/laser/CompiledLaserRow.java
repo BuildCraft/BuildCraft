@@ -48,6 +48,7 @@ public class CompiledLaserRow {
     public void bakeStartCap(LaserContext context) {
         this.currentRowIndex = 0;
         double h = height / 2;
+        context.setFaceNormal(-1, 0, 0);
         context.addPoint(0, h, h, texU(1), texV(1));
         context.addPoint(0, h, -h, texU(1), texV(0));
         context.addPoint(0, -h, -h, texU(0), texV(0));
@@ -57,6 +58,7 @@ public class CompiledLaserRow {
     public void bakeEndCap(LaserContext context) {
         this.currentRowIndex = 0;
         double h = height / 2;
+        context.setFaceNormal(1, 0, 0);
         context.addPoint(context.length, -h, h, texU(0), texV(1));
         context.addPoint(context.length, -h, -h, texU(0), texV(0));
         context.addPoint(context.length, h, -h, texU(1), texV(0));
@@ -69,21 +71,25 @@ public class CompiledLaserRow {
         final double l = length;
         final double i = 1 - (length / width);
         // TOP
+        context.setFaceNormal(0, 1, 0);
         context.addPoint(0, h, -h, texU(i), texV(0));// 1
         context.addPoint(0, h, h, texU(i), texV(1));// 2
         context.addPoint(l, h, h, texU(1), texV(1));// 3
         context.addPoint(l, h, -h, texU(1), texV(0));// 4
         // BOTTOM
+        context.setFaceNormal(0, -1, 0);
         context.addPoint(l, -h, -h, texU(1), texV(0));// 4
         context.addPoint(l, -h, h, texU(1), texV(1));// 3
         context.addPoint(0, -h, h, texU(i), texV(1));// 2
         context.addPoint(0, -h, -h, texU(i), texV(0));// 1
         // LEFT
+        context.setFaceNormal(0, 0, -1);
         context.addPoint(0, -h, -h, texU(i), texV(0));// 1
         context.addPoint(0, h, -h, texU(i), texV(1));// 2
         context.addPoint(l, h, -h, texU(1), texV(1));// 3
         context.addPoint(l, -h, -h, texU(1), texV(0));// 4
         // RIGHT
+        context.setFaceNormal(0, 0, 1);
         context.addPoint(l, -h, h, texU(1), texV(0));// 4
         context.addPoint(l, h, h, texU(1), texV(1));// 3
         context.addPoint(0, h, h, texU(i), texV(1));// 2
@@ -97,21 +103,25 @@ public class CompiledLaserRow {
         final double lb = context.length;
         final double i = length / width;
         // TOP
+        context.setFaceNormal(0, 1, 0);
         context.addPoint(ls, h, -h, texU(0), texV(0));// 1
         context.addPoint(ls, h, h, texU(0), texV(1));// 2
         context.addPoint(lb, h, h, texU(i), texV(1));// 3
         context.addPoint(lb, h, -h, texU(i), texV(0));// 4
         // BOTTOM
+        context.setFaceNormal(0, -1, 0);
         context.addPoint(lb, -h, -h, texU(i), texV(0));// 4
         context.addPoint(lb, -h, h, texU(i), texV(1));// 3
         context.addPoint(ls, -h, h, texU(0), texV(1));// 2
         context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
         // LEFT
+        context.setFaceNormal(0, 0, -1);
         context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
         context.addPoint(ls, h, -h, texU(0), texV(1));// 2
         context.addPoint(lb, h, -h, texU(i), texV(1));// 3
         context.addPoint(lb, -h, -h, texU(i), texV(0));// 4
         // RIGHT
+        context.setFaceNormal(0, 0, 1);
         context.addPoint(lb, -h, h, texU(i), texV(0));// 4
         context.addPoint(lb, h, h, texU(i), texV(1));// 3
         context.addPoint(ls, h, h, texU(0), texV(1));// 2
@@ -122,26 +132,31 @@ public class CompiledLaserRow {
         double xMin = startX;
         double xMax = startX + width;
         double h = height / 2;
+        // TODO: change the order so it calculates the face normals 4 times only!
         for (int i = 0; i < count; i++) {
             this.currentRowIndex = i % rows.length;
             double ls = xMin;
             double lb = xMax;
             if (side == LaserSide.TOP) {
+                context.setFaceNormal(0, 1, 0);
                 context.addPoint(ls, h, -h, texU(0), texV(0));// 1
                 context.addPoint(ls, h, h, texU(0), texV(1));// 2
                 context.addPoint(lb, h, h, texU(1), texV(1));// 3
                 context.addPoint(lb, h, -h, texU(1), texV(0));// 4
             } else if (side == LaserSide.BOTTOM) {
+                context.setFaceNormal(0, -1, 0);
                 context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
                 context.addPoint(lb, -h, h, texU(1), texV(1));// 3
                 context.addPoint(ls, -h, h, texU(0), texV(1));// 2
                 context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
             } else if (side == LaserSide.LEFT) {
+                context.setFaceNormal(0, 0, -1);
                 context.addPoint(ls, -h, -h, texU(0), texV(0));// 1
                 context.addPoint(ls, h, -h, texU(0), texV(1));// 2
                 context.addPoint(lb, h, -h, texU(1), texV(1));// 3
                 context.addPoint(lb, -h, -h, texU(1), texV(0));// 4
             } else if (side == LaserSide.RIGHT) {
+                context.setFaceNormal(0, 0, 1);
                 context.addPoint(lb, -h, h, texU(1), texV(0));// 4
                 context.addPoint(lb, h, h, texU(1), texV(1));// 3
                 context.addPoint(ls, h, h, texU(0), texV(1));// 2

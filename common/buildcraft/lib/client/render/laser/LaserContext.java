@@ -83,7 +83,7 @@ public class LaserContext {
         holding.setIdentity();
     }
 
-    public void setFaceData(double nx, double ny, double nz) {
+    public void setFaceNormal(double nx, double ny, double nz) {
         if (useNormalColour) {
             normal.x = (float) nx;
             normal.y = (float) ny;
@@ -148,6 +148,6 @@ public class LaserContext {
     }
 
     private void vertex(int i) {
-        renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[i], n[1], n[2], diffuse);
+        renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[0], n[1], n[2], diffuse);
     }
 }
