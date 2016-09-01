@@ -24,11 +24,8 @@ import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -56,7 +53,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -162,14 +158,33 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
-        List<EntityQuarry.Type> typesPresent = worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getTilePos().equals(pos)).stream().map(EntityQuarry::getType).collect(Collectors.toList());
-//        System.out.println(worldObj.getEntities(EntityQuarry.class, Predicates.alwaysTrue()));
-        for(EntityQuarry.Type type : EntityQuarry.Type.values()) {
-            if(!typesPresent.contains(type)) {
-                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, type));
+//        List<EntityQuarry.Type> typesPresent = worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getTilePos().equals(pos)).stream().map(EntityQuarry::getType).collect(Collectors.toList());
+//        for(EntityQuarry.Type type : EntityQuarry.Type.values()) {
+//            if(!typesPresent.contains(type)) {
+//                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, type));
+//            }
+//        }
+
+        for(int x = min.getX(); x < max.getX(); x++) {
+            BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
+            if(hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
+                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
             }
         }
-//        System.out.println(worldObj.getEntities(EntityQuarry.class, Predicates.alwaysTrue()));
+
+        for(int y = (int) drillPos.yCoord; y < min.getY(); y++) {
+            BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
+            if(hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
+                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+            }
+        }
+
+        for(int z = min.getZ(); z < max.getZ(); z++) {
+            BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
+            if(hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
+                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+            }
+        }
 
         if(currentTask != null) {
             if(currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getEnergy(), 1000000)))) {
@@ -240,6 +255,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
             sendNetworkUpdate(NET_RENDER_DATA);
         }
+    }
+
+    private boolean hasEntityOfType(BlockPos currentPos, EntityQuarry.Type type) {
+        return worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getType() == type && entityQuarry.getTilePos().equals(pos) && entityQuarry.getPosition().equals(currentPos)).size() < 1;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box.min(), additional);
             BlockPos max = VecUtil.max(box.max(), additional);
-            return makeFrom(min, max);
+            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
         }
     }
 
@@ -33,13 +33,8 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
             BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return makeFrom(min, max);
+            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
         }
-    }
-
-    /** Creates an {@link AxisAlignedBB} that fully encompasses the two given block min and max. */
-    public static AxisAlignedBB makeFrom(BlockPos min, BlockPos max) {
-        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {

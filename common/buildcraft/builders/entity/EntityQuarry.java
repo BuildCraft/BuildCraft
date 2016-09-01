@@ -26,11 +26,15 @@ public class EntityQuarry extends Entity {
         dataManager.register(TYPE, 0);
     }
 
-    public EntityQuarry(World world, BlockPos tilePos, Type type) {
+    public EntityQuarry(World world, BlockPos tilePos, BlockPos entityPos, Type type) {
         super(world);
         dataManager.register(TILE_POS, tilePos);
-        setPosition(tilePos.getX(), tilePos.getY(), tilePos.getZ());
+        setPosition(entityPos.getX(), entityPos.getY(), entityPos.getZ());
         dataManager.register(TYPE, type.ordinal());
+    }
+
+    public EntityQuarry(World world, BlockPos tilePos, Type type) {
+        this(world, tilePos, tilePos, type);
     }
 
     @Override
