@@ -1,6 +1,7 @@
 package buildcraft.lib.marker;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
@@ -136,11 +137,18 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
         if (set != null) {
             deinitConnection(set);
         }
+
+        if (DEBUG_FULL) {
+            validateAllConnections();
+        }
     }
 
     public void addConnection(@Nonnull C connection) {
         Set<BlockPos> lastSeen = new HashSet<>(connection.getMarkerPositions());
         initConnection(connection, lastSeen);
+        if (DEBUG_FULL) {
+            validateAllConnections();
+        }
     }
 
     public void refreshConnection(@Nonnull C connection) {
@@ -159,6 +167,56 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             invalid.removeAll(lastSeen);
             deinitConnection(invalid);
             initConnection(connection, lastSeen);
+            if (lastSeen.isEmpty()) {
+                connectionToPos.remove(connection);
+            }
+        }
+
+        if (DEBUG_FULL) {
+            validateAllConnections();
+        }
+    }
+
+    private void validateAllConnections() {
+        final String logStart = "[lib.marker.full][" + cacheId + "]";
+
+        Set<C> visited = new HashSet<>();
+        Set<BlockPos> visitedPos = new HashSet<>();
+
+        for (Entry<C, Set<BlockPos>> entry : connectionToPos.entrySet()) {
+            C con = entry.getKey();
+            Set<BlockPos> positions = entry.getValue();
+            Set<BlockPos> actual = new HashSet<>(con.getMarkerPositions());
+            if (!positions.equals(actual)) {
+                BCLog.logger.warn(logStart + " Positions differed!");
+                List<BlockPos> total = new ArrayList<>();
+                total.addAll(positions);
+                total.addAll(actual);
+                for (BlockPos p : total) {
+                    String s = "(";
+                    s += positions.contains(p) ? "R" : "_";
+                    s += actual.contains(p) ? "S" : "_";
+                    BCLog.logger.warn(logStart + "  - " + p + " " + s + ")");
+                }
+            }
+            for (BlockPos p : positions) {
+                if (visitedPos.contains(p)) {
+                    BCLog.logger.warn(logStart + " Duplicate block positions!" + p + " - " + con);
+                }
+                visitedPos.add(p);
+            }
+            visited.add(con);
+        }
+
+        for (Entry<BlockPos, C> entry : posToConnection.entrySet()) {
+            C connection = entry.getValue();
+            BlockPos p = entry.getKey();
+            if (!visited.contains(connection)) {
+                BCLog.logger.warn(logStart + " Unknown connection " + connection + "(" + p + ")");
+            }
+            if (!visitedPos.contains(p)) {
+                BCLog.logger.warn(logStart + " Unknown Position " + p + " (" + connection + ")");
+            }
         }
     }
 
@@ -186,8 +244,13 @@ public abstract class MarkerSubCache<C extends MarkerConnection<C>> {
             BCLog.logger.info("[lib.marker.full] Setting up a connection with " + lastSeen);
         }
         if (lastSeen.size() < 2) {
+            connectionToPos.remove(connection);
+            for (BlockPos p : lastSeen) {
+                posToConnection.remove(p);
+            }
             return;
         }
+
         connectionToPos.put(connection, lastSeen);
         for (BlockPos p : lastSeen) {
             posToConnection.put(p, connection);

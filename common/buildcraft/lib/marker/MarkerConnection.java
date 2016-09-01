@@ -31,8 +31,6 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
 
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(BlockPos caller, List<String> left) {
-        left.add("");
-        left.add("Connections:");
         Collection<BlockPos> positions = getMarkerPositions();
         List<BlockPos> list = new ArrayList<>(positions);
         if (positions instanceof Set) {
@@ -40,7 +38,7 @@ public abstract class MarkerConnection<C extends MarkerConnection<C>> {
         }
         for (BlockPos pos : list) {
             TileMarker<C> marker = subCache.getMarker(pos);
-            String s = " - " + pos + " [";
+            String s = "  " + pos + " [";
             if (marker == null) {
                 s += TextFormatting.RED + "U";
             } else {

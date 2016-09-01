@@ -89,7 +89,7 @@ public class PathConnection extends MarkerConnection<PathConnection> {
             conA.positions.addAll(a);
             conB.positions.addAll(b);
             positions.clear();
-            subCache.refreshConnection(this);
+            subCache.destroyConnection(this);
             subCache.addConnection(conA);
             subCache.addConnection(conB);
         }
@@ -163,9 +163,8 @@ public class PathConnection extends MarkerConnection<PathConnection> {
                 return false;
             }
         } else if (positions.getLast().equals(from) && conTo.positions.getFirst().equals(to)) {
+            subCache.destroyConnection(conTo);
             positions.addAll(conTo.positions);
-            conTo.positions.clear();
-            subCache.refreshConnection(conTo);
             subCache.refreshConnection(this);
             return true;
         } else {
