@@ -158,31 +158,26 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             return;
         }
 
-//        List<EntityQuarry.Type> typesPresent = worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getTilePos().equals(pos)).stream().map(EntityQuarry::getType).collect(Collectors.toList());
-//        for(EntityQuarry.Type type : EntityQuarry.Type.values()) {
-//            if(!typesPresent.contains(type)) {
-//                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, type));
-//            }
-//        }
-
-        for(int x = min.getX(); x < max.getX(); x++) {
-            BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
-            if(hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
-                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
+        if(drillPos != null) {
+            for(int x = min.getX(); x < max.getX(); x++) {
+                BlockPos currentPos = new BlockPos(x, min.getY(), drillPos.zCoord);
+                if(hasEntityOfType(currentPos, EntityQuarry.Type.X)) {
+                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.X));
+                }
             }
-        }
 
-        for(int y = (int) drillPos.yCoord; y < min.getY(); y++) {
-            BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
-            if(hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
-                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+            for(int y = (int) drillPos.yCoord; y < min.getY(); y++) {
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, y, drillPos.zCoord);
+                if(hasEntityOfType(currentPos, EntityQuarry.Type.Y)) {
+                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Y));
+                }
             }
-        }
 
-        for(int z = min.getZ(); z < max.getZ(); z++) {
-            BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
-            if(hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
-                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+            for(int z = min.getZ(); z < max.getZ(); z++) {
+                BlockPos currentPos = new BlockPos(drillPos.xCoord, min.getY(), z);
+                if(hasEntityOfType(currentPos, EntityQuarry.Type.Z)) {
+                    worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, currentPos, EntityQuarry.Type.Z));
+                }
             }
         }
 
