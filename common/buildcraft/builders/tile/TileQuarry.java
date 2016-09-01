@@ -10,6 +10,7 @@ import buildcraft.api.mj.types.MachineType;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
+import buildcraft.builders.entity.EntityQuarry;
 import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
@@ -23,8 +24,11 @@ import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjReciverBatteryWrapper;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -52,6 +56,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -156,6 +161,15 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         if(min == null || max == null || box == null) {
             return;
         }
+
+        List<EntityQuarry.Type> typesPresent = worldObj.getEntities(EntityQuarry.class, entityQuarry -> entityQuarry != null && entityQuarry.getTilePos().equals(pos)).stream().map(EntityQuarry::getType).collect(Collectors.toList());
+//        System.out.println(worldObj.getEntities(EntityQuarry.class, Predicates.alwaysTrue()));
+        for(EntityQuarry.Type type : EntityQuarry.Type.values()) {
+            if(!typesPresent.contains(type)) {
+                worldObj.spawnEntityInWorld(new EntityQuarry(worldObj, pos, type));
+            }
+        }
+//        System.out.println(worldObj.getEntities(EntityQuarry.class, Predicates.alwaysTrue()));
 
         if(currentTask != null) {
             if(currentTask.addEnergy(battery.extractPower(0, Math.min(currentTask.getTarget() - currentTask.getEnergy(), 1000000)))) {
