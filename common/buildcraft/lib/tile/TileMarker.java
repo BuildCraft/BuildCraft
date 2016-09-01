@@ -62,10 +62,12 @@ public abstract class TileMarker<C extends MarkerConnection<C>> extends TileBC_N
     @SideOnly(Side.CLIENT)
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         C current = getCurrentConnection();
+        MarkerSubCache<C> cache = getLocalCache();
+        left.add("Exists = " + (cache.getMarker(getPos()) == this));
         if (current == null) {
-            left.add("");
-            left.add("No connection!");
+            left.add("Connection = null");
         } else {
+            left.add("Connection:");
             current.getDebugInfo(getPos(), left);
         }
     }

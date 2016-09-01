@@ -134,6 +134,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
         left.add("");
         left.add("Min = " + min());
         left.add("Max = " + max());
+        left.add("Signals = " + showSignals);
     }
 
     // ITileAreaProvider
