@@ -1,13 +1,12 @@
 package buildcraft.lib.client.render.laser;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserRow;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserSide;
+import buildcraft.lib.client.sprite.ISprite;
 
 public class CompiledLaserRow {
     public final LaserRow[] rows;
-    private final TextureAtlasSprite[] sprites;
+    private final ISprite[] sprites;
     public final double width;
     public final double height;
     private int currentRowIndex;
@@ -21,28 +20,28 @@ public class CompiledLaserRow {
         this.rows = rows;
         this.width = rows[0].width;
         this.height = rows[0].height;
-        this.sprites = new TextureAtlasSprite[rows.length];
+        this.sprites = new ISprite[rows.length];
         for (int i = 0; i < rows.length; i++) {
-            sprites[i] = rows[i].sprite.getSprite();
+            sprites[i] = rows[i].sprite;
         }
     }
 
     private double texU(double between) {
-        TextureAtlasSprite sprite = sprites[currentRowIndex];
+        ISprite sprite = sprites[currentRowIndex];
         LaserRow row = rows[currentRowIndex];
-        if (between == 0) return sprite.getInterpolatedU(row.uMin);
-        if (between == 1) return sprite.getInterpolatedU(row.uMax);
+        if (between == 0) return sprite.getInterpU(row.uMin);
+        if (between == 1) return sprite.getInterpU(row.uMax);
         double interp = row.uMin * (1 - between) + row.uMax * between;
-        return sprite.getInterpolatedU(interp);
+        return sprite.getInterpU(interp);
     }
 
     private double texV(double between) {
-        TextureAtlasSprite sprite = sprites[currentRowIndex];
+        ISprite sprite = sprites[currentRowIndex];
         LaserRow row = rows[currentRowIndex];
-        if (between == 0) return sprite.getInterpolatedV(row.vMin);
-        if (between == 1) return sprite.getInterpolatedV(row.vMax);
+        if (between == 0) return sprite.getInterpV(row.vMin);
+        if (between == 1) return sprite.getInterpV(row.vMax);
         double interp = row.vMin * (1 - between) + row.vMax * between;
-        return sprite.getInterpolatedV(interp);
+        return sprite.getInterpV(interp);
     }
 
     public void bakeStartCap(LaserContext context) {
@@ -132,7 +131,6 @@ public class CompiledLaserRow {
         double xMin = startX;
         double xMax = startX + width;
         double h = height / 2;
-        // TODO: change the order so it calculates the face normals 4 times only!
         for (int i = 0; i < count; i++) {
             this.currentRowIndex = i % rows.length;
             double ls = xMin;
