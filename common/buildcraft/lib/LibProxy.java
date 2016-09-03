@@ -4,12 +4,18 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -30,8 +36,6 @@ import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.debug.BCAdvDebugging;
-import buildcraft.lib.gui.ledger.LedgerOwnership;
-import buildcraft.lib.gui.ledger.Ledger_Neptune;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
 
@@ -74,6 +78,10 @@ public abstract class LibProxy implements IGuiHandler {
 
     public <T extends TileEntity> T getServerTile(T tile) {
         return tile;
+    }
+
+    public InputStream getStreamForIdentifier(ResourceLocation identifier) throws IOException {
+        return null;
     }
 
     @Override
@@ -166,6 +174,15 @@ public abstract class LibProxy implements IGuiHandler {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             return new GuiGuide();
+        }
+
+        @Override
+        public InputStream getStreamForIdentifier(ResourceLocation identifier) throws IOException {
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(identifier);
+            if (resource == null) {
+                throw new FileNotFoundException(identifier.toString());
+            }
+            return resource.getInputStream();
         }
     }
 

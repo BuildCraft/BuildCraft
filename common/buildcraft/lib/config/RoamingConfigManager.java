@@ -1,42 +1,38 @@
 package buildcraft.lib.config;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.LibProxy;
 
 public class RoamingConfigManager extends StreamConfigManager {
     private static final Map<ResourceLocation, RoamingConfigManager> instances = new HashMap<>();
-    private final ResourceLocation location;
+    private final ResourceLocation identifier;
     private Boolean cacheExists = null;
 
-    public static RoamingConfigManager getOrCreateDefault(ResourceLocation location) {
-        if (!instances.containsKey(location)) {
-            instances.put(location, new RoamingConfigManager(location));
+    public static RoamingConfigManager getOrCreateDefault(ResourceLocation identifier) {
+        if (!instances.containsKey(identifier)) {
+            instances.put(identifier, new RoamingConfigManager(identifier));
         }
-        return instances.get(location);
+        return instances.get(identifier);
     }
 
-    public RoamingConfigManager(ResourceLocation location) {
-        this.location = location;
+    public RoamingConfigManager(ResourceLocation identifier) {
+        this.identifier = identifier;
     }
 
     @Override
     protected void read() {
         cacheExists = null;
-        InputStream stream = CoreProxy.proxy.getStreamForResource(location);
-        if (stream != null) {
-            try {
-                read(stream);
-                cacheExists = Boolean.TRUE;
-            } finally {
-                IOUtils.closeQuietly(stream);
-            }
+        try (InputStream stream = LibProxy.getProxy().getStreamForIdentifier(identifier)) {
+            read(stream);
+            cacheExists = Boolean.TRUE;
+        } catch (IOException io) {
+            // ignore the error, the stream probably didn't exist
         }
         if (cacheExists == null) cacheExists = Boolean.FALSE;
     }
