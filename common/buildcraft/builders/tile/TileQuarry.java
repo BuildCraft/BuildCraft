@@ -76,20 +76,6 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
     public List<BlockPos> getFramePoses() {
         List<BlockPos> framePoses = new ArrayList<>();
-//        if(min != null && max != null) {
-//            for(int x = min.getX(); x <= max.getX(); x++) {
-//                framePoses.add(new BlockPos(x, min.getY(), max.getZ()));
-//            }
-//            for(int z = max.getZ() - 1; z > min.getZ(); z--) {
-//                framePoses.add(new BlockPos(max.getX(), min.getY(), z));
-//            }
-//            for(int x = max.getX(); x >= min.getX(); x--) {
-//                framePoses.add(new BlockPos(x, min.getY(), min.getZ()));
-//            }
-//            for(int z = min.getZ() + 1; z < max.getZ(); z++) {
-//                framePoses.add(new BlockPos(min.getX(), min.getY(), z));
-//            }
-//        }
         Map<BlockPos, Boolean> placingMap = new HashMap<>();
         for(int x = min.getX(); x <= max.getX(); x++) {
             for(int z = min.getZ(); z <= max.getZ(); z++) {
@@ -271,7 +257,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
         nbt.setTag("mj_battery", battery.serializeNBT());
         if(currentTask != null) {
-            nbt.setString("current_task_class", currentTask.getClass().getName());
+            nbt.setInteger("current_task_type", currentTask.getType().ordinal());
             nbt.setTag("current_task_data", currentTask.serializeNBT());
         }
         if(drillPos != null) {
@@ -288,13 +274,14 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         max = NBTUtils.readBlockPos(nbt.getTag("max"));
         boxIterator = new BoxIterator(nbt.getCompoundTag("box_iterator"));
         battery.deserializeNBT(nbt.getCompoundTag("mj_battery"));
-        if(nbt.hasKey("current_task_class")) {
+        if(nbt.hasKey("current_task_type")) {
             try {
-                currentTask = (Task) Class.forName(nbt.getString("current_task_class")).getDeclaredConstructor(TileQuarry.class).newInstance(this);
+                //noinspection unchecked
+                currentTask = (Task) EnumTaskType.values()[nbt.getInteger("current_task_type")].clazz.getDeclaredConstructor(TileQuarry.class).newInstance(this);
                 if(nbt.hasKey("current_task_data")) {
                     currentTask.deserializeNBT(nbt.getCompoundTag("current_task_data"));
                 }
-            } catch(ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {
@@ -317,7 +304,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             }
             buffer.writeBoolean(currentTask != null);
             if(currentTask != null) {
-                buffer.writeString(currentTask.getClass().getName());
+                buffer.writeInt(currentTask.getType().ordinal());
                 currentTask.writeToByteBuf(buffer);
             }
             buffer.writeBoolean(drillPos != null);
@@ -347,9 +334,10 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             }
             if(buffer.readBoolean()) {
                 try {
-                    currentTask = (Task) Class.forName(buffer.readStringFromBuffer(256)).getDeclaredConstructor(TileQuarry.class).newInstance(this);
+                    //noinspection unchecked
+                    currentTask = (Task) EnumTaskType.values()[buffer.readInt()].clazz.getDeclaredConstructor(TileQuarry.class).newInstance(this);
                     currentTask.readFromByteBuf(buffer);
-                } catch(InstantiationException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                } catch(InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -415,6 +403,18 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         return Double.MAX_VALUE;
     }
 
+    private enum EnumTaskType {
+        BREAK_BLOCK(TaskBreakBlock.class),
+        ADD_FRAME(TaskAddFrame.class),
+        MOVE_DRILL(TaskMoveDrill.class);
+
+        public Class clazz;
+
+        EnumTaskType(Class clazz) {
+            this.clazz = clazz;
+        }
+    }
+
     private abstract class Task implements INBTSerializable<NBTTagCompound>, INetworkLoadable_BC8<Task> {
         protected long energy = 0;
 
@@ -468,6 +468,15 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         public Task readFromByteBuf(ByteBuf buf) {
             energy = buf.readLong();
             return this;
+        }
+
+        public EnumTaskType getType() {
+            for(EnumTaskType taskType : EnumTaskType.values()) {
+                if(taskType.clazz.isInstance(this)) {
+                    return taskType;
+                }
+            }
+            return null;
         }
     }
 
