@@ -12,8 +12,10 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.entity.EntityQuarry;
 import buildcraft.core.Box;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
@@ -511,8 +513,22 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(worldObj, pos, worldObj.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer((WorldServer) worldObj).get());
             MinecraftForge.EVENT_BUS.post(breakEvent);
             if(!breakEvent.isCanceled()) {
+                boolean put = TileQuarry.this.drillPos != null;
+                if(put) {
+                    List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
+                    //noinspection Duplicates
+                    if(stacks != null) {
+                        for(ItemStack stack : stacks) {
+                            stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, TileQuarry.this.pos, stack);
+                            if(stack.stackSize > 0) {
+                                stack.stackSize -= Utils.addToRandomInjectableAround(worldObj, TileQuarry.this.pos, null, stack);
+                            }
+                            InvUtils.dropItemUp(getWorld(), stack, getPos());
+                        }
+                    }
+                }
                 worldObj.sendBlockBreakProgress(pos.hashCode(), pos, -1);
-                worldObj.destroyBlock(pos, true);
+                worldObj.destroyBlock(pos, !put);
             }
         }
 
