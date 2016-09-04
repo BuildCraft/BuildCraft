@@ -25,6 +25,10 @@ public class InventoryUtil {
         }
     }
 
+    public static void drop(World world, BlockPos pos, ItemStack stack) {
+        drop(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+    }
+
     public static void drop(World world, double x, double y, double z, ItemStack stack) {
         if (stack == null || stack.stackSize <= 0) {
             return;

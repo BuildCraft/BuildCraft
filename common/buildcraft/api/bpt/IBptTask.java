@@ -8,6 +8,7 @@ import net.minecraft.util.EnumFacing;
  * {@link IBuilderAccessor}.
  * 
  * @date Created on 10 Apr 2016 by AlexIIL */
+@Deprecated
 public interface IBptTask extends IBptWriter {
     Set<EnumFacing> getRequiredSolidFaces(IBuilderAccessor builder);
 

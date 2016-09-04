@@ -1,14 +1,11 @@
 package buildcraft.lib.bpt.vanilla;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.*;
+import buildcraft.lib.bpt.task.TaskUsable;
 
 public class SchematicAir extends SchematicBlock {
     public static final SchematicAir INSTANCE = new SchematicAir();
@@ -20,8 +17,8 @@ public class SchematicAir extends SchematicBlock {
     }
 
     @Override
-    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
-        return ImmutableList.of();
+    public TaskUsable createTask(IBuilderAccessor builder, BlockPos pos) {
+        return TaskUsable.NOTHING;
     }
 
     @Override

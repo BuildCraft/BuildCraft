@@ -1,21 +1,27 @@
 package buildcraft.lib.bpt.vanilla;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.bpt.*;
+import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.api.bpt.IMaterialProvider;
 import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.api.bpt.SchematicException;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.bpt.task.TaskBuilder;
+import buildcraft.lib.bpt.task.TaskBuilder.PostTask;
+import buildcraft.lib.bpt.task.TaskBuilder.RequirementBuilder;
+import buildcraft.lib.bpt.task.TaskUsable;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 public class SchematicChest extends SchematicBlock {
@@ -56,8 +62,59 @@ public class SchematicChest extends SchematicBlock {
     }
 
     @Override
-    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
-        return ImmutableList.of(new BptTaskPlaceAndFillChest(pos, state, stacks, builder));
+    public TaskUsable createTask(IBuilderAccessor builder, BlockPos pos) {
+        TaskBuilder t = new TaskBuilder();
+        IRequestedItem stateReq = t.request("state", state);
+        IRequestedItem[] stackReq = new IRequestedItem[27];
+        for (int i = 0; i < 27; i++) {
+            if (stacks[i] != null) {
+                stackReq[i] = t.request("stack[" + i + "]", stacks[i]);
+            }
+        }
+
+        PostTask placeChest = t.doWhen(t.requirement().lock(stateReq).power(MjAPI.MJ * 2), (b, p) -> {
+            stateReq.use();
+            b.getWorld().setBlockState(p, state);
+            SoundUtil.playBlockPlace(b.getWorld(), p);
+            TileEntityChest tileChest = (TileEntityChest) b.getWorld().getTileEntity(p);
+            tileChest.numPlayersUsing++;
+        });
+        PostTask[] post = new PostTask[27];
+        RequirementBuilder reqClose = t.requirement();
+        reqClose.after(placeChest);
+
+        for (int i = 0; i < 27; i++) {
+            if (stacks[i] != null) {
+                final int index = i;
+                post[index] = t.doWhen(t.requirement().lock(stackReq[index]).power(MjAPI.MJ).after(placeChest), (b, p) -> {
+                    TileEntity tile = b.getWorld().getTileEntity(p);
+                    if (tile instanceof TileEntityChest) {
+                        TileEntityChest chest = (TileEntityChest) tile;
+                        ItemStack existing = chest.getStackInSlot(index);
+                        if (existing == null) {
+                            stackReq[index].use();
+                            chest.setInventorySlotContents(index, stacks[index].copy());
+                        } else if (ItemStack.areItemStacksEqual(existing, stacks[index])) {
+                            stackReq[index].release();
+                        } else {
+                            InventoryUtil.drop(b.getWorld(), p, existing);
+                            stackReq[index].use();
+                            chest.setInventorySlotContents(index, stacks[index].copy());
+                        }
+                    }
+                });
+                reqClose.after(post[index]);
+            }
+        }
+
+        t.doWhen(reqClose, (b, p) -> {
+            TileEntity tile = b.getWorld().getTileEntity(p);
+            if (tile instanceof TileEntityChest) {
+                ((TileEntityChest) tile).numPlayersUsing--;
+            }
+        });
+
+        return t.build().createUsableTask();
     }
 
     @Override
