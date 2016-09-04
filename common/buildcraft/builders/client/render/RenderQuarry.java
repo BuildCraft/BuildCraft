@@ -8,17 +8,18 @@ import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.misc.CullTESR;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.opengl.GL11;
 
-public class RenderQuarry extends CullTESR<TileQuarry> {
+public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
     public static final LaserData_BC8.LaserType FRAME;
     public static final LaserData_BC8.LaserType FRAME_BOTTOM;
     public static final LaserData_BC8.LaserType DRILL;
@@ -74,20 +75,36 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
     public RenderQuarry() {}
 
     @Override
-    public void renderTileEntityFast(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-        buffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
+    public void renderTileEntityAt(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage) {
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
+        GlStateManager.enableCull();
+
+        if(Minecraft.isAmbientOcclusionEnabled()) {
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        } else {
+            GlStateManager.shadeModel(GL11.GL_FLAT);
+        }
+
+        VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+
+        VertexBuffer.setTranslation(x - tile.getPos().getX(), y - tile.getPos().getY(), z - tile.getPos().getZ());
 
         if(tile.min != null && tile.max != null) {
             double yOffset = 1;
 
             if(tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskBreakBlock) {
-                TileQuarry.TaskBreakBlock currentTask = (TileQuarry.TaskBreakBlock) tile.currentTask;
-                BlockPos pos = currentTask.pos;
+                TileQuarry.TaskBreakBlock currentTask1 = (TileQuarry.TaskBreakBlock) tile.currentTask;
+                BlockPos pos = currentTask1.pos;
 
                 if(tile.drillPos == null) {
-                    LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(LASER, new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 1 / 16D), buffer);
+                    LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(LASER, new Vec3d(tile.getPos().getX() + 0.5, tile.getPos().getY() + 0.5, tile.getPos().getZ() + 0.5), new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), 1 / 16D), VertexBuffer);
                 } else {
-                    yOffset = (double) currentTask.getEnergy() / currentTask.getTarget();
+                    yOffset = (double) currentTask1.getEnergy() / currentTask1.getTarget();
                     if(yOffset < 0.9) {
                         yOffset = 1 - yOffset / 0.9;
                     } else {
@@ -101,21 +118,21 @@ public class RenderQuarry extends CullTESR<TileQuarry> {
             if(tile.clientDrillPos != null && tile.prevClientDrillPos != null) {
                 Vec3d interpolatedPos = tile.prevClientDrillPos.add(tile.clientDrillPos.subtract(tile.prevClientDrillPos).scale(partialTicks));
 
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ() + 12 / 16D), 1 / 16D), buffer);
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 4 / 16D), 1 / 16D), buffer);
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.max.getX() + 12 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.min.getX() + 4 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME_BOTTOM, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + 4 / 16D, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
-                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(DRILL, new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + yOffset, interpolatedPos.zCoord + 0.5), new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5), 1 / 16D), buffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ() + 12 / 16D), 1 / 16D, true, false, 0), VertexBuffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord), new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 4 / 16D), 1 / 16D, true, false, 0), VertexBuffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.max.getX() + 12 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D, true, false, 0), VertexBuffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME, new Vec3d(interpolatedPos.xCoord, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(tile.min.getX() + 4 / 16D, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), 1 / 16D, true, false, 0), VertexBuffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(FRAME_BOTTOM, new Vec3d(interpolatedPos.xCoord + 0.5, tile.min.getY() + 0.5, interpolatedPos.zCoord + 0.5), new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + 4 / 16D, interpolatedPos.zCoord + 0.5), 1 / 16D, true, false, 0), VertexBuffer);
+                LaserRenderer_BC8.renderLaserBuffer(new LaserData_BC8(DRILL, new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + 1 + yOffset, interpolatedPos.zCoord + 0.5), new Vec3d(interpolatedPos.xCoord + 0.5, interpolatedPos.yCoord + yOffset, interpolatedPos.zCoord + 0.5), 1 / 16D, true, false, 0), VertexBuffer);
             }
         }
 
-        buffer.setTranslation(0, 0, 0);
-    }
+        VertexBuffer.setTranslation(0, 0, 0);
+        VertexBuffer.setTranslation(0, 0, 0);
 
-    @Override
-    public void renderTileEntityAt(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        super.renderTileEntityAt(tile, x, y, z, partialTicks, destroyStage);
+        tessellator.draw();
+
+        RenderHelper.enableStandardItemLighting();
 
         if(tile.min != null && tile.max != null && tile.currentTask != null && tile.currentTask instanceof TileQuarry.TaskAddFrame) {
             TileQuarry.TaskAddFrame currentTask = (TileQuarry.TaskAddFrame) tile.currentTask;
