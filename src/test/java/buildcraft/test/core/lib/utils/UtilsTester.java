@@ -16,9 +16,9 @@ import org.junit.runner.RunWith;
 
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 
 @RunWith(Theories.class)

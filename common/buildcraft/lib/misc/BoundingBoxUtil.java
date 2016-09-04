@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.IBox;
 
@@ -41,5 +42,9 @@ public class BoundingBoxUtil {
     /** Creates an {@link AxisAlignedBB} that fully encompasses the two given block min and max. */
     public static AxisAlignedBB makeFrom(BlockPos min, BlockPos max) {
         return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+    }
+
+    public static AxisAlignedBB makeAround(Vec3d around, double radius) {
+        return new AxisAlignedBB(around.subtract(radius, radius, radius), around.addVector(radius, radius, radius));
     }
 }

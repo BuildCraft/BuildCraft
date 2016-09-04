@@ -27,7 +27,7 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.lib.XorShift128Random;
 
 /**
  * Deprecated as most stuff can be done better now

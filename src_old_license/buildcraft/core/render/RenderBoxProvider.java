@@ -13,10 +13,10 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.internal.IBoxesProvider;
+import buildcraft.lib.misc.data.Box;
 
 public class RenderBoxProvider<T extends TileEntity> extends TileEntitySpecialRenderer<T> {
     public RenderBoxProvider() {}

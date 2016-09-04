@@ -44,8 +44,10 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.lib.XorShift128Random;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterable;
 
 /** Use buildcraft.lib.misc.*Util instead of this */

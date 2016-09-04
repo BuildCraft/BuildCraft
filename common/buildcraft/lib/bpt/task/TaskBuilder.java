@@ -9,10 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -27,131 +24,7 @@ import buildcraft.lib.bpt.task.DelegateRequested.DelegateItem;
 import buildcraft.lib.misc.StackUtil;
 
 public final class TaskBuilder {
-
-    /** The builder should use an */
-    public static final TaskDefinition REMOVE_EXISTING;
-    public static final Action NO_ACTION = (builder, pos) -> {};
-
-    static {
-        // TODO: variable power amounts + mid-way tasks! (To allow for breaking)
-        REMOVE_EXISTING = new TaskBuilder().build();
-
-        // block place
-        final IBlockState bookshelf = Blocks.BOOKSHELF.getDefaultState();
-
-        ICondition stateCheck = condition().isState(BlockPos.ORIGIN, bookshelf).build();
-
-        TaskBuilder pre = new TaskBuilder();
-        pre.doIfFalse(//
-                stateCheck,//
-                removeExisting()//
-        );
-
-        TaskBuilder build = new TaskBuilder();
-        IRequestedItem reqBook = build.request("main", bookshelf);
-        build.doIfFalse(//
-                stateCheck,//
-                build.subTask("main").doWhen(//
-                        build.requirement().lock(reqBook).target(BlockPos.ORIGIN).power(100_000),//
-                        (builder, pos) -> {//
-                            builder.getWorld().setBlockState(pos, bookshelf);
-                        }//
-                ).build()//
-        );
-
-        // return pre for the clear task, return build for the main building task.
-
-        // bed place
-
-        BlockPos offset = new BlockPos(1, 0, 0);
-        ICondition conOff = condition().isState(offset, bookshelf).build();
-
-        pre = new TaskBuilder();
-        pre.doIfFalse(//
-                stateCheck,//
-                removeExisting()//
-        );
-        pre.doIfFalse(//
-                conOff, //
-                removeExisting()//
-        );
-
-        build = new TaskBuilder();
-        final IRequestedItem reqBed = build.request("bed", new ItemStack(Items.BED));
-        build.doIfFalse(//
-                stateCheck.and(conOff),//
-                build.subTask("main").doWhen(//
-                        build.requirement().lock(reqBed).target(new Vec3d(1, 1, 0.5)).power(100_000),//
-                        (builder, pos) -> {
-                            reqBed.use();
-                            builder.getWorld().setBlockState(pos, bookshelf);
-                            builder.getWorld().setBlockState(pos.add(offset), bookshelf);
-                            //
-                        }//
-                ).build()//
-        );
-
-        // single-slot inventory place
-        // (only build)
-        build = new TaskBuilder();
-        IRequested reqBlock = build.request("block", bookshelf);
-        IRequested reqStack = build.request("stack", new ItemStack(Items.APPLE));
-        PostTask post = build.doIfFalse(//
-                condition().isState(BlockPos.ORIGIN, bookshelf).build(),//
-                build.subTask("block").doWhen(//
-                        build.requirement().lock(reqBlock).target(BlockPos.ORIGIN),//
-                        (builder, pos) -> {
-                            reqBlock.use();
-                            builder.getWorld().setBlockState(pos, bookshelf);
-                        }//
-                ).build()//
-        );
-        build.doWhen(//
-                build.requirement().lock(reqStack).after(post, true).target(BlockPos.ORIGIN),//
-                (builder, pos) -> {
-                    // put it into the tile or something like that
-                }//
-        );
-
-        // chest place (only build)
-        build = new TaskBuilder();
-        final IBlockState chest = Blocks.CHEST.getDefaultState();
-        ItemStack[] stacks = new ItemStack[27];
-
-        IRequested reqChest = build.request("block", chest);
-        IRequestedItem[] reqStacks = new IRequestedItem[27];
-        post = build.doIfFalse(//
-                condition().isState(BlockPos.ORIGIN, chest).build(),//
-                build.subTask("block").doWhen(//
-                        build.requirement().lock(reqChest).target(BlockPos.ORIGIN),//
-                        (builder, pos) -> {
-                            reqChest.use();
-                            builder.getWorld().setBlockState(pos, chest);
-                            // open chest
-                        }//
-                ).build()//
-        );
-        RequirementBuilder requirement = build.requirement().after(post, true).target(BlockPos.ORIGIN);
-        for (int index = 0; index < 27; index++) {
-            final int i = index;
-            reqStacks[i] = build.request("item#" + i, stacks[i]);
-            post = build.subTask("item#" + i).doWhen(//
-                    build.requirement().after(post, true).lock(reqStacks[i]).target(BlockPos.ORIGIN).power(10_000),//
-                    (builder, pos) -> {
-                        TileEntity tile = builder.getWorld().getTileEntity(pos);
-                        if (tile instanceof IInventory) {
-                            reqStacks[i].use();
-                            ((IInventory) tile).setInventorySlotContents(i, reqStacks[i].getRequested());
-                        }
-                        // place item into chest
-                    }//
-            );
-            requirement.after(post, true);
-        }
-        build.doWhen(requirement, (builder, pos) -> {
-            // close chest
-        });
-    }
+    public static final TaskDefinition REMOVE_EXISTING = new TaskBuilder().build();
 
     final TaskBuilder root;
     final String id;

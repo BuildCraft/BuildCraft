@@ -40,8 +40,6 @@ import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -65,6 +63,8 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Box.Kind;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable, IInventoryListener {
 

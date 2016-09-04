@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
+import buildcraft.lib.misc.data.Box;
 
 public class PatternPyramid extends FillerPattern {
     private static final int[] MODIFIERS = { 0x0101, 0x1101, 0x1001, 0x0111, 0x1111, 0x1011, 0x0110, 0x1110, 0x1010 };

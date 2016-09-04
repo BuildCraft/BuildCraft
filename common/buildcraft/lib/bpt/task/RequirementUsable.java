@@ -1,7 +1,6 @@
 package buildcraft.lib.bpt.task;
 
 import java.util.BitSet;
-import java.util.Iterator;
 
 import com.google.common.collect.ImmutableList;
 
@@ -81,9 +80,11 @@ public class RequirementUsable {
      *         met, and Boolean.TRUE if the requirements have been met. */
     public Boolean tick(IBuilderAccessor builder, BlockPos buildAt) {
         // stage 1 -- tasks
-        Iterator<PostTask> tasks = successTasks.iterator();
-        while (tasks.hasNext()) {
-            PostTask task = tasks.next();
+        for (int i = 0; i < successTasks.size(); i++) {
+            if (successTaskComplete.get(i)) {
+                continue;
+            }
+            PostTask task = successTasks.get(i);
             int comp = 0;
             if (!root.completed.contains(task.toCompleteA)) return RESULT_NOT_YET;
             else comp++;
@@ -92,25 +93,24 @@ public class RequirementUsable {
             if (root.failed.contains(task.toCompleteA)) return RESULT_FAILED;
             if (root.failed.contains(task.toCompleteB)) return RESULT_FAILED;
             if (comp == 2) {
-                tasks.remove();
+                successTaskComplete.set(i);
             }
         }
-        tasks = completeTasks.iterator();
-        while (tasks.hasNext()) {
-            PostTask task = tasks.next();
+        for (int i = 0; i < completeTasks.size(); i++) {
+            PostTask task = completeTasks.get(i);
             int comp = 0;
             if (!root.completed.contains(task.toCompleteA)) return RESULT_NOT_YET;
             else comp = 1;
             if (!root.completed.contains(task.toCompleteB)) return RESULT_NOT_YET;
             else comp++;
             if (comp == 2) {
-                tasks.remove();
+                completeTaskComplete.set(i);
             } else {
                 comp = 0;
                 if (root.failed.contains(task.toCompleteA)) comp = 1;
                 if (root.failed.contains(task.toCompleteB)) comp++;
                 if (comp == 2) {
-                    tasks.remove();
+                    completeTaskComplete.set(i);
                 }
             }
         }
@@ -167,6 +167,7 @@ public class RequirementUsable {
 
         // stage 5 -- power
         if (!powerFunctionsEvaluated) {
+            powerFunctionsEvaluated = true;
             for (PowerFunction func : powerFunctions) {
                 long req = func.getRequired(builder, buildAt);
                 requiredMicroJoules += req;

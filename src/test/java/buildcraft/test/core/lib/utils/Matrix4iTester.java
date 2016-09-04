@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Matrix4i;
+import buildcraft.lib.misc.data.Box;
 
 @RunWith(Theories.class)
 public class Matrix4iTester {

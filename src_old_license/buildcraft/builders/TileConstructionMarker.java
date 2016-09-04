@@ -17,8 +17,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -36,6 +34,8 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Box.Kind;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 

@@ -35,7 +35,6 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Blueprint;
@@ -47,6 +46,7 @@ import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.command.IPayloadWriter;
@@ -195,7 +195,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             PreBuildAction action = schematic.createClearingTask(builder, buildAt);
             int cost = MathUtils.clamp(action.getTimeCost(), 1, 100);
             if (action.getType() == EnumPreBuildAction.REQUIRE_AIR) {
-                action = VanillaBlockClearer.INSTANCE;
+                action = VanillaBlockClearer.DESTORY_ITEMS;
             }
 
             TaskUsable clears = action.getTask(builder, buildAt);

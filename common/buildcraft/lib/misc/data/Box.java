@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core;
+package buildcraft.lib.misc.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
+import buildcraft.core.LaserData;
 import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;

@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.builders.tile.TileArchitect_Neptune;
-import buildcraft.core.Box;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserBoxRenderer;
+import buildcraft.lib.misc.data.Box;
 
 public class RenderArchitect extends FastTESR<TileArchitect_Neptune> {
     @Override

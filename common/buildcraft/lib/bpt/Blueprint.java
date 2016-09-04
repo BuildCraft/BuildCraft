@@ -21,12 +21,12 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 public class Blueprint extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */

@@ -10,9 +10,9 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
+import buildcraft.lib.misc.data.Box;
 
 public class PatternFlatten extends FillerPattern {
 

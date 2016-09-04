@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core;
+package buildcraft.core.block;
 
 import java.util.List;
 import java.util.Random;
@@ -17,22 +17,24 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumSpring;
-import buildcraft.core.lib.block.BlockBuildCraftBase;
-import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.lib.XorShift128Random;
+import buildcraft.lib.block.BlockBCBase_Neptune;
 
-public class BlockSpring extends BlockBuildCraftBase {
+public class BlockSpring extends BlockBCBase_Neptune {
+    public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
 
     public static final XorShift128Random rand = new XorShift128Random();
 
-    public BlockSpring() {
-        super(Material.ROCK, SPRING_TYPE);
+    public BlockSpring(String id) {
+        super(Material.ROCK, id);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setSoundType(SoundType.STONE);
 
         disableStats();
         setTickRandomly(true);
-        setCreativeTab(BCCreativeTab.get("main"));
     }
 
     @Override
@@ -49,7 +51,7 @@ public class BlockSpring extends BlockBuildCraftBase {
 
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
-        assertSpring(world, pos, state);
+        generateSpringBlock(world, pos, state);
     }
 
     // @Override
@@ -63,8 +65,8 @@ public class BlockSpring extends BlockBuildCraftBase {
         world.scheduleUpdate(pos, this, state.getValue(SPRING_TYPE).tickRate);
     }
 
-    private void assertSpring(World world, BlockPos pos, IBlockState state) {
-        EnumSpring spring = (EnumSpring) state.getValue(SPRING_TYPE);
+    private void generateSpringBlock(World world, BlockPos pos, IBlockState state) {
+        EnumSpring spring = state.getValue(SPRING_TYPE);
         world.scheduleUpdate(pos, this, spring.tickRate);
         if (!spring.canGen || spring.liquidBlock == null) {
             return;

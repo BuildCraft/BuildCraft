@@ -22,13 +22,13 @@ import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.misc.data.Box;
 
 public abstract class FillerPattern implements IFillerPattern {
 

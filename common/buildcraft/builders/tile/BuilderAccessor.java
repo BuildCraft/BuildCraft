@@ -6,6 +6,7 @@ package buildcraft.builders.tile;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -63,5 +64,15 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     @Override
     public boolean target(Vec3d vec, TaskUsable requestor) {
         return true; // The builder doesn't have a head position
+    }
+
+    @Override
+    public void returnItems(BlockPos from, ItemStack stack) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void returnItems(Vec3d from, ItemStack stack) {
+        // TODO Auto-generated method stub
     }
 }

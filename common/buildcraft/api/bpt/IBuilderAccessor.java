@@ -46,4 +46,8 @@ public interface IBuilderAccessor extends IMaterialProvider {
     long drainPower(long requested, TaskUsable requestor);
 
     boolean target(Vec3d vec, TaskUsable requestor);
+
+    void returnItems(Vec3d from, ItemStack stack);
+
+    void returnItems(BlockPos from, ItemStack stack);
 }

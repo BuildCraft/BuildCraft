@@ -26,7 +26,6 @@ public class LaserRenderer_BC8 {
     private static final Map<LaserType, CompiledLaserType> COMPILED_LASER_TYPES = new HashMap<>();
     private static final LoadingCache<LaserData_BC8, LaserCompiledList> COMPILED_GL_LASERS;
     private static final LoadingCache<LaserData_BC8, LaserCompiledBuffer> COMPILED_VB_LASERS;
-    static final LoadingCache<BlockPos, Integer> CACHED_LIGHTMAP;
 
     public static final VertexFormat FORMAT_LESS, FORMAT_ALL;
 
@@ -39,11 +38,6 @@ public class LaserRenderer_BC8 {
         COMPILED_VB_LASERS = CacheBuilder.newBuilder()//
                 .expireAfterWrite(5, TimeUnit.SECONDS)//
                 .build(CacheLoader.from(LaserRenderer_BC8::makeVbLaser));
-
-        // Really? Do we need to cache the lightmap?
-        CACHED_LIGHTMAP = CacheBuilder.newBuilder()//
-                .expireAfterWrite(1, TimeUnit.SECONDS)//
-                .build(CacheLoader.from(LaserRenderer_BC8::computeLightmap));
 
         FORMAT_LESS = new VertexFormat();
         FORMAT_LESS.addElement(DefaultVertexFormats.POSITION_3F);
@@ -94,29 +88,53 @@ public class LaserRenderer_BC8 {
         }
     }
 
-    private static Integer computeLightmap(BlockPos pos) {
+    public static int computeLightmap(double x, double y, double z) {
         World world = Minecraft.getMinecraft().theWorld;
-        if (world == null) return Integer.valueOf(0);
-        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, pos);
-        int skyLight = getLightFor(world, EnumSkyBlock.SKY, pos);
-        return Integer.valueOf(skyLight << 20 | blockLight << 4);
+        if (world == null) return 0;
+        int blockLight = getLightFor(world, EnumSkyBlock.BLOCK, x, y, z);
+        int skyLight = getLightFor(world, EnumSkyBlock.SKY, x, y, z);
+        return skyLight << 20 | blockLight << 4;
     }
 
-    private static int getLightFor(World world, EnumSkyBlock type, BlockPos pos) {
-        int sum = 0;
+    private static int getLightFor(World world, EnumSkyBlock type, double x, double y, double z) {
+        int max = 0;
         int count = 0;
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                for (int z = -1; z <= 1; z++) {
-                    int light = world.getLightFor(type, pos.add(x, y, z));
+        int sum = 0;
+
+        boolean ao = Minecraft.isAmbientOcclusionEnabled();
+
+        double xn = (x % 1 + 1) % 1;
+        double yn = (y % 1 + 1) % 1;
+        double zn = (z % 1 + 1) % 1;
+
+        final double lowerBound = 0.3;
+        final double upperBound = 1 - lowerBound;
+
+        int xl = ao ? (xn < lowerBound ? -1 : 0) : -1;
+        int yl = ao ? (yn < lowerBound ? -1 : 0) : -1;
+        int zl = ao ? (zn < lowerBound ? -1 : 0) : -1;
+        int xu = ao ? (xn > upperBound ? 1 : 0) : 1;
+        int yu = ao ? (yn > upperBound ? 1 : 0) : 1;
+        int zu = ao ? (zn > upperBound ? 1 : 0) : 1;
+
+        for (int xp = xl; xp <= xu; xp++) {
+            for (int yp = yl; yp <= yu; yp++) {
+                for (int zp = zl; zp <= zu; zp++) {
+                    int light = world.getLightFor(type, new BlockPos(x + xp, y + yp, z + zp));
                     if (light > 0) {
                         sum += light;
                         count++;
                     }
+                    max = Math.max(max, light);
                 }
             }
         }
-        return count == 0 ? 0 : sum / count;
+
+        if (ao) {
+            return count == 0 ? 0 : sum / count;
+        } else {
+            return max;
+        }
     }
 
     public static void renderLaserGlList(LaserData_BC8 data) {

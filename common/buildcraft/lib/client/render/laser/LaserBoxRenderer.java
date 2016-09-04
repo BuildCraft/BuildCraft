@@ -9,9 +9,9 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.core.Box;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 public class LaserBoxRenderer {
     private static final double RENDER_SCALE = 1 / 16.05;

@@ -6,7 +6,7 @@ package buildcraft.core.internal;
 
 import java.util.List;
 
-import buildcraft.core.Box;
+import buildcraft.lib.misc.data.Box;
 
 public interface IBoxesProvider {
     List<Box> getBoxes();
