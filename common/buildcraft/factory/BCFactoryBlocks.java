@@ -4,21 +4,23 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.factory;
 
-import buildcraft.factory.block.*;
+import net.minecraft.block.material.Material;
+
+import buildcraft.factory.block.BlockAutoWorkbenchItems;
 import buildcraft.factory.block.BlockChute;
 import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.block.BlockMiningWell;
 import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockTank;
-import buildcraft.factory.tile.*;
+import buildcraft.factory.block.BlockWaterGel;
+import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
-import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
-import net.minecraft.block.material.Material;
 
 public class BCFactoryBlocks {
     public static BlockAutoWorkbenchItems autoWorkbenchItems;
@@ -27,8 +29,10 @@ public class BCFactoryBlocks {
     public static BlockFloodGate floodGate;
     public static BlockTank tank;
     public static BlockChute chute;
+
     // public static BlockAutoWorkbenchFluids autoWorkbenchFluids;
     // public static BlockPlastic plastic;
+    public static BlockWaterGel waterGel;
 
     public static void preInit() {
         // plastic = BlockBuildCraftBase_BC8.register(new BlockPlastic("block.plastic"), ItemPlastic::new);
@@ -38,6 +42,8 @@ public class BCFactoryBlocks {
         floodGate = BlockBCBase_Neptune.register(new BlockFloodGate(Material.ROCK, "block.flood_gate"));
         tank = BlockBCBase_Neptune.register(new BlockTank(Material.ROCK, "block.tank"));
         chute = BlockBCBase_Neptune.register(new BlockChute(Material.ROCK, "block.chute"));
+
+        waterGel = BlockBCBase_Neptune.register(new BlockWaterGel(Material.CLAY, "block.water_gel"), null);
 
         TileBC_Neptune.registerTile(TileAutoWorkbenchItems.class, "tile.autoworkbench.item");
         TileBC_Neptune.registerTile(TileMiningWell.class, "tile.mining_well");

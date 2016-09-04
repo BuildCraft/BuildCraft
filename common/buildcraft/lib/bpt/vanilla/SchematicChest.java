@@ -81,12 +81,12 @@ public class SchematicChest extends SchematicBlock {
         });
         PostTask[] post = new PostTask[27];
         RequirementBuilder reqClose = t.requirement();
-        reqClose.after(placeChest);
+        reqClose.after(placeChest, true);
 
         for (int i = 0; i < 27; i++) {
             if (stacks[i] != null) {
                 final int index = i;
-                post[index] = t.doWhen(t.requirement().lock(stackReq[index]).power(MjAPI.MJ).after(placeChest), (b, p) -> {
+                post[index] = t.doWhen(t.requirement().lock(stackReq[index]).power(MjAPI.MJ).after(placeChest, true), (b, p) -> {
                     TileEntity tile = b.getWorld().getTileEntity(p);
                     if (tile instanceof TileEntityChest) {
                         TileEntityChest chest = (TileEntityChest) tile;
@@ -103,7 +103,7 @@ public class SchematicChest extends SchematicBlock {
                         }
                     }
                 });
-                reqClose.after(post[index]);
+                reqClose.after(post[index], false);
             }
         }
 

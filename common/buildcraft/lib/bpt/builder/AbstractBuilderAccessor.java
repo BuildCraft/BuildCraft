@@ -27,7 +27,7 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
     private final PlayerOwner owner;
     private final DelayedList<IBptAction> actions = new DelayedList<>();
     private final BuilderAnimationManager animationManager;
-    
+
     public AbstractBuilderAccessor(PlayerOwner owner, BuilderAnimationManager animationManager) {
         this.owner = owner;
         this.animationManager = animationManager;
@@ -77,11 +77,6 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
     }
 
     @Override
-    public int startBlockAnimation(Vec3d target, IBlockState state, int delay) {
-        return 0;
-    }
-
-    @Override
     public int startItemStackAnimation(Vec3d target, ItemStack display, int delay) {
         return 0;
     }
@@ -121,10 +116,5 @@ public abstract class AbstractBuilderAccessor implements IBuilderAccessor, ITick
             return new RequestedFree.FreeFluid(fluid);
         }
         throw new AbstractMethodError("Implement this!");
-    }
-
-    @Override
-    public void addAction(IBptAction action, int delay) {
-        actions.add(delay, action);
     }
 }
