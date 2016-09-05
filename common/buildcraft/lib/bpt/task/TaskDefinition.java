@@ -11,6 +11,8 @@ import buildcraft.lib.bpt.task.TaskBuilder.Action;
 import buildcraft.lib.bpt.task.TaskBuilder.WhileAction;
 
 public final class TaskDefinition {
+    public static final TaskDefinition NOTHING = new TaskBuilder().build();
+
     final String id;
     final ImmutableMap<String, DelegateFluid> fluidRequests;
     final ImmutableMap<String, DelegateItem> itemRequests;
@@ -36,6 +38,6 @@ public final class TaskDefinition {
     }
 
     public TaskUsable createUsableTask() {
-        return new TaskUsable(this);
+        return new TaskUsable(null, this);
     }
 }

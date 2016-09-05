@@ -4,8 +4,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.builders.BlockFrame.EFrameConnection;
-import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.lib.misc.data.Box;
 
 public class PatternQuarryFrame {
     public static final PatternQuarryFrame INSTANCE = new PatternQuarryFrame();

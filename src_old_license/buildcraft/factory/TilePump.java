@@ -22,7 +22,6 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.Box;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.BlockTileCache;
 import buildcraft.core.lib.EntityResizableCuboid;
@@ -34,6 +33,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 import io.netty.buffer.ByteBuf;
 

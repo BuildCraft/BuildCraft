@@ -23,8 +23,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
@@ -35,6 +33,8 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Box.Kind;
 
 public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer {
     private static int POWER_ACTIVATION = 500;

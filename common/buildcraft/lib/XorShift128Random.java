@@ -1,4 +1,4 @@
-package buildcraft.core.lib.utils;
+package buildcraft.lib;
 
 import java.util.Random;
 

@@ -5,7 +5,6 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.client.model.MutableQuad;
@@ -112,42 +111,49 @@ public class LaserContext {
         point.y = (float) yIn;
         point.z = (float) zIn;
         matrix.transform(point);
-        BlockPos pos = new BlockPos(point.x, point.y, point.z);
-        int lmap = LaserRenderer_BC8.CACHED_LIGHTMAP.getUnchecked(pos).intValue();
-        if (useNormalColour) {
-            x[index] = point.x;
-            y[index] = point.y;
-            z[index] = point.z;
-            u[index] = uIn;
-            v[index] = vIn;
-            l[index] = lmap;
-            index++;
-            if (index == 4) {
-                index = 0;
-                vertex(0);
-                vertex(1);
-                vertex(2);
+        int lmap = LaserRenderer_BC8.computeLightmap(point.x, point.y, point.z);
+        x[index] = point.x;
+        y[index] = point.y;
+        z[index] = point.z;
+        u[index] = uIn;
+        v[index] = vIn;
+        l[index] = lmap;
+        index++;
+        if (index == 4) {
+            // if (!Minecraft.isAmbientOcclusionEnabled()) {
+            // int rl = Math.max(Math.max(l[0], l[1]), Math.max(l[2], l[3]));
+            // l[0] = l[1] = l[2] = l[3] = rl;
+            // }
+            // int rl = l[0] + l[1] + l[2] + l[3];
+            // rl /= 4;
+            // l[0] = l[1] = l[2] = l[3] = rl;
+
+            index = 0;
+            vertex(0);
+            vertex(1);
+            vertex(2);
+            vertex(3);
+            if (drawBothSides) {
+                n[0] = -n[0];
+                n[1] = -n[1];
+                n[2] = -n[2];
+                diffuse = MutableQuad.diffuseLight(n[0], n[1], n[2]);
                 vertex(3);
-                if (drawBothSides) {
-                    n[0] = -n[0];
-                    n[1] = -n[1];
-                    n[2] = -n[2];
-                    diffuse = MutableQuad.diffuseLight(n[0], n[1], n[2]);
-                    vertex(3);
-                    vertex(2);
-                    vertex(1);
-                    vertex(0);
-                }
-                n[0] = 0;
-                n[1] = 1;
-                n[2] = 0;
+                vertex(2);
+                vertex(1);
+                vertex(0);
             }
-        } else {
-            renderer.vertex(point.x, point.y, point.z, uIn, vIn, lmap, 0, 1, 0, 1);
+            n[0] = 0;
+            n[1] = 1;
+            n[2] = 0;
         }
     }
 
     private void vertex(int i) {
-        renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[0], n[1], n[2], diffuse);
+        if (useNormalColour) {
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], n[0], n[1], n[2], diffuse);
+        } else {
+            renderer.vertex(x[i], y[i], z[i], u[i], v[i], l[i], 0, 1, 0, 1);
+        }
     }
 }

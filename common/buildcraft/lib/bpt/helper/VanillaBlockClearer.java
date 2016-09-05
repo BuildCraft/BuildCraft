@@ -1,21 +1,47 @@
 package buildcraft.lib.bpt.helper;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.Schematic.DefaultBptActions;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.lib.bpt.task.ICondition;
+import buildcraft.lib.bpt.task.TaskBuilder;
+import buildcraft.lib.bpt.task.TaskBuilder.Action;
+import buildcraft.lib.bpt.task.TaskBuilder.PowerFunction;
+import buildcraft.lib.bpt.task.TaskDefinition;
+import buildcraft.lib.bpt.task.TaskUsable;
+import buildcraft.lib.misc.EntityUtil;
 
 /** Provides an implementation of {@link DefaultBptActions#REQUIRE_AIR} */
 public enum VanillaBlockClearer implements PreBuildAction {
-    INSTANCE;
+    DESTORY_ITEMS(false),
+    COLLECT_ITEMS(true);
+
+    private final TaskDefinition defintion;
+
+    private VanillaBlockClearer(final boolean shouldDrop) {
+        TaskBuilder task = new TaskBuilder();
+        ICondition con = (builder, pos) -> {
+            return builder.getWorld().isAirBlock(pos);
+        };
+        TaskBuilder ifNotAir = task.subTask("ifNotAir");
+        PowerFunction reqPower = (builder, pos) -> BlockUtils.computeBlockBreakPower(builder.getWorld(), pos);
+
+        Action action = (builder, pos) -> {
+            builder.getWorld().destroyBlock(pos, shouldDrop);
+            for (ItemStack stack : EntityUtil.collectItems(builder.getWorld(), pos, 2)) {
+                builder.returnItems(pos, stack);
+            }
+        };
+
+        ifNotAir.doWhen(task.requirement().power(reqPower).target(BlockPos.ORIGIN), action);
+        task.doIfFalse(con, ifNotAir.build());
+        defintion = task.build();
+    }
 
     @Override
     public EnumPreBuildAction getType() {
@@ -24,16 +50,12 @@ public enum VanillaBlockClearer implements PreBuildAction {
     }
 
     @Override
-    public Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
-        World world = builder.getWorld();
-        if (world.isAirBlock(pos)) {
-            return ImmutableList.of();
-        }
-        return ImmutableList.of(BptTaskBlockClear.create(world, pos));
+    public TaskUsable getTask(IBuilderAccessor builder, BlockPos pos) {
+        return defintion.createUsableTask();
     }
 
     @Override
     public int getTimeCost() {
-        return 0;
+        return 7;
     }
 }

@@ -22,13 +22,13 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.data.Box;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 

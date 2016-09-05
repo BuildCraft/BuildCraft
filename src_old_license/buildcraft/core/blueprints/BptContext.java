@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.IBox;
-import buildcraft.core.Box;
+import buildcraft.lib.misc.data.Box;
 
 public class BptContext implements IBuilderContext {
 

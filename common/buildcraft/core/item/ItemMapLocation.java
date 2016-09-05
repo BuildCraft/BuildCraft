@@ -31,10 +31,10 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.robotics.zone.ZonePlan;
 
 import gnu.trove.map.hash.TIntObjectHashMap;

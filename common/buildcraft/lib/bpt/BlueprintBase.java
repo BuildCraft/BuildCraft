@@ -11,10 +11,10 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.Box;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 public abstract class BlueprintBase {
     public BlockPos size;

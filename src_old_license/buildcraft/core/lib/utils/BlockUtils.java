@@ -226,11 +226,11 @@ public final class BlockUtils {
 
     public static Fluid getFluidWithFlowing(Block block) {
         Fluid fluid = null;
-        if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             fluid = FluidRegistry.LAVA;
-        } else if(block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
+        } else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
             fluid = FluidRegistry.WATER;
-        } else if(block instanceof BlockFluidBase) {
+        } else if (block instanceof BlockFluidBase) {
             fluid = ((BlockFluidBase) block).getFluid();
         }
         return fluid;
@@ -253,9 +253,9 @@ public final class BlockUtils {
                 return fluidBlock.drain(world, pos, doDrain);
             } else {
                 int level = state.getValue(BlockLiquid.LEVEL);
-//                if (level != 0) {
-//                    return null;
-//                }
+                // if (level != 0) {
+                // return null;
+                // }
 
                 if (doDrain) {
                     world.setBlockToAir(pos);
@@ -298,7 +298,7 @@ public final class BlockUtils {
     public static int computeBlockBreakEnergy(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         float hardness = state.getBlockHardness(world, pos);
-        return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier * ((hardness + 1) * 2));
+        return (int) Math.floor(2 * BuildCraftCore.miningMultiplier * ((hardness + 1) * 2));
     }
 
     public static int computeBlockBreakPower(World world, BlockPos pos) {

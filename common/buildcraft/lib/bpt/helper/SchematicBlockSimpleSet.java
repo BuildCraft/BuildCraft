@@ -1,16 +1,19 @@
 package buildcraft.lib.bpt.helper;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.bpt.*;
+import buildcraft.api.bpt.IBuilderAccessor;
+import buildcraft.api.bpt.IMaterialProvider;
+import buildcraft.api.bpt.IMaterialProvider.IRequested;
 import buildcraft.api.bpt.IMaterialProvider.IRequestedItem;
+import buildcraft.api.bpt.SchematicBlock;
+import buildcraft.api.bpt.SchematicException;
+import buildcraft.api.mj.MjAPI;
+import buildcraft.lib.bpt.task.TaskBuilder;
+import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.misc.SoundUtil;
 
 /** Designates a block that either exists fully or not: like wooden planks or iron bars- the block takes up the entire
@@ -26,12 +29,19 @@ public class SchematicBlockSimpleSet extends SchematicBlock {
     }
 
     @Override
-    public Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos) {
+    public TaskUsable createTask(IBuilderAccessor builder, BlockPos pos) {
         IBlockState current = builder.getWorld().getBlockState(pos);
         if (current.equals(state)) {
-            return ImmutableList.of();
+            return TaskUsable.NOTHING;
         }
-        return ImmutableList.of(new BptTaskBlockStandalone(pos, state, builder));
+        TaskBuilder t = new TaskBuilder();
+        IRequested req = t.request("state", state);
+        t.doWhen(t.requirement().lock(req).power(2 * MjAPI.MJ), (b, p) -> {
+            req.use();
+            b.getWorld().setBlockState(p, state);
+            SoundUtil.playBlockPlace(b.getWorld(), p);
+        });
+        return t.build().createUsableTask();
     }
 
     @Override

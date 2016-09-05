@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.core.Box;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.test.TestHelper;
 
 @RunWith(Theories.class)

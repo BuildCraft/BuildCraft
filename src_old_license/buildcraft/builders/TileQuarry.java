@@ -42,8 +42,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.blueprints.Blueprint;
@@ -56,7 +54,9 @@ import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
+import buildcraft.lib.misc.data.Box.Kind;
 
 import io.netty.buffer.ByteBuf;
 

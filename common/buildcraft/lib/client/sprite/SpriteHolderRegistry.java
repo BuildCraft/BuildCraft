@@ -3,7 +3,6 @@ package buildcraft.lib.client.sprite;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
@@ -13,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+import buildcraft.lib.misc.SpriteUtil;
 
 @SideOnly(Side.CLIENT)
 public class SpriteHolderRegistry {
@@ -87,7 +87,7 @@ public class SpriteHolderRegistry {
 
         @Override
         public void bindTexture() {
-            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            SpriteUtil.bindBlockTextureMap();
         }
     }
 }

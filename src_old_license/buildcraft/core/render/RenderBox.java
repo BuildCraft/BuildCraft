@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import buildcraft.core.Box;
 import buildcraft.core.LaserData;
+import buildcraft.lib.misc.data.Box;
 
 public final class RenderBox {
 

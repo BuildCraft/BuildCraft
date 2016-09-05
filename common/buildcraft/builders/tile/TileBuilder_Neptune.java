@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.bpt.IBptTask;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.SchematicBlock;
@@ -36,17 +35,18 @@ import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
-import buildcraft.core.Box;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
 import buildcraft.lib.bpt.helper.VanillaBlockClearer;
+import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.command.IPayloadWriter;
@@ -80,9 +80,9 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
 
     private final BuilderAccessor builder = new BuilderAccessor(this);
-    private final Deque<Pair<IBptTask, BlockPos>> tasks = new LinkedList<>();
+    private final Deque<Pair<TaskUsable, BlockPos>> tasks = new LinkedList<>();
     private final Set<BlockPos> blocksCompleted = new HashSet<>();
-    private final Map<BlockPos, List<IBptTask>> blockTasks = new HashMap<>();
+    private final Map<BlockPos, List<TaskUsable>> blockTasks = new HashMap<>();
 
     private List<BlockPos> path = null;
     private Box box = null;
@@ -115,27 +115,10 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
         } else {
             // server stuffs
             for (int i = 0; i < 10 & i < tasks.size(); i++) {
-                Pair<IBptTask, BlockPos> pair = tasks.removeFirst();
-                IBptTask task = pair.getLeft();
+                Pair<TaskUsable, BlockPos> pair = tasks.removeFirst();
+                TaskUsable task = pair.getLeft();
                 BlockPos buildAt = pair.getRight();
-                Set<EnumFacing> required = task.getRequiredSolidFaces(builder);
-                boolean has = true;
-                for (EnumFacing face : required) {
-                    BlockPos req = buildAt.offset(face);
-                    if (box.contains(req)) {
-                        if (!blocksCompleted.contains(req)) {
-                            has &= getWorld().isSideSolid(req, face.getOpposite());
-                        }
-                    } else {// Not in the building box
-                        has &= getWorld().isSideSolid(req, face.getOpposite());
-                    }
-                }
-                if (has) {
-                    task.receivePower(builder, MjAPI.MJ * 40);
-                    if (!task.isDone(builder)) {
-                        tasks.addLast(pair);
-                    }
-                } else {
+                if (!task.tick(builder, buildAt)) {
                     tasks.addLast(pair);
                 }
             }
@@ -212,17 +195,15 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             PreBuildAction action = schematic.createClearingTask(builder, buildAt);
             int cost = MathUtils.clamp(action.getTimeCost(), 1, 100);
             if (action.getType() == EnumPreBuildAction.REQUIRE_AIR) {
-                action = VanillaBlockClearer.INSTANCE;
+                action = VanillaBlockClearer.DESTORY_ITEMS;
             }
 
-            Collection<IBptTask> clears = action.getTasks(builder, buildAt);
-            for (IBptTask task : clears) {
-                tasks.add(Pair.of(task, buildAt));
-            }
+            TaskUsable clears = action.getTask(builder, buildAt);
+            tasks.add(Pair.of(clears, buildAt));
             createAndSendMessage(false, NET_CLEAR, (buffer) -> {
                 buffer.writeBlockPos(buildAt);
             });
-            return cost + clears.size() * 4;
+            return cost;
         } else {
             return 1;
         }
@@ -236,14 +217,12 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
         if (canEditOther(buildAt)) {
             int cost = MathUtils.clamp(schematic.getTimeCost(), 1, 100);
-            Collection<IBptTask> builds = schematic.createTasks(builder, buildAt);
-            for (IBptTask task : builds) {
-                tasks.add(Pair.of(task, buildAt));
-            }
+            TaskUsable task = schematic.createTask(builder, buildAt);
+            tasks.add(Pair.of(task, buildAt));
             createAndSendMessage(false, NET_BUILD, (buffer) -> {
                 buffer.writeBlockPos(buildAt);
             });
-            return cost + builds.size() * 4;
+            return cost;
         } else {
             return 1;
         }

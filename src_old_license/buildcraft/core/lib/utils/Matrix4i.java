@@ -3,7 +3,7 @@ package buildcraft.core.lib.utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-import buildcraft.core.Box;
+import buildcraft.lib.misc.data.Box;
 
 public class Matrix4i {
     public static final Matrix4i IDENTITY = makeScale(Utils.POS_ONE);

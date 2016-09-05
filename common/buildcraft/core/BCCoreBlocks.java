@@ -7,10 +7,7 @@ package buildcraft.core;
 import net.minecraft.block.material.Material;
 
 import buildcraft.api.enums.EnumEngineType;
-import buildcraft.core.block.BlockDecoration;
-import buildcraft.core.block.BlockEngine_BC8;
-import buildcraft.core.block.BlockMarkerPath;
-import buildcraft.core.block.BlockMarkerVolume;
+import buildcraft.core.block.*;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemEngine_BC8;
 import buildcraft.core.tile.TileEngineRedstone_BC8;

@@ -7,6 +7,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +24,8 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.migrate.LibraryMigration;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.nbt.NbtSquisher;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class ItemBlueprint extends ItemBC_Neptune implements INamedItem {
     public static final int META_CLEAN = 0;
@@ -123,6 +126,17 @@ public class ItemBlueprint extends ItemBC_Neptune implements INamedItem {
         }
         return sb.toString();
     }
+
+    // Model
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addModelVariants(TIntObjectHashMap<ModelResourceLocation> variants) {
+        addVariant(variants, META_CLEAN, "clean");
+        addVariant(variants, META_USED, "used");
+    }
+
+    // Storage
 
     public BptStorage createStorage(ItemStack stack) {
         return new BptStorage(stack);

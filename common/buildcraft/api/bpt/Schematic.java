@@ -1,14 +1,12 @@
 package buildcraft.api.bpt;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import buildcraft.lib.bpt.task.TaskUsable;
 
 public abstract class Schematic {
     /** Attempts to mirror this schematic in the given axis. (So given Axis.Y you should invert top-to-bottom)
@@ -29,14 +27,14 @@ public abstract class Schematic {
     public abstract void rotate(Axis axis, Rotation rotation);
 
     /** Attempts to build this schematic from the builder. This should not set the blocks or extract items from the
-     * builder, but should provide tasks for the builder to complete. <br>
+     * builder, but should provide the task for the builder to complete. <br>
      * Note that {@link IBuilderAccessor#hasPermissionToEdit(BlockPos)} has already been called, and this will only be
      * called if it returned true.
      * 
      * @param builder The builder that will execute the tasks
      * @param pos The position to build this schematic at
      * @return A collection of all the tasks you need doing to complete the schematic. */
-    public abstract Collection<IBptTask> createTasks(IBuilderAccessor builder, BlockPos pos);
+    public abstract TaskUsable createTask(IBuilderAccessor builder, BlockPos pos);
 
     /** Clears the way for this schematic to build properly.
      * 
@@ -68,7 +66,7 @@ public abstract class Schematic {
     public interface PreBuildAction {
         EnumPreBuildAction getType();
 
-        Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos);
+        TaskUsable getTask(IBuilderAccessor builder, BlockPos pos);
 
         /** @return A non-negative cost value for the clearing. This is just to limit the number of clearing actions per
          *         tick, return a higher value if you need to do lots of things. (1 is the minimum, 100 is the max) */
@@ -90,9 +88,9 @@ public abstract class Schematic {
         }
 
         @Override
-        public Collection<IBptTask> getTasks(IBuilderAccessor builder, BlockPos pos) {
+        public TaskUsable getTask(IBuilderAccessor builder, BlockPos pos) {
             if (type == EnumPreBuildAction.LEAVE) {
-                return ImmutableList.of();
+                return TaskUsable.NOTHING;
             }
             throw new IllegalStateException("You are responsible for creating tasks for " + type);
         }

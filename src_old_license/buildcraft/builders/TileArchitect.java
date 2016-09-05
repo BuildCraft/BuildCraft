@@ -24,8 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
-import buildcraft.core.Box;
-import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.internal.IBoxProvider;
@@ -38,6 +36,8 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.Box.Kind;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
     public enum Mode {

@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core;
+package buildcraft.core.gen;
 
 import java.util.Random;
 
@@ -17,9 +17,9 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.enums.EnumSpring;
-import buildcraft.core.lib.block.BlockBuildCraftBase;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.core.BCCoreBlocks;
 
 public class SpringPopulate {
 
@@ -44,7 +44,7 @@ public class SpringPopulate {
         doPopulate(world, rand, worldX, worldZ);
     }
 
-    private void doPopulate(World world, Random random, int x, int z) {
+    private static void doPopulate(World world, Random random, int x, int z) {
         int dimId = world.provider.getDimension();
         // No water springs will generate in the Nether or End.
         if (dimId == -1 || dimId == 1) {
@@ -70,8 +70,8 @@ public class SpringPopulate {
             // Handle flat bedrock maps
             int y = i > 0 ? i : i - 1;
 
-            IBlockState springState = BuildCraftCore.springBlock.getDefaultState();
-            springState = springState.withProperty(BlockBuildCraftBase.SPRING_TYPE, EnumSpring.WATER);
+            IBlockState springState = BCCoreBlocks.spring.getDefaultState();
+            springState = springState.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.WATER);
 
             world.setBlockState(new BlockPos(posX, y, posZ), springState);
 

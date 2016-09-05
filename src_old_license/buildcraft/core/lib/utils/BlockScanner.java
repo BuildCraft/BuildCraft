@@ -10,8 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.core.Box;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.data.Box;
 
 public class BlockScanner implements Iterable<BlockPos> {
 

@@ -31,12 +31,12 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.*;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.core.Box;
 import buildcraft.core.builders.*;
 import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 
 public abstract class BptBuilderBase implements IAreaProvider {

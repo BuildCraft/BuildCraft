@@ -22,12 +22,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.BCCoreConfig;
-import buildcraft.core.Box;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.core.marker.VolumeConnection;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PositionUtil;
+import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.tile.TileMarker;
 
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {

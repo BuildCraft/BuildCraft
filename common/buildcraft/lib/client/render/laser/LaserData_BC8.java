@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import net.minecraft.util.math.Vec3d;
 
+import buildcraft.lib.client.sprite.ISprite;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 /** Holds information on what a laser is, its width, length, texture, etc. */
@@ -77,17 +78,17 @@ public class LaserData_BC8 {
     }
 
     public static class LaserRow {
-        public final SpriteHolder sprite;
-        public final int uMin, vMin, uMax, vMax;
+        public final ISprite sprite;
+        public final double uMin, vMin, uMax, vMax;
         public final int width, height;
         public final LaserSide[] validSides;
 
-        public LaserRow(SpriteHolder sprite, int uMin, int vMin, int uMax, int vMax, LaserSide... sides) {
+        public LaserRow(ISprite sprite, int uMin, int vMin, int uMax, int vMax, int textureSize, LaserSide... sides) {
             this.sprite = sprite;
-            this.uMin = uMin;
-            this.vMin = vMin;
-            this.uMax = uMax;
-            this.vMax = vMax;
+            this.uMin = uMin / (double) textureSize;
+            this.vMin = vMin / (double) textureSize;
+            this.uMax = uMax / (double) textureSize;
+            this.vMax = vMax / (double) textureSize;
             this.width = uMax - uMin;
             this.height = vMax - vMin;
             if (sides == null || sides.length == 0) {
@@ -97,7 +98,11 @@ public class LaserData_BC8 {
             }
         }
 
-        public LaserRow(LaserRow from, SpriteHolder sprite) {
+        public LaserRow(ISprite sprite, int uMin, int vMin, int uMax, int vMax, LaserSide... sides) {
+            this(sprite, uMin, vMin, uMax, vMax, 16, sides);
+        }
+
+        public LaserRow(LaserRow from, ISprite sprite) {
             this.sprite = sprite;
             this.uMin = from.uMin;
             this.vMin = from.vMin;

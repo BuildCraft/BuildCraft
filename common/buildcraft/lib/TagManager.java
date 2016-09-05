@@ -275,7 +275,9 @@ public class TagManager {
         endBatch(prependTags("energy:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
         startBatch();// factory
+        // BC Factory Items
         registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
+        registerTag("item.water_gel").reg("water_gel").locale("waterGel").model("water_gel");
         // BC Factory Item Blocks
         registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
@@ -292,6 +294,7 @@ public class TagManager {
         registerTag("block.flood_gate").reg("flood_gate").oldReg("floodGateBlock").locale("floodGateBlock").model("flood_gate");
         registerTag("block.tank").reg("tank").oldReg("tankBlock").locale("tankBlock").model("tank");
         registerTag("block.chute").reg("chute").oldReg("chuteBlock").locale("chuteBlock").model("chute");
+        registerTag("block.water_gel").reg("water_gel").locale("waterGel").model("water_gel");
         // BC Factory Tiles
         registerTag("tile.autoworkbench.item").reg("autoworkbench_item");
         registerTag("tile.mining_well").reg("mining_well");
