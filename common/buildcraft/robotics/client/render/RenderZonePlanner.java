@@ -97,7 +97,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                 for(int textureY = 0; textureY < textureHeight; textureY++) {
                     int posX = -1;
                     int posZ = -1;
-                    int scale = 1;
+                    int scale = 4;
                     int offset1 = (textureX - textureWidth / 2) * scale;
                     int offset2 = (textureY - textureHeight / 2) * scale;
                     switch(side) {
