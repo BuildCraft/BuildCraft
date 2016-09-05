@@ -70,7 +70,7 @@ public class EntityQuarry extends Entity {
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound compound) {
-        dataManager.set(TILE_POS, NBTUtils.readBlockPos(compound.getCompoundTag("tile_pos")));
+        dataManager.set(TILE_POS, NBTUtils.readBlockPos(compound.getTag("tile_pos")));
         dataManager.set(TYPE, compound.getInteger("type"));
     }
 
