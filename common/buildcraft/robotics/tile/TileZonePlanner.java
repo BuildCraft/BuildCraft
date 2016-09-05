@@ -3,8 +3,10 @@ package buildcraft.robotics.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.robotics.client.render.RenderZonePlanner;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -27,6 +29,7 @@ import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.robotics.zone.ZonePlan;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileZonePlanner extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_PLAN_CHANGE = 10;
@@ -124,6 +127,16 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
             layers[index].writeToByteBuf(buffer);
         });
         MessageUtil.getWrapper().sendToServer(message);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void invalidate() {
+        super.invalidate();
+        if(worldObj.isRemote && RenderZonePlanner.textures.containsKey(this)) {
+            GlStateManager.deleteTexture(RenderZonePlanner.textures.get(this).getGlTextureId());
+            RenderZonePlanner.textures.remove(this);
+        }
     }
 
     @Override

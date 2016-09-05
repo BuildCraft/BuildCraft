@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 
 public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner> {
-    private Map<TileZonePlanner, DynamicTexture> textures = new CachedMap<>(ZonePlannerMapData.TIMEOUT);
+    public static Map<TileZonePlanner, DynamicTexture> textures = new CachedMap<>(ZonePlannerMapData.TIMEOUT);
 
     @Override
     public final void renderTileEntityAt(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage) {
@@ -36,6 +37,8 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         double maxU = (double) textureWidth / textureSize;
         double minV = 0;
         double maxV = (double) textureHeight / textureSize;
+
+        EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
         if(textures.containsKey(tile)) {
             DynamicTexture texture = textures.get(tile);
@@ -58,7 +61,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             Vec3d min = new Vec3d(0, 0, 0);
             Vec3d max = new Vec3d(1, 1, 1);
 
-            switch(tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite()) {
+            switch(side) {
                 case NORTH:
                     min = new Vec3d(minX, minY, maxZ);
                     max = new Vec3d(maxX, maxY, maxZ);
@@ -92,21 +95,42 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
             }
             for(int textureX = 0; textureX < textureWidth; textureX++) {
                 for(int textureY = 0; textureY < textureHeight; textureY++) {
-                    int scale = 8;
-                    int posX = tile.getPos().getX() + (textureX - textureWidth / 2) * scale;
-                    int posZ = tile.getPos().getZ() + (textureY - textureHeight / 2) * scale;
+                    int posX = -1;
+                    int posZ = -1;
+                    int scale = 1;
+                    int offset1 = (textureX - textureWidth / 2) * scale;
+                    int offset2 = (textureY - textureHeight / 2) * scale;
+                    switch(side) {
+                        case NORTH:
+                            posX = tile.getPos().getX() + offset1;
+                            posZ = tile.getPos().getZ() - offset2;
+                            break;
+                        case EAST:
+                            posX = tile.getPos().getX() + offset2;
+                            posZ = tile.getPos().getZ() + offset1;
+                            break;
+                        case SOUTH:
+                            posX = tile.getPos().getX() + offset1;
+                            posZ = tile.getPos().getZ() + offset2;
+                            break;
+                        case WEST:
+                            posX = tile.getPos().getX() - offset2;
+                            posZ = tile.getPos().getZ() + offset1;
+                            break;
+                    }
                     int finalTextureX = textureX;
                     int finalTextureY = textureY;
                     ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
-                    ZonePlannerMapDataClient.instance.loadChunk(tile.getWorld(), new ZonePlannerMapChunkKey(chunkPos, tile.getWorld().provider.getDimension(), tile.getLevel()), zonePlannerMapChunk -> {
-                        zonePlannerMapChunk.data.forEach((pos, color) -> {
-                            if(pos.getX() == posX - chunkPos.getXStart() && pos.getZ() == posZ - chunkPos.getZStart()) {
-                                image.setRGB(finalTextureX, finalTextureY, color);
-                                GlStateManager.deleteTexture(textures.get(tile).getGlTextureId());
-                                textures.put(tile, new DynamicTexture(image));
-                            }
-                        });
-                    });
+                    int finalPosX = posX;
+                    int finalPosZ = posZ;
+                    ZonePlannerMapDataClient.instance.loadChunk(tile.getWorld(), new ZonePlannerMapChunkKey(chunkPos, tile.getWorld().provider.getDimension(), tile.getLevel()),
+                            zonePlannerMapChunk -> zonePlannerMapChunk.data.forEach((pos, color) -> {
+                                if(pos.getX() == finalPosX - chunkPos.getXStart() && pos.getZ() == finalPosZ - chunkPos.getZStart()) {
+                                    image.setRGB(finalTextureX, finalTextureY, color);
+                                    GlStateManager.deleteTexture(textures.get(tile).getGlTextureId());
+                                    textures.put(tile, new DynamicTexture(image));
+                                }
+                            }));
                 }
             }
             textures.put(tile, new DynamicTexture(image));
