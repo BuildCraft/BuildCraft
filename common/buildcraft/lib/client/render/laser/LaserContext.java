@@ -120,14 +120,6 @@ public class LaserContext {
         l[index] = lmap;
         index++;
         if (index == 4) {
-            // if (!Minecraft.isAmbientOcclusionEnabled()) {
-            // int rl = Math.max(Math.max(l[0], l[1]), Math.max(l[2], l[3]));
-            // l[0] = l[1] = l[2] = l[3] = rl;
-            // }
-            // int rl = l[0] + l[1] + l[2] + l[3];
-            // rl /= 4;
-            // l[0] = l[1] = l[2] = l[3] = rl;
-
             index = 0;
             vertex(0);
             vertex(1);

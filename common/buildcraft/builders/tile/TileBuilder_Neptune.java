@@ -5,12 +5,13 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
-import java.util.*;
 
-import org.apache.commons.lang3.tuple.Pair;
+import com.google.common.collect.ImmutableList;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumParticleTypes;
@@ -27,27 +28,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
-import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.core.IPathProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.builders.BCBuildersItems;
+import buildcraft.builders.bpt.TickingBlueprintBuilder;
+import buildcraft.builders.bpt.TickingBlueprintBuilder.EnumBuilderMessage;
 import buildcraft.builders.item.ItemBlueprint.BptStorage;
-import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.bpt.Blueprint;
-import buildcraft.lib.bpt.builder.BuilderAnimationManager;
-import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
-import buildcraft.lib.bpt.helper.VanillaBlockClearer;
-import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
@@ -64,7 +60,6 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     public static final int NET_ANIM_POWER = 17;
     public static final int NET_ANIM_STATE = 18;
 
-    public final BuilderAnimationManager animation = new BuilderAnimationManager(this::sendMessage);
     private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
     private final IItemHandlerModifiable invResources = addInventory("resources", 28, EnumAccess.NONE, EnumPipePart.VALUES);
 
@@ -79,18 +74,14 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     private final MjBattery battery = new MjBattery(1000 * MjAPI.MJ);
 
-    private final BuilderAccessor builder = new BuilderAccessor(this);
-    private final Deque<Pair<TaskUsable, BlockPos>> tasks = new LinkedList<>();
-    private final Set<BlockPos> blocksCompleted = new HashSet<>();
-    private final Map<BlockPos, List<TaskUsable>> blockTasks = new HashMap<>();
+    public final TickingBlueprintBuilder tickingBuilder = new TickingBlueprintBuilder(this::sendMessage, this::getSchematic);
+    private BuilderAccessor accessor = null;
 
-    private List<BlockPos> path = null;
-    private Box box = null;
-    private BoxIterator boxIter = null;
+    private ImmutableList<BlockPos> path = null;
+
+    private BlockPos lastBptPos;
+    private Box lastBox = null;
     private Blueprint currentBpt = null;
-    private Rotation rotation = null;
-    private BlockPos start;
-    private boolean hasFinishedPreBuild = false;
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -106,142 +97,91 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     private int cooldown = 0;
 
     @Override
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        super.onPlacedBy(placer, stack);
+        EnumFacing thisFacing = getWorld().getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
+        TileEntity inFront = getWorld().getTileEntity(getPos().offset(thisFacing.getOpposite()));
+        if (inFront instanceof IPathProvider) {
+            IPathProvider provider = (IPathProvider) inFront;
+            path = ImmutableList.copyOf(provider.getPath());
+            provider.removeFromWorld();
+            sendNetworkUpdate(NET_RENDER_DATA);
+        }
+    }
+
+    @Override
     public void update() {
         battery.tick(getWorld(), getPos());
-        builder.update();
-        animation.update();
         if (worldObj.isRemote) {
+            tickingBuilder.tick(Side.CLIENT);
             // client stuffs
         } else {
-            // server stuffs
-            for (int i = 0; i < 10 & i < tasks.size(); i++) {
-                Pair<TaskUsable, BlockPos> pair = tasks.removeFirst();
-                TaskUsable task = pair.getLeft();
-                BlockPos buildAt = pair.getRight();
-                if (!task.tick(builder, buildAt)) {
-                    tasks.addLast(pair);
-                }
+            if (accessor != null) {
+                accessor.tick();
             }
+            ItemStack bpt = invBlueprint.getStackInSlot(0);
+            if (bpt != null && bpt.getItem() == BCBuildersItems.blueprint) {
+                if (tickingBuilder.tick(Side.SERVER)) {
+                    cooldown--;
+                    if (cooldown <= 0) {
+                        BptStorage storage = BCBuildersItems.blueprint.createStorage(bpt);
+                        currentBpt = new Blueprint(storage.getSaved());
+                        EnumFacing thisFacing = getWorld().getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
+                        Rotation rotation = PositionUtil.getRotatedFacing(currentBpt.facing, thisFacing, Axis.Y);
+                        currentBpt.rotate(Axis.Y, rotation);
 
-            if (currentBpt != null) {
-                if (!hasFinishedPreBuild) {
-                    if (boxIter.hasFinished()) {
-                        if (tasks.isEmpty()) {
-                            boxIter = new BoxIterator(BlockPos.ORIGIN, box.size().add(-1, -1, -1), EnumAxisOrder.XZY.getMinToMaxOrder(), true);
-                            hasFinishedPreBuild = true;
-                        }
-                    } else {
-                        int clears = 100;
-                        while (clears > 0) {
-                            clears -= clearSingle();
-                            if (boxIter.hasFinished()) {
-                                break;
-                            }
-                        }
-                    }
-                } else {
+                        if (path != null && lastBox != null && lastBptPos != null) {
+                            BlockPos start = lastBptPos.add(currentBpt.offset);
+                            BlockPos max = currentBpt.size.add(-1, -1, -1);
+                            BlockPos end = start.add(max);
+                            lastBox = new Box(start, end);
+                        } else {
+                            BlockPos bptPos = getPos().add(thisFacing.getOpposite().getDirectionVec());
 
-                    int builds = 100;
-                    while (builds > 0) {
-                        builds -= buildSingle();
-                        builds -= 30;
-                        if (boxIter.hasFinished()) {
-                            break;
+                            lastBptPos = bptPos;
+                            BlockPos start = bptPos.add(currentBpt.offset);
+                            BlockPos max = currentBpt.size.add(-1, -1, -1);
+                            BlockPos end = start.add(max);
+                            lastBox = new Box(start, end);
                         }
-                    }
-
-                    if (boxIter.hasFinished()) {
-                        currentBpt = null;
-                        boxIter = null;
-                        rotation = null;
-                        start = null;
-                        blocksCompleted.clear();
+                        cooldown = 3000;
+                        if (accessor != null) {
+                            accessor.releaseAll();
+                        }
+                        accessor = new BuilderAccessor(this);
+                        tickingBuilder.reset(lastBox, currentBpt, EnumAxisOrder.XZY.getMinToMaxOrder(), accessor);
+                        sendNetworkUpdate(NET_RENDER_DATA);
                     }
                 }
             } else {
-                cooldown--;
-            }
-
-            if (cooldown <= 0 && currentBpt == null) {
-                ItemStack bpt = invBlueprint.getStackInSlot(0);
-                if (bpt != null && bpt.getItem() == BCBuildersItems.blueprint) {
-                    BptStorage storage = BCBuildersItems.blueprint.createStorage(bpt);
-                    currentBpt = new Blueprint(storage.getSaved());
-                    EnumFacing thisFacing = getWorld().getBlockState(getPos()).getValue(BlockBCBase_Neptune.PROP_FACING);
-                    rotation = PositionUtil.getRotatedFacing(currentBpt.facing, thisFacing, Axis.Y);
-                    currentBpt.rotate(Axis.Y, rotation);
-
-                    BlockPos bptPos = getPos().add(thisFacing.getOpposite().getDirectionVec());
-
-                    start = bptPos.add(currentBpt.offset);
-                    BlockPos max = currentBpt.size.add(-1, -1, -1);
-                    BlockPos end = start.add(max);
-                    box = new Box(start, end);
-                    boxIter = new BoxIterator(BlockPos.ORIGIN, max, EnumAxisOrder.XZY.getMinToMaxOrder(), true);
-                    cooldown = 3000;
+                tickingBuilder.cancel();
+                if (lastBox != null) {
+                    lastBox = null;
+                    lastBptPos = null;
                     sendNetworkUpdate(NET_RENDER_DATA);
                 }
             }
         }
     }
 
-    private int clearSingle() {
-        BlockPos next = boxIter.getCurrent();
-        boxIter.advance();
-        SchematicBlock schematic = currentBpt.getSchematicAt(next);
-        BlockPos buildAt = start.add(next);
-
-        if (canEditOther(buildAt)) {
-            PreBuildAction action = schematic.createClearingTask(builder, buildAt);
-            int cost = MathUtils.clamp(action.getTimeCost(), 1, 100);
-            if (action.getType() == EnumPreBuildAction.REQUIRE_AIR) {
-                action = VanillaBlockClearer.DESTORY_ITEMS;
-            }
-
-            TaskUsable clears = action.getTask(builder, buildAt);
-            tasks.add(Pair.of(clears, buildAt));
-            createAndSendMessage(false, NET_CLEAR, (buffer) -> {
-                buffer.writeBlockPos(buildAt);
-            });
-            return cost;
-        } else {
-            return 1;
-        }
-    }
-
-    private int buildSingle() {
-        BlockPos next = boxIter.getCurrent();
-        boxIter.advance();
-        SchematicBlock schematic = currentBpt.getSchematicAt(next);
-        BlockPos buildAt = start.add(next);
-
-        if (canEditOther(buildAt)) {
-            int cost = MathUtils.clamp(schematic.getTimeCost(), 1, 100);
-            TaskUsable task = schematic.createTask(builder, buildAt);
-            tasks.add(Pair.of(task, buildAt));
-            createAndSendMessage(false, NET_BUILD, (buffer) -> {
-                buffer.writeBlockPos(buildAt);
-            });
-            return cost;
-        } else {
-            return 1;
-        }
-    }
-
-    private void advanceBuilder() {
-
+    private SchematicBlock getSchematic(BlockPos bptPos) {
+        return currentBpt.getSchematicAt(bptPos);
     }
 
     // Networking
 
-    private void sendMessage(EnumBuilderAnimMessage type, IPayloadWriter writer) {
-        int id;
-        if (type == EnumBuilderAnimMessage.BLOCK) id = NET_ANIM_BLOCK;
-        else if (type == EnumBuilderAnimMessage.ITEM) id = NET_ANIM_ITEM;
-        else if (type == EnumBuilderAnimMessage.FLUID) id = NET_ANIM_FLUID;
-        else if (type == EnumBuilderAnimMessage.POWER) id = NET_ANIM_POWER;
+    private void sendMessage(EnumBuilderMessage type, IPayloadWriter writer) {
+        final int id;
+        if (type == EnumBuilderMessage.ANIMATION_BLOCK) id = NET_ANIM_BLOCK;
+        else if (type == EnumBuilderMessage.ANIMATION_ITEM) id = NET_ANIM_ITEM;
+        else if (type == EnumBuilderMessage.ANIMATION_FLUID) id = NET_ANIM_FLUID;
+        else if (type == EnumBuilderMessage.ANIMATION_POWER) id = NET_ANIM_POWER;
+        else if (type == EnumBuilderMessage.ANIMATION_STATE) id = NET_ANIM_STATE;
+        else if (type == EnumBuilderMessage.BOX) id = NET_BOX;
+        else if (type == EnumBuilderMessage.BUILD) id = NET_BUILD;
+        else if (type == EnumBuilderMessage.CLEAR) id = NET_CLEAR;
         else throw new IllegalArgumentException("Unknown type " + type);
-        this.createAndSendMessage(false, id, writer);
+        createAndSendMessage(false, id, writer);
     }
 
     @Override
@@ -253,16 +193,18 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 writePayload(NET_PATH, buffer, side);
                 writePayload(NET_ANIM_STATE, buffer, side);
             } else if (id == NET_BOX) {
-                if (box == null) {
-                    buffer.writeBoolean(false);
-                } else {
-                    buffer.writeBoolean(true);
-                    box.writeData(buffer);
-                }
+                tickingBuilder.writePayload(EnumBuilderMessage.BOX, buffer, side);
             } else if (id == NET_PATH) {
-
+                if (path == null) {
+                    buffer.writeInt(0);
+                } else {
+                    buffer.writeInt(path.size());
+                    for (BlockPos p : path) {
+                        buffer.writeBlockPos(p);
+                    }
+                }
             } else if (id == NET_ANIM_STATE) {
-                animation.writeStatePayload(buffer);
+                tickingBuilder.writePayload(EnumBuilderMessage.ANIMATION_STATE, buffer, side);
             }
         }
     }
@@ -276,14 +218,18 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 readPayload(NET_PATH, buffer, side, ctx);
                 readPayload(NET_ANIM_STATE, buffer, side, ctx);
             } else if (id == NET_BOX) {
-                if (buffer.readBoolean()) {
-                    box = new Box();
-                    box.readData(buffer);
-                } else {
-                    box = null;
-                }
+                tickingBuilder.readPayload(EnumBuilderMessage.BOX, buffer, side);
             } else if (id == NET_PATH) {
-
+                int count = buffer.readInt();
+                if (count <= 0) {
+                    path = null;
+                } else {
+                    ImmutableList.Builder<BlockPos> nPath = ImmutableList.builder();
+                    for (int i = 0; i < count; i++) {
+                        nPath.add(buffer.readBlockPos());
+                    }
+                    path = nPath.build();
+                }
             } else if (id == NET_CLEAR || id == NET_BUILD) {
                 BlockPos changeAt = buffer.readBlockPos();
                 double x = changeAt.getX() + 0.5;
@@ -293,11 +239,11 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 worldObj.spawnParticle(type, x, y, z, 0, 0, 0);
             }
             // All animation types
-            else if (id == NET_ANIM_ITEM) animation.receiveMessage(EnumBuilderAnimMessage.ITEM, buffer);
-            else if (id == NET_ANIM_BLOCK) animation.receiveMessage(EnumBuilderAnimMessage.BLOCK, buffer);
-            else if (id == NET_ANIM_FLUID) animation.receiveMessage(EnumBuilderAnimMessage.FLUID, buffer);
-            else if (id == NET_ANIM_POWER) animation.receiveMessage(EnumBuilderAnimMessage.POWER, buffer);
-            else if (id == NET_ANIM_STATE) animation.receiveMessage(EnumBuilderAnimMessage.STATE, buffer);
+            else if (id == NET_ANIM_ITEM) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_ITEM, buffer, side);
+            else if (id == NET_ANIM_BLOCK) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_BLOCK, buffer, side);
+            else if (id == NET_ANIM_FLUID) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_FLUID, buffer, side);
+            else if (id == NET_ANIM_POWER) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_POWER, buffer, side);
+            else if (id == NET_ANIM_STATE) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_STATE, buffer, side);
         }
     }
 
@@ -322,8 +268,13 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     // Rendering
 
     @SideOnly(Side.CLIENT)
+    public ImmutableList<BlockPos> getPath() {
+        return path;
+    }
+
+    @SideOnly(Side.CLIENT)
     public Box getBox() {
-        return box;
+        return tickingBuilder.box;
     }
 
     @Override
@@ -335,7 +286,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), box);
+        return BoundingBoxUtil.makeFrom(getPos(), getBox());
     }
 
     @Override

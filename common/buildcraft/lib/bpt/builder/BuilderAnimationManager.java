@@ -61,7 +61,7 @@ public class BuilderAnimationManager implements INBTSerializable<NBTTagCompound>
         elements.clear();
     }
 
-    public void update() {
+    public void tick() {
 
         now++;
     }

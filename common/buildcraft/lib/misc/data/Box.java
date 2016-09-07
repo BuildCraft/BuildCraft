@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.LaserData;
 import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -34,23 +33,6 @@ import io.netty.buffer.ByteBuf;
 
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
 public class Box implements IBox, ISerializable {
-    @Deprecated
-    public enum Kind {
-        LASER_RED,
-        LASER_YELLOW,
-        LASER_GREEN,
-        LASER_BLUE,
-        STRIPES,
-        BLUE_STRIPES,
-    }
-
-    @Deprecated
-    public Kind kind = Kind.LASER_RED;
-    @Deprecated
-    public boolean isVisible = true;
-    @Deprecated
-    public LaserData[] lasersData;
-
     @SideOnly(Side.CLIENT)
     public LaserData_BC8[] laserData;
     @SideOnly(Side.CLIENT)
@@ -209,11 +191,6 @@ public class Box implements IBox, ISerializable {
     }
 
     @Override
-    public void createLaserData() {
-        lasersData = Utils.createLaserDataBox(Utils.convert(min()), Utils.convert(max()));
-    }
-
-    @Override
     public String toString() {
         return "Box[min = " + min + ", max = " + max + "]";
     }
@@ -266,9 +243,7 @@ public class Box implements IBox, ISerializable {
     @Override
     public void readData(ByteBuf stream) {
         byte flags = stream.readByte();
-        kind = Kind.values()[flags & 31];
-        boolean initialized = (flags & 64) != 0;
-        isVisible = (flags & 32) != 0;
+        boolean initialized = (flags & 1) != 0;
         if (initialized) {
             min = NetworkUtils.readBlockPos(stream);
             max = NetworkUtils.readBlockPos(stream);
@@ -280,7 +255,7 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public void writeData(ByteBuf stream) {
-        stream.writeByte((isInitialized() ? 64 : 0) | (isVisible ? 32 : 0) | kind.ordinal());
+        stream.writeByte((isInitialized() ? 1 : 0));
         if (isInitialized()) {
             NetworkUtils.writeBlockPos(stream, min);
             NetworkUtils.writeBlockPos(stream, max);

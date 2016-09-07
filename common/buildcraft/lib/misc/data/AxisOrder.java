@@ -5,6 +5,7 @@ import com.google.common.collect.Table;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 
 import buildcraft.lib.misc.NBTUtils;
@@ -71,6 +72,12 @@ public class AxisOrder {
 
     public AxisOrder invertThird() {
         return allOrders.get(order, Inversion.getFor(first, second, third.getOpposite()));
+    }
+
+    public AxisOrder invert(Axis axis) {
+        if (axis == first.getAxis()) return invertFirst();
+        if (axis == second.getAxis()) return invertSecond();
+        else return invertThird();
     }
 
     public enum Inversion {

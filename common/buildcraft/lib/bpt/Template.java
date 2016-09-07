@@ -9,19 +9,21 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
+import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 public class Template extends BlueprintBase {
     /** Stores all of the blocks, using {@link BlueprintBase#min} as the origin. */
     private boolean[][][] contentBlocks;
 
-    private Template(BlockPos size) {
-        super(size);
+    private Template(BlockPos size, BlockPos offset) {
+        super(size, offset);
         contentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
     }
 
-    public Template(boolean[][][] blocks) {
-        super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length));
+    public Template(boolean[][][] blocks, BlockPos offset) {
+        super(new BlockPos(blocks.length, blocks[0].length, blocks[0][0].length), offset);
         contentBlocks = blocks;
     }
 
@@ -81,39 +83,48 @@ public class Template extends BlueprintBase {
 
     @Override
     protected void rotateContentsBy(Axis axis, Rotation rotation) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
-
-    }
-
-    @Override
-    public void mirror(Axis axis) {
-        // TODO Auto-generated method stub
-        throw new AbstractMethodError("Implement this!");
-
-    }
-
-    @Override
-    protected void rotateContentsBy(Rotation rotation) {
         BlockPos oldSize = this.size;
-        BlockPos newSize = VecUtil.absolute(rotate(oldSize, rotation));
-        boolean[][][] newContentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
-        BlockPos arrayOffset = newSize.subtract(oldSize);// FIXME: This might be the wrong offset!
+        BlockPos newSize = VecUtil.absolute(PositionUtil.rotatePos(oldSize, axis, rotation));
+        boolean[][][] newContentBlocks = new boolean[newSize.getX()][newSize.getY()][newSize.getZ()];
+        Box to = new Box(BlockPos.ORIGIN, newSize.add(-1, -1, -1));
+        BlockPos newMax = PositionUtil.rotatePos(size.add(-1, -1, -1), axis, rotation);
+        BlockPos arrayOffset = to.closestInsideTo(newMax).subtract(newMax);
 
         for (int x = 0; x < contentBlocks.length; x++) {
             for (int y = 0; y < contentBlocks[x].length; y++) {
                 for (int z = 0; z < contentBlocks[x][y].length; z++) {
+                    boolean from = contentBlocks[x][y][z];
                     BlockPos original = new BlockPos(x, y, z);
-                    BlockPos rotated = rotate(original, rotation);
+                    BlockPos rotated = PositionUtil.rotatePos(original, axis, rotation);
                     rotated = rotated.add(arrayOffset);
-                    newContentBlocks[rotated.getX()][rotated.getY()][rotated.getZ()] = contentBlocks[x][y][z];
+                    newContentBlocks[rotated.getX()][rotated.getY()][rotated.getZ()] = from;
                 }
             }
         }
+
         contentBlocks = newContentBlocks;
     }
 
-    public boolean getIsSolidAt(BlockPos pos) {
+    @Override
+    public void mirror(Axis axis) {
+        boolean[][][] newContentBlocks = new boolean[size.getX()][size.getY()][size.getZ()];
+
+        for (int x = 0; x < contentBlocks.length; x++) {
+            for (int y = 0; y < contentBlocks[x].length; y++) {
+                for (int z = 0; z < contentBlocks[x][y].length; z++) {
+                    boolean from = contentBlocks[x][y][z];
+                    BlockPos mirrored = new BlockPos(x, y, z);
+                    int value = VecUtil.getValue(size, axis) - 1 - VecUtil.getValue(mirrored, axis);
+                    mirrored = VecUtil.replaceValue(mirrored, axis, value);
+                    newContentBlocks[mirrored.getX()][mirrored.getY()][mirrored.getZ()] = from;
+                }
+            }
+        }
+
+        contentBlocks = newContentBlocks;
+    }
+
+    public boolean isSolidAt(BlockPos pos) {
         return contentBlocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 }

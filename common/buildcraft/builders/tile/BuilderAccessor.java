@@ -23,13 +23,13 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
     private final TileBuilder_Neptune tile;
 
     public BuilderAccessor(TileBuilder_Neptune tile) {
-        super(tile.getOwner(), tile.animation);
+        super(tile.getOwner(), tile.tickingBuilder.animationManager);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
     }
 
     public BuilderAccessor(TileBuilder_Neptune tile, NBTTagCompound nbt) {
-        super(tile.getOwner(), tile.animation, nbt);
+        super(tile.getOwner(), tile.tickingBuilder.animationManager, nbt);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
     }
