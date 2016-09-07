@@ -44,7 +44,7 @@ public class AxisOrder {
         );
     }
 
-    public NBTTagCompound writeNbt() {
+    public NBTTagCompound writeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTUtils.writeEnum(order);
         nbt.setString("order", order.name());

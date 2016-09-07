@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.IBox;
+import net.minecraft.util.math.Vec3d;
 
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {
@@ -20,7 +21,7 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box.min(), additional);
             BlockPos max = VecUtil.max(box.max(), additional);
-            return makeFrom(min, max);
+            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
         }
     }
 
@@ -35,13 +36,23 @@ public class BoundingBoxUtil {
         } else {
             BlockPos min = VecUtil.min(box1.min(), box2.min(), additional);
             BlockPos max = VecUtil.max(box1.max(), box2.max(), additional);
-            return makeFrom(min, max);
+            return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
         }
     }
 
-    /** Creates an {@link AxisAlignedBB} that fully encompasses the two given block min and max. */
-    public static AxisAlignedBB makeFrom(BlockPos min, BlockPos max) {
-        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
+    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
+        return new AxisAlignedBB(
+                Math.min(from.xCoord, to.xCoord),
+                Math.min(from.yCoord, to.yCoord),
+                Math.min(from.zCoord, to.zCoord),
+                Math.max(from.xCoord, to.xCoord),
+                Math.max(from.yCoord, to.yCoord),
+                Math.max(from.zCoord, to.zCoord)
+        );
+    }
+
+    public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
+        return makeFrom(from, to).expandXyz(radius);
     }
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {

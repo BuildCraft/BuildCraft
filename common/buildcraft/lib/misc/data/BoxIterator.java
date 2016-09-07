@@ -1,15 +1,14 @@
 package buildcraft.lib.misc.data;
 
-import java.util.Iterator;
-
+import buildcraft.api.core.IBox;
+import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.VecUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.core.IBox;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.VecUtil;
+import java.util.Iterator;
 
 public class BoxIterator implements Iterator<BlockPos> {
     private final BlockPos min, max;
@@ -39,13 +38,13 @@ public class BoxIterator implements Iterator<BlockPos> {
         current = NBTUtils.readBlockPos(nbt.getTag("current"));
     }
 
-    public NBTTagCompound writeToNbt() {
+    public NBTTagCompound writeToNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("min", NBTUtils.writeBlockPos(min));
         nbt.setTag("max", NBTUtils.writeBlockPos(max));
         nbt.setBoolean("invert", invert);
         // repeat
-        nbt.setTag("order", order.writeNbt());
+        nbt.setTag("order", order.writeNBT());
         nbt.setTag("current", NBTUtils.writeBlockPos(current));
         return nbt;
     }
@@ -86,10 +85,10 @@ public class BoxIterator implements Iterator<BlockPos> {
         return order;
     }
 
-    public void advance() {
+    public BlockPos advance() {
         if (current == null) {
             current = getStart();
-            return;
+            return getCurrent();
         }
         current = increment(current, order.first);
         if (shouldReset(current, order.first)) {
@@ -116,6 +115,7 @@ public class BoxIterator implements Iterator<BlockPos> {
                 }
             }
         }
+        return getCurrent();
     }
 
     private static BlockPos increment(BlockPos pos, EnumFacing facing) {

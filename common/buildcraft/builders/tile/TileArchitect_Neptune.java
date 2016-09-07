@@ -272,7 +272,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
         super.writeToNBT(nbt);
         nbt.setTag("box", box.writeToNBT());
         if (boxIterator != null) {
-            nbt.setTag("iter", boxIterator.writeToNbt());
+            nbt.setTag("iter", boxIterator.writeToNBT());
         }
         nbt.setBoolean("shouldStartScanning", shouldStartScanning);
         nbt.setBoolean("scanning", scanning);

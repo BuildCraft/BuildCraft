@@ -10,7 +10,8 @@ import net.minecraft.util.math.BlockPos;
 public enum BuildersGuis {
     ARCHITECT,
     BUILDER,
-    LIBRARY;
+    LIBRARY,
+    QUARRY;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCBuilders.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
