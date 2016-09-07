@@ -1,9 +1,11 @@
 package buildcraft.robotics;
 
+import buildcraft.robotics.client.render.RenderZonePlanner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,6 +58,12 @@ public abstract class RoboticsProxy_BC8 implements IGuiHandler {
                 }
             }
             return null;
+        }
+
+        @Override
+        public void fmlInit() {
+            super.fmlInit();
+            ClientRegistry.bindTileEntitySpecialRenderer(TileZonePlanner.class, new RenderZonePlanner());
         }
     }
 }

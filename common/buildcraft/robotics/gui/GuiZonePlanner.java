@@ -84,14 +84,6 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         return null;
     }
 
-    private int getLevel() {
-        BlockPos blockPos = Minecraft.getMinecraft().thePlayer.getPosition();
-        while (!Minecraft.getMinecraft().theWorld.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().theWorld, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
-            blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
-        }
-        return (int) Math.floor((double) blockPos.getY() / ZonePlannerMapChunkKey.LEVEL_HEIGHT);
-    }
-
     @Override
     public void handleMouseInput() throws IOException {
         int wheel = Mouse.getEventDWheel();
@@ -172,7 +164,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         scaleSpeed *= 0.7F;
         {
             ChunkPos chunkPos = new ChunkPos((int) positionX >> 4, (int) positionZ >> 4);
-            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
+            ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), container.tile.getLevel()));
             BlockPos pos = null;
             if (zonePlannerMapChunk != null) {
                 pos = zonePlannerMapChunk.data.keySet()//
@@ -226,7 +218,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         int radius = 8;
         for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
-                GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), container.tile.getWorld().provider.getDimension(), getLevel())));
+                GL11.glCallList(ZonePlannerMapRenderer.instance.drawChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), container.tile.getWorld().provider.getDimension(), container.tile.getLevel())));
             }
         }
 
@@ -259,7 +251,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             for (int i = 0; i < 10000; i++) {
                 int chunkX = (int) rayPosition.getX() >> 4;
                 int chunkZ = (int) rayPosition.getZ() >> 4;
-                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
+                ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), Minecraft.getMinecraft().theWorld.provider.getDimension(), container.tile.getLevel()));
                 if (zonePlannerMapChunk != null) {
                     BlockPos pos = new BlockPos(Math.round(rayPosition.getX()) - chunkX * 16, Math.round(rayPosition.getY()), Math.round(rayPosition.getZ()) - chunkZ * 16);
                     if (zonePlannerMapChunk.data.containsKey(pos)) {
@@ -317,7 +309,7 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
                                 for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
                                     if (layer.get(blockX, blockZ)) {
                                         int height = 256;
-                                        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), getLevel()));
+                                        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.instance.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, Minecraft.getMinecraft().theWorld.provider.getDimension(), container.tile.getLevel()));
                                         if (zonePlannerMapChunk != null) {
                                             int finalBlockX = blockX;
                                             int finalBlockZ = blockZ;

@@ -3,12 +3,17 @@ package buildcraft.robotics.tile;
 import java.io.IOException;
 import java.util.List;
 
+import buildcraft.robotics.client.render.RenderZonePlanner;
+import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -24,6 +29,7 @@ import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.robotics.zone.ZonePlan;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileZonePlanner extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_PLAN_CHANGE = 10;
@@ -52,6 +58,14 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
         for (int i = 0; i < layers.length; i++) {
             layers[i] = new ZonePlan();
         }
+    }
+
+    public int getLevel() {
+        BlockPos blockPos = Minecraft.getMinecraft().thePlayer.getPosition();
+        while (!Minecraft.getMinecraft().theWorld.getBlockState(blockPos).getBlock().isBlockSolid(Minecraft.getMinecraft().theWorld, blockPos, EnumFacing.DOWN) && blockPos.getY() < 255) {
+            blockPos = new BlockPos(blockPos.getX(), blockPos.getY() + 1, blockPos.getZ());
+        }
+        return (int) Math.floor((double) blockPos.getY() / ZonePlannerMapChunkKey.LEVEL_HEIGHT);
     }
 
     @Override
@@ -113,6 +127,16 @@ public class TileZonePlanner extends TileBCInventory_Neptune implements ITickabl
             layers[index].writeToByteBuf(buffer);
         });
         MessageUtil.getWrapper().sendToServer(message);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void invalidate() {
+        super.invalidate();
+        if(worldObj.isRemote && RenderZonePlanner.textures.containsKey(this)) {
+            GlStateManager.deleteTexture(RenderZonePlanner.textures.get(this).getGlTextureId());
+            RenderZonePlanner.textures.remove(this);
+        }
     }
 
     @Override

@@ -4,26 +4,31 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
+import buildcraft.builders.client.render.RenderArchitect;
+import buildcraft.builders.client.render.RenderBuilder;
+import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.builders.container.ContainerArchitect;
+import buildcraft.builders.container.ContainerQuarry;
+import buildcraft.builders.entity.EntityQuarry;
+import buildcraft.builders.gui.ContainerBlueprintLibrary;
+import buildcraft.builders.gui.GuiArchitect;
+import buildcraft.builders.gui.GuiBlueprintLibrary;
+import buildcraft.builders.gui.GuiQuarry;
+import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.builders.tile.TileLibrary_Neptune;
+import buildcraft.builders.tile.TileQuarry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.builders.client.render.RenderArchitect;
-import buildcraft.builders.client.render.RenderBuilder;
-import buildcraft.builders.container.ContainerArchitect;
-import buildcraft.builders.gui.ContainerBlueprintLibrary;
-import buildcraft.builders.gui.GuiArchitect;
-import buildcraft.builders.gui.GuiBlueprintLibrary;
-import buildcraft.builders.tile.TileArchitect_Neptune;
-import buildcraft.builders.tile.TileBuilder_Neptune;
-import buildcraft.builders.tile.TileLibrary_Neptune;
 
 public abstract class BuildersProxy_Neptune implements IGuiHandler {
     @SidedProxy
@@ -48,6 +53,12 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
                 return new ContainerArchitect(player, library);
             }
         }
+        if (ID == BuildersGuis.QUARRY.ordinal()) {
+            if (tile instanceof TileQuarry) {
+                TileQuarry quarry = (TileQuarry) tile;
+                return new ContainerQuarry(player, quarry);
+            }
+        }
         return null;
     }
 
@@ -56,7 +67,9 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
         return null;
     }
 
-    public void fmlInit() {}
+    public void fmlInit() {
+        EntityRegistry.registerModEntity(EntityQuarry.class, "quarry", 0, BCBuilders.INSTANCE, 50, 1, true);
+    }
 
     @SideOnly(Side.SERVER)
     public static class ServerProxy extends BuildersProxy_Neptune {
@@ -80,6 +93,12 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
                     return new GuiArchitect(new ContainerArchitect(player, library));
                 }
             }
+            if (ID == BuildersGuis.QUARRY.ordinal()) {
+                if (tile instanceof TileQuarry) {
+                    TileQuarry quarry = (TileQuarry) tile;
+                    return new GuiQuarry(new ContainerQuarry(player, quarry));
+                }
+            }
             return null;
         }
 
@@ -88,6 +107,7 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
             super.fmlInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder_Neptune.class, new RenderBuilder());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
         }
     }
 }

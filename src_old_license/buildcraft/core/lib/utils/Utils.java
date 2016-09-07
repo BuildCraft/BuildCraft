@@ -4,14 +4,26 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import java.util.*;
-
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector3f;
-
+import buildcraft.api.core.IAreaProvider;
+import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.ITileAreaProvider;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.CompatHooks;
+import buildcraft.core.EntityLaser;
+import buildcraft.core.LaserData;
+import buildcraft.core.LaserKind;
+import buildcraft.core.internal.IDropControlInventory;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.ITransactor;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.lib.XorShift128Random;
+import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.misc.data.BoxIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -28,27 +40,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.power.IEngine;
-import buildcraft.api.tiles.ITileAreaProvider;
-import buildcraft.api.transport.IInjectable;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.*;
-import buildcraft.core.internal.IDropControlInventory;
-import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.lib.XorShift128Random;
-import buildcraft.lib.misc.VecUtil;
-import buildcraft.lib.misc.data.AxisOrder;
-import buildcraft.lib.misc.data.Box;
-import buildcraft.lib.misc.data.BoxIterable;
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3f;
+import java.util.*;
 
 /** Use buildcraft.lib.misc.*Util instead of this */
 @Deprecated
@@ -117,14 +115,14 @@ public final class Utils {
             TileEntity tile = world.getTileEntity(newpos);
             ITransactor transactor = Transactor.getTransactorFor(tile, orientation.getOpposite());
             if (transactor != null && !(tile instanceof IEngine) && transactor.insert(stack, false).stackSize > 0) {// FIXME
-                                                                                                                    // WRONG
-                                                                                                                    // OMG
-                                                                                                                    // 1.9.4
-                                                                                                                    // port
-                                                                                                                    // messed
-                                                                                                                    // this
-                                                                                                                    // ITransactor
-                                                                                                                    // UP!
+                // WRONG
+                // OMG
+                // 1.9.4
+                // port
+                // messed
+                // this
+                // ITransactor
+                // UP!
                 return transactor.insert(stack, true).stackSize;
             }
         }

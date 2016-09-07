@@ -248,14 +248,19 @@ public class TagManager {
         registerTag("item.block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("item.block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("item.block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("item.block.frame").reg("frame").locale("frameBlock").model("frame");
+        registerTag("item.block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // BC Builders Blocks
         registerTag("block.architect").reg("architect").locale("architectBlock").model("architect");
         registerTag("block.builder").reg("builder").locale("builderBlock").model("builder");
         registerTag("block.library").reg("library").locale("libraryBlock").model("library");
+        registerTag("block.frame").reg("frame").locale("frameBlock").model("frame");
+        registerTag("block.quarry").reg("quarry").locale("quarryBlock").model("quarry");
         // BC Builders Tiles
         registerTag("tile.architect").reg("architect");
         registerTag("tile.library").reg("library");
         registerTag("tile.builder").reg("builder");
+        registerTag("tile.quarry").reg("quarry");
 
         endBatch(prependTags("builders:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
