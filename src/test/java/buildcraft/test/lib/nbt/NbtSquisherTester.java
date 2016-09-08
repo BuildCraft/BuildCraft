@@ -24,30 +24,8 @@ import buildcraft.lib.nbt.NbtSquisher;
 public class NbtSquisherTester {
     private final NBTTagCompound nbt = genNbt();
 
-    public static void spool(int times, NBTTagCompound nbt) {
-        for (int i = 0; i < times; i++) {
-            if (i % 10 == 0) {
-                System.out.println("Spooling [ " + i + "/" + times + " ]");
-            }
-            try {
-                warm(nbt);
-            } catch (IOException io) {
-                throw new Error(io);
-            }
-        }
-    }
-
-    public static void warm(NBTTagCompound nbt) throws IOException {
-        NbtSquisher.expand(NbtSquisher.squishVanillaUncompressed(nbt));
-        NbtSquisher.expand(NbtSquisher.squishVanilla(nbt));
-        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1Uncompressed(nbt));
-        NbtSquisher.expand(NbtSquisher.squishBuildCraftV1(nbt));
-    }
-
     @Test
     public void testSimpleNBT() throws IOException {
-        spool(100, nbt);
-
         NBTSquishDebugging.debug = true;
         test(nbt);
         NBTSquishDebugging.debug = false;
@@ -78,6 +56,8 @@ public class NbtSquisherTester {
         list.appendTag(new NBTTagFloat(19.76f));
 
         nbt.setTag("complex|list", list);
+
+        nbt.setTag("complex|tag", new NBTTagCompound());
 
         NBTTagCompound compound = new NBTTagCompound();
         compound.setBoolean("a", false);
@@ -181,31 +161,65 @@ public class NbtSquisherTester {
     }
 
     public static void checkEquality(NBTTagCompound from, NBTTagCompound to) {
-        checkEquality("", from, to);
+        if (!checkEquality("", from, to)) {
+            // Assert.fail("Tags were not equal!");
+        }
     }
 
-    private static void checkEquality(String start, NBTTagCompound from, NBTTagCompound to) {
+    private static boolean checkEquality(String start, NBTTagCompound from, NBTTagCompound to) {
         Set<String> keysFrom = from.getKeySet();
         Set<String> keysTo = to.getKeySet();
         if (!keysFrom.equals(keysTo)) {
             System.out.println(start + "Differing keys!");
             System.out.println(start + "  from = " + keysFrom);
             System.out.println(start + "    to = " + keysTo);
+            return false;
         } else {
+            boolean wasEqual = false;
             start = "  " + start;
             for (String key : keysFrom) {
                 String start2 = start + key + ":";
                 NBTBase valFrom = from.getTag(key);
                 NBTBase valTo = to.getTag(key);
-                checkEquality(start2, valFrom, valTo);
+                wasEqual &= checkEquality(start2, valFrom, valTo);
             }
+            return wasEqual;
         }
     }
 
-    private static void checkEquality(String start, NBTBase valFrom, NBTBase valTo) {
+    private static boolean checkEquality(String start, NBTTagList from, NBTTagList to) {
+        int l1 = from.tagCount();
+        int l2 = to.tagCount();
+        if (l1 != l2) {
+            System.out.println(start + "Differing lengths!");
+            System.out.println(start + "  from = " + l1);
+            System.out.println(start + "    to = " + l2);
+            return false;
+        } else {
+            boolean wasEqual = true;
+            start = "  " + start;
+            for (int i = 0; i < l1; i++) {
+                String start2 = start + i + ":";
+                NBTBase valFrom = from.get(i);
+                NBTBase valTo = to.get(i);
+                wasEqual &= checkEquality(start2, valFrom, valTo);
+            }
+            return wasEqual;
+        }
+    }
+
+    private static boolean checkEquality(String start, NBTBase valFrom, NBTBase valTo) {
+        if (valFrom instanceof NBTTagCompound && valTo instanceof NBTTagCompound) {
+            return checkEquality(start, (NBTTagCompound) valFrom, (NBTTagCompound) valTo);
+        }
+        if (valFrom instanceof NBTTagList && valTo instanceof NBTTagList) {
+            return checkEquality(start, (NBTTagList) valFrom, (NBTTagList) valTo);
+        }
         if (!valFrom.equals(valTo)) {
             System.out.println(start + " were not equal!");
+            return false;
         }
+        return true;
     }
 
     private static NBTTagCompound genRandomChest(Random rand) {

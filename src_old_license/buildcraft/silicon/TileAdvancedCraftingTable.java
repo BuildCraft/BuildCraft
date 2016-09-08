@@ -437,7 +437,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
     @Override
     public boolean hasWork() {
-        return requiresLaserEnergy();
+        return requiresLaserPower();
     }
 
     @Override

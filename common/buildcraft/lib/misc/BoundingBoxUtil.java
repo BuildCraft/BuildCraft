@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.util.math.AxisAlignedBB;
@@ -7,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.IBox;
-import net.minecraft.util.math.Vec3d;
 
 /** Various methods operating on (and creating) {@link AxisAlignedBB} */
 public class BoundingBoxUtil {
@@ -41,14 +42,7 @@ public class BoundingBoxUtil {
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to) {
-        return new AxisAlignedBB(
-                Math.min(from.xCoord, to.xCoord),
-                Math.min(from.yCoord, to.yCoord),
-                Math.min(from.zCoord, to.zCoord),
-                Math.max(from.xCoord, to.xCoord),
-                Math.max(from.yCoord, to.yCoord),
-                Math.max(from.zCoord, to.zCoord)
-        );
+        return new AxisAlignedBB(from, to);
     }
 
     public static AxisAlignedBB makeFrom(Vec3d from, Vec3d to, double radius) {
@@ -57,5 +51,17 @@ public class BoundingBoxUtil {
 
     public static AxisAlignedBB makeAround(Vec3d around, double radius) {
         return new AxisAlignedBB(around.subtract(radius, radius, radius), around.addVector(radius, radius, radius));
+    }
+
+    public static AxisAlignedBB makeFrom(BlockPos pos, @Nullable IBox box, @Nullable Collection<BlockPos> additional) {
+        BlockPos min = box == null ? pos : VecUtil.min(box.min(), pos);
+        BlockPos max = box == null ? pos : VecUtil.max(box.max(), pos);
+        if (additional != null) {
+            for (BlockPos p : additional) {
+                min = VecUtil.min(min, p);
+                max = VecUtil.max(max, p);
+            }
+        }
+        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
     }
 }

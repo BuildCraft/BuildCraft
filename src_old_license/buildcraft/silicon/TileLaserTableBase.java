@@ -78,12 +78,12 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
     } */
 
     @Override
-    public boolean requiresLaserEnergy() {
+    public boolean requiresLaserPower() {
         return canCraft() && energy < getRequiredEnergy() * 5F /* && mode == Mode.On */;
     }
 
     @Override
-    public void receiveLaserEnergy(int energy) {
+    public void receiveLaserPower(int energy) {
         this.energy += energy;
         recentEnergyAverageUtil.push(energy);
     }

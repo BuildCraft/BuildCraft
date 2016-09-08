@@ -126,13 +126,12 @@ public class TickingBlueprintBuilder {
 
     public void reset(Box nBox, BlueprintBase bpt, AxisOrder nOrder, IBuilderAccessor accessor) {
         cancel();
-        if (nBox != null && bpt != null) {
+        if (nBox != null && bpt != null && accessor != null) {
             this.box = nBox;
             this.currentBpt = bpt;
             this.order = nOrder;
             this.start = box.min();
             this.accessor = accessor;
-            if (accessor == null) throw new NullPointerException();
             initBoxIter();
         }
     }

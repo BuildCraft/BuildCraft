@@ -28,6 +28,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.VecUtil;
 
 import io.netty.buffer.ByteBuf;
 
@@ -206,7 +207,7 @@ public class Box implements IBox, ISerializable {
     /** IMPORTANT: Use {@link #contains(Vec3d)}instead of the returned {@link AxisAlignedBB#isVecInside(Vec3d)} as the
      * logic is different! */
     public AxisAlignedBB getBoundingBox() {
-        return new AxisAlignedBB(min, max.add(Utils.POS_ONE));
+        return new AxisAlignedBB(min, max.add(VecUtil.POS_ONE));
     }
 
     public Box extendToEncompass(Vec3d toBeContained) {

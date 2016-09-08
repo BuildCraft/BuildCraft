@@ -5,11 +5,14 @@
 package buildcraft.builders.tile;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +24,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -33,6 +37,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.builders.BCBuildersItems;
 import buildcraft.builders.bpt.TickingBlueprintBuilder;
 import buildcraft.builders.bpt.TickingBlueprintBuilder.EnumBuilderMessage;
@@ -42,6 +47,7 @@ import buildcraft.lib.bpt.Blueprint;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
@@ -49,7 +55,7 @@ import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
-public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable {
+public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     public static final int NET_BOX = 10;
     public static final int NET_PATH = 11;
     public static final int NET_CLEAR = 12;
@@ -77,7 +83,11 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     public final TickingBlueprintBuilder tickingBuilder = new TickingBlueprintBuilder(this::sendMessage, this::getSchematic);
     private BuilderAccessor accessor = null;
 
+    /** Stores the real path - just a few block positions. */
     private ImmutableList<BlockPos> path = null;
+    /** Stores the real path plus all possible block positions inbetween. Not saved, regenerated from path. */
+    private ImmutableList<BlockPos> pathInterpCache = null;
+    private int lastIndex = -1;
 
     private BlockPos lastBptPos;
     private Box lastBox = null;
@@ -103,8 +113,13 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
         TileEntity inFront = getWorld().getTileEntity(getPos().offset(thisFacing.getOpposite()));
         if (inFront instanceof IPathProvider) {
             IPathProvider provider = (IPathProvider) inFront;
-            path = ImmutableList.copyOf(provider.getPath());
-            provider.removeFromWorld();
+            ImmutableList<BlockPos> copiedPath = ImmutableList.copyOf(provider.getPath());
+            if (copiedPath.size() < 2) {
+                setPath(null);
+            } else {
+                setPath(copiedPath);
+                provider.removeFromWorld();
+            }
             sendNetworkUpdate(NET_RENDER_DATA);
         }
     }
@@ -130,21 +145,57 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                         Rotation rotation = PositionUtil.getRotatedFacing(currentBpt.facing, thisFacing, Axis.Y);
                         currentBpt.rotate(Axis.Y, rotation);
 
-                        if (path != null && lastBox != null && lastBptPos != null) {
-                            BlockPos start = lastBptPos.add(currentBpt.offset);
-                            BlockPos max = currentBpt.size.add(-1, -1, -1);
-                            BlockPos end = start.add(max);
-                            lastBox = new Box(start, end);
-                        } else {
-                            BlockPos bptPos = getPos().add(thisFacing.getOpposite().getDirectionVec());
+                        boolean immediateRestart = false;
 
+                        if (getPath() == null) {
+                            BlockPos bptPos = getPos().add(thisFacing.getOpposite().getDirectionVec());
                             lastBptPos = bptPos;
                             BlockPos start = bptPos.add(currentBpt.offset);
                             BlockPos max = currentBpt.size.add(-1, -1, -1);
                             BlockPos end = start.add(max);
                             lastBox = new Box(start, end);
+                            lastIndex = -1;
+                        } else if (lastBox == null || lastBptPos == null) {
+                            BlockPos bptPos = getPath().get(0);
+                            lastBptPos = bptPos;
+                            BlockPos start = bptPos.add(currentBpt.offset);
+                            BlockPos max = currentBpt.size.add(-1, -1, -1);
+                            BlockPos end = start.add(max);
+                            lastBox = new Box(start, end);
+                            lastIndex = 0;
+                            immediateRestart = true;
+                        } else {
+                            BlockPos toStartAt = null;
+                            Box toUse = null;
+                            for (int i = lastIndex + 1; i < pathInterpCache.size(); i++) {
+                                BlockPos toTest = pathInterpCache.get(i);
+                                BlockPos start = toTest.add(currentBpt.offset);
+                                BlockPos max = currentBpt.size.add(-1, -1, -1);
+                                BlockPos end = start.add(max);
+                                Box nBox = new Box(start, end);
+                                if (!nBox.getBoundingBox().intersectsWith(lastBox.getBoundingBox())) {
+                                    toStartAt = toTest;
+                                    toUse = nBox;
+                                    lastIndex = i;
+                                    break;
+                                }
+                            }
+                            if (toStartAt == null) {
+                                // failed to find a position on the path
+                                lastBox = null;
+                                lastBptPos = null;
+                                lastIndex = -1;
+                            } else {
+                                lastBptPos = toStartAt;
+                                lastBox = toUse;
+                                immediateRestart = true;
+                            }
                         }
-                        cooldown = 3000;
+                        if (immediateRestart) {
+                            cooldown = 30;
+                        } else {
+                            cooldown = 300;
+                        }
                         if (accessor != null) {
                             accessor.releaseAll();
                         }
@@ -161,6 +212,24 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                     sendNetworkUpdate(NET_RENDER_DATA);
                 }
             }
+        }
+    }
+
+    private void setPath(ImmutableList<BlockPos> path) {
+        this.path = path;
+        if (path != null) {
+            int max = path.size() - 1;
+            // Create a list of all the possible block positions on the path that could be used
+            ImmutableList.Builder<BlockPos> interp = ImmutableList.builder();
+            interp.add(path.get(0));
+            for (int i = 1; i <= max; i++) {
+                final BlockPos from = path.get(i - 1);
+                final BlockPos to = path.get(i);
+                interp.addAll(PositionUtil.getAllOnPath(from, to));
+            }
+            pathInterpCache = interp.build();
+        } else {
+            pathInterpCache = null;
         }
     }
 
@@ -195,11 +264,11 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             } else if (id == NET_BOX) {
                 tickingBuilder.writePayload(EnumBuilderMessage.BOX, buffer, side);
             } else if (id == NET_PATH) {
-                if (path == null) {
+                if (getPath() == null) {
                     buffer.writeInt(0);
                 } else {
-                    buffer.writeInt(path.size());
-                    for (BlockPos p : path) {
+                    buffer.writeInt(getPath().size());
+                    for (BlockPos p : getPath()) {
                         buffer.writeBlockPos(p);
                     }
                 }
@@ -222,13 +291,13 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             } else if (id == NET_PATH) {
                 int count = buffer.readInt();
                 if (count <= 0) {
-                    path = null;
+                    setPath(null);
                 } else {
                     ImmutableList.Builder<BlockPos> nPath = ImmutableList.builder();
                     for (int i = 0; i < count; i++) {
                         nPath.add(buffer.readBlockPos());
                     }
-                    path = nPath.build();
+                    setPath(nPath.build());
                 }
             } else if (id == NET_CLEAR || id == NET_BUILD) {
                 BlockPos changeAt = buffer.readBlockPos();
@@ -245,6 +314,39 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
             else if (id == NET_ANIM_POWER) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_POWER, buffer, side);
             else if (id == NET_ANIM_STATE) tickingBuilder.readPayload(EnumBuilderMessage.ANIMATION_STATE, buffer, side);
         }
+    }
+
+    // Read-write
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+
+        NBTTagList list = nbt.getTagList("path", Constants.NBT.TAG_INT_ARRAY);
+        if (list.hasNoTags()) {
+            setPath(null);
+        } else {
+            ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+            for (int i = 0; i < list.tagCount(); i++) {
+                builder.add(NBTUtils.readBlockPos(list.get(i)));
+            }
+            setPath(builder.build());
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+
+        if (getPath() != null) {
+            NBTTagList list = new NBTTagList();
+            for (BlockPos p : getPath()) {
+                list.appendTag(NBTUtils.writeBlockPos(p));
+            }
+            nbt.setTag("path", list);
+        }
+
+        return nbt;
     }
 
     // Capability
@@ -267,7 +369,6 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
 
     // Rendering
 
-    @SideOnly(Side.CLIENT)
     public ImmutableList<BlockPos> getPath() {
         return path;
     }
@@ -286,12 +387,23 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
-        return BoundingBoxUtil.makeFrom(getPos(), getBox());
+        return BoundingBoxUtil.makeFrom(getPos(), getBox(), getPath());
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return Double.MAX_VALUE;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("cooldown = " + cooldown);
+        left.add("lastBptPos = " + lastBptPos);
+        left.add("lastBox = " + lastBox);
+        left.add("pathInterpCache = " + (pathInterpCache == null ? "null" : pathInterpCache.size()));
+        left.add("lastIndex = " + lastIndex);
     }
 }

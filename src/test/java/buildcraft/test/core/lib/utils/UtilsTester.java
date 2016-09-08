@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.data.AxisOrder;
+import buildcraft.lib.misc.data.AxisOrder.Inversion;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 
@@ -263,13 +264,10 @@ public class UtilsTester {
     @DataPoints
     public static List<AxisOrder> getOrders() {
         List<AxisOrder> orders = Lists.newArrayList();
-        boolean[] pos = { false, true };
         for (EnumAxisOrder e : EnumAxisOrder.values()) {
-            for (boolean a : pos)
-                for (boolean b : pos)
-                    for (boolean c : pos) {
-                        orders.add(new AxisOrder(e, a, b, c));
-                    }
+            for (Inversion inv : Inversion.VALUES) {
+                orders.add(AxisOrder.getFor(e, inv));
+            }
         }
         return orders;
     }

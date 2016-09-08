@@ -23,6 +23,7 @@ public class BuildCraftLaserManager {
 
     public static final LaserType STRIPES_READ;
     public static final LaserType STRIPES_WRITE;
+    public static final LaserType STRIPES_WRITE_DIRECTION;
 
     public static final LaserType POWER_LOW;// red
     public static final LaserType POWER_MED;// yellow
@@ -77,6 +78,7 @@ public class BuildCraftLaserManager {
 
         STRIPES_READ = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_read"));
         STRIPES_WRITE = new LaserType(MARKER_VOLUME_CONNECTED, getSprite("stripes_write"));
+        STRIPES_WRITE_DIRECTION = new LaserType(MARKER_PATH_CONNECTED, getSprite("stripes_write_direction"));
 
         POWER_LOW = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_low"));
         POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_med"));

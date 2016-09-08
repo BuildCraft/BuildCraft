@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.util.EnumFacing;
@@ -196,5 +197,54 @@ public class PositionUtil {
         public Vec3d interpolate(double interp) {
             return VecUtil.scale(start, 1 - interp).add(VecUtil.scale(end, interp));
         }
+    }
+
+    public static ImmutableList<BlockPos> getAllOnPath(BlockPos from, BlockPos to) {
+        ImmutableList.Builder<BlockPos> interp = ImmutableList.builder();
+
+        final BlockPos difference = to.subtract(from);
+
+        final int ax = Math.abs(difference.getX());
+        final int ay = Math.abs(difference.getY());
+        final int az = Math.abs(difference.getZ());
+
+        int count = ax + ay + az;
+        BlockPos current = from;
+        final int ddx = difference.getX() > 0 ? 1 : -1;
+        final int ddy = difference.getY() > 0 ? 1 : -1;
+        final int ddz = difference.getZ() > 0 ? 1 : -1;
+
+        // start from 1/2 in a block
+        // (as we want to compare to the centre of blocks rather than the lower corner)
+        int dx = count / 2;
+        int dy = count / 2;
+        int dz = count / 2;
+
+        for (int j = 0; j < count; j++) {
+            dx += ax;
+            dy += ay;
+            dz += az;
+            boolean changed = false;
+            if (dx >= count) {
+                changed = true;
+                dx -= count;
+                current = current.add(ddx, 0, 0);
+            }
+            if (dy >= count) {
+                changed = true;
+                dy -= count;
+                current = current.add(0, ddy, 0);
+            }
+            if (dz >= count) {
+                changed = true;
+                dz -= count;
+                current = current.add(0, 0, ddz);
+            }
+
+            if (changed) {
+                interp.add(current);
+            }
+        }
+        return interp.build();
     }
 }

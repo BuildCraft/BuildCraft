@@ -113,7 +113,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
         // Consume power and transfer it to the table.
         int localPower = getBattery().useEnergy(0, getMaxPowerSent(), false);
-        laserTarget.receiveLaserEnergy(localPower);
+        laserTarget.receiveLaserPower(localPower);
 
         if (laser != null) {
             pushPower(localPower);
@@ -139,7 +139,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
     }
 
     protected boolean isValidTable() {
-        if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserEnergy()) {
+        if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserPower()) {
             return false;
         }
 
@@ -166,7 +166,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
                 if (tile instanceof ILaserTarget) {
                     ILaserTarget table = (ILaserTarget) tile;
 
-                    if (table.requiresLaserEnergy()) {
+                    if (table.requiresLaserPower()) {
                         targets.add(table);
                     }
                 }

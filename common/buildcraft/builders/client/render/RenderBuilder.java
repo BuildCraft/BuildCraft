@@ -17,6 +17,8 @@ import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
+    private static final double OFFSET = 0.1;
+
     @Override
     public void renderTileEntityFast(TileBuilder_Neptune te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
         vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
@@ -33,7 +35,7 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
                     Vec3d to = new Vec3d(p).add(VecUtil.VEC_HALF);
                     Vec3d one = offset(from, to);
                     Vec3d two = offset(to, from);
-                    LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.MARKER_PATH_CONNECTED, one, two, 1 / 16.0);
+                    LaserData_BC8 data = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE_DIRECTION, one, two, 1 / 16.1);
                     LaserRenderer_BC8.renderLaserBuffer(data, vb);
                 }
                 last = p;
@@ -45,7 +47,7 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
 
     private static Vec3d offset(Vec3d from, Vec3d to) {
         Vec3d dir = to.subtract(from).normalize();
-        return from.add(VecUtil.scale(dir, 0.125));
+        return from.add(VecUtil.scale(dir, OFFSET));
     }
 
     @Override
