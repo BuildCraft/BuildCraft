@@ -41,19 +41,19 @@ public class BCLib {
     public void preInit(FMLPreInitializationEvent evt) {
         BCModules.fmlPreInit();
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
-        LibProxy.getProxy().fmlPreInit();
+        BCLibProxy.getProxy().fmlPreInit();
 
         BCLibItems.preInit();
 
         BCMessageHandler.fmlPreInit();
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, LibProxy.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCLibProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(BCLibEventDist.INSTANCE);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        LibProxy.getProxy().fmlInit();
+        BCLibProxy.getProxy().fmlInit();
 
         VanillaSchematics.fmlInit();
         VanillaListHandlers.fmlInit();
@@ -67,7 +67,7 @@ public class BCLib {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
-        LibProxy.getProxy().fmlPostInit();
+        BCLibProxy.getProxy().fmlPostInit();
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
         MarkerCache.postInit();

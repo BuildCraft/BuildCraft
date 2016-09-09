@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.factory.FactoryGuis;
+import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileChute;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
@@ -44,7 +44,7 @@ public class BlockChute extends BlockBCTile_Neptune implements IBlockWithFacing 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            FactoryGuis.CHUTE.openGUI(player, pos);
+            BCFactoryGuis.CHUTE.openGUI(player, pos);
         }
         return true;
     }

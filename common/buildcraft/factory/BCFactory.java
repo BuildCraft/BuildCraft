@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.RegistryHelper;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCFactory.MODID, name = "BuildCraft Factory", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCFactory {
@@ -29,14 +29,14 @@ public class BCFactory {
         BCFactoryItems.preInit();
         BCFactoryBlocks.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, FactoryProxy_BC8.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCFactoryProxy.getProxy());
         
         MinecraftForge.EVENT_BUS.register(BCFactoryEventDist.INSTANCE);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent evt) {
-        FactoryProxy_BC8.getProxy().fmlInit();
+        BCFactoryProxy.getProxy().fmlInit();
         BCFactoryRecipes.init();
     }
 

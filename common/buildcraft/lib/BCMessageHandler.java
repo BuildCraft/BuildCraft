@@ -77,9 +77,9 @@ public enum BCMessageHandler {
     /** Wraps this handler to delay message processing until the next world tick. */
     private static <I extends IMessage> IMessageHandler<I, IMessage> wrapHandler(IMessageHandler<I, ?> from) {
         return (message, context) -> {
-            EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
             if (player == null || player.worldObj == null) return null;
-            LibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
+            BCLibProxy.getProxy().addScheduledTask(player.worldObj, () -> {
                 IMessage reply = from.onMessage(message, context);
                 if (reply != null) {
                     MessageUtil.sendReturnMessage(context, reply);

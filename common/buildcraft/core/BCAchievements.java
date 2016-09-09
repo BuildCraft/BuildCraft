@@ -12,7 +12,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
 
-import buildcraft.lib.AchievementPageManager;
+import buildcraft.lib.registry.AchievementPageManager;
 
 public class BCAchievements {
     // public static final AchievementPageManager mainPage;

@@ -1,99 +1,130 @@
 package buildcraft.robotics.zone;
 
-import buildcraft.lib.CachedMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
+import java.util.concurrent.ExecutionException;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalNotification;
+
 import org.lwjgl.opengl.GL11;
 
-import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
-public class ZonePlannerMapRenderer {
-    public static ZonePlannerMapRenderer instance = new ZonePlannerMapRenderer();
-    private Map<ZonePlannerMapChunkKey, Integer> chunkListIndexes = new CachedMap<>(ZonePlannerMapData.TIMEOUT);
+import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.robotics.zone.ZonePlannerMapChunk.MapColourData;
 
-    private static void vertex(double x, double y, double z, double u, double v) {
-        GL11.glTexCoord2d(u, v);
-        GL11.glVertex3d(x, y, z);
+public enum ZonePlannerMapRenderer {
+    INSTANCE;
+
+    private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE;
+    private final MutableVertex vertex = new MutableVertex();
+
+    static {
+        CHUNK_GL_CACHE = CacheBuilder.newBuilder().build();
     }
 
-    public void drawBlockCuboid(double x, double y, double z, double height, double radius) {
+    private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification) {
+        Integer val = notification.getValue();
+        if (val != null) {
+            GL11.glDeleteLists(val.intValue(), 1);
+        }
+    }
+
+    private void vertex(VertexBuffer builder, double x, double y, double z) {
+        vertex.positiond(x, y, z);
+        vertex.render(builder);
+    }
+
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z, double height, double radius) {
         double rX = radius;
         double rY = height * 0.5;
         double rZ = radius;
 
         y -= rY;
 
-        GL11.glNormal3d(0, 1, 0);
-        vertex(x - rX, y + rY, z + rZ, 0, 0);
-        vertex(x + rX, y + rY, z + rZ, 0, 1);
-        vertex(x + rX, y + rY, z - rZ, 1, 1);
-        vertex(x - rX, y + rY, z - rZ, 1, 0);
+        vertex.normalf(0, 1, 0);
+        vertex(builder, x - rX, y + rY, z + rZ);
+        vertex(builder, x + rX, y + rY, z + rZ);
+        vertex(builder, x + rX, y + rY, z - rZ);
+        vertex(builder, x - rX, y + rY, z - rZ);
 
-        GL11.glNormal3d(0, -1, 0);
-        vertex(x - rX, y - rY, z - rZ, 0, 0);
-        vertex(x + rX, y - rY, z - rZ, 0, 1);
-        vertex(x + rX, y - rY, z + rZ, 1, 1);
-        vertex(x - rX, y - rY, z + rZ, 1, 0);
+        // vertex.normalf(0, -1, 0);
+        // vertex(builder, x - rX, y - rY, z - rZ);
+        // vertex(builder, x + rX, y - rY, z - rZ);
+        // vertex(builder, x + rX, y - rY, z + rZ);
+        // vertex(builder, x - rX, y - rY, z + rZ);
 
-        GL11.glNormal3d(-1, 0, 0);
-        vertex(x - rX, y - rY, z + rZ, 0, 0);
-        vertex(x - rX, y + rY, z + rZ, 0, height);
-        vertex(x - rX, y + rY, z - rZ, 1, height);
-        vertex(x - rX, y - rY, z - rZ, 1, 0);
+        vertex.normalf(-1, 0, 0);
+        vertex.multColourd(0.6);
+        vertex(builder, x - rX, y - rY, z + rZ);
+        vertex(builder, x - rX, y + rY, z + rZ);
+        vertex(builder, x - rX, y + rY, z - rZ);
+        vertex(builder, x - rX, y - rY, z - rZ);
 
-        GL11.glNormal3d(1, 0, 0);
-        vertex(x + rX, y - rY, z - rZ, 0, 0);
-        vertex(x + rX, y + rY, z - rZ, 0, height);
-        vertex(x + rX, y + rY, z + rZ, 1, height);
-        vertex(x + rX, y - rY, z + rZ, 1, 0);
+        vertex.normalf(1, 0, 0);
+        vertex(builder, x + rX, y - rY, z - rZ);
+        vertex(builder, x + rX, y + rY, z - rZ);
+        vertex(builder, x + rX, y + rY, z + rZ);
+        vertex(builder, x + rX, y - rY, z + rZ);
+        vertex.multColourd(1 / 0.6);
 
-        GL11.glNormal3d(0, 0, -1);
-        vertex(x - rX, y - rY, z - rZ, 0, 0);
-        vertex(x - rX, y + rY, z - rZ, 0, height);
-        vertex(x + rX, y + rY, z - rZ, 1, height);
-        vertex(x + rX, y - rY, z - rZ, 1, 0);
+        vertex.normalf(0, 0, -1);
+        vertex.multColourd(0.8);
+        vertex(builder, x - rX, y - rY, z - rZ);
+        vertex(builder, x - rX, y + rY, z - rZ);
+        vertex(builder, x + rX, y + rY, z - rZ);
+        vertex(builder, x + rX, y - rY, z - rZ);
 
-        GL11.glNormal3d(0, 0, 1);
-        vertex(x + rX, y - rY, z + rZ, 0, 0);
-        vertex(x + rX, y + rY, z + rZ, 0, height);
-        vertex(x - rX, y + rY, z + rZ, 1, height);
-        vertex(x - rX, y - rY, z + rZ, 1, 0);
+        vertex.normalf(0, 0, 1);
+        vertex(builder, x + rX, y - rY, z + rZ);
+        vertex(builder, x + rX, y + rY, z + rZ);
+        vertex(builder, x - rX, y + rY, z + rZ);
+        vertex(builder, x - rX, y - rY, z + rZ);
+        vertex.multColourd(1 / 0.8);
     }
 
-    public void drawBlockCuboid(double x, double y, double z, double height) {
-        drawBlockCuboid(x, y, z, height, 0.5);
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z, double height) {
+        drawBlockCuboid(builder, x, y, z, height, 0.5);
     }
 
-    public void drawBlockCuboid(double x, double y, double z) {
-        drawBlockCuboid(x, y, z, 1);
+    public void drawBlockCuboid(VertexBuffer builder, double x, double y, double z) {
+        drawBlockCuboid(builder, x, y, z, 1);
     }
 
-    @SuppressWarnings("PointlessBitwiseExpression")
-    public int drawChunk(ZonePlannerMapChunkKey zonePlannerMapChunkKey) {
-        if(chunkListIndexes.containsKey(zonePlannerMapChunkKey)) {
-            return chunkListIndexes.get(zonePlannerMapChunkKey);
+    public int getChunkGlList(ZonePlannerMapChunkKey key) {
+        try {
+            return CHUNK_GL_CACHE.get(key, () -> genChunk(key));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private Integer genChunk(ZonePlannerMapChunkKey key) {
         int listIndexEmpty = GL11.glGenLists(1);
         GL11.glNewList(listIndexEmpty, GL11.GL_COMPILE);
-        // noting, wait for chunk data
+        // nothing, wait for chunk data
         GL11.glEndList();
-        chunkListIndexes.put(zonePlannerMapChunkKey, listIndexEmpty);
-        ZonePlannerMapDataClient.instance.getChunk(Minecraft.getMinecraft().theWorld, zonePlannerMapChunkKey, zonePlannerMapChunk -> {
+        CHUNK_GL_CACHE.put(key, listIndexEmpty);
+        ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().theWorld, key, chunk -> {
+            VertexBuffer builder = Tessellator.getInstance().getBuffer();
+            builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);// TODO: normals
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    MapColourData data = chunk.getData(x, z);
+                    if (data != null) {
+                        vertex.colouri(data.colour >> 16, data.colour >> 8, data.colour, data.colour >> 24);
+                        drawBlockCuboid(builder, key.chunkPos.getXStart() + x, data.posY, key.chunkPos.getZStart() + z, data.posY);
+                    }
+                }
+            }
             int listIndex = GL11.glGenLists(1);
             GL11.glNewList(listIndex, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_QUADS);
-            for(BlockPos pos : zonePlannerMapChunk.data.keySet()) {
-                int color = zonePlannerMapChunk.data.get(pos);
-                int r = (color >> 16) & 0xFF;
-                int g = (color >> 8) & 0xFF;
-                int b = (color >> 0) & 0xFF;
-                int a = (color >> 24) & 0xFF;
-                GL11.glColor4d(r / (double)0xFF, g / (double)0xFF, b / (double)0xFF, a / (double)0xFF);
-                drawBlockCuboid(zonePlannerMapChunkKey.chunkPos.chunkXPos * 16 + pos.getX(), pos.getY(), zonePlannerMapChunkKey.chunkPos.chunkZPos * 16 + pos.getZ(), pos.getY());
-            }
-            GL11.glEnd();
+            Tessellator.getInstance().draw();
             GL11.glEndList();
-            chunkListIndexes.put(zonePlannerMapChunkKey, listIndex);
+            CHUNK_GL_CACHE.put(key, listIndex);
         });
         return listIndexEmpty;
     }

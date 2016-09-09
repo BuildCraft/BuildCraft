@@ -1,30 +1,37 @@
 package buildcraft.robotics.zone;
 
-import buildcraft.lib.CachedMap;
-import net.minecraft.world.World;
-
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import net.minecraft.world.World;
 
 public abstract class ZonePlannerMapData {
     public static final int TIMEOUT = 10 * 60 * 1000;
 
-    private Map<ZonePlannerMapChunkKey, ZonePlannerMapChunk> data = new CachedMap<>(TIMEOUT);
+    private final Cache<ZonePlannerMapChunkKey, ZonePlannerMapChunk> data;
 
-    public abstract void loadChunk(World world, ZonePlannerMapChunkKey zonePlannerMapChunkKey, Consumer<ZonePlannerMapChunk> callback);
+    public ZonePlannerMapData() {
+        data = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES).build();
+    }
 
-    public void getChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> callback) {
-        if(getLoadedChunk(key) != null) {
-            callback.accept(getLoadedChunk(key));
+    public abstract void loadChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad);
+
+    public final void getChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad) {
+        ZonePlannerMapChunk loadedChunk = getLoadedChunk(key);
+        if (loadedChunk != null) {
+            onLoad.accept(loadedChunk);
         } else {
-            loadChunk(world, key, zonePlannerMapChunk -> {
-                data.put(key, zonePlannerMapChunk);
-                callback.accept(zonePlannerMapChunk);
+            loadChunk(world, key, chunk -> {
+                data.put(key, chunk);
+                onLoad.accept(chunk);
             });
         }
     }
 
-    public ZonePlannerMapChunk getLoadedChunk(ZonePlannerMapChunkKey zonePlannerMapChunkKey) {
-        return data.get(zonePlannerMapChunkKey);
+    public final ZonePlannerMapChunk getLoadedChunk(ZonePlannerMapChunkKey key) {
+        return data.getIfPresent(key);
     }
 }

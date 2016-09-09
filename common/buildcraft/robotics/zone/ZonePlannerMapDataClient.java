@@ -11,7 +11,8 @@ import net.minecraft.world.World;
 import buildcraft.lib.BCMessageHandler;
 
 public class ZonePlannerMapDataClient extends ZonePlannerMapData {
-    public static ZonePlannerMapDataClient instance = new ZonePlannerMapDataClient();
+    public static final ZonePlannerMapDataClient INSTANCE = new ZonePlannerMapDataClient();
+
     public final Map<ZonePlannerMapChunkKey, Deque<Consumer<ZonePlannerMapChunk>>> pendingRequests = new ConcurrentHashMap<>();
 
     @Override

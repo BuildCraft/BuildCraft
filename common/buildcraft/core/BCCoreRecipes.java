@@ -17,9 +17,9 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
 import buildcraft.core.item.ItemPaintbrush_BC8;
-import buildcraft.lib.TagManager;
-import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public class BCCoreRecipes {
     public static void init() {

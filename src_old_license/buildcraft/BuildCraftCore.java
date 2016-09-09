@@ -107,11 +107,11 @@ import buildcraft.core.tablet.PacketTabletMessage;
 import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
-import buildcraft.lib.AchievementPageManager;
-import buildcraft.lib.XorShift128Random;
 import buildcraft.lib.config.FileConfigManager;
 import buildcraft.lib.list.*;
 import buildcraft.lib.misc.DebuggingTools;
+import buildcraft.lib.misc.data.XorShift128Random;
+import buildcraft.lib.registry.AchievementPageManager;
 
 //@Mod(name = "BuildCraft", version = DefaultProps.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8.9]",
 //        dependencies = "required-after:Forge@[11.15.1.1764,11.16)", guiFactory = "buildcraft.core.config.ConfigManager",

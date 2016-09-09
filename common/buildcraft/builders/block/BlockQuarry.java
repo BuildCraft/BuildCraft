@@ -2,7 +2,7 @@ package buildcraft.builders.block;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.builders.BuildersGuis;
+import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
@@ -76,7 +76,7 @@ public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        BuildersGuis.QUARRY.openGUI(player, pos);
+        BCBuildersGuis.QUARRY.openGUI(player, pos);
         return true;
     }
 }

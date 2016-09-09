@@ -14,7 +14,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.factory.FactoryGuis;
+import buildcraft.factory.BCFactoryGuis;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
@@ -32,7 +32,7 @@ public class BlockAutoWorkbenchItems extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            FactoryGuis.AUTO_WORKBENCH_ITEMS.openGUI(player, pos);
+            BCFactoryGuis.AUTO_WORKBENCH_ITEMS.openGUI(player, pos);
         }
         return true;
     }

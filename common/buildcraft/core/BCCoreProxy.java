@@ -21,17 +21,17 @@ import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
 import buildcraft.core.tile.TileMarkerVolume;
 
-public abstract class CoreProxy implements IGuiHandler {
+public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy
-    private static CoreProxy proxy = null;
+    private static BCCoreProxy proxy = null;
 
-    public static CoreProxy getProxy() {
+    public static BCCoreProxy getProxy() {
         return proxy;
     }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == CoreGuis.LIST.ordinal()) {
+        if (ID == BCCoreGuis.LIST.ordinal()) {
             return new ContainerList(player);
         }
         return null;
@@ -49,15 +49,15 @@ public abstract class CoreProxy implements IGuiHandler {
     public void fmlPostInit() {}
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends CoreProxy {
+    public static class ServerProxy extends BCCoreProxy {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends CoreProxy {
+    public static class ClientProxy extends BCCoreProxy {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-            if (ID == CoreGuis.LIST.ordinal()) {
+            if (ID == BCCoreGuis.LIST.ordinal()) {
                 return new GuiList(player);
             }
             return null;

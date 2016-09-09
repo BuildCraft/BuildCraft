@@ -6,9 +6,9 @@ package buildcraft.core;
 
 import buildcraft.core.item.*;
 import buildcraft.lib.BCLibItems;
-import buildcraft.lib.CreativeTabManager;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.CreativeTabManager;
 
 public class BCCoreItems {
     public static ItemBC_Neptune gearWood;

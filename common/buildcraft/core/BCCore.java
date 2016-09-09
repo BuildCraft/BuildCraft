@@ -22,9 +22,9 @@ import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.VolumeCache;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCLibItems;
-import buildcraft.lib.CreativeTabManager;
-import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.marker.MarkerCache;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 //@formatter:off
 @Mod(modid = BCCore.MODID,
@@ -58,7 +58,7 @@ public class BCCore {
         RegistryHelper.setRegistryConfig(MODID, new File(cfgFolder, "objects.cfg"));
 
         BCCoreConfig.preInit(cfgFolder);
-        CoreProxy.getProxy().fmlPreInit();
+        BCCoreProxy.getProxy().fmlPreInit();
 
         CreativeTabManager.createTab("buildcraft.main");
 
@@ -68,7 +68,7 @@ public class BCCore {
 
         CreativeTabManager.setItem("buildcraft.main", BCCoreItems.wrench);
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, CoreProxy.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCCoreProxy.getProxy());
 
         MinecraftForge.EVENT_BUS.register(ListTooltipHandler.INSTANCE);
 
@@ -77,7 +77,7 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
-        CoreProxy.getProxy().fmlInit();
+        BCCoreProxy.getProxy().fmlInit();
 
         BCCoreRecipes.init();
         BCAchievements.init();
@@ -88,6 +88,6 @@ public class BCCore {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-        CoreProxy.getProxy().fmlPostInit();
+        BCCoreProxy.getProxy().fmlPostInit();
     }
 }

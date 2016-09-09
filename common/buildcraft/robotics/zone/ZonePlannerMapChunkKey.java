@@ -1,5 +1,7 @@
 package buildcraft.robotics.zone;
 
+import java.util.Objects;
+
 import net.minecraft.util.math.ChunkPos;
 
 import io.netty.buffer.ByteBuf;
@@ -10,17 +12,20 @@ public class ZonePlannerMapChunkKey {
     public final ChunkPos chunkPos;
     public final int dimensionalId;
     public final int level;
+    private final int hash;
 
     public ZonePlannerMapChunkKey(ChunkPos chunkPos, int dimensionalId, int level) {
         this.chunkPos = chunkPos;
         this.dimensionalId = dimensionalId;
         this.level = level;
+        hash = Objects.hash(chunkPos, dimensionalId, level);
     }
 
     public ZonePlannerMapChunkKey(ByteBuf buf) {
         chunkPos = new ChunkPos(buf.readInt(), buf.readInt());
         dimensionalId = buf.readInt();
         level = buf.readInt();
+        hash = Objects.hash(chunkPos, dimensionalId, level);
     }
 
     public void toBytes(ByteBuf buf) {
@@ -32,30 +37,18 @@ public class ZonePlannerMapChunkKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ZonePlannerMapChunkKey that = (ZonePlannerMapChunkKey) o;
-
-        if (dimensionalId != that.dimensionalId) {
-            return false;
-        }
-        if (level != that.level) {
-            return false;
-        }
-        return chunkPos.equals(that.chunkPos);
+        if (o == this) return true;
+        if (o == null) return false;
+        if (o.getClass() != getClass()) return false;
+        ZonePlannerMapChunkKey other = (ZonePlannerMapChunkKey) o;
+        if (dimensionalId != other.dimensionalId) return false;
+        if (level != other.level) return false;
+        return chunkPos.chunkXPos == other.chunkPos.chunkXPos && chunkPos.chunkZPos == other.chunkPos.chunkZPos;
 
     }
 
     @Override
     public int hashCode() {
-        int result = chunkPos.hashCode();
-        result = 31 * result + dimensionalId;
-        result = 31 * result + level;
-        return result;
+        return hash;
     }
 }

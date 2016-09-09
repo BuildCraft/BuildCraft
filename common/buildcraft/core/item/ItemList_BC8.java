@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IList;
-import buildcraft.core.CoreGuis;
+import buildcraft.core.BCCoreGuis;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.NBTUtils;
@@ -35,7 +35,7 @@ public class ItemList_BC8 extends ItemBC_Neptune implements IList {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        CoreGuis.LIST.openGUI(player);
+        BCCoreGuis.LIST.openGUI(player);
         return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
     }
 

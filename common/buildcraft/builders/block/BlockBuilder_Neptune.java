@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.builders.BuildersGuis;
+import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
@@ -58,7 +58,7 @@ public class BlockBuilder_Neptune extends BlockBCTile_Neptune implements IBlockW
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            BuildersGuis.BUILDER.openGUI(player, pos);
+            BCBuildersGuis.BUILDER.openGUI(player, pos);
         }
         return true;
     }

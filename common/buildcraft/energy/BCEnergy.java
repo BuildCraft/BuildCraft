@@ -21,8 +21,8 @@ import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.RegistryHelper;
 import buildcraft.lib.fluid.FluidManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCEnergy {

@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 
 public class CommandTargetContainer implements ICommandTarget {
@@ -19,7 +19,7 @@ public class CommandTargetContainer implements ICommandTarget {
     @Override
     public ICommandReceiver getReceiver(PacketBuffer buffer, MessageContext context) {
         int windowId = buffer.readInt();
-        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player != null && player.openContainer instanceof ICommandReceiver && player.openContainer.windowId == windowId) {
             return (ICommandReceiver) player.openContainer;
         }

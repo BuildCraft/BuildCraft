@@ -9,9 +9,9 @@ import net.minecraft.block.properties.IProperty;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.lib.TagManager;
-import buildcraft.lib.TagManager.EnumTagType;
 import buildcraft.lib.engine.BlockEngineBase_BC8;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
 
 public class BlockEngine_BC8 extends BlockEngineBase_BC8<EnumEngineType> {
     public BlockEngine_BC8(Material material, String id) {

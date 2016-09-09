@@ -19,8 +19,8 @@ import net.minecraft.world.World;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.lib.XorShift128Random;
 import buildcraft.lib.block.BlockBCBase_Neptune;
+import buildcraft.lib.misc.data.XorShift128Random;
 
 public class BlockSpring extends BlockBCBase_Neptune {
     public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;

@@ -2,7 +2,7 @@
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-package buildcraft.lib;
+package buildcraft.lib.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -11,6 +11,8 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+
+import buildcraft.lib.misc.RegistryUtil;
 
 public class AchievementPageManager {
     public final AchievementPage page;
@@ -34,9 +36,9 @@ public class AchievementPageManager {
             Item item = achievement.theItemStack.getItem();
             if (item instanceof ItemBlock) {
                 Block block = ((ItemBlock) item).getBlock();
-                registered = Block.REGISTRY.getNameForObject(block) != null;
+                registered = RegistryUtil.isRegistered(block);
             } else {
-                registered = Item.REGISTRY.getNameForObject(item) != null;
+                registered = RegistryUtil.isRegistered(item);
             }
             if (registered) {
                 page.getAchievements().add(achievement);

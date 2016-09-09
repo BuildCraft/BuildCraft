@@ -29,36 +29,36 @@ import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.builders.tile.TileQuarry;
 
-public abstract class BuildersProxy_Neptune implements IGuiHandler {
+public abstract class BCBuildersProxy implements IGuiHandler {
     @SidedProxy
-    private static BuildersProxy_Neptune proxy;
+    private static BCBuildersProxy proxy;
 
-    public static BuildersProxy_Neptune getProxy() {
+    public static BCBuildersProxy getProxy() {
         return proxy;
     }
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (id == BuildersGuis.LIBRARY.ordinal()) {
+        if (id == BCBuildersGuis.LIBRARY.ordinal()) {
             if (tile instanceof TileLibrary_Neptune) {
                 TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
                 return new ContainerBlueprintLibrary(player, library);
             }
         }
-        if (id == BuildersGuis.BUILDER.ordinal()) {
+        if (id == BCBuildersGuis.BUILDER.ordinal()) {
             if (tile instanceof TileBuilder_Neptune) {
                 TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
                 return new ContainerBuilder_Neptune(player, builder);
             }
         }
-        if (id == BuildersGuis.ARCHITECT.ordinal()) {
+        if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
             if (tile instanceof TileArchitect_Neptune) {
                 TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
                 return new ContainerArchitect(player, library);
             }
         }
-        if (id == BuildersGuis.QUARRY.ordinal()) {
+        if (id == BCBuildersGuis.QUARRY.ordinal()) {
             if (tile instanceof TileQuarry) {
                 TileQuarry quarry = (TileQuarry) tile;
                 return new ContainerQuarry(player, quarry);
@@ -77,34 +77,34 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
     }
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends BuildersProxy_Neptune {
+    public static class ServerProxy extends BCBuildersProxy {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends BuildersProxy_Neptune {
+    public static class ClientProxy extends BCBuildersProxy {
         @Override
         public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-            if (id == BuildersGuis.LIBRARY.ordinal()) {
+            if (id == BCBuildersGuis.LIBRARY.ordinal()) {
                 if (tile instanceof TileLibrary_Neptune) {
                     TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
                     return new GuiBlueprintLibrary(player, library);
                 }
             }
-            if (id == BuildersGuis.BUILDER.ordinal()) {
+            if (id == BCBuildersGuis.BUILDER.ordinal()) {
                 if (tile instanceof TileBuilder_Neptune) {
                     TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
                     return new GuiBuilder_Neptune(new ContainerBuilder_Neptune(player, builder));
                 }
             }
-            if (id == BuildersGuis.ARCHITECT.ordinal()) {
+            if (id == BCBuildersGuis.ARCHITECT.ordinal()) {
                 if (tile instanceof TileArchitect_Neptune) {
                     TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
                     return new GuiArchitect(new ContainerArchitect(player, library));
                 }
             }
-            if (id == BuildersGuis.QUARRY.ordinal()) {
+            if (id == BCBuildersGuis.QUARRY.ordinal()) {
                 if (tile instanceof TileQuarry) {
                     TileQuarry quarry = (TileQuarry) tile;
                     return new GuiQuarry(new ContainerQuarry(player, quarry));

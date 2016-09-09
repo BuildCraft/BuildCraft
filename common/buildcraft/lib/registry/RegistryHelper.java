@@ -2,13 +2,12 @@
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
-package buildcraft.lib;
+package buildcraft.lib.registry;
 
 import java.io.File;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import buildcraft.lib.item.IItemBuildCraft;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
@@ -17,8 +16,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.item.IItemBuildCraft;
 
 public class RegistryHelper {
     private static final Map<ModContainer, Configuration> modObjectConfigs = new IdentityHashMap<>();
@@ -50,7 +50,7 @@ public class RegistryHelper {
             GameRegistry.register(item);
             if (item instanceof IItemBuildCraft) {
                 IItemBuildCraft itemBc = (IItemBuildCraft) item;
-                LibProxy.getProxy().postRegisterItem(itemBc);
+                BCLibProxy.getProxy().postRegisterItem(itemBc);
             }
             return true;
         }
@@ -66,7 +66,7 @@ public class RegistryHelper {
             GameRegistry.register(block);
             if (block instanceof BlockBCBase_Neptune) {
                 BlockBCBase_Neptune blockBc = (BlockBCBase_Neptune) block;
-                LibProxy.getProxy().postRegisterBlock(blockBc);
+                BCLibProxy.getProxy().postRegisterBlock(blockBc);
             }
             return true;
         }

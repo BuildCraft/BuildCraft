@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.builders.BuildersGuis;
+import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
@@ -37,7 +37,7 @@ public class BlockLibrary_Neptune extends BlockBCTile_Neptune implements IBlockW
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        BuildersGuis.LIBRARY.openGUI(player, pos);
+        BCBuildersGuis.LIBRARY.openGUI(player, pos);
         return true;
     }
 }

@@ -69,6 +69,11 @@ public class DynamicTextureBC {
     }
 
     @SideOnly(Side.CLIENT)
+    public void deleteGlTexture() {
+        dynamicTexture.deleteGlTexture();
+    }
+
+    @SideOnly(Side.CLIENT)
     public void draw(int screenX, int screenY, float zLevel) {
         draw(screenX, screenY, zLevel, 0, 0, width, height);
     }
@@ -89,7 +94,8 @@ public class DynamicTextureBC {
         tessellator.draw();
     }
 
-    private void vertexUV(VertexBuffer vb, double x, double y, double z, double u, double v) {
+    @SideOnly(Side.CLIENT)
+    private static void vertexUV(VertexBuffer vb, double x, double y, double z, double u, double v) {
         vb.pos(x, y, z);
         vb.tex(u, v);
         vb.endVertex();

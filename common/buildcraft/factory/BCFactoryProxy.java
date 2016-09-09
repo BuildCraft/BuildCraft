@@ -29,24 +29,24 @@ import buildcraft.factory.tile.TileMiningWell;
 import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileTank;
 
-public abstract class FactoryProxy_BC8 implements IGuiHandler {
+public abstract class BCFactoryProxy implements IGuiHandler {
     @SidedProxy
-    private static FactoryProxy_BC8 proxy;
+    private static BCFactoryProxy proxy;
 
-    public static FactoryProxy_BC8 getProxy() {
+    public static BCFactoryProxy getProxy() {
         return proxy;
     }
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (ID == FactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
+        if (ID == BCFactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
             if (tile instanceof TileAutoWorkbenchItems) {
                 TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
                 return new ContainerAutoCraftItems(player, workbench);
             }
         }
-        if (ID == FactoryGuis.CHUTE.ordinal()) {
+        if (ID == BCFactoryGuis.CHUTE.ordinal()) {
             if (tile instanceof TileChute) {
                 TileChute chute = (TileChute) tile;
                 return new ContainerChute(player, chute);
@@ -63,22 +63,22 @@ public abstract class FactoryProxy_BC8 implements IGuiHandler {
     public void fmlInit() {}
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends FactoryProxy_BC8 {
+    public static class ServerProxy extends BCFactoryProxy {
 
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends FactoryProxy_BC8 {
+    public static class ClientProxy extends BCFactoryProxy {
         @Override
         public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-            if (ID == FactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
+            if (ID == BCFactoryGuis.AUTO_WORKBENCH_ITEMS.ordinal()) {
                 if (tile instanceof TileAutoWorkbenchItems) {
                     TileAutoWorkbenchItems workbench = (TileAutoWorkbenchItems) tile;
                     return new GuiAutoCraftItems(new ContainerAutoCraftItems(player, workbench));
                 }
             }
-            if (ID == FactoryGuis.CHUTE.ordinal()) {
+            if (ID == BCFactoryGuis.CHUTE.ordinal()) {
                 if (tile instanceof TileChute) {
                     TileChute chute = (TileChute) tile;
                     return new GuiChute(new ContainerChute(player, chute));

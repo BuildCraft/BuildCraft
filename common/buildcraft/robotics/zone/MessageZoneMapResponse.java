@@ -39,7 +39,7 @@ public class MessageZoneMapResponse implements IMessage {
 
         @Override
         public IMessage onMessage(MessageZoneMapResponse message, MessageContext ctx) {
-            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.instance.pendingRequests.get(message.key);
+            Deque<Consumer<ZonePlannerMapChunk>> queue = ZonePlannerMapDataClient.INSTANCE.pendingRequests.get(message.key);
             if (queue != null) {
                 while (!queue.isEmpty()) {
                     queue.remove().accept(message.data);

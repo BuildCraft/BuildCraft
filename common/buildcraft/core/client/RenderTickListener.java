@@ -45,7 +45,7 @@ import buildcraft.core.item.ItemMarkerConnector;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
@@ -148,7 +148,7 @@ public enum RenderTickListener {
         if (client == null) return null;
         if (client instanceof TileEntity) {
             TileEntity tile = (TileEntity) client;
-            tile = LibProxy.getProxy().getServerTile(tile);
+            tile = BCLibProxy.getProxy().getServerTile(tile);
             if (tile != client && tile instanceof IDebuggable) {
                 return (IDebuggable) tile;
             }

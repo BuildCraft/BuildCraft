@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 
 public class CommandTargetEntity implements ICommandTarget {
     private final Entity entity;
@@ -19,7 +19,7 @@ public class CommandTargetEntity implements ICommandTarget {
     @Override
     public ICommandReceiver getReceiver(PacketBuffer buffer, MessageContext context) {
         int id = buffer.readInt();
-        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player == null) return null;
         World world = player.worldObj;
         if (world == null) return null;

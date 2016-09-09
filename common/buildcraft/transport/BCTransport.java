@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.CreativeTabManager;
-import buildcraft.lib.RegistryHelper;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCTransport {

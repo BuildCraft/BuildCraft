@@ -14,7 +14,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 
@@ -44,7 +44,7 @@ public final class BCRegistry {
         if (name == null) throw new IllegalArgumentException("Tried to register a block without specifing its registry name!");
         if (forced || regCfg.get("blocks", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(block);
-            LibProxy.getProxy().postRegisterBlock(block);
+            BCLibProxy.getProxy().postRegisterBlock(block);
             registerItem(item, true);
             return true;
         }
@@ -56,7 +56,7 @@ public final class BCRegistry {
         if (name == null) throw new IllegalArgumentException("Tried to register an item without specifing its registry name!");
         if (forced || regCfg.get("items", name.getResourcePath(), true).getBoolean()) {
             GameRegistry.register(item);
-            LibProxy.getProxy().postRegisterItem(item);
+            BCLibProxy.getProxy().postRegisterItem(item);
             return true;
         }
         return false;

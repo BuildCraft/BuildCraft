@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.RegistryHelper;
+import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.robotics.zone.MessageZoneMapRequest;
 import buildcraft.robotics.zone.MessageZoneMapResponse;
 

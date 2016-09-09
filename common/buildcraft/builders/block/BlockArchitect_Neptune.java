@@ -5,7 +5,7 @@
 package buildcraft.builders.block;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.builders.BuildersGuis;
+import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;
@@ -58,7 +58,7 @@ public class BlockArchitect_Neptune extends BlockBCTile_Neptune implements IBloc
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            BuildersGuis.ARCHITECT.openGUI(player, pos);
+            BCBuildersGuis.ARCHITECT.openGUI(player, pos);
         }
         return true;
     }

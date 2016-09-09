@@ -6,7 +6,7 @@ package buildcraft.lib.item;
 
 import net.minecraft.item.Item;
 
-import buildcraft.lib.TagManager;
+import buildcraft.lib.registry.TagManager;
 
 public class ItemBC_Neptune extends Item implements IItemBuildCraft {
     /** The tag used to identify this in the {@link TagManager} */

@@ -1,8 +1,8 @@
 package buildcraft.robotics.zone;
 
-import net.minecraft.world.World;
-
 import java.util.function.Consumer;
+
+import net.minecraft.world.World;
 
 public class ZonePlannerMapDataServer extends ZonePlannerMapData {
     public static ZonePlannerMapDataServer instance = new ZonePlannerMapDataServer();

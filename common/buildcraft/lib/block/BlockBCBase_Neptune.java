@@ -24,15 +24,15 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.lib.CreativeTabManager;
-import buildcraft.lib.MigrationManager;
-import buildcraft.lib.RegistryHelper;
-import buildcraft.lib.TagManager;
-import buildcraft.lib.TagManager.EnumTagType;
-import buildcraft.lib.TagManager.EnumTagTypeMulti;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.lib.registry.CreativeTabManager;
+import buildcraft.lib.registry.MigrationManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 
 public class BlockBCBase_Neptune extends Block {
     private static List<BlockBCBase_Neptune> registeredBlocks = new ArrayList<>();

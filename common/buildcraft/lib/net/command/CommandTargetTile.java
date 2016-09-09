@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 
 final class CommandTargetTile implements ICommandTarget {
     private final TileEntity tile;
@@ -19,7 +19,7 @@ final class CommandTargetTile implements ICommandTarget {
     @Override
     public ICommandReceiver getReceiver(PacketBuffer buffer, MessageContext context) {
         BlockPos pos = buffer.readBlockPos();
-        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player == null || player.worldObj == null) return null;
         TileEntity tile = player.worldObj.getTileEntity(pos);
         if (tile instanceof ICommandReceiver) {

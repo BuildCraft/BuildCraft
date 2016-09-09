@@ -13,11 +13,11 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.MigrationManager;
-import buildcraft.lib.RegistryHelper;
-import buildcraft.lib.TagManager;
-import buildcraft.lib.TagManager.EnumTagType;
-import buildcraft.lib.TagManager.EnumTagTypeMulti;
+import buildcraft.lib.registry.MigrationManager;
+import buildcraft.lib.registry.RegistryHelper;
+import buildcraft.lib.registry.TagManager;
+import buildcraft.lib.registry.TagManager.EnumTagType;
+import buildcraft.lib.registry.TagManager.EnumTagTypeMulti;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 

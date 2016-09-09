@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.data.DelayedList;
 
 import io.netty.buffer.ByteBuf;
@@ -132,7 +132,7 @@ public class MessageUtil {
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {
-        EntityPlayer player = LibProxy.getProxy().getPlayerForContext(context);
+        EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(context);
         if (player instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             BCMessageHandler.netWrapper.sendTo(reply, playerMP);

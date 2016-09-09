@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.builders.bpt.PerSaveBptStorage;
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.RegistryHelper;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCBuilders.MODID, name = "BuildCraft Builders", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCBuilders {
@@ -27,12 +27,12 @@ public class BCBuilders {
         BCBuildersItems.preInit();
         BCBuildersBlocks.preInit();
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BuildersProxy_Neptune.getProxy());
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCBuildersProxy.getProxy());
     }
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent evt) {
-        BuildersProxy_Neptune.getProxy().fmlInit();
+        BCBuildersProxy.getProxy().fmlInit();
         BCBuildersRecipes.init();
     }
 

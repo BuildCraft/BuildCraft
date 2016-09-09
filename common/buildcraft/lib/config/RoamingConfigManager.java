@@ -7,7 +7,7 @@ import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 
 public class RoamingConfigManager extends StreamConfigManager {
     private static final Map<ResourceLocation, RoamingConfigManager> instances = new HashMap<>();
@@ -28,7 +28,7 @@ public class RoamingConfigManager extends StreamConfigManager {
     @Override
     protected void read() {
         cacheExists = null;
-        try (InputStream stream = LibProxy.getProxy().getStreamForIdentifier(identifier)) {
+        try (InputStream stream = BCLibProxy.getProxy().getStreamForIdentifier(identifier)) {
             read(stream);
             cacheExists = Boolean.TRUE;
         } catch (IOException io) {

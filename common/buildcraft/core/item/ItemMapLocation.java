@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -61,13 +59,6 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
-        for (MapLocationType type : MapLocationType.values()) {
-            subItems.add(new ItemStack(item, 1, type.meta));
-        }
-    }
-
-    @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> strings, boolean advanced) {
         NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -81,7 +72,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
         MapLocationType type = MapLocationType.getFromStack(stack);
         switch (type) {
             case SPOT: {
-                if(cpt.hasKey("x") && cpt.hasKey("y") && cpt.hasKey("z") && cpt.hasKey("side")) {
+                if (cpt.hasKey("x") && cpt.hasKey("y") && cpt.hasKey("z") && cpt.hasKey("side")) {
                     int x = cpt.getInteger("x");
                     int y = cpt.getInteger("y");
                     int z = cpt.getInteger("z");
@@ -92,7 +83,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                 break;
             }
             case AREA: {
-                if(cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax") && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
+                if (cpt.hasKey("xMin") && cpt.hasKey("yMin") && cpt.hasKey("zMin") && cpt.hasKey("xMax") && cpt.hasKey("yMax") && cpt.hasKey("zMax")) {
                     int x = cpt.getInteger("xMin");
                     int y = cpt.getInteger("yMin");
                     int z = cpt.getInteger("zMin");
@@ -106,10 +97,10 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
             case PATH:
             case PATH_REPEATING: {
-                if(cpt.hasKey("path")) {
+                if (cpt.hasKey("path")) {
                     NBTTagList pathNBT = (NBTTagList) cpt.getTag("path");
 
-                    if(pathNBT.tagCount() > 0) {
+                    if (pathNBT.tagCount() > 0) {
                         BlockPos first = NBTUtils.readBlockPos(pathNBT.get(0));
 
                         int x = first.getX();

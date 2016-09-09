@@ -8,12 +8,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 
 import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.lib.LibProxy;
+import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.misc.FakePlayerUtil;
 
 public class ListMatchHandlerArmor extends ListMatchHandler {
     private static int getArmorTypeID(ItemStack stack) {
-        EntityPlayer player = LibProxy.getProxy().getClientPlayer();
+        EntityPlayer player = BCLibProxy.getProxy().getClientPlayer();
         if (player == null) {
             player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(DimensionManager.getWorld(0), BlockPos.ORIGIN).get();
         }

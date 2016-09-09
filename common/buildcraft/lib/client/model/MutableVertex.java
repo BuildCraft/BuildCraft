@@ -191,6 +191,18 @@ public class MutableVertex {
         // @formatter:on
     }
 
+    public MutableVertex multColourd(double d) {
+        return multColourd(d, d, d, 1);
+    }
+
+    public MutableVertex multColourd(double r, double g, double b, double a) {
+        colour[0] *= r;
+        colour[1] *= g;
+        colour[2] *= b;
+        colour[3] *= a;
+        return this;
+    }
+
     public MutableVertex texv(Tuple2f vec) {
         return texf(vec.x, vec.y);
     }

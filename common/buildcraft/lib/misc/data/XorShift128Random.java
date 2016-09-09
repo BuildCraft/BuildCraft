@@ -1,4 +1,4 @@
-package buildcraft.lib;
+package buildcraft.lib.misc.data;
 
 import java.util.Random;
 

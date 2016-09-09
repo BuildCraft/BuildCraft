@@ -19,7 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -39,17 +38,17 @@ import buildcraft.lib.debug.BCAdvDebugging;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
 
-public abstract class LibProxy implements IGuiHandler {
+public abstract class BCLibProxy implements IGuiHandler {
     @SidedProxy
-    private static LibProxy proxy;
+    private static BCLibProxy proxy;
 
-    public static LibProxy getProxy() {
+    public static BCLibProxy getProxy() {
         return proxy;
     }
 
-    void postRegisterItem(IItemBuildCraft item) {}
+    public void postRegisterItem(IItemBuildCraft item) {}
 
-    void postRegisterBlock(BlockBCBase_Neptune block) {}
+    public void postRegisterBlock(BlockBCBase_Neptune block) {}
 
     void fmlPreInit() {}
 
@@ -95,7 +94,7 @@ public abstract class LibProxy implements IGuiHandler {
     }
 
     @SideOnly(Side.CLIENT)
-    public static class ClientProxy extends LibProxy {
+    public static class ClientProxy extends BCLibProxy {
         @Override
         public void postRegisterItem(IItemBuildCraft item) {
             item.postRegisterClient();
@@ -106,8 +105,6 @@ public abstract class LibProxy implements IGuiHandler {
             super.fmlPreInit();
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, MarkerRenderer.INSTANCE);
             DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, BCAdvDebugging.INSTANCE);
-            // FIXME TEMP!
-            ModelLoaderRegistry.registerLoader(ObjJsonLoader.INSTANCE);
             // various sprite registers
             LibSprites.fmlPreInitClient();
         }
@@ -187,5 +184,5 @@ public abstract class LibProxy implements IGuiHandler {
     }
 
     @SideOnly(Side.SERVER)
-    public static class ServerProxy extends LibProxy {}
+    public static class ServerProxy extends BCLibProxy {}
 }

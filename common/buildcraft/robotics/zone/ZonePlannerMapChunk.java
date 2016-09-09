@@ -1,50 +1,73 @@
 package buildcraft.robotics.zone;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import javax.annotation.Nullable;
 
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class ZonePlannerMapChunk {
-    public Map<BlockPos, Integer> data = new HashMap<>();
+    private final MapColourData[][] data = new MapColourData[16][16];
 
     public ZonePlannerMapChunk(World world, ZonePlannerMapChunkKey key) {
         Chunk chunk = world.getChunkFromChunkCoords(key.chunkPos.chunkXPos, key.chunkPos.chunkZPos);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                BlockPos pos = new BlockPos(x, key.level * ZonePlannerMapChunkKey.LEVEL_HEIGHT, z);
-                int color = 0;
-                while (pos.getY() > 0 && color == 0) {
-                    IBlockState state = chunk.getBlockState(pos);
-                    MapColor mapColor = state.getMapColor();
-                    color = mapColor.colorValue;
-                    pos = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
+                // Scan down from the max height value of a chunk until we find a block
+                for (int y = chunk.getHeightValue(x, z); y > 0; y--) {
+                    int colour = chunk.getBlockState(x, y, z).getMapColor().colorValue;
+                    if (colour != 0) {
+                        data[x][z] = new MapColourData(y, colour);
+                        break;
+                    }
                 }
-                data.put(pos, color);
             }
         }
     }
 
     public ZonePlannerMapChunk(PacketBuffer buffer) {
-        int size = buffer.readInt();
-        for (int i = 0; i < size; i++) {
-            BlockPos pos = buffer.readBlockPos();
-            int colour = buffer.readInt();
-            data.put(pos, Integer.valueOf(colour));
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int posY = buffer.readInt();
+                if (posY > 0) {
+                    int colour = buffer.readInt();
+                    data[x][z] = new MapColourData(posY, colour);
+                }
+            }
         }
     }
 
     public void write(PacketBuffer buffer) {
-        buffer.writeInt(data.size());
-        for (Entry<BlockPos, Integer> entry : data.entrySet()) {
-            buffer.writeBlockPos(entry.getKey());
-            buffer.writeInt(entry.getValue().intValue());
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                MapColourData colour = data[x][z];
+                if (colour == null) {
+                    buffer.writeInt(-1);
+                } else {
+                    buffer.writeInt(colour.posY);
+                    buffer.writeInt(colour.colour);
+                }
+            }
+        }
+    }
+
+    public int getColour(int x, int z) {
+        MapColourData col = getData(x, z);
+        return col == null ? -1 : col.colour;
+    }
+
+    @Nullable
+    public MapColourData getData(int x, int z) {
+        return data[x & 15][z & 15];
+    }
+
+    public static final class MapColourData {
+        public final int posY;
+        public final int colour;
+
+        public MapColourData(int posY, int colour) {
+            this.posY = posY;
+            this.colour = colour;
         }
     }
 }
