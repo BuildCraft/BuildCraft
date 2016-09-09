@@ -17,21 +17,25 @@ import buildcraft.lib.bpt.builder.AbstractBuilderAccessor;
 import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.WorldUtil;
 
 public class BuilderAccessor extends AbstractBuilderAccessor {
     private final Vec3d vec;
     private final TileBuilder_Neptune tile;
+    private final boolean isCreative;
 
     public BuilderAccessor(TileBuilder_Neptune tile) {
         super(tile.getOwner(), tile.tickingBuilder.animationManager);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
+        isCreative = WorldUtil.isWorldCreative(tile.getWorld());
     }
 
     public BuilderAccessor(TileBuilder_Neptune tile, NBTTagCompound nbt) {
         super(tile.getOwner(), tile.tickingBuilder.animationManager, nbt);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
+        isCreative = WorldUtil.isWorldCreative(tile.getWorld());
     }
 
     @Override
@@ -48,7 +52,11 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
 
     @Override
     public ImmutableSet<BptPermissions> getPermissions() {
-        return ImmutableSet.of(BptPermissions.FREE_MATERIALS);
+        if (isCreative) {
+            return BptPermissions.SET_NORMAL_CREATIVE;
+        } else {
+            return BptPermissions.SET_NORMAL_SURVIVAL;
+        }
     }
 
     @Override

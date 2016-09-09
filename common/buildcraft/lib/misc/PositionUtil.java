@@ -199,6 +199,10 @@ public class PositionUtil {
         }
     }
 
+    /** Returns a list of all the block positions between from and to (mostly).
+     * <p>
+     * Does not return the "from" co-ordinate, but does include the "to" co-ordinate (provided that from does not equal
+     * to) */
     public static ImmutableList<BlockPos> getAllOnPath(BlockPos from, BlockPos to) {
         ImmutableList.Builder<BlockPos> interp = ImmutableList.builder();
 

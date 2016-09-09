@@ -4,31 +4,30 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders;
 
-import buildcraft.builders.client.render.RenderArchitect;
-import buildcraft.builders.client.render.RenderBuilder;
-import buildcraft.builders.client.render.RenderQuarry;
-import buildcraft.builders.container.ContainerArchitect;
-import buildcraft.builders.container.ContainerQuarry;
-import buildcraft.builders.entity.EntityQuarry;
-import buildcraft.builders.gui.ContainerBlueprintLibrary;
-import buildcraft.builders.gui.GuiArchitect;
-import buildcraft.builders.gui.GuiBlueprintLibrary;
-import buildcraft.builders.gui.GuiQuarry;
-import buildcraft.builders.tile.TileArchitect_Neptune;
-import buildcraft.builders.tile.TileBuilder_Neptune;
-import buildcraft.builders.tile.TileLibrary_Neptune;
-import buildcraft.builders.tile.TileQuarry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.builders.client.render.RenderArchitect;
+import buildcraft.builders.client.render.RenderBuilder;
+import buildcraft.builders.client.render.RenderQuarry;
+import buildcraft.builders.container.ContainerArchitect;
+import buildcraft.builders.container.ContainerBuilder_Neptune;
+import buildcraft.builders.container.ContainerQuarry;
+import buildcraft.builders.entity.EntityQuarry;
+import buildcraft.builders.gui.*;
+import buildcraft.builders.tile.TileArchitect_Neptune;
+import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.builders.tile.TileLibrary_Neptune;
+import buildcraft.builders.tile.TileQuarry;
 
 public abstract class BuildersProxy_Neptune implements IGuiHandler {
     @SidedProxy
@@ -39,21 +38,27 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (ID == BuildersGuis.LIBRARY.ordinal()) {
+        if (id == BuildersGuis.LIBRARY.ordinal()) {
             if (tile instanceof TileLibrary_Neptune) {
                 TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
                 return new ContainerBlueprintLibrary(player, library);
             }
         }
-        if (ID == BuildersGuis.ARCHITECT.ordinal()) {
+        if (id == BuildersGuis.BUILDER.ordinal()) {
+            if (tile instanceof TileBuilder_Neptune) {
+                TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
+                return new ContainerBuilder_Neptune(player, builder);
+            }
+        }
+        if (id == BuildersGuis.ARCHITECT.ordinal()) {
             if (tile instanceof TileArchitect_Neptune) {
                 TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
                 return new ContainerArchitect(player, library);
             }
         }
-        if (ID == BuildersGuis.QUARRY.ordinal()) {
+        if (id == BuildersGuis.QUARRY.ordinal()) {
             if (tile instanceof TileQuarry) {
                 TileQuarry quarry = (TileQuarry) tile;
                 return new ContainerQuarry(player, quarry);
@@ -79,21 +84,27 @@ public abstract class BuildersProxy_Neptune implements IGuiHandler {
     @SideOnly(Side.CLIENT)
     public static class ClientProxy extends BuildersProxy_Neptune {
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-            if (ID == BuildersGuis.LIBRARY.ordinal()) {
+            if (id == BuildersGuis.LIBRARY.ordinal()) {
                 if (tile instanceof TileLibrary_Neptune) {
                     TileLibrary_Neptune library = (TileLibrary_Neptune) tile;
                     return new GuiBlueprintLibrary(player, library);
                 }
             }
-            if (ID == BuildersGuis.ARCHITECT.ordinal()) {
+            if (id == BuildersGuis.BUILDER.ordinal()) {
+                if (tile instanceof TileBuilder_Neptune) {
+                    TileBuilder_Neptune builder = (TileBuilder_Neptune) tile;
+                    return new GuiBuilder_Neptune(new ContainerBuilder_Neptune(player, builder));
+                }
+            }
+            if (id == BuildersGuis.ARCHITECT.ordinal()) {
                 if (tile instanceof TileArchitect_Neptune) {
                     TileArchitect_Neptune library = (TileArchitect_Neptune) tile;
                     return new GuiArchitect(new ContainerArchitect(player, library));
                 }
             }
-            if (ID == BuildersGuis.QUARRY.ordinal()) {
+            if (id == BuildersGuis.QUARRY.ordinal()) {
                 if (tile instanceof TileQuarry) {
                     TileQuarry quarry = (TileQuarry) tile;
                     return new GuiQuarry(new ContainerQuarry(player, quarry));

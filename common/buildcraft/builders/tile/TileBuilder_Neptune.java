@@ -66,8 +66,8 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     public static final int NET_ANIM_POWER = 17;
     public static final int NET_ANIM_STATE = 18;
 
-    private final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
-    private final IItemHandlerModifiable invResources = addInventory("resources", 28, EnumAccess.NONE, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invBlueprint = addInventory("blueprint", 1, EnumAccess.BOTH, EnumPipePart.VALUES);
+    public final IItemHandlerModifiable invResources = addInventory("resources", 27, EnumAccess.NONE, EnumPipePart.VALUES);
 
     private final Tank[] tanks = new Tank[] {//
         new Tank("fluid1", Fluid.BUCKET_VOLUME * 8, this),//
