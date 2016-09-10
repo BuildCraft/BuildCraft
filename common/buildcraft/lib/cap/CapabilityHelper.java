@@ -41,10 +41,11 @@ public class CapabilityHelper implements ICapabilityProvider {
         addCapability(cap, supplier.get(), faces);
     }
 
-    public void addProvider(ICapabilityProvider provider) {
+    public <T extends ICapabilityProvider> T addProvider(T provider) {
         if (provider != null) {
             additional.add(provider);
         }
+        return provider;
     }
 
     @Override

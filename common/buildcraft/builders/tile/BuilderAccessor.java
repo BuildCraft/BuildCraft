@@ -13,26 +13,28 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.BptPermissions;
+import buildcraft.builders.bpt.TickingBlueprintBuilder;
 import buildcraft.lib.bpt.builder.AbstractBuilderAccessor;
 import buildcraft.lib.bpt.task.TaskUsable;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.WorldUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public class BuilderAccessor extends AbstractBuilderAccessor {
     private final Vec3d vec;
-    private final TileBuilder_Neptune tile;
+    private final TileBC_Neptune tile;
     private final boolean isCreative;
 
-    public BuilderAccessor(TileBuilder_Neptune tile) {
-        super(tile.getOwner(), tile.tickingBuilder.animationManager);
+    public BuilderAccessor(TileBC_Neptune tile, TickingBlueprintBuilder ticker) {
+        super(tile.getOwner(), ticker.animationManager);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
         isCreative = WorldUtil.isWorldCreative(tile.getWorld());
     }
 
-    public BuilderAccessor(TileBuilder_Neptune tile, NBTTagCompound nbt) {
-        super(tile.getOwner(), tile.tickingBuilder.animationManager, nbt);
+    public BuilderAccessor(TileBC_Neptune tile, TickingBlueprintBuilder ticker, NBTTagCompound nbt) {
+        super(tile.getOwner(), ticker.animationManager, nbt);
         this.vec = VecUtil.add(new Vec3d(0.5, 0.5, 0.5), tile.getPos());
         this.tile = tile;
         isCreative = WorldUtil.isWorldCreative(tile.getWorld());
@@ -61,7 +63,7 @@ public class BuilderAccessor extends AbstractBuilderAccessor {
 
     @Override
     public boolean hasPermissionToEdit(BlockPos pos) {
-        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, tile.getOwner(), PermissionUtil.createFrom(getWorld(), pos));
+        return PermissionUtil.hasPermission(PermissionUtil.PERM_EDIT, getOwner(), PermissionUtil.createFrom(getWorld(), pos));
     }
 
     @Override

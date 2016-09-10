@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.permission.EnumProtectionStatus;
@@ -77,7 +78,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_ADV_DEBUG_DISABLE = 7;
 
     protected final CapabilityHelper caps = new CapabilityHelper();
-    protected final ItemHandlerManager itemManager = new ItemHandlerManager();
+    protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
 
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
@@ -155,6 +156,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         return caps.getCapability(capability, facing);
+    }
+
+    // Item caps
+    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
+        markDirty();
     }
 
     // ##################

@@ -4,7 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.lib.tile;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
@@ -37,10 +36,6 @@ public abstract class TileBCInventory_Neptune extends TileBC_Neptune {
 
     protected <T extends INBTSerializable<NBTTagCompound> & IItemHandlerModifiable> T addInventory(String key, T handler, EnumAccess access, EnumPipePart... parts) {
         return itemManager.addInvHandler(key, handler, access, parts);
-    }
-
-    protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
-        markDirty();
     }
 
     @Override

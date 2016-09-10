@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 public enum BCBuildersGuis {
     ARCHITECT,
     BUILDER,
+    FILLER,
     LIBRARY,
     QUARRY;
 

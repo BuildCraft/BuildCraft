@@ -23,10 +23,12 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         BOTH
     }
 
+    private final StackChangeCallback callback;
     private final Map<EnumPipePart, Wrapper> wrappers = new EnumMap<>(EnumPipePart.class);
     private final Map<String, INBTSerializable<NBTTagCompound>> handlers = new HashMap<>();
 
-    public ItemHandlerManager() {
+    public ItemHandlerManager(StackChangeCallback defaultCallback) {
+        this.callback = defaultCallback;
         for (EnumPipePart part : EnumPipePart.VALUES) {
             wrappers.put(part, new Wrapper());
         }
@@ -58,6 +60,11 @@ public class ItemHandlerManager implements ICapabilityProvider, INBTSerializable
         }
         handlers.put(key, handler);
         return handler;
+    }
+
+    public ItemHandlerSimple addInvHandler(String key, int size, EnumAccess access, EnumPipePart... parts) {
+        ItemHandlerSimple handler = new ItemHandlerSimple(size, callback);
+        return addInvHandler(key, handler, access, parts);
     }
 
     @Override

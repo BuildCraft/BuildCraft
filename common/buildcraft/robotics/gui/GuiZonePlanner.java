@@ -19,7 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -220,7 +219,10 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
         for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
             for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
                 ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(new ChunkPos(chunkX, chunkZ), dimension, container.tile.getLevel());
-                GL11.glCallList(ZonePlannerMapRenderer.INSTANCE.getChunkGlList(key));
+                int glId = ZonePlannerMapRenderer.INSTANCE.getChunkGlList(key);
+                if (glId > 0) {
+                    GL11.glCallList(glId);
+                }
             }
         }
 
@@ -249,7 +251,13 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             rayDirection.sub(rayStart);
             rayDirection.normalize();
             rayDirection.scale(0.1);
-            //
+
+            double rayY = rayStart.y;
+
+            while (rayY > 0) {
+
+            }
+
             // for (int i = 0; i < 10000; i++) {
             // int chunkX = (int) rayPosition.getX() >> 4;
             // int chunkZ = (int) rayPosition.getZ() >> 4;
@@ -271,25 +279,27 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             // }
         }
 
+        // TODO: Cache this!
+
         if (found != null) {
-//            GlStateManager.disableDepth();
-//            GlStateManager.disableLighting();
-//            GlStateManager.enableBlend();
-//            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-//            GL11.glBegin(GL11.GL_QUADS);
-//            int r = (foundColor >> 16) & 0xFF;
-//            int g = (foundColor >> 8) & 0xFF;
-//            int b = (foundColor >> 0) & 0xFF;
-//            // noinspection unused
-//            int a = (foundColor >> 24) & 0xFF;
-//            GL11.glColor4d(r / (double) 0xFF + 0.3, g / (double) 0xFF + 0.3, b / (double) 0xFF + 0.3, 0.7);
-//            ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(found.getX(), found.getY(), found.getZ());
-//            GL11.glEnd();
-//            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-//            GlStateManager.disableBlend();
-//            GlStateManager.enableLighting();
-//            GlStateManager.enableLighting();
-//            GlStateManager.enableDepth();
+            // GlStateManager.disableDepth();
+            // GlStateManager.disableLighting();
+            // GlStateManager.enableBlend();
+            // GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            // GL11.glBegin(GL11.GL_QUADS);
+            // int r = (foundColor >> 16) & 0xFF;
+            // int g = (foundColor >> 8) & 0xFF;
+            // int b = (foundColor >> 0) & 0xFF;
+            // // noinspection unused
+            // int a = (foundColor >> 24) & 0xFF;
+            // GL11.glColor4d(r / (double) 0xFF + 0.3, g / (double) 0xFF + 0.3, b / (double) 0xFF + 0.3, 0.7);
+            // ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(found.getX(), found.getY(), found.getZ());
+            // GL11.glEnd();
+            // GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            // GlStateManager.disableBlend();
+            // GlStateManager.enableLighting();
+            // GlStateManager.enableLighting();
+            // GlStateManager.enableDepth();
         }
 
         GlStateManager.disableLighting();
@@ -304,39 +314,40 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
             if (getPaintbrushBrush() != null && getPaintbrushBrush().colour.getMetadata() == i && bufferLayer != null) {
                 layer = bufferLayer;
             }
-//            if (!layer.getChunkPoses().isEmpty()) {
-//                for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
-//                    for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
-//                        ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
-//                        if (layer.hasChunk(chunkPos)) {
-//                            for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
-//                                for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
-//                                    if (layer.get(blockX, blockZ)) {
-//                                        int height = 256;
-//                                        ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getLoadedChunk(new ZonePlannerMapChunkKey(chunkPos, dimension, container.tile.getLevel()));
-//                                        if (zonePlannerMapChunk != null) {
-//                                            int finalBlockX = blockX;
-//                                            int finalBlockZ = blockZ;
-//                                            MapColourData data = zonePlannerMapChunk.getData(finalBlockX, finalBlockZ);
-//                                            if (data != null) {
-//                                                height = data.posY;
-//                                            }
-//                                        }
-//                                        int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
-//                                        int r = (color >> 16) & 0xFF;
-//                                        int g = (color >> 8) & 0xFF;
-//                                        int b = (color >> 0) & 0xFF;
-//                                        // noinspection unused
-//                                        int a = (color >> 24) & 0xFF;
-//                                        GL11.glColor4d(r / (double) 0xFF, g / (double) 0xFF, b / (double) 0xFF, 0.3);
-//                                        ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            // if (!layer.getChunkPoses().isEmpty()) {
+            // for (int chunkX = chunkBaseX - radius; chunkX < chunkBaseX + radius; chunkX++) {
+            // for (int chunkZ = chunkBaseZ - radius; chunkZ < chunkBaseZ + radius; chunkZ++) {
+            // ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
+            // if (layer.hasChunk(chunkPos)) {
+            // for (int blockX = chunkPos.getXStart(); blockX <= chunkPos.getXEnd(); blockX++) {
+            // for (int blockZ = chunkPos.getZStart(); blockZ <= chunkPos.getZEnd(); blockZ++) {
+            // if (layer.get(blockX, blockZ)) {
+            // int height = 256;
+            // ZonePlannerMapChunk zonePlannerMapChunk = ZonePlannerMapDataClient.INSTANCE.getLoadedChunk(new
+            // ZonePlannerMapChunkKey(chunkPos, dimension, container.tile.getLevel()));
+            // if (zonePlannerMapChunk != null) {
+            // int finalBlockX = blockX;
+            // int finalBlockZ = blockZ;
+            // MapColourData data = zonePlannerMapChunk.getData(finalBlockX, finalBlockZ);
+            // if (data != null) {
+            // height = data.posY;
+            // }
+            // }
+            // int color = EnumDyeColor.byMetadata(i).getMapColor().colorValue;
+            // int r = (color >> 16) & 0xFF;
+            // int g = (color >> 8) & 0xFF;
+            // int b = (color >> 0) & 0xFF;
+            // // noinspection unused
+            // int a = (color >> 24) & 0xFF;
+            // GL11.glColor4d(r / (double) 0xFF, g / (double) 0xFF, b / (double) 0xFF, 0.3);
+            // ZonePlannerMapRenderer.INSTANCE.drawBlockCuboid(blockX, height + 0.1, blockZ, height, 0.6);
+            // }
+            // }
+            // }
+            // }
+            // }
+            // }
+            // }
         }
         GL11.glEnd();
         GlStateManager.disableBlend();

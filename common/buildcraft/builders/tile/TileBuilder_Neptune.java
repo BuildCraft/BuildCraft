@@ -92,6 +92,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
     private BlockPos lastBptPos;
     private Box lastBox = null;
     private Blueprint currentBpt = null;
+    private int cooldown = 0;
 
     @Override
     protected void onSlotChange(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
@@ -102,9 +103,8 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                 // animation.reset();
             }
         }
+        markDirty();
     }
-
-    private int cooldown = 0;
 
     @Override
     public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
@@ -199,8 +199,8 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
                         if (accessor != null) {
                             accessor.releaseAll();
                         }
-                        accessor = new BuilderAccessor(this);
-                        tickingBuilder.reset(lastBox, currentBpt, EnumAxisOrder.XZY.getMinToMaxOrder(), accessor);
+                        accessor = new BuilderAccessor(this, tickingBuilder);
+                        tickingBuilder.reset(lastBox, EnumAxisOrder.XZY.getMaxToMinOrder(), accessor);
                         sendNetworkUpdate(NET_RENDER_DATA);
                     }
                 }

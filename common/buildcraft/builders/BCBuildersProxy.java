@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.builders.client.render.RenderArchitect;
 import buildcraft.builders.client.render.RenderBuilder;
+import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
 import buildcraft.builders.container.ContainerArchitect;
 import buildcraft.builders.container.ContainerBuilder_Neptune;
@@ -26,6 +27,7 @@ import buildcraft.builders.entity.EntityQuarry;
 import buildcraft.builders.gui.*;
 import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.builders.tile.TileBuilder_Neptune;
+import buildcraft.builders.tile.TileFiller_Neptune;
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.builders.tile.TileQuarry;
 
@@ -118,6 +120,7 @@ public abstract class BCBuildersProxy implements IGuiHandler {
             super.fmlInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect_Neptune.class, new RenderArchitect());
             ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder_Neptune.class, new RenderBuilder());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileFiller_Neptune.class, new RenderFiller());
             ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderQuarry());
         }
     }

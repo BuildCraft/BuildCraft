@@ -18,7 +18,6 @@ import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.lib.bpt.BlueprintBase;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
 import buildcraft.lib.bpt.helper.VanillaBlockClearer;
@@ -60,9 +59,9 @@ public class TickingBlueprintBuilder {
 
     public Box box = null;
     private BoxIterator boxIter = null;
-    private BlueprintBase currentBpt = null;
     private BlockPos start;
     private boolean hasFinishedPreBuild = false;
+    private boolean hasFinishedFully = false;
     private AxisOrder order = null;
 
     public TickingBlueprintBuilder(IBuilderMessageSender sender, IBuilderSchematicProvider provider) {
@@ -124,11 +123,10 @@ public class TickingBlueprintBuilder {
         blocksCompleted.clear();
     }
 
-    public void reset(Box nBox, BlueprintBase bpt, AxisOrder nOrder, IBuilderAccessor accessor) {
+    public void reset(Box nBox, AxisOrder nOrder, IBuilderAccessor accessor) {
         cancel();
-        if (nBox != null && bpt != null && accessor != null) {
+        if (nBox != null && accessor != null) {
             this.box = nBox;
-            this.currentBpt = bpt;
             this.order = nOrder;
             this.start = box.min();
             this.accessor = accessor;
@@ -158,7 +156,7 @@ public class TickingBlueprintBuilder {
             }
         }
 
-        if (currentBpt != null) {
+        if (boxIter != null) {
             if (!hasFinishedPreBuild) {
                 if (boxIter.hasFinished()) {
                     if (tasks.isEmpty()) {
@@ -180,20 +178,19 @@ public class TickingBlueprintBuilder {
                     builds -= buildSingle();
                     builds -= 30;
                     if (boxIter.hasFinished()) {
-                        currentBpt = null;
                         break;
                     }
                 }
 
                 if (boxIter.hasFinished()) {
-                    currentBpt = null;
+                    hasFinishedFully = true;
                     boxIter = null;
                     start = null;
                     blocksCompleted.clear();
                 }
             }
         }
-        return currentBpt == null && tasks.isEmpty();
+        return (boxIter == null || hasFinishedFully) && tasks.isEmpty();
     }
 
     private int clearSingle() {

@@ -1,6 +1,9 @@
 package buildcraft.robotics.zone;
 
-import java.util.concurrent.ExecutionException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -20,10 +23,14 @@ public enum ZonePlannerMapRenderer {
     INSTANCE;
 
     private static final Cache<ZonePlannerMapChunkKey, Integer> CHUNK_GL_CACHE;
+    private static final Set<ZonePlannerMapChunkKey> GENERATING = Collections.synchronizedSet(new HashSet<>());
     private final MutableVertex vertex = new MutableVertex();
 
     static {
-        CHUNK_GL_CACHE = CacheBuilder.newBuilder().build();
+        CHUNK_GL_CACHE = CacheBuilder.newBuilder()//
+                .expireAfterAccess(20, TimeUnit.SECONDS)//
+                .removalListener(ZonePlannerMapRenderer::onRemove)//
+                .build();
     }
 
     private static void onRemove(RemovalNotification<ZonePlannerMapChunkKey, Integer> notification) {
@@ -50,12 +57,6 @@ public enum ZonePlannerMapRenderer {
         vertex(builder, x + rX, y + rY, z + rZ);
         vertex(builder, x + rX, y + rY, z - rZ);
         vertex(builder, x - rX, y + rY, z - rZ);
-
-        // vertex.normalf(0, -1, 0);
-        // vertex(builder, x - rX, y - rY, z - rZ);
-        // vertex(builder, x + rX, y - rY, z - rZ);
-        // vertex(builder, x + rX, y - rY, z + rZ);
-        // vertex(builder, x - rX, y - rY, z + rZ);
 
         vertex.normalf(-1, 0, 0);
         vertex.multColourd(0.6);
@@ -95,19 +96,19 @@ public enum ZonePlannerMapRenderer {
     }
 
     public int getChunkGlList(ZonePlannerMapChunkKey key) {
-        try {
-            return CHUNK_GL_CACHE.get(key, () -> genChunk(key));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+        Integer val = CHUNK_GL_CACHE.getIfPresent(key);
+        if (val == null) {
+            if (GENERATING.add(key)) {
+                genChunk(key);
+            }
+            return -1;
+        } else {
+            GENERATING.remove(key);
+            return val.intValue();
         }
     }
 
-    private Integer genChunk(ZonePlannerMapChunkKey key) {
-        int listIndexEmpty = GL11.glGenLists(1);
-        GL11.glNewList(listIndexEmpty, GL11.GL_COMPILE);
-        // nothing, wait for chunk data
-        GL11.glEndList();
-        CHUNK_GL_CACHE.put(key, listIndexEmpty);
+    private void genChunk(ZonePlannerMapChunkKey key) {
         ZonePlannerMapDataClient.INSTANCE.getChunk(Minecraft.getMinecraft().theWorld, key, chunk -> {
             VertexBuffer builder = Tessellator.getInstance().getBuffer();
             builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);// TODO: normals
@@ -126,6 +127,5 @@ public enum ZonePlannerMapRenderer {
             GL11.glEndList();
             CHUNK_GL_CACHE.put(key, listIndex);
         });
-        return listIndexEmpty;
     }
 }

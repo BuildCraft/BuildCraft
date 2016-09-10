@@ -1,6 +1,6 @@
 package buildcraft.robotics.zone;
 
-import java.util.Objects;
+import java.util.Arrays;
 
 import net.minecraft.util.math.ChunkPos;
 
@@ -18,14 +18,14 @@ public class ZonePlannerMapChunkKey {
         this.chunkPos = chunkPos;
         this.dimensionalId = dimensionalId;
         this.level = level;
-        hash = Objects.hash(chunkPos, dimensionalId, level);
+        hash = Arrays.hashCode(new int[] { chunkPos.chunkXPos, chunkPos.chunkZPos, dimensionalId, level });
     }
 
     public ZonePlannerMapChunkKey(ByteBuf buf) {
         chunkPos = new ChunkPos(buf.readInt(), buf.readInt());
         dimensionalId = buf.readInt();
         level = buf.readInt();
-        hash = Objects.hash(chunkPos, dimensionalId, level);
+        hash = Arrays.hashCode(new int[] { chunkPos.chunkXPos, chunkPos.chunkZPos, dimensionalId, level });
     }
 
     public void toBytes(ByteBuf buf) {

@@ -17,7 +17,8 @@ public abstract class ZonePlannerMapData {
         data = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.MINUTES).build();
     }
 
-    public abstract void loadChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad);
+    /** Use {@link #getChunk(World, ZonePlannerMapChunkKey, Consumer)} for a cached version */
+    protected abstract void loadChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad);
 
     public final void getChunk(World world, ZonePlannerMapChunkKey key, Consumer<ZonePlannerMapChunk> onLoad) {
         ZonePlannerMapChunk loadedChunk = getLoadedChunk(key);
