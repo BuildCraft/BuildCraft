@@ -254,9 +254,9 @@ public class GuiZonePlanner extends GuiBC8<ContainerZonePlanner> {
 
             double rayY = rayStart.y;
 
-            while (rayY > 0) {
+//            while (rayY > 0) {
 
-            }
+//            }
 
             // for (int i = 0; i < 10000; i++) {
             // int chunkX = (int) rayPosition.getX() >> 4;

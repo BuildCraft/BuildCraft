@@ -2,70 +2,62 @@ package buildcraft.core.lib.client.sprite;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.util.math.MathHelper;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class DynamicTextureBC {
     public final int width, height;
-    public int[] colorMap;
+    private final int[] colorMap;
+    private final int widthPow2, heightPow2;
 
-    @SideOnly(Side.CLIENT)
-    protected DynamicTexture dynamicTexture;
+    private DynamicTexture dynamicTexture;
 
     public DynamicTextureBC(int iWidth, int iHeight) {
         width = iWidth;
         height = iHeight;
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            createDynamicTexture();
-        } else {
-            colorMap = new int[iWidth * iHeight];
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void createDynamicTexture() {
-        dynamicTexture = new DynamicTexture(width, height);
+        widthPow2 = MathHelper.roundUpToPowerOfTwo(iWidth);
+        heightPow2 = MathHelper.roundUpToPowerOfTwo(iHeight);
+        dynamicTexture = new DynamicTexture(widthPow2, heightPow2);
         colorMap = dynamicTexture.getTextureData();
     }
 
-    public void setColord(int index, double r, double g, double b, double a) {
-        int i = (int) (a * 255.0F);
-        int j = (int) (r * 255.0F);
-        int k = (int) (g * 255.0F);
-        int l = (int) (b * 255.0F);
-        colorMap[index] = i << 24 | j << 16 | k << 8 | l;
-    }
-
     public void setColord(int x, int y, double r, double g, double b, double a) {
-        setColord(x + y * width, r, g, b, a);
-    }
-
-    public void setColori(int index, int r, int g, int b, int a) {
-        colorMap[index] = (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255);
+        int a2 = (int) (a * 255.0F);
+        int r2 = (int) (r * 255.0F);
+        int g2 = (int) (g * 255.0F);
+        int b2 = (int) (b * 255.0F);
+        setColor(x, y, a2 << 24 | r2 << 16 | g2 << 8 | b2);
     }
 
     public void setColori(int x, int y, int r, int g, int b, int a) {
-        setColori(x + y * width, r, g, b, a);
-    }
-
-    public void setColor(int x, int y, int color) {
-        colorMap[x + y * width] = color;
+        setColor(x, y, (a & 255) << 24 | (r & 255) << 16 | (g & 255) << 8 | (b & 255));
     }
 
     public void setColor(int x, int y, int color, float alpha) {
         int a = (int) (alpha * 255.0F);
 
-        colorMap[x + y * width] = a << 24 | color;
+        setColor(x, y, a << 24 | (color & 0xFF_FF_FF));
+    }
+
+    public void setColor(int x, int y, int color) {
+        colorMap[x + y * widthPow2] = color;
     }
 
     @SideOnly(Side.CLIENT)
     public void updateTexture() {
         dynamicTexture.updateDynamicTexture();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void bindGlTexture() {
+        GlStateManager.bindTexture(dynamicTexture.getGlTextureId());
     }
 
     @SideOnly(Side.CLIENT)
@@ -79,11 +71,21 @@ public class DynamicTextureBC {
     }
 
     @SideOnly(Side.CLIENT)
+    public float getMaxU() {
+        return width / (float) widthPow2;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float getMaxV() {
+        return height / (float) heightPow2;
+    }
+
+    @SideOnly(Side.CLIENT)
     public void draw(int screenX, int screenY, float zLevel, int clipX, int clipY, int clipWidth, int clipHeight) {
         updateTexture();
 
-        float f = 1F / width;
-        float f1 = 1F / height;
+        float f = 1F / widthPow2;
+        float f1 = 1F / heightPow2;
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vb = tessellator.getBuffer();
         vb.begin(GL11.GL_QUADS, vb.getVertexFormat());

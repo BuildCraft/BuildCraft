@@ -31,8 +31,9 @@ run_server
 custom
 
 #licnse_checker
-license_checker/local/**
-license_checker/node_modules
+# Not in git because it contains names + emails.
+license_checker/agreed.txt
+license_checker/out/**
 
 # For some annoying reason the tests creates a log file in "/logs/latest.txt"
 logs

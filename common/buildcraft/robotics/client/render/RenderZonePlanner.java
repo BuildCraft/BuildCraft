@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.data.WorldPos;
 import buildcraft.robotics.tile.TileZonePlanner;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;
@@ -48,16 +49,13 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
 
     @Override
     public final void renderTileEntityAt(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage) {
-        double minX = 3 / 16D;
-        double maxX = 13 / 16D;
-        double minY = 5 / 16D;
-        double maxY = 13 / 16D;
-        double minZ = -0.001;
-        double maxZ = 1.001;
-        double minU = 0;
-        double maxU = 1;
-        double minV = 0;
-        double maxV = 1;
+        double offset = 0.001;
+        double minX = 3 / 16D - offset;
+        double maxX = 13 / 16D + offset;
+        double minY = 5 / 16D - offset;
+        double maxY = 13 / 16D + offset;
+        double minZ = -offset;
+        double maxZ = 1 + offset;
 
         EnumFacing side = tile.getWorld().getBlockState(tile.getPos()).getValue(BuildCraftProperties.BLOCK_FACING).getOpposite();
 
@@ -65,6 +63,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
         texture.updateTexture();
+        texture.bindGlTexture();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GlStateManager.disableTexture2D();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
@@ -75,11 +74,17 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
+
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         buffer.setTranslation(x, y, z);
 
         Vec3d min = new Vec3d(0, 0, 0);
         Vec3d max = new Vec3d(1, 1, 1);
+
+        float minU = 0;
+        float maxU = texture.getMaxU();
+        float minV = 0;
+        float maxV = texture.getMaxV();
 
         switch (side) {
             case NORTH:
@@ -95,15 +100,21 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                 max = new Vec3d(maxX, maxY, minZ);
                 break;
             case WEST:
+            default:
                 min = new Vec3d(maxZ, minY, minX);
                 max = new Vec3d(maxZ, maxY, maxX);
                 break;
         }
 
-        buffer.pos(min.xCoord, min.yCoord, min.zCoord).color(255, 255, 255, 255).tex(minU, minV).lightmap(0xFF, 0xFF).endVertex();
-        buffer.pos(max.xCoord, min.yCoord, max.zCoord).color(255, 255, 255, 255).tex(maxU, minV).lightmap(0xFF, 0xFF).endVertex();
-        buffer.pos(max.xCoord, max.yCoord, max.zCoord).color(255, 255, 255, 255).tex(maxU, maxV).lightmap(0xFF, 0xFF).endVertex();
-        buffer.pos(min.xCoord, max.yCoord, min.zCoord).color(255, 255, 255, 255).tex(minU, maxV).lightmap(0xFF, 0xFF).endVertex();
+        MutableVertex vert = new MutableVertex();
+
+        vert.colouri(-1);
+        vert.lighti(0xF, 0xF);
+
+        vert.positiond(min.xCoord, min.yCoord, min.zCoord).texf(minU, minV).render(buffer);
+        vert.positiond(max.xCoord, min.yCoord, max.zCoord).texf(maxU, minV).render(buffer);
+        vert.positiond(max.xCoord, max.yCoord, max.zCoord).texf(maxU, maxV).render(buffer);
+        vert.positiond(min.xCoord, max.yCoord, min.zCoord).texf(minU, maxV).render(buffer);
 
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
@@ -112,11 +123,11 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
 
     @Nonnull
     private static DynamicTextureBC getTexture(final TileZonePlanner tile, final EnumFacing side) {
-        Callable<DynamicTextureBC> callable = () -> {
+        Callable<DynamicTextureBC> textureGetter = () -> {
             return createTexture(tile, side);
         };
         try {
-            DynamicTextureBC texture = TEXTURES.get(new WorldPos(tile), callable);
+            DynamicTextureBC texture = TEXTURES.get(new WorldPos(tile), textureGetter);
             if (texture == null) {
                 throw new NullPointerException("Somehow generated a null texture!");
             }
@@ -150,6 +161,7 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                         posZ = tile.getPos().getZ() + offset2;
                         break;
                     case WEST:
+                    default:
                         posX = tile.getPos().getX() - offset2;
                         posZ = tile.getPos().getZ() + offset1;
                         break;
@@ -159,9 +171,10 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
                 ChunkPos chunkPos = new ChunkPos(posX >> 4, posZ >> 4);
                 int finalPosX = posX;
                 int finalPosZ = posZ;
+                texture.setColor(finalTextureX, finalTextureY, -1);
                 ZonePlannerMapChunkKey key = new ZonePlannerMapChunkKey(chunkPos, tile.getWorld().provider.getDimension(), tile.getLevel());
                 ZonePlannerMapDataClient.INSTANCE.loadChunk(tile.getWorld(), key, (chunk) -> {
-                    int colour = chunk.getColour(finalPosX, finalPosZ);
+                    int colour = chunk.getColour(finalPosX, finalPosZ) | 0xFF_00_00_00;
                     texture.setColor(finalTextureX, finalTextureY, colour);
                 });
             }
