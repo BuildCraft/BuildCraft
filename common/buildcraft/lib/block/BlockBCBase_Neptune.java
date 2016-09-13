@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -45,9 +46,17 @@ public class BlockBCBase_Neptune extends Block {
     public BlockBCBase_Neptune(Material material, String id) {
         super(material);
         this.id = id;
+
+        // Sensible default block properties
+        setHardness(5.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
+
+        // Init names from the tag manager
         setUnlocalizedName(TagManager.getTag(id, EnumTagType.UNLOCALIZED_NAME));
         setRegistryName(TagManager.getTag(id, EnumTagType.REGISTRY_NAME));
         setCreativeTab(CreativeTabManager.getTab(TagManager.getTag(id, EnumTagType.CREATIVE_TAB)));
+
         if (this instanceof IBlockWithFacing) {
             setDefaultState(getDefaultState().withProperty(PROP_FACING, EnumFacing.NORTH));
         }

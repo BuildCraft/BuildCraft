@@ -150,6 +150,10 @@ public class MutableQuad {
         return verticies[v & 0b11];
     }
 
+    public MutableVertex[] verticies() {
+        return verticies;
+    }
+
     public Vector3f getCalculatedNormal() {
         Point3f[] positions = { getVertex(0).position(), getVertex(1).position(), getVertex(2).position() };
 
@@ -208,6 +212,21 @@ public class MutableQuad {
         newArray[3] = verticies[0];
         for (int i = 0; i < 4; i++)
             verticies[i] = newArray[i].invertNormal();
+        return this;
+    }
+
+    public MutableQuad rotateTextureUp(int times) {
+        times = times % 4;
+        if (times <= 0) {
+            return this;
+        }
+        Point2f[] textures = new Point2f[4];
+        for (int i = 0; i < 4; i++) {
+            textures[i] = verticies[i].tex();
+        }
+        for (int i = 0; i < 4; i++) {
+            verticies[i].texv(textures[(i + times) % 4]);
+        }
         return this;
     }
 

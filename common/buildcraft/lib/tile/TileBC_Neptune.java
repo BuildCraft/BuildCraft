@@ -303,7 +303,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
+    public final void handleUpdateTag(NBTTagCompound tag) {
         super.readFromNBT(tag);
         byte[] bytes = tag.getByteArray("d");
         ByteBuf buf = Unpooled.copiedBuffer(bytes);

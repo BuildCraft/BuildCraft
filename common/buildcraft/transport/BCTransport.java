@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import buildcraft.transport.container.ContainerFilteredBuffer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -20,13 +19,14 @@ public class BCTransport {
     public static BCTransport INSTANCE = null;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         CreativeTabManager.createTab("buildcraft.pipe");
 
         BCTransportItems.preInit();
         BCTransportBlocks.preInit();
+        BCTransportPipes.preInit();
 
         // CreativeTabManager.setItem("buildcraft.pipe", BCCoreItems.wrench);
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
@@ -35,13 +35,13 @@ public class BCTransport {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BCTransportProxy.getProxy().fmlInit();
         BCTransportRecipes.init();
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
 
     }
 }
