@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.bpt.vanilla.VanillaSchematics;
@@ -22,12 +23,14 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.list.VanillaListHandlers;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 
 //@formatter:off
 @Mod(modid = BCLib.MODID,
      name = "BuildCraft Lib",
      version = BCLib.VERSION,
-     acceptedMinecraftVersions = "[1.9.4]",
+     acceptedMinecraftVersions = "[1.10.2]",
      dependencies = "required-after:Forge@[12.17.0.1909,)")
 //@formatter:on
 public class BCLib {
@@ -38,7 +41,10 @@ public class BCLib {
     public static BCLib INSTANCE;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent evt) {
+    public static void preInit(FMLPreInitializationEvent evt) {
+        BuildcraftRecipeRegistry.assemblyRecipes = AssemblyRecipeRegistry.INSTANCE;
+        BuildcraftRecipeRegistry.integrationRecipes = IntegrationRecipeRegistry.INSTANCE;
+
         BCModules.fmlPreInit();
         BuildCraftAPI.fakePlayerProvider = FakePlayerUtil.INSTANCE;
         BCLibProxy.getProxy().fmlPreInit();
@@ -52,7 +58,7 @@ public class BCLib {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent evt) {
+    public static void init(FMLInitializationEvent evt) {
         BCLibProxy.getProxy().fmlInit();
 
         VanillaSchematics.fmlInit();
@@ -66,7 +72,7 @@ public class BCLib {
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public static void postInit(FMLPostInitializationEvent evt) {
         BCLibProxy.getProxy().fmlPostInit();
         BCMessageHandler.fmlPostInit();
         VanillaListHandlers.fmlPostInit();
@@ -74,7 +80,7 @@ public class BCLib {
     }
 
     @Mod.EventHandler
-    public void onServerStarted(FMLServerStartedEvent evt) {
+    public static void onServerStarted(FMLServerStartedEvent evt) {
         BCLibEventDist.onServerStarted(evt);
     }
 }

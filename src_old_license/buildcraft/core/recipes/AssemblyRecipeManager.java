@@ -22,11 +22,11 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
     private BiMap<String, IFlexibleRecipe<ItemStack>> assemblyRecipes = HashBiMap.create();
 
     @Override
-    public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
+    public void addRecipe(String id, long powerCost, ItemStack output, Object... input) {
         if (output == null) {
             throw new IllegalArgumentException("Cannot have a null output!");
         }
-        addRecipe(id, new FlexibleRecipe<>(id, output, energyCost, 0, input));
+        addRecipe(id, new FlexibleRecipe<>(id, output, powerCost, 0, input));
     }
 
     @Override
