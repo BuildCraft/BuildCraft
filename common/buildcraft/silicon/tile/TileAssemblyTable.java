@@ -111,6 +111,39 @@ public class TileAssemblyTable extends TileLaserTableBase {
                 .orElse(null);
     }
 
+    private void activateNextRecipe() {
+        AssemblyRecipe activeRecipe = getActiveRecipe();
+        if(activeRecipe != null) {
+            int index = 0;
+            int activeIndex = 0;
+            boolean isActiveLast = false;
+            for(Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
+                EnumAssemblyRecipeState state = entry.getValue();
+                if(state == EnumAssemblyRecipeState.SAVED_ENOUGH) {
+                    isActiveLast = false;
+                }
+                if(state == EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE) {
+                    state = EnumAssemblyRecipeState.SAVED_ENOUGH;
+                    entry.setValue(state);
+                    activeIndex = index;
+                    isActiveLast = true;
+                }
+                index++;
+            }
+            index = 0;
+            for(Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
+                AssemblyRecipe recipe = entry.getKey();
+                EnumAssemblyRecipeState state = entry.getValue();
+                if(state == EnumAssemblyRecipeState.SAVED_ENOUGH && recipe != activeRecipe && (index > activeIndex || isActiveLast)) {
+                    state = EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE;
+                    entry.setValue(state);
+                    break;
+                }
+                index++;
+            }
+        }
+    }
+
     public long getTarget() {
         return getActiveRecipe() == null ? 0 : getActiveRecipe().requiredMicroJoules;
     }
@@ -135,6 +168,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
             }
             InvUtils.dropItemUp(getWorld(), stack, getPos());
             power -= getTarget();
+            activateNextRecipe();
         }
 
         sendNetworkUpdate(NET_RENDER_DATA);
