@@ -117,6 +117,12 @@ public class TileAssemblyTable extends TileLaserTableBase {
             int index = 0;
             int activeIndex = 0;
             boolean isActiveLast = false;
+            long enoughCount = recipesStates.values().stream()
+                    .filter(state -> state == EnumAssemblyRecipeState.SAVED_ENOUGH || state == EnumAssemblyRecipeState.SAVED_ENOUGH_ACTIVE)
+                    .count();
+            if(enoughCount <= 1) {
+                return;
+            }
             for(Map.Entry<AssemblyRecipe, EnumAssemblyRecipeState> entry : recipesStates.entrySet()) {
                 EnumAssemblyRecipeState state = entry.getValue();
                 if(state == EnumAssemblyRecipeState.SAVED_ENOUGH) {
