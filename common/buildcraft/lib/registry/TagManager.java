@@ -331,6 +331,20 @@ public class TagManager {
 
         endBatch(prependTags("robotics:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
+        startBatch();// silicon
+        // BC Silicon Items
+        // BC Silicon Item Blocks
+        registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
+        registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
+        // BC Silicon Blocks
+        registerTag("block.laser").reg("laser").oldReg("laserBlock").locale("laserBlock").model("laser");
+        registerTag("block.assembly_table").reg("assembly_table").oldReg("assemblyTableBlock").locale("assemblyTableBlock").model("assembly_table");
+        // BC Silicon Tiles
+        registerTag("tile.laser").reg("laser");
+        registerTag("tile.assembly_table").reg("assembly_table");
+
+        endBatch(prependTags("silicon:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
         endBatch(prependTags("buildcraft", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(setTab("buildcraft.main")));
     }
 }

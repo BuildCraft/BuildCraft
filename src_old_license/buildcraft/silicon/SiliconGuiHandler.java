@@ -16,7 +16,7 @@ import buildcraft.silicon.gui.ContainerChargingTable;
 import buildcraft.silicon.gui.ContainerIntegrationTable;
 import buildcraft.silicon.gui.ContainerProgrammingTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
-import buildcraft.silicon.gui.GuiAssemblyTable;
+import buildcraft.silicon.gui.GuiAssemblyTableOld;
 import buildcraft.silicon.gui.GuiChargingTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
 import buildcraft.silicon.gui.GuiProgrammingTable;
@@ -39,7 +39,7 @@ public class SiliconGuiHandler implements IGuiHandler {
                 if (!(tile instanceof TileAssemblyTable)) {
                     return null;
                 } else {
-                    return new GuiAssemblyTable(player, (TileAssemblyTable) tile);
+                    return new GuiAssemblyTableOld(player, (TileAssemblyTable) tile);
                 }
 
             case 1:

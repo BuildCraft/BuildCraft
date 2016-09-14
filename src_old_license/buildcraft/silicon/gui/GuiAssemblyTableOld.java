@@ -27,7 +27,7 @@ import buildcraft.core.lib.gui.Ledger;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.silicon.TileAssemblyTable;
 
-public class GuiAssemblyTable extends GuiAdvancedInterface {
+public class GuiAssemblyTableOld extends GuiAdvancedInterface {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_table.png");
 
@@ -38,7 +38,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
         int textColour = 0x000000;
 
         public LaserTableLedger() {
-            super(GuiAssemblyTable.this);
+            super(GuiAssemblyTableOld.this);
             maxHeight = 94;
             overlayColor = 0xd46c1f;
         }
@@ -80,7 +80,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
         public boolean craftable;
 
         public RecipeSlot(int x, int y) {
-            super(GuiAssemblyTable.this, x, y);
+            super(GuiAssemblyTableOld.this, x, y);
         }
 
         @Override
@@ -93,7 +93,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
         }
     }
 
-    public GuiAssemblyTable(EntityPlayer player, TileAssemblyTable assemblyTable) {
+    public GuiAssemblyTableOld(EntityPlayer player, TileAssemblyTable assemblyTable) {
         super(new ContainerAssemblyTable(player, assemblyTable), assemblyTable, TEXTURE);
 
         this.table = assemblyTable;
