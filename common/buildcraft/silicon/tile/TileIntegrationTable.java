@@ -38,9 +38,11 @@ public class TileIntegrationTable extends TileLaserTableBase {
         List<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
         for(int i = 0; i < invToIntegrate.getSlots(); i++) {
             ItemStack stack = invToIntegrate.getStackInSlot(i);
+            boolean found = false;
             for(Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext(); ) {
                 ItemStack itemStack = iterator.next();
                 if(StackUtil.canMerge(stack, itemStack) && stack != null) {
+                    found = true;
                     int spend = Math.min(itemStack.stackSize, stack.stackSize);
                     itemStack.stackSize -= spend;
                     if(!simulate) {
@@ -56,6 +58,9 @@ public class TileIntegrationTable extends TileLaserTableBase {
                         invToIntegrate.setStackInSlot(i, stack);
                     }
                 }
+            }
+            if(!found && stack != null) {
+                return false;
             }
         }
         return itemsNeeded.size() == 0;

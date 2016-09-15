@@ -12,9 +12,11 @@ public class ContainerIntegrationTable extends ContainerBCTile<TileIntegrationTa
         super(player, tile);
         addFullPlayerInventory(PLAYER_INV_START);
 
+        int[] indexes = {0, 1, 2, 3, 0, 4, 5, 6, 7};
+
         for(int y = 0; y < 3; y++) {
             for(int x = 0; x < 3; x++) {
-                addSlotToContainer(new SlotBase((x == 1 && y == 1) ? tile.invTarget : tile.invToIntegrate, (x == 1 && y == 1) ? 0 : (y > 1 || (x == 2 && y == 1)) ? x + y * 3 - 1 : x + y * 3, 19 + x * 25, 24 + y * 25));
+                addSlotToContainer(new SlotBase((x == 1 && y == 1) ? tile.invTarget : tile.invToIntegrate, indexes[x + y * 3], 19 + x * 25, 24 + y * 25));
             }
         }
 
