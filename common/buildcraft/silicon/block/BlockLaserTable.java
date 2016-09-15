@@ -80,13 +80,6 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
-        for(EnumLaserTableType type : EnumLaserTableType.values()) {
-            list.add(new ItemStack(item, 1, type.ordinal()));
-        }
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return AABB;
     }
