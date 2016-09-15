@@ -5,10 +5,13 @@ import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.silicon.client.render.RenderLaser;
+import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 import buildcraft.silicon.container.ContainerIntegrationTable;
+import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
@@ -40,8 +43,14 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (ID == BCSiliconGuis.ASSEMBLY_TABLE.ordinal()) {
             if (tile instanceof TileAssemblyTable) {
-                TileAssemblyTable laser = (TileAssemblyTable) tile;
-                return new ContainerAssemblyTable(player, laser);
+                TileAssemblyTable assemblyTable = (TileAssemblyTable) tile;
+                return new ContainerAssemblyTable(player, assemblyTable);
+            }
+        }
+        if (ID == BCSiliconGuis.ADVANCED_CRAFTING_TABLE.ordinal()) {
+            if (tile instanceof TileAdvancedCraftingTable) {
+                TileAdvancedCraftingTable advancedCraftingTable = (TileAdvancedCraftingTable) tile;
+                return new ContainerAdvancedCraftingTable(player, advancedCraftingTable);
             }
         }
         if (ID == BCSiliconGuis.INTEGRATION_TABLE.ordinal()) {
@@ -81,8 +90,14 @@ public abstract class BCSiliconProxy implements IGuiHandler {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
             if (ID == BCSiliconGuis.ASSEMBLY_TABLE.ordinal()) {
                 if (tile instanceof TileAssemblyTable) {
-                    TileAssemblyTable laser = (TileAssemblyTable) tile;
-                    return new GuiAssemblyTable(new ContainerAssemblyTable(player, laser));
+                    TileAssemblyTable assemblyTable = (TileAssemblyTable) tile;
+                    return new GuiAssemblyTable(new ContainerAssemblyTable(player, assemblyTable));
+                }
+            }
+            if (ID == BCSiliconGuis.ADVANCED_CRAFTING_TABLE.ordinal()) {
+                if (tile instanceof TileAdvancedCraftingTable) {
+                    TileAdvancedCraftingTable advancedCraftingTable = (TileAdvancedCraftingTable) tile;
+                    return new GuiAdvancedCraftingTable(new ContainerAdvancedCraftingTable(player, advancedCraftingTable));
                 }
             }
             if (ID == BCSiliconGuis.INTEGRATION_TABLE.ordinal()) {

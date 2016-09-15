@@ -15,12 +15,12 @@ import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.client.CoreIconProvider;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 
-public class GuiAdvancedCraftingTable extends GuiLaserTable {
+public class GuiAdvancedCraftingTableOld extends GuiLaserTable {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_advancedworkbench.png");
     private final TileAdvancedCraftingTable workbench;
 
-    public GuiAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable advancedWorkbench) {
+    public GuiAdvancedCraftingTableOld(EntityPlayer player, TileAdvancedCraftingTable advancedWorkbench) {
         super(player, new ContainerAdvancedCraftingTable(player, advancedWorkbench), advancedWorkbench, TEXTURE);
         this.workbench = advancedWorkbench;
         xSize = 176;

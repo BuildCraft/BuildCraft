@@ -7,18 +7,18 @@ package buildcraft.silicon.gui;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.silicon.container.ContainerIntegrationTable;
+import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
-    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/integration_table.png");
-    private static final int SIZE_X = 176, SIZE_Y = 191;
+public class GuiAdvancedCraftingTable extends GuiBC8<ContainerAdvancedCraftingTable> {
+    private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/advanced_crafting_table.png");
+    private static final int SIZE_X = 176, SIZE_Y = 241;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE_BASE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_PROGRESS = new GuiIcon(TEXTURE_BASE, SIZE_X, 0, 4, 70);
-    private static final GuiRectangle RECT_PROGRESS = new GuiRectangle(164, 22, 4, 70);
+    private static final GuiRectangle RECT_PROGRESS = new GuiRectangle(164, 7, 4, 70);
 
-    public GuiIntegrationTable(ContainerIntegrationTable container) {
+    public GuiAdvancedCraftingTable(ContainerAdvancedCraftingTable container) {
         super(container);
         xSize = SIZE_X;
         ySize = SIZE_Y;
@@ -40,15 +40,15 @@ public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
                     ).offset(rootElement)
             );
         }
-
-        if(container.tile.recipe != null) {
-            drawItemStackAt(container.tile.recipe.output, rootElement.getX() + 101, rootElement.getY() + 36);
-        }
+//
+//        if(container.tile.recipe != null) {
+//            drawItemStackAt(container.tile.recipe.output, rootElement.getX() + 101, rootElement.getY() + 36);
+//        }
     }
 
     @Override
     protected void drawForegroundLayer() {
-        String title = I18n.format("tile.integrationTableBlock.name");
-        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 10, 0x404040);
+        String title = I18n.format("tile.advancedCraftingTableBlock.name");
+        fontRendererObj.drawString(title, guiLeft + (xSize - fontRendererObj.getStringWidth(title)) / 2, guiTop + 5, 0x404040);
     }
 }
