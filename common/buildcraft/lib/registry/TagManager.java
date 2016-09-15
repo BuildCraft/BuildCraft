@@ -336,12 +336,15 @@ public class TagManager {
         // BC Silicon Item Blocks
         registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
         registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
+        registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock").model("integration_table");
         // BC Silicon Blocks
         registerTag("block.laser").reg("laser").oldReg("laserBlock").locale("laserBlock").model("laser");
         registerTag("block.assembly_table").reg("assembly_table").oldReg("assemblyTableBlock").locale("assemblyTableBlock").model("assembly_table");
+        registerTag("block.integration_table").reg("integration_table").oldReg("integrationTableBlock").locale("integrationTableBlock").model("integration_table");
         // BC Silicon Tiles
         registerTag("tile.laser").reg("laser");
         registerTag("tile.assembly_table").reg("assembly_table");
+        registerTag("tile.integration_table").reg("integration_table");
 
         endBatch(prependTags("silicon:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 

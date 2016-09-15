@@ -9,8 +9,12 @@ package buildcraft.silicon.block;
 import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.silicon.*;
+import buildcraft.silicon.BCSiliconGuis;
+import buildcraft.silicon.TileAdvancedCraftingTable;
+import buildcraft.silicon.TileChargingTable;
+import buildcraft.silicon.TileProgrammingTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.tile.TileIntegrationTable;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -94,7 +98,11 @@ public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTarget
                 BCSiliconGuis.ASSEMBLY_TABLE.openGUI(player, pos);
                 return true;
             case ADVANCED_CRAFTING_TABLE:
+                BCSiliconGuis.ADVANCED_CRAFTING_TABLE.openGUI(player, pos);
+                return true;
             case INTEGRATION_TABLE:
+                BCSiliconGuis.INTEGRATION_TABLE.openGUI(player, pos);
+                return true;
             case CHARGING_TABLE:
             case PROGRAMMING_TABLE:
         }

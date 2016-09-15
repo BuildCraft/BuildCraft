@@ -8,7 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
 public enum BCSiliconGuis {
-    ASSEMBLY_TABLE;
+    ASSEMBLY_TABLE,
+    ADVANCED_CRAFTING_TABLE,
+    INTEGRATION_TABLE;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCSilicon.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);

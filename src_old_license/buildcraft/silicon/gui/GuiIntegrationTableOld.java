@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.silicon.TileIntegrationTable;
 
-public class GuiIntegrationTable extends GuiLaserTable {
+public class GuiIntegrationTableOld extends GuiLaserTable {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/integration_table.png");
     private static final int FLASH_DELAY = 3;
@@ -19,7 +19,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
     private boolean flash;
     private int flashDelay;
 
-    public GuiIntegrationTable(EntityPlayer player, TileIntegrationTable table) {
+    public GuiIntegrationTableOld(EntityPlayer player, TileIntegrationTable table) {
         super(player, new ContainerIntegrationTable(player, table), table, TEXTURE);
         this.integrationTable = table;
         xSize = 176;

@@ -1,12 +1,18 @@
 package buildcraft.silicon;
 
 import buildcraft.api.recipes.AssemblyRecipe;
+import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.silicon.client.render.RenderLaser;
 import buildcraft.silicon.container.ContainerAssemblyTable;
+import buildcraft.silicon.container.ContainerIntegrationTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
+import buildcraft.silicon.gui.GuiIntegrationTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
+import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -38,6 +44,12 @@ public abstract class BCSiliconProxy implements IGuiHandler {
                 return new ContainerAssemblyTable(player, laser);
             }
         }
+        if (ID == BCSiliconGuis.INTEGRATION_TABLE.ordinal()) {
+            if (tile instanceof TileIntegrationTable) {
+                TileIntegrationTable integrationTable = (TileIntegrationTable) tile;
+                return new ContainerIntegrationTable(player, integrationTable);
+            }
+        }
         return null;
     }
 
@@ -49,9 +61,10 @@ public abstract class BCSiliconProxy implements IGuiHandler {
     public void fmlPreInit() {}
 
     public void fmlInit() {
-       AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.APPLE)));
-       AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE)));
-       AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE, 1, 1)));
+        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.APPLE)));
+        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE)));
+        AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000, ImmutableSet.of(new ItemStack(Items.BAKED_POTATO)), new ItemStack(Items.GOLDEN_APPLE, 1, 1)));
+        IntegrationRecipeRegistry.INSTANCE.addRecipe(new IntegrationRecipe(10000000, new ItemStack(Items.BAKED_POTATO), ImmutableList.of(new ItemStack(Items.REDSTONE)), new ItemStack(Items.FIRE_CHARGE)));
     }
 
     public void fmlPostInit() {}
@@ -70,6 +83,12 @@ public abstract class BCSiliconProxy implements IGuiHandler {
                 if (tile instanceof TileAssemblyTable) {
                     TileAssemblyTable laser = (TileAssemblyTable) tile;
                     return new GuiAssemblyTable(new ContainerAssemblyTable(player, laser));
+                }
+            }
+            if (ID == BCSiliconGuis.INTEGRATION_TABLE.ordinal()) {
+                if (tile instanceof TileIntegrationTable) {
+                    TileIntegrationTable integrationTable = (TileIntegrationTable) tile;
+                    return new GuiIntegrationTable(new ContainerIntegrationTable(player, integrationTable));
                 }
             }
             return null;
