@@ -101,9 +101,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune {
         IExtendedBlockState extended = (IExtendedBlockState) state;
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TilePipeHolder) {
-            // TODO: this needs to be a full model key, not just the pipe shape
-            PipeModelKey key = ((TilePipeHolder) tile).getPipe().getModel();
-            extended = extended.withProperty(PROP_MODEL, key);
+            TilePipeHolder holder = (TilePipeHolder) tile;
+            if (holder.getPipe() != null) {
+                // TODO: this needs to be a full model key, not just the pipe shape
+                PipeModelKey key = ((TilePipeHolder) tile).getPipe().getModel();
+                extended = extended.withProperty(PROP_MODEL, key);
+            }
         }
         return extended;
     }

@@ -15,5 +15,5 @@ public interface IPipeHolder {
 
     void scheduleRenderUpdate();
 
-    void scheduleUpdatePacket();
+    void scheduleNetworkUpdate();
 }

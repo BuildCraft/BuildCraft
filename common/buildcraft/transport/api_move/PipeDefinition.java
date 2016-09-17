@@ -1,11 +1,5 @@
 package buildcraft.transport.api_move;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -13,61 +7,35 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
-import buildcraft.lib.misc.data.LoadingException;
 
 public final class PipeDefinition {
-    private static final Map<ResourceLocation, PipeDefinition> definitions = new HashMap<>();
-
-    public final ResourceLocation key;
+    public final ResourceLocation identifier;
     public final IPipeCreator logicConstructor;
     public final IPipeLoader logicLoader;
+    public final PipeFlowType flowType;
     private final String texturePrefix;
     private final String[] textureSuffixes;
 
+    // TODO: this can't be in the API as-is, as this class is in lib!
     @SideOnly(Side.CLIENT)
     private SpriteHolder[] sprites;
 
-    public PipeDefinition(ResourceLocation key, String texturePrefix, String[] textureSuffixes, IPipeCreator logicConstructor, IPipeLoader logicLoader) {
-        this.key = key;
+    public PipeDefinition(ResourceLocation identifier, String texturePrefix, String[] textureSuffixes, IPipeCreator logicConstructor, IPipeLoader logicLoader, PipeFlowType flowType) {
+        this.identifier = identifier;
         this.texturePrefix = texturePrefix;
         this.textureSuffixes = textureSuffixes;
         this.logicConstructor = logicConstructor;
         this.logicLoader = logicLoader;
-    }
-
-    public static void register(PipeDefinition definition) {
-        register(definition.key, definition);
-    }
-
-    public static void register(ResourceLocation key, PipeDefinition definition) {
-        definitions.put(key, definition);
-        BCLog.logger.info("[pipe-reg] Registered a pipe defintion for " + key);
-    }
-
-    @Nullable
-    public static PipeDefinition getDefinition(ResourceLocation identifier) {
-        return definitions.get(identifier);
-    }
-
-    @Nonnull
-    public static PipeDefinition loadDefinition(String identifier) throws LoadingException {
-        PipeDefinition def = getDefinition(new ResourceLocation(identifier));
-        if (def == null) {
-            throw new LoadingException("Unknown pipe defintion " + identifier);
-        }
-        return def;
+        this.flowType = flowType;
     }
 
     @SideOnly(Side.CLIENT)
-    public static void fmlInit() {
-        for (PipeDefinition def : definitions.values()) {
-            def.sprites = new SpriteHolder[def.textureSuffixes.length];
-            for (int i = 0; i < def.textureSuffixes.length; i++) {
-                def.sprites[i] = SpriteHolderRegistry.getHolder(def.texturePrefix + def.textureSuffixes[i]);
-            }
+    public void initSprites() {
+        sprites = new SpriteHolder[textureSuffixes.length];
+        for (int i = 0; i < textureSuffixes.length; i++) {
+            sprites[i] = SpriteHolderRegistry.getHolder(texturePrefix + textureSuffixes[i]);
         }
     }
 

@@ -2,6 +2,9 @@ package buildcraft.transport.tile;
 
 import java.io.IOException;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -9,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -16,6 +20,8 @@ import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.api_move.IPipe;
 import buildcraft.transport.api_move.IPipeHolder;
+import buildcraft.transport.api_move.IPipeItem;
+import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.pipe.Pipe;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable {
@@ -42,10 +48,23 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             try {
                 pipe = new Pipe(this, nbt.getCompoundTag("pipe"));
             } catch (LoadingException e) {
-                // For now, just keep on going. This is a test environment.
+                // For now quit immediately so we can debug the cause
                 throw new Error(e);
             }
         }
+    }
+
+    // Misc
+
+    @Override
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        super.onPlacedBy(placer, stack);
+        Item item = stack.getItem();
+        if (item instanceof IPipeItem) {
+            PipeDefinition definition = ((IPipeItem) item).getDefiniton();
+            this.pipe = new Pipe(this, definition);
+        }
+        scheduleRenderUpdate();
     }
 
     // ITickable
@@ -57,9 +76,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         if (scheduleRenderUpdate) {
             scheduleRenderUpdate = false;
+            scheduleNetworkUpdate = false;
             redrawBlock();
-        }
-        if (scheduleNetworkUpdate) {
+        } else if (scheduleNetworkUpdate) {
             scheduleNetworkUpdate = false;
             sendNetworkUpdate(NET_PIPE_UPDATE);
         }
@@ -93,7 +112,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if (side == Side.SERVER) {
+        if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     pipe = new Pipe(this, buffer);
@@ -108,6 +127,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     if (pipe == null) {
                         throw new IllegalStateException("pipe was null when it shoudn't be!");
                     }
+                    pipe.readPayload(buffer, side, ctx);
                 } else {
                     pipe = null;
                 }
@@ -148,7 +168,19 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
-    public void scheduleUpdatePacket() {
+    public void scheduleNetworkUpdate() {
         scheduleNetworkUpdate = true;
+    }
+
+    // Caps
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        return pipe == null ? false : pipe.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        return pipe == null ? null : pipe.getCapability(capability, facing);
     }
 }

@@ -1,12 +1,17 @@
 package buildcraft.lib.client.sprite;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,6 +44,31 @@ public class SpriteHolderRegistry {
     public static void onTextureStitchPre(TextureMap map) {
         for (SpriteHolder holder : HOLDER_MAP.values()) {
             holder.onTextureStitchPre(map);
+        }
+    }
+
+    public static void onTextureStitchPost() {
+        if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
+            BCLog.logger.info("[lib.sprite.holder] List of registered sprites:");
+            List<ResourceLocation> locations = new ArrayList<>();
+            locations.addAll(HOLDER_MAP.keySet());
+            locations.sort((a, b) -> a.toString().compareTo(b.toString()));
+
+            TextureAtlasSprite missing = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+
+            for (ResourceLocation r : locations) {
+                SpriteHolder sprite = HOLDER_MAP.get(r);
+                TextureAtlasSprite stitched = sprite.sprite;
+                String status = "  ";
+                if (stitched == null) {
+                    status += "(Sprite was registered too late)";
+                } else if (missing.getMinU() == stitched.getMinU() && missing.getMinV() == stitched.getMinV()) {
+                    status += "(Sprite did not exist in a resource pack)";
+                }
+
+                BCLog.logger.info("  - " + r + status);
+            }
+            BCLog.logger.info("[lib.sprite.holder] Total of " + HOLDER_MAP.size() + " sprites");
         }
     }
 

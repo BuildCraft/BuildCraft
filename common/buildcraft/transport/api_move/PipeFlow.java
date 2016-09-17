@@ -7,26 +7,22 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public abstract class PipeBehaviour implements ICapabilityProvider {
+public abstract class PipeFlow implements ICapabilityProvider {
     public final IPipe pipe;
 
-    public PipeBehaviour(IPipe pipe) {
+    public PipeFlow(IPipe pipe) {
         this.pipe = pipe;
     }
 
-    public PipeBehaviour(IPipe pipe, NBTTagCompound nbt) {
+    public PipeFlow(IPipe pipe, NBTTagCompound nbt) {
         this.pipe = pipe;
     }
 
     public NBTTagCompound writeToNbt() {
-        NBTTagCompound nbt = new NBTTagCompound();
-
-        return nbt;
+        return new NBTTagCompound();
     }
 
-    public abstract int getTextureIndex(EnumFacing face);
-
-    public abstract boolean canConnect(EnumFacing face, PipeBehaviour other);
+    public abstract boolean canConnect(EnumFacing face, PipeFlow other);
 
     public abstract boolean canConnect(EnumFacing face, TileEntity oTile);
 

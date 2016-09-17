@@ -197,6 +197,11 @@ public class MutableQuad {
         return diffuseLight(getCalculatedNormal());
     }
 
+    public void setDiffuse(Vector3f normal) {
+        float diffuse = diffuseLight(normal);
+        colourf(diffuse, diffuse, diffuse, 1);
+    }
+
     public void setCalculatedDiffuse() {
         float diffuse = getCalculatedDiffuse();
         colourf(diffuse, diffuse, diffuse, 1);

@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 
@@ -27,13 +29,10 @@ import buildcraft.transport.client.model.key.PipeModelKey;
 public enum ModelPipe implements IBakedModel {
     INSTANCE;
 
-    private static MutableQuad[][][] QUADS;
+    private static final MutableQuad[][][] QUADS;
+    // TODO: Colour
 
     static {
-        genQuads();
-    }
-
-    private static void genQuads() {
         QUADS = new MutableQuad[2][][];
         // not connected
         QUADS[0] = new MutableQuad[6][2];
@@ -43,8 +42,8 @@ public enum ModelPipe implements IBakedModel {
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
             QUADS[0][face.ordinal()][0] = quad;
-            quad.setCalculatedDiffuse();
-            quad.setCalculatedNormal();
+            quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+            quad.setDiffuse(quad.getVertex(0).normal());
             dupDarker(QUADS[0][face.ordinal()]);
         }
 
@@ -89,40 +88,12 @@ public enum ModelPipe implements IBakedModel {
                 if (face.getAxis() == side.getAxis()) continue;
                 MutableQuad quad = BCModelHelper.createFace(face, center, radius, types[i]);
                 quad.rotateTextureUp(uvsRot[side.ordinal()][i]);
-                quad.setCalculatedDiffuse();
-                // quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
-                quad.setCalculatedNormal();
+                quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+                quad.setDiffuse(quad.getVertex(0).normal());
                 QUADS[1][side.ordinal()][i++] = quad;
             }
             dupDarker(QUADS[1][side.ordinal()]);
         }
-    }
-
-    @Override
-    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        if (side != null) {
-            return ImmutableList.of();
-        }
-        List<BakedQuad> quads = new ArrayList<>();
-
-        PipeModelKey key = null;
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState ext = (IExtendedBlockState) state;
-            key = ext.getValue(BlockPipeHolder.PROP_MODEL);
-        }
-        if (key == null) {
-            key = PipeModelKey.DEFAULT_KEY;
-        }
-        genQuads();
-        for (EnumFacing face : EnumFacing.VALUES) {
-            if (key.connected[face.ordinal()]) {
-                addQuads(QUADS[1][face.ordinal()], quads, key.sides[face.ordinal()]);
-            } else {
-                addQuads(QUADS[0][face.ordinal()], quads, key.center);
-            }
-        }
-
-        return quads;
     }
 
     private static void dupDarker(MutableQuad[] quads) {
@@ -145,7 +116,33 @@ public enum ModelPipe implements IBakedModel {
         }
     }
 
-    private static void addQuads(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite) {
+    @Override
+    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        if (side != null) {
+            return ImmutableList.of();
+        }
+        PipeModelKey key = null;
+        if (state instanceof IExtendedBlockState) {
+            IExtendedBlockState ext = (IExtendedBlockState) state;
+            key = ext.getValue(BlockPipeHolder.PROP_MODEL);
+        }
+        if (key == null) {
+            key = PipeModelKey.DEFAULT_KEY;
+        }
+        VertexFormat vf = DefaultVertexFormats.BLOCK;
+        List<BakedQuad> quads = new ArrayList<>();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            if (key.connected[face.ordinal()]) {
+                addQuads(QUADS[1][face.ordinal()], quads, key.sides[face.ordinal()], vf);
+            } else {
+                addQuads(QUADS[0][face.ordinal()], quads, key.center, vf);
+            }
+        }
+
+        return quads;
+    }
+
+    private static void addQuads(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite, VertexFormat vf) {
         for (MutableQuad f : from) {
             if (f == null) {
                 continue;
@@ -155,7 +152,7 @@ public enum ModelPipe implements IBakedModel {
                 Point2f tex = v.tex();
                 v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
             }
-            to.add(copy.toUnpacked(/* DefaultVertexFormats.ITEM */));
+            to.add(copy.toUnpacked(vf));
         }
     }
 
@@ -181,11 +178,11 @@ public enum ModelPipe implements IBakedModel {
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return null;
+        return ItemCameraTransforms.DEFAULT;
     }
 
     @Override
     public ItemOverrideList getOverrides() {
-        return null;
+        return ItemOverrideList.NONE;
     }
 }

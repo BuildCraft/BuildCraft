@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.transport.container.ContainerFilteredBuffer;
 import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.tile.TileFilteredBuffer;
 
 public abstract class BCTransportProxy implements IGuiHandler {
@@ -55,6 +56,11 @@ public abstract class BCTransportProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             TransportSprites.preInit();
+        }
+
+        @Override
+        public void fmlInit() {
+            PipeRegistry.INSTANCE.fmlInit();
         }
 
         @Override
