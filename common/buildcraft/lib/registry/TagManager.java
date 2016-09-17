@@ -333,6 +333,7 @@ public class TagManager {
 
         startBatch();// silicon
         // BC Silicon Items
+        registerTag("item.redstone_chipset").reg("redstone_chipset").locale("redstone_chipset").model("redstone_chipset/");
         // BC Silicon Item Blocks
         registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
         registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
