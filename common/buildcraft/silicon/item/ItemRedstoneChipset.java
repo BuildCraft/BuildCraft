@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ItemRedstoneChipset extends ItemBC_Neptune {
     public ItemRedstoneChipset(String id) {
@@ -47,7 +48,7 @@ public class ItemRedstoneChipset extends ItemBC_Neptune {
 
         @Override
         public String getName() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ROOT);
         }
     }
 }
