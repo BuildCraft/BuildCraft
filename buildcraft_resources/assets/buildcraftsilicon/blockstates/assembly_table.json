@@ -1,12 +1,10 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "buildcraftsilicon:table/assembly.obj"
+        "model": "buildcraftsilicon:table/assembly"
     },
     "variants": {
         "normal": [{}],
-        "inventory": [{
-            "transform": "forge:default-block"
-        }]
+        "inventory": []
     }
 }

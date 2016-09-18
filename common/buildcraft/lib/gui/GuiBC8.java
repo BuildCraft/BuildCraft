@@ -61,9 +61,9 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     protected void drawItemStackAt(ItemStack stack, int x, int y) {
         RenderHelper.enableGUIStandardItemLighting();
-        RenderHelper.disableStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(mc.thePlayer, stack, x, y);
         itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, null);
+        RenderHelper.disableStandardItemLighting();
     }
 
     @Override

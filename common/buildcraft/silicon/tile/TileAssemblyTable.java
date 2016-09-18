@@ -177,7 +177,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
             activateNextRecipe();
         }
 
-        sendNetworkUpdate(NET_RENDER_DATA);
+        sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
     @Override
@@ -209,7 +209,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         super.writePayload(id, buffer, side);
 
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             buffer.writeInt(recipesStates.size());
             recipesStates.forEach((recipe, state) -> {
                 recipe.writeToBuffer(buffer);
@@ -222,7 +222,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             recipesStates.clear();
             int count = buffer.readInt();
             for(int i = 0; i < count; i++) {

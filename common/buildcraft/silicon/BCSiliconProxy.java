@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -112,7 +111,6 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             super.fmlInit();
-            OBJLoader.INSTANCE.addDomain("buildcraftsilicon");
             ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaser());
         }
     }

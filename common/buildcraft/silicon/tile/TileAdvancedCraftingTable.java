@@ -30,7 +30,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase {
             return;
         }
 
-        sendNetworkUpdate(NET_RENDER_DATA);
+        sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
     @Override

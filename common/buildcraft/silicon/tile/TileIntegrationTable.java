@@ -116,7 +116,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
             power -= getTarget();
         }
 
-        sendNetworkUpdate(NET_RENDER_DATA);
+        sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         super.writePayload(id, buffer, side);
 
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             buffer.writeBoolean(recipe != null);
             if(recipe != null) {
                 recipe.writeToBuffer(buffer);
@@ -154,7 +154,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             if(buffer.readBoolean()) {
                 recipe = new IntegrationRecipe(buffer);
             } else {

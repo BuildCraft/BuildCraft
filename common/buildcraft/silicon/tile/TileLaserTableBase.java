@@ -59,7 +59,7 @@ abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILa
     @Override
     public void writePayload(int id, PacketBuffer buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             buffer.writeLong(power);
         }
     }
@@ -67,7 +67,7 @@ abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILa
     @Override
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if(id == NET_RENDER_DATA) {
+        if(id == NET_GUI_DATA) {
             power = buffer.readLong();
         }
     }
