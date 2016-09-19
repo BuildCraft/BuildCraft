@@ -1,4 +1,4 @@
-package buildcraft.core.lib.client.model;
+package buildcraft.lib.client.model;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.config.DetailedConfigOption;
 
 /** Implements a caching system for models with potentially infinite variants. Automatically expires entries after a

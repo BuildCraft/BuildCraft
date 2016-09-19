@@ -1,4 +1,4 @@
-package buildcraft.core.lib.client.model;
+package buildcraft.lib.client.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,8 +6,6 @@ import java.util.List;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-
-import buildcraft.lib.client.model.MutableQuad;
 
 /** An adding {@link IModelCache} that takes a single key and adds all of the sub-keys given by the
  * {@link IModelKeyMultipleSameMapper}

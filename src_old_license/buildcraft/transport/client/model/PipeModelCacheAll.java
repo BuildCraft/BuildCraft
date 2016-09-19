@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 
-import buildcraft.core.lib.client.model.IModelCache;
-import buildcraft.core.lib.client.model.ModelCacheJoiner;
-import buildcraft.core.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
+import buildcraft.lib.client.model.IModelCache;
+import buildcraft.lib.client.model.ModelCacheJoiner;
+import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
