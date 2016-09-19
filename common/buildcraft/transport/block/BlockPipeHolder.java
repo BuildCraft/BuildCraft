@@ -5,9 +5,17 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -17,12 +25,16 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.blocks.ICustomPaintHandler;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
+import buildcraft.transport.api_move.PipeAPI;
+import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.client.model.key.PipeModelKey;
+import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 
-public class BlockPipeHolder extends BlockBCTile_Neptune {
+public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
     public static final IUnlistedProperty<PipeModelKey> PROP_MODEL = new UnlistedNonNullProperty<>("model");
 
     public BlockPipeHolder(Material material, String id) {
@@ -68,6 +80,21 @@ public class BlockPipeHolder extends BlockBCTile_Neptune {
         }
     }
 
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        Pipe pipe = tile == null ? null : tile.getPipe();
+        if (pipe != null) {
+            PipeDefinition def = pipe.getDefinition();
+            Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(def);
+            if (item != null) {
+                int meta = pipe.getColour() == null ? 0 : pipe.getColour().getMetadata() + 1;
+                return new ItemStack(item, 1, meta);
+            }
+        }
+        return null;
+    }
+
     public static TilePipeHolder getPipe(IBlockAccess access, BlockPos pos, boolean requireServer) {
         if (access instanceof World) {
             return getPipe((World) access, pos, requireServer);
@@ -93,6 +120,27 @@ public class BlockPipeHolder extends BlockBCTile_Neptune {
         return null;
     }
 
+    // paint
+
+    @Override
+    public EnumActionResult attemptPaint(World world, BlockPos pos, IBlockState state, Vec3d hitPos, EnumFacing hitSide, EnumDyeColor paintColour) {
+        TilePipeHolder tile = getPipe(world, pos, true);
+        if (tile == null) {
+            return EnumActionResult.PASS;
+        }
+
+        Pipe pipe = tile.getPipe();
+        if (pipe == null) {
+            return EnumActionResult.FAIL;
+        }
+        if (pipe.getColour() == paintColour) {
+            return EnumActionResult.FAIL;
+        } else {
+            pipe.setColour(paintColour);
+            return EnumActionResult.SUCCESS;
+        }
+    }
+
     // rendering
 
     @Override
@@ -114,6 +162,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune {
     @Override
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT /* || layer == BlockRenderLayer.TRANSLUCENT */;
+        return layer == BlockRenderLayer.CUTOUT_MIPPED || layer == BlockRenderLayer.TRANSLUCENT;
     }
 }

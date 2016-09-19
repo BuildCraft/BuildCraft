@@ -43,17 +43,6 @@ public class BCTransportPipes {
         goldPower = builder.idTex("gold_power").flowPower().define();
     }
 
-    private static PipeDefinition defineItem(String post, String texPrefix, IPipeCreator creator, IPipeLoader loader) {
-        return defineItem(post, texPrefix, new String[] { "" }, creator, loader);
-    }
-
-    private static PipeDefinition defineItem(String post, String texPrefix, String[] suffixes, IPipeCreator creator, IPipeLoader loader) {
-        ResourceLocation identifier = new ResourceLocation("buildcrafttransport", post);
-        PipeDefinition def = new PipeDefinition(identifier, "buildcrafttransport:pipes/" + texPrefix, suffixes, creator, loader, PipeAPI.flowItems);
-        PipeRegistry.INSTANCE.registerPipe(def);
-        return def;
-    }
-
     private static class DefinitionBuilder {
         private String identifier;
         private String texturePrefix;

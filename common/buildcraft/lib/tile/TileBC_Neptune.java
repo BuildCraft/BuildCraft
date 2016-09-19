@@ -21,6 +21,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -213,11 +214,16 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     //
     // ##################
 
-    /** Tells MC to redraw this block. Note that (in 1.9) this ALSO sends a description packet. */
+    /** Tells MC to redraw this block. Note that (in 1.10.2) this ALSO sends a description packet. */
     public final void redrawBlock() {
         if (hasWorldObj()) {
             IBlockState state = worldObj.getBlockState(pos);
             worldObj.notifyBlockUpdate(pos, state, state, 0);
+
+            double x = getPos().getX() + 0.5;
+            double y = getPos().getY() + 0.5;
+            double z = getPos().getZ() + 0.5;
+            worldObj.spawnParticle(EnumParticleTypes.HEART, x, y, z, 0, 0, 0);
         }
     }
 
@@ -231,9 +237,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     public final void sendNetworkGuiUpdate(int id) {
         if (hasWorldObj()) {
-            BCLog.logger.info("Sending a GUI update " + id);
             for (EntityPlayer player : usingPlayers) {
-                BCLog.logger.info("   - " + player.getDisplayNameString());
                 sendNetworkUpdate(id, player);
             }
         }
@@ -316,12 +320,32 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        if (worldObj != null) {
+            double x = getPos().getX() + 0.5;
+            double y = getPos().getY() + 0.5;
+            double z = getPos().getZ() + 0.5;
+            double dx = Math.random() - 0.5;
+            double dy = Math.random() - 1;
+            double dz = Math.random() - 0.5;
+            worldObj.spawnParticle(EnumParticleTypes.DAMAGE_INDICATOR, x, y, z, dx, dy, dz);
+        }
     }
 
     @Override
     public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, ctx.side, ctx);
+        if (ctx.side == Side.CLIENT) {
+            if (worldObj != null) {
+                double x = getPos().getX() + 0.5;
+                double y = getPos().getY() + 0.5;
+                double z = getPos().getZ() + 0.5;
+                double dx = Math.random() - 0.5;
+                double dy = Math.random() - 1;
+                double dz = Math.random() - 0.5;
+                worldObj.spawnParticle(EnumParticleTypes.DAMAGE_INDICATOR, x, y, z, dx, dy, dz);
+            }
+        }
         return null;
     }
 

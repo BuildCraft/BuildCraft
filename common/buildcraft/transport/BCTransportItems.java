@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
+import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.item.ItemPipeHolder;
 
 public class BCTransportItems {
@@ -22,16 +23,24 @@ public class BCTransportItems {
     public static void preInit() {
         waterproof = ItemManager.register(new ItemBC_Neptune("item.waterproof"));
 
-        pipeItemWood = ItemManager.register(new ItemPipeHolder(BCTransportPipes.woodItem));
-        pipeItemStone = ItemManager.register(new ItemPipeHolder(BCTransportPipes.stoneItem));
-        pipeItemGold = ItemManager.register(new ItemPipeHolder(BCTransportPipes.goldItem));
+        pipeItemWood = makePipeItem(BCTransportPipes.woodItem);
+        pipeItemStone = makePipeItem(BCTransportPipes.stoneItem);
+        pipeItemGold = makePipeItem(BCTransportPipes.goldItem);
 
-        pipeFluidWood = ItemManager.register(new ItemPipeHolder(BCTransportPipes.woodFluid));
-        pipeFluidStone = ItemManager.register(new ItemPipeHolder(BCTransportPipes.stoneFluid));
-        pipeFluidGold = ItemManager.register(new ItemPipeHolder(BCTransportPipes.goldFluid));
+        pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
+        pipeFluidStone = makePipeItem(BCTransportPipes.stoneFluid);
+        pipeFluidGold = makePipeItem(BCTransportPipes.goldFluid);
 
-        pipePowerWood = ItemManager.register(new ItemPipeHolder(BCTransportPipes.woodPower));
-        pipePowerStone = ItemManager.register(new ItemPipeHolder(BCTransportPipes.stonePower));
-        pipePowerGold = ItemManager.register(new ItemPipeHolder(BCTransportPipes.goldPower));
+        pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
+        pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
+        pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
+    }
+
+    public static ItemPipeHolder makePipeItem(PipeDefinition def) {
+        ItemPipeHolder item = ItemManager.register(new ItemPipeHolder(def));
+        if (item != null) {
+            item.registerWithPipeApi();
+        }
+        return item;
     }
 }

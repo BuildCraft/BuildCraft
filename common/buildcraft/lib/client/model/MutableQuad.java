@@ -1,7 +1,5 @@
 package buildcraft.lib.client.model;
 
-import java.util.Arrays;
-
 import javax.vecmath.*;
 
 import net.minecraft.client.renderer.VertexBuffer;
@@ -12,6 +10,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
@@ -58,6 +58,10 @@ public class MutableQuad {
                 mutableVertex.lighti(lightmap);
             } else if (format == DefaultVertexFormats.ITEM) {
                 int normal = data[stride * v + UNUSED];
+                float nx = 0;
+                float ny = 1;
+                float nz = 0;
+                mutableVertex.normalf(nx, ny, nz);
             }
         }
         return mutable;
@@ -237,13 +241,16 @@ public class MutableQuad {
 
     /* A lot of delegate functions here. The actual documentation should be per-vertex. */
     // @formatter:off
-    /** @see MutableVertex#normalv(Vector3f) */ public MutableQuad normalv(Vector3f vec) {Arrays.stream(verticies).forEach(v -> v.normalv(vec)); return this;}
-    public MutableQuad normalf(float x, float y, float z) {Arrays.stream(verticies).forEach(v -> v.normalf(x, y, z)); return this;}
+    /** @see MutableVertex#normalv(Vector3f) */ public MutableQuad normalv(Vector3f vec) {for (MutableVertex v : verticies) v.normalv(vec); return this;}
+    public MutableQuad normalf(float x, float y, float z) {for (MutableVertex v : verticies) v.normalf(x, y, z); return this;}
 
-    public MutableQuad colourv(Tuple4f vec) {Arrays.stream(verticies).forEach(v -> v.colourv(vec)); return this;};
-    public MutableQuad colourf(float r, float g, float b, float a) {Arrays.stream(verticies).forEach(v -> v.colourf(r,g,b,a)); return this;}
-    public MutableQuad colouri(int rgba) {Arrays.stream(verticies).forEach(v -> v.colouri(rgba)); return this;}
-    public MutableQuad colouri(int r, int g, int b, int a) {Arrays.stream(verticies).forEach(v -> v.colouri(r, g, b, a)); return this;}
+    public MutableQuad colourv(Tuple4f vec) {for (MutableVertex v : verticies) v.colourv(vec); return this;};
+    public MutableQuad colourf(float r, float g, float b, float a) {for (MutableVertex v : verticies) v.colourf(r,g,b,a); return this;}
+    public MutableQuad colouri(int rgba) {for (MutableVertex v : verticies) v.colouri(rgba); return this;}
+    public MutableQuad colouri(int r, int g, int b, int a) {for (MutableVertex v : verticies) v.colouri(r, g, b, a); return this;}
+
+    public MutableQuad multColourd(double by) {for (MutableVertex v : verticies) v.multColourd(by); return this;}
+    public MutableQuad multColourd(double r, double g, double b, double a) {for (MutableVertex v : verticies) v.multColourd(r, g, b, a); return this;}
 
     public MutableQuad lightv(Tuple2f vec) {for (MutableVertex v : verticies) v.lightv(vec); return this;}
     public MutableQuad lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky); return this;}
@@ -251,6 +258,12 @@ public class MutableQuad {
     public MutableQuad lighti(int block, int sky) {for (MutableVertex v : verticies) v.lighti(block, sky); return this;}
 
     public MutableQuad transform(Matrix4f transformation) {for (MutableVertex v : verticies) v.transform(transformation); return this;}
+
+    public MutableQuad translatei(int x, int y, int z) {for (MutableVertex v : verticies) v.translatei(x, y, z); return this;}
+    public MutableQuad translatef(float x, float y, float z) {for (MutableVertex v : verticies) v.translatef(x, y, z); return this;}
+    public MutableQuad translated(double x, double y, double z) {for (MutableVertex v : verticies) v.translated(x, y, z); return this;}
+    public MutableQuad translatevi(Vec3i vec) {for (MutableVertex v : verticies) v.translatevi(vec); return this;}
+    public MutableQuad translatevd(Vec3d vec) {for (MutableVertex v : verticies) v.translatevd(vec); return this;}
     // @formatter:on
 
     @Override

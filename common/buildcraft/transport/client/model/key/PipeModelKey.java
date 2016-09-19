@@ -1,9 +1,11 @@
 package buildcraft.transport.client.model.key;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.EnumDyeColor;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,19 +18,21 @@ public final class PipeModelKey {
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         TextureAtlasSprite[] sides = { sprite, sprite, sprite, sprite, sprite, sprite };
         boolean[] connected = { true, true, false, false, false, false };
-        DEFAULT_KEY = new PipeModelKey(sprite, sides, connected);
+        DEFAULT_KEY = new PipeModelKey(sprite, sides, connected, null);
     }
 
     public final TextureAtlasSprite center;
     public final TextureAtlasSprite[] sides;
     public final boolean[] connected;
+    public final EnumDyeColor colour;
     private final int hash;
 
-    public PipeModelKey(TextureAtlasSprite center, TextureAtlasSprite[] sides, boolean[] connected) {
+    public PipeModelKey(TextureAtlasSprite center, TextureAtlasSprite[] sides, boolean[] connected, EnumDyeColor colour) {
         this.center = center;
         this.sides = sides;
         this.connected = connected;
-        hash = Arrays.hashCode(new int[] { System.identityHashCode(center), Arrays.hashCode(sides), Arrays.hashCode(connected) });
+        this.colour = colour;
+        hash = Arrays.hashCode(new int[] { System.identityHashCode(center), Arrays.hashCode(sides), Arrays.hashCode(connected), Objects.hashCode(colour) });
     }
 
     @Override
@@ -42,7 +46,7 @@ public final class PipeModelKey {
         if (obj == null) return false;
         if (obj instanceof PipeModelKey) {
             PipeModelKey other = (PipeModelKey) obj;
-            return center == other.center && eq(sides, other.sides) && Arrays.equals(connected, other.connected);
+            return center == other.center && colour == other.colour && eq(sides, other.sides) && Arrays.equals(connected, other.connected);
         } else {
             return false;
         }

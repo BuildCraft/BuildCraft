@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 import buildcraft.api.core.BCLog;
 
@@ -261,6 +263,35 @@ public class MutableVertex {
         matrix.transform(point);
         positionv(point);
         return this;
+    }
+
+    public MutableVertex translatei(int x, int y, int z) {
+        position[0] += x;
+        position[1] += y;
+        position[2] += z;
+        return this;
+    }
+
+    public MutableVertex translatef(float x, float y, float z) {
+        position[0] += x;
+        position[1] += y;
+        position[2] += z;
+        return this;
+    }
+
+    public MutableVertex translated(double x, double y, double z) {
+        position[0] += x;
+        position[1] += y;
+        position[2] += z;
+        return this;
+    }
+
+    public MutableVertex translatevi(Vec3i vec) {
+        return translatei(vec.getX(), vec.getY(), vec.getZ());
+    }
+
+    public MutableVertex translatevd(Vec3d vec) {
+        return translated(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
     @Override

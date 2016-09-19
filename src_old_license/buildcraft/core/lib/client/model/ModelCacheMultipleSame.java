@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
@@ -45,20 +42,8 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     }
 
     @Override
-    public ImmutableList<BakedQuad> bake(K key, VertexFormat format) {
+    public List<BakedQuad> bake(K key, VertexFormat format) {
         return mainCache.bake(key, format);
-    }
-
-    @Override
-    public void render(K key, VertexBuffer vb) {
-        mainCache.render(key, vb);
-    }
-
-    @Override
-    public void renderDisplayList(K key) {
-        for (T to : mapper.map(key)) {
-            seperateCache.renderDisplayList(to);
-        }
     }
 
     public interface IModelKeyMultipleSameMapper<F, T> {

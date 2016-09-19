@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 
@@ -35,20 +34,8 @@ public class ModelCacheJoiner<K> implements IModelCache<K> {
     }
 
     @Override
-    public ImmutableList<BakedQuad> bake(K key, VertexFormat format) {
+    public List<BakedQuad> bake(K key, VertexFormat format) {
         return mainCache.bake(key, format);
-    }
-
-    @Override
-    public void render(K key, VertexBuffer vb) {
-        mainCache.render(key, vb);
-    }
-
-    @Override
-    public void renderDisplayList(K key) {
-        for (ModelKeyWrapper<K, ?> wrapper : modelKeyWrappers) {
-            wrapper.renderDisplayList(key);
-        }
     }
 
     public static class ModelKeyWrapper<K, T> {
@@ -67,10 +54,6 @@ public class ModelCacheJoiner<K> implements IModelCache<K> {
 
         public void appendQuads(K key, List<MutableQuad> quads) {
             cache.appendAsMutable(mapper.getInternKey(key), quads);
-        }
-
-        public void renderDisplayList(K key) {
-            cache.renderDisplayList(mapper.getInternKey(key));
         }
     }
 

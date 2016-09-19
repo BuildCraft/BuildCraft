@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -27,9 +28,12 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.api_move.IPipeItem;
 import buildcraft.transport.api_move.PipeDefinition;
 
@@ -38,25 +42,43 @@ public enum ModelPipeItem implements IBakedModel {
 
     private static final MutableQuad[] QUADS_SAME;
     // private static final MutableQuad[][] QUADS_DIFFERENT;
-    // private static final MutableQuad[] QUADS_COLOUR;
+    private static final MutableQuad[] QUADS_COLOUR;
 
     static {
         // Same sprite for all 3 sections
-        QUADS_SAME = new MutableQuad[6];
-        Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
-        Tuple3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
-        float[] uvsY = { 4 / 16f, 12 / 16f, 4 / 16f, 12 / 16f };
-        float[] uvsXZ = { 4 / 16f, 12 / 16f, 0, 1 };
-        for (EnumFacing face : EnumFacing.VALUES) {
-            float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
-            MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
-            quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
-            quad.setDiffuse(quad.getVertex(0).normal());
-            QUADS_SAME[face.ordinal()] = quad;
+        {
+            QUADS_SAME = new MutableQuad[6];
+            Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
+            Tuple3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
+            float[] uvsY = { 4 / 16f, 12 / 16f, 4 / 16f, 12 / 16f };
+            float[] uvsXZ = { 4 / 16f, 12 / 16f, 0, 1 };
+            for (EnumFacing face : EnumFacing.VALUES) {
+                float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+                quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+                QUADS_SAME[face.ordinal()] = quad;
+            }
         }
 
         // Different sprite for any of the 3 sections
-        // QUADS[0] = new MutableQuad[14];
+        {
+            // QUADS_DIFFERENT = new MutableQuad[3];
+        }
+
+        // Coloured pipes
+        {
+            QUADS_COLOUR = new MutableQuad[6];
+            Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
+            Tuple3f radius = new Vector3f(0.24f, 0.49f, 0.24f);
+            float[] uvsY = { 4 / 16f, 12 / 16f, 4 / 16f, 12 / 16f };
+            float[] uvsXZ = { 4 / 16f, 12 / 16f, 0, 1 };
+            for (EnumFacing face : EnumFacing.VALUES) {
+                float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+                quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+                QUADS_COLOUR[face.ordinal()] = quad;
+            }
+        }
     }
 
     @Override
@@ -77,8 +99,11 @@ public enum ModelPipeItem implements IBakedModel {
         // TODO: Differing sprite quads
         // }
 
-        if (colour >= 0 && colour < 16) {
-            // TODO: colours!
+        if (colour > 0 && colour <= 16) {
+            EnumDyeColor rColour = EnumDyeColor.byMetadata(colour - 1);
+            int rgb = 0xFF_00_00_00 | ColorUtils.convertBGRAtoRGBA(ColourUtil.getLightHex(rColour));
+            TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
+            addQuadsColoured(QUADS_COLOUR, quads, sprite, rgb, vf);
         }
 
         return quads;
@@ -93,6 +118,22 @@ public enum ModelPipeItem implements IBakedModel {
             for (MutableVertex v : copy.verticies()) {
                 Point2f tex = v.tex();
                 v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
+            }
+            to.add(copy.toUnpacked(vf));
+        }
+    }
+
+    private static void addQuadsColoured(MutableQuad[] from, List<BakedQuad> to, TextureAtlasSprite sprite, int colour, VertexFormat vf) {
+        for (MutableQuad f : from) {
+            if (f == null) {
+                continue;
+            }
+            MutableQuad copy = new MutableQuad(f);
+            // copy.setTint(colour);
+            for (MutableVertex v : copy.verticies()) {
+                Point2f tex = v.tex();
+                v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
+                v.colouri(colour);
             }
             to.add(copy.toUnpacked(vf));
         }

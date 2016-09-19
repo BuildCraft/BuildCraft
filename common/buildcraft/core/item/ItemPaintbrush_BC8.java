@@ -6,8 +6,6 @@ package buildcraft.core.item;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,7 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.CustomPaintHelper;
 import buildcraft.lib.item.ItemBC_Neptune;
+import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.ParticleUtil;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -86,10 +84,9 @@ public class ItemPaintbrush_BC8 extends ItemBC_Neptune {
         Brush brush = getBrushFromStack(stack);
         String colourComponent = "";
         if (brush.colour != null) {
-            String colourLocale = I18n.translateToLocal(brush.colour.getUnlocalizedName());
-            colourComponent = " - " + StringUtils.capitalize(colourLocale);
+            colourComponent = ColourUtil.getTextFullTooltip(brush.colour) + " ";
         }
-        return super.getItemStackDisplayName(stack) + colourComponent;
+        return colourComponent + super.getItemStackDisplayName(stack);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class BCModelHelper {
 
     public static MutableQuad createFace(EnumFacing face, Tuple3f center, Tuple3f radius, float[] uvs) {
         Point3f[] points = BCModelHelper.getPointsForFace(face, center, radius);
-        return createFace(face, points, uvs);
+        return createFace(face, points, uvs).normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
     }
 
     public static MutableQuad createInverseFace(EnumFacing face, Tuple3f center, Tuple3f radius, float[] uvs) {

@@ -11,10 +11,14 @@ import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
+/** Provides a simple way of rendering an item model with just a list of quads. This provides some transforms to use
+ * that make it simple to render as a block, item (todo) or tool (todo) */
 @SuppressWarnings("deprecation")
 public class ModelItemSimple implements IBakedModel {
     public static final ItemCameraTransforms TRANSFORM_DEAFULT = ItemCameraTransforms.DEFAULT;
     public static final ItemCameraTransforms TRANSFORM_BLOCK;
+    // TODO: TRANSFORM_ITEM
+    // TODO: TRANSFORM_TOOL
 
     static {
         // Values taken from "minecraft:models/block/block.json"

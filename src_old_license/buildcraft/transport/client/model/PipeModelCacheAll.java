@@ -3,11 +3,10 @@ package buildcraft.transport.client.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 
 import buildcraft.core.lib.client.model.IModelCache;
 import buildcraft.core.lib.client.model.ModelCacheJoiner;
@@ -35,12 +34,12 @@ public class PipeModelCacheAll {
         cacheTranslucent = new ModelCacheJoiner<>("pipe.all.transclucent", translucent);
     }
 
-    public static ImmutableList<BakedQuad> getCutoutModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
+    public static List<BakedQuad> getCutoutModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
         PipeAllCutoutKey key = new PipeAllCutoutKey(pipe, render, pluggable);
         return cacheCutout.bake(key, DefaultVertexFormats.BLOCK);
     }
 
-    public static ImmutableList<BakedQuad> getTranslucentModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
+    public static List<BakedQuad> getTranslucentModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
         PipeAllTranslucentKey key = new PipeAllTranslucentKey(pipe, render, pluggable);
         return cacheTranslucent.bake(key, DefaultVertexFormats.BLOCK);
     }
@@ -52,7 +51,7 @@ public class PipeModelCacheAll {
 
         public PipeAllCutoutKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
             cutout = new PipeBaseCutoutKey(pipe, render);
-            this.pluggable = new PluggableKey(EnumWorldBlockLayer.CUTOUT, pluggable);
+            this.pluggable = new PluggableKey(BlockRenderLayer.CUTOUT, pluggable);
             hash = Objects.hash(cutout, pluggable);
         }
 
@@ -93,7 +92,7 @@ public class PipeModelCacheAll {
 
         public PipeAllTranslucentKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
             translucent = new PipeBaseTransclucentKey(render);
-            this.pluggable = new PluggableKey(EnumWorldBlockLayer.TRANSLUCENT, pluggable);
+            this.pluggable = new PluggableKey(BlockRenderLayer.TRANSLUCENT, pluggable);
             hash = Objects.hash(translucent, pluggable);
         }
 

@@ -1,35 +1,29 @@
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import javax.vecmath.*;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.IModelCache;
 import buildcraft.core.lib.client.model.ModelCache;
-import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.config.DetailedConfigOption;
-import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
-
-import javax.vecmath.Tuple3f;
+import buildcraft.transport.client.model.key.PipeModelKey;
 
 public class PipeModelCacheBase {
     private static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
@@ -37,139 +31,175 @@ public class PipeModelCacheBase {
     static final IModelCache<PipeBaseCutoutKey> cacheCutout;
     static final IModelCache<PipeBaseTransclucentKey> cacheTranslucent;
 
+    private static final MutableQuad[][][] QUADS;
+    private static final MutableQuad[][][] QUADS_COLOURED;
+
     static {
         cacheCutout = new ModelCache<>("pipe.base.cutout", PipeModelCacheBase::generateCutout);
         cacheTranslucent = new ModelCache<>("pipe.base.transclucent", PipeModelCacheBase::generateTranslucent);
+
+        QUADS = new MutableQuad[2][][];
+        QUADS_COLOURED = new MutableQuad[2][][];
+        final double colourOffset = 0.01;
+        Vec3d[] faceOffset = new Vec3d[6];
+        for (EnumFacing face : EnumFacing.VALUES) {
+            faceOffset[face.ordinal()] = new Vec3d(face.getOpposite().getDirectionVec()).scale(colourOffset);
+        }
+
+        // not connected
+        QUADS[0] = new MutableQuad[6][2];
+        QUADS_COLOURED[0] = new MutableQuad[6][2];
+        Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
+        Tuple3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
+        float[] uvs = { 4 / 16f, 12 / 16f, 4 / 16f, 12 / 16f };
+        for (EnumFacing face : EnumFacing.VALUES) {
+            MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+            quad.setDiffuse(quad.getVertex(0).normal());
+            QUADS[0][face.ordinal()][0] = quad;
+            dupDarker(QUADS[0][face.ordinal()]);
+
+            MutableQuad[] colQuads = BCModelHelper.createDoubleFace(face, center, radius, uvs);
+            for (MutableQuad q : colQuads) {
+                q.translatevd(faceOffset[face.ordinal()]);
+            }
+            QUADS_COLOURED[0][face.ordinal()] = colQuads;
+        }
+
+        int[][] uvsRot = {//
+            { 2, 0, 3, 3 },//
+            { 0, 2, 1, 1 },//
+            { 2, 0, 0, 2 },//
+            { 0, 2, 2, 0 },//
+            { 3, 3, 0, 2 },//
+            { 1, 1, 2, 0 } //
+        };
+
+        float[][] types = {//
+            { 4, 12, 0, 4 },//
+            { 4, 12, 12, 16 },//
+            { 0, 4, 4, 12 },//
+            { 12, 16, 4, 12 } //
+        };
+
+        for (float[] f2 : types) {
+            for (int i = 0; i < f2.length; i++) {
+                f2[i] /= 16f;
+            }
+        }
+        // connected
+        QUADS[1] = new MutableQuad[6][8];
+        QUADS_COLOURED[1] = new MutableQuad[6][8];
+        for (EnumFacing side : EnumFacing.VALUES) {
+            center = new Point3f(//
+                    side.getFrontOffsetX() * 0.375f,//
+                    side.getFrontOffsetY() * 0.375f,//
+                    side.getFrontOffsetZ() * 0.375f //
+            );
+            radius = new Vector3f(//
+                    side.getAxis() == Axis.X ? 0.125f : 0.25f,//
+                    side.getAxis() == Axis.Y ? 0.125f : 0.25f,//
+                    side.getAxis() == Axis.Z ? 0.125f : 0.25f //
+            );//
+            center.add(new Point3f(0.5f, 0.5f, 0.5f));
+
+            int i = 0;
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (face.getAxis() == side.getAxis()) continue;
+                MutableQuad quad = BCModelHelper.createFace(face, center, radius, types[i]);
+                quad.rotateTextureUp(uvsRot[side.ordinal()][i]);
+
+                MutableQuad col = new MutableQuad(quad);
+
+                quad.setDiffuse(quad.getVertex(0).normal());
+                QUADS[1][side.ordinal()][i] = quad;
+
+                col.translatevd(faceOffset[face.ordinal()]);
+                QUADS_COLOURED[1][side.ordinal()][i++] = col;
+            }
+            dupDarker(QUADS[1][side.ordinal()]);
+            dupInverted(QUADS_COLOURED[1][side.ordinal()]);
+        }
+    }
+
+    private static void dupDarker(MutableQuad[] quads) {
+        int halfLength = quads.length / 2;
+        for (int i = 0; i < halfLength; i++) {
+            int n = i + halfLength;
+            MutableQuad from = quads[i];
+            if (from != null) {
+                MutableQuad to = new MutableQuad(from);
+                to.invertNormal();
+                to.setCalculatedDiffuse();
+                for (MutableVertex v : to.verticies()) {
+                    Point4f colour = v.colourv();
+                    colour.scale(OPTION_INSIDE_COLOUR_MULT.getAsFloat());
+                    colour.w = 1;
+                    v.colourv(colour);
+                }
+                quads[n] = to;
+            }
+        }
+    }
+
+    private static void dupInverted(MutableQuad[] quads) {
+        int halfLength = quads.length / 2;
+        for (int i = 0; i < halfLength; i++) {
+            int n = i + halfLength;
+            MutableQuad from = quads[i];
+            if (from != null) {
+                MutableQuad to = new MutableQuad(from);
+                to.invertNormal();
+                quads[n] = to;
+            }
+        }
     }
 
     private static List<MutableQuad> generateCutout(PipeBaseCutoutKey key) {
-        TextureAtlasSprite center = key.center;
-        float min = CoreConstants.PIPE_MIN_POS;
-        float max = CoreConstants.PIPE_MAX_POS;
-
-        float minUV = min * 16;
-        float maxUV = max * 16;
-
-        float[] centerUV = new float[4];
-        centerUV[BCModelHelper.U_MIN] = center.getInterpolatedU(minUV);
-        centerUV[BCModelHelper.U_MAX] = center.getInterpolatedU(maxUV);
-        centerUV[BCModelHelper.V_MIN] = center.getInterpolatedV(minUV);
-        centerUV[BCModelHelper.V_MAX] = center.getInterpolatedV(maxUV);
-
-        List<MutableQuad> mutable = new ArrayList<>();
-        List<MutableQuad> mutableIn = new ArrayList<>();
+        List<MutableQuad> quads = new ArrayList<>();
 
         for (EnumFacing face : EnumFacing.values()) {
             float size = key.connections[face.ordinal()];
-            if (size <= 0) {
-                renderPipeCenterFace(centerUV, face, false, mutable, mutableIn);
+            if (size > 0) {
+                addQuads(QUADS[1][face.ordinal()], quads, key.sides[face.ordinal()]);
             } else {
-                renderPipeConnection(size, face, key.sides[face.ordinal()], false, mutable, mutableIn);
+                addQuads(QUADS[0][face.ordinal()], quads, key.center);
             }
         }
-
-        float mult = OPTION_INSIDE_COLOUR_MULT.getAsFloatCapped(0, 1);
-
-        for (MutableQuad q : mutableIn) {
-            q.colourf(mult, mult, mult, 1);
-            mutable.add(q);
-        }
-
-        return mutable;
+        return quads;
     }
 
     private static List<MutableQuad> generateTranslucent(PipeBaseTransclucentKey key) {
         if (!key.shouldRender()) return ImmutableList.of();
-        TextureAtlasSprite sprite = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
-        float min = CoreConstants.PIPE_MIN_POS;
-        float max = CoreConstants.PIPE_MAX_POS;
-
-        float minUV = min * 16;
-        float maxUV = max * 16;
-
-        float[] centerUV = new float[4];
-        centerUV[BCModelHelper.U_MIN] = sprite.getInterpolatedU(minUV);
-        centerUV[BCModelHelper.U_MAX] = sprite.getInterpolatedU(maxUV);
-        centerUV[BCModelHelper.V_MIN] = sprite.getInterpolatedV(minUV);
-        centerUV[BCModelHelper.V_MAX] = sprite.getInterpolatedV(maxUV);
-
-        List<MutableQuad> mutable = new ArrayList<>();
-        List<MutableQuad> mutableIn = new ArrayList<>();
+        List<MutableQuad> quads = new ArrayList<>();
+        TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
 
         for (EnumFacing face : EnumFacing.values()) {
             float size = key.connections[face.ordinal()];
-            if (size <= 0) {
-                renderPipeCenterFace(centerUV, face, true, mutable, mutableIn);
+            if (size > 0) {
+                addQuads(QUADS_COLOURED[1][face.ordinal()], quads, sprite);
             } else {
-                renderPipeConnection(size, face, sprite, true, mutable, mutableIn);
+                addQuads(QUADS_COLOURED[0][face.ordinal()], quads, sprite);
             }
         }
-        float mult = OPTION_INSIDE_COLOUR_MULT.getAsFloatCapped(0, 1);
-        for (MutableQuad q : mutableIn) {
-            q.colourf(mult, mult, mult, 1);
-            mutable.add(q);
+        int colour = 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(key.colour));
+        for (MutableQuad q : quads) {
+            q.colouri(colour);
         }
-        int colour = ColorUtils.getRGBColor(key.colour);
-        for (MutableQuad q : mutable) {
-            q.setTint(colour);
-        }
-        return mutable;
+        return quads;
     }
 
-    private static void renderPipeCenterFace(float[] uvs, EnumFacing face, boolean smaller, List<MutableQuad> mutable, List<MutableQuad> mutableIn) {
-        Vec3d radius = Utils.vec3(0.25);
-        if (smaller) {
-            double smallerValue = VecUtil.getValue(radius, face.getAxis()) - 0.01f;
-            radius = VecUtil.replaceValue(radius, face.getAxis(), smallerValue);
+    private static void addQuads(MutableQuad[] from, List<MutableQuad> to, TextureAtlasSprite sprite) {
+        for (MutableQuad f : from) {
+            if (f == null) {
+                continue;
+            }
+            MutableQuad copy = new MutableQuad(f);
+            for (MutableVertex v : copy.verticies()) {
+                Point2f tex = v.tex();
+                v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
+            }
+            to.add(copy);
         }
-
-        Tuple3f center = Utils.vec3f(0.5f);
-        Tuple3f radiusf = Utils.convertFloat(radius);
-
-        BCModelHelper.appendQuads(mutable, BCModelHelper.createFace(face, center, radiusf, uvs));
-        BCModelHelper.appendQuads(mutableIn, BCModelHelper.createInverseFace(face, center, radiusf, uvs).setFace(face.getOpposite()));
-    }
-
-    private static void renderPipeConnection(float extension, EnumFacing face, TextureAtlasSprite sprite, boolean smaller, List<MutableQuad> mutable,
-            List<MutableQuad> mutableIn) {
-        Vec3d actualCenter = Utils.convert(face, 0.25 + extension / 2).add(Utils.VEC_HALF);
-
-        EnumFacing positive = Utils.convertPositive(face);
-
-        Vec3d actualSize = Utils.convert(positive, extension);
-        actualSize = actualSize.add(Utils.convertExcept(positive, 0.5));
-
-        if (smaller) {
-            // Decrease the entire size
-            Vec3d allSmaller = actualSize.subtract(Utils.vec3(0.02));
-            // Increase the size of axis the connection is in.
-            actualSize = allSmaller.add(Utils.convert(positive, 0.02));
-        }
-
-        Vec3d pos = actualCenter.subtract(Utils.multiply(actualSize, 1 / 2d));
-
-        EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
-        cuboid.texture = sprite;
-        cuboid.makeClient();
-
-        double start = face.getAxisDirection() == AxisDirection.POSITIVE ? 12 : 0;
-
-        cuboid.textureStartX = face.getAxis() == Axis.X ? start : 4;
-        cuboid.textureStartY = face.getAxis() == Axis.Y ? start : 4;
-        cuboid.textureStartZ = face.getAxis() == Axis.Z ? start : 4;
-
-        cuboid.textureSizeX = face.getAxis() == Axis.X ? 4 : 8;
-        cuboid.textureSizeY = face.getAxis() == Axis.Y ? 4 : 8;
-        cuboid.textureSizeZ = face.getAxis() == Axis.Z ? 4 : 8;
-
-        cuboid.textures[face.ordinal()] = null;
-        cuboid.textures[face.getOpposite().ordinal()] = null;
-
-        cuboid.setSize(actualSize);
-        cuboid.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-
-        RenderResizableCuboid.bakeCube(mutable, cuboid, true, false);
-        RenderResizableCuboid.bakeCube(mutableIn, cuboid, false, true);
     }
 
     private static float[] computeConnections(PipeRenderState state) {
@@ -194,6 +224,20 @@ public class PipeModelCacheBase {
         public final TextureAtlasSprite[] sides;
         public final float[] connections;
         private final int hashCode;
+
+        public PipeBaseCutoutKey(PipeModelKey key) {
+            center = key.center;
+            sides = key.sides;
+            connections = new float[] {//
+                key.connected[0] ? 1 : 0,//
+                key.connected[1] ? 1 : 0,//
+                key.connected[2] ? 1 : 0,//
+                key.connected[3] ? 1 : 0,//
+                key.connected[4] ? 1 : 0,//
+                key.connected[5] ? 1 : 0,//
+            };
+            hashCode = Objects.hash(center, Arrays.hashCode(sides), Arrays.hashCode(connections));
+        }
 
         public PipeBaseCutoutKey(Pipe<?> pipe, PipeRenderState render) {
             this(render, getSprites(pipe, render));
@@ -237,8 +281,7 @@ public class PipeModelCacheBase {
 
         @Override
         public String toString() {
-            return "PipeBaseCutoutKey [center=" + center.getIconName() + ", sides=" + sidesToString() + ", connections=" + Arrays.toString(
-                    connections) + "]";
+            return "PipeBaseCutoutKey [center=" + center.getIconName() + ", sides=" + sidesToString() + ", connections=" + Arrays.toString(connections) + "]";
         }
 
         private String sidesToString() {
@@ -257,26 +300,30 @@ public class PipeModelCacheBase {
     }
 
     public static final class PipeBaseTransclucentKey {
-        public final byte colour;
+        public final EnumDyeColor colour;
         public final float[] connections;
         private final int hashCode;
 
-        public PipeBaseTransclucentKey(PipeRenderState render) {
-            this.colour = render.getGlassColor();
-            if (shouldRender()) {
-                connections = computeConnections(render);
-                hashCode = Objects.hash(colour, Arrays.hashCode(connections));
-            } else {
-                /* If we don't have any translucency then set our hash code to 0. We don't care what the other variables
-                 * are, we will never render anything */
-                hashCode = 0;
-                // Will never be used
+        public PipeBaseTransclucentKey(PipeModelKey key) {
+            this.colour = key.colour;
+            if (colour == null) {
                 connections = null;
+                hashCode = 0;
+            } else {
+                connections = new float[] {//
+                    key.connected[0] ? 1 : 0,//
+                    key.connected[1] ? 1 : 0,//
+                    key.connected[2] ? 1 : 0,//
+                    key.connected[3] ? 1 : 0,//
+                    key.connected[4] ? 1 : 0,//
+                    key.connected[5] ? 1 : 0,//
+                };
+                hashCode = Objects.hash(colour, Arrays.hashCode(connections));
             }
         }
 
         public boolean shouldRender() {
-            return colour >= 0 && colour < 16;
+            return colour != null;
         }
 
         @Override

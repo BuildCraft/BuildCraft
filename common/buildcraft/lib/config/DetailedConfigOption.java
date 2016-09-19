@@ -33,7 +33,9 @@ public class DetailedConfigOption {
     }
 
     public static void reloadAll() {
-        allRegistered.forEach(r -> r.reload());
+        for (DetailedConfigOption dco : allRegistered) {
+            dco.reload();
+        }
     }
 
     @Override

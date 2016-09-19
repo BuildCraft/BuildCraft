@@ -3,6 +3,7 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Set;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
@@ -73,16 +74,15 @@ public final class Pipe implements IPipe {
         }
         this.behaviour = definition.logicConstructor.createBehaviour(this);
         this.flow = definition.flowType.creator.createFlow(this);
-        this.colour = NetworkUtils.readEnum(buffer, EnumDyeColor.class);
     }
 
     public void writeCreationPayload(PacketBuffer buffer) {
         buffer.writeString(definition.identifier.toString());
-        NetworkUtils.writeEnum(buffer, colour);
     }
 
     public void writePayload(PacketBuffer buffer, Side side) {
         if (side == Side.SERVER) {
+            NetworkUtils.writeEnum(buffer, colour);
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (connected.contains(face) && textures.get(face) != null) {
                     buffer.writeBoolean(true);
@@ -107,6 +107,8 @@ public final class Pipe implements IPipe {
             connected.clear();
             textures.clear();
             types.clear();
+
+            this.colour = NetworkUtils.readEnum(buffer, EnumDyeColor.class);
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (buffer.readBoolean()) {
@@ -157,6 +159,7 @@ public final class Pipe implements IPipe {
     @Override
     public void setColour(EnumDyeColor colour) {
         this.colour = colour;
+        markForUpdate();
     }
 
     // Caps
@@ -183,6 +186,8 @@ public final class Pipe implements IPipe {
         behaviour.onTick();
         if (updateMarked) {
             updateMarked = false;
+
+            Set<EnumFacing> old = EnumSet.copyOf(connected);
 
             connected.clear();
             types.clear();
@@ -211,6 +216,19 @@ public final class Pipe implements IPipe {
                     textures.put(facing, behaviour.getTextureIndex(facing));
                 }
             }
+            if (!old.equals(connected)) {
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    boolean o = old.contains(face);
+                    boolean n = connected.contains(face);
+                    if (o != n) {
+                        IPipe oPipe = getHolder().getNeighbouringPipe(face);
+                        if (oPipe != null) {
+                            oPipe.markForUpdate();
+                        }
+                    }
+                }
+            }
+
             getHolder().scheduleNetworkUpdate();
         }
     }
@@ -233,6 +251,7 @@ public final class Pipe implements IPipe {
         return one.canConnect(to, two) && two.canConnect(to.getOpposite(), one);
     }
 
+    @Override
     public void markForUpdate() {
         updateMarked = true;
     }
@@ -250,7 +269,7 @@ public final class Pipe implements IPipe {
             sides[i] = getDefinition().getSprite(behaviour.getTextureIndex(face));
             mc[i] = connected.contains(face);
         }
-        return new PipeModelKey(center, sides, mc);
+        return new PipeModelKey(center, sides, mc, colour);
     }
 
     @Override

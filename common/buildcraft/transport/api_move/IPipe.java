@@ -19,6 +19,8 @@ public interface IPipe extends ICapabilityProvider {
 
     void setColour(EnumDyeColor colour);
 
+    void markForUpdate();
+
     TileEntity getConnectedTile(EnumFacing side);
 
     IPipe getConnectedPipe(EnumFacing side);
@@ -29,4 +31,5 @@ public interface IPipe extends ICapabilityProvider {
         TILE,
         PIPE;
     }
+
 }

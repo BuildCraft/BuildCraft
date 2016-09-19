@@ -55,7 +55,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
     public static class ClientProxy extends BCTransportProxy {
         @Override
         public void fmlPreInit() {
-            TransportSprites.preInit();
+            BCTransportSprites.preInit();
         }
 
         @Override

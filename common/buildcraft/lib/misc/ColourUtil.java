@@ -3,6 +3,8 @@ package buildcraft.lib.misc;
 import java.util.Arrays;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 
 public class ColourUtil {
     private static final String[] NAMES = { //
@@ -24,6 +26,12 @@ public class ColourUtil {
         0x66AAFF, 0xD943C6, 0xEA7835, 0xe4e4e4 //
     };
     private static final String[] DYES = new String[16];
+    private static final TextFormatting[] FORMAT = { //
+        TextFormatting.BLACK, TextFormatting.RED, TextFormatting.DARK_GREEN, TextFormatting.GOLD,//
+        TextFormatting.BLUE, TextFormatting.DARK_PURPLE, TextFormatting.DARK_AQUA, TextFormatting.GRAY,//
+        TextFormatting.DARK_GRAY, TextFormatting.LIGHT_PURPLE, TextFormatting.GREEN, TextFormatting.YELLOW,//
+        TextFormatting.AQUA, TextFormatting.DARK_PURPLE, TextFormatting.GOLD, TextFormatting.WHITE,//
+    };
 
     static {
         for (int i = 0; i < 16; i++) {
@@ -49,5 +57,34 @@ public class ColourUtil {
 
     public static String[] getNameArray() {
         return Arrays.copyOf(NAMES, NAMES.length);
+    }
+
+    public static String getLocalized(EnumDyeColor colour) {
+        return I18n.translateToLocal("item.fireworksCharge." + colour.getUnlocalizedName());
+    }
+
+    public static String getTextFullTooltip(EnumDyeColor colour) {
+        return getTextFormatTooltip(colour) + getLocalized(colour) + TextFormatting.RESET;
+    }
+
+    public static String getTextFull(EnumDyeColor colour) {
+        return getTextFormat(colour) + getLocalized(colour) + TextFormatting.RESET;
+    }
+
+    public static TextFormatting getTextFormatTooltip(EnumDyeColor colour) {
+        if (colour == EnumDyeColor.BLACK) colour = EnumDyeColor.GRAY;
+        return getTextFormat(colour);
+    }
+
+    public static TextFormatting getTextFormat(EnumDyeColor colour) {
+        return FORMAT[colour.getDyeDamage()];
+    }
+
+    public static int swapArgbToAbgr(int argb) {
+        int a = (argb >> 24) & 0xFF;
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = (argb >> 0) & 0xFF;
+        return (a << 24) | (b << 16) | (g << 8) | r;
     }
 }

@@ -3,6 +3,7 @@ package buildcraft.transport.tile;
 import java.io.IOException;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -63,6 +64,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (item instanceof IPipeItem) {
             PipeDefinition definition = ((IPipeItem) item).getDefiniton();
             this.pipe = new Pipe(this, definition);
+            int meta = stack.getMetadata();
+            if (meta > 0 && meta <= 16) {
+                pipe.setColour(EnumDyeColor.byMetadata(meta - 1));
+            }
         }
         scheduleRenderUpdate();
     }
