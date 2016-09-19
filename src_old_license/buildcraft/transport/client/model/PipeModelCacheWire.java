@@ -1,10 +1,9 @@
 package buildcraft.transport.client.model;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import javax.vecmath.Vector3f;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -21,12 +20,15 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.model.IModelCache;
+import buildcraft.lib.client.model.ModelCache;
+import buildcraft.lib.client.model.ModelCacheMultipleSame;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.PipeRenderState;
 
-import javax.vecmath.Vector3f;
-
+/** Should render manually in the FastTesr now! */
+@Deprecated
 public class PipeModelCacheWire {
     public static final IModelCache<PipeWireKey> cacheAll;
     public static final ModelCache<PipeWireKeySingle> cacheSingle;
@@ -51,8 +53,7 @@ public class PipeModelCacheWire {
         wirePosMap.put(PipeWire.GREEN, getOffset(PipeWire.GREEN));
         wirePosMap.put(PipeWire.YELLOW, getOffset(PipeWire.YELLOW));
 
-        cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).enableGL(
-                DefaultVertexFormats.POSITION_TEX).setKeepMutable(false).build();
+        cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).enableGL(DefaultVertexFormats.POSITION_TEX).setKeepMutable(false).build();
         // new ModelCache<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
         cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
     }

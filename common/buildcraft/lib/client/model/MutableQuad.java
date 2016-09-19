@@ -4,6 +4,7 @@ import javax.vecmath.*;
 
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -42,6 +43,7 @@ public class MutableQuad {
         int[] data = quad.getVertexData();
         int stride = data.length / 4;
         MutableQuad mutable = new MutableQuad(quad.getTintIndex(), quad.getFace());
+        mutable.sprite = quad.getSprite();
         for (int v = 0; v < 4; v++) {
             MutableVertex mutableVertex = mutable.getVertex(v);
             float x = fromBits(data[stride * v + X]);
@@ -84,6 +86,7 @@ public class MutableQuad {
     private final MutableVertex[] verticies = new MutableVertex[4];
     private int tintIndex = -1;
     private EnumFacing face = null;
+    private TextureAtlasSprite sprite = null;
 
     public MutableQuad(int tintIndex, EnumFacing face) {
         this.tintIndex = tintIndex;
@@ -103,8 +106,10 @@ public class MutableQuad {
     public MutableQuad(MutableQuad from) {
         this.tintIndex = from.tintIndex;
         this.face = from.face;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
             this.verticies[i] = new MutableVertex(from.verticies[i]);
+        }
+        this.sprite = from.sprite;
     }
 
     public MutableQuad setTint(int tint) {
@@ -125,6 +130,14 @@ public class MutableQuad {
         return face;
     }
 
+    public void setSprite(TextureAtlasSprite sprite) {
+        this.sprite = sprite;
+    }
+
+    public TextureAtlasSprite getSprite() {
+        return this.sprite;
+    }
+
     public UnpackedBakedQuad toUnpacked() {
         return toUnpacked(ITEM_LMAP);
     }
@@ -141,7 +154,7 @@ public class MutableQuad {
                 }
             }
         }
-        return new UnpackedBakedQuad(data, tintIndex, face, null, false, format);
+        return new UnpackedBakedQuad(data, tintIndex, face, sprite, false, format);
     }
 
     public void render(VertexBuffer vb) {

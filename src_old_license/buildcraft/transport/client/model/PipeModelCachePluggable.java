@@ -10,9 +10,9 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-import buildcraft.core.lib.client.model.IModelCache;
-import buildcraft.core.lib.client.model.ModelCache;
-import buildcraft.core.lib.client.model.ModelCacheMultipleSame;
+import buildcraft.lib.client.model.IModelCache;
+import buildcraft.lib.client.model.ModelCache;
+import buildcraft.lib.client.model.ModelCacheMultipleSame;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.PipePluggableState;
 

@@ -14,8 +14,8 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
-import buildcraft.core.lib.client.model.IModelCache;
-import buildcraft.core.lib.client.model.ModelCache;
+import buildcraft.lib.client.model.IModelCache;
+import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.config.DetailedConfigOption;
@@ -194,6 +194,7 @@ public class PipeModelCacheBase {
                 continue;
             }
             MutableQuad copy = new MutableQuad(f);
+            copy.setSprite(sprite);
             for (MutableVertex v : copy.verticies()) {
                 Point2f tex = v.tex();
                 v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
