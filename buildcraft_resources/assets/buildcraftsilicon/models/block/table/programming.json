@@ -111,7 +111,7 @@
         },
         {
             "from": [5, 4, 5],
-            "to": [11, 5, 11],
+            "to": [11, 6, 11],
             "faces": {
                 "down": {"texture": "#center"},
                 "up": {"texture": "#center"},
@@ -119,6 +119,13 @@
                 "south": {"texture": "#center"},
                 "west": {"texture": "#center"},
                 "east": {"texture": "#center"}
+            }
+        },
+        {
+            "from": [4, 9, 4],
+            "to": [12, 9, 12],
+            "faces": {
+                "up": {"texture": "#glass", "uv": [0, 0, 16, 16]}
             }
         }
     ],
@@ -128,6 +135,7 @@
         "middle": "buildcraftsilicon:blocks/table/programming/middle",
         "bottom": "buildcraftsilicon:blocks/table/programming/bottom",
         "side": "buildcraftsilicon:blocks/table/programming/side",
-        "center": "buildcraftsilicon:blocks/table/programming/center"
+        "center": "buildcraftsilicon:blocks/table/programming/center",
+        "glass": "blocks/glass_white"
     }
 }

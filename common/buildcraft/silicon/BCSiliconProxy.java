@@ -5,6 +5,7 @@ import buildcraft.api.recipes.IntegrationRecipe;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.silicon.client.render.RenderLaser;
+import buildcraft.silicon.client.render.RenderProgrammingTable;
 import buildcraft.silicon.container.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.container.ContainerAssemblyTable;
 import buildcraft.silicon.container.ContainerIntegrationTable;
@@ -15,6 +16,7 @@ import buildcraft.silicon.tile.TileAdvancedCraftingTable;
 import buildcraft.silicon.tile.TileAssemblyTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
+import buildcraft.silicon.tile.TileProgrammingTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,6 +114,7 @@ public abstract class BCSiliconProxy implements IGuiHandler {
         public void fmlInit() {
             super.fmlInit();
             ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaser());
+            ClientRegistry.bindTileEntitySpecialRenderer(TileProgrammingTable.class, new RenderProgrammingTable());
         }
     }
 }
