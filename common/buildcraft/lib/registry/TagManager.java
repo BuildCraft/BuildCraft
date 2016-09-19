@@ -345,6 +345,33 @@ public class TagManager {
 
         endBatch(prependTags("robotics:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
 
+        startBatch();// silicon
+        // BC Silicon Items
+        registerTag("item.redstone_chipset").reg("redstone_chipset").locale("redstone_chipset").model("redstone_chipset/");
+        // BC Silicon Item Blocks
+        registerTag("item.block.laser").reg("laser").locale("laserBlock").model("laser");
+        registerTag("item.block.assembly_table").reg("assembly_table").locale("assemblyTableBlock").model("assembly_table");
+        registerTag("item.block.advanced_crafting_table").reg("advanced_crafting_table").locale("advancedCraftingTableBlock").model("advanced_crafting_table");
+        registerTag("item.block.integration_table").reg("integration_table").locale("integrationTableBlock").model("integration_table");
+        registerTag("item.block.charging_table").reg("charging_table").locale("chargingTableBlock").model("charging_table");
+        registerTag("item.block.programming_table").reg("programming_table").locale("programmingTableBlock").model("programming_table");
+        // BC Silicon Blocks
+        registerTag("block.laser").reg("laser").oldReg("laserBlock").locale("laserBlock").model("laser");
+        registerTag("block.assembly_table").reg("assembly_table").oldReg("assemblyTableBlock").locale("assemblyTableBlock").model("assembly_table");
+        registerTag("block.advanced_crafting_table").reg("advanced_crafting_table").oldReg("advancedCraftingTableBlock").locale("advancedCraftingTableBlock").model("advanced_crafting_table");
+        registerTag("block.integration_table").reg("integration_table").oldReg("integrationTableBlock").locale("integrationTableBlock").model("integration_table");
+        registerTag("block.charging_table").reg("charging_table").oldReg("chargingTableBlock").locale("chargingTableBlock").model("charging_table");
+        registerTag("block.programming_table").reg("programming_table").oldReg("programmingTableBlock").locale("programmingTableBlock").model("programming_table");
+        // BC Silicon Tiles
+        registerTag("tile.laser").reg("laser");
+        registerTag("tile.assembly_table").reg("assembly_table");
+        registerTag("tile.advanced_crafting_table").reg("advanced_crafting_table");
+        registerTag("tile.integration_table").reg("integration_table");
+        registerTag("tile.charging_table").reg("charging_table");
+        registerTag("tile.programming_table").reg("programming_table");
+
+        endBatch(prependTags("silicon:", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION));
+
         endBatch(prependTags("buildcraft", EnumTagType.REGISTRY_NAME, EnumTagType.MODEL_LOCATION).andThen(setTab("buildcraft.main")));
     }
 }

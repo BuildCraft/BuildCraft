@@ -1,0 +1,38 @@
+package buildcraft.silicon.container;
+
+import buildcraft.core.lib.gui.slots.SlotBase;
+import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.silicon.tile.TileAdvancedCraftingTable;
+import net.minecraft.entity.player.EntityPlayer;
+
+public class ContainerAdvancedCraftingTable extends ContainerBCTile<TileAdvancedCraftingTable> {
+    private static final int PLAYER_INV_START = 153;
+
+    public ContainerAdvancedCraftingTable(EntityPlayer player, TileAdvancedCraftingTable tile) {
+        super(player, tile);
+        addFullPlayerInventory(PLAYER_INV_START);
+
+        for(int y = 0; y < 3; y++) {
+            for(int x = 0; x < 3; x++) {
+                addSlotToContainer(new SlotBase(tile.invBlueprint, x + y * 3, 33 + x * 18, 16 + y * 18));
+            }
+        }
+
+        for(int y = 0; y < 3; y++) {
+            for(int x = 0; x < 5; x++) {
+                addSlotToContainer(new SlotBase(tile.invMaterials, x + y * 5, 15 + x * 18, 85 + y * 18));
+            }
+        }
+
+        for(int y = 0; y < 3; y++) {
+            for(int x = 0; x < 3; x++) {
+                addSlotToContainer(new SlotBase(tile.invResults, x + y * 3, 109 + x * 18, 85 + y * 18));
+            }
+        }
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return true;
+    }
+}

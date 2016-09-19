@@ -29,6 +29,7 @@ public class BuildCraftLaserManager {
     public static final LaserType POWER_MED;// yellow
     public static final LaserType POWER_HIGH;// green
     public static final LaserType POWER_FULL;// blue
+    public static final LaserType[] POWERS;
 
     static {
         {
@@ -36,8 +37,8 @@ public class BuildCraftLaserManager {
             LaserRow capStart = new LaserRow(sprite, 0, 0, 2, 2);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 2);
             LaserRow[] middle = { //
-                new LaserRow(sprite, 0, 2, 16, 4), new LaserRow(sprite, 0, 4, 16, 6), new LaserRow(sprite, 0, 6, 16, 8), //
-                new LaserRow(sprite, 0, 8, 16, 10), new LaserRow(sprite, 0, 10, 16, 12), new LaserRow(sprite, 0, 12, 16, 14) //
+                    new LaserRow(sprite, 0, 2, 16, 4), new LaserRow(sprite, 0, 4, 16, 6), new LaserRow(sprite, 0, 6, 16, 8), //
+                    new LaserRow(sprite, 0, 8, 16, 10), new LaserRow(sprite, 0, 10, 16, 12), new LaserRow(sprite, 0, 12, 16, 14) //
             };
             LaserRow end = new LaserRow(sprite, 0, 14, 16, 16);
             LaserRow capEnd = new LaserRow(sprite, 14, 14, 16, 16);
@@ -48,8 +49,8 @@ public class BuildCraftLaserManager {
             LaserRow capStart = new LaserRow(sprite, 0, 0, 3, 3);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 3);
             LaserRow[] middle = { //
-                new LaserRow(sprite, 0, 4, 16, 7, LaserSide.TOP, LaserSide.BOTTOM),//
-                new LaserRow(sprite, 0, 8, 16, 11, LaserSide.LEFT, LaserSide.RIGHT) //
+                    new LaserRow(sprite, 0, 4, 16, 7, LaserSide.TOP, LaserSide.BOTTOM),//
+                    new LaserRow(sprite, 0, 8, 16, 11, LaserSide.LEFT, LaserSide.RIGHT) //
             };
             LaserRow end = new LaserRow(sprite, 0, 12, 16, 15);
             LaserRow capEnd = new LaserRow(sprite, 13, 12, 16, 15);
@@ -60,13 +61,13 @@ public class BuildCraftLaserManager {
             LaserRow capStart = new LaserRow(sprite, 0, 0, 1, 1);
             LaserRow start = new LaserRow(sprite, 0, 0, 16, 1);
             LaserRow[] middle = { //
-                new LaserRow(sprite, 0, 1, 16, 2), new LaserRow(sprite, 0, 2, 16, 3),//
-                new LaserRow(sprite, 0, 3, 16, 4), new LaserRow(sprite, 0, 4, 16, 5),//
-                new LaserRow(sprite, 0, 5, 16, 6), new LaserRow(sprite, 0, 6, 16, 7),//
-                new LaserRow(sprite, 0, 7, 16, 8), new LaserRow(sprite, 0, 8, 16, 9),//
-                new LaserRow(sprite, 0, 9, 16, 10), new LaserRow(sprite, 0, 10, 16, 11),//
-                new LaserRow(sprite, 0, 11, 16, 12), new LaserRow(sprite, 0, 12, 16, 13),//
-                new LaserRow(sprite, 0, 13, 16, 14), new LaserRow(sprite, 0, 14, 16, 15),//
+                    new LaserRow(sprite, 0, 1, 16, 2), new LaserRow(sprite, 0, 2, 16, 3),//
+                    new LaserRow(sprite, 0, 3, 16, 4), new LaserRow(sprite, 0, 4, 16, 5),//
+                    new LaserRow(sprite, 0, 5, 16, 6), new LaserRow(sprite, 0, 6, 16, 7),//
+                    new LaserRow(sprite, 0, 7, 16, 8), new LaserRow(sprite, 0, 8, 16, 9),//
+                    new LaserRow(sprite, 0, 9, 16, 10), new LaserRow(sprite, 0, 10, 16, 11),//
+                    new LaserRow(sprite, 0, 11, 16, 12), new LaserRow(sprite, 0, 12, 16, 13),//
+                    new LaserRow(sprite, 0, 13, 16, 14), new LaserRow(sprite, 0, 14, 16, 15),//
             };
             LaserRow end = new LaserRow(sprite, 0, 15, 16, 16);
             LaserRow capEnd = new LaserRow(sprite, 15, 15, 16, 16);
@@ -84,6 +85,7 @@ public class BuildCraftLaserManager {
         POWER_MED = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_med"));
         POWER_HIGH = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_high"));
         POWER_FULL = new LaserType(MARKER_VOLUME_POSSIBLE, getSprite("power_full"));
+        POWERS = new LaserType[] {POWER_LOW, POWER_MED, POWER_HIGH, POWER_FULL};
     }
 
     private static SpriteHolder getSprite(String post) {
