@@ -1,0 +1,10 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "buildcraftsilicon:table/programming"
+    },
+    "variants": {
+        "normal": [{}],
+        "inventory": []
+    }
+}

@@ -14,6 +14,8 @@ import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 import buildcraft.lib.gui.widget.WidgetOwnership;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     public final C container;
@@ -55,6 +57,13 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     public Stream<IGuiElement> getElementAt(int x, int y) {
         return guiElements.stream().filter(elem -> elem.contains(x, y));
+    }
+
+    protected void drawItemStackAt(ItemStack stack, int x, int y) {
+        RenderHelper.enableGUIStandardItemLighting();
+        itemRender.renderItemAndEffectIntoGUI(mc.thePlayer, stack, x, y);
+        itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, null);
+        RenderHelper.disableStandardItemLighting();
     }
 
     @Override
