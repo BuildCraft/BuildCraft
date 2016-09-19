@@ -120,18 +120,6 @@
                 "west": {"texture": "#center"},
                 "east": {"texture": "#center"}
             }
-        },
-        {
-            "from": [4, 9, 4],
-            "to": [12, 9, 12],
-            "faces": {
-                "down": {"texture": "#glass"},
-                "up": {"texture": "#glass", "uv": [0, 0, 16, 16]},
-                "north": {"texture": "#glass"},
-                "south": {"texture": "#glass"},
-                "west": {"texture": "#glass"},
-                "east": {"texture": "#glass"}
-            }
         }
     ],
     "textures": {
@@ -140,7 +128,6 @@
         "middle": "buildcraftsilicon:blocks/table/programming/middle",
         "bottom": "buildcraftsilicon:blocks/table/programming/bottom",
         "side": "buildcraftsilicon:blocks/table/programming/side",
-        "center": "buildcraftsilicon:blocks/table/programming/center",
-        "glass": "blocks/glass"
+        "center": "buildcraftsilicon:blocks/table/programming/center"
     }
 }
