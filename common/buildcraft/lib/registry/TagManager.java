@@ -222,9 +222,11 @@ public class TagManager {
         // BC Core ItemBlocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
+        registerTag("item.block.spring").reg("spring").locale("spring").model("spring");
         registerTag("item.block.decorated").reg("decorated").locale("decorated").model("decorated/");
         registerTag("item.block.engine.bc").reg("engine").locale("engineBlock").model("engine/");
         // BC Core Blocks
+        registerTag("block.spring").reg("spring").locale("spring");
         registerTag("block.decorated").reg("decorated").locale("decorated");
         registerTag("block.engine.bc").reg("engine").locale("engineBlock").oldReg("engineBlock");
         registerTag("block.engine.bc.wood").locale("engineBlockWood");

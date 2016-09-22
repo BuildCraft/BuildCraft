@@ -2,6 +2,7 @@ package buildcraft.core.lib.client.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.vecmath.Point3f;
@@ -86,9 +87,7 @@ public class BCModelHelper {
     }
 
     public static void appendQuads(List<MutableQuad> to, MutableQuad... from) {
-        for (MutableQuad q : from) {
-            to.add(q);
-        }
+        Collections.addAll(to, from);
     }
 
     public static void appendBakeQuads(List<BakedQuad> to, MutableQuad... from) {

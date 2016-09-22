@@ -89,6 +89,10 @@ public class BlockTank extends BlockBCTile_Neptune {
         if(heldItem == null || tile == null) {
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
-        return FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player);
+        if( FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
+            player.inventoryContainer.detectAndSendChanges();
+            return true;
+        }
+        return false;
     }
 }

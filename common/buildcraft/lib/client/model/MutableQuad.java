@@ -149,9 +149,7 @@ public class MutableQuad {
             data[vertex] = new float[fromData.length][];
             for (int element = 0; element < fromData.length; element++) {
                 data[vertex][element] = new float[fromData[element].length];
-                for (int d = 0; d < fromData[element].length; d++) {
-                    data[vertex][element][d] = fromData[element][d];
-                }
+                System.arraycopy(fromData[element], 0, data[vertex][element], 0, fromData[element].length);
             }
         }
         return new UnpackedBakedQuad(data, tintIndex, face, sprite, false, format);

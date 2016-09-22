@@ -5,10 +5,10 @@ import java.io.IOException;
 import io.netty.buffer.ByteBuf;
 
 public enum WrittenType {
-    BYTE(1, (1 << 8) - 1),
-    SHORT(2, (1 << 16) - 1),
+    BYTE(1, Byte.MAX_VALUE),
+    SHORT(2, Short.MAX_VALUE),
     MEDIUM(3, (1 << 24) - 1),
-    INT(4, (1 << 31) - 1);
+    INT(4, Integer.MAX_VALUE);
 
     public static final WrittenType[] ORDERED_VALUES = { BYTE, SHORT, MEDIUM, INT };
 

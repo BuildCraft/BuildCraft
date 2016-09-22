@@ -9,6 +9,7 @@ import java.util.Random;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
@@ -35,7 +37,31 @@ public class BlockSpring extends BlockBCBase_Neptune {
 
         disableStats();
         setTickRandomly(true);
+        setDefaultState(getDefaultState().withProperty(SPRING_TYPE, EnumSpring.WATER));
     }
+
+    // BlockState
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, SPRING_TYPE);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(SPRING_TYPE).ordinal();
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        if (meta == EnumSpring.OIL.ordinal()) {
+            return getDefaultState().withProperty(SPRING_TYPE, EnumSpring.OIL);
+        } else {
+            return getDefaultState().withProperty(SPRING_TYPE, EnumSpring.WATER);
+        }
+    }
+
+    // Other
 
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {

@@ -102,22 +102,22 @@ public final class TaskUsable {
         boolean doneAll = true;
 
         // Setup the requests
-        for (String key : fluidRequests.keySet()) {
-            DelegateFluid delegate = fluidRequests.get(key);
-            IRequestedFluid actual = realFluidRequests.get(key);
+        for (Map.Entry<String, DelegateFluid> stringDelegateFluidEntry : fluidRequests.entrySet()) {
+            DelegateFluid delegate = stringDelegateFluidEntry.getValue();
+            IRequestedFluid actual = realFluidRequests.get(stringDelegateFluidEntry.getKey());
             if (actual == null) {
                 actual = builder.requestFluid(delegate.getRequested());
                 delegate.delegate = actual;
-                realFluidRequests.put(key, actual);
+                realFluidRequests.put(stringDelegateFluidEntry.getKey(), actual);
             }
         }
-        for (String key : itemRequests.keySet()) {
-            DelegateItem delegate = itemRequests.get(key);
-            IRequestedItem actual = realItemRequests.get(key);
+        for (Map.Entry<String, DelegateItem> stringDelegateItemEntry : itemRequests.entrySet()) {
+            DelegateItem delegate = stringDelegateItemEntry.getValue();
+            IRequestedItem actual = realItemRequests.get(stringDelegateItemEntry.getKey());
             if (actual == null) {
                 actual = builder.requestStack(delegate.getRequested());
                 delegate.delegate = actual;
-                realItemRequests.put(key, actual);
+                realItemRequests.put(stringDelegateItemEntry.getKey(), actual);
             }
         }
 

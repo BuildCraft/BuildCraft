@@ -4,8 +4,6 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.energy;
 
-import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -15,13 +13,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.core.BCCore;
-import buildcraft.energy.fluid.FluidOil;
 import buildcraft.energy.generation.BiomeInitializer;
 import buildcraft.energy.generation.BiomeOilDesert;
 import buildcraft.energy.generation.BiomeOilOcean;
 import buildcraft.energy.generation.OilPopulate;
 import buildcraft.lib.BCLib;
-import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCEnergy.MODID, name = "BuildCraft Energy", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
@@ -34,8 +30,6 @@ public class BCEnergy {
     @Mod.Instance(MODID)
     public static BCEnergy INSTANCE;
 
-    public static FluidOil oil;
-
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
@@ -44,8 +38,6 @@ public class BCEnergy {
         BCEnergyBlocks.preInit();
         BCEnergyEntities.preInit();
 
-        oil = FluidManager.register(new FluidOil("oil", new ResourceLocation("buildcraftenergy", "blocks/fluids/oil_still"), new ResourceLocation("buildcraftenergy", "blocks/fluids/oil_flow")));
-        FluidManager.fmlPreInitClient(); // TODO: move from here
         GameRegistry.register(BiomeOilOcean.INSTANCE);
         GameRegistry.register(BiomeOilDesert.INSTANCE);
         MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());

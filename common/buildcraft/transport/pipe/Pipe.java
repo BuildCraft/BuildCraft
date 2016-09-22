@@ -166,18 +166,15 @@ public final class Pipe implements IPipe {
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        // TODO: Pluggables
         if (behaviour.hasCapability(capability, facing)) return true;
         return flow.hasCapability(capability, facing);
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        // TODO: Pluggables
         T val = behaviour.getCapability(capability, facing);
         if (val != null) return val;
-        val = flow.getCapability(capability, facing);
-        return val;
+        return flow.getCapability(capability, facing);
     }
 
     // misc

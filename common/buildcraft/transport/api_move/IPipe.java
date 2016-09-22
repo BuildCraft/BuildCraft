@@ -31,5 +31,4 @@ public interface IPipe extends ICapabilityProvider {
         TILE,
         PIPE;
     }
-
 }

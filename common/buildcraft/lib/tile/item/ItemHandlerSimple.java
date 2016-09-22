@@ -87,7 +87,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     @Override
     public ItemStack getStackInSlot(int slot) {
         if (badSlotIndex(slot)) return null;
-        return safeCopy(stacks[slot]);
+        return asValid(stacks[slot]);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         }
         if (canSet(slot, stack)) {
             ItemStack current = stacks[slot];
-            InsertionResult result = insertor.modifyForInsertion(slot, safeCopy(current), safeCopy(stack));
+            InsertionResult result = insertor.modifyForInsertion(slot, asValid(current), asValid(stack));
             if (!canSet(slot, result.toSet)) {
                 // We have a bad inserter or checker, as they should not be conflicting
                 CrashReport report = new CrashReport("Inserting an item (buildcraft:ItemHandlerSimple)", new IllegalStateException("Confilicting Insertion!"));
@@ -111,7 +111,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             } else if (!simulate) {
                 setStackInternal(slot, result.toSet);
             }
-            return safeCopy(result.toReturn);
+            return asValid(result.toReturn);
         } else {
             return stack;
         }
@@ -130,13 +130,13 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (current == null) return null;
         if (current.stackSize < amount) {
             if (simulate) {
-                return safeCopy(current);
+                return asValid(current);
             }
             setStackInternal(slot, null);
             // no need to copy as we no longer have it
             return current;
         } else {
-            current = safeCopy(current);
+            current = asValid(current);
             ItemStack split = current.splitStack(amount);
             if (!simulate) {
                 if (current.stackSize <= 0) current = null;
@@ -152,7 +152,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
         if (max < min) return null;
         ItemStack current = stacks[slot];
         if (current == null || current.stackSize < min) return null;
-        if (filter.matches(safeCopy(current))) {
+        if (filter.matches(asValid(current))) {
             if (simulate) {
                 ItemStack copy = current.copy();
                 return copy.splitStack(max);
@@ -178,7 +178,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     }
 
     public final boolean canSet(int slot, ItemStack stack) {
-        ItemStack copied = safeCopy(stack);
+        ItemStack copied = asValid(stack);
         if (copied == null) {
             return true;
         }
@@ -188,7 +188,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     private void setStackInternal(int slot, ItemStack stack) {
         ItemStack before = stacks[slot];
         if (!ItemStack.areItemStacksEqual(before, stack)) {
-            stacks[slot] = safeCopy(stack);
+            stacks[slot] = asValid(stack);
             // Transactor calc
             if (stack == null && firstUsed == slot) {
                 for (int s = firstUsed; s < getSlots(); s++) {
@@ -205,7 +205,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             }
 
             if (callback != null) {
-                callback.onStackChange(this, slot, before, safeCopy(stack));
+                callback.onStackChange(this, slot, before, asValid(stack));
             }
         }
     }

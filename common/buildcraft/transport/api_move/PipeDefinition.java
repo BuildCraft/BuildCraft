@@ -19,6 +19,7 @@ public final class PipeDefinition {
     private final String[] textureSuffixes;
 
     // TODO: this can't be in the API as-is, as this class is in lib!
+    // TODO: Move sprite handling out of this class to be handled by the model baker
     @SideOnly(Side.CLIENT)
     private SpriteHolder[] sprites;
 

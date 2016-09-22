@@ -1,6 +1,8 @@
 package buildcraft.transport.tile;
 
 import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
@@ -19,15 +21,17 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.IPipeItem;
-import buildcraft.transport.api_move.PipeDefinition;
+import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable {
-    public static final int NET_PIPE_UPDATE = 10;
+    public static final int NET_UPDATE_MULTI = 10;
+    public static final int NET_UPDATE_PIPE = 11;
+    public static final int NET_UPDATE_PLUG_START = 12;
+    // 12 -> 17 are pluggables faces
+    public static final int NET_UPDATE_PLUG_END = 17;
 
+    private final Map<EnumFacing, PipePluggable> pluggables = new EnumMap<>(EnumFacing.class);
     private Pipe pipe;
     private boolean scheduleRenderUpdate = true, scheduleNetworkUpdate = true;
 
@@ -79,13 +83,19 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (pipe != null) {
             pipe.onTick();
         }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable plug = pluggables.get(face);
+            if (plug != null) {
+                plug.onTick();
+            }
+        }
         if (scheduleRenderUpdate) {
             scheduleRenderUpdate = false;
             scheduleNetworkUpdate = false;
             redrawBlock();
         } else if (scheduleNetworkUpdate) {
             scheduleNetworkUpdate = false;
-            sendNetworkUpdate(NET_PIPE_UPDATE);
+            sendNetworkUpdate(NET_UPDATE_MULTI);
         }
     }
 
@@ -102,8 +112,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     buffer.writeBoolean(true);
                     pipe.writeCreationPayload(buffer);
                 }
-                writePayload(NET_PIPE_UPDATE, buffer, side);
-            } else if (id == NET_PIPE_UPDATE) {
+                writePayload(NET_UPDATE_MULTI, buffer, side);
+            } else if (id == NET_UPDATE_MULTI) {
                 if (pipe == null) {
                     buffer.writeBoolean(false);
                 } else {
@@ -125,9 +135,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     pipe = null;
                 }
 
-                readPayload(NET_PIPE_UPDATE, buffer, side, ctx);
+                readPayload(NET_UPDATE_MULTI, buffer, side, ctx);
 
-            } else if (id == NET_PIPE_UPDATE) {
+            } else if (id == NET_UPDATE_MULTI) {
                 if (buffer.readBoolean()) {
                     if (pipe == null) {
                         throw new IllegalStateException("pipe was null when it shoudn't be!");
@@ -150,6 +160,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public Pipe getPipe() {
         return pipe;
+    }
+
+    @Override
+    public PipePluggable getPluggable(EnumFacing side) {
+        return pluggables.get(side);
     }
 
     @Override
@@ -181,11 +196,17 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        return pipe == null ? false : pipe.hasCapability(capability, facing);
+        return getCapability(capability, facing) != null;
     }
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (facing != null) {
+            PipePluggable plug = getPluggable(facing);
+            if (plug != null && plug.isBlocking()) {
+                return plug.getCapability(capability);
+            }
+        }
         return pipe == null ? null : pipe.getCapability(capability, facing);
     }
 }

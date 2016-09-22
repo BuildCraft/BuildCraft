@@ -35,7 +35,7 @@ public class FluidManager {
             registeredFluids.add(fluid);
             FluidRegistry.registerFluid(fluid);
 
-            Material material = new BCMaterialFluid(fluid.getMapColor(), fluid.isFlammable());
+            Material material = new BCMaterialFluid(fluid.getMapColour(), fluid.isFlammable());
             Block block = new BCFluidBlock(fluid, material);
             block.setRegistryName(Loader.instance().activeModContainer().getModId(), "fluid_block_" + fluid.getName());
             block.setUnlocalizedName("blockFluid_" + fluid.getName());
@@ -49,7 +49,7 @@ public class FluidManager {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void fmlPreInitClient() {
+    public static void fmlInitClient() {
         for (BCFluid fluid : registeredFluids) {
             ModelResourceLocation modelLocation = new ModelResourceLocation(Loader.instance().activeModContainer().getModId() + ":fluids", fluid.getName());
             Item item = ItemBlock.getItemFromBlock(fluid.getBlock());

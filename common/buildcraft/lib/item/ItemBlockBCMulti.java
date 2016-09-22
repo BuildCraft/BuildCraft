@@ -15,6 +15,7 @@ public class ItemBlockBCMulti extends ItemBlockBC_Neptune {
         super(block);
         this.nameFunction = nameFunction;
         setHasSubtypes(true);
+        setMaxDamage(0);
     }
 
     public ItemBlockBCMulti(BlockBCBase_Neptune block, final String[] namesByMeta) {

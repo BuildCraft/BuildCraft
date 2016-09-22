@@ -1,6 +1,10 @@
 package buildcraft.transport.api_move;
 
+import net.minecraft.util.ResourceLocation;
+
 public interface IPipeRegistry {
+    PipeDefinition getDefinition(ResourceLocation identifier);
+
     IPipeItem registerPipeAndItem(PipeDefinition definition);
 
     void registerPipe(PipeDefinition definition);

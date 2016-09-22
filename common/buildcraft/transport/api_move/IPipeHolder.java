@@ -9,6 +9,8 @@ public interface IPipeHolder {
 
     IPipe getPipe();
 
+    PipePluggable getPluggable(EnumFacing side);
+
     TileEntity getNeighbouringTile(EnumFacing side);
 
     IPipe getNeighbouringPipe(EnumFacing side);

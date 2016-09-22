@@ -18,13 +18,6 @@ public class ItemEngine_BC8<E extends Enum<E>> extends ItemBlockBCMulti {
             return block.getUnlocalizedName(block.getEngineType(stack.getItemDamage()));
         });
         engineBlock = block;
-        setHasSubtypes(true);
-        setMaxDamage(0);
-    }
-
-    @Override
-    public int getMetadata(int damage) {
-        return damage;
     }
 
     @Override

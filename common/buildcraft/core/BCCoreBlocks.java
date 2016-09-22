@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.core.block.*;
 import buildcraft.core.item.ItemBlockDecorated;
+import buildcraft.core.item.ItemBlockSpring;
 import buildcraft.core.item.ItemEngine_BC8;
 import buildcraft.core.tile.TileEngineRedstone_BC8;
 import buildcraft.core.tile.TileMarkerPath;
@@ -24,6 +25,7 @@ public class BCCoreBlocks {
     public static BlockMarkerPath markerPath;
 
     public static void preInit() {
+        spring = BlockBCBase_Neptune.register(new BlockSpring("block.spring"), ItemBlockSpring::new);
         markerVolume = BlockBCBase_Neptune.register(new BlockMarkerVolume(Material.CIRCUITS, "block.marker.volume"));
         markerPath = BlockBCBase_Neptune.register(new BlockMarkerPath(Material.CIRCUITS, "block.marker.path"));
         decorated = BlockBCBase_Neptune.register(new BlockDecoration("block.decorated"), ItemBlockDecorated::new);

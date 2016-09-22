@@ -58,7 +58,7 @@ public class SpriteColourMapper extends TextureAtlasSprite {
         int[] b = { (from >> 16) & 0xFF, (light >> 16) & 0xFF, (dark >> 16) & 0xFF };
         int[] g = { (from >> 8) & 0xFF, (light >> 8) & 0xFF, (dark >> 8) & 0xFF };
         int[] r = { from & 0xFF, light & 0xFF, dark & 0xFF };
-        return 0xFF << 24 | lerp(b) << 16 | lerp(g) << 8 | lerp(r);
+        return lerp(a) << 24 | lerp(b) << 16 | lerp(g) << 8 | lerp(r);
     }
 
     @Override

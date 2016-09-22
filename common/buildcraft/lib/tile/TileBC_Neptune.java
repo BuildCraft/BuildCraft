@@ -62,7 +62,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 public abstract class TileBC_Neptune extends TileEntity implements IPayloadReceiver, IAdvDebugTarget, IPlayerOwned {
-    public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug");
+    public static final boolean DEBUG_PARTICLES = BCDebugging.shouldDebugLog("tile.debug.particles");
 
     /** Used for sending all data used for rendering the tile on a client. This does not include items, power, stages,
      * etc (Unless some are shown in the world) */

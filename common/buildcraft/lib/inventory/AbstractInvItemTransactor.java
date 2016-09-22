@@ -14,10 +14,10 @@ import gnu.trove.list.array.TIntArrayList;
 /** Designates an {@link IItemTransactor} that is backed by a simple, static, array based inventory. */
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
     /** Safely copies the input item stack, returning null if the stack size is less than or equal to zero. */
-    public static ItemStack safeCopy(ItemStack stack) {
+    public static ItemStack asValid(ItemStack stack) {
         if (stack == null) return null;
         if (stack.stackSize <= 0) return null;
-        return stack.copy();
+        return stack;
     }
 
     protected abstract ItemStack insert(int slot, ItemStack stack, boolean simulate);
@@ -56,7 +56,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
     }
 
     private ItemStack insertAllAtOnce(ItemStack stack, boolean simulate) {
-        ItemStack before = safeCopy(stack);
+        ItemStack before = asValid(stack);
         TIntArrayList insertedSlots = new TIntArrayList(getSlots());
         TIntArrayList emptySlots = new TIntArrayList(getSlots());
         for (int slot = 0; slot < getSlots(); slot++) {
