@@ -25,6 +25,8 @@ public interface IPipe extends ICapabilityProvider {
 
     IPipe getConnectedPipe(EnumFacing side);
 
+    boolean isConnected(EnumFacing side);
+
     ConnectedType getConnectedType(EnumFacing side);
 
     public enum ConnectedType {

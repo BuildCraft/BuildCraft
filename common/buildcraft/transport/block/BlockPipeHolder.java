@@ -1,10 +1,16 @@
 package buildcraft.transport.block;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -13,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -30,12 +37,22 @@ import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
 import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipeDefinition;
+import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.client.model.key.PipeModelKey;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaintHandler {
     public static final IUnlistedProperty<PipeModelKey> PROP_MODEL = new UnlistedNonNullProperty<>("model");
+
+    private static final AxisAlignedBB BOX_CENTER = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+    private static final AxisAlignedBB BOX_DOWN = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.25, 0.75);
+    private static final AxisAlignedBB BOX_UP = new AxisAlignedBB(0.25, 0.75, 0.25, 0.75, 1, 0.75);
+    private static final AxisAlignedBB BOX_NORTH = new AxisAlignedBB(0.25, 0.25, 0, 0.75, 0.75, 0.25);
+    private static final AxisAlignedBB BOX_SOUTH = new AxisAlignedBB(0.25, 0.25, 0.75, 0.75, 0.75, 1);
+    private static final AxisAlignedBB BOX_WEST = new AxisAlignedBB(0, 0.25, 0.25, 0.25, 0.75, 0.75);
+    private static final AxisAlignedBB BOX_EAST = new AxisAlignedBB(0.75, 0.25, 0.25, 1, 0.75, 0.75);
+    private static final AxisAlignedBB[] BOX_FACES = { BOX_DOWN, BOX_UP, BOX_NORTH, BOX_SOUTH, BOX_WEST, BOX_EAST };
 
     public BlockPipeHolder(Material material, String id) {
         super(material, id);
@@ -70,6 +87,94 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
+    }
+
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return;
+        }
+        Pipe pipe = tile.getPipe();
+        if (pipe != null) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_CENTER);
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (pipe.isConnected(face)) {
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_FACES[face.ordinal()]);
+                }
+            }
+        }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable pluggable = tile.getPluggable(face);
+            if (pluggable != null) {
+                AxisAlignedBB bb = pluggable.getBoundingBox();
+                addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
+            }
+        }
+    }
+
+    @Override
+    @Nullable
+    public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return null;
+        }
+        RayTraceResult best = null;
+        Pipe pipe = tile.getPipe();
+        if (pipe != null) {
+            best = computeTrace(best, pos, start, end, BOX_CENTER, 0);
+            for (EnumFacing face : EnumFacing.VALUES) {
+                if (pipe.isConnected(face)) {
+                    best = computeTrace(best, pos, start, end, BOX_FACES[face.ordinal()], face.ordinal() + 1);
+                }
+            }
+        }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable pluggable = tile.getPluggable(face);
+            if (pluggable != null) {
+                AxisAlignedBB bb = pluggable.getBoundingBox();
+                best = computeTrace(best, pos, start, end, bb, face.ordinal() + 7);
+            }
+        }
+        return best;
+    }
+
+    private RayTraceResult computeTrace(RayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB aabb, int part) {
+        RayTraceResult next = super.rayTrace(pos, start, end, aabb);
+        if (next == null) {
+            return lastBest;
+        }
+        next.subHit = part;
+        if (lastBest == null) {
+            return next;
+        }
+        double distLast = lastBest.hitVec.squareDistanceTo(start);
+        double distNext = next.hitVec.squareDistanceTo(start);
+        return distLast > distNext ? next : lastBest;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return null;
+        }
+        int part = Minecraft.getMinecraft().objectMouseOver.subHit;
+        AxisAlignedBB aabb = null;
+        if (part == 0) {
+            aabb = BOX_CENTER;
+        } else if (part < 1 + 6) {
+            aabb = BOX_FACES[part - 1];
+        } else if (part < 1 + 6 + 6) {
+            EnumFacing side = EnumFacing.VALUES[part - 1 - 6 - 6];
+            PipePluggable pluggable = tile.getPluggable(side);
+            if (pluggable != null) {
+                aabb = pluggable.getBoundingBox();
+            }
+        }
+        return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
     }
 
     @Override

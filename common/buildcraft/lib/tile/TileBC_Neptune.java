@@ -81,6 +81,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public static final int NET_ADV_DEBUG = 6;
     public static final int NET_ADV_DEBUG_DISABLE = 7;
 
+    /** Used to tell the client to redraw the block. */
+    public static final int NET_REDRAW = 8;
+
     protected final CapabilityHelper caps = new CapabilityHelper();
     protected final ItemHandlerManager itemManager = caps.addProvider(new ItemHandlerManager(this::onSlotChange));
 
@@ -98,7 +101,11 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         } else {
             throw new IllegalArgumentException("Unknown delta message type " + type);
         }
-        this.createAndSendMessage(gui, id, writer);
+        if (gui) {
+            this.createAndSendGuiMessage(id, writer);
+        } else {
+            this.createAndSendMessage(id, writer);
+        }
     });
 
     public TileBC_Neptune() {
@@ -133,7 +140,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         onRemove();
     }
 
-    /** Called whenever the block is removed. called by {@link #onExplode(Explosion)}, and
+    /** Called whenever the block is removed. Called by {@link #onExplode(Explosion)}, and
      * {@link Block#breakBlock(World, BlockPos, IBlockState)} */
     public void onRemove() {}
 
@@ -217,17 +224,21 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     //
     // ##################
 
-    /** Tells MC to redraw this block. Note that (in 1.10.2) this ALSO sends a description packet. */
+    /** Tells MC to redraw this block. Note that this sends the NET_REDRAW message. */
     public final void redrawBlock() {
         if (hasWorldObj()) {
-            IBlockState state = worldObj.getBlockState(pos);
-            worldObj.notifyBlockUpdate(pos, state, state, 0);
+            if (worldObj.isRemote) {
+                IBlockState state = worldObj.getBlockState(pos);
+                worldObj.notifyBlockUpdate(pos, state, state, 0);
 
-            if (DEBUG_PARTICLES) {
-                double x = getPos().getX() + 0.5;
-                double y = getPos().getY() + 0.5;
-                double z = getPos().getZ() + 0.5;
-                worldObj.spawnParticle(EnumParticleTypes.HEART, x, y, z, 0, 0, 0);
+                if (DEBUG_PARTICLES) {
+                    double x = getPos().getX() + 0.5;
+                    double y = getPos().getY() + 0.5;
+                    double z = getPos().getZ() + 0.5;
+                    worldObj.spawnParticle(EnumParticleTypes.HEART, x, y, z, 0, 0, 0);
+                }
+            } else {
+                sendNetworkUpdate(NET_REDRAW);
             }
         }
     }
@@ -268,14 +279,17 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return null;
     }
 
-    public final void createAndSendMessage(boolean gui, int id, IPayloadWriter writer) {
+    public final void createAndSendMessage(int id, IPayloadWriter writer) {
         if (hasWorldObj()) {
             IMessage message = createMessage(id, writer);
-            if (gui) {
-                MessageUtil.sendToPlayers(usingPlayers, message);
-            } else {
-                MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
-            }
+            MessageUtil.sendToAllWatching(this.worldObj, this.getPos(), message);
+        }
+    }
+
+    public final void createAndSendGuiMessage(int id, IPayloadWriter writer) {
+        if (hasWorldObj()) {
+            IMessage message = createMessage(id, writer);
+            MessageUtil.sendToPlayers(usingPlayers, message);
         }
     }
 
@@ -416,6 +430,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
             else if (id == NET_GUI_DELTA_SINGLE) deltaManager.receiveDeltaData(true, EnumDeltaMessage.ADD_SINGLE, buffer);
             else if (id == NET_REN_DELTA_CLEAR) deltaManager.receiveDeltaData(false, EnumDeltaMessage.SET_VALUE, buffer);
             else if (id == NET_GUI_DELTA_CLEAR) deltaManager.receiveDeltaData(true, EnumDeltaMessage.SET_VALUE, buffer);
+            else if (id == NET_REDRAW) redrawBlock();
         }
     }
 

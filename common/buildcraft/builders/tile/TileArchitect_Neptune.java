@@ -171,7 +171,7 @@ public class TileArchitect_Neptune extends TileBCInventory_Neptune implements IT
             templateScannedBlocks[schematicIndex.getX()][schematicIndex.getY()][schematicIndex.getZ()] = solid;
         }
 
-        createAndSendMessage(false, NET_SCAN, (buffer) -> {
+        createAndSendMessage(NET_SCAN, (buffer) -> {
             buffer.writeBlockPos(worldScanPos);
         });
 

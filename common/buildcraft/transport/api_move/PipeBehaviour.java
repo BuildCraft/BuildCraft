@@ -1,11 +1,14 @@
 package buildcraft.transport.api_move;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 public abstract class PipeBehaviour implements ICapabilityProvider {
     public final IPipe pipe;
@@ -23,6 +26,10 @@ public abstract class PipeBehaviour implements ICapabilityProvider {
 
         return nbt;
     }
+
+    public void writePayload(PacketBuffer buffer, Side side) {}
+
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {}
 
     public abstract int getTextureIndex(EnumFacing face);
 

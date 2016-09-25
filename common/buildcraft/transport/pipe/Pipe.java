@@ -3,6 +3,7 @@ package buildcraft.transport.pipe;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -17,20 +18,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.transport.api_move.*;
+import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
 import buildcraft.transport.client.model.key.PipeModelKey;
 import buildcraft.transport.pipes.events.PipeEvent;
 
-public final class Pipe implements IPipe {
+public final class Pipe implements IPipe, IDebuggable {
     public static final int NET_RENDER = 0;
 
-    private final IPipeHolder holder;
-    private final PipeDefinition definition;
-    private final PipeBehaviour behaviour;
-    private final PipeFlow flow;
+    public final IPipeHolder holder;
+    public final PipeDefinition definition;
+    public final PipeBehaviour behaviour;
+    public final PipeFlow flow;
     private EnumDyeColor colour = null;
     private boolean updateMarked = true;
     private final EnumSet<EnumFacing> connected = EnumSet.noneOf(EnumFacing.class);
@@ -65,7 +68,7 @@ public final class Pipe implements IPipe {
 
     // network
 
-    public Pipe(IPipeHolder holder, PacketBuffer buffer) throws IOException {
+    public Pipe(IPipeHolder holder, PacketBuffer buffer, MessageContext ctx) throws IOException {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readStringFromBuffer(256));
@@ -73,11 +76,15 @@ public final class Pipe implements IPipe {
             throw new IOException(e);
         }
         this.behaviour = definition.logicConstructor.createBehaviour(this);
+        readPayload(buffer, Side.CLIENT, ctx);
         this.flow = definition.flowType.creator.createFlow(this);
+        this.flow.readPayload(PipeFlow.NET_ID_FULL_STATE, buffer, Side.CLIENT);
     }
 
     public void writeCreationPayload(PacketBuffer buffer) {
         buffer.writeString(definition.identifier.toString());
+        writePayload(buffer, Side.SERVER);
+        flow.writePayload(PipeFlow.NET_ID_FULL_STATE, buffer, Side.SERVER);
     }
 
     public void writePayload(PacketBuffer buffer, Side side) {
@@ -96,6 +103,8 @@ public final class Pipe implements IPipe {
                     buffer.writeBoolean(false);
                 }
             }
+
+            behaviour.writePayload(buffer, side);
         }
     }
 
@@ -122,6 +131,8 @@ public final class Pipe implements IPipe {
                     }
                 }
             }
+
+            behaviour.readPayload(buffer, side, ctx);
 
             if (!before.equals(getModel())) {
                 getHolder().scheduleRenderUpdate();
@@ -226,7 +237,7 @@ public final class Pipe implements IPipe {
                 }
             }
 
-            getHolder().scheduleNetworkUpdate();
+            getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
         }
     }
 
@@ -298,5 +309,33 @@ public final class Pipe implements IPipe {
     @Override
     public ConnectedType getConnectedType(EnumFacing side) {
         return types.get(side);
+    }
+    
+    @Override
+    public boolean isConnected(EnumFacing side) {
+        return connected.contains(side);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("Colour = " + colour);
+        left.add("Definition = " + definition.identifier);
+        if (behaviour instanceof IDebuggable) {
+            left.add("Behaviour:");
+            ((IDebuggable) behaviour).getDebugInfo(left, right, side);
+            left.add("");
+        } else {
+            left.add("Behaviour = " + behaviour.getClass());
+        }
+
+        if (flow instanceof IDebuggable) {
+            left.add("Flow:");
+            ((IDebuggable) flow).getDebugInfo(left, right, side);
+            left.add("");
+        } else {
+            left.add("Flow = " + flow.getClass());
+        }
+
     }
 }

@@ -54,6 +54,7 @@ public enum PipeRegistry implements IPipeRegistry {
         return pipeItems.get(definition);
     }
 
+    @Override
     @Nullable
     public PipeDefinition getDefinition(ResourceLocation identifier) {
         return definitions.get(identifier);

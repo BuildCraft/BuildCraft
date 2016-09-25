@@ -119,7 +119,7 @@ public class TileFiller_Neptune extends TileBC_Neptune implements ITickable, IDe
         else if (type == EnumBuilderMessage.BUILD) id = NET_BUILD;
         else if (type == EnumBuilderMessage.CLEAR) id = NET_CLEAR;
         else throw new IllegalArgumentException("Unknown type " + type);
-        createAndSendMessage(false, id, writer);
+        createAndSendMessage(id, writer);
     }
 
     @Override

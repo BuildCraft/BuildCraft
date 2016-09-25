@@ -250,7 +250,7 @@ public class TileBuilder_Neptune extends TileBCInventory_Neptune implements ITic
         else if (type == EnumBuilderMessage.BUILD) id = NET_BUILD;
         else if (type == EnumBuilderMessage.CLEAR) id = NET_CLEAR;
         else throw new IllegalArgumentException("Unknown type " + type);
-        createAndSendMessage(false, id, writer);
+        createAndSendMessage(id, writer);
     }
 
     @Override
