@@ -25,6 +25,7 @@ import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PluggableHolder;
+import buildcraft.transport.wire.WireManager;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
     public static final int NET_UPDATE_MULTI = 10;
@@ -49,6 +50,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         return NET_UPDATE_SINGLE_START + type.ordinal();
     }
 
+    public final WireManager wireManager = new WireManager(this);
     private final Map<EnumFacing, PluggableHolder> pluggables = new EnumMap<>(EnumFacing.class);
     private Pipe pipe;
     private boolean scheduleRenderUpdate = true;
@@ -240,6 +242,16 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         return pluggables.get(side).pluggable;
     }
 
+    public PipePluggable replacePluggable(EnumFacing side, PipePluggable with) {
+        PluggableHolder holder = pluggables.get(side);
+        PipePluggable old = holder.pluggable;
+        holder.pluggable = with;
+        pipe.markForUpdate();
+        scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
+        scheduleRenderUpdate();
+        return old;
+    }
+
     @Override
     public TileEntity getNeighbouringTile(EnumFacing side) {
         return worldObj.getTileEntity(getPos().offset(side));
@@ -271,8 +283,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
-    public IWireManager getWireManager() {
-        return null;
+    public WireManager getWireManager() {
+        return wireManager;
     }
 
     // Caps

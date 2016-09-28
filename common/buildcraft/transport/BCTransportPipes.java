@@ -6,6 +6,7 @@ import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.api_move.PipeDefinition.IPipeCreator;
 import buildcraft.transport.api_move.PipeDefinition.IPipeLoader;
+import buildcraft.transport.api_move.PipeDefinition.PipeDefinitionBuilder;
 import buildcraft.transport.api_move.PipeFlowType;
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourGold;
@@ -44,12 +45,7 @@ public class BCTransportPipes {
     }
 
     private static class DefinitionBuilder {
-        private String identifier;
-        private String texturePrefix;
-        private String[] textureSuffixes;
-        private IPipeCreator logicConstructor;
-        private IPipeLoader logicLoader;
-        private PipeFlowType flowType;
+        public final PipeDefinitionBuilder builder = new PipeDefinitionBuilder();
 
         public DefinitionBuilder idTexPrefix(String both) {
             return id(both).texPrefix(both);
@@ -60,7 +56,7 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder id(String post) {
-            identifier = post;
+            builder.identifier = new ResourceLocation("buildcrafttransport", post);
             return this;
         }
 
@@ -69,22 +65,22 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder texPrefix(String prefix) {
-            texturePrefix = "buildcrafttransport:pipes/" + prefix;
+            builder.texturePrefix = "buildcrafttransport:pipes/" + prefix;
             return this;
         }
 
         public DefinitionBuilder texSuffixes(String... suffixes) {
             if (suffixes.length == 0) {
-                textureSuffixes = new String[] { "" };
+                builder.textureSuffixes = new String[] { "" };
             } else {
-                textureSuffixes = suffixes;
+                builder.textureSuffixes = suffixes;
             }
             return this;
         }
 
         public DefinitionBuilder logic(IPipeCreator creator, IPipeLoader loader) {
-            logicConstructor = creator;
-            logicLoader = loader;
+            builder.logicConstructor = creator;
+            builder.logicLoader = loader;
             return this;
         }
 
@@ -101,13 +97,12 @@ public class BCTransportPipes {
         }
 
         public DefinitionBuilder flow(PipeFlowType flow) {
-            flowType = flow;
+            builder.flow(flow);
             return this;
         }
 
         public PipeDefinition define() {
-            ResourceLocation id = new ResourceLocation("buildcrafttransport", identifier + "");
-            PipeDefinition def = new PipeDefinition(id, texturePrefix, textureSuffixes, logicConstructor, logicLoader, flowType);
+            PipeDefinition def = new PipeDefinition(builder);
             PipeRegistry.INSTANCE.registerPipe(def);
             return def;
         }

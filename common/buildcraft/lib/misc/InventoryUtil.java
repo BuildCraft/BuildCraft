@@ -1,5 +1,7 @@
 package buildcraft.lib.misc;
 
+import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +24,12 @@ public class InventoryUtil {
     public static void dropAll(World world, double x, double y, double z, IItemHandlerModifiable handler) {
         for (int i = 0; i < handler.getSlots(); i++) {
             drop(world, x, y, z, handler.extractItem(i, Integer.MAX_VALUE, false));
+        }
+    }
+
+    public static void dropAll(World world, BlockPos pos, List<ItemStack> toDrop) {
+        for (ItemStack stack : toDrop) {
+            drop(world, pos, stack);
         }
     }
 

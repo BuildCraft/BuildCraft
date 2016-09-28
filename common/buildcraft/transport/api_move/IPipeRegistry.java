@@ -12,4 +12,6 @@ public interface IPipeRegistry {
     void setItemForPipe(PipeDefinition definition, IPipeItem item);
 
     IPipeItem getItemForPipe(PipeDefinition definition);
+
+    Iterable<PipeDefinition> getAllRegisteredPipes();
 }

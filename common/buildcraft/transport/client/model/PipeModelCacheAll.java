@@ -5,43 +5,44 @@ import java.util.List;
 import java.util.Objects;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCacheJoiner;
 import buildcraft.lib.client.model.ModelCacheJoiner.ModelKeyWrapper;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipePluggableState;
-import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
 import buildcraft.transport.client.model.PipeModelCachePluggable.PluggableKey;
+import buildcraft.transport.tile.TilePipeHolder;
 
 public class PipeModelCacheAll {
-    private static final IModelCache<PipeAllCutoutKey> cacheCutout;
-    private static final IModelCache<PipeAllTranslucentKey> cacheTranslucent;
+    static final IModelCache<PipeAllCutoutKey> cacheCutout;
+    static final IModelCache<PipeAllTranslucentKey> cacheTranslucent;
 
     static {
         List<ModelKeyWrapper<PipeAllCutoutKey, ?>> cutout = new ArrayList<>();
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getBaseCutout, PipeModelCacheBase.cacheCutout));
         cutout.add(new ModelKeyWrapper<>(PipeAllCutoutKey::getPluggable, PipeModelCachePluggable.cacheCutoutAll));
-        cacheCutout = new ModelCacheJoiner<>("pipe.all.cutout", cutout);
+        cacheCutout = new ModelCacheJoiner<>(cutout);
 
         List<ModelKeyWrapper<PipeAllTranslucentKey, ?>> translucent = new ArrayList<>();
         translucent.add(new ModelKeyWrapper<>(PipeAllTranslucentKey::getBaseTranslucent, PipeModelCacheBase.cacheTranslucent));
         translucent.add(new ModelKeyWrapper<>(PipeAllTranslucentKey::getPluggable, PipeModelCachePluggable.cacheTranslucentAll));
-        cacheTranslucent = new ModelCacheJoiner<>("pipe.all.transclucent", translucent);
+        cacheTranslucent = new ModelCacheJoiner<>(translucent);
     }
 
-    public static List<BakedQuad> getCutoutModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
-        PipeAllCutoutKey key = new PipeAllCutoutKey(pipe, render, pluggable);
-        return cacheCutout.bake(key, DefaultVertexFormats.BLOCK);
+    public static List<BakedQuad> getCutoutModel(TilePipeHolder tile) {
+        return cacheCutout.bake(new PipeAllCutoutKey(tile));
     }
 
-    public static List<BakedQuad> getTranslucentModel(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
-        PipeAllTranslucentKey key = new PipeAllTranslucentKey(pipe, render, pluggable);
-        return cacheTranslucent.bake(key, DefaultVertexFormats.BLOCK);
+    public static List<BakedQuad> getTranslucentModel(TilePipeHolder tile) {
+        PipeAllTranslucentKey key = new PipeAllTranslucentKey(tile);
+        return cacheTranslucent.bake(key);
+    }
+
+    public static void clearModels() {
+        cacheCutout.clear();
+        cacheTranslucent.clear();
     }
 
     public static class PipeAllCutoutKey {
@@ -49,9 +50,9 @@ public class PipeModelCacheAll {
         private final PluggableKey pluggable;
         private final int hash;
 
-        public PipeAllCutoutKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
-            cutout = new PipeBaseCutoutKey(pipe, render);
-            this.pluggable = new PluggableKey(BlockRenderLayer.CUTOUT, pluggable);
+        public PipeAllCutoutKey(TilePipeHolder tile) {
+            cutout = new PipeBaseCutoutKey(tile.getPipe().getModel());
+            this.pluggable = new PluggableKey(BlockRenderLayer.CUTOUT, tile);
             hash = Objects.hash(cutout, pluggable);
         }
 
@@ -90,9 +91,9 @@ public class PipeModelCacheAll {
         private final PluggableKey pluggable;
         private final int hash;
 
-        public PipeAllTranslucentKey(Pipe<?> pipe, PipeRenderState render, PipePluggableState pluggable) {
-            translucent = new PipeBaseTransclucentKey(render);
-            this.pluggable = new PluggableKey(BlockRenderLayer.TRANSLUCENT, pluggable);
+        public PipeAllTranslucentKey(TilePipeHolder tile) {
+            translucent = new PipeBaseTransclucentKey(tile.getPipe().getModel());
+            this.pluggable = new PluggableKey(BlockRenderLayer.TRANSLUCENT, tile);
             hash = Objects.hash(translucent, pluggable);
         }
 

@@ -1,53 +1,50 @@
 package buildcraft.transport.client.model;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.transport.PipePluggableState;
+import buildcraft.transport.api_move.IPipeHolder;
+import buildcraft.transport.api_move.PipePluggable;
 
 public class PipeModelCachePluggable {
     public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;
     public static final ModelCache<PluggableModelKey<?>> cacheCutoutSingle, cacheTranslucentSingle;
 
     static {
-        cacheCutoutSingle = new ModelCache<>("pipe.pluggable.cutout.single", PipeModelCachePluggable::generate);
-        cacheCutoutAll = new ModelCacheMultipleSame<>("pipe.pluggable.cutout.all", PluggableKey::getKeys, cacheCutoutSingle);
+        cacheCutoutSingle = new ModelCache<>(PipeModelCachePluggable::generate);
+        cacheCutoutAll = new ModelCacheMultipleSame<>(PluggableKey::getKeys, cacheCutoutSingle);
 
-        cacheTranslucentSingle = new ModelCache<>("pipe.pluggable.translucent.single", PipeModelCachePluggable::generate);
-        cacheTranslucentAll = new ModelCacheMultipleSame<>("pipe.pluggable.translucent.all", PluggableKey::getKeys, cacheTranslucentSingle);
+        cacheTranslucentSingle = new ModelCache<>(PipeModelCachePluggable::generate);
+        cacheTranslucentAll = new ModelCacheMultipleSame<>(PluggableKey::getKeys, cacheTranslucentSingle);
     }
 
-    private static <K extends PluggableModelKey<K>> ImmutableList<MutableQuad> generate(PluggableModelKey<K> key) {
-        if (key == null) return ImmutableList.of();
-        ImmutableList.Builder<MutableQuad> builder = ImmutableList.builder();
-        VertexFormat format = key.baker.getVertexFormat();
-        for (BakedQuad bq : key.baker.bake((K) key)) {
-            builder.add(MutableQuad.create(bq, format));
+    private static <K extends PluggableModelKey<K>> List<BakedQuad> generate(PluggableModelKey<K> key) {
+        if (key == null) {
+            return ImmutableList.of();
         }
-        return builder.build();
+        return key.baker.bake((K) key);
     }
 
     public static class PluggableKey {
         private final ImmutableSet<PluggableModelKey<?>> pluggables;
         private final int hash;
 
-        public PluggableKey(BlockRenderLayer layer, PipePluggableState state) {
+        public PluggableKey(BlockRenderLayer layer, IPipeHolder holder) {
             ImmutableSet.Builder<PluggableModelKey<?>> builder = ImmutableSet.builder();
-            for (EnumFacing side : EnumFacing.values()) {
-                PipePluggable pluggable = state.getPluggable(side);
+            for (EnumFacing side : EnumFacing.VALUES) {
+                PipePluggable pluggable = holder.getPluggable(side);
                 if (pluggable == null) continue;
-                PluggableModelKey<?> key = pluggable.getModelRenderKey(layer, side);
+                PluggableModelKey<?> key = pluggable.getModelRenderKey(layer);
                 if (key == null || key.baker == null) continue;
                 builder.add(key);
             }

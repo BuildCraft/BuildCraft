@@ -2,15 +2,24 @@ package buildcraft.transport.client.model;
 
 import java.util.List;
 
-import buildcraft.lib.client.model.MutableQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+
 import buildcraft.lib.config.DetailedConfigOption;
+import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
 
 public interface IPipeBaseModelGen {
     public static final DetailedConfigOption OPTION_INSIDE_COLOUR_MULT = new DetailedConfigOption("render.pipe.misc.inside.shade", "0.725");
 
-    List<MutableQuad> generateCutout(PipeBaseCutoutKey key);
+    List<BakedQuad> generateCutout(PipeBaseCutoutKey key);
 
-    List<MutableQuad> generateTranslucent(PipeBaseTransclucentKey key);
+    List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key);
+
+    /** Gets a sprite that can be baked into the item model. */
+    TextureAtlasSprite getItemSprite(PipeDefinition def, int index);
+
+    void onTextureStitchPre(TextureMap map);
 }

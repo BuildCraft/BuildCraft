@@ -1,14 +1,20 @@
 package buildcraft.transport.api_move;
 
 import java.io.IOException;
+import java.util.List;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 public abstract class PipePluggable {
     public final PluggableDefinition definition;
@@ -47,5 +53,13 @@ public abstract class PipePluggable {
         return null;
     }
 
-    // TODO: Model Key
+    /** Called whenever this pluggable is removed from the pipe.
+     * 
+     * @param toDrop A list containing all the items to drop (so you should add your items to this list) */
+    public void onRemove(List<ItemStack> toDrop) {}
+
+    @SideOnly(Side.CLIENT)
+    public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
+        return null;
+    }
 }

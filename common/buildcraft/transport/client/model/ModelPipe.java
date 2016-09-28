@@ -1,5 +1,6 @@
 package buildcraft.transport.client.model;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -17,11 +18,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.block.BlockPipeHolder;
+import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllCutoutKey;
+import buildcraft.transport.client.model.PipeModelCacheAll.PipeAllTranslucentKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
-import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
 import buildcraft.transport.client.model.key.PipeModelKey;
+import buildcraft.transport.tile.TilePipeHolder;
 
 public enum ModelPipe implements IBakedModel {
     INSTANCE;
@@ -31,23 +33,31 @@ public enum ModelPipe implements IBakedModel {
         if (side != null) {
             return ImmutableList.of();
         }
-        PipeModelKey key = null;
+
+        TilePipeHolder tile = null;
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState ext = (IExtendedBlockState) state;
-            key = ext.getValue(BlockPipeHolder.PROP_MODEL);
-        }
-        if (key == null) {
-            key = PipeModelKey.DEFAULT_KEY;
+            WeakReference<TilePipeHolder> ref = ext.getValue(BlockPipeHolder.PROP_TILE);
+            if (ref != null) {
+                tile = ref.get();
+            }
         }
 
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 
+        if (tile == null) {
+            if (layer == BlockRenderLayer.TRANSLUCENT) {
+                return ImmutableList.of();
+            }
+            return PipeModelCacheBase.cacheCutout.bake(new PipeBaseCutoutKey(PipeModelKey.DEFAULT_KEY));
+        }
+
         if (layer == BlockRenderLayer.TRANSLUCENT) {
-            PipeBaseTransclucentKey realKey = new PipeBaseTransclucentKey(key);
-            return PipeModelCacheBase.cacheTranslucent.bake(realKey, MutableQuad.ITEM_LMAP);
+            PipeAllTranslucentKey realKey = new PipeAllTranslucentKey(tile);
+            return PipeModelCacheAll.cacheTranslucent.bake(realKey);
         } else {
-            PipeBaseCutoutKey realKey = new PipeBaseCutoutKey(key);
-            return PipeModelCacheBase.cacheCutout.bake(realKey, MutableQuad.ITEM_LMAP);
+            PipeAllCutoutKey realKey = new PipeAllCutoutKey(tile);
+            return PipeModelCacheAll.cacheCutout.bake(realKey);
         }
     }
 

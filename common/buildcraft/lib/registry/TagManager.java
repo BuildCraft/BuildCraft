@@ -313,8 +313,9 @@ public class TagManager {
         startBatch();// transport
         // BC Transport Items
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
+        registerTag("item.plug.stop").reg("plug_stop").locale("PipePlug").model("pluggable/stop");
         // BC Transport Pipes
-        startBatch();//Pipes
+        startBatch();// Pipes
         registerTag("item.pipe.buildcrafttransport.wood_item").reg("pipe_wood_item").locale("PipeItemsWood");
         registerTag("item.pipe.buildcrafttransport.wood_fluid").reg("pipe_wood_fluid").locale("PipeFluidsWood");
         registerTag("item.pipe.buildcrafttransport.wood_power").reg("pipe_wood_power").locale("PipePowerWood");

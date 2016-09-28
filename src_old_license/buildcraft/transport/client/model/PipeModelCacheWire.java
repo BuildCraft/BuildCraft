@@ -55,7 +55,7 @@ public class PipeModelCacheWire {
 
         cacheSingle = new ModelCacheBuilder<>("pipe.wire.single", PipeModelCacheWire::generate).setMaxSize(1003).enableGL(DefaultVertexFormats.POSITION_TEX).setKeepMutable(false).build();
         // new ModelCache<>("pipe.wire.single", 1000, PipeModelCacheWire::generate);
-        cacheAll = new ModelCacheMultipleSame<>("pipe.wire.all", PipeWireKey::getKeys, cacheSingle);
+        cacheAll = new ModelCacheMultipleSame<>(PipeWireKey::getKeys, cacheSingle);
     }
 
     private static Vec3d getOffset(PipeWire wire) {

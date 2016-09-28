@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 
 /** An adding {@link IModelCache} that takes a single key and adds all of the sub-keys given by the
  * {@link IModelKeyMultipleSameMapper}
@@ -20,28 +19,33 @@ public class ModelCacheMultipleSame<K, T> implements IModelCache<K> {
     private final IModelKeyMultipleSameMapper<K, T> mapper;
     private final IModelCache<T> seperateCache;
 
-    public ModelCacheMultipleSame(String mainName, IModelKeyMultipleSameMapper<K, T> mapper, IModelCache<T> seperateCache) {
-        this.mainCache = new ModelCache<>(mainName, this::load);
+    public ModelCacheMultipleSame(IModelKeyMultipleSameMapper<K, T> mapper, IModelCache<T> seperateCache) {
+        this.mainCache = new ModelCache<>(this::load);
         this.mapper = mapper;
         this.seperateCache = seperateCache;
     }
 
-    private List<MutableQuad> load(K key) {
-        List<MutableQuad> quads = new ArrayList<>();
+    private List<BakedQuad> load(K key) {
+        List<BakedQuad> quads = new ArrayList<>();
         for (T to : mapper.map(key)) {
-            seperateCache.appendAsMutable(to, quads);
+            quads.addAll(seperateCache.bake(to));
         }
         return quads;
     }
 
     @Override
-    public void appendAsMutable(K key, List<MutableQuad> quads) {
-        mainCache.appendAsMutable(key, quads);
+    public List<BakedQuad> bake(K key) {
+        if (ModelCache.cacheJoined) {
+            return mainCache.bake(key);
+        } else {
+            return load(key);
+        }
     }
 
     @Override
-    public List<BakedQuad> bake(K key, VertexFormat format) {
-        return mainCache.bake(key, format);
+    public void clear() {
+        mainCache.clear();
+        seperateCache.clear();
     }
 
     public interface IModelKeyMultipleSameMapper<F, T> {

@@ -17,11 +17,11 @@ public final class PluggableDefinition {
 
     @FunctionalInterface
     public interface IPluggableCreator {
-        PipePluggable createPluggable(IPipeHolder t, EnumFacing side);
+        PipePluggable createPluggable(IPipeHolder holder, EnumFacing side);
     }
 
     @FunctionalInterface
     public interface IPluggableLoader {
-        PipePluggable loadPluggable(IPipeHolder t, EnumFacing side, NBTTagCompound u);
+        PipePluggable loadPluggable(IPipeHolder holder, EnumFacing side, NBTTagCompound u);
     }
 }

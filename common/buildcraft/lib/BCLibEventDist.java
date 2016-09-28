@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.client.model.CustomModelLoader;
 import buildcraft.lib.client.render.DetatchedRenderer;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -61,6 +62,7 @@ public enum BCLibEventDist {
     public void textureStitchPre(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPre(map);
+        CustomModelLoader.onTextureStitchPre(map);
         FluidRenderer.onTextureStitchPre(map);
     }
 
@@ -76,6 +78,7 @@ public enum BCLibEventDist {
     @SideOnly(Side.CLIENT)
     public void modelBake(ModelBakeEvent event) {
         LaserRenderer_BC8.clearModels();
+        CustomModelLoader.onModelBake();
     }
 
     @SubscribeEvent

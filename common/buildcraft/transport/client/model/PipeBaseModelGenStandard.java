@@ -1,15 +1,22 @@
 package buildcraft.transport.client.model;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.vecmath.*;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
@@ -17,14 +24,35 @@ import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
+import buildcraft.transport.api_move.PipeAPI;
+import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
 
-public enum StandardPipeBaseModelGen implements IPipeBaseModelGen {
+public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
     INSTANCE;
 
-    // Gen
+    // Textures
+    private static final Map<PipeDefinition, TextureAtlasSprite[]> sprites = new IdentityHashMap<>();
 
+    @Override
+    public void onTextureStitchPre(TextureMap map) {
+        sprites.clear();
+        for (PipeDefinition def : PipeAPI.pipeRegistry.getAllRegisteredPipes()) {
+            TextureAtlasSprite[] array = new TextureAtlasSprite[def.textures.length];
+            for (int i = 0; i < array.length; i++) {
+                array[i] = map.registerSprite(new ResourceLocation(def.textures[i]));
+            }
+            sprites.put(def, array);
+        }
+    }
+
+    @Override
+    public TextureAtlasSprite getItemSprite(PipeDefinition def, int index) {
+        return getSprite(sprites.get(def), index);
+    }
+
+    // Models
     private static final MutableQuad[][][] QUADS;
     private static final MutableQuad[][][] QUADS_COLOURED;
 
@@ -145,25 +173,37 @@ public enum StandardPipeBaseModelGen implements IPipeBaseModelGen {
         }
     }
 
-    // Usage
+    // Model Usage
 
     @Override
-    public List<MutableQuad> generateCutout(PipeBaseCutoutKey key) {
+    public List<BakedQuad> generateCutout(PipeBaseCutoutKey key) {
         List<MutableQuad> quads = new ArrayList<>();
 
+        TextureAtlasSprite[] spriteArray = sprites.get(key.definition);
         for (EnumFacing face : EnumFacing.values()) {
             float size = key.connections[face.ordinal()];
             if (size > 0) {
-                addQuads(QUADS[1][face.ordinal()], quads, key.sides[face.ordinal()]);
+                addQuads(QUADS[1][face.ordinal()], quads, getSprite(spriteArray, key.sideSprites[face.ordinal()]));
             } else {
-                addQuads(QUADS[0][face.ordinal()], quads, key.center);
+                addQuads(QUADS[0][face.ordinal()], quads, getSprite(spriteArray, key.centerSprite));
             }
         }
-        return quads;
+        List<BakedQuad> bakedQuads = new ArrayList<>();
+        for (MutableQuad q : quads) {
+            bakedQuads.add(q.toUnpacked(DefaultVertexFormats.BLOCK));
+        }
+        return bakedQuads;
+    }
+
+    private static TextureAtlasSprite getSprite(TextureAtlasSprite[] array, int index) {
+        if (array == null || index < 0 || index >= array.length) {
+            return Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+        }
+        return array[index];
     }
 
     @Override
-    public List<MutableQuad> generateTranslucent(PipeBaseTransclucentKey key) {
+    public List<BakedQuad> generateTranslucent(PipeBaseTransclucentKey key) {
         if (!key.shouldRender()) return ImmutableList.of();
         List<MutableQuad> quads = new ArrayList<>();
         TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
@@ -177,10 +217,12 @@ public enum StandardPipeBaseModelGen implements IPipeBaseModelGen {
             }
         }
         int colour = 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(key.colour));
+        List<BakedQuad> bakedQuads = new ArrayList<>();
         for (MutableQuad q : quads) {
             q.colouri(colour);
+            bakedQuads.add(q.toUnpacked(DefaultVertexFormats.BLOCK));
         }
-        return quads;
+        return bakedQuads;
     }
 
     private static void addQuads(MutableQuad[] from, List<MutableQuad> to, TextureAtlasSprite sprite) {

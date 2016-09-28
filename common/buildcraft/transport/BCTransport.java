@@ -21,11 +21,12 @@ import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipeFlowType;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
-import buildcraft.transport.flow.PipeFlowFluids;
-import buildcraft.transport.flow.PipeFlowItems;
-import buildcraft.transport.flow.PipeFlowPower;
-import buildcraft.transport.flow.PipeFlowStructure;
 import buildcraft.transport.pipe.PipeRegistry;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.pipe.flow.PipeFlowPower;
+import buildcraft.transport.pipe.flow.PipeFlowStructure;
+import buildcraft.transport.plug.PluggableRegistry;
 
 @Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCTransport {
@@ -39,6 +40,7 @@ public class BCTransport {
         RegistryHelper.useOtherModConfigFor(MODID, BCCore.MODID);
 
         PipeAPI.pipeRegistry = PipeRegistry.INSTANCE;
+        PipeAPI.pluggableRegistry = PluggableRegistry.INSTANCE;
 
         PipeAPI.flowItems = new PipeFlowType(PipeFlowItems::new, PipeFlowItems::new);
         PipeAPI.flowFluids = new PipeFlowType(PipeFlowFluids::new, PipeFlowFluids::new);
@@ -49,6 +51,7 @@ public class BCTransport {
 
         BCTransportBlocks.preInit();
         BCTransportPipes.preInit();
+        BCTransportPlugs.preInit();
         BCTransportItems.preInit();
 
         CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);

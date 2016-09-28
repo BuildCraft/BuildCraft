@@ -1,7 +1,14 @@
 package buildcraft.transport;
 
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.transport.client.model.PipeModelCacheAll;
+import buildcraft.transport.client.model.PipeModelCacheBase;
 
 public class BCTransportSprites {
     public static final SpriteHolder EMPTY_FILTERED_BUFFER_SLOT;
@@ -19,6 +26,16 @@ public class BCTransportSprites {
     }
 
     public static void preInit() {
-        // noting, just for sprite loading
+        MinecraftForge.EVENT_BUS.register(BCTransportSprites.class);
+    }
+
+    @SubscribeEvent
+    public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
+        PipeModelCacheBase.generator.onTextureStitchPre(event.getMap());
+    }
+
+    @SubscribeEvent
+    public static void onModelBake(ModelBakeEvent event) {
+        PipeModelCacheAll.clearModels();
     }
 }

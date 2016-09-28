@@ -58,15 +58,19 @@ public final class PluggableHolder {
             buffer.writeBoolean(false);
         } else {
             buffer.writeBoolean(true);
+            buffer.writeString(pluggable.definition.identifier.toString());
             pluggable.writePayload(buffer, netSide);
         }
     }
 
     public void readPayload(PacketBuffer buffer, Side netSide, MessageContext ctx) throws IOException {
         if (buffer.readBoolean()) {
-            if (pluggable == null) {
-                throw new IllegalStateException("Tried to read data for a null pluggable!");
+            ResourceLocation identifer = new ResourceLocation(buffer.readStringFromBuffer(256));
+            PluggableDefinition def = PipeAPI.pluggableRegistry.getDefinition(identifer);
+            if (def == null) {
+                throw new IllegalStateException("Unknown remote pluggable \"" + identifer + "\"");
             }
+            pluggable = def.pluggableConstructor.createPluggable(holder, side);
             pluggable.readPayload(buffer, netSide, ctx);
         } else {
             pluggable = null;

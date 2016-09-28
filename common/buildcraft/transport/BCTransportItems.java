@@ -20,6 +20,8 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeFluidGold;
     public static ItemPipeHolder pipePowerGold;
 
+    public static ItemBC_Neptune plugStop;
+
     public static void preInit() {
         waterproof = ItemManager.register(new ItemBC_Neptune("item.waterproof"));
 
@@ -34,6 +36,8 @@ public class BCTransportItems {
         pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
         pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
         pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
+
+        plugStop = ItemManager.register(new ItemBC_Neptune("item.plug.stop"));
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {

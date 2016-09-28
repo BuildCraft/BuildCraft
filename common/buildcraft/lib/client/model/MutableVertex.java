@@ -32,6 +32,20 @@ public class MutableVertex {
         System.arraycopy(from.light, 0, light, 0, 2);
     }
 
+    public void toBakedBlock(int[] data, int offset) {
+        // POSITION_3F
+        data[offset + 0] = Float.floatToRawIntBits(position[0]);
+        data[offset + 1] = Float.floatToRawIntBits(position[1]);
+        data[offset + 2] = Float.floatToRawIntBits(position[2]);
+        // COLOR_4UB
+        data[offset + 3] = -1;//colourRGBA();
+        // TEX_2F
+        data[offset + 4] = Float.floatToRawIntBits(uv[0]);
+        data[offset + 5] = Float.floatToRawIntBits(uv[1]);
+        // TEX_2S
+        data[offset + 6] = 0;
+    }
+
     public void setData(float[][] from, VertexFormat vfFrom) {
         int index = 0;
         for (VertexFormatElement elem : vfFrom.getElements()) {

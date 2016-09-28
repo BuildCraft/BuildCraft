@@ -185,10 +185,9 @@ public enum ModelPipeItem implements IBakedModel {
 
             if (item instanceof IPipeItem) {
                 PipeDefinition def = ((IPipeItem) item).getDefiniton();
-                // TODO: pipe texture indexes for items!
-                center = def.getSprite(0);
-                top = center;
-                bottom = center;
+                top = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureTop);
+                center = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureCenter);
+                bottom = PipeModelCacheBase.generator.getItemSprite(def, def.itemTextureBottom);
             }
             List<BakedQuad> quads = getQuads(center, top, bottom, stack.getMetadata(), DefaultVertexFormats.ITEM);
             return new ModelItemSimple(quads, ModelItemSimple.TRANSFORM_BLOCK);

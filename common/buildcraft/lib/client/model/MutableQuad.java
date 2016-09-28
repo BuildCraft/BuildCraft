@@ -19,6 +19,7 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 public class MutableQuad {
     public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
     public static final VertexFormat ITEM_BLOCK_PADDING = new VertexFormat();
+    public static final MutableQuad[] EMPTY_ARRAY = new MutableQuad[0];
 
     // Baked Quad array indices
     public static final int X = 0;
@@ -138,6 +139,9 @@ public class MutableQuad {
         return this.sprite;
     }
 
+    /** You should use {@link #toBakedBlock()} instead! (or a different, more specific method generator - you should
+     * file an issue at the main BC github if you need another VertexFormat to be supported) */
+    @Deprecated
     public UnpackedBakedQuad toUnpacked() {
         return toUnpacked(ITEM_LMAP);
     }
@@ -153,6 +157,16 @@ public class MutableQuad {
             }
         }
         return new UnpackedBakedQuad(data, tintIndex, face, sprite, false, format);
+    }
+
+    public BakedQuad toBakedBlock() {
+        int[] data = new int[28];
+        verticies[0].toBakedBlock(data, 0);
+        verticies[1].toBakedBlock(data, 7);
+        verticies[2].toBakedBlock(data, 14);
+        verticies[3].toBakedBlock(data, 21);
+        return new BakedQuad(data, tintIndex, face, sprite, false, DefaultVertexFormats.BLOCK);
+
     }
 
     public void render(VertexBuffer vb) {

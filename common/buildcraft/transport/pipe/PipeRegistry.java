@@ -7,10 +7,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.util.ResourceLocation;
+import com.google.common.collect.ImmutableList;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.misc.data.LoadingException;
@@ -69,10 +68,8 @@ public enum PipeRegistry implements IPipeRegistry {
         return def;
     }
 
-    @SideOnly(Side.CLIENT)
-    public void fmlInit() {
-        for (PipeDefinition def : definitions.values()) {
-            def.initSprites();
-        }
+    @Override
+    public Iterable<PipeDefinition> getAllRegisteredPipes() {
+        return ImmutableList.copyOf(definitions.values());
     }
 }

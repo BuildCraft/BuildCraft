@@ -1,4 +1,4 @@
-package buildcraft.transport.flow;
+package buildcraft.transport.pipe.flow;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

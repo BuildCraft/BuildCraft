@@ -6,7 +6,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -202,11 +201,19 @@ public final class Pipe implements IPipe, IDebuggable {
             textures.clear();
 
             for (EnumFacing facing : EnumFacing.VALUES) {
+                PipePluggable plug = getHolder().getPluggable(facing);
+                if (plug != null && plug.isBlocking()) {
+                    continue;
+                }
                 TileEntity oTile = getHolder().getNeighbouringTile(facing);
                 IPipe oPipe = getHolder().getNeighbouringPipe(facing);
                 if (oPipe != null) {
                     PipeBehaviour oBehaviour = oPipe.getBehaviour();
                     if (oBehaviour == null) {
+                        continue;
+                    }
+                    PipePluggable oPlug = oPipe.getHolder().getPluggable(facing.getOpposite());
+                    if (oPlug != null && oPlug.isBlocking()) {
                         continue;
                     }
                     if (canPipesConnect(facing, this, oPipe)) {
@@ -269,15 +276,14 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @SideOnly(Side.CLIENT)
     public PipeModelKey getModel() {
-        TextureAtlasSprite center = getDefinition().getSprite(behaviour.getTextureIndex(null));
-        TextureAtlasSprite[] sides = new TextureAtlasSprite[6];
-        boolean[] mc = new boolean[6];
+        int[] sides = new int[6];
+        float[] mc = new float[6];
         for (EnumFacing face : EnumFacing.VALUES) {
             int i = face.ordinal();
-            sides[i] = getDefinition().getSprite(behaviour.getTextureIndex(face));
-            mc[i] = connected.contains(face);
+            sides[i] = behaviour.getTextureIndex(face);
+            mc[i] = connected.contains(face) ? 0.25f : 0;
         }
-        return new PipeModelKey(center, sides, mc, colour);
+        return new PipeModelKey(definition, behaviour.getTextureIndex(null), sides, mc, colour);
     }
 
     @Override
@@ -310,7 +316,7 @@ public final class Pipe implements IPipe, IDebuggable {
     public ConnectedType getConnectedType(EnumFacing side) {
         return types.get(side);
     }
-    
+
     @Override
     public boolean isConnected(EnumFacing side) {
         return connected.contains(side);
