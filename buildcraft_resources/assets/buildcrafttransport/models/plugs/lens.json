@@ -1,0 +1,26 @@
+{
+    "textures": {
+        "#main":"buildcrafttransport:pipes/lens",
+        "#lens":"buildcrafttransport:pipes/overlay_lens"
+    },
+    "shade": true,
+    "cutout": [
+        {
+           "from": [ 2, 4, 4 ],
+            "to": [ 4, 12, 12 ],
+            "faces": {
+                "down":  { "uv": [ 2, 4, 4, 12 ], "texture": "#main" },
+                "up":    { "uv": [ 2, 4, 4, 12 ], "texture": "#main" },
+                "north": { "uv": [ 2, 4, 4, 12 ], "texture": "#main" },
+                "south": { "uv": [ 2, 4, 4, 12 ], "texture": "#main" },
+                "west":  { "uv": [ 4, 4, 12, 12 ], "texture": "#main" },
+                "east":  { "uv": [ 4, 4, 12, 12 ], "texture": "#main" }
+            }
+        }
+    ],
+    "translucent": [
+        {
+            "from":[ 0, 0, 0 ]
+        }
+    ]
+}

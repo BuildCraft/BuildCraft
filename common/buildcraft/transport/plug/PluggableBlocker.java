@@ -18,12 +18,12 @@ import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.api_move.PluggableDefinition.IPluggableCreator;
 import buildcraft.transport.api_move.PluggableDefinition.IPluggableLoader;
-import buildcraft.transport.client.model.key.KeyPlugStopper;
+import buildcraft.transport.client.model.key.KeyPlugBlocker;
 
-public class PluggableStop extends PipePluggable {
+public class PluggableBlocker extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
 
-    public static final IPluggableCreator CREATOR = (holder, side) -> new PluggableStop(BCTransportPlugs.stop, holder, side);
+    public static final IPluggableCreator CREATOR = (holder, side) -> new PluggableBlocker(BCTransportPlugs.blocker, holder, side);
     public static final IPluggableLoader LOADER = (holder, side, nbt) -> CREATOR.createPluggable(holder, side);
 
     static {
@@ -39,7 +39,7 @@ public class PluggableStop extends PipePluggable {
         BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, 0.25, 0.25, uu, 0.75, 0.75);
     }
 
-    public PluggableStop(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
+    public PluggableBlocker(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {
         super(definition, holder, side);
     }
 
@@ -61,7 +61,7 @@ public class PluggableStop extends PipePluggable {
     @Override
     @SideOnly(Side.CLIENT)
     public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
-        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugStopper(side);
+        if (layer == BlockRenderLayer.CUTOUT) return new KeyPlugBlocker(side);
         return null;
     }
 }

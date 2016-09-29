@@ -1,0 +1,20 @@
+{
+    "textures": {
+        "#all":"buildcrafttransport:pipes/plug"
+    },
+    "shade": true,
+    "elements": [
+        {
+           "from": [ 2, 4, 4 ],
+            "to": [ 4, 12, 12 ],
+            "faces": {
+                "down":  { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
+                "up":    { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
+                "north": { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
+                "south": { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
+                "west":  { "uv": [ 4, 4, 12, 12 ], "texture": "#all" },
+                "east":  { "uv": [ 4, 4, 12, 12 ], "texture": "#all" }
+            }
+        }
+    ]
+}

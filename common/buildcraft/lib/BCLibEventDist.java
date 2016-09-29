@@ -71,12 +71,12 @@ public enum BCLibEventDist {
     public void textureStitchPost(TextureStitchEvent.Post event) {
         TextureMap map = event.getMap();
         SpriteHolderRegistry.onTextureStitchPost();
-
     }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void modelBake(ModelBakeEvent event) {
+        SpriteHolderRegistry.exportTextureMap();
         LaserRenderer_BC8.clearModels();
         CustomModelLoader.onModelBake();
     }

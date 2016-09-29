@@ -8,18 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.vecmath.Vector3f;
-
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.client.renderer.block.model.BlockPartFace;
-import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.Loader;
@@ -27,7 +22,9 @@ import net.minecraftforge.fml.common.LoaderState;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.lib.client.model.json.JsonModel;
+import buildcraft.lib.client.model.json.JsonModelPart;
+import buildcraft.lib.client.model.json.JsonQuad;
 
 public class CustomModelLoader {
     public static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.model.holder");
@@ -39,12 +36,16 @@ public class CustomModelLoader {
         for (ModelHolder holder : HOLDERS) {
             holder.onTextureStitchPre(toStitch);
         }
+
         for (ResourceLocation res : toStitch) {
             map.registerSprite(res);
         }
     }
 
-    public static void onTextureStitchPost() {
+    public static void onModelBake() {
+        for (ModelHolder holder : HOLDERS) {
+            holder.onModelBake();
+        }
         if (DEBUG && Loader.instance().isInState(LoaderState.AVAILABLE)) {
             BCLog.logger.info("[lib.model.holder] List of registered Models:");
             List<ModelHolder> holders = new ArrayList<>();
@@ -52,12 +53,12 @@ public class CustomModelLoader {
             holders.sort((a, b) -> a.modelLocation.toString().compareTo(b.modelLocation.toString()));
 
             for (ModelHolder holder : holders) {
-                MutableQuad[] baked = holder.quads;
+                MutableQuad[][] baked = holder.quads;
                 String status = "  ";
-                if (baked == null) {
+                if (holder.failReason != null) {
+                    status += "(" + holder.failReason + ")";
+                } else if (baked == null) {
                     status += "(Model was registered too late)";
-                } else if (holder.hasBaked) {
-                    status += "(Model did not exist in a resource pack)";
                 }
 
                 BCLog.logger.info("  - " + holder.modelLocation + status);
@@ -66,106 +67,119 @@ public class CustomModelLoader {
         }
     }
 
-    public static void onModelBake() {
-        for (ModelHolder holder : HOLDERS) {
-            holder.onModelBake();
-        }
-    }
-
     public static class ModelHolder {
+        // TODO: Add a complex version of this that can use expressions
         public final ResourceLocation modelLocation;
         private final Map<String, String> textureLookup;
-        private MutableQuad[] quads;
-        private ModelBlock rawModel;
-        private boolean unseen = true, hasBaked = false;
+        private final boolean allowTextureFallthrough;
+        private MutableQuad[][] quads;
+        private JsonModel rawModel;
+        private boolean unseen = true;
+        private String failReason;
 
         public ModelHolder(String location) {
-            this(new ResourceLocation(location));
+            this(new ResourceLocation(location), ImmutableMap.of(), false);
         }
 
-        public ModelHolder(ResourceLocation modelLocation) {
-            this(modelLocation, ImmutableMap.of());
+        public ModelHolder(String location, Map<String, String> textureLookup, boolean allowTextureFallthrough) {
+            this(new ResourceLocation(location), textureLookup, allowTextureFallthrough);
         }
 
-        public ModelHolder(ResourceLocation modelLocation, Map<String, String> textureLookup) {
+        public ModelHolder(ResourceLocation modelLocation, Map<String, String> textureLookup, boolean allowTextureFallthrough) {
             HOLDERS.add(this);
             this.modelLocation = modelLocation;
             this.textureLookup = textureLookup;
+            this.allowTextureFallthrough = allowTextureFallthrough;
         }
 
         protected void onTextureStitchPre(List<ResourceLocation> toRegisterSprites) {
             rawModel = null;
             quads = null;
+            failReason = null;
             try (IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation)) {
                 InputStream is = res.getInputStream();
                 try (InputStreamReader isr = new InputStreamReader(is)) {
-                    rawModel = ModelBlock.deserialize(isr);
+                    rawModel = JsonModel.deserialize(isr);
+                } catch (JsonSyntaxException jse) {
+                    rawModel = null;
+                    failReason = "The model had errors: " + jse.getMessage();
+                    BCLog.logger.warn("Failed to load the model " + modelLocation + " because " + jse.getMessage());
                 }
-            } catch (IOException e) {
-                throw new Error(e);
+            } catch (IOException io) {
+                BCLog.logger.warn("Failed to load the model " + modelLocation + " because " + io.getMessage());
+                rawModel = null;
+                failReason = "The model did not exist in any resource pack: " + io.getMessage();
             }
             if (rawModel != null) {
+                if (DEBUG) {
+                    BCLog.logger.info("[lib.model.holder] The model " + modelLocation + " requires these sprites:");
+                }
                 for (Entry<String, String> entry : rawModel.textures.entrySet()) {
                     String lookup = entry.getValue();
                     if (lookup.startsWith("~")) {
                         lookup = textureLookup.get(lookup);
+                        if (lookup == null) {
+                            lookup = entry.getValue();
+                        }
                     }
-                    toRegisterSprites.add(new ResourceLocation(lookup));
+                    if (lookup == null || lookup.startsWith("#") || lookup.startsWith("~")) {
+                        if (!allowTextureFallthrough) {
+                            failReason = "The sprite lookup '" + lookup + "' did not exist in ay of the maps";
+                            rawModel = null;
+                            break;
+                        }
+                    } else {
+                        toRegisterSprites.add(new ResourceLocation(lookup));
+                    }
+                    if (DEBUG) {
+                        BCLog.logger.info("[lib.model.holder]  - " + lookup);
+                    }
                 }
             }
         }
 
         protected void onModelBake() {
-            hasBaked = true;
             if (rawModel == null) {
-                BCLog.logger.warn("Raw Model for " + modelLocation + " was null!");
+                quads = null;
             } else {
-                List<MutableQuad> mutableQuads = new ArrayList<>();
-
-                for (BlockPart part : rawModel.getElements()) {
-                    Vector3f radius = new Vector3f(//
-                            part.positionTo.x - part.positionFrom.x,//
-                            part.positionTo.y - part.positionFrom.y,//
-                            part.positionTo.z - part.positionFrom.z//
-                    );
-                    radius.scale(0.5f);
-                    Vector3f center = new Vector3f(part.positionFrom.x, part.positionFrom.y, part.positionFrom.z);
-                    center.add(radius);
-                    center.scale(1 / 16f);
-                    radius.scale(1 / 16f);
-
-                    for (Entry<EnumFacing, BlockPartFace> e : part.mapFaces.entrySet()) {
-                        EnumFacing side = e.getKey();
-                        BlockPartFace face = e.getValue();
-
-                        String lookup = face.texture;
-                        if (lookup.startsWith("#")) {
-                            lookup = rawModel.textures.get(lookup);
-                        }
-                        if (lookup.startsWith("~")) {
-                            lookup = textureLookup.get(lookup);
-                        }
-
-                        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
-
-                        float[] uvs = new float[4];
-                        uvs[0] = sprite.getInterpolatedU(face.blockFaceUV.uvs[0]);
-                        uvs[1] = sprite.getInterpolatedU(face.blockFaceUV.uvs[2]);
-                        uvs[2] = sprite.getInterpolatedV(face.blockFaceUV.uvs[1]);
-                        uvs[3] = sprite.getInterpolatedV(face.blockFaceUV.uvs[3]);
-                        // int rot = face.blockFaceUV.rotation;
-                        MutableQuad quad = BCModelHelper.createFace(side, center, radius, uvs);
-                        // quad.rotateTextureUp(rot);
-                        mutableQuads.add(quad);
-                    }
-                }
-
-                this.quads = mutableQuads.toArray(new MutableQuad[mutableQuads.size()]);
+                MutableQuad[] cut = bakePart(rawModel.cutoutElements);
+                MutableQuad[] trans = bakePart(rawModel.translucentElements);
+                quads = new MutableQuad[][] { cut, trans };
                 rawModel = null;
             }
         }
 
-        private MutableQuad[] getQuadsChecking() {
+        private MutableQuad[] bakePart(JsonModelPart[] a) {
+            TextureAtlasSprite missingSprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+            List<MutableQuad> list = new ArrayList<>();
+            for (JsonModelPart part : a) {
+                for (JsonQuad quad : part.quads) {
+                    String lookup = quad.texture;
+                    if (lookup.startsWith("#")) {
+                        lookup = rawModel.textures.get(lookup);
+                    }
+                    if (lookup.startsWith("~")) {
+                        lookup = textureLookup.get(lookup);
+                    }
+                    TextureAtlasSprite sprite;
+                    if (lookup.startsWith("#") || lookup.startsWith("~")) {
+                        if (allowTextureFallthrough) {
+                            // Let the caller manually replace the sprite (as we don't know what to replace it with)
+                            // But only if the model user is aware of this (so its not an error)
+                            sprite = null;
+                        } else {
+                            sprite = missingSprite;
+                        }
+                    } else {
+                        sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(lookup);
+                    }
+                    list.add(quad.toQuad(sprite));
+                }
+            }
+            return list.toArray(new MutableQuad[list.size()]);
+        }
+
+        private MutableQuad[][] getQuadsChecking() {
             if (quads == null) {
                 if (unseen) {
                     unseen = false;
@@ -176,13 +190,17 @@ public class CustomModelLoader {
                         BCLog.logger.warn(warnText);
                     }
                 }
-                return MutableQuad.EMPTY_ARRAY;
+                return new MutableQuad[][] { MutableQuad.EMPTY_ARRAY, MutableQuad.EMPTY_ARRAY };
             }
             return quads;
         }
 
-        public MutableQuad[] getQuads() {
-            return getQuadsChecking();
+        public MutableQuad[] getCutoutQuads() {
+            return getQuadsChecking()[0];
+        }
+
+        public MutableQuad[] getTranslucentQuads() {
+            return getQuadsChecking()[1];
         }
     }
 }

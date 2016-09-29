@@ -25,7 +25,7 @@ public class BCTransportSprites {
         return SpriteHolderRegistry.getHolder("buildcrafttransport:" + loc);
     }
 
-    public static void preInit() {
+    public static void fmlPreInit() {
         MinecraftForge.EVENT_BUS.register(BCTransportSprites.class);
     }
 

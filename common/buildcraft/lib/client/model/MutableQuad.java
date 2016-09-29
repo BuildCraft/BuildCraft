@@ -25,7 +25,7 @@ public class MutableQuad {
     public static final int X = 0;
     public static final int Y = 1;
     public static final int Z = 2;
-    public static final int SHADE = 3;
+    public static final int COLOUR = 3;
     public static final int U = 4;
     public static final int V = 5;
     /** Represents either the normal (for items) or lightmap (for blocks) */
@@ -51,7 +51,7 @@ public class MutableQuad {
             float y = fromBits(data[stride * v + Y]);
             float z = fromBits(data[stride * v + Z]);
             mutableVertex.positionf(x, y, z);
-            mutableVertex.colouri(data[stride * v + SHADE]);
+            mutableVertex.colouri(data[stride * v + COLOUR]);
             float texU = fromBits(data[stride * v + U]);
             float texV = fromBits(data[stride * v + V]);
             mutableVertex.texf(texU, texV);
@@ -87,11 +87,17 @@ public class MutableQuad {
     private final MutableVertex[] verticies = new MutableVertex[4];
     private int tintIndex = -1;
     private EnumFacing face = null;
+    private boolean shade = false;
     private TextureAtlasSprite sprite = null;
 
     public MutableQuad(int tintIndex, EnumFacing face) {
+        this(tintIndex, face, false);
+    }
+
+    public MutableQuad(int tintIndex, EnumFacing face, boolean shade) {
         this.tintIndex = tintIndex;
         this.face = face;
+        this.shade = shade;
         for (int v = 0; v < 4; v++) {
             verticies[v] = new MutableVertex();
         }
@@ -131,6 +137,14 @@ public class MutableQuad {
         return face;
     }
 
+    public void setShade(boolean shade) {
+        this.shade = shade;
+    }
+
+    public boolean isShade() {
+        return this.shade;
+    }
+
     public void setSprite(TextureAtlasSprite sprite) {
         this.sprite = sprite;
     }
@@ -156,7 +170,7 @@ public class MutableQuad {
                 System.arraycopy(fromData[element], 0, data[vertex][element], 0, fromData[element].length);
             }
         }
-        return new UnpackedBakedQuad(data, tintIndex, face, sprite, false, format);
+        return new UnpackedBakedQuad(data, tintIndex, face, sprite, shade, format);
     }
 
     public BakedQuad toBakedBlock() {
@@ -165,7 +179,7 @@ public class MutableQuad {
         verticies[1].toBakedBlock(data, 7);
         verticies[2].toBakedBlock(data, 14);
         verticies[3].toBakedBlock(data, 21);
-        return new BakedQuad(data, tintIndex, face, sprite, false, DefaultVertexFormats.BLOCK);
+        return new BakedQuad(data, tintIndex, face, sprite, shade, DefaultVertexFormats.BLOCK);
 
     }
 
@@ -276,6 +290,8 @@ public class MutableQuad {
 
     public MutableQuad multColourd(double by) {for (MutableVertex v : verticies) v.multColourd(by); return this;}
     public MutableQuad multColourd(double r, double g, double b, double a) {for (MutableVertex v : verticies) v.multColourd(r, g, b, a); return this;}
+
+    public MutableQuad texFromSprite(TextureAtlasSprite s) {for (MutableVertex v : verticies) v.texFromSprite(s); return this;}
 
     public MutableQuad lightv(Tuple2f vec) {for (MutableVertex v : verticies) v.lightv(vec); return this;}
     public MutableQuad lightf(float block, float sky) {for (MutableVertex v : verticies) v.lightf(block, sky); return this;}

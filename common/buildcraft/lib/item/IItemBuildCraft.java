@@ -46,9 +46,10 @@ public interface IItemBuildCraft {
         Item thisItem = (Item) this;
         TIntObjectHashMap<ModelResourceLocation> variants = new TIntObjectHashMap<>();
         addModelVariants(variants);
-        for (ModelResourceLocation variant : variants.values(new ModelResourceLocation[variants.size()])) {
+        for (int key : variants.keys()) {
+            ModelResourceLocation variant = variants.get(key);
             if (ItemManager.DEBUG) {
-                BCLog.logger.info("[lib.item][" + thisItem.getRegistryName() + "] Registering a variant " + variant);
+                BCLog.logger.info("[lib.item][" + thisItem.getRegistryName() + "] Registering a variant " + variant + " for damage " + key);
             }
             ModelBakery.registerItemVariants(thisItem, variant);
         }

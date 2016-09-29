@@ -47,7 +47,7 @@ import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.plug.PluggableStop;
+import buildcraft.transport.plug.PluggableBlocker;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 import buildcraft.transport.wire.WireManager;
@@ -296,7 +296,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
         if (held != null && held.getItem() == BCTransportItems.plugStop) {
             // TODO: Add custom items for addition
-            tile.replacePluggable(realSide, PluggableStop.CREATOR.createPluggable(tile, realSide));
+            tile.replacePluggable(realSide, PluggableBlocker.CREATOR.createPluggable(tile, realSide));
             SoundUtil.playBlockPlace(world, pos);
             return true;
         }

@@ -4,14 +4,14 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PluggableDefinition;
-import buildcraft.transport.plug.PluggableStop;
+import buildcraft.transport.plug.PluggableBlocker;
 
 public class BCTransportPlugs {
 
-    public static PluggableDefinition stop;
+    public static PluggableDefinition blocker;
 
     public static void preInit() {
-        stop = new PluggableDefinition(new ResourceLocation("buildcrafttransport:stop"), PluggableStop.CREATOR, PluggableStop.LOADER);
-        PipeAPI.pluggableRegistry.registerPluggable(stop);
+        blocker = new PluggableDefinition(new ResourceLocation("buildcrafttransport:blocker"), PluggableBlocker.CREATOR, PluggableBlocker.LOADER);
+        PipeAPI.pluggableRegistry.registerPluggable(blocker);
     }
 }

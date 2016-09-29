@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.vecmath.*;
 
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -38,7 +39,7 @@ public class MutableVertex {
         data[offset + 1] = Float.floatToRawIntBits(position[1]);
         data[offset + 2] = Float.floatToRawIntBits(position[2]);
         // COLOR_4UB
-        data[offset + 3] = -1;//colourRGBA();
+        data[offset + 3] = -1;// colourRGBA();
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(uv[0]);
         data[offset + 5] = Float.floatToRawIntBits(uv[1]);
@@ -216,6 +217,12 @@ public class MutableVertex {
         colour[1] *= g;
         colour[2] *= b;
         colour[3] *= a;
+        return this;
+    }
+
+    public MutableVertex texFromSprite(TextureAtlasSprite sprite) {
+        uv[0] = sprite.getInterpolatedU(uv[0]);
+        uv[1] = sprite.getInterpolatedV(uv[1]);
         return this;
     }
 

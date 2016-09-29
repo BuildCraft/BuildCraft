@@ -1,11 +1,22 @@
 package buildcraft.lib.client.sprite;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
@@ -44,6 +55,34 @@ public class SpriteHolderRegistry {
     public static void onTextureStitchPre(TextureMap map) {
         for (SpriteHolder holder : HOLDER_MAP.values()) {
             holder.onTextureStitchPre(map);
+        }
+    }
+
+    public static void exportTextureMap() {
+        if (!DEBUG) {
+            return;
+        }
+        TextureMap map = Minecraft.getMinecraft().getTextureMapBlocks();
+        GlStateManager.bindTexture(map.getGlTextureId());
+
+        int width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+        int height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+
+        int totalSize = width * height;
+        IntBuffer intbuffer = BufferUtils.createIntBuffer(totalSize);
+        int[] aint = new int[totalSize];
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
+        intbuffer.get(aint);
+        BufferedImage bufferedimage = new BufferedImage(width, height, 2);
+        bufferedimage.setRGB(0, 0, width, height, aint, 0, width);
+
+        try {
+            ImageIO.write(bufferedimage, "png", new File("bc_spritemap.png"));
+        } catch (IOException io) {
+            BCLog.logger.warn(io);
         }
     }
 
