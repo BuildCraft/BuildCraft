@@ -15,8 +15,9 @@ import net.minecraft.util.EnumFacing;
  * that make it simple to render as a block, item (todo) or tool (todo) */
 @SuppressWarnings("deprecation")
 public class ModelItemSimple implements IBakedModel {
-    public static final ItemCameraTransforms TRANSFORM_DEAFULT = ItemCameraTransforms.DEFAULT;
+    public static final ItemCameraTransforms TRANSFORM_DEFAULT = ItemCameraTransforms.DEFAULT;
     public static final ItemCameraTransforms TRANSFORM_BLOCK;
+    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM;
     // TODO: TRANSFORM_ITEM
     // TODO: TRANSFORM_TOOL
 
@@ -31,6 +32,17 @@ public class ModelItemSimple implements IBakedModel {
         ItemTransformVec3f ground = def(0, 0, 0, 0, 3, 0, 0.25);
         ItemTransformVec3f fixed = def(0, 0, 0, 0, 0, 0, 0.5);
         TRANSFORM_BLOCK = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+
+        // Same as block
+        // thirdperson_left = def(0, 270, 0, 0, 0, -8, 0.5);
+        // thirdperson_right = def(0, 90, 0, 0, 0, -8, 0.5);
+        // firstperson_left = def(0, 270, 0, 0, 0, -8, 0.5);
+        // firstperson_right = def(0, 90, 0, 0, 0, -8, 0.5);
+        head = def(0, 90, 0, 0, 0, 0, 1);
+        gui = def(0, 90, 0, 0, 0, 0, 1);
+        ground = def(0, 90, 0, 0, 0, -4, 0.5);
+        fixed = def(0, 90, 0, 0, 0, -4, 0.85);
+        TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
     }
 
     private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {

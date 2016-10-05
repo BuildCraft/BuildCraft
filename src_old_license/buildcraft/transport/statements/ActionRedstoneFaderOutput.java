@@ -6,7 +6,7 @@ package buildcraft.transport.statements;
 
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.StatementParamGateSideOnly;
 import buildcraft.core.statements.StatementParameterRedstoneLevel;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput {
@@ -34,7 +34,7 @@ public class ActionRedstoneFaderOutput extends ActionRedstoneOutput {
         if (index == 0) {
             param = new StatementParameterRedstoneLevel(15, 1, 15);
         } else if (index == 1) {
-            param = new StatementParameterRedstoneGateSideOnly();
+            param = new StatementParamGateSideOnly();
         }
 
         return param;

@@ -39,15 +39,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.blocks.ICustomPaintHandler;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.InventoryUtil;
-import buildcraft.lib.misc.SoundUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.api_move.EnumWirePart;
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipeDefinition;
-import buildcraft.transport.api_move.PipePluggable;
+import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.plug.PluggableBlocker;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;
 import buildcraft.transport.wire.WireManager;
@@ -265,14 +259,28 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         TilePipeHolder tile = getPipe(world, pos, false);
-        Pipe pipe = tile == null ? null : tile.getPipe();
-        if (pipe != null) {
-            PipeDefinition def = pipe.getDefinition();
-            Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(def);
-            if (item != null) {
-                int meta = pipe.getColour() == null ? 0 : pipe.getColour().getMetadata() + 1;
-                return new ItemStack(item, 1, meta);
+        if (tile == null) {
+            return null;
+        }
+        if (target.subHit <= 6) {
+            Pipe pipe = tile.getPipe();
+            if (pipe != null) {
+                PipeDefinition def = pipe.getDefinition();
+                Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(def);
+                if (item != null) {
+                    int meta = pipe.getColour() == null ? 0 : pipe.getColour().getMetadata() + 1;
+                    return new ItemStack(item, 1, meta);
+                }
             }
+        } else if (target.subHit <= 12) {
+            int pluggableHit = target.subHit - 7;
+            EnumFacing face = EnumFacing.VALUES[pluggableHit];
+            PipePluggable plug = tile.getPluggable(face);
+            if (plug != null) {
+                return plug.getPickStack();
+            }
+        } else {
+            // TODO: wire handling
         }
         return null;
     }
@@ -291,14 +299,18 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (realSide == null) {
             return false;
         }
-        if (tile.getPluggable(realSide) != null) {
-            return false;
+        PipePluggable existing = tile.getPluggable(realSide);
+        if (existing != null) {
+            return existing.onPluggableActivate(player, trace, hitX, hitY, hitZ);
         }
-        if (held != null && held.getItem() == BCTransportItems.plugStop) {
-            // TODO: Add custom items for addition
-            tile.replacePluggable(realSide, PluggableBlocker.CREATOR.createPluggable(tile, realSide));
-            SoundUtil.playBlockPlace(world, pos);
-            return true;
+        Item item = held == null ? null : held.getItem();
+        if (item instanceof IItemPluggable) {
+            IItemPluggable itemPlug = (IItemPluggable) item;
+            PipePluggable plug = itemPlug.onPlace(held, tile, realSide);
+            if (plug != null) {
+                tile.replacePluggable(realSide, plug);
+                return true;
+            }
         }
         return false;
     }

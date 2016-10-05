@@ -236,10 +236,20 @@ gate.logic.and=AND
 gate.logic.or=OR
 
 gate.material.iron=Iron
+gate.material.nether_brick=Nether Brick
 gate.material.gold=Gold
-gate.material.diamond=Diamond
-gate.material.emerald=Emerald
-gate.material.quartz=Quartz
+
+gate.modifier.gold=Modifier: §6Gold§r
+gate.modifier.quartz=Modifier: §fQuartz§r
+gate.modifier.diamond=Modifier: §bDiamond§r
+gate.modifier.prismarine=Modifier: §aPrismarine§r
+
+gate.modifier.desc.gold=Adds 1 trigger parameter slot
+gate.modifier.desc.quartz=Adds 1 trigger and action parameter slots
+gate.modifier.desc.diamond=Adds 2 trigger and action parameter slots
+gate.modifier.desc.prismarine=Adds 3 trigger and action parameter slots
+
+gate.modifier.divisor=§cBut halves the number of action and trigger slots!§r
 
 gate.name=%s %s Gate
 gate.name.basic=Basic Gate
@@ -331,6 +341,7 @@ gui.ledger.access.private=Private
 
 item.bucketFuel.name=Fuel Bucket
 item.bucketOil.name=Oil Bucket
+item.diamondShard.name=Diamond Shard
 item.woodenGearItem.name=Wood Gear
 item.stoneGearItem.name=Stone Gear
 item.ironGearItem.name=Iron Gear

@@ -1,0 +1,102 @@
+package buildcraft.transport.client.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+
+import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.transport.BCTransportModels;
+import buildcraft.transport.gate.EnumGateLogic;
+import buildcraft.transport.gate.GateVariant;
+import buildcraft.transport.item.ItemPluggableGate;
+
+public enum ModelGateItem implements IBakedModel {
+    INSTANCE;
+
+    private static MutableQuad[][] lastQuads = new MutableQuad[2][];
+    private static List<BakedQuad>[] lastBaked = new List[2];
+
+    private static List<BakedQuad> getQuads(GateVariant variant) {
+        MutableQuad[] from;
+        int idx = 0;
+        if (variant.logic == EnumGateLogic.AND) {
+            from = BCTransportModels.GATE_AND.getCutoutQuads();
+            idx = 0;
+        } else {
+            from = BCTransportModels.GATE_OR.getCutoutQuads();
+            idx = 1;
+        }
+
+        if (from != lastQuads[idx]) {
+            lastQuads[idx] = from;
+            lastBaked[idx] = new ArrayList<>();
+            for (MutableQuad q : from) {
+                lastBaked[idx].add(q.toBakedItem());
+            }
+        }
+
+        return lastBaked[idx];
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return false;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return false;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return null;
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return GateOverride.GATE_OVERRIDE;
+    }
+
+    public static class GateOverride extends ItemOverrideList {
+        public static final GateOverride GATE_OVERRIDE = new GateOverride();
+
+        private GateOverride() {
+            super(ImmutableList.of());
+        }
+
+        @Override
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
+            GateVariant variant = ItemPluggableGate.getVariant(stack);
+            return new ModelItemSimple(getQuads(variant), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM);
+        }
+    }
+}

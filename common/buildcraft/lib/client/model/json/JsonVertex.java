@@ -2,20 +2,24 @@ package buildcraft.lib.client.model.json;
 
 import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import buildcraft.lib.client.model.MutableVertex;
 
 public class JsonVertex {
     public Point3f pos;
+    public Vector3f normal;
     public Point2f uv;
 
     public JsonVertex(MutableVertex vertex) {
         pos = vertex.position();
+        normal = vertex.normal();
         uv = vertex.tex();
     }
 
     public void loadInto(MutableVertex vertex) {
-        vertex.positionf(pos.x, pos.y, pos.z);
-        vertex.texf(uv.x, uv.y);
+        vertex.positionv(pos);
+        vertex.normalv(normal);
+        vertex.texv(uv);
     }
 }

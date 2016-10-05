@@ -395,10 +395,10 @@ public class BuildCraftCore extends BuildCraftMod {
         StatementManager.registerParameterClass(StatementParameterItemStack.class);
         StatementManager.registerParameterClass(StatementParameterItemStackExact.class);
         StatementManager.registerParameterClass(StatementParameterDirection.class);
-        StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
+        StatementManager.registerParameterClass(StatementParamGateSideOnly.class);
         StatementManager.registerParameterClass(StatementParameterRedstoneLevel.class);
-        StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
-        StatementManager.registerActionProvider(new DefaultActionProvider());
+        StatementManager.registerTriggerProvider(new CoreTriggerProvider());
+        StatementManager.registerActionProvider(new CoreActionProvider());
 
         if (BuildCraftCore.modifyWorld) {
             MinecraftForge.EVENT_BUS.register(new SpringPopulate());

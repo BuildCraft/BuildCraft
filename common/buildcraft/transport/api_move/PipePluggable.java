@@ -3,11 +3,14 @@ package buildcraft.transport.api_move;
 import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -25,6 +28,18 @@ public abstract class PipePluggable {
         this.definition = definition;
         this.holder = holder;
         this.side = side;
+    }
+
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        return nbt;
+    }
+
+    /** Writes the payload that will be passed into
+     * {@link PluggableDefinition#loadFromBuffer(IPipeHolder, EnumFacing, PacketBuffer)} on the client. (This is called
+     * on the server and sent to the client). Note that this will be called *instead* of write and read payload. */
+    public void writeCreationPayload(PacketBuffer buffer) {
+
     }
 
     public void writePayload(PacketBuffer buffer, Side side) {
@@ -57,6 +72,17 @@ public abstract class PipePluggable {
      * 
      * @param toDrop A list containing all the items to drop (so you should add your items to this list) */
     public void onRemove(List<ItemStack> toDrop) {}
+
+    /** Called whenever this pluggable is picked by the player (similar to Block.getPickBlock)
+     * 
+     * @return The stack that should be picked, or null if no stack can be picked from this pluggable. */
+    public ItemStack getPickStack() {
+        return null;
+    }
+
+    public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
+        return false;
+    }
 
     @SideOnly(Side.CLIENT)
     public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {

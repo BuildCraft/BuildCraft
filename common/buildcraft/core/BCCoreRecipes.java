@@ -29,6 +29,12 @@ public class BCCoreRecipes {
             GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
         }
 
+        if (BCItems.CORE_DIAMOND_SHARD != null) {
+            ItemStack out = new ItemStack(BCItems.CORE_DIAMOND_SHARD, 4);
+            Object[] in = { "D", 'D', Items.DIAMOND };
+            GameRegistry.addRecipe(new ShapedOreRecipe(out, in));
+        }
+
         if (BCBlocks.CORE_MARKER_VOLUME != null) {
             ItemStack out = new ItemStack(BCBlocks.CORE_MARKER_VOLUME);
             ItemStack lapisLazuli = new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage());

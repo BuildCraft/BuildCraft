@@ -4,6 +4,8 @@ import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
 import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.item.ItemPipeHolder;
+import buildcraft.transport.item.ItemPluggableGate;
+import buildcraft.transport.item.ItemPluggableSimple;
 
 public class BCTransportItems {
     public static ItemBC_Neptune waterproof;
@@ -20,7 +22,8 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeFluidGold;
     public static ItemPipeHolder pipePowerGold;
 
-    public static ItemBC_Neptune plugStop;
+    public static ItemPluggableSimple plugBlocker;
+    public static ItemPluggableGate plugGate;
 
     public static void preInit() {
         waterproof = ItemManager.register(new ItemBC_Neptune("item.waterproof"));
@@ -37,7 +40,8 @@ public class BCTransportItems {
         pipePowerStone = makePipeItem(BCTransportPipes.stonePower);
         pipePowerGold = makePipeItem(BCTransportPipes.goldPower);
 
-        plugStop = ItemManager.register(new ItemBC_Neptune("item.plug.stop"));
+        plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
+        plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));// TEMP
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {

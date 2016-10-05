@@ -22,7 +22,6 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     public ActionRedstoneOutput() {
         super("buildcraft:redstone.output", "buildcraft.redstone.output");
-        setBuildCraftLocation("core", "triggers/action_redstoneoutput");
     }
 
     @Override
@@ -35,7 +34,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
         IStatementParameter param = null;
 
         if (index == 0) {
-            param = new StatementParameterRedstoneGateSideOnly();
+            param = new StatementParamGateSideOnly();
         }
 
         return param;
@@ -47,8 +46,8 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     }
 
     protected boolean isSideOnly(IStatementParameter[] parameters) {
-        if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParameterRedstoneGateSideOnly) {
-            return ((StatementParameterRedstoneGateSideOnly) parameters[getRGSOSlot()]).isOn;
+        if (parameters != null && parameters.length >= (getRGSOSlot() + 1) && parameters[getRGSOSlot()] instanceof StatementParamGateSideOnly) {
+            return ((StatementParamGateSideOnly) parameters[getRGSOSlot()]).isOn;
         }
 
         return false;
@@ -65,7 +64,9 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
         }
     }
 
-    protected int getRGSOSlot() { return 0; }
+    protected int getRGSOSlot() {
+        return 0;
+    }
 
     protected int getSignalLevel(IStatementParameter[] parameters) {
         return 15;

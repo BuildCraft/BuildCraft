@@ -36,7 +36,6 @@ public class JsonQuad {
         uvs[1] = uv[2];
         uvs[2] = uv[1];
         uvs[3] = uv[3];
-        // int rot = face.blockFaceUV.rotation;
         Vector3f radius = new Vector3f(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
         radius.scale(0.5f);
         Vector3f center = new Vector3f(from);

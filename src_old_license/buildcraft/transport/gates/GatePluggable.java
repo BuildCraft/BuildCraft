@@ -25,7 +25,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.client.model.GatePluggableModel;
-import buildcraft.transport.client.model.ModelKeyGate;
+import buildcraft.transport.client.model.key.KeyPlugGate;
 
 public class GatePluggable extends PipePluggable {
     public GateDefinition.GateMaterial material;
@@ -240,9 +240,9 @@ public class GatePluggable extends PipePluggable {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ModelKeyGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
+    public KeyPlugGate getModelRenderKey(EnumWorldBlockLayer layer, EnumFacing side) {
         if (layer == EnumWorldBlockLayer.CUTOUT) {
-            return new ModelKeyGate(side, material, logic, isLit, expansions);
+            return new KeyPlugGate(side, material, logic, isLit, expansions);
         }
         return null;
     }

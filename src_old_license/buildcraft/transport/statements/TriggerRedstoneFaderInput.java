@@ -10,7 +10,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.StatementParamGateSideOnly;
 import buildcraft.core.statements.StatementParameterRedstoneLevel;
 import buildcraft.transport.TileGenericPipe;
 
@@ -55,8 +55,8 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
         IGate gate = (IGate) container;
         TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
         int inputLevel = tile.redstoneInput;
-        if (parameters.length > 1 && parameters[1] instanceof StatementParameterRedstoneGateSideOnly
-            && ((StatementParameterRedstoneGateSideOnly) parameters[1]).isOn) {
+        if (parameters.length > 1 && parameters[1] instanceof StatementParamGateSideOnly
+            && ((StatementParamGateSideOnly) parameters[1]).isOn) {
             inputLevel = tile.redstoneInputSide[gate.getSide().ordinal()];
         }
 
@@ -78,7 +78,7 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
         if (index == 0) {
             param = new StatementParameterRedstoneLevel((mode == Mode.LESS) ? 1 : 0, (mode == Mode.GREATER) ? 14 : 15);
         } else if (index == 1) {
-            param = new StatementParameterRedstoneGateSideOnly();
+            param = new StatementParamGateSideOnly();
         }
 
         return param;

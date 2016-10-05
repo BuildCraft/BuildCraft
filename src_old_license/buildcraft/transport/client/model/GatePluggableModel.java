@@ -23,10 +23,11 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.transport.client.model.key.KeyPlugGate;
 
 import javax.vecmath.Matrix4f;
 
-public final class GatePluggableModel extends BakedModelHolder implements IPluggableModelBaker<ModelKeyGate>, IPipePluggableDynamicRenderer {
+public final class GatePluggableModel extends BakedModelHolder implements IPluggableModelBaker<KeyPlugGate>, IPipePluggableDynamicRenderer {
     private static final ResourceLocation mainLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_main.obj");
     private static final ResourceLocation materialLoc = new ResourceLocation("buildcrafttransport:models/blocks/pluggables/gate_material.obj");
 
@@ -53,11 +54,11 @@ public final class GatePluggableModel extends BakedModelHolder implements IPlugg
     }
 
     @Override
-    public ImmutableList<BakedQuad> bake(ModelKeyGate key) {
+    public ImmutableList<BakedQuad> bake(KeyPlugGate key) {
         return ImmutableList.copyOf(bakeCutout(key, DefaultVertexFormats.BLOCK));
     }
 
-    public List<BakedQuad> bakeCutout(ModelKeyGate key, VertexFormat format) {
+    public List<BakedQuad> bakeCutout(KeyPlugGate key, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
         List<MutableQuad> bakedQuads = renderGate(key, format);
         Matrix4f matrix = MatrixUtils.rotateTowardsFace(key.side);
@@ -70,7 +71,7 @@ public final class GatePluggableModel extends BakedModelHolder implements IPlugg
         return quads;
     }
 
-    public List<MutableQuad> renderGate(ModelKeyGate gate, VertexFormat format) {
+    public List<MutableQuad> renderGate(KeyPlugGate gate, VertexFormat format) {
         TextureAtlasSprite logicSprite = gate.lit ? gate.logic.getIconLit() : gate.logic.getIconDark();
         TextureAtlasSprite materialSprite = gate.material.getIconBlock();
 

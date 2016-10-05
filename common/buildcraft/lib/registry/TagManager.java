@@ -210,6 +210,7 @@ public class TagManager {
         startBatch();// core
         // BC Core Items
         registerTag("item.wrench").reg("wrench").locale("wrenchItem").oldReg("wrenchItem").model("wrench");
+        registerTag("item.diamond.shard").reg("diamond_shard").locale("diamondShard").model("diamond_shard").tab("vanilla.materials");
         registerTag("item.gear.wood").reg("gear_wood").locale("woodenGearItem").oreDict("gearWood").oldReg("woodenGearItem").model("gears/wood");
         registerTag("item.gear.stone").reg("gear_stone").locale("stoneGearItem").oreDict("gearStone").oldReg("stoneGearItem").model("gears/stone");
         registerTag("item.gear.iron").reg("gear_iron").locale("ironGearItem").oreDict("gearIron").oldReg("ironGearItem").model("gears/iron");
@@ -313,7 +314,8 @@ public class TagManager {
         startBatch();// transport
         // BC Transport Items
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
-        registerTag("item.plug.stop").reg("plug_stop").locale("PipePlug").model("pluggable/stop");
+        registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("pluggable/blocker");
+        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gate");// TEMP
         // BC Transport Pipes
         startBatch();// Pipes
         registerTag("item.pipe.buildcrafttransport.wood_item").reg("pipe_wood_item").locale("PipeItemsWood");

@@ -64,7 +64,7 @@ public class BCCore {
 
         BCCoreItems.preInit();
         BCCoreBlocks.preInit();
-        BCCoreTriggers.preInit();
+        BCCoreStatements.preInit();
 
         CreativeTabManager.setItem("buildcraft.main", BCCoreItems.wrench);
 

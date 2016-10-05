@@ -4,12 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -20,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,8 +38,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 
-import javax.annotation.Nullable;
-
+@Deprecated
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe, Comparable<Pipe<?>> {
     // TODO: Change this to EventBusProviderASM!
     private static final IEventBusProvider<PipeEvent> eventProvider = PipeEventBus::new;
@@ -250,7 +247,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             }
 
             if (prevStrength != signalStrength[c.ordinal()]) {
-              container.scheduleRenderUpdate();
+                container.scheduleRenderUpdate();
             }
 
             if (signalStrength[c.ordinal()] == 0) {
@@ -458,8 +455,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             return false;
         }
 
-        return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils.checkPipesConnections(
-                container, tile);
+        return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils.checkPipesConnections(container, tile);
     }
 
     public void dropContents() {

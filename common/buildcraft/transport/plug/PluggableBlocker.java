@@ -12,19 +12,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.BCTransportPlugs;
 import buildcraft.transport.api_move.IPipeHolder;
 import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.api_move.PluggableDefinition;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableCreator;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableLoader;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 
 public class PluggableBlocker extends PipePluggable {
     private static final AxisAlignedBB[] BOXES = new AxisAlignedBB[6];
-
-    public static final IPluggableCreator CREATOR = (holder, side) -> new PluggableBlocker(BCTransportPlugs.blocker, holder, side);
-    public static final IPluggableLoader LOADER = (holder, side, nbt) -> CREATOR.createPluggable(holder, side);
 
     static {
         double ll = 2 / 16.0;
@@ -55,7 +49,12 @@ public class PluggableBlocker extends PipePluggable {
 
     @Override
     public void onRemove(List<ItemStack> toDrop) {
-        toDrop.add(new ItemStack(BCTransportItems.plugStop));
+        toDrop.add(new ItemStack(BCTransportItems.plugBlocker));
+    }
+
+    @Override
+    public ItemStack getPickStack() {
+        return new ItemStack(BCTransportItems.plugBlocker);
     }
 
     @Override

@@ -54,9 +54,7 @@ public enum ModelPipeItem implements IBakedModel {
             float[] uvsXZ = { 4 / 16f, 12 / 16f, 0, 1 };
             for (EnumFacing face : EnumFacing.VALUES) {
                 float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
-                MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
-                quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
-                QUADS_SAME[face.ordinal()] = quad;
+                QUADS_SAME[face.ordinal()] = BCModelHelper.createFace(face, center, radius, uvs);
             }
         }
 
@@ -74,9 +72,7 @@ public enum ModelPipeItem implements IBakedModel {
             float[] uvsXZ = { 4 / 16f, 12 / 16f, 0, 1 };
             for (EnumFacing face : EnumFacing.VALUES) {
                 float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
-                MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
-                quad.normalf(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
-                QUADS_COLOUR[face.ordinal()] = quad;
+                QUADS_COLOUR[face.ordinal()] = BCModelHelper.createFace(face, center, radius, uvs);
             }
         }
     }

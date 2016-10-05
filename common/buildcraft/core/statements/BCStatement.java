@@ -5,27 +5,23 @@
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public abstract class BCStatement implements IStatement {
 
     protected final String uniqueTag;
-    private ResourceLocation location;
 
     @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite sprite;
+    private SpriteHolder sprite;
 
-    /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardized tags if needed,
+    /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardised tags if needed,
      * otherwise just pass a single string. The first passed string will be the one used when saved to disk.
      *
      * @param uniqueTag */
@@ -66,23 +62,14 @@ public abstract class BCStatement implements IStatement {
         return null;
     }
 
-    protected void setLocation(String newLocation) {
-        location = new ResourceLocation(newLocation);
-    }
-
-    protected void setBuildCraftLocation(String modulePart, String newLocation) {
-        setLocation("buildcraft" + modulePart + ":" + newLocation);
-    }
-
-    @Override
-    public void registerIcons(TextureMap map) {
-        sprite = map.getTextureExtry(location.toString());
-        if (sprite == null) sprite = map.registerSprite(location);
-    }
-
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
-        return sprite;
+        return sprite.getSprite();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setSpriteHolder(SpriteHolder holder) {
+        sprite = holder;
     }
 }

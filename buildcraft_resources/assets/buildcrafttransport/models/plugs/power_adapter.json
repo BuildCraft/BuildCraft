@@ -1,7 +1,6 @@
 {
     "textures": {
-        "#all":"buildcrafttransport:pipes/power_adapter",
-        "#lok":"~some_value"
+        "#all":"buildcrafttransport:pipes/power_adapter"
     },
     "shade": true,
     "elements": [
@@ -13,8 +12,8 @@
                 "up":    { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
                 "north": { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
                 "south": { "uv": [ 2, 4, 4, 12 ], "texture": "#all" },
-                "west":  { "uv": [ 4, 4, 12, 12 ], "texture": "#lok" },
-                "east":  { "uv": [ 4, 4, 12, 12 ], "texture": "#all__" }
+                "west":  { "uv": [ 4, 4, 12, 12 ], "texture": "#all" },
+                "east":  { "uv": [ 4, 4, 12, 12 ], "texture": "#all" }
             }
         },
         {

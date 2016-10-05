@@ -55,11 +55,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     public final GateLogic logic;
     public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 
-    public IStatement[] triggers = new IStatement[MAX_STATEMENTS];
-    public IStatementParameter[][] triggerParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
+    public final IStatement[] triggers = new IStatement[MAX_STATEMENTS];
+    public final IStatementParameter[][] triggerParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
-    public IStatement[] actions = new IStatement[MAX_STATEMENTS];
-    public IStatementParameter[][] actionParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
+    public final IStatement[] actions = new IStatement[MAX_STATEMENTS];
+    public final IStatementParameter[][] actionParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
     public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
     public ArrayList<StatementSlot> activeActions = new ArrayList<>();
@@ -144,11 +144,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         this.direction = direction;
     }
 
-    public void addGateExpansion(IGateExpansion expansion) {
-        if (!expansions.containsKey(expansion)) {
-            expansions.put(expansion, expansion.makeController(pipe != null ? pipe.container : null));
-        }
-    }
+//    public void addGateExpansion(IGateExpansion expansion) {
+//        if (!expansions.containsKey(expansion)) {
+//            expansions.put(expansion, expansion.makeController(pipe != null ? pipe.container : null));
+//        }
+//    }
 
     public void writeStatementsToNBT(NBTTagCompound data) {
         for (int i = 0; i < material.numSlots; ++i) {
@@ -186,14 +186,14 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         data.setString("logic", logic.name());
         data.setInteger("direction", direction.ordinal());
         NBTTagList exList = new NBTTagList();
-        for (GateExpansionController con : expansions.values()) {
-            NBTTagCompound conNBT = new NBTTagCompound();
-            conNBT.setString("type", con.getType().getUniqueIdentifier());
-            NBTTagCompound conData = new NBTTagCompound();
-            con.writeToNBT(conData);
-            conNBT.setTag("data", conData);
-            exList.appendTag(conNBT);
-        }
+//        for (GateExpansionController con : expansions.values()) {
+//            NBTTagCompound conNBT = new NBTTagCompound();
+//            conNBT.setString("type", con.getType().getUniqueIdentifier());
+//            NBTTagCompound conData = new NBTTagCompound();
+//            con.writeToNBT(conData);
+//            conNBT.setTag("data", conData);
+//            exList.appendTag(conNBT);
+//        }
         data.setTag("expansions", exList);
 
         writeStatementsToNBT(data);
@@ -318,9 +318,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
     // UPDATING
     public void tick() {
-        for (GateExpansionController expansion : expansions.values()) {
-            expansion.tick(this);
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            expansion.tick(this);
+//        }
     }
 
     public ItemStack getGateItem() {
@@ -369,9 +369,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public void startResolution() {
-        for (GateExpansionController expansion : expansions.values()) {
-            expansion.startResolution();
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            expansion.startResolution();
+//        }
     }
 
     public void resolveActions() {
@@ -510,11 +510,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     public boolean resolveAction(IStatement action) {
-        for (GateExpansionController expansion : expansions.values()) {
-            if (expansion.resolveAction(action, statementCounts.count(action))) {
-                return true;
-            }
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            if (expansion.resolveAction(action, statementCounts.count(action))) {
+//                return true;
+//            }
+//        }
         return false;
     }
 
@@ -548,11 +548,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
         // TODO: This can probably be refactored with regular triggers instead
         // of yet another system.
-        for (GateExpansionController expansion : expansions.values()) {
-            if (expansion.isTriggerActive(trigger, parameters)) {
-                return true;
-            }
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            if (expansion.isTriggerActive(trigger, parameters)) {
+//                return true;
+//            }
+//        }
 
         return false;
     }
@@ -566,9 +566,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
             }
         }
 
-        for (GateExpansionController expansion : expansions.values()) {
-            expansion.addTriggers(list);
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            expansion.addTriggers(list);
+//        }
     }
 
     public List<IStatement> getAllValidTriggers() {
@@ -591,9 +591,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
             }
         }
 
-        for (GateExpansionController expansion : expansions.values()) {
-            expansion.addActions(list);
-        }
+//        for (GateExpansionController expansion : expansions.values()) {
+//            expansion.addActions(list);
+//        }
     }
 
     public List<IStatement> getAllValidActions() {
@@ -609,7 +609,6 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     }
 
     // @Override TODO
-    @Override
     public void setPulsing(boolean pulsing) {
         if (pulsing != isPulsing) {
             isPulsing = pulsing;
@@ -646,15 +645,14 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         broadcastSignal |= 1 << color.ordinal();
     }
 
-    @Override
     public IPipe getPipe() {
         return pipe;
     }
 
-    @Override
-    public Collection<IGateExpansion> getExpansions() {
-        return expansions.keySet();
-    }
+//    @Override
+//    public Collection<IGateExpansion> getExpansions() {
+//        return expansions.keySet();
+//    }
 
     @Override
     public EnumFacing getSide() {

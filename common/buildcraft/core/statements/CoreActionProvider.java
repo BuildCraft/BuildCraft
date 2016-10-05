@@ -9,31 +9,32 @@ import java.util.Collection;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
-import buildcraft.api.tiles.IControllable;
+import buildcraft.core.BCCoreStatements;
 
-public class DefaultActionProvider implements IActionProvider {
+public enum CoreActionProvider implements IActionProvider {
+    INSTANCE;
 
     @Override
     public void addInternalActions(Collection<IActionInternal> res, IStatementContainer container) {
         if (container instanceof IRedstoneStatementContainer) {
-            res.add(BuildCraftCore.actionRedstone);
+            res.add(BCCoreStatements.ACTION_REDSTONE);
         }
     }
 
     @Override
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
-        if (tile instanceof IControllable) {
-            for (IControllable.Mode mode : IControllable.Mode.values()) {
-                if (mode != IControllable.Mode.Unknown && ((IControllable) tile).acceptsControlMode(mode)) {
-                    res.add(BuildCraftCore.actionControl[mode.ordinal()]);
-                }
-            }
-        }
+        // TODO: the controllable sprites + statements!
+        // if (tile instanceof IControllable) {
+        // for (IControllable.Mode mode : IControllable.Mode.values()) {
+        // if (mode != IControllable.Mode.Unknown && ((IControllable) tile).acceptsControlMode(mode)) {
+        // res.add(BuildCraftCore.actionControl[mode.ordinal()]);
+        // }
+        // }
+        // }
     }
 }

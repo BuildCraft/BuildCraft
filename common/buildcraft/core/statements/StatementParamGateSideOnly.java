@@ -14,15 +14,16 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
-public class StatementParameterRedstoneGateSideOnly implements IStatementParameter {
+public class StatementParamGateSideOnly implements IStatementParameter {
 
     @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite icon;
+    public static SpriteHolder sprite;
 
     public boolean isOn = false;
 
-    public StatementParameterRedstoneGateSideOnly() {
+    public StatementParamGateSideOnly() {
 
     }
 
@@ -36,7 +37,7 @@ public class StatementParameterRedstoneGateSideOnly implements IStatementParamet
         if (!isOn) {
             return null;
         } else {
-            return icon;
+            return sprite.getSprite();
         }
     }
 
@@ -65,12 +66,6 @@ public class StatementParameterRedstoneGateSideOnly implements IStatementParamet
     @Override
     public String getUniqueTag() {
         return "buildcraft:redstoneGateSideOnly";
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap iconRegister) {
-        icon = iconRegister.registerSprite(new ResourceLocation("buildcraftcore", "triggers/redstone_gate_side_only"));
     }
 
     @Override

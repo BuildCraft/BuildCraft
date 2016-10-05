@@ -7,14 +7,11 @@ package buildcraft.core.statements;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BCStringUtils;
 
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
@@ -85,7 +82,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
     public static boolean isTriggeringPipe(TileEntity tile) {
         if (tile instanceof IPipeTile) {
             IPipeTile pipeTile = (IPipeTile) tile;
-            if (pipeTile.getPipeType() == IPipeTile.PipeType.POWER && pipeTile.getPipe() instanceof IEnergyHandler) {
+            if (pipeTile.getPipeType() == IPipeTile.PipeType.POWER && pipeTile.getPipe() instanceof IMjReadable) {
                 return true;
             }
         }

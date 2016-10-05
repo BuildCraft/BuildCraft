@@ -11,6 +11,7 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
 
 public class BCCoreItems {
+    public static ItemBC_Neptune diamondShard;
     public static ItemBC_Neptune gearWood;
     public static ItemBC_Neptune gearStone;
     public static ItemBC_Neptune gearIron;
@@ -23,6 +24,7 @@ public class BCCoreItems {
     public static ItemMarkerConnector markerConnector;
 
     public static void preInit() {
+        diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
         gearWood = ItemManager.register(new ItemBC_Neptune("item.gear.wood"));
         gearStone = ItemManager.register(new ItemBC_Neptune("item.gear.stone"));
         gearIron = ItemManager.register(new ItemBC_Neptune("item.gear.iron"));

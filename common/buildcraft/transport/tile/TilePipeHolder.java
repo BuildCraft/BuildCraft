@@ -12,6 +12,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -70,6 +71,16 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (pipe != null) {
             nbt.setTag("pipe", pipe.writeToNbt());
         }
+        NBTTagCompound plugs = new NBTTagCompound();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            NBTTagCompound plugTag = pluggables.get(face).writeToNbt();
+            if (!plugTag.hasNoTags()) {
+                plugs.setTag(face.getName(), plugTag);
+            }
+        }
+        if (!plugs.hasNoTags()) {
+            nbt.setTag("plugs", plugs);
+        }
         return nbt;
     }
 
@@ -83,6 +94,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 // For now quit immediately so we can debug the cause
                 throw new Error(e);
             }
+        }
+        NBTTagCompound plugs = nbt.getCompoundTag("plugs");
+        for (EnumFacing face : EnumFacing.VALUES) {
+            pluggables.get(face).readFromNbt(plugs.getCompoundTag(face.getName()));
         }
     }
 
@@ -191,7 +206,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     pipe = null;
                 }
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    pluggables.get(face).readCreationPayload(buffer, ctx);
+                    pluggables.get(face).readCreationPayload(buffer);
                 }
             } else if (id == NET_UPDATE_MULTI) {
                 int total = buffer.readUnsignedByte();
@@ -230,6 +245,16 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public World getPipeWorld() {
         return getWorld();
+    }
+
+    @Override
+    public BlockPos getPipePos() {
+        return getPos();
+    }
+
+    @Override
+    public TileEntity getPipeTile() {
+        return this;
     }
 
     @Override

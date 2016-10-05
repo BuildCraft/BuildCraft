@@ -16,9 +16,8 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     boolean active;
 
     public TriggerRedstoneInput(boolean active) {
-        super("buildcraft:redstone.input." + (active ? "active" : "inactive"), active ? "buildcraft.redtone.input.active"
-            : "buildcraft.redtone.input.inactive");
-        setBuildCraftLocation("core", "triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
+        super("buildcraft:redstone.input." + (active ? "active" : "inactive"),//
+                "buildcraft.redtone.input." + (active ? "active" : "inactive"));
         this.active = active;
     }
 
@@ -32,7 +31,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
         IStatementParameter param = null;
 
         if (index == 0) {
-            param = new StatementParameterRedstoneGateSideOnly();
+            param = new StatementParamGateSideOnly();
         }
 
         return param;
@@ -47,8 +46,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
         if (container instanceof IRedstoneStatementContainer) {
             int level = ((IRedstoneStatementContainer) container).getRedstoneInput(null);
-            if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly
-                && ((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn && container instanceof ISidedStatementContainer) {
+            if (parameters.length > 0 && parameters[0] instanceof StatementParamGateSideOnly && ((StatementParamGateSideOnly) parameters[0]).isOn && container instanceof ISidedStatementContainer) {
                 level = ((IRedstoneStatementContainer) container).getRedstoneInput(((ISidedStatementContainer) container).getSide());
             }
 

@@ -33,6 +33,7 @@ public enum PlugBakerBlocker implements IPluggableModelBaker<KeyPlugBlocker> {
                 for (MutableQuad q : quads) {
                     MutableQuad c = new MutableQuad(q);
                     c.transform(transform);
+                    c.setCalculatedDiffuse();
                     list.add(c.toBakedBlock());
                 }
                 cached.put(to, list);

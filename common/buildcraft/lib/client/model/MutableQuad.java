@@ -180,7 +180,15 @@ public class MutableQuad {
         verticies[2].toBakedBlock(data, 14);
         verticies[3].toBakedBlock(data, 21);
         return new BakedQuad(data, tintIndex, face, sprite, shade, DefaultVertexFormats.BLOCK);
+    }
 
+    public BakedQuad toBakedItem() {
+        int[] data = new int[28];
+        verticies[0].toBakedItem(data, 0);
+        verticies[1].toBakedItem(data, 7);
+        verticies[2].toBakedItem(data, 14);
+        verticies[3].toBakedItem(data, 21);
+        return new BakedQuad(data, tintIndex, face, sprite, shade, DefaultVertexFormats.ITEM);
     }
 
     public void render(VertexBuffer vb) {

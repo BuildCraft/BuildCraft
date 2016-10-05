@@ -1,6 +1,8 @@
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.util.registry.IRegistry;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,6 +21,7 @@ import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipeFlowType;
+import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.pipe.PipeRegistry;
@@ -48,6 +51,7 @@ public class BCTransport {
         PipeAPI.flowStructure = new PipeFlowType(PipeFlowStructure::new, PipeFlowStructure::new);
 
         CreativeTabManager.createTab("buildcraft.pipe");
+        CreativeTabManager.createTab("buildcraft.gate");
 
         BCTransportBlocks.preInit();
         BCTransportPipes.preInit();
@@ -55,14 +59,12 @@ public class BCTransport {
         BCTransportItems.preInit();
 
         CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);
+        CreativeTabManager.setItem("buildcraft.gate", BCTransportItems.plugGate);
 
         // CreativeTabManager.setItem("buildcraft.pipe", BCCoreItems.wrench);
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();
-
-        // TEMP
-        MinecraftForge.EVENT_BUS.register(BCTransport.class);
     }
 
     @Mod.EventHandler
@@ -73,14 +75,6 @@ public class BCTransport {
 
     @Mod.EventHandler
     public static void postInit(FMLPostInitializationEvent evt) {
-
-    }
-
-    // TEMP
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
-        event.getModelRegistry().putObject(new ModelResourceLocation("buildcrafttransport:pipe_holder#normal"), ModelPipe.INSTANCE);
-        event.getModelRegistry().putObject(new ModelResourceLocation("buildcrafttransport:pipe_item#inventory"), ModelPipeItem.INSTANCE);
+        BCTransportProxy.getProxy().fmlPostInit();
     }
 }

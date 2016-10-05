@@ -3,11 +3,16 @@ package buildcraft.transport.api_move;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /** Designates a tile that can contain a pipe, up to 6 sided pluggables, and up to 4 different pipe wires. */
 public interface IPipeHolder {
     World getPipeWorld();
+
+    BlockPos getPipePos();
+
+    TileEntity getPipeTile();
 
     IPipe getPipe();
 

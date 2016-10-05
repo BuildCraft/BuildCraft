@@ -17,8 +17,11 @@ public class CreativeTabManager {
     public static CreativeTabs getTab(String name) {
         if (name.startsWith("vanilla.")) {
             String after = name.substring("vanilla.".length());
-            if ("misc".equals(after)) {
-                return CreativeTabs.MISC;
+            switch (after) {
+                case "misc":
+                    return CreativeTabs.MISC;
+                case "materials":
+                    return CreativeTabs.MATERIALS;
             }
         }
         if (tabMap.containsKey(name)) {

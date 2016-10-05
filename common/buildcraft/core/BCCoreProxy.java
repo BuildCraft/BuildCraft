@@ -66,7 +66,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
         @Override
         public void fmlPreInit() {
             super.fmlPreInit();
-
+            BCCoreSprites.fmlPreInit();
             BuildCraftLaserManager.fmlPreInit();
         }
 

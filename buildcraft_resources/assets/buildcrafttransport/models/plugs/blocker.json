@@ -1,6 +1,7 @@
 {
     "textures": {
-        "#all":"buildcrafttransport:pipes/plug"
+        "#all":"buildcrafttransport:pipes/plug",
+        "particle":"#all"
     },
     "shade": true,
     "elements": [

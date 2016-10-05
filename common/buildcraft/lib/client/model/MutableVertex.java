@@ -39,12 +39,26 @@ public class MutableVertex {
         data[offset + 1] = Float.floatToRawIntBits(position[1]);
         data[offset + 2] = Float.floatToRawIntBits(position[2]);
         // COLOR_4UB
-        data[offset + 3] = -1;// colourRGBA();
+        data[offset + 3] = colourRGBA();
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(uv[0]);
         data[offset + 5] = Float.floatToRawIntBits(uv[1]);
         // TEX_2S
         data[offset + 6] = 0;
+    }
+
+    public void toBakedItem(int[] data, int offset) {
+        // POSITION_3F
+        data[offset + 0] = Float.floatToRawIntBits(position[0]);
+        data[offset + 1] = Float.floatToRawIntBits(position[1]);
+        data[offset + 2] = Float.floatToRawIntBits(position[2]);
+        // COLOR_4UB
+        data[offset + 3] = colourRGBA();
+        // TEX_2F
+        data[offset + 4] = Float.floatToRawIntBits(uv[0]);
+        data[offset + 5] = Float.floatToRawIntBits(uv[1]);
+        // NROMAL_3B
+        data[offset + 6] = normalToPackedInt();
     }
 
     public void setData(float[][] from, VertexFormat vfFrom) {
@@ -175,6 +189,17 @@ public class MutableVertex {
         return new Vector3f(normal);
     }
 
+    public int normalToPackedInt() {
+        return normalAsByte(normal[0], 0) //
+            | normalAsByte(normal[1], 8) //
+            | normalAsByte(normal[2], 16);
+    }
+
+    private static int normalAsByte(float norm, int offset) {
+        int as = (int) (norm * 0x7f);
+        return as << offset;
+    }
+
     public MutableVertex colourv(Tuple4f vec) {
         return colourf(vec.x, vec.y, vec.z, vec.w);
     };
@@ -200,12 +225,21 @@ public class MutableVertex {
     }
 
     public int colourRGBA() {
-        // @formatter:off
-        return (int) (colour[0] * 0xFF)
-            + ((int) (colour[1] * 0xFF)) <<  8
-            + ((int) (colour[2] * 0xFF)) << 16
-            + ((int) (colour[3] * 0xFF)) << 24;
-        // @formatter:on
+        return (rc(0) << 0)//
+            + (rc(1) << 8)//
+            + (rc(2) << 16)//
+            + (rc(3) << 24);//
+    }
+
+    public int colourABGR() {
+        return (rc(0) << 24)//
+            + (rc(1) << 16)//
+            + (rc(2) << 8)//
+            + (rc(3) << 0);//
+    }
+
+    private int rc(int idx) {
+        return (int) (colour[idx] * 0xFF);
     }
 
     public MutableVertex multColourd(double d) {

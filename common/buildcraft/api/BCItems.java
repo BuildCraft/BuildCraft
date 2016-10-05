@@ -21,6 +21,7 @@ public class BCItems {
 
     // BC Core
     public static final Item CORE_WRENCH;
+    public static final Item CORE_DIAMOND_SHARD;
     public static final Item CORE_LIST;
     public static final Item CORE_MAP_LOCATION;
     public static final Item CORE_PAINTBRUSH;
@@ -71,6 +72,7 @@ public class BCItems {
         // core
         final String core = "core";
         CORE_WRENCH = getRegisteredItem(core, "wrench");
+        CORE_DIAMOND_SHARD = getRegisteredItem(core, "diamond_shard");
         CORE_LIST = getRegisteredItem(core, "list");
         CORE_MAP_LOCATION = getRegisteredItem(core, "map_location");
         CORE_PAINTBRUSH = getRegisteredItem(core, "paintbrush");

@@ -9,12 +9,14 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.client.sprite.SpriteBuilder;
 import buildcraft.core.lib.utils.BCStringUtils;
 
+@Deprecated
 public final class GateDefinition {
 
     private GateDefinition() {}
@@ -34,7 +36,7 @@ public final class GateDefinition {
         IRON("gate_interface_2.png", 164, 2, 0, 0, 2),
         GOLD("gate_interface_3.png", 200, 4, 1, 0, 3),
         DIAMOND("gate_interface_4.png", 200, 8, 1, 0, 4),
-        EMERALD("gate_interface_5.png", 200, 4, 3, 3, 4),
+//        EMERALD("gate_interface_5.png", 200, 4, 3, 3, 4),
         QUARTZ("gate_interface_6.png", 164, 2, 1, 1, 3);
 
         public static final GateMaterial[] VALUES = values();

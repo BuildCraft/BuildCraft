@@ -41,7 +41,7 @@ public class InventoryUtil {
         if (stack == null || stack.stackSize <= 0) {
             return;
         }
-        EntityItem entity = new EntityItem(world, x, y, z);
+        EntityItem entity = new EntityItem(world, x, y, z, stack);
         world.spawnEntityInWorld(entity);
     }
 

@@ -23,6 +23,7 @@ import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.client.model.key.KeyPlugGate;
 import buildcraft.transport.gates.ItemGate;
 
 import javax.vecmath.Matrix4f;
@@ -31,7 +32,7 @@ import javax.vecmath.Vector3f;
 public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
     public static final GateItemModel INSTANCE = new GateItemModel();
 
-    private final Map<ModelKeyGate, GateItemModel> map = Maps.newHashMap();
+    private final Map<KeyPlugGate, GateItemModel> map = Maps.newHashMap();
 
     public GateItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format, getPluggableTransforms());
@@ -46,7 +47,7 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
 
     @Override
     public GateItemModel handleItemState(ItemStack stack) {
-        ModelKeyGate key = getState(stack);
+        KeyPlugGate key = getState(stack);
 
         if (!map.containsKey(key)) {
             List<BakedQuad> quads = Lists.newArrayList();
@@ -79,13 +80,13 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
         return map.get(key);
     }
 
-    private ModelKeyGate getState(ItemStack stack) {
+    private KeyPlugGate getState(ItemStack stack) {
         GateMaterial material = ItemGate.getMaterial(stack);
         GateLogic logic = ItemGate.getLogic(stack);
         Set<IGateExpansion> expansions = ItemGate.getInstalledExpansions(stack);
 //        Set<IGateStaticRenderState> states = Sets.newHashSet();
 //        for (IGateExpansion exp : expansions)
 //            states.add(exp.getRenderState());
-        return new ModelKeyGate(EnumFacing.UP, material, logic, false, expansions.toArray(new IGateExpansion[0]));
+        return new KeyPlugGate(EnumFacing.UP, material, logic, false, expansions.toArray(new IGateExpansion[0]));
     }
 }
