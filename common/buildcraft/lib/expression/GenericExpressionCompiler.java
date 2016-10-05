@@ -2,6 +2,11 @@ package buildcraft.lib.expression;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
+
+import buildcraft.api.core.BCDebugging;
+import buildcraft.api.core.BCLog;
 import buildcraft.lib.expression.api.ArgumentCounts;
 import buildcraft.lib.expression.api.IExpression;
 import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
@@ -18,15 +23,18 @@ import buildcraft.lib.expression.node.func.ExpressionBoolean;
 import buildcraft.lib.expression.node.func.ExpressionDouble;
 import buildcraft.lib.expression.node.func.ExpressionLong;
 import buildcraft.lib.expression.node.func.ExpressionString;
-import buildcraft.lib.expression.api.IFunctionMap;
 
 public class GenericExpressionCompiler {
+    public static final boolean DEBUG = BCDebugging.shouldDebugComplex("lib.expression");
+    /** Modifiable field to enable or disable debugging for testing. You should reset this to {@link #DEBUG} after you
+     * have finished testing. */
+    public static boolean debug = DEBUG;
 
     public static IExpressionLong compileExpressionLong(String function) throws InvalidExpressionException {
         return compileExpressionLong(function, null);
     }
 
-    public static IExpressionLong compileExpressionLong(String function, IFunctionMap functions) throws InvalidExpressionException {
+    public static IExpressionLong compileExpressionLong(String function, FunctionContext functions) throws InvalidExpressionException {
         Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
 
         if (exp.getLeft() instanceof INodeLong) {
@@ -40,7 +48,7 @@ public class GenericExpressionCompiler {
         return compileExpressionDouble(function, null);
     }
 
-    public static IExpressionDouble compileExpressionDouble(String function, IFunctionMap functions) throws InvalidExpressionException {
+    public static IExpressionDouble compileExpressionDouble(String function, FunctionContext functions) throws InvalidExpressionException {
         Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
         INodeDouble nodeDouble = NodeCasting.castToDouble(exp.getLeft());
         return new ExpressionDouble(nodeDouble, exp.getRight());
@@ -50,7 +58,7 @@ public class GenericExpressionCompiler {
         return compileExpressionBoolean(function, null);
     }
 
-    public static IExpressionBoolean compileExpressionBoolean(String function, IFunctionMap functions) throws InvalidExpressionException {
+    public static IExpressionBoolean compileExpressionBoolean(String function, FunctionContext functions) throws InvalidExpressionException {
         Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
 
         if (exp.getLeft() instanceof INodeBoolean) {
@@ -64,7 +72,7 @@ public class GenericExpressionCompiler {
         return compileExpressionString(function, null);
     }
 
-    public static IExpressionString compileExpressionString(String function, IFunctionMap functions) throws InvalidExpressionException {
+    public static IExpressionString compileExpressionString(String function, FunctionContext functions) throws InvalidExpressionException {
         Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
         INodeString nodeString = NodeCasting.castToString(exp.getLeft());
         return new ExpressionString(nodeString, exp.getRight());
@@ -74,7 +82,7 @@ public class GenericExpressionCompiler {
         return compileExpressionUnknown(function, null);
     }
 
-    public static IExpression compileExpressionUnknown(String function, IFunctionMap functions) throws InvalidExpressionException {
+    public static IExpression compileExpressionUnknown(String function, FunctionContext functions) throws InvalidExpressionException {
         Pair<IExpressionNode, ArgumentCounts> exp = compileExpression(function, functions);
         IExpressionNode node = exp.getLeft();
         if (node instanceof INodeString) {
@@ -92,7 +100,18 @@ public class GenericExpressionCompiler {
         throw new InvalidExpressionException("Unknown node type " + node);
     }
 
-    private static Pair<IExpressionNode, ArgumentCounts> compileExpression(String function, IFunctionMap functions) throws InvalidExpressionException {
-        return InternalCompiler.compileExpression(function, functions);
+    private static Pair<IExpressionNode, ArgumentCounts> compileExpression(String function, FunctionContext context) throws InvalidExpressionException {
+        return InternalCompiler.compileExpression(function, context);
+    }
+
+    public static void debugPrintln(String text) {
+        if (debug) {
+            if (Loader.instance().hasReachedState(LoaderState.CONSTRUCTING)) {
+                BCLog.logger.info(text);
+            } else {
+                // When using a test
+                System.out.println(text);
+            }
+        }
     }
 }

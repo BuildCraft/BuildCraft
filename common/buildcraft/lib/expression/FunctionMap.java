@@ -61,7 +61,7 @@ public class FunctionMap implements IFunctionMap {
             }
             functionNames.put(ident.lowerCaseName, expression);
 
-            System.out.println("Defined a function " + ident);
+            GenericExpressionCompiler.debugPrintln("Defined a function " + ident);
 
             return ident;
         }

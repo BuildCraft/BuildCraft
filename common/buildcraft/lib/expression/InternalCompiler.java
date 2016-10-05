@@ -25,20 +25,15 @@ class InternalCompiler {
     private static final String UNARY_NEGATION = "¬";
     private static final String FUNCTION_START = "@";
     private static final String FUNCTION_ARGS = "#";
-    private static final String OPERATORS = "+-*/^%~ << >> == <= >=";
-    private static final String splitters = OPERATORS + "(),";
-    private static final String leftAssosiative = "+-^*/%";
+    private static final String OPERATORS = "+-*/^%~ << >> == <= >= && || !=";
+    private static final String leftAssosiative = "+-^*/%||&&==!=<=>=<<>>";
     private static final String rightAssosiative = "";
-    private static final String[] precedence = { "(),", "== <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
-
-    /** This is not a complete encompassing regular expression, just for the char set that can be used */
-    private static final String expressionRegex = "[a-z0-9]|[+\\-*/^%()~,\\._<=>\"]";
-    private static final Pattern expressionMatcher = Pattern.compile(expressionRegex);
+    private static final String[] precedence = { "(),", "|| &&", "!= == <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
 
     private static final String LONG_REGEX = "[-+]?[0-9]+";
     private static final String DOUBLE_REGEX = "[-+]?[0-9]+(\\.[0-9]+)?";
     private static final String BOOLEAN_REGEX = "true|false";
-    private static final String STRING_REGEX = "\"[a-z_]*\"";
+    private static final String STRING_REGEX = "\".*\"|'.'";
 
     private static final Pattern LONG_MATCHER = Pattern.compile(LONG_REGEX);
     private static final Pattern DOUBLE_MATCHER = Pattern.compile(DOUBLE_REGEX);
@@ -56,38 +51,37 @@ class InternalCompiler {
 
         @Override
         public String toString() {
-            return type.name().toLowerCase(Locale.ROOT) + " " + name;
+            return type.name().toLowerCase(Locale.ROOT) + " '" + name + "'";
         }
     }
 
-    public static Pair<IExpressionNode, ArgumentCounts> compileExpression(String expression, IFunctionMap functions) throws InvalidExpressionException {
-        expression = expression.replace(" ", "").toLowerCase(Locale.ROOT);
+    public static Pair<IExpressionNode, ArgumentCounts> compileExpression(String expression, FunctionContext context) throws InvalidExpressionException {
+        expression = expression.toLowerCase(Locale.ROOT);
         Argument[] args = parseArgs(expression);
-        System.out.println(Arrays.toString(args));
+        GenericExpressionCompiler.debugPrintln(Arrays.toString(args));
         String actualExpression = extractExpression(expression);
-        actualExpression = validateExpression(actualExpression);
         String[] infix = split(actualExpression);
-        System.out.println(Arrays.toString(infix));
+        GenericExpressionCompiler.debugPrintln(Arrays.toString(infix));
         String[] postfix = convertToPostfix(infix);
-        System.out.println(Arrays.toString(postfix));
-        return makeExpression(args, postfix, functions);
+        GenericExpressionCompiler.debugPrintln(Arrays.toString(postfix));
+        return makeExpression(args, postfix, context);
     }
 
     private static Argument[] parseArgs(String expression) throws InvalidExpressionException {
         List<Argument> args = new ArrayList<>();
         if (expression.startsWith("{") && expression.contains("}")) {
             String inMiddle = expression.substring(1, expression.indexOf("}"));
-            System.out.println("inMiddle = " + inMiddle);
+            GenericExpressionCompiler.debugPrintln("inMiddle = " + inMiddle);
             String[] strings = inMiddle.split(",");
-            System.out.println("argTypes = " + Arrays.toString(strings));
+            GenericExpressionCompiler.debugPrintln("argTypes = " + Arrays.toString(strings));
             for (int i = 0; i < strings.length; i++) {
-                String type = strings[i];
-                if (type.startsWith("long")) {
-                    String val = type.substring(4);
-                    args.add(new Argument(val, ArgType.LONG));
-                } else if (type.startsWith("double")) {
-                    String val = type.substring(6);
-                    args.add(new Argument(val, ArgType.DOUBLE));
+                String type = strings[i].trim();
+                if (type.startsWith("long ")) {
+                    String val = type.substring(5);
+                    args.add(new Argument(val.trim(), ArgType.LONG));
+                } else if (type.startsWith("double ")) {
+                    String val = type.substring(7);
+                    args.add(new Argument(val.trim(), ArgType.DOUBLE));
                 } else {
                     throw new InvalidExpressionException("Unknown type " + type);
                 }
@@ -99,42 +93,14 @@ class InternalCompiler {
     private static String extractExpression(String expression) {
         if (expression.startsWith("{") && expression.contains("}")) {
             String actual = expression.substring(expression.indexOf("}") + 1);
-            System.out.println(actual);
+            GenericExpressionCompiler.debugPrintln(actual);
             return actual;
         }
         return expression;
     }
 
-    private static String validateExpression(String expression) throws InvalidExpressionException {
-        for (int i = 0; i < expression.length(); i++) {
-            char c = expression.charAt(i);
-            if (!expressionMatcher.matcher(c + "").matches()) {
-                throw new InvalidExpressionException("Could not compile " + expression + ", as the " + i + "th char ('" + c + "') was invalid");
-            }
-        }
-        return expression;
-    }
-
     private static String[] split(String function) {
-        function = function.replaceAll("\\s", "");
-        List<String> list = Lists.newArrayList();
-        StringBuffer buffer = new StringBuffer();
-        for (int index = 0; index < function.length(); index++) {
-            char toTest = function.charAt(index);
-            if (splitters.indexOf(toTest) != -1) {
-                if (buffer.length() > 0) {
-                    list.add(buffer.toString());
-                }
-                list.add(String.valueOf(toTest));
-                buffer = new StringBuffer();
-            } else {
-                buffer.append(toTest);
-            }
-        }
-        if (buffer.length() > 0) {
-            list.add(buffer.toString());
-        }
-        return list.toArray(new String[list.size()]);
+        return TokeniserDefaults.createTokensizer().tokenize(function);
     }
 
     private static int getPrecendence(String token) {
@@ -156,12 +122,12 @@ class InternalCompiler {
         Deque<String> stack = Queues.newArrayDeque();
         List<String> postfix = Lists.newArrayList();
         int index = 0;
-        System.out.println("Converting " + Arrays.toString(infix));
-        System.out.println("         Stack=" + stack + ", postfix=" + postfix);
+        GenericExpressionCompiler.debugPrintln("Converting " + Arrays.toString(infix));
+        GenericExpressionCompiler.debugPrintln("         Stack=" + stack + ", postfix=" + postfix);
         boolean justPushedFunc = false;
         for (index = 0; index < infix.length; index++) {
             String token = infix[index];
-            System.out.println("  - Token \"" + token + "\"");
+            GenericExpressionCompiler.debugPrintln("  - Token \"" + token + "\"");
 
             if (justPushedFunc && !")".equals(token)) {
                 if (stack.peek() != null && stack.peek().startsWith(FUNCTION_START)) {
@@ -249,12 +215,12 @@ class InternalCompiler {
                 // Either an argument, number, string or boolean
                 postfix.add(token);
             }
-            System.out.println("         Stack=" + stack + ", postfix=" + postfix);
+            GenericExpressionCompiler.debugPrintln("         Stack=" + stack + ", postfix=" + postfix);
         }
 
         while (!stack.isEmpty()) {
             String operator = stack.pop();
-            System.out.println("  - Operator \"" + operator + "\"");
+            GenericExpressionCompiler.debugPrintln("  - Operator \"" + operator + "\"");
             if ("(".equals(operator)) {
                 throw new InvalidExpressionException("Too many opening parenthesis!");
             } else if (")".equals(operator)) {
@@ -262,13 +228,13 @@ class InternalCompiler {
             } else {
                 postfix.add(operator);
             }
-            System.out.println("         Stack=" + stack + ", postfix=" + postfix);
+            GenericExpressionCompiler.debugPrintln("         Stack=" + stack + ", postfix=" + postfix);
         }
 
         return postfix.toArray(new String[postfix.size()]);
     }
 
-    private static Pair<IExpressionNode, ArgumentCounts> makeExpression(Argument[] args, String[] postfix, IFunctionMap functions) throws InvalidExpressionException {
+    private static Pair<IExpressionNode, ArgumentCounts> makeExpression(Argument[] args, String[] postfix, FunctionContext context) throws InvalidExpressionException {
         Deque<IExpressionNode> stack = Queues.newArrayDeque();
         for (String op : postfix) {
             if ("-".equals(op)) pushSubtraction(stack);
@@ -278,15 +244,28 @@ class InternalCompiler {
             else if ("%".equals(op)) pushModulus(stack);
             else if ("^".equals(op)) pushPower(stack);
             else if ("~".equals(op)) pushBitwiseInvert(stack);
+            else if ("==".equals(op)) pushEqual(stack);
+            else if ("<=".equals(op)) pushLessOrEqual(stack);
+            else if (">=".equals(op)) pushGreaterOrEqual(stack);
+            else if ("<".equals(op)) pushLess(stack);
+            else if (">".equals(op)) pushGreater(stack);
+            else if ("!=".equals(op)) pushNotEqual(stack);
+            else if ("&&".equals(op)) pushBooleanAnd(stack);
+            else if ("||".equals(op)) pushBooleanOr(stack);
+            else if ("!".equals(op)) pushBooleanNot(stack);
             else if (UNARY_NEGATION.equals(op)) pushNegation(stack);
             else if (LONG_MATCHER.matcher(op).matches()) {
                 stack.push(new NodeValueLong(Long.parseLong(op)));
             } else if (DOUBLE_MATCHER.matcher(op).matches()) {
                 stack.push(new NodeValueDouble(Double.parseDouble(op)));
+            } else if (BOOLEAN_MATCHER.matcher(op).matches()) {
+                stack.push(NodeValueBoolean.get(Boolean.parseBoolean(op)));
+            } else if (STRING_MATCHER.matcher(op).matches()) {
+                stack.push(new NodeValueString(op.substring(1, op.length() - 1)));
             } else if (op.startsWith(FUNCTION_START)) {
                 // Its a function
                 String function = op.substring(1);
-                pushFunctionNode(stack, function, functions);
+                pushFunctionNode(stack, function, context == null ? null : context.getFunctionMap());
             } else {
                 boolean found = false;
                 int i = 0;
@@ -294,11 +273,17 @@ class InternalCompiler {
                     if (arg.name.equals(op)) {
                         pushArgumentNode(stack, i, arg.type);
                         found = true;
+                        break;
                     }
                     i++;
                 }
                 if (!found) {
-                    throw new InvalidExpressionException("Unknown argument \"" + op + "\"");
+                    IExpressionNode node = context == null ? null : context.getAny(op);
+                    if (node != null) {
+                        stack.push(node);
+                    } else {
+                        throw new InvalidExpressionException("Unknown variable '" + op + "'");
+                    }
                 }
             }
         }
@@ -457,6 +442,147 @@ class InternalCompiler {
         }
     }
 
+    public static void pushEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.EQUAL.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.EQUAL.create((INodeDouble) left, (INodeDouble) right));
+        } else if (left instanceof INodeString) {
+            stack.push(new NodeEqualityString((INodeString) left, (INodeString) right));
+        } else if (left instanceof INodeBoolean) {
+            stack.push(NodeBinaryBoolean.Type.EQUAL.create((INodeBoolean) left, (INodeBoolean) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushLessOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.LESS_THAN_OR_EQUAL.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.LESS_THAN_OR_EQUAL.create((INodeDouble) left, (INodeDouble) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushGreaterOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.GREATER_THAN_OR_EQUAL.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.GREATER_THAN_OR_EQUAL.create((INodeDouble) left, (INodeDouble) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushLess(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.LESS_THAN.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.LESS_THAN.create((INodeDouble) left, (INodeDouble) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushGreater(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.GREATER_THAN.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.GREATER_THAN.create((INodeDouble) left, (INodeDouble) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushNotEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeLong) {
+            stack.push(NodeBinaryLongToBoolean.Type.NOT_EQUAL.create((INodeLong) left, (INodeLong) right));
+        } else if (left instanceof INodeDouble) {
+            stack.push(NodeBinaryDoubleToBoolean.Type.NOT_EQUAL.create((INodeDouble) left, (INodeDouble) right));
+        } else if (left instanceof INodeString) {
+            stack.push(new NodeBooleanInvert(new NodeEqualityString((INodeString) left, (INodeString) right)));
+        } else if (left instanceof INodeBoolean) {
+            stack.push(NodeBinaryBoolean.Type.NOT_EQUAL.create((INodeBoolean) left, (INodeBoolean) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushBooleanAnd(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeBoolean) {
+            stack.push(NodeBinaryBoolean.Type.AND.create((INodeBoolean) left, (INodeBoolean) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushBooleanOr(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (left instanceof INodeBoolean) {
+            stack.push(NodeBinaryBoolean.Type.OR.create((INodeBoolean) left, (INodeBoolean) right));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + left + ", " + right);
+        }
+    }
+
+    public static void pushBooleanNot(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode node = stack.pop();
+        if (node instanceof INodeBoolean) {
+            stack.push(new NodeBooleanInvert((INodeBoolean) node));
+        } else {
+            throw new InvalidExpressionException("Unknown node " + node);
+        }
+    }
+
     private static void pushNegation(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode node = stack.pop();
         if (node instanceof INodeDouble) {
@@ -494,7 +620,7 @@ class InternalCompiler {
         if (exp == null) {
             // Find the next best one that we can cast to/from
             for (IExpression e2 : functions.getExpressions(name, count)) {
-                System.out.println("Checking " + name + "(" + e2.getCounts() + ")");
+                GenericExpressionCompiler.debugPrintln("Checking " + name + "(" + e2.getCounts() + ")");
                 if (counts.canCastTo(e2.getCounts())) {
                     args = args.castTo(e2.getCounts());
                     exp = e2;

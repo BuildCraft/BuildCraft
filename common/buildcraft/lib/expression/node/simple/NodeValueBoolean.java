@@ -13,6 +13,14 @@ public enum NodeValueBoolean implements INodeBoolean {
         this.value = b;
     }
 
+    public static NodeValueBoolean get(boolean value) {
+        if (value) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
     @Override
     public boolean evaluate() {
         return value;
@@ -21,5 +29,9 @@ public enum NodeValueBoolean implements INodeBoolean {
     @Override
     public INodeBoolean inline(Arguments args) {
         return this;
+    }
+
+    public NodeValueBoolean invert() {
+        return get(!value);
     }
 }

@@ -1,5 +1,7 @@
 package buildcraft.lib.expression.api;
 
+import buildcraft.lib.expression.GenericExpressionCompiler;
+
 public enum ArgType {
     LONG,
     DOUBLE,
@@ -9,9 +11,9 @@ public enum ArgType {
     public boolean canCastTo(ArgType other) {
         boolean ans = canCastTo0(other);
         if (ans) {
-            System.out.println("Can cast from " + this + " to " + other);
+            GenericExpressionCompiler.debugPrintln("Can cast from " + this + " to " + other);
         } else {
-            System.out.println("NO CASTING FROM " + this + " TO " + other + " EVER!");
+            GenericExpressionCompiler.debugPrintln("NO CASTING FROM " + this + " TO " + other + " EVER!");
         }
         return ans;
     }

@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import com.google.common.collect.ImmutableList;
 
+import buildcraft.lib.expression.GenericExpressionCompiler;
+
 public final class ArgumentCounts {
     public static final ArgumentCounts NO_ARGS = new ArgumentCounts();
 
@@ -13,20 +15,20 @@ public final class ArgumentCounts {
 
     public ArgumentCounts(ArgType... types) {
         order = ImmutableList.copyOf(types);
-        int longs = 0;
-        int doubles = 0;
-        int booleans = 0;
-        int strings = 0;
+        int typeLongs = 0;
+        int typeDoubles = 0;
+        int typeBooleans = 0;
+        int typeStrings = 0;
         for (ArgType type : types) {
-            if (type == ArgType.LONG) longs++;
-            if (type == ArgType.DOUBLE) doubles++;
-            if (type == ArgType.BOOL) booleans++;
-            if (type == ArgType.STRING) strings++;
+            if (type == ArgType.LONG) typeLongs++;
+            if (type == ArgType.DOUBLE) typeDoubles++;
+            if (type == ArgType.BOOL) typeBooleans++;
+            if (type == ArgType.STRING) typeStrings++;
         }
-        this.longs = longs;
-        this.doubles = doubles;
-        this.booleans = booleans;
-        this.strings = strings;
+        this.longs = typeLongs;
+        this.doubles = typeDoubles;
+        this.booleans = typeBooleans;
+        this.strings = typeStrings;
         this.hash = order.hashCode();
     }
 
@@ -36,7 +38,7 @@ public final class ArgumentCounts {
 
     public boolean canCastTo(ArgumentCounts counts) {
         if (order.size() != counts.order.size()) {
-            System.out.println("Cannot cast from " + counts.order + " to " + order);
+            GenericExpressionCompiler.debugPrintln("Cannot cast from " + counts.order + " to " + order);
             return false;
         }
         for (int i = 0; i < order.size(); i++) {

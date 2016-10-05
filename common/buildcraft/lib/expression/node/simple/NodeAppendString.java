@@ -18,15 +18,15 @@ public class NodeAppendString implements INodeString {
 
     @Override
     public INodeString inline(Arguments args) {
-        INodeString left = this.left.inline(args);
-        INodeString right = this.right.inline(args);
+        INodeString il = this.left.inline(args);
+        INodeString ir = this.right.inline(args);
 
-        if (left instanceof NodeValueString && right instanceof NodeValueString) {
-            return new NodeValueString(((NodeValueString) left).value + ((NodeValueString) right).value);
-        } else if (left == this.left && right == this.right) {
+        if (il instanceof NodeValueString && ir instanceof NodeValueString) {
+            return new NodeValueString(((NodeValueString) il).value + ((NodeValueString) ir).value);
+        } else if (il == this.left && ir == this.right) {
             return this;
         } else {
-            return new NodeAppendString(left, right);
+            return new NodeAppendString(il, ir);
         }
     }
 }
