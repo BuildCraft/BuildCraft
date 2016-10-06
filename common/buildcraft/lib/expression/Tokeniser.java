@@ -68,6 +68,10 @@ public class Tokeniser {
         default String get(int length) {
             return get(0, length);
         }
+
+        default char getCharAt(int rel) {
+            return get(rel, rel + 1).charAt(0);
+        }
     }
 
     @FunctionalInterface

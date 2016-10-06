@@ -1,7 +1,9 @@
 package buildcraft.transport.client.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 
@@ -19,36 +21,29 @@ import net.minecraft.world.World;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.GateVariant;
 import buildcraft.transport.item.ItemPluggableGate;
 
 public enum ModelGateItem implements IBakedModel {
     INSTANCE;
 
-    private static MutableQuad[][] lastQuads = new MutableQuad[2][];
-    private static List<BakedQuad>[] lastBaked = new List[2];
+    private static final Map<GateVariant, List<BakedQuad>> cached = new HashMap<>();
+
+    public static void onModelBake() {
+        cached.clear();
+    }
 
     private static List<BakedQuad> getQuads(GateVariant variant) {
-        MutableQuad[] from;
-        int idx = 0;
-        if (variant.logic == EnumGateLogic.AND) {
-            from = BCTransportModels.GATE_AND.getCutoutQuads();
-            idx = 0;
-        } else {
-            from = BCTransportModels.GATE_OR.getCutoutQuads();
-            idx = 1;
-        }
-
-        if (from != lastQuads[idx]) {
-            lastQuads[idx] = from;
-            lastBaked[idx] = new ArrayList<>();
-            for (MutableQuad q : from) {
-                lastBaked[idx].add(q.toBakedItem());
+        if (!cached.containsKey(variant)) {
+            List<BakedQuad> list = new ArrayList<>();
+            MutableQuad[] quads = BCTransportModels.getGateQuads(variant);
+            for (MutableQuad q : quads) {
+                MutableQuad c = new MutableQuad(q);
+                list.add(c.toBakedItem());
             }
+            cached.put(variant, list);
         }
-
-        return lastBaked[idx];
+        return cached.get(variant);
     }
 
     @Override
@@ -78,7 +73,7 @@ public enum ModelGateItem implements IBakedModel {
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM;
+        return ModelItemSimple.TRANSFORM_PLUG_AS_ITEM_BIGGER;
     }
 
     @Override
@@ -96,7 +91,7 @@ public enum ModelGateItem implements IBakedModel {
         @Override
         public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, World world, EntityLivingBase entity) {
             GateVariant variant = ItemPluggableGate.getVariant(stack);
-            return new ModelItemSimple(getQuads(variant), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM);
+            return new ModelItemSimple(getQuads(variant), ModelItemSimple.TRANSFORM_PLUG_AS_ITEM_BIGGER);
         }
     }
 }

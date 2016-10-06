@@ -66,12 +66,12 @@ public class GateLogic implements IGate, IWireEmitter {
     // Saving + Loading
 
     public GateLogic(PluggableGate pluggable, NBTTagCompound nbt) {
-        this(pluggable, new GateVariant(nbt));
+        this(pluggable, new GateVariant(nbt.getCompoundTag("variant")));
     }
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
-
+        nbt.setTag("variant", variant.writeToNbt());
         return nbt;
     }
 

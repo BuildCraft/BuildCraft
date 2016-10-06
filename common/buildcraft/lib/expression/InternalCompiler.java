@@ -33,7 +33,7 @@ class InternalCompiler {
     private static final String LONG_REGEX = "[-+]?[0-9]+";
     private static final String DOUBLE_REGEX = "[-+]?[0-9]+(\\.[0-9]+)?";
     private static final String BOOLEAN_REGEX = "true|false";
-    private static final String STRING_REGEX = "\".*\"|'.'";
+    private static final String STRING_REGEX = "'.*'";
 
     private static final Pattern LONG_MATCHER = Pattern.compile(LONG_REGEX);
     private static final Pattern DOUBLE_MATCHER = Pattern.compile(DOUBLE_REGEX);

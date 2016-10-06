@@ -18,6 +18,7 @@ public class ModelItemSimple implements IBakedModel {
     public static final ItemCameraTransforms TRANSFORM_DEFAULT = ItemCameraTransforms.DEFAULT;
     public static final ItemCameraTransforms TRANSFORM_BLOCK;
     public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM;
+    public static final ItemCameraTransforms TRANSFORM_PLUG_AS_ITEM_BIGGER;
     // TODO: TRANSFORM_ITEM
     // TODO: TRANSFORM_TOOL
 
@@ -43,6 +44,28 @@ public class ModelItemSimple implements IBakedModel {
         ground = def(0, 90, 0, 0, 0, -4, 0.5);
         fixed = def(0, 90, 0, 0, 0, -4, 0.85);
         TRANSFORM_PLUG_AS_ITEM = new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+        TRANSFORM_PLUG_AS_ITEM_BIGGER = scale(TRANSFORM_PLUG_AS_ITEM, 1.8);
+    }
+
+    private static ItemCameraTransforms scale(ItemCameraTransforms from, double by) {
+        ItemTransformVec3f thirdperson_left = scale(from.thirdperson_left, by);
+        ItemTransformVec3f thirdperson_right = scale(from.thirdperson_right, by);
+        ItemTransformVec3f firstperson_left = scale(from.firstperson_left, by);
+        ItemTransformVec3f firstperson_right = scale(from.firstperson_right, by);
+        ItemTransformVec3f head = scale(from.head, by);
+        ItemTransformVec3f gui = scale(from.gui, by);
+        ItemTransformVec3f ground = scale(from.ground, by);
+        ItemTransformVec3f fixed = scale(from.fixed, by);
+        return new ItemCameraTransforms(thirdperson_left, thirdperson_right, firstperson_left, firstperson_right, head, gui, ground, fixed);
+    }
+
+    private static ItemTransformVec3f scale(ItemTransformVec3f from, double by) {
+
+        float scale = (float) by;
+        Vector3f nScale = new Vector3f(from.scale);
+        nScale.scale(scale);
+
+        return new ItemTransformVec3f(from.rotation, from.translation, nScale);
     }
 
     private static ItemTransformVec3f def(double rx, double ry, double rz, double tx, double ty, double tz, double scale) {

@@ -62,7 +62,7 @@ public class ExpressionTester {
         bakeAndCallString("'a'", "a");
         bakeAndCallString("'A'", "a");
         bakeAndCallString("'a' + 'b'", "ab");
-        bakeAndCallString("\"aA\" + 'b'", "aab");
+        bakeAndCallString("'aA' + 'b'", "aab");
 
         bakeAndCallBoolean("'a' != 'b'", true);
     }
@@ -125,7 +125,7 @@ public class ExpressionTester {
         bakeAndCallDouble("something", 1, ctx);
 
         NodeMutableString variant = ctx.getOrAddString("variant");
-        String exp = "variant == \"gold\"";
+        String exp = "variant == 'gold'";
         IExpressionBoolean expBool = bakeFunctionBoolean(exp, ctx);
 
         variant.value = "nether_brick";

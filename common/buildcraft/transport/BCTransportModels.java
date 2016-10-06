@@ -9,33 +9,35 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.lib.client.model.ModelHolderStatic;
+import buildcraft.lib.client.model.ModelHolderVariable;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.expression.FunctionContext;
+import buildcraft.lib.expression.node.simple.NodeMutableString;
 import buildcraft.transport.client.model.ModelBlockerItem;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
+import buildcraft.transport.client.model.plug.PlugGateBaker;
+import buildcraft.transport.gate.GateVariant;
 
 public class BCTransportModels {
     public static final ModelHolderStatic BLOCKER;
     public static final ModelHolderStatic POWER_ADAPTER;
     public static final ModelHolderStatic LENS;
-    public static final ModelHolderStatic GATE_AND;
-    public static final ModelHolderStatic GATE_OR;
+
+    private static final ModelHolderVariable GATE;
+    private static final NodeMutableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
         LENS = getModel("plugs/lens.json");
-        // TODO: Replace this with "~material:<variant>" so that this is actually useful
-        // (and "~modifier:<variant>")
-        String[][] gateTextures = {//
-            { "~brick", "buildcrafttransport:gates/material_brick" },//
-            { "~iron", "buildcrafttransport:gates/material_iron" },//
-            { "~gold", "buildcrafttransport:gates/material_gold" },//
-            { "~nether_brick", "buildcrafttransport:gates/material_nether_brick" },//
-            { "~prismarine", "buildcrafttransport:gates/material_prismarine" },//
-        };
-        GATE_AND = getModel("plugs/gate_and.json", gateTextures);
-        GATE_OR = getModel("plugs/gate_or.json", gateTextures);
+
+        FunctionContext fnCtx = new FunctionContext();
+        GATE_MATERIAL = fnCtx.getOrAddString("material");
+        GATE_MODIFIER = fnCtx.getOrAddString("modifier");
+        GATE_LOGIC = fnCtx.getOrAddString("logic");
+        GATE = new ModelHolderVariable("buildcrafttransport:models/plugs/gate.json", fnCtx);
     }
 
     private static ModelHolderStatic getModel(String loc) {
@@ -61,9 +63,23 @@ public class BCTransportModels {
         registerModel(modelRegistry, "buildcrafttransport:pipe_item#inventory", ModelPipeItem.INSTANCE);
         registerModel(modelRegistry, "buildcrafttransport:gate_item#inventory", ModelGateItem.INSTANCE);
         registerModel(modelRegistry, "buildcrafttransport:pluggable/blocker#inventory", ModelBlockerItem.INSTANCE);
+
+        PlugGateBaker.onModelBake();
+        ModelGateItem.onModelBake();
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
         modelRegistry.putObject(new ModelResourceLocation(reg), val);
+    }
+
+    public static MutableQuad[] getGateQuads(GateVariant variant) {
+        return getGateQuads(variant.material.tag, variant.modifier.tag, variant.logic.tag);
+    }
+
+    public static MutableQuad[] getGateQuads(String material, String modifier, String logic) {
+        GATE_MATERIAL.value = material;
+        GATE_MODIFIER.value = modifier;
+        GATE_LOGIC.value = logic;
+        return GATE.getCutoutQuads();
     }
 }

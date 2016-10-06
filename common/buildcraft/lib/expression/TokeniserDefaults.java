@@ -8,43 +8,20 @@ import buildcraft.lib.expression.Tokeniser.*;
 public class TokeniserDefaults {
     // Lots of gobblers.
     // They like to "gobble" up bits of text.
-    public static final ITokenizerGobbler GOBBLER_SINGLE_QUOTE = (ctx) -> {
-        // single quote gobbler, takes a length of text in quotes. Does NOT allow EOL.
-        String text = ctx.get(4);// Maximum length for single quotes - '\\'
-        if (!text.startsWith("'")) return ResultSpecific.IGNORE;
-        if (text.charAt(1) == '\\') {
-            if (text.charAt(3) == '\'') {
-                return new ResultConsume(4);
-            } else {
-                return new ResultInvalid(4);
-            }
-        } else if (text.charAt(2) == '\'') {
-            return new ResultConsume(3);
-        } else {
-            return new ResultInvalid(3);
-        }
-    };
-    public static final ITokenizerGobbler GOBBLER_DOUBLE_QUOTE = (ctx) -> {
+    public static final ITokenizerGobbler GOBBLER_QUOTE = (ctx) -> {
         // Quoted gobbler, takes a length of text in quotes. Does NOT allow EOL.
-        String text = ctx.get(3);// Min valid length
-        int i = 3;
-        int s = 1;
-        if (!text.startsWith("\"")) return ResultSpecific.IGNORE;
+        int length = 1;
+        if (ctx.getCharAt(0) != '\'') return ResultSpecific.IGNORE;
         while (true) {
-            if (s == i) {
-                text += ctx.get(i, i + 4);
-                i += 4;
-
-            }
-            char c = text.charAt(s);
+            char c = ctx.getCharAt(length);
             if (c == '\\') {
-                s++;
-            } else if (c == '"') {
-                return new ResultConsume(s + 1);
+                length++;
+            } else if (c == '\'') {
+                return new ResultConsume(length + 1);
             } else if (c == Tokeniser.END_OF_LINE) {
-                return new ResultInvalid(s + 1);
+                return new ResultInvalid(length + 1);
             }
-            s++;
+            length++;
         }
     };
 
@@ -63,8 +40,7 @@ public class TokeniserDefaults {
         boolean dot = false;
         boolean moreAfterDot = false;
         while (true) {
-            String str = ctx.get(i, i + 1);
-            char c = str.charAt(0);
+            char c = ctx.getCharAt(i);
             if (c == '.') {
                 if (dot) {
                     break;
@@ -84,16 +60,15 @@ public class TokeniserDefaults {
     public static final ITokenizerGobbler GOBBLER_WORD = (ctx) -> {
         int i = 0;
         while (true) {
-            String c = ctx.get(i, i + 1);
-            if (!Character.isAlphabetic(c.charAt(0))) break;
+            char c = ctx.getCharAt(i);
+            if (!Character.isAlphabetic(c)) break;
             i++;
         }
         return i == 0 ? ResultSpecific.IGNORE : new ResultConsume(i);
     };
     public static final ITokenizerGobbler GOBBLER_NON_WHITESPACE = (ctx) -> {
         // Non-special char gobbler, takes a single of not-EOL and not-EOF and not-whitespace
-        String s = ctx.get(1);
-        char c = s.charAt(0);
+        char c = ctx.getCharAt(0);
         if (c == Tokeniser.END_OF_LINE) {
             return ResultSpecific.IGNORE;
         }
@@ -106,8 +81,7 @@ public class TokeniserDefaults {
 
     public static List<ITokenizerGobbler> createParts() {
         List<ITokenizerGobbler> list = new ArrayList<>();
-        list.add(GOBBLER_SINGLE_QUOTE);
-        list.add(GOBBLER_DOUBLE_QUOTE);
+        list.add(GOBBLER_QUOTE);
         list.add(GOBBLER_MATH_OPERATOR);
         list.add(GOBBLER_NUMBER);
         list.add(GOBBLER_WORD);

@@ -25,6 +25,10 @@ public class FunctionContext implements IFunctionContext {
         this.map = map;
     }
 
+    public FunctionContext() {
+        this(new FunctionMap());
+    }
+
     public IFunctionMap getFunctionMap() {
         return map;
     }
