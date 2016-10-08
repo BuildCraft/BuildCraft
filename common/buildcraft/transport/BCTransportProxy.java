@@ -6,15 +6,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.transport.client.model.GateMeshDefinition;
+import buildcraft.transport.client.render.RenderPipeHolder;
 import buildcraft.transport.container.ContainerFilteredBuffer;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.tile.TileFilteredBuffer;
+import buildcraft.transport.tile.TilePipeHolder;
 
 public abstract class BCTransportProxy implements IGuiHandler {
     @SidedProxy
@@ -63,6 +66,7 @@ public abstract class BCTransportProxy implements IGuiHandler {
         @Override
         public void fmlInit() {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BCTransportItems.plugGate, GateMeshDefinition.INSTANCE);
+            ClientRegistry.bindTileEntitySpecialRenderer(TilePipeHolder.class, new RenderPipeHolder());
         }
 
         @Override

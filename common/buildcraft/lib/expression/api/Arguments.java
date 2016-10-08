@@ -1,5 +1,7 @@
 package buildcraft.lib.expression.api;
 
+import java.util.Arrays;
+
 import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -53,5 +55,10 @@ public class Arguments {
             to.appendNode(node);
         }
         return to;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(longs) + ", " + Arrays.toString(doubles) + ", " + Arrays.toString(bools) + ", " + Arrays.toString(strings);
     }
 }

@@ -4,7 +4,7 @@ import java.util.Locale;
 
 public enum EnumGateModifier {
     NO_MODIFIER(0, 0, 1),
-    GOLD(1, 0, 1),
+    LAPIS(1, 0, 1),
     QUARTZ(1, 1, 2),
     DIAMOND(2, 2, 2),
     PRISMARINE(3, 3, 2);

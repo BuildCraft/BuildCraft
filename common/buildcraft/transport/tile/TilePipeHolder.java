@@ -341,4 +341,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pipe.getDebugInfo(left, right, side);
         }
     }
+
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
 }

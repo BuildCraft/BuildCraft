@@ -12,12 +12,14 @@ import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.FunctionContext;
-import buildcraft.lib.expression.node.simple.NodeMutableString;
+import buildcraft.lib.expression.node.value.NodeMutableBoolean;
+import buildcraft.lib.expression.node.value.NodeMutableString;
 import buildcraft.transport.client.model.ModelBlockerItem;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.plug.PlugGateBaker;
+import buildcraft.transport.client.render.PlugGateRenderer;
 import buildcraft.transport.gate.GateVariant;
 
 public class BCTransportModels {
@@ -25,8 +27,11 @@ public class BCTransportModels {
     public static final ModelHolderStatic POWER_ADAPTER;
     public static final ModelHolderStatic LENS;
 
-    private static final ModelHolderVariable GATE;
+    private static final ModelHolderVariable GATE_STATIC, GATE_DYNAMIC;
+    /** Used in {@link #GATE_STATIC} */
     private static final NodeMutableString GATE_MATERIAL, GATE_MODIFIER, GATE_LOGIC;
+    /** Used in {@link #GATE_DYNAMIC} */
+    private static final NodeMutableBoolean GATE_ON;
 
     static {
         BLOCKER = getModel("plugs/blocker.json");
@@ -37,7 +42,11 @@ public class BCTransportModels {
         GATE_MATERIAL = fnCtx.getOrAddString("material");
         GATE_MODIFIER = fnCtx.getOrAddString("modifier");
         GATE_LOGIC = fnCtx.getOrAddString("logic");
-        GATE = new ModelHolderVariable("buildcrafttransport:models/plugs/gate.json", fnCtx);
+        GATE_STATIC = getModel("plugs/gate.json", fnCtx);
+
+        fnCtx = new FunctionContext();
+        GATE_ON = fnCtx.getOrAddBoolean("on");
+        GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
     }
 
     private static ModelHolderStatic getModel(String loc) {
@@ -50,6 +59,10 @@ public class BCTransportModels {
 
     private static ModelHolderStatic getModel(String loc, String[][] textures, boolean allowTextureFallthrough) {
         return new ModelHolderStatic("buildcrafttransport:models/" + loc, textures, allowTextureFallthrough);
+    }
+
+    private static ModelHolderVariable getModel(String loc, FunctionContext fnCtx) {
+        return new ModelHolderVariable("buildcrafttransport:models/" + loc, fnCtx);
     }
 
     public static void fmlPreInit() {
@@ -66,6 +79,8 @@ public class BCTransportModels {
 
         PlugGateBaker.onModelBake();
         ModelGateItem.onModelBake();
+
+        PlugGateRenderer.onModelBake();
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
@@ -80,6 +95,11 @@ public class BCTransportModels {
         GATE_MATERIAL.value = material;
         GATE_MODIFIER.value = modifier;
         GATE_LOGIC.value = logic;
-        return GATE.getCutoutQuads();
+        return GATE_STATIC.getCutoutQuads();
+    }
+
+    public static MutableQuad[] getGateDynQuads(boolean isOn) {
+        GATE_ON.value = isOn;
+        return GATE_DYNAMIC.getCutoutQuads();
     }
 }

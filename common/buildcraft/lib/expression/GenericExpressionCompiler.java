@@ -29,6 +29,7 @@ public class GenericExpressionCompiler {
     /** Modifiable field to enable or disable debugging for testing. You should reset this to {@link #DEBUG} after you
      * have finished testing. */
     public static boolean debug = DEBUG;
+    private static String debugIndentCache = "";
 
     public static IExpressionLong compileExpressionLong(String function) throws InvalidExpressionException {
         return compileExpressionLong(function, null);
@@ -104,13 +105,31 @@ public class GenericExpressionCompiler {
         return InternalCompiler.compileExpression(function, context);
     }
 
+    public static void debugStart(String text) {
+        if (debug) {
+            debugPrintln(text);
+            debugIndentCache += "  ";
+        }
+    }
+
+    public static void debugEnd(String text) {
+        if (debug) {
+            if (debugIndentCache.length() > 1) {
+                debugIndentCache = debugIndentCache.substring(2);
+            } else if (debugIndentCache.length() > 0) {
+                debugIndentCache = "";
+            }
+            debugPrintln(text);
+        }
+    }
+
     public static void debugPrintln(String text) {
         if (debug) {
             if (Loader.instance().hasReachedState(LoaderState.CONSTRUCTING)) {
-                BCLog.logger.info(text);
+                BCLog.logger.info(debugIndentCache + text);
             } else {
                 // When using a test
-                System.out.println(text);
+                System.out.println(debugIndentCache + text);
             }
         }
     }

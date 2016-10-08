@@ -88,4 +88,9 @@ public abstract class PipePluggable {
     public PluggableModelKey<?> getModelRenderKey(BlockRenderLayer layer) {
         return null;
     }
+    
+    @SideOnly(Side.CLIENT)
+    public IPluggableDynamicRenderer getDynamicRenderer() {
+        return null;
+    }
 }

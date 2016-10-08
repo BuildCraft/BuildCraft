@@ -15,20 +15,31 @@ import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.node.arg.NodeArgumentDouble;
 import buildcraft.lib.expression.node.arg.NodeArgumentLong;
+import buildcraft.lib.expression.node.binary.*;
 import buildcraft.lib.expression.node.cast.NodeCastBooleanToString;
 import buildcraft.lib.expression.node.cast.NodeCastDoubleToString;
 import buildcraft.lib.expression.node.cast.NodeCastLongToDouble;
 import buildcraft.lib.expression.node.cast.NodeCastLongToString;
-import buildcraft.lib.expression.node.simple.*;
+import buildcraft.lib.expression.node.condition.NodeConditionalBoolean;
+import buildcraft.lib.expression.node.condition.NodeConditionalDouble;
+import buildcraft.lib.expression.node.condition.NodeConditionalLong;
+import buildcraft.lib.expression.node.condition.NodeConditionalString;
+import buildcraft.lib.expression.node.unary.NodeBooleanInvert;
+import buildcraft.lib.expression.node.unary.NodeUnaryDouble;
+import buildcraft.lib.expression.node.unary.NodeUnaryLong;
+import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableDouble;
+import buildcraft.lib.expression.node.value.NodeImmutableLong;
+import buildcraft.lib.expression.node.value.NodeImmutableString;
 
 class InternalCompiler {
     private static final String UNARY_NEGATION = "¬";
     private static final String FUNCTION_START = "@";
     private static final String FUNCTION_ARGS = "#";
-    private static final String OPERATORS = "+-*/^%~ << >> == <= >= && || !=";
-    private static final String leftAssosiative = "+-^*/%||&&==!=<=>=<<>>";
+    private static final String OPERATORS = "+-*/^%~?: << >> == <= >= && || !=";
+    private static final String leftAssosiative = "+-^*/%||&&==!=<=>=<<>>?";
     private static final String rightAssosiative = "";
-    private static final String[] precedence = { "(),", "|| &&", "!= == <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
+    private static final String[] precedence = { "(),", "?", "|| &&", "!= == <= >=", "<< >>", "+-", "%", "*/", "^", "~¬" };
 
     private static final String LONG_REGEX = "[-+]?[0-9]+";
     private static final String DOUBLE_REGEX = "[-+]?[0-9]+(\\.[0-9]+)?";
@@ -83,7 +94,7 @@ class InternalCompiler {
                     String val = type.substring(7);
                     args.add(new Argument(val.trim(), ArgType.DOUBLE));
                 } else {
-                    throw new InvalidExpressionException("Unknown type " + type);
+                    throw new InvalidExpressionException("Unknown type '" + type + "'");
                 }
             }
         }
@@ -182,6 +193,15 @@ class InternalCompiler {
                 if (!found) {
                     throw new InvalidExpressionException("Too many closing parenthesis!");
                 }
+            } else if (":".equals(token)) {
+                String s;
+                while ((s = stack.peek()) != null) {
+                    if (s.equals("?")) {
+                        break;
+                    } else {
+                        postfix.add(stack.pop());
+                    }
+                }
             } else if (OPERATORS.contains(token)) {
                 // Its an operator
                 if ("-".equals(token) && (index == 0 || (OPERATORS + "(,").contains(infix[index - 1]))) {
@@ -192,7 +212,9 @@ class InternalCompiler {
                 while ((s = stack.peek()) != null) {
                     int tokenPrec = getPrecendence(token);
                     int stackPrec = getPrecendence(s);
-                    boolean shouldContinue = leftAssosiative.contains(token) && tokenPrec <= stackPrec;
+                    boolean continueIfEqual = !"?".contains(token);
+
+                    boolean shouldContinue = leftAssosiative.contains(token) && (continueIfEqual ? tokenPrec <= stackPrec : tokenPrec < stackPrec);
                     if (!shouldContinue && rightAssosiative.contains(token)) {
                         if (tokenPrec > stackPrec) shouldContinue = true;
                     }
@@ -253,15 +275,17 @@ class InternalCompiler {
             else if ("&&".equals(op)) pushBooleanAnd(stack);
             else if ("||".equals(op)) pushBooleanOr(stack);
             else if ("!".equals(op)) pushBooleanNot(stack);
+            else if (":".equals(op)) pushSelector(stack);
+            else if ("?".equals(op)) pushConditional(stack);
             else if (UNARY_NEGATION.equals(op)) pushNegation(stack);
             else if (LONG_MATCHER.matcher(op).matches()) {
-                stack.push(new NodeValueLong(Long.parseLong(op)));
+                stack.push(new NodeImmutableLong(Long.parseLong(op)));
             } else if (DOUBLE_MATCHER.matcher(op).matches()) {
-                stack.push(new NodeValueDouble(Double.parseDouble(op)));
+                stack.push(new NodeImmutableDouble(Double.parseDouble(op)));
             } else if (BOOLEAN_MATCHER.matcher(op).matches()) {
-                stack.push(NodeValueBoolean.get(Boolean.parseBoolean(op)));
+                stack.push(NodeImmutableBoolean.get(Boolean.parseBoolean(op)));
             } else if (STRING_MATCHER.matcher(op).matches()) {
-                stack.push(new NodeValueString(op.substring(1, op.length() - 1)));
+                stack.push(new NodeImmutableString(op.substring(1, op.length() - 1)));
             } else if (op.startsWith(FUNCTION_START)) {
                 // Its a function
                 String function = op.substring(1);
@@ -442,7 +466,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -462,7 +486,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushLessOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushLessOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -478,7 +502,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushGreaterOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushGreaterOrEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -494,7 +518,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushLess(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushLess(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -510,7 +534,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushGreater(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushGreater(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -526,7 +550,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushNotEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushNotEqual(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -546,7 +570,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushBooleanAnd(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushBooleanAnd(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -560,7 +584,7 @@ class InternalCompiler {
         }
     }
 
-    public static void pushBooleanOr(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushBooleanOr(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode right = stack.pop();
         IExpressionNode left = stack.pop();
 
@@ -574,12 +598,43 @@ class InternalCompiler {
         }
     }
 
-    public static void pushBooleanNot(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+    private static void pushBooleanNot(Deque<IExpressionNode> stack) throws InvalidExpressionException {
         IExpressionNode node = stack.pop();
         if (node instanceof INodeBoolean) {
             stack.push(new NodeBooleanInvert((INodeBoolean) node));
         } else {
             throw new InvalidExpressionException("Unknown node " + node);
+        }
+    }
+
+    private static void pushSelector(Deque<IExpressionNode> stack) {
+        // NO-OP, is all handled by pushConditional
+    }
+
+    private static void pushConditional(Deque<IExpressionNode> stack) throws InvalidExpressionException {
+        IExpressionNode right = stack.pop();
+        IExpressionNode left = stack.pop();
+        IExpressionNode conditional = stack.pop();
+
+        right = convertBinary(right, left);
+        left = convertBinary(left, right);
+
+        if (conditional instanceof INodeBoolean) {
+            INodeBoolean condition = (INodeBoolean) conditional;
+            if (right instanceof INodeBoolean) {
+                stack.push(new NodeConditionalBoolean(condition, (INodeBoolean) left, (INodeBoolean) right));
+            } else if (right instanceof INodeDouble) {
+                stack.push(new NodeConditionalDouble(condition, (INodeDouble) left, (INodeDouble) right));
+            } else if (right instanceof INodeString) {
+                stack.push(new NodeConditionalString(condition, (INodeString) left, (INodeString) right));
+            } else if (right instanceof INodeLong) {
+                stack.push(new NodeConditionalLong(condition, (INodeLong) left, (INodeLong) right));
+            } else {
+                throw new InvalidExpressionException("Unkown node " + left);
+            }
+
+        } else {
+            throw new InvalidExpressionException("Required a boolean node, but got '" + conditional + "' of " + conditional.getClass());
         }
     }
 

@@ -1,23 +1,26 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.binary;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
 
 public class NodeBinaryLongToBoolean implements INodeBoolean {
     public enum Type {
-        EQUAL((l, r) -> l == r),
-        NOT_EQUAL((l, r) -> l != r),
-        LESS_THAN((l, r) -> l < r),
-        LESS_THAN_OR_EQUAL((l, r) -> l <= r),
-        GREATER_THAN((l, r) -> l > r),
-        GREATER_THAN_OR_EQUAL((l, r) -> l >= r);
+        EQUAL("==", (l, r) -> l == r),
+        NOT_EQUAL("!=", (l, r) -> l != r),
+        LESS_THAN("<", (l, r) -> l < r),
+        LESS_THAN_OR_EQUAL("<=", (l, r) -> l <= r),
+        GREATER_THAN(">", (l, r) -> l > r),
+        GREATER_THAN_OR_EQUAL(">=", (l, r) -> l >= r);
 
+        private final String op;
         private final BiLongToBooleanFunction operator;
 
-        private Type(BiLongToBooleanFunction operator) {
+        Type(String op, BiLongToBooleanFunction operator) {
+            this.op = op;
             this.operator = operator;
         }
-        
 
         public NodeBinaryLongToBoolean create(INodeLong left, INodeLong right) {
             return new NodeBinaryLongToBoolean(left, right, this);
@@ -45,23 +48,14 @@ public class NodeBinaryLongToBoolean implements INodeBoolean {
 
     @Override
     public INodeBoolean inline(Arguments args) {
-        INodeLong il = this.left.inline(args);
-        INodeLong ir = this.right.inline(args);
-
-        if (il instanceof NodeValueLong && ir instanceof NodeValueLong) {
-            long l = ((NodeValueLong) il).value;
-            long r = ((NodeValueLong) ir).value;
-            return NodeValueBoolean.get(type.operator.apply(l, r));
-        } else if (il == this.left && ir == this.right) {
-            return this;
-        } else {
-            return new NodeBinaryLongToBoolean(il, ir, type);
-        }
+        return NodeInliningHelper.tryInline(this, args, left, right, //
+                (l, r) -> new NodeBinaryLongToBoolean(l, r, type), //
+                (l, r) -> NodeImmutableBoolean.get(type.operator.apply(l.evaluate(), r.evaluate())));
     }
 
     @Override
     public String toString() {
-        return "(" + left + ") " + type.name() + " (" + right + ")";
+        return "(" + left + ") " + type.op + " (" + right + ")";
     }
 
 }

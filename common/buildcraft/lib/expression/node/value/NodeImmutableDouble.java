@@ -1,12 +1,12 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 
-public class NodeValueDouble implements INodeDouble {
+public class NodeImmutableDouble implements INodeDouble, IImmutableNode {
     public final double value;
 
-    public NodeValueDouble(double value) {
+    public NodeImmutableDouble(double value) {
         this.value = value;
     }
 

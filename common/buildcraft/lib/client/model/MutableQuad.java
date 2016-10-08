@@ -14,8 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-
 public class MutableQuad {
     public static final VertexFormat ITEM_LMAP = new VertexFormat(DefaultVertexFormats.ITEM);
     public static final VertexFormat ITEM_BLOCK_PADDING = new VertexFormat();
@@ -60,6 +58,7 @@ public class MutableQuad {
                 int lightmap = data[stride * v + UNUSED];
                 mutableVertex.lighti(lightmap);
             } else if (format == DefaultVertexFormats.ITEM) {
+                // TODO: get the normal!
                 int normal = data[stride * v + UNUSED];
                 float nx = 0;
                 float ny = 1;
@@ -100,13 +99,6 @@ public class MutableQuad {
         this.shade = shade;
         for (int v = 0; v < 4; v++) {
             verticies[v] = new MutableVertex();
-        }
-    }
-
-    public MutableQuad(VertexFormat format, float[][][] data, int tintIndex, EnumFacing face) {
-        this(tintIndex, face);
-        for (int v = 0; v < 4; v++) {
-            verticies[v].setData(data[v], format);
         }
     }
 
@@ -153,26 +145,6 @@ public class MutableQuad {
         return this.sprite;
     }
 
-    /** You should use {@link #toBakedBlock()} instead! (or a different, more specific method generator - you should
-     * file an issue at the main BC github if you need another VertexFormat to be supported) */
-    @Deprecated
-    public UnpackedBakedQuad toUnpacked() {
-        return toUnpacked(ITEM_LMAP);
-    }
-
-    public UnpackedBakedQuad toUnpacked(VertexFormat format) {
-        float[][][] data = new float[4][][];
-        for (int vertex = 0; vertex < 4; vertex++) {
-            float[][] fromData = verticies[vertex].getData(format);
-            data[vertex] = new float[fromData.length][];
-            for (int element = 0; element < fromData.length; element++) {
-                data[vertex][element] = new float[fromData[element].length];
-                System.arraycopy(fromData[element], 0, data[vertex][element], 0, fromData[element].length);
-            }
-        }
-        return new UnpackedBakedQuad(data, tintIndex, face, sprite, shade, format);
-    }
-
     public BakedQuad toBakedBlock() {
         int[] data = new int[28];
         verticies[0].toBakedBlock(data, 0);
@@ -206,7 +178,7 @@ public class MutableQuad {
     }
 
     public Vector3f getCalculatedNormal() {
-        Point3f[] positions = { getVertex(0).position(), getVertex(1).position(), getVertex(2).position() };
+        Point3f[] positions = { getVertex(0).positionvf(), getVertex(1).positionvf(), getVertex(2).positionvf() };
 
         Vector3f a = new Vector3f(positions[1]);
         a.sub(positions[0]);

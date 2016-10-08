@@ -7,10 +7,10 @@ import java.util.Map;
 import buildcraft.lib.expression.api.IExpressionNode;
 import buildcraft.lib.expression.api.IFunctionContext;
 import buildcraft.lib.expression.api.IFunctionMap;
-import buildcraft.lib.expression.node.simple.NodeMutableBoolean;
-import buildcraft.lib.expression.node.simple.NodeMutableDouble;
-import buildcraft.lib.expression.node.simple.NodeMutableLong;
-import buildcraft.lib.expression.node.simple.NodeMutableString;
+import buildcraft.lib.expression.node.value.NodeMutableBoolean;
+import buildcraft.lib.expression.node.value.NodeMutableDouble;
+import buildcraft.lib.expression.node.value.NodeMutableLong;
+import buildcraft.lib.expression.node.value.NodeMutableString;
 
 /** Holds a set of function-local variables that can be called upon by the expression. */
 public class FunctionContext implements IFunctionContext {

@@ -20,7 +20,7 @@ public class NodeArgumentDouble implements INodeDouble {
         if (args == null) {
             return this;
         }
-        return args.doubles[index].inline(args);
+        return args.doubles[index];
     }
 
     @Override

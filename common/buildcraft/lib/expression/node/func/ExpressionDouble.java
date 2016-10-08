@@ -1,5 +1,6 @@
 package buildcraft.lib.expression.node.func;
 
+import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.ArgumentCounts;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionDouble;
@@ -21,7 +22,10 @@ public class ExpressionDouble implements IExpressionDouble {
 
     @Override
     public INodeDouble derive(Arguments args) {
-        return node.inline(args);
+        GenericExpressionCompiler.debugStart("Deriving from " + args);
+        INodeDouble n = node.inline(args);
+        GenericExpressionCompiler.debugEnd("Derived as " + n);
+        return n;
     }
 
     @Override

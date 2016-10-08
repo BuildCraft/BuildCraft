@@ -49,6 +49,10 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
 
     @Override
     public final void renderTileEntityAt(TileZonePlanner tile, double x, double y, double z, float partialTicks, int destroyStage) {
+
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("zone");
+        
         double offset = 0.001;
         double minX = 3 / 16D - offset;
         double maxX = 13 / 16D + offset;
@@ -119,6 +123,9 @@ public class RenderZonePlanner extends TileEntitySpecialRenderer<TileZonePlanner
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
         RenderHelper.enableStandardItemLighting();
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     @Nonnull

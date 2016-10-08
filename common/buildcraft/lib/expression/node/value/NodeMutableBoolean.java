@@ -1,4 +1,4 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
@@ -14,5 +14,10 @@ public class NodeMutableBoolean implements INodeBoolean {
     @Override
     public INodeBoolean inline(Arguments args) {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "mutable_boolean#" + System.identityHashCode(this);
     }
 }

@@ -1,20 +1,24 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.binary;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
 
 public class NodeBinaryDoubleToBoolean implements INodeBoolean {
     public enum Type {
-        EQUAL((l, r) -> l == r),
-        NOT_EQUAL((l, r) -> l != r),
-        LESS_THAN((l, r) -> l < r),
-        LESS_THAN_OR_EQUAL((l, r) -> l <= r),
-        GREATER_THAN((l, r) -> l > r),
-        GREATER_THAN_OR_EQUAL((l, r) -> l >= r);
+        EQUAL("==", (l, r) -> l == r),
+        NOT_EQUAL("!=", (l, r) -> l != r),
+        LESS_THAN("<", (l, r) -> l < r),
+        LESS_THAN_OR_EQUAL("<=", (l, r) -> l <= r),
+        GREATER_THAN(">", (l, r) -> l > r),
+        GREATER_THAN_OR_EQUAL(">=", (l, r) -> l >= r);
 
+        private final String op;
         private final BiDoubleToBooleanFunction operator;
 
-        private Type(BiDoubleToBooleanFunction operator) {
+        Type(String op, BiDoubleToBooleanFunction operator) {
+            this.op = op;
             this.operator = operator;
         }
 
@@ -44,23 +48,14 @@ public class NodeBinaryDoubleToBoolean implements INodeBoolean {
 
     @Override
     public INodeBoolean inline(Arguments args) {
-        INodeDouble il = this.left.inline(args);
-        INodeDouble ir = this.right.inline(args);
-
-        if (il instanceof NodeValueDouble && ir instanceof NodeValueDouble) {
-            double l = ((NodeValueDouble) il).value;
-            double r = ((NodeValueDouble) ir).value;
-            return NodeValueBoolean.get(type.operator.apply(l, r));
-        } else if (il == this.left && ir == this.right) {
-            return this;
-        } else {
-            return new NodeBinaryDoubleToBoolean(il, ir, type);
-        }
+        return NodeInliningHelper.tryInline(this, args, left, right, //
+                (l, r) -> new NodeBinaryDoubleToBoolean(l, r, type), //
+                (l, r) -> NodeImmutableBoolean.get(type.operator.apply(l.evaluate(), r.evaluate())));
     }
 
     @Override
     public String toString() {
-        return "(" + left + ") " + type.name() + " (" + right + ")";
+        return "(" + left + ") " + type.op + " (" + right + ")";
     }
 
 }

@@ -1,5 +1,6 @@
 package buildcraft.lib.expression.node.func;
 
+import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.ArgumentCounts;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionString;
@@ -21,7 +22,10 @@ public class ExpressionString implements IExpressionString {
 
     @Override
     public INodeString derive(Arguments args) {
-        return node.inline(args);
+        GenericExpressionCompiler.debugStart("Deriving from " + args);
+        INodeString n = node.inline(args);
+        GenericExpressionCompiler.debugEnd("Derived as " + n);
+        return n;
     }
 
     @Override

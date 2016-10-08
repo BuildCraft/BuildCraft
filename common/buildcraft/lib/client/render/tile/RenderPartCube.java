@@ -34,7 +34,7 @@ public class RenderPartCube {
     /** Renders an element, without changing the vertex. However this does ignore the "normal" and "texture" components
      * of the vertex. */
     public void render(VertexBuffer vb) {
-        Point3f pos = center.position();
+        Point3f pos = center.positionvf();
         double x = pos.x;
         double y = pos.y;
         double z = pos.z;

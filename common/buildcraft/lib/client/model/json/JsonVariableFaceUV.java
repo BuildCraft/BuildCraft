@@ -10,7 +10,7 @@ import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.simple.NodeValueBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
 import buildcraft.lib.misc.JsonUtil;
 
 public class JsonVariableFaceUV {
@@ -23,7 +23,7 @@ public class JsonVariableFaceUV {
         if (json.has("visible")) {
             visible = JsonVariableModelPart.readVariableBoolean(json, "visible", fnCtx);
         } else {
-            visible = NodeValueBoolean.TRUE;
+            visible = NodeImmutableBoolean.TRUE;
         }
         texture = readVariableString(json, "texture", fnCtx);
     }

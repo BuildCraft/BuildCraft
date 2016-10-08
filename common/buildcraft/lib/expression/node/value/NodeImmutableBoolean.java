@@ -1,19 +1,19 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 
-public enum NodeValueBoolean implements INodeBoolean {
+public enum NodeImmutableBoolean implements INodeBoolean, IImmutableNode {
     TRUE(true),
     FALSE(false);
 
     public final boolean value;
 
-    private NodeValueBoolean(boolean b) {
+    private NodeImmutableBoolean(boolean b) {
         this.value = b;
     }
 
-    public static NodeValueBoolean get(boolean value) {
+    public static NodeImmutableBoolean get(boolean value) {
         if (value) {
             return TRUE;
         } else {
@@ -31,7 +31,7 @@ public enum NodeValueBoolean implements INodeBoolean {
         return this;
     }
 
-    public NodeValueBoolean invert() {
+    public NodeImmutableBoolean invert() {
         return get(!value);
     }
 }

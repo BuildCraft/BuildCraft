@@ -1,18 +1,22 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.unary;
 
 import java.util.function.LongUnaryOperator;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
+import buildcraft.lib.expression.node.value.NodeImmutableLong;
 
 public class NodeUnaryLong implements INodeLong {
     public enum Type {
-        NEG((v) -> -v),
-        BITWISE_INVERT(v -> ~v);
+        NEG("-", (v) -> -v),
+        BITWISE_INVERT("~", v -> ~v);
 
+        private final String op;
         private final LongUnaryOperator operator;
 
-        Type(LongUnaryOperator operator) {
+        Type(String op, LongUnaryOperator operator) {
+            this.op = op;
             this.operator = operator;
         }
 
@@ -36,18 +40,13 @@ public class NodeUnaryLong implements INodeLong {
 
     @Override
     public INodeLong inline(Arguments args) {
-        INodeLong from = this.from.inline(args);
-        if (from instanceof NodeValueLong) {
-            return new NodeValueLong(type.operator.applyAsLong(((NodeValueLong) from).value));
-        } else if (from == this.from) {
-            return this;
-        } else {
-            return new NodeUnaryLong(from, type);
-        }
+        return NodeInliningHelper.tryInline(this, args, from, //
+                (f) -> new NodeUnaryLong(f, type), //
+                (f) -> new NodeImmutableLong(type.operator.applyAsLong(f.evaluate())));
     }
 
     @Override
     public String toString() {
-        return type.name() + "(" + from + ")";
+        return type.op + "(" + from + ")";
     }
 }

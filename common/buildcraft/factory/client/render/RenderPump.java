@@ -1,5 +1,6 @@
 package buildcraft.factory.client.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
@@ -100,6 +101,10 @@ public class RenderPump extends FastTESR<TilePump> {
 
     @Override
     public void renderTileEntityFast(TilePump tile, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("pump");
+
         buffer.setTranslation(x, y, z);
 
         float percentFilled = tile.getFluidPercentFilledForRender();
@@ -130,5 +135,8 @@ public class RenderPump extends FastTESR<TilePump> {
         }
 
         tubeRenderer.renderTileEntityFast(tile, x, y, z, partialTicks, destroyStage, buffer);
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 }

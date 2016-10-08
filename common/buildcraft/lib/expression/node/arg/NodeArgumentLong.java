@@ -12,6 +12,7 @@ public class NodeArgumentLong implements INodeLong {
 
     @Override
     public long evaluate() {
+        // We need to get the inlined version
         throw new IllegalStateException("Cannot evaluate without optimizing!");
     }
 
@@ -20,7 +21,7 @@ public class NodeArgumentLong implements INodeLong {
         if (args == null) {
             return this;
         }
-        return args.longs[index].inline(args);// TODO: Make sure this is right!
+        return args.longs[index];// TODO: Make sure this is right!
     }
 
     @Override

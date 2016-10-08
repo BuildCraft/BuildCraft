@@ -38,9 +38,12 @@ public enum ModelGateItem implements IBakedModel {
             List<BakedQuad> list = new ArrayList<>();
             MutableQuad[] quads = BCTransportModels.getGateQuads(variant);
             for (MutableQuad q : quads) {
-                MutableQuad c = new MutableQuad(q);
-                list.add(c.toBakedItem());
+                list.add(q.toBakedItem());
             }
+            for (MutableQuad q : BCTransportModels.getGateDynQuads(false)) {
+                list.add(q.toBakedItem());
+            }
+
             cached.put(variant, list);
         }
         return cached.get(variant);

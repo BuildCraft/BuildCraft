@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.cast;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.simple.NodeValueBoolean;
-import buildcraft.lib.expression.node.simple.NodeValueString;
+import buildcraft.lib.expression.node.value.NodeImmutableString;
 
 public class NodeCastBooleanToString implements INodeString {
     private final INodeBoolean from;
@@ -19,13 +19,11 @@ public class NodeCastBooleanToString implements INodeString {
 
     @Override
     public INodeString inline(Arguments args) {
-        INodeBoolean from = this.from.inline(args);
-        if (from instanceof NodeValueBoolean) {
-            return new NodeValueString(Boolean.toString(((NodeValueBoolean) from).value));
-        } else if (from == this.from) {
-            return this;
-        } else {
-            return new NodeCastBooleanToString(from);
-        }
+        return NodeInliningHelper.tryInline(this, args, from, (f) -> new NodeCastBooleanToString(f), (f) -> new NodeImmutableString(Boolean.toString(f.evaluate())));
+    }
+
+    @Override
+    public String toString() {
+        return "_to_string(" + from + ")";
     }
 }

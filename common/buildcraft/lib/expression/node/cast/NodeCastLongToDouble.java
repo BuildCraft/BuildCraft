@@ -1,9 +1,9 @@
 package buildcraft.lib.expression.node.cast;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
-import buildcraft.lib.expression.node.simple.NodeValueDouble;
-import buildcraft.lib.expression.node.simple.NodeValueLong;
+import buildcraft.lib.expression.node.value.NodeImmutableDouble;
 
 public class NodeCastLongToDouble implements INodeDouble {
     private final INodeLong from;
@@ -19,18 +19,11 @@ public class NodeCastLongToDouble implements INodeDouble {
 
     @Override
     public INodeDouble inline(Arguments args) {
-        INodeLong from = this.from.inline(args);
-        if (from instanceof NodeValueLong) {
-            return new NodeValueDouble(((NodeValueLong) from).value);
-        } else if (from == this.from) {
-            return this;
-        } else {
-            return new NodeCastLongToDouble(from);
-        }
+        return NodeInliningHelper.tryInline(this, args, from, (f) -> new NodeCastLongToDouble(f), (f) -> new NodeImmutableDouble(f.evaluate()));
     }
 
     @Override
     public String toString() {
-        return "( " + from + " ) -> double";
+        return "_long_to_double( " + from + " )";
     }
 }

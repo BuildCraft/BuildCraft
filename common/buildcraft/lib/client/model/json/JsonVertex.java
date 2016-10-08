@@ -12,7 +12,7 @@ public class JsonVertex {
     public Point2f uv;
 
     public JsonVertex(MutableVertex vertex) {
-        pos = vertex.position();
+        pos = vertex.positionvf();
         normal = vertex.normal();
         uv = vertex.tex();
     }

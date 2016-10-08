@@ -1,9 +1,11 @@
 package buildcraft.lib.expression.node.func;
 
+import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.ArgumentCounts;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
+import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 
 public class ExpressionBoolean implements IExpressionBoolean {
     private final INodeBoolean node;
@@ -21,7 +23,10 @@ public class ExpressionBoolean implements IExpressionBoolean {
 
     @Override
     public INodeBoolean derive(Arguments args) {
-        return node.inline(args);
+        GenericExpressionCompiler.debugStart("Deriving from " + args);
+        INodeBoolean n = node.inline(args);
+        GenericExpressionCompiler.debugEnd("Derived as " + n);
+        return n;
     }
 
     @Override

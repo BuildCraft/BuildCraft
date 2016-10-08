@@ -11,14 +11,16 @@ import buildcraft.lib.expression.GenericExpressionCompiler;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
 import buildcraft.lib.expression.api.IExpression.IExpressionDouble;
+import buildcraft.lib.expression.api.IExpression.IExpressionLong;
 import buildcraft.lib.expression.api.IExpression.IExpressionString;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 import buildcraft.lib.expression.api.IFunctionMap;
 import buildcraft.lib.expression.api.IFunctionMap.IInnerMap;
-import buildcraft.lib.expression.node.simple.NodeMutableDouble;
-import buildcraft.lib.expression.node.simple.NodeMutableString;
+import buildcraft.lib.expression.node.value.NodeMutableDouble;
+import buildcraft.lib.expression.node.value.NodeMutableString;
 
 @SuppressWarnings("static-method")
 public class ExpressionTester {
@@ -77,6 +79,15 @@ public class ExpressionTester {
         bakeAndCallBoolean("1 != 1", false);
         bakeAndCallBoolean("1 == 1 || 1 > 2", true);
         bakeAndCallBoolean("1 == 1 && 1 > 2", false);
+
+        bakeAndCallString("true ? 'hi' : 'nope'", "hi");
+        bakeAndCallString("true ? 'h'+'i' : 'no'+'pe'", "hi");
+        bakeAndCallString("false ? 'hi' : 'nope'", "nope");
+        bakeAndCallString("1 <= 5^2-1 ? 'larger' : 'smaller'", "larger");
+
+        bakeAndCallLong("false ? 0 : true ? 1 : 2", 1);
+        bakeAndCallLong("(true ? false : true) ? 0 : 1", 1);
+        bakeAndCallLong("(false ? 0 : 2) - 1", 1);
     }
 
     @Test
@@ -89,8 +100,9 @@ public class ExpressionTester {
         doubleMap.putExpression("same", bakeFunctionDouble("{long value} (value)", ctx));
         doubleMap.putExpression("same", bakeFunctionDouble("{double value} (value)", ctx));
         doubleMap.putExpression("powertwo", bakeFunctionDouble("{double input} (2^input)", ctx));
-        doubleMap.putExpression("subtract", bakeFunctionDouble("{double l, double r}   (l - r)", ctx));
-        doubleMap.putExpression("tuple", bakeFunctionDouble("{double a, double b, double c}  (a + b + c)", ctx));
+        doubleMap.putExpression("subtract", bakeFunctionDouble("{double l, double r} (l - r)", ctx));
+        doubleMap.putExpression("tuple", bakeFunctionDouble("{double a, double b, double c} (a + b + c)", ctx));
+        doubleMap.putExpression("powlong", bakeFunctionDouble("{double a, double b} (same(a + 1) - 1) ^ (same(b) * one())", ctx));
 
         bakeAndCallDouble("one()", 1, ctx);
         bakeAndCallDouble("oNe()", 1, ctx);
@@ -111,6 +123,8 @@ public class ExpressionTester {
         bakeAndCallDouble("tuple(3, 2, 1)", 6, ctx);
         bakeAndCallDouble("tuple(-7, 1, 0)", -6, ctx);
         bakeAndCallDouble("tuple(1, 3, 2)", 6, ctx);
+
+        bakeAndCallDouble("powLong(3, 3)", 27, ctx);
     }
 
     @Test
@@ -126,14 +140,26 @@ public class ExpressionTester {
 
         NodeMutableString variant = ctx.getOrAddString("variant");
         String exp = "variant == 'gold'";
-        IExpressionBoolean expBool = bakeFunctionBoolean(exp, ctx);
+        INodeBoolean expBool = bakeFunctionBoolean(exp, ctx).derive(null);
 
         variant.value = "nether_brick";
-        Assert.assertFalse(expBool.derive(null).evaluate());
+        Assert.assertFalse(expBool.evaluate());
         variant.value = "gold";
-        Assert.assertTrue(expBool.derive(null).evaluate());
+        Assert.assertTrue(expBool.evaluate());
         variant.value = "iron";
-        Assert.assertFalse(expBool.derive(null).evaluate());
+        Assert.assertFalse(expBool.evaluate());
+
+        exp = "variant == 'wood' ? 0 : variant == 'steel' ? 1 : variant == 'obsidian' ? 2 : 3";
+        INodeLong expLong = bakeFunctionLong(exp, ctx).derive(null);
+
+        variant.value = "wood";
+        Assert.assertEquals(expLong.evaluate(), 0);
+        variant.value = "steel";
+        Assert.assertEquals(expLong.evaluate(), 1);
+        variant.value = "obsidian";
+        Assert.assertEquals(expLong.evaluate(), 2);
+        variant.value = "some_other_value";
+        Assert.assertEquals(expLong.evaluate(), 3);
     }
 
     private static IExpressionDouble bakeFunctionDouble(String function, FunctionContext ctx) {
@@ -205,4 +231,26 @@ public class ExpressionTester {
         bakeAndCallString(function, def, null);
     }
 
+    private static IExpressionLong bakeFunctionLong(String function, FunctionContext ctx) {
+        try {
+            return GenericExpressionCompiler.compileExpressionLong(function, ctx);
+        } catch (buildcraft.lib.expression.InvalidExpressionException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private static void bakeAndCallLong(String function, long expected, FunctionContext ctx) {
+        GenericExpressionCompiler.debugPrintln("Testing \"" + function + "\", expecting " + expected);
+        IExpressionLong func = bakeFunctionLong(function, ctx);
+        Arguments args = Arguments.NO_ARGS;
+        GenericExpressionCompiler.debugPrintln("From " + func);
+        INodeLong node = func.derive(args);
+        GenericExpressionCompiler.debugPrintln("To " + node);
+        long got = node.evaluate();
+        assertEquals(expected, got);
+    }
+
+    private static void bakeAndCallLong(String function, long def) {
+        bakeAndCallLong(function, def, null);
+    }
 }

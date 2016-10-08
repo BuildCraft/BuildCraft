@@ -42,6 +42,9 @@ public class GateLogic implements IGate, IWireEmitter {
 
     private final EnumSet<EnumDyeColor> wireBroadcasts;
 
+    /** Used on the client to determine if this gate should glow or not. */
+    public boolean isOn;
+
     public GateLogic(PluggableGate pluggable, GateVariant variant) {
         this.pluggable = pluggable;
         this.variant = variant;

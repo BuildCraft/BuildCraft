@@ -2,6 +2,7 @@ package buildcraft.builders.client.render;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -21,10 +22,17 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
 
     @Override
     public void renderTileEntityFast(TileBuilder_Neptune te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("builder");
+
         vb.setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
 
+        Minecraft.getMinecraft().mcProfiler.startSection("box");
         Box box = te.getBox();
         LaserBoxRenderer.renderLaserBoxVb(box, BuildCraftLaserManager.STRIPES_WRITE, vb);
+
+        Minecraft.getMinecraft().mcProfiler.endStartSection("path");
 
         List<BlockPos> path = te.getPath();
         if (path != null) {
@@ -42,7 +50,12 @@ public class RenderBuilder extends FastTESR<TileBuilder_Neptune> {
             }
         }
 
+        Minecraft.getMinecraft().mcProfiler.endSection();
+
         vb.setTranslation(0, 0, 0);
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private static Vec3d offset(Vec3d from, Vec3d to) {

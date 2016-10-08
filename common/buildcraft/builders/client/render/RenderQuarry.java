@@ -76,6 +76,10 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
 
     @Override
     public void renderTileEntityAt(TileQuarry tile, double x, double y, double z, float partialTicks, int destroyStage) {
+
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("quarry");
+        
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -207,6 +211,9 @@ public class RenderQuarry extends TileEntitySpecialRenderer<TileQuarry> {
                 GlStateManager.popMatrix();
             }
         }
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     @Override

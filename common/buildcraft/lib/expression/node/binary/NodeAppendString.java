@@ -1,7 +1,9 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.binary;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
+import buildcraft.lib.expression.node.value.NodeImmutableString;
 
 public class NodeAppendString implements INodeString {
     private final INodeString left, right;
@@ -18,15 +20,13 @@ public class NodeAppendString implements INodeString {
 
     @Override
     public INodeString inline(Arguments args) {
-        INodeString il = this.left.inline(args);
-        INodeString ir = this.right.inline(args);
+        return NodeInliningHelper.tryInline(this, args, left, right, //
+                (l, r) -> new NodeAppendString(l, r), //
+                (l, r) -> new NodeImmutableString(l.evaluate() + r.evaluate()));
+    }
 
-        if (il instanceof NodeValueString && ir instanceof NodeValueString) {
-            return new NodeValueString(((NodeValueString) il).value + ((NodeValueString) ir).value);
-        } else if (il == this.left && ir == this.right) {
-            return this;
-        } else {
-            return new NodeAppendString(il, ir);
-        }
+    @Override
+    public String toString() {
+        return "(" + left + ") + (" + right + ")";
     }
 }

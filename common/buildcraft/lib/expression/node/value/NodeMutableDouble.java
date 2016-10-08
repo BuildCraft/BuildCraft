@@ -1,4 +1,4 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.value;
 
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
@@ -14,5 +14,10 @@ public class NodeMutableDouble implements INodeDouble {
     @Override
     public INodeDouble inline(Arguments args) {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "mutable_double#" + System.identityHashCode(this);
     }
 }

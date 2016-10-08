@@ -8,14 +8,12 @@
         "#material_nether_brick":"minecraft:blocks/nether_brick",
         "#material_gold":"minecraft:blocks/gold_block",
 
-        "#modifier_gold":"minecraft:blocks/gold_block",
+        "#modifier_lapis":"minecraft:blocks/lapis_block",
         "#modifier_quartz":"minecraft:blocks/quartz_block_top",
         "#modifier_diamond":"minecraft:blocks/diamond_block",
         "#modifier_prismarine":"minecraft:blocks/prismarine_bricks",
 
-        "#iron":"minecraft:blocks/iron_block",
-        "#all":"#material_gold",
-        "particle":"#all"
+        "particle":"#logic_and"
     },
     "shade": true,
     "elements": [

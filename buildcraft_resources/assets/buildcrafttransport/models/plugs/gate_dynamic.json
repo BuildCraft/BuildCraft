@@ -1,0 +1,27 @@
+{
+    "textures": {
+        "#gate_false_":"buildcrafttransport:gates/gate_off",
+        "#gate_true_":"buildcrafttransport:gates/gate_on",
+
+        "#gate_true":"minecraft:blocks/redstone_block",
+        "#gate_false":"minecraft:blocks/redstone_block",
+
+        "particle":"#gate_off"
+    },
+    "shade": true,
+    "elements": [
+        {
+            "from": [ 1.9, 6, 6 ],
+            "to": [ 4.1, 10, 10 ],
+            "light": "on ? 15 : 0",
+            "faces": {
+                "down":  { "uv": [ 2, 5, 4, 11 ], "texture": "'#gate_' + on" },
+                "up":    { "uv": [ 2, 5, 4, 11 ], "texture": "'#gate_' + on" },
+                "north": { "uv": [ 2, 5, 4, 11 ], "texture": "'#gate_' + on" },
+                "south": { "uv": [ 2, 5, 4, 11 ], "texture": "'#gate_' + on" },
+                "west":  { "uv": [ 5, 5, 11, 11 ], "texture": "'#gate_' + on" },
+                "east":  { "uv": [ 5, 5, 11, 11 ], "texture": "'#gate_' + on" }
+            }
+        }
+    ]
+}

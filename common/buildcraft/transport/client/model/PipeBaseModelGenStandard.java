@@ -5,7 +5,9 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.*;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 import com.google.common.collect.ImmutableList;
 
@@ -13,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +22,6 @@ import net.minecraft.util.math.Vec3d;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.api_move.PipeAPI;
@@ -70,7 +70,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS_COLOURED[0] = new MutableQuad[6][2];
         Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
         Tuple3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
-        float[] uvs = { 4 / 16f, 12 / 16f, 4 / 16f, 12 / 16f };
+        float[] uvs = { 4, 12, 4, 12 };
         for (EnumFacing face : EnumFacing.VALUES) {
             MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
             quad.setDiffuse(quad.getVertex(0).normal());
@@ -100,11 +100,6 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             { 12, 16, 4, 12 } //
         };
 
-        for (float[] f2 : types) {
-            for (int i = 0; i < f2.length; i++) {
-                f2[i] /= 16f;
-            }
-        }
         // connected
         QUADS[1] = new MutableQuad[6][8];
         QUADS_COLOURED[1] = new MutableQuad[6][8];
@@ -142,6 +137,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
 
     private static void dupDarker(MutableQuad[] quads) {
         int halfLength = quads.length / 2;
+        float mult = OPTION_INSIDE_COLOUR_MULT.getAsFloat();
         for (int i = 0; i < halfLength; i++) {
             int n = i + halfLength;
             MutableQuad from = quads[i];
@@ -149,12 +145,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
                 MutableQuad to = new MutableQuad(from);
                 to.invertNormal();
                 to.setCalculatedDiffuse();
-                for (MutableVertex v : to.verticies()) {
-                    Point4f colour = v.colourv();
-                    colour.scale(OPTION_INSIDE_COLOUR_MULT.getAsFloat());
-                    colour.w = 1;
-                    v.colourv(colour);
-                }
+                to.multColourd(mult);
                 quads[n] = to;
             }
         }
@@ -190,7 +181,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         }
         List<BakedQuad> bakedQuads = new ArrayList<>();
         for (MutableQuad q : quads) {
-            bakedQuads.add(q.toUnpacked(DefaultVertexFormats.BLOCK));
+            bakedQuads.add(q.toBakedBlock());
         }
         return bakedQuads;
     }
@@ -220,7 +211,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         List<BakedQuad> bakedQuads = new ArrayList<>();
         for (MutableQuad q : quads) {
             q.colouri(colour);
-            bakedQuads.add(q.toUnpacked(DefaultVertexFormats.BLOCK));
+            bakedQuads.add(q.toBakedBlock());
         }
         return bakedQuads;
     }
@@ -232,10 +223,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             }
             MutableQuad copy = new MutableQuad(f);
             copy.setSprite(sprite);
-            for (MutableVertex v : copy.verticies()) {
-                Point2f tex = v.tex();
-                v.texf(sprite.getInterpolatedU(tex.x * 16), sprite.getInterpolatedV(tex.y * 16));
-            }
+            copy.texFromSprite(sprite);
             to.add(copy);
         }
     }

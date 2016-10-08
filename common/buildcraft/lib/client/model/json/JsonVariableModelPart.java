@@ -25,11 +25,14 @@ import buildcraft.lib.expression.InvalidExpressionException;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
 import buildcraft.lib.expression.api.IExpression.IExpressionDouble;
+import buildcraft.lib.expression.api.IExpression.IExpressionLong;
 import buildcraft.lib.expression.api.IExpression.IExpressionString;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.api.IExpressionNode.INodeLong;
 import buildcraft.lib.expression.api.IExpressionNode.INodeString;
-import buildcraft.lib.expression.node.simple.NodeValueBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableBoolean;
+import buildcraft.lib.expression.node.value.NodeImmutableLong;
 import buildcraft.lib.misc.JsonUtil;
 
 /** {@link JsonModelPart} but with can be animated */
@@ -86,6 +89,15 @@ public abstract class JsonVariableModelPart {
         }
     }
 
+    private static INodeLong convertStringToLongNode(String expression, FunctionContext context) {
+        try {
+            IExpressionLong exp = GenericExpressionCompiler.compileExpressionLong(expression, context);
+            return exp.derive(Arguments.NO_ARGS);
+        } catch (InvalidExpressionException e) {
+            throw new JsonSyntaxException("Invalid expression", e);
+        }
+    }
+
     private static JsonVariableQuad[] readFace(JsonObject obj, FunctionContext fnCtx) {
         throw new AbstractMethodError("Implement this!");
     }
@@ -115,16 +127,30 @@ public abstract class JsonVariableModelPart {
         }
     }
 
+    public static INodeLong readVariableLong(JsonObject obj, String member, FunctionContext context) {
+        if (!obj.has(member)) {
+            throw new JsonSyntaxException("Required '" + member + "' in '" + obj + "'");
+        }
+        JsonElement elem = obj.get(member);
+        if (elem.isJsonPrimitive()) {
+            return convertStringToLongNode(elem.getAsString(), context);
+        } else {
+            throw new JsonSyntaxException("Expected a string, got " + elem);
+        }
+    }
+
     private static class TypeCuboid extends JsonVariableModelPart {
         private final INodeDouble[] from, to;
         private final INodeBoolean visible, shade;
+        private final INodeLong light;
         private final Map<EnumFacing, JsonVariableFaceUV> faces = new HashMap<>();
 
         private TypeCuboid(JsonObject obj, FunctionContext fnCtx) {
             from = readVariablePosition(obj, "from", fnCtx);
             to = readVariablePosition(obj, "to", fnCtx);
-            shade = obj.has("shade") ? readVariableBoolean(obj, "shade", fnCtx) : NodeValueBoolean.TRUE;
-            visible = obj.has("visible") ? readVariableBoolean(obj, "visible", fnCtx) : NodeValueBoolean.TRUE;
+            shade = obj.has("shade") ? readVariableBoolean(obj, "shade", fnCtx) : NodeImmutableBoolean.TRUE;
+            visible = obj.has("visible") ? readVariableBoolean(obj, "visible", fnCtx) : NodeImmutableBoolean.TRUE;
+            light = obj.has("light") ? readVariableLong(obj, "light", fnCtx) : new NodeImmutableLong(0);
 
             if (!obj.has("faces")) {
                 throw new JsonSyntaxException("Expected between 1 and 6 faces, got nothing");
@@ -154,6 +180,7 @@ public abstract class JsonVariableModelPart {
                 float[] f = bakePosition(from);
                 float[] t = bakePosition(to);
                 boolean s = shade.evaluate();
+                int l = (int) (light.evaluate() & 15);
                 for (Entry<EnumFacing, JsonVariableFaceUV> entry : faces.entrySet()) {
                     EnumFacing face = entry.getKey();
                     JsonVariableFaceUV var = entry.getValue();
@@ -169,6 +196,7 @@ public abstract class JsonVariableModelPart {
                         Vector3f center = new Vector3f(f);
                         center.add(radius);
                         MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+                        quad.lighti(l, 0);
                         quad.texFromSprite(sprite);
                         quad.setSprite(sprite);
                         quad.setShade(s);

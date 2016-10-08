@@ -17,9 +17,11 @@ import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.api_move.IPipeHolder;
 import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
+import buildcraft.transport.api_move.IPluggableDynamicRenderer;
 import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.client.model.key.KeyPlugGate;
+import buildcraft.transport.client.render.PlugGateRenderer;
 import buildcraft.transport.gate.GateLogic;
 import buildcraft.transport.gate.GateVariant;
 
@@ -118,6 +120,12 @@ public class PluggableGate extends PipePluggable {
             return new KeyPlugGate(side, logic.variant);
         }
         return null;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IPluggableDynamicRenderer getDynamicRenderer() {
+        return new PlugGateRenderer(this);
     }
 
     // Gate methods

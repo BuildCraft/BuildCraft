@@ -1,9 +1,5 @@
 package buildcraft.lib.client.model;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.vecmath.*;
 
 import net.minecraft.client.renderer.VertexBuffer;
@@ -14,97 +10,72 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
-import buildcraft.api.core.BCLog;
-
 public class MutableVertex {
-    private final float[] position = new float[3];
-    private final float[] normal = new float[] { -1, -1, -1 };
-    private final float[] colour = new float[] { 1, 1, 1, 1 };
-    private final float[] uv = new float[2];
-    private final float[] light = new float[2];
+    private float position_x, position_y, position_z;
+    private float normal_x, normal_y, normal_z;
+    private short colour_r, colour_g, colour_b, colour_a;
+    private float tex_u, tex_v;
+    private byte light_block, light_sky;
 
-    public MutableVertex() {}
+    public MutableVertex() {
+        normal_x = 0;
+        normal_y = 1;
+        normal_z = 0;
+
+        colour_r = 0xFF;
+        colour_g = 0xFF;
+        colour_b = 0xFF;
+        colour_a = 0xFF;
+    }
 
     public MutableVertex(MutableVertex from) {
-        System.arraycopy(from.position, 0, position, 0, 3);
-        System.arraycopy(from.normal, 0, normal, 0, 3);
-        System.arraycopy(from.colour, 0, colour, 0, 4);
-        System.arraycopy(from.uv, 0, uv, 0, 2);
-        System.arraycopy(from.light, 0, light, 0, 2);
+        position_x = from.position_x;
+        position_y = from.position_y;
+        position_z = from.position_z;
+
+        normal_x = from.normal_x;
+        normal_y = from.normal_y;
+        normal_z = from.normal_z;
+
+        colour_r = from.colour_r;
+        colour_g = from.colour_g;
+        colour_b = from.colour_b;
+        colour_a = from.colour_a;
+
+        tex_u = from.tex_u;
+        tex_v = from.tex_v;
+
+        light_block = from.light_block;
+        light_sky = from.light_sky;
     }
 
     public void toBakedBlock(int[] data, int offset) {
         // POSITION_3F
-        data[offset + 0] = Float.floatToRawIntBits(position[0]);
-        data[offset + 1] = Float.floatToRawIntBits(position[1]);
-        data[offset + 2] = Float.floatToRawIntBits(position[2]);
+        data[offset + 0] = Float.floatToRawIntBits(position_x);
+        data[offset + 1] = Float.floatToRawIntBits(position_y);
+        data[offset + 2] = Float.floatToRawIntBits(position_z);
         // COLOR_4UB
         data[offset + 3] = colourRGBA();
         // TEX_2F
-        data[offset + 4] = Float.floatToRawIntBits(uv[0]);
-        data[offset + 5] = Float.floatToRawIntBits(uv[1]);
+        data[offset + 4] = Float.floatToRawIntBits(tex_u);
+        data[offset + 5] = Float.floatToRawIntBits(tex_v);
         // TEX_2S
-        data[offset + 6] = 0;
+        data[offset + 6] = lightc();
     }
 
     public void toBakedItem(int[] data, int offset) {
         // POSITION_3F
-        data[offset + 0] = Float.floatToRawIntBits(position[0]);
-        data[offset + 1] = Float.floatToRawIntBits(position[1]);
-        data[offset + 2] = Float.floatToRawIntBits(position[2]);
+        data[offset + 0] = Float.floatToRawIntBits(position_x);
+        data[offset + 1] = Float.floatToRawIntBits(position_y);
+        data[offset + 2] = Float.floatToRawIntBits(position_z);
         // COLOR_4UB
         data[offset + 3] = colourRGBA();
         // TEX_2F
-        data[offset + 4] = Float.floatToRawIntBits(uv[0]);
-        data[offset + 5] = Float.floatToRawIntBits(uv[1]);
+        data[offset + 4] = Float.floatToRawIntBits(tex_u);
+        data[offset + 5] = Float.floatToRawIntBits(tex_v);
         // NROMAL_3B
         data[offset + 6] = normalToPackedInt();
     }
-
-    public void setData(float[][] from, VertexFormat vfFrom) {
-        int index = 0;
-        for (VertexFormatElement elem : vfFrom.getElements()) {
-            System.arraycopy(from[index], 0, getFor(elem), 0, from[index].length);
-            index++;
-        }
-    }
-
-    public float[][] getData(VertexFormat as) {
-        float[][] data = new float[as.getElementCount()][];
-        int index = 0;
-        for (VertexFormatElement elem : as.getElements()) {
-            float[] f = getFor(elem);
-            data[index] = Arrays.copyOf(f, f.length);
-            index++;
-        }
-        return data;
-    }
-
-    private float[] getFor(VertexFormatElement element) {
-        EnumUsage usage = element.getUsage();
-        if (usage == EnumUsage.POSITION) {
-            return position;
-        } else if (usage == EnumUsage.NORMAL) {
-            return normal;
-        } else if (usage == EnumUsage.COLOR) {
-            return colour;
-        } else if (usage == EnumUsage.UV) {
-            if (element.getIndex() == 0) {
-                return uv;
-            } else if (element.getIndex() == 1) {
-                return light;
-            }
-        }
-        // Otherwise... thats not good.
-        String s = element.toString();
-        if (!failedStrings.contains(s) && usage != EnumUsage.PADDING) {
-            failedStrings.add(s);
-            BCLog.logger.info("Element " + s + " failed!");
-        }
-        return new float[element.getElementCount()];
-    }
-
-    private static Set<String> failedStrings = new HashSet<>();
 
     // Rendering
 
@@ -123,24 +94,23 @@ public class MutableVertex {
     }
 
     public void renderPosition(VertexBuffer vb) {
-        vb.pos(position[0], position[1], position[2]);
+        vb.pos(position_x, position_y, position_z);
     }
 
     public void renderNormal(VertexBuffer vb) {
-        vb.normal(normal[0], normal[1], normal[2]);
+        vb.normal(normal_x, normal_y, normal_z);
     }
 
     public void renderColour(VertexBuffer vb) {
-        vb.color(colour[0], colour[1], colour[2], colour[3]);
+        vb.color(colour_r, colour_g, colour_b, colour_a);
     }
 
     public void renderTex(VertexBuffer vb) {
-        vb.tex(uv[0], uv[1]);
+        vb.tex(tex_u, tex_v);
     }
 
     public void renderLightMap(VertexBuffer vb) {
-        int[] lighti = lighti();
-        vb.lightmap(lighti[0] << 4, lighti[1] << 4);
+        vb.lightmap(light_sky << 4, light_block << 4);
     }
 
     // Mutating
@@ -154,14 +124,14 @@ public class MutableVertex {
     }
 
     public MutableVertex positionf(float x, float y, float z) {
-        position[0] = x;
-        position[1] = y;
-        position[2] = z;
+        position_x = x;
+        position_y = y;
+        position_z = z;
         return this;
     }
 
-    public Point3f position() {
-        return new Point3f(position);
+    public Point3f positionvf() {
+        return new Point3f(position_x, position_y, position_z);
     }
 
     /** Sets the current normal for this vertex based off the given vector.
@@ -174,25 +144,25 @@ public class MutableVertex {
 
     /** Sets the current normal given the x, y, and z coordinates. These are NOT normalised or checked. */
     public MutableVertex normalf(float x, float y, float z) {
-        normal[0] = x;
-        normal[1] = y;
-        normal[2] = z;
+        normal_x = x;
+        normal_y = y;
+        normal_z = z;
         return this;
     }
 
     public MutableVertex invertNormal() {
-        return normalf(-normal[0], -normal[1], -normal[2]);
+        return normalf(-normal_x, -normal_y, -normal_z);
     }
 
     /** @return The current normal vector of this vertex. This might be normalised. */
     public Vector3f normal() {
-        return new Vector3f(normal);
+        return new Vector3f(normal_x, normal_y, normal_z);
     }
 
     public int normalToPackedInt() {
-        return normalAsByte(normal[0], 0) //
-            | normalAsByte(normal[1], 8) //
-            | normalAsByte(normal[2], 16);
+        return normalAsByte(normal_x, 0) //
+            | normalAsByte(normal_y, 8) //
+            | normalAsByte(normal_z, 16);
     }
 
     private static int normalAsByte(float norm, int offset) {
@@ -205,11 +175,7 @@ public class MutableVertex {
     };
 
     public MutableVertex colourf(float r, float g, float b, float a) {
-        colour[0] = r;
-        colour[1] = g;
-        colour[2] = b;
-        colour[3] = a;
-        return this;
+        return colouri((int) (r * 0xFF), (int) (g * 0xFF), (int) (b * 0xFF), (int) (a * 0xFF));
     }
 
     public MutableVertex colouri(int rgba) {
@@ -217,29 +183,29 @@ public class MutableVertex {
     }
 
     public MutableVertex colouri(int r, int g, int b, int a) {
-        return colourf((r & 0xFF) / 255f, (g & 0xFF) / 255f, (b & 0xFF) / 255f, (a & 0xFF) / 255f);
+        colour_r = (short) (r & 0xFF);
+        colour_g = (short) (g & 0xFF);
+        colour_b = (short) (b & 0xFF);
+        colour_a = (short) (a & 0xFF);
+        return this;
     }
 
     public Point4f colourv() {
-        return new Point4f(colour);
+        return new Point4f(colour_r / 255f, colour_g / 255f, colour_b / 255f, colour_a / 255f);
     }
 
     public int colourRGBA() {
-        return (rc(0) << 0)//
-            + (rc(1) << 8)//
-            + (rc(2) << 16)//
-            + (rc(3) << 24);//
+        return (colour_r << 0)//
+            | (colour_g << 8)//
+            | (colour_b << 16)//
+            | (colour_a << 24);
     }
 
     public int colourABGR() {
-        return (rc(0) << 24)//
-            + (rc(1) << 16)//
-            + (rc(2) << 8)//
-            + (rc(3) << 0);//
-    }
-
-    private int rc(int idx) {
-        return (int) (colour[idx] * 0xFF);
+        return (colour_r << 24)//
+            | (colour_g << 16)//
+            | (colour_b << 8)//
+            | (colour_a << 0);
     }
 
     public MutableVertex multColourd(double d) {
@@ -247,16 +213,17 @@ public class MutableVertex {
     }
 
     public MutableVertex multColourd(double r, double g, double b, double a) {
-        colour[0] *= r;
-        colour[1] *= g;
-        colour[2] *= b;
-        colour[3] *= a;
-        return this;
+        return colouri(//
+                (int) (colour_r * r),//
+                (int) (colour_g * g),//
+                (int) (colour_b * b),//
+                (int) (colour_a * a)//
+        );
     }
 
     public MutableVertex texFromSprite(TextureAtlasSprite sprite) {
-        uv[0] = sprite.getInterpolatedU(uv[0]);
-        uv[1] = sprite.getInterpolatedV(uv[1]);
+        tex_u = sprite.getInterpolatedU(tex_u);
+        tex_v = sprite.getInterpolatedV(tex_v);
         return this;
     }
 
@@ -265,13 +232,13 @@ public class MutableVertex {
     }
 
     public MutableVertex texf(float u, float v) {
-        uv[0] = u;
-        uv[1] = v;
+        tex_u = u;
+        tex_v = v;
         return this;
     }
 
     public Point2f tex() {
-        return new Point2f(uv);
+        return new Point2f(tex_u, tex_v);
     }
 
     public MutableVertex lightv(Tuple2f vec) {
@@ -287,57 +254,47 @@ public class MutableVertex {
     }
 
     public MutableVertex lighti(int block, int sky) {
-        light[0] = light(block);
-        light[1] = light(sky);
+        light_block = (byte) block;
+        light_sky = (byte) sky;
         return this;
     }
 
-    public Point2f light() {
-        return new Point2f(light);
+    public Point2f lightvf() {
+        return new Point2f(light_block * 15f, light_sky * 15f);
     }
 
     public int lightc() {
-        return light(light[0]) << 4 + light(light[1]) << 20;
+        return light_block << 4 + light_sky << 20;
     }
 
     public int[] lighti() {
-        return new int[] { light(light[0]), light(light[1]) };
+        return new int[] { light_block, light_sky };
     };
 
-    private static float light(int val) {
-        val &= 0xF;
-        return (float) val * 0x20 / 0xFFFF;
-    }
-
-    private static int light(float val) {
-        return (int) (val * 0xFFFF / 0x20);
-    }
-
     public MutableVertex transform(Matrix4f matrix) {
-        Point3f point = position();
+        Point3f point = positionvf();
         matrix.transform(point);
-        positionv(point);
-        return this;
+        return positionv(point);
     }
 
     public MutableVertex translatei(int x, int y, int z) {
-        position[0] += x;
-        position[1] += y;
-        position[2] += z;
+        position_x += x;
+        position_y += y;
+        position_z += z;
         return this;
     }
 
     public MutableVertex translatef(float x, float y, float z) {
-        position[0] += x;
-        position[1] += y;
-        position[2] += z;
+        position_x += x;
+        position_y += y;
+        position_z += z;
         return this;
     }
 
     public MutableVertex translated(double x, double y, double z) {
-        position[0] += x;
-        position[1] += y;
-        position[2] += z;
+        position_x += x;
+        position_y += y;
+        position_z += z;
         return this;
     }
 
@@ -347,11 +304,5 @@ public class MutableVertex {
 
     public MutableVertex translatevd(Vec3d vec) {
         return translated(vec.xCoord, vec.yCoord, vec.zCoord);
-    }
-
-    @Override
-    public String toString() {
-        return "\tVertex [\n\t\tposition=" + Arrays.toString(position) + ",\n\t\tnormal=" + Arrays.toString(normal) + ",\n\t\tcolour=" + Arrays.toString(colour) + ",\n\t\tuv=" + Arrays.toString(uv) + ",\n\t\tlight=" + Arrays.toString(light)
-            + "\n\t]";
     }
 }

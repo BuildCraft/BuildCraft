@@ -1,17 +1,21 @@
-package buildcraft.lib.expression.node.simple;
+package buildcraft.lib.expression.node.unary;
 
 import java.util.function.DoubleUnaryOperator;
 
+import buildcraft.lib.expression.NodeInliningHelper;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpressionNode.INodeDouble;
+import buildcraft.lib.expression.node.value.NodeImmutableDouble;
 
 public class NodeUnaryDouble implements INodeDouble {
     public enum Type {
-        NEG((v) -> -v);
+        NEG("-", (v) -> -v);
 
+        private final String op;
         private final DoubleUnaryOperator operator;
 
-        Type(DoubleUnaryOperator operator) {
+        Type(String op, DoubleUnaryOperator operator) {
+            this.op = op;
             this.operator = operator;
         }
 
@@ -35,18 +39,13 @@ public class NodeUnaryDouble implements INodeDouble {
 
     @Override
     public INodeDouble inline(Arguments args) {
-        INodeDouble from = this.from.inline(args);
-        if (from instanceof NodeValueDouble) {
-            return new NodeValueDouble(type.operator.applyAsDouble(((NodeValueDouble) from).value));
-        } else if (from == this.from) {
-            return this;
-        } else {
-            return new NodeUnaryDouble(from, type);
-        }
+        return NodeInliningHelper.tryInline(this, args, from, //
+                (f) -> new NodeUnaryDouble(f, type),//
+                (f) -> new NodeImmutableDouble(type.operator.applyAsDouble(f.evaluate())));
     }
 
     @Override
     public String toString() {
-        return type.name() + "(" + from + ")";
+        return type.op + "(" + from + ")";
     }
 }

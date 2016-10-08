@@ -43,6 +43,10 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
     public void renderTileEntityAt(TileMarkerVolume marker, double tileX, double tileY, double tileZ, float partialTicks, int destroyStage) {
         if (marker == null || !marker.isShowingSignals()) return;
 
+        Minecraft.getMinecraft().mcProfiler.startSection("bc");
+        Minecraft.getMinecraft().mcProfiler.startSection("marker");
+        Minecraft.getMinecraft().mcProfiler.startSection("volume");
+
         DetatchedRenderer.fromWorldOriginPre(Minecraft.getMinecraft().thePlayer, partialTicks);
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -61,6 +65,10 @@ public class RenderMarkerVolume extends TileEntitySpecialRenderer<TileMarkerVolu
 
         RenderHelper.enableStandardItemLighting();
         DetatchedRenderer.fromWorldOriginPost();
+
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private static void renderLaser(Vec3d min, Vec3d max, Axis axis) {
