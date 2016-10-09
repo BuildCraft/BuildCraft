@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -44,6 +46,7 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = definition;
         this.behaviour = definition.logicConstructor.createBehaviour(this);
         this.flow = definition.flowType.creator.createFlow(this);
+        behaviour.configureFlow(flow);
     }
 
     // read + write
@@ -54,6 +57,7 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
+        behaviour.configureFlow(flow);
     }
 
     public NBTTagCompound writeToNbt() {
@@ -191,6 +195,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public void onTick() {
         behaviour.onTick();
+        flow.onTick();
         if (updateMarked) {
             updateMarked = false;
 
@@ -245,6 +250,13 @@ public final class Pipe implements IPipe, IDebuggable {
             }
 
             getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+        }
+    }
+
+    public void onRemove(List<ItemStack> toDrop) {
+        Item item = (Item) PipeAPI.pipeRegistry.getItemForPipe(definition);
+        if (item != null) {
+            toDrop.add(new ItemStack(item, 1, colour == null ? 0 : 1 + colour.ordinal()));
         }
     }
 

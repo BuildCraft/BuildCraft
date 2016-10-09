@@ -105,12 +105,12 @@ public class PluggableGate extends PipePluggable {
 
     @Override
     public void onRemove(List<ItemStack> toDrop) {
-        toDrop.add(new ItemStack(BCTransportItems.plugGate));
+        toDrop.add(getPickStack());
     }
 
     @Override
     public ItemStack getPickStack() {
-        return new ItemStack(BCTransportItems.plugGate);
+        return BCTransportItems.plugGate.getStack(logic.variant);
     }
 
     @Override

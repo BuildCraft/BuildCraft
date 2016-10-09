@@ -33,6 +33,10 @@ public abstract class PipeBehaviour implements ICapabilityProvider {
 
     public abstract int getTextureIndex(EnumFacing face);
 
+    // Event handling
+
+    public void configureFlow(PipeFlow flow) {}
+
     public abstract boolean canConnect(EnumFacing face, PipeBehaviour other);
 
     public abstract boolean canConnect(EnumFacing face, TileEntity oTile);

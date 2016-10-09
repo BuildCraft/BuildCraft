@@ -309,6 +309,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             PipePluggable plug = itemPlug.onPlace(held, tile, realSide);
             if (plug != null) {
                 tile.replacePluggable(realSide, plug);
+                held.stackSize--;
                 return true;
             }
         }
@@ -317,6 +318,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        TilePipeHolder tile = getPipe(world, pos, false);
+        if (tile == null) {
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+        }
+
+        List<ItemStack> toDrop = new ArrayList<>();
         RayTraceResult trace = rayTrace(world, pos, player);
         EnumFacing side = null;
 
@@ -324,28 +331,28 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             side = getPartSideHit(trace);
         }
 
-        TilePipeHolder tile = getPipe(world, pos, false);
-        if (tile != null) {
-            if (side != null) {
-                removePluggable(world, pos, player, side, tile);
-                return false;
-            } else {
-                for (EnumFacing face : EnumFacing.VALUES) {
-                    removePluggable(world, pos, player, face, tile);
-                }
+        if (side != null) {
+            removePluggable(side, tile, toDrop);
+            if (!world.isRemote && !player.capabilities.isCreativeMode) {
+                InventoryUtil.dropAll(world, pos, toDrop);
             }
+            return false;
+        } else {
+            for (EnumFacing face : EnumFacing.VALUES) {
+                removePluggable(face, tile, toDrop);
+            }
+            tile.getPipe().onRemove(toDrop);
+        }
+        if (!world.isRemote && !player.capabilities.isCreativeMode) {
+            InventoryUtil.dropAll(world, pos, toDrop);
         }
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
-    private static void removePluggable(World world, BlockPos pos, EntityPlayer player, EnumFacing side, TilePipeHolder tile) {
+    private static void removePluggable(EnumFacing side, TilePipeHolder tile, List<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
-            List<ItemStack> toDrop = new ArrayList<>();
             removed.onRemove(toDrop);
-            if (!world.isRemote && !player.capabilities.isCreativeMode) {
-                InventoryUtil.dropAll(world, pos, toDrop);
-            }
         }
     }
 

@@ -6,14 +6,20 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.transport.api_move.IPluggableDynamicRenderer;
 import buildcraft.transport.api_move.PipePluggable;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
     @Override
     public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+
+        pipe = BCLibProxy.getProxy().getServerTile(pipe);
+
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("pipe");
 
@@ -24,7 +30,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         renderPluggables(pipe, x, y, z, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
-        renderContents(pipe, x, y, z, vb);
+        renderContents(pipe, x, y, z, partialTicks, vb);
 
         Minecraft.getMinecraft().mcProfiler.endSection();
         Minecraft.getMinecraft().mcProfiler.endSection();
@@ -49,7 +55,12 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         }
     }
 
-    private void renderContents(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
-        // TODO Auto-generated method stub
+    private void renderContents(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
+        Pipe p = pipe.getPipe();
+        if (p != null && p.flow != null) {
+            if (p.flow instanceof PipeFlowItems) {
+                RendererPipeFlowItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
+            }
+        }
     }
 }
