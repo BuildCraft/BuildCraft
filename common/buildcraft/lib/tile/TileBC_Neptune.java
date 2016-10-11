@@ -360,6 +360,10 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, ctx.side, ctx);
+
+        // Make sure that we actually read the entire message rather than just discarding it
+        MessageUtil.ensureEmpty(buffer, worldObj.isRemote, getClass().getSimpleName());
+
         if (ctx.side == Side.CLIENT) {
             spawnReceiveParticles();
         }

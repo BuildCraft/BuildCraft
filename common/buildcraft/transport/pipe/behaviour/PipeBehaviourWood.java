@@ -24,14 +24,6 @@ public class PipeBehaviourWood extends PipeBehaviour {
     }
 
     @Override
-    public void configureFlow(PipeFlow flow) {
-        if (flow instanceof IFlowItems) {
-            IFlowItems itemFlow = (IFlowItems) flow;
-            itemFlow.setTargetSpeed(0.05);
-        }
-    }
-
-    @Override
     public int getTextureIndex(EnumFacing face) {
         return (face != null && face == currentDir) ? 1 : 0;
     }

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.transport.api_move.PipeAPI;
 import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.api_move.PluggableDefinition;
@@ -58,6 +59,7 @@ public final class PluggableHolder {
             throw new Error("Def was null!");
         } else {
             pluggable = def.readFromNbt(holder, side, data);
+            holder.eventBus.registerHandler(pluggable);
             lastGeneralExisted = true;
         }
     }
@@ -79,6 +81,7 @@ public final class PluggableHolder {
         if (id == ID_CREATE_PLUG) {
             readCreateInternal(buffer);
         } else {
+            holder.eventBus.unregisterHandler(pluggable);
             pluggable = null;
         }
     }
@@ -90,6 +93,7 @@ public final class PluggableHolder {
             throw new IllegalStateException("Unknown remote pluggable \"" + identifer + "\"");
         }
         pluggable = def.loadFromBuffer(holder, side, buffer);
+        holder.eventBus.registerHandler(pluggable);
     }
 
     public void writePayload(PacketBuffer buffer, Side netSide) {
@@ -109,6 +113,7 @@ public final class PluggableHolder {
     public void readPayload(PacketBuffer buffer, Side netSide, MessageContext ctx) throws IOException {
         int id = buffer.readUnsignedByte();
         if (id == ID_REMOVE_PLUG) {
+            holder.eventBus.unregisterHandler(pluggable);
             pluggable = null;
         } else if (id == ID_UPDATE_PLUG) {
             pluggable.readPayload(buffer, netSide, ctx);

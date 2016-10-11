@@ -6,7 +6,6 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.lib.BCLibProxy;
 import buildcraft.transport.api_move.IPluggableDynamicRenderer;
 import buildcraft.transport.api_move.PipePluggable;
 import buildcraft.transport.pipe.Pipe;
@@ -17,9 +16,6 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
     @Override
     public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
-
-        pipe = BCLibProxy.getProxy().getServerTile(pipe);
-
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("pipe");
 

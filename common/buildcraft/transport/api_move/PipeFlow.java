@@ -1,5 +1,7 @@
 package buildcraft.transport.api_move;
 
+import java.io.IOException;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -8,6 +10,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
+
+import buildcraft.transport.api_move.IPipeHolder.IWriter;
+import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
 
 public abstract class PipeFlow implements ICapabilityProvider {
     /** The ID for completely refreshing the state of this flow. */
@@ -34,7 +39,15 @@ public abstract class PipeFlow implements ICapabilityProvider {
     public void writePayload(int id, PacketBuffer buffer, Side side) {}
 
     /** Reads a payload with the specified id. Standard ID's are NET_ID_FULL_STATE and NET_ID_UPDATE. */
-    public void readPayload(int id, PacketBuffer buffer, Side side) {}
+    public void readPayload(int id, PacketBuffer buffer, Side side) throws IOException {}
+
+    public final void sendCustomPayload(int id, IWriter writer) {
+        pipe.getHolder().sendMessage(PipeMessageReceiver.FLOW, (buffer) -> {
+            buffer.writeBoolean(true);
+            buffer.writeShort(id);
+            writer.write(buffer);
+        });
+    }
 
     public abstract boolean canConnect(EnumFacing face, PipeFlow other);
 

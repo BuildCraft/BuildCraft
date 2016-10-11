@@ -21,10 +21,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.PipeEvent;
+
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
 
@@ -52,6 +55,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     public final WireManager wireManager = new WireManager(this);
+    public final PipeEventBus eventBus = new PipeEventBus();
     private final Map<EnumFacing, PluggableHolder> pluggables = new EnumMap<>(EnumFacing.class);
     private Pipe pipe;
     private boolean scheduleRenderUpdate = true;
@@ -90,6 +94,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (nbt.hasKey("pipe")) {
             try {
                 pipe = new Pipe(this, nbt.getCompoundTag("pipe"));
+                eventBus.registerHandler(pipe.behaviour);
+                eventBus.registerHandler(pipe.flow);
             } catch (LoadingException e) {
                 // For now quit immediately so we can debug the cause
                 throw new Error(e);
@@ -110,6 +116,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (item instanceof IPipeItem) {
             PipeDefinition definition = ((IPipeItem) item).getDefiniton();
             this.pipe = new Pipe(this, definition);
+            eventBus.registerHandler(pipe.behaviour);
+            eventBus.registerHandler(pipe.flow);
             int meta = stack.getMetadata();
             if (meta > 0 && meta <= 16) {
                 pipe.setColour(EnumDyeColor.byMetadata(meta - 1));
@@ -202,7 +210,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             if (id == NET_RENDER_DATA) {
                 if (buffer.readBoolean()) {
                     pipe = new Pipe(this, buffer, ctx);
-                } else {
+                    eventBus.registerHandler(pipe.behaviour);
+                    eventBus.registerHandler(pipe.flow);
+                } else if (pipe != null) {
+                    eventBus.unregisterHandler(pipe.behaviour);
+                    eventBus.unregisterHandler(pipe.flow);
                     pipe = null;
                 }
                 for (EnumFacing face : EnumFacing.VALUES) {
@@ -228,7 +240,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                     if (pipe == null) {
                         throw new IllegalStateException("Pipe was null when it shouldn't have been!");
                     } else {
-                        pipe.flow.readPayload(PipeFlow.NET_ID_UPDATE, buffer, side);
+                        int fId = buffer.readShort();
+                        pipe.flow.readPayload(fId, buffer, side);
                     }
                 }
             } else if (id == NET_UPDATE_PLUG_DOWN) pluggables.get(EnumFacing.DOWN).readPayload(buffer, side, ctx);
@@ -271,6 +284,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         PluggableHolder holder = pluggables.get(side);
         PipePluggable old = holder.pluggable;
         holder.pluggable = with;
+
+        eventBus.registerHandler(with);
+        eventBus.unregisterHandler(old);
+
         pipe.markForUpdate();
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
@@ -310,6 +327,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public WireManager getWireManager() {
         return wireManager;
+    }
+
+    @Override
+    public void fireEvent(PipeEvent event) {
+        eventBus.fireEvent(event);
     }
 
     // Caps

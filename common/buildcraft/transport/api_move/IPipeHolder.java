@@ -6,6 +6,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.api.transport.PipeEvent;
+
 /** Designates a tile that can contain a pipe, up to 6 sided pluggables, and up to 4 different pipe wires. */
 public interface IPipeHolder {
     World getPipeWorld();
@@ -23,6 +25,8 @@ public interface IPipeHolder {
     IPipe getNeighbouringPipe(EnumFacing side);
 
     IWireManager getWireManager();
+
+    void fireEvent(PipeEvent event);
 
     void scheduleRenderUpdate();
 

@@ -45,7 +45,7 @@ public enum ModelPipe implements IBakedModel {
 
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 
-        if (tile == null) {
+        if (tile == null || tile.getPipe() == null) {
             if (layer == BlockRenderLayer.TRANSLUCENT) {
                 return ImmutableList.of();
             }

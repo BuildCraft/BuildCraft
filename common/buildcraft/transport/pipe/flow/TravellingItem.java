@@ -6,7 +6,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
@@ -15,10 +14,25 @@ public class TravellingItem {
     public final ItemStack stack;
     EnumDyeColor colour = null;
     double speed = 0.05;
+
+    // The following fields are basically just this motion, but inlined to not use up an extra object
     EnumFacing from, to;
 
     /** Indicates the in-world tick of when it will reach its destination (Generally the other side of the pipe) */
     long tickStarted, tickFinished;
+
+    Motion nextMotion = null;
+
+    /** Used to save (on the client) where this item should go next. */
+    // TODO: Use this!
+    static class Motion {
+        EnumFacing from, to;
+
+        /** Indicates the in-world tick of when it will reach its destination (Generally the other side of the pipe) */
+        long tickStarted, tickFinished;
+
+        Motion nextMotion = null;
+    }
 
     public TravellingItem(PipeFlowItems flow, ItemStack stack) {
         this.flow = flow;
@@ -39,8 +53,26 @@ public class TravellingItem {
         double time = distance / speed;
         time = Math.ceil(time);
         tickFinished = now + (long) (time);
+    }
 
-        BCLog.logger.info("Taking " + time + " ticks to go " + distance + "m, at " + speed + "m/t");
+    boolean advanceMotion() {
+        return setMotion(nextMotion);
+    }
+
+    boolean setMotion(Motion motion) {
+        if (motion == null) {
+            tickStarted = tickFinished;
+            tickFinished = tickFinished + 1;
+            nextMotion = null;
+            return false;
+        } else {
+            from = motion.from;
+            to = motion.to;
+            tickStarted = motion.tickStarted;
+            tickFinished = motion.tickFinished;
+            nextMotion = motion.nextMotion;
+            return true;
+        }
     }
 
     public Vec3d interpolatePosition(Vec3d start, Vec3d end, long tick, float partialTicks) {

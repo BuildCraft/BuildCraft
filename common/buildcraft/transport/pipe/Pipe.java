@@ -46,7 +46,6 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = definition;
         this.behaviour = definition.logicConstructor.createBehaviour(this);
         this.flow = definition.flowType.creator.createFlow(this);
-        behaviour.configureFlow(flow);
     }
 
     // read + write
@@ -57,7 +56,6 @@ public final class Pipe implements IPipe, IDebuggable {
         this.definition = PipeRegistry.INSTANCE.loadDefinition(nbt.getString("def"));
         this.behaviour = definition.logicLoader.loadBehaviour(this, nbt.getCompoundTag("beh"));
         this.flow = definition.flowType.loader.loadFlow(this, nbt.getCompoundTag("flow"));
-        behaviour.configureFlow(flow);
     }
 
     public NBTTagCompound writeToNbt() {
