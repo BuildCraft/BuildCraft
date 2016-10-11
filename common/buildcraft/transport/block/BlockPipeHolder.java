@@ -37,6 +37,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomPaintHandler;
+import buildcraft.api.core.EnumPipePart;
+
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
@@ -297,7 +299,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             realSide = side;
         }
         if (realSide == null) {
-            return false;
+            boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+            if (!result) {
+                result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+            }
+            return result;
         }
         PipePluggable existing = tile.getPluggable(realSide);
         if (existing != null) {
@@ -315,7 +321,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return true;
             }
         }
-        return false;
+        boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+        if (!result) {
+            result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+        }
+        return result;
     }
 
     @Override

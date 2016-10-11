@@ -2,14 +2,18 @@ package buildcraft.transport.api_move;
 
 import java.io.IOException;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
+
+import buildcraft.api.core.EnumPipePart;
 
 import buildcraft.transport.api_move.IPipeHolder.IWriter;
 import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
@@ -53,8 +57,10 @@ public abstract class PipeFlow implements ICapabilityProvider {
 
     public abstract boolean canConnect(EnumFacing face, TileEntity oTile);
 
-    public void onTick() {
+    public void onTick() {}
 
+    public boolean onFlowActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
+        return false;
     }
 
     @Override
@@ -66,5 +72,4 @@ public abstract class PipeFlow implements ICapabilityProvider {
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         return null;
     }
-
 }
