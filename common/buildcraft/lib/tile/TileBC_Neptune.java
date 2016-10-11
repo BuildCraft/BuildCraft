@@ -37,8 +37,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.permission.EnumProtectionStatus;
 import buildcraft.api.permission.IPlayerOwned;
+
 import buildcraft.lib.cap.CapabilityHelper;
 import buildcraft.lib.client.render.DetatchedRenderer.IDetachedRenderer;
 import buildcraft.lib.debug.BCAdvDebugging;
@@ -90,7 +90,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     /** Handles all of the players that are currently using this tile (have a GUI open) */
     private final Set<EntityPlayer> usingPlayers = Sets.newIdentityHashSet();
     private PlayerOwner owner;
-    private EnumProtectionStatus protectionStatus;
 
     protected final DeltaManager deltaManager = new DeltaManager((gui, type, writer) -> {
         final int id;
@@ -183,16 +182,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     @Override
     public PlayerOwner getOwner() {
         return owner;
-    }
-
-    @Override
-    public EnumProtectionStatus getStatus() {
-        return protectionStatus;
-    }
-
-    public void setStatus(EnumProtectionStatus status) {
-        protectionStatus = status;
-        sendNetworkGuiUpdate(NET_GUI_DATA);
     }
 
     public PermissionUtil.PermissionBlock getPermBlock() {
@@ -389,11 +378,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                     buffer.writeByte(1);
                     owner.writeToByteBuf(buffer);
                 }
-                if (protectionStatus == null) {
-                    buffer.writeByte(10);
-                } else {
-                    buffer.writeByte(protectionStatus.permissionLevel);
-                }
             }
         }
         if (side == Side.SERVER) {
@@ -418,12 +402,6 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
                     owner = PlayerOwner.read(buffer);
                 } else {
                     owner = null;
-                }
-                byte permLevel = buffer.readByte();
-                if (permLevel == 10) {
-                    protectionStatus = null;
-                } else {
-                    protectionStatus = EnumProtectionStatus.get(permLevel);
                 }
             }
         }

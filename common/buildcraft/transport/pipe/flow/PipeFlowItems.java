@@ -230,13 +230,20 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         EnumSet<EnumFacing> used = getFirstNonEmptySet(sideCheck.possible);
 
         if (used == null) {
-            /* We failed and will be dropping the item right in the centre of the pipe.
-             * 
-             * No need for any other events */
-            BCLog.logger.info("Failed to find a side!");
-            insertItemImpl(toInsert, colour, speed, from, null);
 
-            return stack;
+            // TryBounce
+
+            PipeEventItem.TryBounce bounce = new PipeEventItem.TryBounce(holder, this, colour, from, toInsert);
+
+            if (bounce.canBounce) {
+                used = EnumSet.of(from);
+            } else {
+                /* We failed and will be dropping the item right in the centre of the pipe.
+                 * 
+                 * No need for any other events */
+                insertItemImpl(toInsert, colour, speed, from, null);
+                return stack;
+            }
         }
         List<EnumFacing> randOrder = new ArrayList<>(used);
         Collections.shuffle(randOrder);

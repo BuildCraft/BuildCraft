@@ -6,8 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.permission.IPlayerOwned;
+
 import buildcraft.lib.permission.PlayerOwner;
-import buildcraft.lib.permission.PlayerOwnership;
 
 /** Future class for checking to see if a given player can actually do something. */
 public class PermissionUtil {
@@ -24,7 +24,7 @@ public class PermissionUtil {
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius
         }
-        return PlayerOwnership.INSTANCE.canUse(attempting.owned.getOwner(), target.owned);
+        return true;
     }
 
     public static boolean hasPermission(Object type, PlayerOwner attempting, PermissionBlock target) {
@@ -32,7 +32,7 @@ public class PermissionUtil {
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius
         }
-        return PlayerOwnership.INSTANCE.canUse(attempting, target.owned);
+        return true;
     }
 
     public static boolean hasPermission(Object type, EntityPlayer attempting, PermissionBlock target) {
@@ -44,7 +44,7 @@ public class PermissionUtil {
         if (type == PERM_DESTROY || type == PERM_EDIT) {
             // TODO check "area" -- the player must be an OP if its within spawn radius
         }
-        return PlayerOwnership.INSTANCE.canUse(attempting, target.owned);
+        return true;
     }
 
     public static PermissionBlock createFrom(World world, BlockPos pos) {

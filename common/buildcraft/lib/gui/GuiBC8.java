@@ -7,15 +7,14 @@ import java.util.stream.Stream;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.gui.ledger.LedgerManager_Neptune;
 import buildcraft.lib.gui.ledger.LedgerOwnership;
 import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.gui.pos.MousePosition;
 import buildcraft.lib.gui.pos.PositionCallable;
-import buildcraft.lib.gui.widget.WidgetOwnership;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.ItemStack;
 
 public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer {
     public final C container;
@@ -35,8 +34,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
 
         if (container instanceof ContainerBCTile<?>) {
-            WidgetOwnership widget = ((ContainerBCTile<?>) container).ownershipWidget;
-            ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, widget));
+            ledgersRight.ledgers.add(new LedgerOwnership(ledgersRight, (ContainerBCTile<?>) container));
         }
     }
 
