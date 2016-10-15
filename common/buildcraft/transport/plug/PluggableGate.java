@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.api_move.IPipeHolder;
@@ -51,6 +52,8 @@ public class PluggableGate extends PipePluggable {
         BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
         BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
     }
+
+    // Manual constructor (called by the specific item pluggable gate code)
 
     public PluggableGate(PluggableDefinition def, IPipeHolder holder, EnumFacing side, GateVariant variant) {
         super(def, holder, side);

@@ -18,11 +18,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.types.MachineType;
+
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
-import buildcraft.lib.mj.MjReciverBatteryWrapper;
+import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 
 public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
@@ -31,7 +31,7 @@ public class TilePump extends TileMiner {
 
     @Override
     protected IMjReceiver createMjReceiver() {
-        return new MjReciverBatteryWrapper(battery, MachineType.PUMP);
+        return new MjRedstoneBatteryReceiver(battery);
     }
 
     private void rebuildQueue() {

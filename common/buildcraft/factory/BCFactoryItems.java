@@ -11,9 +11,11 @@ import buildcraft.lib.item.ItemManager;
 public class BCFactoryItems {
     public static ItemBC_Neptune plasticSheet;
     public static ItemWaterGel waterGel;
+    public static ItemBC_Neptune gelledWater;
 
     public static void preInit() {
         plasticSheet = ItemManager.register(new ItemBC_Neptune("item.plastic.sheet"));
-        waterGel = ItemManager.register(new ItemWaterGel("item.water_gel"));
+        waterGel = ItemManager.register(new ItemWaterGel("item.water_gel_spawn"));
+        gelledWater = ItemManager.register(new ItemBC_Neptune("item.gel"));
     }
 }

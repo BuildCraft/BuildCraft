@@ -10,6 +10,7 @@ import buildcraft.transport.api_move.PipeDefinition.PipeDefinitionBuilder;
 import buildcraft.transport.api_move.PipeFlowType;
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourGold;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourSandstone;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWood;
 
@@ -25,6 +26,10 @@ public class BCTransportPipes {
     public static PipeDefinition goldItem;
     public static PipeDefinition goldFluid;
     public static PipeDefinition goldPower;
+
+    public static PipeDefinition sandstoneItem;
+    public static PipeDefinition sandstoneFluid;
+    public static PipeDefinition sandstonePower;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -42,6 +47,11 @@ public class BCTransportPipes {
         goldItem = builder.idTex("gold_item").flowItem().define();
         goldFluid = builder.idTex("gold_fluid").flowFluid().define();
         goldPower = builder.idTex("gold_power").flowPower().define();
+
+        builder.logic(PipeBehaviourSandstone::new, PipeBehaviourSandstone::new);
+        sandstoneItem = builder.idTex("sandstone_item").flowItem().define();
+        sandstoneFluid = builder.idTex("sandstone_fluid").flowFluid().define();
+        sandstonePower = builder.idTex("sandstone_power").flowPower().define();
     }
 
     private static class DefinitionBuilder {

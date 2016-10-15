@@ -1,28 +1,20 @@
 package buildcraft.lib.mj;
 
-import javax.annotation.Nonnull;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjReadable;
+import buildcraft.api.mj.IMjReceiver;
+import buildcraft.api.mj.MjBattery;
 
-import buildcraft.api.mj.*;
-
-public class MjReciverBatteryWrapper implements IMjReceiver, IMjReadable {
+public class MjBatteryReciver implements IMjReceiver, IMjReadable {
     private final MjBattery battery;
 
-    @Nonnull
-    private final IMjConnectorType type;
-
-    public MjReciverBatteryWrapper(MjBattery battery, @Nonnull IMjConnectorType type) {
+    public MjBatteryReciver(MjBattery battery) {
         this.battery = battery;
-        this.type = type;
     }
 
     @Override
     public boolean canConnect(IMjConnector other) {
-        return type.getSimpleType().canReceiveFrom(other.getType().getSimpleType());
-    }
-
-    @Override
-    public IMjConnectorType getType() {
-        return type;
+        return true;
     }
 
     @Override
@@ -31,9 +23,13 @@ public class MjReciverBatteryWrapper implements IMjReceiver, IMjReadable {
     }
 
     @Override
-    public boolean receivePower(long microJoules, boolean simulate) {
+    public long receivePower(long microJoules, boolean simulate) {
         if (simulate) {
-            return !battery.isFull();
+            if (battery.isFull()) {
+                return microJoules;
+            } else {
+                return 0;
+            }
         }
         return battery.addPowerChecking(microJoules);
     }

@@ -11,12 +11,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.api.mj.IMjReceiver;
-import buildcraft.api.mj.types.MachineType;
+
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.FakePlayerUtil;
-import buildcraft.lib.mj.MjReciverBatteryWrapper;
+import buildcraft.lib.mj.MjBatteryReciver;
 
 public class TileMiningWell extends TileMiner {
     @Override
@@ -78,6 +78,6 @@ public class TileMiningWell extends TileMiner {
 
     @Override
     protected IMjReceiver createMjReceiver() {
-        return new MjReciverBatteryWrapper(battery, MachineType.MINING_WELL);
+        return new MjBatteryReciver(battery);
     }
 }

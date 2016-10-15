@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.api_move.IPipeHolder;
 import buildcraft.transport.api_move.PipePluggable;
@@ -25,12 +26,16 @@ public class PluggableBlocker extends PipePluggable {
         double lu = 4 / 16.0;
         double ul = 12 / 16.0;
         double uu = 14 / 16.0;
-        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(0.25, ll, 0.25, 0.75, lu, 0.75);
-        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(0.25, ul, 0.25, 0.75, uu, 0.75);
-        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(0.25, 0.25, ll, 0.75, 0.75, lu);
-        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(0.25, 0.25, ul, 0.75, 0.75, uu);
-        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, 0.25, 0.25, lu, 0.75, 0.75);
-        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, 0.25, 0.25, uu, 0.75, 0.75);
+
+        double min = 4 / 16.0;
+        double max = 12 / 16.0;
+
+        BOXES[EnumFacing.DOWN.getIndex()] = new AxisAlignedBB(min, ll, min, max, lu, max);
+        BOXES[EnumFacing.UP.getIndex()] = new AxisAlignedBB(min, ul, min, max, uu, max);
+        BOXES[EnumFacing.NORTH.getIndex()] = new AxisAlignedBB(min, min, ll, max, max, lu);
+        BOXES[EnumFacing.SOUTH.getIndex()] = new AxisAlignedBB(min, min, ul, max, max, uu);
+        BOXES[EnumFacing.WEST.getIndex()] = new AxisAlignedBB(ll, min, min, lu, max, max);
+        BOXES[EnumFacing.EAST.getIndex()] = new AxisAlignedBB(ul, min, min, uu, max, max);
     }
 
     public PluggableBlocker(PluggableDefinition definition, IPipeHolder holder, EnumFacing side) {

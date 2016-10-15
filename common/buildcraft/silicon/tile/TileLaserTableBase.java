@@ -1,6 +1,6 @@
 package buildcraft.silicon.tile;
 
-import buildcraft.api.power.ILaserTarget;
+import buildcraft.api.mj.ILaserTarget;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.lib.tile.TileBCInventory_Neptune;

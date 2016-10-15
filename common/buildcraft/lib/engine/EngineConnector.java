@@ -1,25 +1,20 @@
 package buildcraft.lib.engine;
 
-import javax.annotation.Nonnull;
-
 import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.IMjConnectorType;
+import buildcraft.api.mj.IMjRedstoneReceiver;
 
 public class EngineConnector implements IMjConnector {
-    @Nonnull
-    private final IMjConnectorType type;
+    public final boolean redstoneOnly;
 
-    public EngineConnector(@Nonnull IMjConnectorType type) {
-        this.type = type;
-    }
-
-    @Override
-    public IMjConnectorType getType() {
-        return type;
+    public EngineConnector(boolean redstoneOnly) {
+        this.redstoneOnly = redstoneOnly;
     }
 
     @Override
     public boolean canConnect(IMjConnector other) {
-        return type.getSimpleType().canSendTo(other.getType().getSimpleType());
+        if (redstoneOnly) {
+            return other instanceof IMjRedstoneReceiver;
+        }
+        return true;
     }
 }

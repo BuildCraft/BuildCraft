@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.IMjConnector;
-import buildcraft.api.mj.types.EngineType;
+
 import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
@@ -76,7 +76,7 @@ public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     protected IMjConnector createConnector() {
-        return new EngineConnector(EngineType.REDSTONE);
+        return new EngineConnector(true);
     }
 
     @Override

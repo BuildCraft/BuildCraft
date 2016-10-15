@@ -50,6 +50,13 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     public PipeFlowItems(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
+        // TODO!
+    }
+
+    @Override
+    public NBTTagCompound writeToNbt() {
+        // TODO!
+        return super.writeToNbt();
     }
 
     // Network
@@ -77,19 +84,35 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
     }
 
-    // IFlow Items
+    // IFlowItems
 
     @Override
     public int tryExtractStack(int count, EnumFacing from, IStackFilter filter) {
-        TileEntity tile = pipe.getConnectedTile(from);
-        IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, from.getOpposite());
-        ItemStack stack = trans.extract(filter, 0, count, false);
-        if (stack != null && stack.stackSize > 0) {
-            insertItem(stack, null, EXTRACT_SPEED, from);
-            return stack.stackSize;
+        if (from == null) {
+            return 0;
         }
 
-        return 0;
+        TileEntity tile = pipe.getConnectedTile(from);
+        IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, from.getOpposite());
+
+        ItemStack possible = trans.extract(filter, 0, count, true);
+
+        if (possible == null || possible.stackSize == 0) {
+            return 0;
+        }
+
+        IPipeHolder holder = pipe.getHolder();
+        PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, null, from, possible);
+        holder.fireEvent(tryInsert);
+        if (tryInsert.isCanceled() || tryInsert.accepted <= 0) {
+            return 0;
+        }
+
+        ItemStack stack = trans.extract(filter, tryInsert.accepted, tryInsert.accepted, false);
+
+        insertItemEvents(stack, null, EXTRACT_SPEED, from);
+
+        return tryInsert.accepted;
     }
 
     // PipeFlow
@@ -197,19 +220,26 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
      * 
      * (This text was copied from buildcraft.api.transport.PipeEventItem) */
     public ItemStack insertItem(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from) {
-        IPipeHolder holder = pipe.getHolder();
-
         BCLog.logger.info("Attempting to insert " + stack + " from " + from);
 
         // Try insert
 
-        PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(holder, this, colour, from, stack);
-        holder.fireEvent(tryInsert);
+        PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(pipe.getHolder(), this, colour, from, stack);
+        pipe.getHolder().fireEvent(tryInsert);
         if (tryInsert.isCanceled() || tryInsert.accepted <= 0) {
             BCLog.logger.info("Insertion failed! (" + tryInsert.isCanceled() + ", " + tryInsert.accepted + ")");
             return stack;
         }
         ItemStack toInsert = stack.splitStack(tryInsert.accepted);
+
+        insertItemEvents(toInsert, colour, speed, from);
+
+        return stack;
+    }
+
+    /** Used internally to split up manual insertions from controlled extractions. */
+    private void insertItemEvents(ItemStack toInsert, EnumDyeColor colour, double speed, EnumFacing from) {
+        IPipeHolder holder = pipe.getHolder();
 
         // Side Check
 
@@ -242,7 +272,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                  * 
                  * No need for any other events */
                 insertItemImpl(toInsert, colour, speed, from, null);
-                return stack;
+                return;
             }
         }
         List<EnumFacing> randOrder = new ArrayList<>(used);
@@ -272,8 +302,6 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
             insertItemImpl(item.stack, item.colour, modifySpeed.speed, from, item.to);
         }
-
-        return stack;
     }
 
     private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, EnumFacing to) {

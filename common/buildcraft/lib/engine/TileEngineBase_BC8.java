@@ -22,6 +22,7 @@ import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.core.lib.BlockTileCache;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.ParticleUtil;
@@ -195,11 +196,17 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     protected void sendPower(long power) {
-        if (receiverBuffer == null || !receiverBuffer.receivePower(power, false)) {
-            MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, power);
-            ParticleUtil.showTempPower(getWorld(), getPos(), getCurrentDirection(), power);
-            addHeatFromPower(power);
+        long excess = power;
+        if (receiverBuffer != null) {
+            excess = receiverBuffer.receivePower(power, false);
         }
+        if (excess <= 0) {
+            return;
+        }
+        MjAPI.EFFECT_MANAGER.createPowerLossEffect(getWorld(), new Vec3d(getPos()), currentDirection, excess);
+        ParticleUtil.showTempPower(getWorld(), getPos(), getCurrentDirection(), excess);
+        // This is horrible!
+        addHeatFromPower(excess);
     }
 
     public EnumFacing getCurrentDirection() {

@@ -28,7 +28,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
-import buildcraft.api.power.ILaserTarget;
+import buildcraft.api.mj.ILaserTarget;
+
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryCopy;
 import buildcraft.core.lib.inventory.InventoryIterator;

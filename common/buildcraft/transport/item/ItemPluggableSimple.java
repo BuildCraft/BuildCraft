@@ -20,14 +20,17 @@ public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggabl
     @Nonnull
     private final IPluggableCreator creator;
 
-    public ItemPluggableSimple(String id, PluggableDefinition definition) {
+    public ItemPluggableSimple(String id, PluggableDefinition definition, IPluggableCreator creator) {
         super(id);
         this.definition = definition;
-        IPluggableCreator c = definition.creator;
-        if (c == null) {
-            throw new IllegalArgumentException("Can only use this class for simple pluggables! (Was given " + definition.identifier + ")");
+        if (creator == null) {
+            throw new NullPointerException("Null creator! (Was given " + definition.identifier + ")");
         }
-        this.creator = c;
+        this.creator = creator;
+    }
+
+    public ItemPluggableSimple(String id, PluggableDefinition definition) {
+        this(id, definition, definition.creator);
     }
 
     @Override

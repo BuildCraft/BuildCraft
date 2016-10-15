@@ -10,31 +10,34 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import buildcraft.factory.BCFactoryItems;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.SoundUtil;
 
 public class BlockWaterGel extends BlockBCBase_Neptune {
     public enum GelStage implements IStringSerializable {
-        SPREAD_0(0.3f, true),
-        SPREAD_1(0.4f, true),
-        SPREAD_2(0.6f, true),
-        SPREAD_3(0.8f, true),
-        GELLING_0(1.0f, false),
-        GELLING_1(1.2f, false),
-        GEL(1.5f, false);
+        SPREAD_0(0.3f, true, 3),
+        SPREAD_1(0.4f, true, 3),
+        SPREAD_2(0.6f, true, 3),
+        SPREAD_3(0.8f, true, 3),
+        GELLING_0(1.0f, false, 0.6f),
+        GELLING_1(1.2f, false, 0.6f),
+        GEL(1.5f, false, 0.1f);
 
         public static final GelStage[] VALUES = values();
 
         public final SoundType soundType;
         public final String modelName = name().toLowerCase(Locale.ROOT);
         public final boolean spreading;
+        public final float hardness;
 
-        private GelStage(float pitch, boolean spreading) {
+        private GelStage(float pitch, boolean spreading, float hardness) {
             this.soundType = new SoundType(//
                     SoundType.SLIME.volume,//
                     pitch,//
@@ -45,6 +48,7 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
                     SoundEvents.BLOCK_SLIME_FALL//
             );
             this.spreading = spreading;
+            this.hardness = hardness;
         }
 
         @Override
@@ -192,5 +196,26 @@ public class BlockWaterGel extends BlockBCBase_Neptune {
     public SoundType getSoundType(IBlockState state, World world, BlockPos pos, Entity entity) {
         GelStage stage = state.getValue(PROP_STAGE);
         return stage.soundType;
+    }
+
+    @Override
+    public float getBlockHardness(IBlockState state, World world, BlockPos pos) {
+        GelStage stage = state.getValue(PROP_STAGE);
+        return stage.hardness;
+    }
+
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return BCFactoryItems.gelledWater;
+    }
+
+    @Override
+    public int quantityDropped(IBlockState state, int fortune, Random random) {
+        GelStage stage = state.getValue(PROP_STAGE);
+        if (stage.spreading) {
+            return random.nextInt(2) + 1;
+        } else {
+            return 1;
+        }
     }
 }

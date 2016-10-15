@@ -9,15 +9,18 @@ import buildcraft.transport.api_move.PluggableDefinition.IPluggableNbtReader;
 import buildcraft.transport.api_move.PluggableDefinition.IPluggableNetLoader;
 import buildcraft.transport.plug.PluggableBlocker;
 import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.plug.PluggablePulsar;
 
 public class BCTransportPlugs {
 
     public static PluggableDefinition blocker;
     public static PluggableDefinition gate;
+    public static PluggableDefinition pulsar;
 
     public static void preInit() {
         blocker = register("blocker", PluggableBlocker::new);
         gate = register("gate", PluggableGate::new, PluggableGate::new);
+        pulsar = register("pulsar", PluggablePulsar::new, PluggablePulsar::new);
     }
 
     private static PluggableDefinition register(String name, IPluggableCreator creator) {

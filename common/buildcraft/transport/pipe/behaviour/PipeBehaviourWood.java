@@ -1,5 +1,7 @@
 package buildcraft.transport.pipe.behaviour;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -11,6 +13,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.mj.IMjConnector;
+import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.mj.MjAPI;
 
 import buildcraft.core.lib.inventory.filters.StackFilter;
 import buildcraft.lib.misc.EntityUtil;
@@ -21,11 +26,8 @@ import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
 import buildcraft.transport.api_move.PipeBehaviour;
 import buildcraft.transport.api_move.PipeFlow;
 
-public class PipeBehaviourWood extends PipeBehaviour {
-    private EnumFacing currentDir = EnumFacing.UP;
-
-    // Currently we auto-extract every 2 seconds
-    private int lastExtract = 0;
+public class PipeBehaviourWood extends PipeBehaviour implements IMjRedstoneReceiver {
+    private EnumPipePart currentDir = EnumPipePart.CENTER;
 
     public PipeBehaviourWood(IPipe pipe) {
         super(pipe);
@@ -33,19 +35,19 @@ public class PipeBehaviourWood extends PipeBehaviour {
 
     public PipeBehaviourWood(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        nbt.setTag("currentDir", NBTUtils.writeEnum(currentDir));
+        setCurrentDir(NBTUtils.readEnum(nbt.getTag("currentDir"), EnumFacing.class));
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
-        currentDir = NBTUtils.readEnum(nbt.getTag("currentDir"), EnumFacing.class);
+        nbt.setTag("currentDir", NBTUtils.writeEnum(getCurrentDir()));
         return nbt;
     }
 
     @Override
     public int getTextureIndex(EnumFacing face) {
-        return (face != null && face == currentDir) ? 1 : 0;
+        return (face != null && face == getCurrentDir()) ? 1 : 0;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class PipeBehaviourWood extends PipeBehaviour {
     @Override
     public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) {
         super.readPayload(buffer, side, ctx);
-        currentDir = EnumFacing.getFront(buffer.readUnsignedByte());
+        currentDir = EnumPipePart.fromMeta(buffer.readUnsignedByte());
     }
 
     @Override
@@ -75,27 +77,18 @@ public class PipeBehaviourWood extends PipeBehaviour {
         if (pipe.getHolder().getPipeWorld().isRemote) {
             return;
         }
-
-        lastExtract++;
-        if (lastExtract >= 40) {
-            lastExtract = 0;
-            PipeFlow flow = pipe.getFlow();
-            if (flow instanceof IFlowItems) {
-                ((IFlowItems) flow).tryExtractStack(1, currentDir, StackFilter.ALL);
-            }
-        }
     }
 
     @Override
     public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
         if (EntityUtil.getWrenchHand(player) != null) {
             EntityUtil.activateWrench(player);
-            if (part.face != currentDir) {
+            if (part.face != getCurrentDir()) {
                 if (part == EnumPipePart.CENTER) {
                     // TODO: Advance the currentDir
                     return false;
                 } else {
-                    currentDir = part.face;
+                    setCurrentDir(part.face);
                 }
                 if (!player.worldObj.isRemote) {
                     pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
@@ -104,5 +97,39 @@ public class PipeBehaviourWood extends PipeBehaviour {
             return true;
         }
         return false;
+    }
+
+    @Nullable
+    private EnumFacing getCurrentDir() {
+        return currentDir.face;
+    }
+
+    private void setCurrentDir(EnumFacing setTo) {
+        this.currentDir = EnumPipePart.fromFacing(setTo);
+    }
+
+    // IMjRedstoneReceiver
+
+    @Override
+    public boolean canConnect(IMjConnector other) {
+        return true;
+    }
+
+    @Override
+    public long getPowerRequested() {
+        return MjAPI.MJ;
+    }
+
+    @Override
+    public long receivePower(long microJoules, boolean simulate) {
+        // TODO: Make this require more or less than 1 Mj Per item
+        // Also make this extract different numbers of items depending
+        // on how much power was put in
+
+        PipeFlow flow = pipe.getFlow();
+        if (flow instanceof IFlowItems) {
+            ((IFlowItems) flow).tryExtractStack(1, getCurrentDir(), StackFilter.ALL);
+        }
+        return 0;
     }
 }

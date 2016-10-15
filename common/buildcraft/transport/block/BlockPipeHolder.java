@@ -313,7 +313,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (item instanceof IItemPluggable) {
             IItemPluggable itemPlug = (IItemPluggable) item;
             PipePluggable plug = itemPlug.onPlace(held, tile, realSide);
-            if (plug != null) {
+            if (plug == null) {
+                return false;
+            } else {
                 tile.replacePluggable(realSide, plug);
                 if (!player.capabilities.isCreativeMode) {
                     held.stackSize--;

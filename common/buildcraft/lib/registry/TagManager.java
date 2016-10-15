@@ -283,7 +283,8 @@ public class TagManager {
         startBatch();// factory
         // BC Factory Items
         registerTag("item.plastic.sheet").reg("plastic_sheet").locale("plasticSheet").oldReg("plasticSheet").model("plastic_sheet");
-        registerTag("item.water_gel").reg("water_gel").locale("waterGel").model("water_gel");
+        registerTag("item.water_gel_spawn").reg("water_gel_spawn").locale("waterGel").model("water_gel");
+        registerTag("item.gel").reg("gel").locale("gel").model("gel");
         // BC Factory Item Blocks
         registerTag("item.block.plastic").reg("plastic_block").locale("plasticBlock").model("plastic_block/");
         registerTag("item.block.autoworkbench.item").reg("autoworkbench_item").locale("autoWorkbenchBlock").model("autoworkbench_item");
@@ -315,7 +316,8 @@ public class TagManager {
         // BC Transport Items
         registerTag("item.waterproof").reg("waterproof").locale("pipeWaterproof").oldReg("pipeWaterproof").model("waterproof");
         registerTag("item.plug.blocker").reg("plug_blocker").locale("PipePlug").model("pluggable/blocker");
-        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gate");// TEMP
+        registerTag("item.plug.gate").reg("plug_gate").locale("gate").model("pluggable/gate").tab("buildcraft.gate");
+        registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("pluggable/pulsar");
         // BC Transport Pipes
         startBatch();// Pipes
         registerTag("item.pipe.buildcrafttransport.wood_item").reg("pipe_wood_item").locale("PipeItemsWood");
@@ -327,6 +329,9 @@ public class TagManager {
         registerTag("item.pipe.buildcrafttransport.gold_item").reg("pipe_gold_item").locale("PipeItemsGold");
         registerTag("item.pipe.buildcrafttransport.gold_fluid").reg("pipe_gold_fluid").locale("PipeFluidsGold");
         registerTag("item.pipe.buildcrafttransport.gold_power").reg("pipe_gold_power").locale("PipePowerGold");
+        registerTag("item.pipe.buildcrafttransport.sandstone_item").reg("pipe_sandstone_item").locale("PipeItemsSandstone");
+        registerTag("item.pipe.buildcrafttransport.sandstone_fluid").reg("pipe_sandstone_fluid").locale("PipeFluidsSandstone");
+        registerTag("item.pipe.buildcrafttransport.sandstone_power").reg("pipe_sandstone_power").locale("PipePowerSandstone");
         endBatch(setTab("buildcraft.pipe"));
         // BC Transport Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");

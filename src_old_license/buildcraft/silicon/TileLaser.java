@@ -18,8 +18,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.power.ILaserTarget;
-import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.api.mj.ILaserTarget;
+import buildcraft.api.mj.ILaserTargetBlock;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.EntityLaser;

@@ -17,7 +17,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.mj.types.EngineType;
+
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.engine.EngineConnector;
@@ -105,7 +105,7 @@ public class TileEngineStone_BC8 extends TileEngineBase_BC8 {
 
     @Override
     protected IMjConnector createConnector() {
-        return new EngineConnector(EngineType.STIRLING);
+        return new EngineConnector(false);
     }
 
     @Override

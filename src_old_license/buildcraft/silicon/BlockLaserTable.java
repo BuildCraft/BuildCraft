@@ -24,7 +24,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.api.mj.ILaserTargetBlock;
+
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 

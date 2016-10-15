@@ -7,7 +7,8 @@
 package buildcraft.silicon.block;
 
 import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.api.mj.ILaserTargetBlock;
+
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.silicon.BCSiliconGuis;
 import buildcraft.silicon.tile.*;
