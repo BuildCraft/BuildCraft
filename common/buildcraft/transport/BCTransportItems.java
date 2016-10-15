@@ -27,6 +27,10 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeFluidSandstone;
     public static ItemPipeHolder pipePowerSandstone;
 
+    public static ItemPipeHolder pipeItemIron;
+    public static ItemPipeHolder pipeFluidIron;
+    // public static ItemPipeHolder pipePowerIron;
+
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
     public static ItemPluggablePulsar plugPulsar;
@@ -49,6 +53,10 @@ public class BCTransportItems {
         pipeItemSandstone = makePipeItem(BCTransportPipes.sandstoneItem);
         pipeFluidSandstone = makePipeItem(BCTransportPipes.sandstoneFluid);
         pipePowerSandstone = makePipeItem(BCTransportPipes.sandstonePower);
+
+        pipeItemIron = makePipeItem(BCTransportPipes.ironItem);
+        pipeFluidIron = makePipeItem(BCTransportPipes.ironFluid);
+        // pipePowerIron = makePipeItem(BCTransportPipes.ironPower);
 
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));

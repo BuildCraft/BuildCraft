@@ -9,10 +9,7 @@ import buildcraft.transport.api_move.PipeDefinition.IPipeLoader;
 import buildcraft.transport.api_move.PipeDefinition.PipeDefinitionBuilder;
 import buildcraft.transport.api_move.PipeFlowType;
 import buildcraft.transport.pipe.PipeRegistry;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourGold;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourSandstone;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourStone;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWood;
+import buildcraft.transport.pipe.behaviour.*;
 
 public class BCTransportPipes {
     public static PipeDefinition woodItem;
@@ -30,6 +27,10 @@ public class BCTransportPipes {
     public static PipeDefinition sandstoneItem;
     public static PipeDefinition sandstoneFluid;
     public static PipeDefinition sandstonePower;
+
+    public static PipeDefinition ironItem;
+    public static PipeDefinition ironFluid;
+    // public static PipeDefinition ironPower;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -52,6 +53,11 @@ public class BCTransportPipes {
         sandstoneItem = builder.idTex("sandstone_item").flowItem().define();
         sandstoneFluid = builder.idTex("sandstone_fluid").flowFluid().define();
         sandstonePower = builder.idTex("sandstone_power").flowPower().define();
+
+        builder.logic(PipeBehaviourIron::new, PipeBehaviourIron::new).texSuffixes("_clear", "_filled");
+        ironItem = builder.idTexPrefix("iron_item").flowItem().define();
+        ironFluid = builder.idTexPrefix("iron_fluid").flowFluid().define();
+        // ironPower = builder.idTexPrefix("iron_power").flowPower().define();
     }
 
     private static class DefinitionBuilder {

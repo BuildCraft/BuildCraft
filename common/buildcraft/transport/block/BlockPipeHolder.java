@@ -299,9 +299,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             realSide = side;
         }
         if (realSide == null) {
-            boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+            EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
+
+            boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
             if (!result) {
-                result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
+                result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
             }
             return result;
         }

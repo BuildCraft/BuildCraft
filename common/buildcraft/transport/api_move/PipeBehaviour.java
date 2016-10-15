@@ -39,9 +39,13 @@ public abstract class PipeBehaviour implements ICapabilityProvider {
 
     // Event handling
 
-    public abstract boolean canConnect(EnumFacing face, PipeBehaviour other);
+    public boolean canConnect(EnumFacing face, PipeBehaviour other) {
+        return true;
+    }
 
-    public abstract boolean canConnect(EnumFacing face, TileEntity oTile);
+    public boolean canConnect(EnumFacing face, TileEntity oTile) {
+        return true;
+    }
 
     public boolean onPipeActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ, EnumPipePart part) {
         return false;

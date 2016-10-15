@@ -332,6 +332,9 @@ public class TagManager {
         registerTag("item.pipe.buildcrafttransport.sandstone_item").reg("pipe_sandstone_item").locale("PipeItemsSandstone");
         registerTag("item.pipe.buildcrafttransport.sandstone_fluid").reg("pipe_sandstone_fluid").locale("PipeFluidsSandstone");
         registerTag("item.pipe.buildcrafttransport.sandstone_power").reg("pipe_sandstone_power").locale("PipePowerSandstone");
+        registerTag("item.pipe.buildcrafttransport.iron_item").reg("pipe_iron_item").locale("PipeItemsIron");
+        registerTag("item.pipe.buildcrafttransport.iron_fluid").reg("pipe_iron_fluid").locale("PipeFluidsIron");
+        registerTag("item.pipe.buildcrafttransport.iron_power").reg("pipe_iron_power").locale("PipePowerIron");
         endBatch(setTab("buildcraft.pipe"));
         // BC Transport Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");
