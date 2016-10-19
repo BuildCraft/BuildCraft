@@ -13,14 +13,15 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.neptune.IItemPluggable;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.neptune.PluggableDefinition;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.api_move.IItemPluggable;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.PipePluggable;
-import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;

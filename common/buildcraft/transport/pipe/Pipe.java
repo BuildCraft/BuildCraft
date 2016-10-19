@@ -20,11 +20,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.neptune.*;
+import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
-import buildcraft.transport.api_move.*;
-import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
 import buildcraft.transport.client.model.key.PipeModelKey;
 import buildcraft.transport.pipes.events.PipeEvent;
 

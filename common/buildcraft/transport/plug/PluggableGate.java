@@ -12,15 +12,15 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
-import buildcraft.transport.api_move.IPluggableDynamicRenderer;
-import buildcraft.transport.api_move.PipePluggable;
-import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 import buildcraft.transport.client.render.PlugGateRenderer;
 import buildcraft.transport.gate.GateLogic;

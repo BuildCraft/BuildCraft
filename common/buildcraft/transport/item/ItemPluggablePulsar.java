@@ -4,11 +4,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
+import buildcraft.api.transport.neptune.*;
 
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
 import buildcraft.transport.BCTransportPlugs;
-import buildcraft.transport.api_move.*;
 import buildcraft.transport.plug.PluggablePulsar;
 
 public class ItemPluggablePulsar extends ItemBC_Neptune implements IItemPluggable {

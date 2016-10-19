@@ -5,13 +5,14 @@ import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.transport.neptune.IItemPluggable;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableCreator;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
-import buildcraft.transport.api_move.IItemPluggable;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.PipePluggable;
-import buildcraft.transport.api_move.PluggableDefinition;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableCreator;
 
 public class ItemPluggableSimple extends ItemBC_Neptune implements IItemPluggable {
 

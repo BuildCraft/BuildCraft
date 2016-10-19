@@ -5,9 +5,8 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
-
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.PipeBehaviour;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeBehaviour;
 
 public class PipeBehaviourGold extends PipeBehaviour {
     private static final double SPEED_DELTA = 0.07;

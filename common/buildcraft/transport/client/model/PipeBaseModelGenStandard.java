@@ -20,12 +20,13 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseCutoutKey;
 import buildcraft.transport.client.model.PipeModelCacheBase.PipeBaseTransclucentKey;
 

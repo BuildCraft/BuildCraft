@@ -12,12 +12,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtils;
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.IPipeHolder.PipeMessageReceiver;
-import buildcraft.transport.api_move.PipeBehaviour;
 
 public abstract class PipeBehaviourDirectional extends PipeBehaviour {
     protected EnumPipePart currentDir = EnumPipePart.CENTER;

@@ -2,7 +2,6 @@ package buildcraft.transport.pipe.flow;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -26,15 +25,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.PipeEventItem;
+import buildcraft.api.transport.neptune.IFlowItems;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.IPipe.ConnectedType;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.misc.data.DelayedList;
-import buildcraft.transport.api_move.IFlowItems;
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.IPipe.ConnectedType;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.PipeFlow;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
@@ -148,6 +147,8 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             } else {
                 ConnectedType type = pipe.getConnectedType(to);
 
+                ItemStack leftOver = item.stack;
+
                 if (type == ConnectedType.PIPE) {
                     IPipe oPipe = pipe.getConnectedPipe(to);
                     PipeFlow flow = oPipe.getFlow();
@@ -155,19 +156,21 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                     // TODO: Replace with interface for inserting
                     if (flow instanceof PipeFlowItems) {
                         PipeFlowItems oItemFlow = (PipeFlowItems) flow;
-                        oItemFlow.insertItem(item.stack, item.colour, item.speed, to.getOpposite());
-                    } else {
-                        dropItem(item);
+                        leftOver = oItemFlow.insertItem(item.stack, item.colour, item.speed, to.getOpposite());
                     }
-
                 } else if (type == ConnectedType.TILE) {
                     TileEntity tile = pipe.getConnectedTile(to);
                     IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, to.getOpposite());
-                    ItemStack leftOver = trans.insert(item.stack, false, false);
-                    dropItem(item, leftOver);
-                } else {
-                    // Something went wrong???
-                    dropItem(item);
+                    leftOver = trans.insert(item.stack, false, false);
+                }
+
+                if (leftOver != null) {
+                    if (item.toTryOrder == null || item.toTryOrder.isEmpty()) {
+                        // Really drop it
+                        dropItem(item, leftOver);
+                    } else {
+                        insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder);
+                    }
                 }
 
                 // TODO: Inform client
@@ -235,6 +238,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         insertItemEvents(toInsert, colour, speed, from);
 
+        if (stack.stackSize == 0) {
+            stack = null;
+        }
+
         return stack;
     }
 
@@ -245,27 +252,26 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         // Side Check
 
         PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(holder, this, colour, from, toInsert);
-        EnumSet<EnumFacing> possible = EnumSet.noneOf(EnumFacing.class);
+        sideCheck.disallow(from);
         for (EnumFacing face : EnumFacing.VALUES) {
             if (face == from) {
                 continue;
             }
-            if (pipe.isConnected(face)) {
-                possible.add(face);
+            if (!pipe.isConnected(face)) {
+                sideCheck.disallow(face);
             }
         }
-        sideCheck.possible.add(possible);
         holder.fireEvent(sideCheck);
-        EnumSet<EnumFacing> used = getFirstNonEmptySet(sideCheck.possible);
 
-        if (used == null) {
+        List<EnumSet<EnumFacing>> order = sideCheck.getOrder();
 
+        if (order.isEmpty()) {
             // TryBounce
 
             PipeEventItem.TryBounce bounce = new PipeEventItem.TryBounce(holder, this, colour, from, toInsert);
 
             if (bounce.canBounce) {
-                used = EnumSet.of(from);
+                order = ImmutableList.of(EnumSet.of(from));
             } else {
                 /* We failed and will be dropping the item right in the centre of the pipe.
                  * 
@@ -274,20 +280,17 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 return;
             }
         }
-        List<EnumFacing> randOrder = new ArrayList<>(used);
-        Collections.shuffle(randOrder);
-        ImmutableList<EnumFacing> destinations = ImmutableList.copyOf(randOrder);
 
         // Split:
 
         PipeEventItem.ItemEntry toSplit = new PipeEventItem.ItemEntry(colour, toInsert, from);
-        PipeEventItem.Split split = new PipeEventItem.Split(holder, this, destinations, toSplit);
+        PipeEventItem.Split split = new PipeEventItem.Split(holder, this, order, toSplit);
         holder.fireEvent(split);
         ImmutableList<PipeEventItem.ItemEntry> splitList = ImmutableList.copyOf(split.items);
 
         // FindDest:
 
-        PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(holder, this, destinations, splitList);
+        PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(holder, this, order, splitList);
         holder.fireEvent(findDest);
 
         // ModifySpeed:
@@ -313,14 +316,14 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
 
             if (item.to == null) {
-                item.to = destinations.get(0);
+                item.to = findDest.generateRandomOrder();
             }
 
             insertItemImpl(item.stack, item.colour, nSpeed, from, item.to);
         }
     }
 
-    private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, EnumFacing to) {
+    private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to) {
         TravellingItem item = new TravellingItem(stack);
 
         World world = pipe.getHolder().getPipeWorld();
@@ -329,7 +332,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.from = from;
         item.speed = speed;
         item.colour = colour;
-        item.to = to;
+        item.to = (to == null || to.size() <= 0) ? null : to.get(0);
+        if (to != null && to.size() > 1) {
+            item.toTryOrder = to.subList(1, to.size());
+        }
 
         double dist = getPipeLength(item.from) + getPipeLength(item.to);
         item.genTimings(now, dist);

@@ -5,7 +5,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.transport.api_move.PipeDefinition;
+import buildcraft.api.transport.neptune.PipeDefinition;
 
 @SideOnly(Side.CLIENT)
 public final class PipeModelKey {

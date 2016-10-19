@@ -16,12 +16,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.transport.BCTransportItems;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.PipePluggable;
-import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 
 public class PluggablePulsar extends PipePluggable {

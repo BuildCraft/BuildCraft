@@ -3,8 +3,8 @@ package buildcraft.transport.pipe.behaviour;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.PipeBehaviour;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeBehaviour;
 
 public class PipeBehaviourStone extends PipeBehaviour {
     public PipeBehaviourStone(IPipe pipe) {

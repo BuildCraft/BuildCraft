@@ -1,5 +1,7 @@
 package buildcraft.transport.pipe.flow;
 
+import java.util.List;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -9,24 +11,22 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
-    ItemStack stack;
+    // Public for rendering
+    public ItemStack stack;
+    public EnumDyeColor colour;
+
     double speed = 0.05;
+    long tickStarted, tickFinished;
+    EnumFacing from, to;
+    /** A list of the next faces to try if the current "to" differs from "from" and "to" failed to insert. */
+    List<EnumFacing> toTryOrder;
 
-    Motion motion = new Motion();
+    /** Used to save where this item should go next. Only the client uses this field. */
+    Motion motion;
 
-    /** Used to save where this item should go next. Only the client uses "nextPipe" though. */
     static class Motion {
-        EnumFacing from;
-        Destination dest = new Destination();
-        Motion nextPipe;
-    }
-
-    /** Used to store where the item will try next if it fails to be inserted into the first one */
-    static class Destination {
-        long tickStart, tickMiddle, tickEnd;
         EnumFacing to;
-        EnumDyeColor colourAtStart, colourAtMiddle, colourAtEnd;
-        Destination after;
+        Motion nextPipe;
     }
 
     public TravellingItem(ItemStack stack) {

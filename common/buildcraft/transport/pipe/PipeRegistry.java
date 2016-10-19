@@ -11,11 +11,12 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.transport.neptune.IPipeItem;
+import buildcraft.api.transport.neptune.IPipeRegistry;
+import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.misc.data.LoadingException;
-import buildcraft.transport.api_move.IPipeItem;
-import buildcraft.transport.api_move.IPipeRegistry;
-import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.item.ItemPipeHolder;
 
 public enum PipeRegistry implements IPipeRegistry {

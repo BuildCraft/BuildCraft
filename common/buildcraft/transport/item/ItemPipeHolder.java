@@ -10,12 +10,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.neptune.IPipeItem;
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportBlocks;
-import buildcraft.transport.api_move.IPipeItem;
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipeDefinition;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 

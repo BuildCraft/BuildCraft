@@ -15,12 +15,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PipeFlowType;
+
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipeFlowType;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;

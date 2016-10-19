@@ -7,10 +7,11 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+
 import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.api_move.IPluggableDynamicRenderer;
 import buildcraft.transport.plug.PluggableGate;
 
 public class PlugGateRenderer implements IPluggableDynamicRenderer {

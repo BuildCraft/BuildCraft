@@ -5,8 +5,8 @@ import java.util.Map;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.transport.api_move.IPluggableRegistry;
-import buildcraft.transport.api_move.PluggableDefinition;
+import buildcraft.api.transport.neptune.IPluggableRegistry;
+import buildcraft.api.transport.neptune.PluggableDefinition;
 
 public enum PluggableRegistry implements IPluggableRegistry {
     INSTANCE;

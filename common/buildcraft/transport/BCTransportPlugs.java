@@ -2,11 +2,12 @@ package buildcraft.transport;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PluggableDefinition;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableCreator;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableNbtReader;
-import buildcraft.transport.api_move.PluggableDefinition.IPluggableNetLoader;
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PluggableDefinition;
+import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableCreator;
+import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNbtReader;
+import buildcraft.api.transport.neptune.PluggableDefinition.IPluggableNetLoader;
+
 import buildcraft.transport.plug.PluggableBlocker;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.plug.PluggablePulsar;

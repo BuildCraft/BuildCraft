@@ -2,12 +2,13 @@ package buildcraft.transport;
 
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipeDefinition;
-import buildcraft.transport.api_move.PipeDefinition.IPipeCreator;
-import buildcraft.transport.api_move.PipeDefinition.IPipeLoader;
-import buildcraft.transport.api_move.PipeDefinition.PipeDefinitionBuilder;
-import buildcraft.transport.api_move.PipeFlowType;
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PipeDefinition;
+import buildcraft.api.transport.neptune.PipeDefinition.IPipeCreator;
+import buildcraft.api.transport.neptune.PipeDefinition.IPipeLoader;
+import buildcraft.api.transport.neptune.PipeDefinition.PipeDefinitionBuilder;
+import buildcraft.api.transport.neptune.PipeFlowType;
+
 import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.*;
 
@@ -41,6 +42,9 @@ public class BCTransportPipes {
     public static PipeDefinition ironItem;
     public static PipeDefinition ironFluid;
     // public static PipeDefinition ironPower;
+
+    public static PipeDefinition clayItem;
+    public static PipeDefinition clayFluid;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -82,6 +86,10 @@ public class BCTransportPipes {
         ironItem = builder.idTexPrefix("iron_item").flowItem().define();
         ironFluid = builder.idTexPrefix("iron_fluid").flowFluid().define();
         // ironPower = builder.idTexPrefix("iron_power").flowPower().define();
+
+        builder.logic(PipeBehaviourClay::new, PipeBehaviourClay::new);
+        clayItem = builder.idTex("clay_item").flowItem().define();
+        clayFluid = builder.idTex("clay_fluid").flowFluid().define();
     }
 
     private static class DefinitionBuilder {

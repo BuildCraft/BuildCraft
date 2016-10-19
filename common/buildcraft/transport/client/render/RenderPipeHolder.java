@@ -6,8 +6,9 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.animation.FastTESR;
 
-import buildcraft.transport.api_move.IPluggableDynamicRenderer;
-import buildcraft.transport.api_move.PipePluggable;
+import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+import buildcraft.api.transport.neptune.PipePluggable;
+
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;

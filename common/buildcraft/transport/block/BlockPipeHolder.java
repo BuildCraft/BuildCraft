@@ -38,11 +38,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomPaintHandler;
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.neptune.*;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
-import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
 import buildcraft.transport.wire.EnumWireBetween;

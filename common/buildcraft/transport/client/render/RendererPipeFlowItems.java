@@ -6,9 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import buildcraft.transport.api_move.IPipeFlowRenderer;
+import buildcraft.api.transport.neptune.IPipeFlowRenderer;
+
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.TravellingItem;
 
@@ -22,7 +24,7 @@ public enum RendererPipeFlowItems implements IPipeFlowRenderer<PipeFlowItems> {
         List<TravellingItem> toRender = flow.getAllItemsForRender();
 
         for (TravellingItem item : toRender) {
-            Vec3d pos = item.getRenderPosition(false, now, partialTicks);
+            Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
             // TODO: render the item FAST
             GlStateManager.pushMatrix();
             GlStateManager.translate(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);

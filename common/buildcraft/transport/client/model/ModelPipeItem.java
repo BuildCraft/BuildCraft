@@ -24,14 +24,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 
+import buildcraft.api.transport.neptune.IPipeItem;
+import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.lib.client.model.ModelItemSimple;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
-import buildcraft.transport.api_move.IPipeItem;
-import buildcraft.transport.api_move.PipeDefinition;
 
 public enum ModelPipeItem implements IBakedModel {
     INSTANCE;

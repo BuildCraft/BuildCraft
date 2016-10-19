@@ -5,8 +5,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.mj.MjAPI;
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.PipeFlow;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 public class PipeFlowPower extends PipeFlow {
     public PipeFlowPower(IPipe pipe) {

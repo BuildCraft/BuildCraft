@@ -1,8 +1,9 @@
 package buildcraft.transport;
 
+import buildcraft.api.transport.neptune.PipeDefinition;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.transport.api_move.PipeDefinition;
 import buildcraft.transport.item.ItemPipeHolder;
 import buildcraft.transport.item.ItemPluggableGate;
 import buildcraft.transport.item.ItemPluggablePulsar;
@@ -41,6 +42,9 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeFluidIron;
     // public static ItemPipeHolder pipePowerIron;
 
+    public static ItemPipeHolder pipeItemClay;
+    public static ItemPipeHolder pipeFluidClay;
+
     public static ItemPluggableSimple plugBlocker;
     public static ItemPluggableGate plugGate;
     public static ItemPluggablePulsar plugPulsar;
@@ -58,6 +62,7 @@ public class BCTransportItems {
         pipeItemQuartz = makePipeItem(BCTransportPipes.quartzItem);
         pipeItemGold = makePipeItem(BCTransportPipes.goldItem);
         pipeItemIron = makePipeItem(BCTransportPipes.ironItem);
+        pipeItemClay = makePipeItem(BCTransportPipes.clayItem);
         pipeItemSandstone = makePipeItem(BCTransportPipes.sandstoneItem);
 
         pipeFluidWood = makePipeItem(BCTransportPipes.woodFluid);
@@ -66,6 +71,7 @@ public class BCTransportItems {
         pipeFluidQuartz = makePipeItem(BCTransportPipes.quartzFluid);
         pipeFluidGold = makePipeItem(BCTransportPipes.goldFluid);
         pipeFluidIron = makePipeItem(BCTransportPipes.ironFluid);
+        pipeFluidClay = makePipeItem(BCTransportPipes.clayFluid);
         pipeFluidSandstone = makePipeItem(BCTransportPipes.sandstoneFluid);
 
         pipePowerWood = makePipeItem(BCTransportPipes.woodPower);

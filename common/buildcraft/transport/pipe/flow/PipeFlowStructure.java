@@ -4,8 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.PipeFlow;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 public class PipeFlowStructure extends PipeFlow {
     public PipeFlowStructure(IPipe pipe) {

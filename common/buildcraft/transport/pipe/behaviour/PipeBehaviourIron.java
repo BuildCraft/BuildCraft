@@ -1,15 +1,12 @@
 package buildcraft.transport.pipe.behaviour;
 
-import java.util.EnumSet;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
-
-import buildcraft.transport.api_move.IPipe;
+import buildcraft.api.transport.neptune.IPipe;
 
 public class PipeBehaviourIron extends PipeBehaviourDirectional {
     public PipeBehaviourIron(IPipe pipe) {
@@ -33,19 +30,9 @@ public class PipeBehaviourIron extends PipeBehaviourDirectional {
     @PipeEventHandler
     public void sideCheck(PipeEventItem.SideCheck sideCheck) {
         if (currentDir == EnumPipePart.CENTER) {
-            sideCheck.possible.clear();
+            sideCheck.disallowAll();
         } else {
-            boolean contains = false;
-            for (EnumSet<EnumFacing> set : sideCheck.possible) {
-                if (set.contains(currentDir.face)) {
-                    contains = true;
-                    break;
-                }
-            }
-            sideCheck.possible.clear();
-            if (contains) {
-                sideCheck.possible.add(EnumSet.of(currentDir.face));
-            }
+            sideCheck.disallowAllExcept(currentDir.face);
         }
     }
 

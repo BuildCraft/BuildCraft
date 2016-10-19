@@ -11,10 +11,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.neptune.PipeAPI;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.api.transport.neptune.PluggableDefinition;
 
-import buildcraft.transport.api_move.PipeAPI;
-import buildcraft.transport.api_move.PipePluggable;
-import buildcraft.transport.api_move.PluggableDefinition;
 import buildcraft.transport.tile.TilePipeHolder;
 
 public final class PluggableHolder {

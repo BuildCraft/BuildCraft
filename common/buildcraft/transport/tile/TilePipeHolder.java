@@ -22,10 +22,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.PipeEvent;
+import buildcraft.api.transport.neptune.*;
 
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.transport.api_move.*;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;

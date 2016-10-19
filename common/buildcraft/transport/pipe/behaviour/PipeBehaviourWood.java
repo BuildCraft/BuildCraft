@@ -6,13 +6,13 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
+import buildcraft.api.transport.neptune.IFlowItems;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.neptune.PipeFlow;
+import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 
 import buildcraft.core.lib.inventory.filters.StackFilter;
-import buildcraft.transport.api_move.IFlowItems;
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.IPipe.ConnectedType;
-import buildcraft.transport.api_move.PipeBehaviour;
-import buildcraft.transport.api_move.PipeFlow;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver {
     public PipeBehaviourWood(IPipe pipe) {

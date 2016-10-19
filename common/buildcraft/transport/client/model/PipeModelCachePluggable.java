@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
 import buildcraft.lib.client.model.ModelCacheMultipleSame;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.PipePluggable;
 
 public class PipeModelCachePluggable {
     public static final IModelCache<PluggableKey> cacheCutoutAll, cacheTranslucentAll;

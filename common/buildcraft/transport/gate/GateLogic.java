@@ -18,9 +18,10 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.neptune.IPipeHolder;
+
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.ActionActiveState;
-import buildcraft.transport.api_move.IPipeHolder;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
 

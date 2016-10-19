@@ -6,8 +6,8 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import buildcraft.transport.api_move.IPipe;
-import buildcraft.transport.api_move.PipeFlow;
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeFlow;
 
 public class PipeFlowFluids extends PipeFlow {
     public PipeFlowFluids(IPipe pipe) {

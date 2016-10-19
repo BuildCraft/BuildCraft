@@ -6,9 +6,9 @@ import java.util.Map;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.world.World;
 
-import buildcraft.transport.api_move.EnumWirePart;
-import buildcraft.transport.api_move.IPipeHolder;
-import buildcraft.transport.api_move.IWireManager;
+import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.IWireManager;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
