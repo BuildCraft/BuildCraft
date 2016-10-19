@@ -13,6 +13,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IStackFilter;
+
 import buildcraft.lib.inventory.AbstractInvItemTransactor;
 import buildcraft.lib.tile.item.StackInsertionFunction.InsertionResult;
 
@@ -136,7 +137,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
             // no need to copy as we no longer have it
             return current;
         } else {
-            current = asValid(current);
+            current = current.copy();
             ItemStack split = current.splitStack(amount);
             if (!simulate) {
                 if (current.stackSize <= 0) current = null;
@@ -149,6 +150,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     @Override
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
         if (badSlotIndex(slot)) return null;
+        if (min <= 0) min = 1;
         if (max < min) return null;
         ItemStack current = stacks[slot];
         if (current == null || current.stackSize < min) return null;
@@ -157,7 +159,11 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
                 ItemStack copy = current.copy();
                 return copy.splitStack(max);
             }
-            return current.splitStack(max);
+            ItemStack split = current.splitStack(max);
+            if (current.stackSize <= 0) {
+                stacks[slot] = null;
+            }
+            return split;
         }
         return null;
     }

@@ -12,6 +12,8 @@ import buildcraft.transport.pipe.PipeRegistry;
 import buildcraft.transport.pipe.behaviour.*;
 
 public class BCTransportPipes {
+    public static PipeDefinition structure;
+
     public static PipeDefinition woodItem;
     public static PipeDefinition woodFluid;
     public static PipeDefinition woodPower;
@@ -19,6 +21,14 @@ public class BCTransportPipes {
     public static PipeDefinition stoneItem;
     public static PipeDefinition stoneFluid;
     public static PipeDefinition stonePower;
+
+    public static PipeDefinition cobbleItem;
+    public static PipeDefinition cobbleFluid;
+    public static PipeDefinition cobblePower;
+
+    public static PipeDefinition quartzItem;
+    public static PipeDefinition quartzFluid;
+    public static PipeDefinition quartzPower;
 
     public static PipeDefinition goldItem;
     public static PipeDefinition goldFluid;
@@ -34,6 +44,10 @@ public class BCTransportPipes {
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
+
+        builder.logic(PipeBehaviourStructure::new, PipeBehaviourStructure::new);
+        structure = builder.idTex("structure").flow(PipeAPI.flowStructure).define();
+
         builder.logic(PipeBehaviourWood::new, PipeBehaviourWood::new).texSuffixes("_clear", "_filled");
         woodItem = builder.idTexPrefix("wood_item").flowItem().define();
         woodFluid = builder.idTexPrefix("wood_fluid").flowFluid().define();
@@ -43,6 +57,16 @@ public class BCTransportPipes {
         stoneItem = builder.idTex("stone_item").flowItem().define();
         stoneFluid = builder.idTex("stone_fluid").flowFluid().define();
         stonePower = builder.idTex("stone_power").flowPower().define();
+
+        builder.logic(PipeBehaviourCobble::new, PipeBehaviourCobble::new);
+        cobbleItem = builder.idTex("cobblestone_item").flowItem().define();
+        cobbleFluid = builder.idTex("cobblestone_fluid").flowFluid().define();
+        cobblePower = builder.idTex("cobblestone_power").flowPower().define();
+
+        builder.logic(PipeBehaviourQuartz::new, PipeBehaviourQuartz::new);
+        quartzItem = builder.idTex("quartz_item").flowItem().define();
+        quartzFluid = builder.idTex("quartz_fluid").flowFluid().define();
+        quartzPower = builder.idTex("quartz_power").flowPower().define();
 
         builder.logic(PipeBehaviourGold::new, PipeBehaviourGold::new);
         goldItem = builder.idTex("gold_item").flowItem().define();

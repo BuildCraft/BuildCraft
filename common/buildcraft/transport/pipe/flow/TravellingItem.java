@@ -9,33 +9,27 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.lib.misc.VecUtil;
 
 public class TravellingItem {
-    private final PipeFlowItems flow;
-
-    public final ItemStack stack;
-    EnumDyeColor colour = null;
+    ItemStack stack;
     double speed = 0.05;
 
-    // The following fields are basically just this motion, but inlined to not use up an extra object
-    EnumFacing from, to;
+    Motion motion = new Motion();
 
-    /** Indicates the in-world tick of when it will reach its destination (Generally the other side of the pipe) */
-    long tickStarted, tickFinished;
-
-    Motion nextMotion = null;
-
-    /** Used to save (on the client) where this item should go next. */
-    // TODO: Use this!
+    /** Used to save where this item should go next. Only the client uses "nextPipe" though. */
     static class Motion {
-        EnumFacing from, to;
-
-        /** Indicates the in-world tick of when it will reach its destination (Generally the other side of the pipe) */
-        long tickStarted, tickFinished;
-
-        Motion nextMotion = null;
+        EnumFacing from;
+        Destination dest = new Destination();
+        Motion nextPipe;
     }
 
-    public TravellingItem(PipeFlowItems flow, ItemStack stack) {
-        this.flow = flow;
+    /** Used to store where the item will try next if it fails to be inserted into the first one */
+    static class Destination {
+        long tickStart, tickMiddle, tickEnd;
+        EnumFacing to;
+        EnumDyeColor colourAtStart, colourAtMiddle, colourAtEnd;
+        Destination after;
+    }
+
+    public TravellingItem(ItemStack stack) {
         this.stack = stack;
         if (stack == null || stack.getItem() == null) {
             throw new NullPointerException("stack");
@@ -55,26 +49,6 @@ public class TravellingItem {
         tickFinished = now + (long) (time);
     }
 
-    boolean advanceMotion() {
-        return setMotion(nextMotion);
-    }
-
-    boolean setMotion(Motion motion) {
-        if (motion == null) {
-            tickStarted = tickFinished;
-            tickFinished = tickFinished + 1;
-            nextMotion = null;
-            return false;
-        } else {
-            from = motion.from;
-            to = motion.to;
-            tickStarted = motion.tickStarted;
-            tickFinished = motion.tickFinished;
-            nextMotion = motion.nextMotion;
-            return true;
-        }
-    }
-
     public Vec3d interpolatePosition(Vec3d start, Vec3d end, long tick, float partialTicks) {
         long diff = tickFinished - tickStarted;
         long nowDiff = tick - tickStarted;
@@ -90,9 +64,7 @@ public class TravellingItem {
         return new Vec3d(x, y, z);
     }
 
-    public Vec3d getRenderPosition(boolean addPipePos, long tick, float partialTicks) {
-        BlockPos pos = addPipePos ? flow.pipe.getHolder().getPipePos() : BlockPos.ORIGIN;
-
+    public Vec3d getRenderPosition(BlockPos pos, long tick, float partialTicks) {
         long diff = tickFinished - tickStarted;
         long afterTick = tick - tickStarted;
 

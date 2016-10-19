@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
+
 import buildcraft.core.lib.inventory.filters.StackFilter;
 import buildcraft.lib.misc.StackUtil;
 
@@ -96,6 +97,7 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
 
     @Override
     public ItemStack extract(IStackFilter filter, int min, int max, boolean simulate) {
+        if (min < 1) min = 1;
         if (min > max) return null;
         if (max < 0) return null;
 

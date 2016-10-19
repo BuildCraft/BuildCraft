@@ -23,6 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
+
 import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
@@ -47,8 +48,8 @@ public class Box implements IBox, ISerializable {
 
     public Box(BlockPos min, BlockPos max) {
         this();
-        this.min = Utils.min(min, max);
-        this.max = Utils.max(min, max);
+        this.min = VecUtil.min(min, max);
+        this.max = VecUtil.max(min, max);
     }
 
     public Box(TileEntity e) {
@@ -64,20 +65,20 @@ public class Box implements IBox, ISerializable {
         return min != null && max != null;
     }
 
-    public void extendToEncompassBoth(BlockPos min, BlockPos max) {
-        this.min = Utils.min(this.min, Utils.min(min, max));
-        this.max = Utils.max(this.max, Utils.max(min, max));
+    public void extendToEncompassBoth(BlockPos newMin, BlockPos newMax) {
+        this.min = VecUtil.min(this.min, newMin, newMax);
+        this.max = VecUtil.max(this.max, newMin, newMax);
     }
 
     public void setMin(BlockPos min) {
         if (min == null) return;
         this.min = min;
-        this.max = Utils.max(min, max);
+        this.max = VecUtil.max(min, max);
     }
 
     public void setMax(BlockPos max) {
         if (max == null) return;
-        this.min = Utils.min(min, max);
+        this.min = VecUtil.min(min, max);
         this.max = max;
     }
 
@@ -117,7 +118,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public void initializeCenter(BlockPos center, int size) {
-        initializeCenter(center, Utils.vec3i(size));
+        initializeCenter(center, new BlockPos(size, size, size));
     }
 
     public void initializeCenter(BlockPos center, Vec3i size) {
@@ -137,7 +138,7 @@ public class Box implements IBox, ISerializable {
     @Override
     public Box expand(int amount) {
         if (!isInitialized()) return this;
-        Vec3i am = Utils.vec3i(amount);
+        Vec3i am = new BlockPos(amount, amount, amount);
         setMin(min().subtract(am));
         setMax(max().add(am));
         return this;
@@ -158,7 +159,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public boolean contains(BlockPos i) {
-        return contains(Utils.convert(i));
+        return contains(new Vec3d(i));
     }
 
     @Override
@@ -173,15 +174,15 @@ public class Box implements IBox, ISerializable {
 
     public BlockPos size() {
         if (!isInitialized()) return BlockPos.ORIGIN;
-        return max.subtract(min).add(Utils.POS_ONE);
+        return max.subtract(min).add(VecUtil.POS_ONE);
     }
 
     public BlockPos center() {
-        return Utils.convertFloor(centerExact());
+        return new BlockPos(centerExact());
     }
 
     public Vec3d centerExact() {
-        return Utils.convert(min()).add(Utils.multiply(Utils.convert(size()), 0.5));
+        return new Vec3d(size()).scale(0.5).add(new Vec3d(min()));
     }
 
     public Box rotateLeft() {
@@ -211,14 +212,14 @@ public class Box implements IBox, ISerializable {
     }
 
     public Box extendToEncompass(Vec3d toBeContained) {
-        setMin(Utils.min(min, Utils.convertFloor(toBeContained)));
-        setMax(Utils.max(max, Utils.convertCeiling(toBeContained)));
+        setMin(VecUtil.min(min, Utils.convertFloor(toBeContained)));
+        setMax(VecUtil.max(max, Utils.convertCeiling(toBeContained)));
         return this;
     }
 
     public Box extendToEncompass(BlockPos toBeContained) {
-        setMin(Utils.min(min, toBeContained));
-        setMax(Utils.max(max, toBeContained));
+        setMin(VecUtil.min(min, toBeContained));
+        setMax(VecUtil.max(max, toBeContained));
         return this;
     }
 
@@ -233,12 +234,12 @@ public class Box implements IBox, ISerializable {
     }
 
     public BlockPos closestInsideTo(BlockPos toTest) {
-        return Utils.max(min(), Utils.min(max(), toTest));
+        return VecUtil.max(min(), max(), toTest);
     }
 
     @Override
     public BlockPos getRandomBlockPos(Random rand) {
-        return min().add(Utils.randomBlockPos(rand, size().add(Utils.POS_ONE)));
+        return min().add(Utils.randomBlockPos(rand, size().add(VecUtil.POS_ONE)));
     }
 
     @Override

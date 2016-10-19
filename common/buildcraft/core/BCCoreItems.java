@@ -36,6 +36,8 @@ public class BCCoreItems {
         mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
         markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));
 
+        ItemManager.register(new ItemVolumeCuboid("item.volume_marker"));
+
         BCLibItems.guide.setCreativeTab(CreativeTabManager.getTab("buildcraft.main"));
     }
 }

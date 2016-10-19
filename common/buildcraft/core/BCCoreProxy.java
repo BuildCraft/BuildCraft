@@ -17,9 +17,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.core.client.RenderTickListener;
 import buildcraft.core.client.render.RenderMarkerVolume;
+import buildcraft.core.client.render.RenderVolumeInWorld;
 import buildcraft.core.list.ContainerList;
 import buildcraft.core.list.GuiList;
 import buildcraft.core.tile.TileMarkerVolume;
+import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.DetatchedRenderer.RenderMatrixType;
 
 public abstract class BCCoreProxy implements IGuiHandler {
     @SidedProxy
@@ -68,6 +71,7 @@ public abstract class BCCoreProxy implements IGuiHandler {
             super.fmlPreInit();
             BCCoreSprites.fmlPreInit();
             BuildCraftLaserManager.fmlPreInit();
+            DetatchedRenderer.INSTANCE.addRenderer(RenderMatrixType.FROM_WORLD_ORIGIN, RenderVolumeInWorld.INSTANCE);
         }
 
         @Override

@@ -23,7 +23,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.PipeEventItem;
@@ -72,7 +71,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 EnumDyeColor colour = readColour == 16 ? null : EnumDyeColor.byMetadata(readColour);
                 int delay = buffer.readInt();
                 ItemStack stack = buffer.readItemStackFromBuffer();
-                TravellingItem item = new TravellingItem(this, stack);
+                TravellingItem item = new TravellingItem(stack);
                 item.from = from;
                 item.to = to;
                 item.colour = colour;
@@ -95,7 +94,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         TileEntity tile = pipe.getConnectedTile(from);
         IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, from.getOpposite());
 
-        ItemStack possible = trans.extract(filter, 0, count, true);
+        ItemStack possible = trans.extract(filter, 1, count, true);
 
         if (possible == null || possible.stackSize == 0) {
             return 0;
@@ -109,6 +108,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         }
 
         ItemStack stack = trans.extract(filter, tryInsert.accepted, tryInsert.accepted, false);
+
+        if (stack == null) {
+            throw new IllegalStateException("The transactor " + trans + " returned a null itemstack from a known good request!");
+        }
 
         insertItemEvents(stack, null, EXTRACT_SPEED, from);
 
@@ -220,14 +223,12 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
      * 
      * (This text was copied from buildcraft.api.transport.PipeEventItem) */
     public ItemStack insertItem(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from) {
-        BCLog.logger.info("Attempting to insert " + stack + " from " + from);
 
         // Try insert
 
         PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(pipe.getHolder(), this, colour, from, stack);
         pipe.getHolder().fireEvent(tryInsert);
         if (tryInsert.isCanceled() || tryInsert.accepted <= 0) {
-            BCLog.logger.info("Insertion failed! (" + tryInsert.isCanceled() + ", " + tryInsert.accepted + ")");
             return stack;
         }
         ItemStack toInsert = stack.splitStack(tryInsert.accepted);
@@ -254,9 +255,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             }
         }
         sideCheck.possible.add(possible);
-        BCLog.logger.info("Possible sides (before): " + sideCheck.possible);
         holder.fireEvent(sideCheck);
-        BCLog.logger.info("Possible sides (after): " + sideCheck.possible);
         EnumSet<EnumFacing> used = getFirstNonEmptySet(sideCheck.possible);
 
         if (used == null) {
@@ -295,17 +294,34 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
         for (PipeEventItem.ItemEntry item : findDest.items) {
             PipeEventItem.ModifySpeed modifySpeed = new PipeEventItem.ModifySpeed(holder, this, item, speed);
+            modifySpeed.modifyTo(0.04, 0.01);
             holder.fireEvent(modifySpeed);
+
+            double target = modifySpeed.targetSpeed;
+            double maxDelta = modifySpeed.maxSpeedChange;
+            double nSpeed = speed;
+            if (nSpeed < target) {
+                nSpeed += maxDelta;
+                if (nSpeed > target) {
+                    nSpeed = target;
+                }
+            } else if (nSpeed > target) {
+                nSpeed -= maxDelta;
+                if (nSpeed < target) {
+                    nSpeed = target;
+                }
+            }
+
             if (item.to == null) {
                 item.to = destinations.get(0);
             }
 
-            insertItemImpl(item.stack, item.colour, modifySpeed.speed, from, item.to);
+            insertItemImpl(item.stack, item.colour, nSpeed, from, item.to);
         }
     }
 
     private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, EnumFacing to) {
-        TravellingItem item = new TravellingItem(this, stack);
+        TravellingItem item = new TravellingItem(stack);
 
         World world = pipe.getHolder().getPipeWorld();
         long now = world.getTotalWorldTime();

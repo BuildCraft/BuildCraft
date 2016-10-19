@@ -220,6 +220,7 @@ public class TagManager {
         registerTag("item.map_location").reg("map_location").locale("mapLocation").oldReg("mapLocation").model("map_location/");
         registerTag("item.paintbrush").reg("paintbrush").locale("paintbrush").model("paintbrush/");
         registerTag("item.marker_connector").reg("marker_connector").locale("markerConnector").model("marker_connector");
+        registerTag("item.volume_marker").reg("volume_marker").locale("volume_marker").model("volume_marker");
         // BC Core ItemBlocks
         registerTag("item.block.marker.volume").reg("marker_volume").locale("markerBlock").oldReg("markerBlock").model("marker_volume");
         registerTag("item.block.marker.path").reg("marker_path").locale("pathMarkerBlock").oldReg("pathMarkerBlock").model("marker_path");
@@ -320,12 +321,19 @@ public class TagManager {
         registerTag("item.plug.pulsar").reg("plug_pulsar").locale("pulsar").model("pluggable/pulsar");
         // BC Transport Pipes
         startBatch();// Pipes
+        registerTag("item.pipe.buildcrafttransport.structure").reg("pipe_structure").locale("PipeStructureCobblestone");
         registerTag("item.pipe.buildcrafttransport.wood_item").reg("pipe_wood_item").locale("PipeItemsWood");
         registerTag("item.pipe.buildcrafttransport.wood_fluid").reg("pipe_wood_fluid").locale("PipeFluidsWood");
         registerTag("item.pipe.buildcrafttransport.wood_power").reg("pipe_wood_power").locale("PipePowerWood");
         registerTag("item.pipe.buildcrafttransport.stone_item").reg("pipe_stone_item").locale("PipeItemsStone");
         registerTag("item.pipe.buildcrafttransport.stone_fluid").reg("pipe_stone_fluid").locale("PipeFluidsStone");
         registerTag("item.pipe.buildcrafttransport.stone_power").reg("pipe_stone_power").locale("PipePowerStone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_item").reg("pipe_cobble_item").locale("PipeItemsCobblestone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_fluid").reg("pipe_cobble_fluid").locale("PipeFluidsCobblestone");
+        registerTag("item.pipe.buildcrafttransport.cobblestone_power").reg("pipe_cobble_power").locale("PipePowerCobblestone");
+        registerTag("item.pipe.buildcrafttransport.quartz_item").reg("pipe_quartz_item").locale("PipeItemsQuartz");
+        registerTag("item.pipe.buildcrafttransport.quartz_fluid").reg("pipe_quartz_fluid").locale("PipeFluidsQuartz");
+        registerTag("item.pipe.buildcrafttransport.quartz_power").reg("pipe_quartz_power").locale("PipePowerQuartz");
         registerTag("item.pipe.buildcrafttransport.gold_item").reg("pipe_gold_item").locale("PipeItemsGold");
         registerTag("item.pipe.buildcrafttransport.gold_fluid").reg("pipe_gold_fluid").locale("PipeFluidsGold");
         registerTag("item.pipe.buildcrafttransport.gold_power").reg("pipe_gold_power").locale("PipePowerGold");

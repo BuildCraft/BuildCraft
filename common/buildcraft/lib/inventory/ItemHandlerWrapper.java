@@ -20,7 +20,8 @@ public final class ItemHandlerWrapper extends AbstractInvItemTransactor {
 
     @Override
     protected ItemStack extract(int slot, IStackFilter filter, int min, int max, boolean simulate) {
-        if (max < 0 || max < min) return null;
+        if (min <= 0) min = 1;
+        if (max < min) return null;
         ItemStack current = wrapped.getStackInSlot(slot);
         if (current == null || current.stackSize < min) return null;
         if (filter.matches(asValid(current))) {

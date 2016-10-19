@@ -91,7 +91,6 @@ public class PipeEventBus {
     }
 
     public void fireEvent(PipeEvent event) {
-        BCLog.logger.info("Firing a pipe event " + event);
         for (LocalHandler handler : currentHandlers) {
             handler.handleEvent(event);
         }

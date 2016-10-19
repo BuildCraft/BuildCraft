@@ -105,7 +105,8 @@ public class NbtSquisherTester {
         chest.setTag("items", chestItems);
 
         NBTTagList bpt = new NBTTagList();
-        for (int i = 0; i < 64 * 64 * 64; i++) {
+
+        for (int i = 0; i < 10 * 6 * 10; i++) {
             double r = rand.nextDouble();
             final NBTTagCompound toUse;
             if (r < 0.8) toUse = air;

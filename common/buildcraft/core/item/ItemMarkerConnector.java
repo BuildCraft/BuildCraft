@@ -4,22 +4,32 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.core.item;
 
+import java.util.Iterator;
+
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.marker.volume.VolumeMarkerCache;
+import buildcraft.core.marker.volume.VolumeMarkerCache.VolumeBox;
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.PositionUtil.Line;
 import buildcraft.lib.misc.PositionUtil.LineSkewResult;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import buildcraft.lib.misc.VecUtil;
 
 public class ItemMarkerConnector extends ItemBC_Neptune {
     public ItemMarkerConnector(String id) {
@@ -38,7 +48,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
                 }
             }
         }
-        return ActionResult.newResult(result, stack);
+        return newVolumeCacheStuff_onItemRightClick(stack, world, player, hand);
     }
 
     private static <S extends MarkerSubCache<?>> boolean interactCache(S cache, EntityPlayer player) {
@@ -100,5 +110,96 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
             if (other.distToPoint < distToPoint) return other;
             return this;
         }
+    }
+
+    // ##################################
+    //
+    // NEW volume cache stuff
+    //
+    // ##################################
+
+    private ActionResult<ItemStack> newVolumeCacheStuff_onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (!world.isRemote) {
+            // only run this on the client
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
+
+        VolumeMarkerCache mk = VolumeMarkerCache.SERVER_INSTANCE;
+
+        if (player.isSneaking()) {
+            mk.currentlyEditing = null;
+
+            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+            Vec3d end = start.add(player.getLookVec().scale(4));
+
+            Iterator<VolumeBox> iter = mk.boxes.iterator();
+            while (iter.hasNext()) {
+                VolumeBox vbox = iter.next();
+                AxisAlignedBB aabb = new AxisAlignedBB(vbox.box.min(), vbox.box.max().add(VecUtil.POS_ONE));
+
+                RayTraceResult ray = aabb.calculateIntercept(start, end);
+                if (ray != null) {
+                    iter.remove();
+                    return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+                }
+            }
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        }
+
+        if (mk.currentlyEditing == null) {
+            VolumeBox vBest = null;
+            double bestDist = 10000;
+            BlockPos editing = null;
+
+            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+            Vec3d end = start.add(player.getLookVec().scale(4));
+
+            for (VolumeBox vbox : mk.boxes) {
+
+                for (BlockPos p : PositionUtil.getCorners(vbox.box.min(), vbox.box.max())) {
+                    AxisAlignedBB aabb = new AxisAlignedBB(p);
+
+                    RayTraceResult ray = aabb.calculateIntercept(start, end);
+
+                    if (ray != null) {
+                        double dist = ray.hitVec.distanceTo(start);
+                        if (bestDist > dist) {
+                            bestDist = dist;
+                            vBest = vbox;
+                            editing = p;
+                        }
+                    }
+                }
+            }
+
+            if (vBest != null && editing != null) {
+                mk.currentlyEditing = vBest;
+
+                BlockPos min = vBest.box.min();
+                BlockPos max = vBest.box.max();
+
+                BlockPos held = min;
+                if (editing.getX() == min.getX()) {
+                    held = VecUtil.replaceValue(held, Axis.X, max.getX());
+                }
+                if (editing.getY() == min.getY()) {
+                    held = VecUtil.replaceValue(held, Axis.Y, max.getY());
+                }
+                if (editing.getZ() == min.getZ()) {
+                    held = VecUtil.replaceValue(held, Axis.Z, max.getZ());
+                }
+                mk.held = held;
+                mk.dist = Math.max(1.5, bestDist + 0.5);
+                return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            }
+        } else {
+            mk.currentlyEditing.box.reset();
+            mk.currentlyEditing.box.extendToEncompass(mk.held);
+            BlockPos lookingAt = new BlockPos(player.getPositionVector().addVector(0, player.getEyeHeight(), 0).add(player.getLookVec().scale(mk.dist)));
+            mk.currentlyEditing.box.extendToEncompass(lookingAt);
+            mk.currentlyEditing = null;
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        }
+        return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 }
