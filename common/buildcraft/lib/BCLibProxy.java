@@ -35,6 +35,7 @@ import buildcraft.lib.client.render.MarkerRenderer;
 import buildcraft.lib.client.resource.ResourceRegistry;
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.debug.BCAdvDebugging;
+import buildcraft.lib.fluid.BCFluid;
 import buildcraft.lib.fluid.FluidManager;
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemManager;
@@ -50,6 +51,8 @@ public abstract class BCLibProxy implements IGuiHandler {
     public void postRegisterItem(IItemBuildCraft item) {}
 
     public void postRegisterBlock(BlockBCBase_Neptune block) {}
+
+    public void postRegisterFluid(BCFluid fluid) {}
 
     void fmlPreInit() {}
 
@@ -100,6 +103,11 @@ public abstract class BCLibProxy implements IGuiHandler {
         public void postRegisterItem(IItemBuildCraft item) {
             item.postRegisterClient();
         }
+        
+        @Override
+        public void postRegisterFluid(BCFluid fluid) {
+            FluidManager.postRegisterFluid(fluid);
+        }
 
         @Override
         void fmlPreInit() {
@@ -113,7 +121,6 @@ public abstract class BCLibProxy implements IGuiHandler {
         @Override
         void fmlInit() {
             super.fmlInit();
-            FluidManager.fmlInitClient();
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
             IReloadableResourceManager reloadable = (IReloadableResourceManager) manager;
             reloadable.registerReloadListener(ResourceRegistry.INSTANCE);
