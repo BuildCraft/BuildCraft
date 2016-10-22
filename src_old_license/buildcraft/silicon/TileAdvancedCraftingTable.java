@@ -39,10 +39,10 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.CraftingFilter;
 import buildcraft.core.lib.network.PacketSlotChange;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory, PacketSlotChange.ITile {
 
@@ -193,7 +193,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
     @Override
     public String getInventoryName() {
-        return BCStringUtils.localize("tile.assemblyWorkbenchBlock.name");
+        return StringUtilBC.localize("tile.assemblyWorkbenchBlock.name");
     }
 
     @Override

@@ -52,6 +52,7 @@ import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
@@ -942,8 +943,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         } else {
             left.add("  - Builder");
             left.add("    - IsDone = " + (server.builder.isDone(server)));
-            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.builder.min()));
-            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.builder.max()));
+            left.add("    - Min = " + StringUtilBC.vec3ToDispString(server.builder.min()));
+            left.add("    - Max = " + StringUtilBC.vec3ToDispString(server.builder.max()));
             left.add("    - Successes = " + server.buildCallsS);
             left.add("    - Failures = " + server.buildCallsF);
         }
@@ -951,17 +952,17 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             left.add("  - BuildingBox = null");
         } else {
             left.add("  - BuildingBox");
-            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.box.min()));
-            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.box.max()));
+            left.add("    - Min = " + StringUtilBC.vec3ToDispString(server.box.min()));
+            left.add("    - Max = " + StringUtilBC.vec3ToDispString(server.box.max()));
         }
         if (server.miningBox == null || !server.miningBox.isInitialized()) {
             left.add("  - MiningBox = null");
         } else {
             left.add("  - MiningBox");
-            left.add("    - Min = " + BCStringUtils.vec3ToDispString(server.miningBox.min()));
-            left.add("    - Max = " + BCStringUtils.vec3ToDispString(server.miningBox.max()));
+            left.add("    - Min = " + StringUtilBC.vec3ToDispString(server.miningBox.min()));
+            left.add("    - Max = " + StringUtilBC.vec3ToDispString(server.miningBox.max()));
         }
-        left.add("  - Head = " + BCStringUtils.vec3ToDispString(server.headPos));
-        left.add("  - Target = " + BCStringUtils.vec3ToDispString(server.target));
+        left.add("  - Head = " + StringUtilBC.vec3ToDispString(server.headPos));
+        left.add("  - Target = " + StringUtilBC.vec3ToDispString(server.target));
     }
 }

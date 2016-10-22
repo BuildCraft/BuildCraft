@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.client.render.ICustomHighlight;
-import buildcraft.core.lib.utils.MatrixUtils;
+import buildcraft.lib.misc.MatrixUtil;
 
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     private static final EnumMap<EnumFacing, AxisAlignedBB[]> boxesMap = Maps.newEnumMap(EnumFacing.class);
@@ -32,7 +32,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
             AxisAlignedBB[] array = new AxisAlignedBB[2];
             array[0] = new AxisAlignedBB(0, 0, 0, 1, 0.25, 1);
             array[1] = new AxisAlignedBB(5 / 16.0, 4 / 16.0, 5 / 16.0, 11 / 16.0, 13 / 16.0, 11 / 16.0);
-            array = MatrixUtils.multiplyAll(array, MatrixUtils.rotateTowardsFace(EnumFacing.UP, face));
+            array = MatrixUtil.multiplyAll(array, MatrixUtil.rotateTowardsFace(EnumFacing.UP, face));
             boxesMap.put(face, array);
         }
     }

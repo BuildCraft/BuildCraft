@@ -39,6 +39,7 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.StackUtil;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver, IDebuggable {
     public static final int SLOT_RESULT = 9;
@@ -152,7 +153,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
             hasWork = result != null;
             ItemStack resultInto = resultInv.getStackInSlot(0);
 
-            if (resultInto != null && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())) {
+            if (resultInto != null && (!StackUtil.canMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())) {
                 isJammed = true;
             } else {
                 isJammed = false;
@@ -424,7 +425,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
             return false;
         }
         ItemStack slotStack = inv.getStackInSlot(slot);
-        if (StackHelper.canStacksMerge(stack, slotStack)) {
+        if (StackUtil.canMerge(stack, slotStack)) {
             return true;
         }
         for (int i = 0; i < 9; i++) {

@@ -17,11 +17,12 @@ import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
 import buildcraft.api.bpt.SchematicBlock;
-import buildcraft.core.lib.utils.MathUtils;
+
 import buildcraft.lib.bpt.builder.BuilderAnimationManager;
 import buildcraft.lib.bpt.builder.BuilderAnimationManager.EnumBuilderAnimMessage;
 import buildcraft.lib.bpt.helper.VanillaBlockClearer;
 import buildcraft.lib.bpt.task.TaskUsable;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
@@ -201,7 +202,7 @@ public class TickingBlueprintBuilder {
 
         if (accessor.hasPermissionToEdit(buildAt)) {
             PreBuildAction action = schematic.createClearingTask(accessor, buildAt);
-            int cost = MathUtils.clamp(action.getTimeCost(), 1, 100);
+            int cost = MathUtil.clamp(action.getTimeCost(), 1, 100);
             if (action.getType() == EnumPreBuildAction.REQUIRE_AIR) {
                 action = VanillaBlockClearer.DESTORY_ITEMS;
             }
@@ -224,7 +225,7 @@ public class TickingBlueprintBuilder {
         BlockPos buildAt = start.add(next);
 
         if (accessor.hasPermissionToEdit(buildAt)) {
-            int cost = MathUtils.clamp(schematic.getTimeCost(), 1, 100);
+            int cost = MathUtil.clamp(schematic.getTimeCost(), 1, 100);
             TaskUsable task = schematic.createTask(accessor, buildAt);
             tasks.add(Pair.of(task, buildAt));
             sender.sendBuilderMessage(EnumBuilderMessage.BUILD, (buffer) -> {

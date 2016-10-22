@@ -12,7 +12,8 @@ import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
     public static class Neighbor {
@@ -35,7 +36,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
+        return StringUtilBC.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
     }
 
     private boolean isTriggeredEnergyHandler(IEnergyConnection connection, EnumPipePart part) {

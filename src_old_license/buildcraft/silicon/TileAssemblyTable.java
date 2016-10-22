@@ -27,9 +27,9 @@ import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
     public String currentRecipeId = "";
@@ -109,7 +109,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
     @Override
     public String getInventoryName() {
-        return BCStringUtils.localize("tile.assemblyTableBlock.name");
+        return StringUtilBC.localize("tile.assemblyTableBlock.name");
     }
 
     @Override

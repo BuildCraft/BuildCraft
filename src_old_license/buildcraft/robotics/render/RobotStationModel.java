@@ -27,8 +27,8 @@ import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
 
 import javax.vecmath.Matrix4f;
@@ -119,7 +119,7 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
 
         List<BakedQuad> quads = Lists.newArrayList();
         if (base != null) {
-            Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+            Matrix4f matrix = MatrixUtil.rotateTowardsFace(face);
 
             for (MutableQuad mutable : baseQuads()) {
                 mutable = new MutableQuad(mutable);

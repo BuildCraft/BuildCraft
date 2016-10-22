@@ -21,8 +21,8 @@ import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 
 import javax.vecmath.Matrix4f;
@@ -61,7 +61,7 @@ public final class GatePluggableModel extends BakedModelHolder implements IPlugg
     public List<BakedQuad> bakeCutout(KeyPlugGate key, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
         List<MutableQuad> bakedQuads = renderGate(key, format);
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(key.side);
+        Matrix4f matrix = MatrixUtil.rotateTowardsFace(key.side);
         for (MutableQuad quad : bakedQuads) {
             quad.transform(matrix);
             quad.setCalculatedDiffuse();

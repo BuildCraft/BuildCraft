@@ -19,6 +19,7 @@ import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.misc.StackUtil;
 
 // TODO: Rewrite all methods from this into BCContainer_BC8
 @Deprecated
@@ -83,7 +84,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
                 adjustPhantomSlot(slot, mouseButton, clickType);
                 slot.onPickupFromSlot(player, playerInv.getItemStack());
             } else if (slot.isItemValid(stackHeld)) {
-                if (StackHelper.canStacksMerge(stackSlot, stackHeld)) {
+                if (StackUtil.canMerge(stackSlot, stackHeld)) {
                     adjustPhantomSlot(slot, mouseButton, clickType);
                 } else {
                     fillPhantomSlot(slot, stackHeld, mouseButton, clickType);
@@ -136,7 +137,7 @@ public abstract class BuildCraftContainer extends ContainerBC_Neptune {
             for (int slotIndex = start; stackToShift.stackSize > 0 && slotIndex < end; slotIndex++) {
                 Slot slot = inventorySlots.get(slotIndex);
                 ItemStack stackInSlot = slot.getStack();
-                if (stackInSlot != null && StackHelper.canStacksMerge(stackInSlot, stackToShift)) {
+                if (stackInSlot != null && StackUtil.canMerge(stackInSlot, stackToShift)) {
                     int resultingStackSize = stackInSlot.stackSize + stackToShift.stackSize;
                     int max = Math.min(stackToShift.getMaxStackSize(), slot.getSlotStackLimit());
                     if (resultingStackSize <= max) {

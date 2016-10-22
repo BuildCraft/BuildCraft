@@ -7,8 +7,9 @@ package buildcraft.transport.statements;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 
@@ -19,7 +20,7 @@ public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.pulsar.constant");
+        return StringUtilBC.localize("gate.action.pulsar.constant");
     }
 
     @Override

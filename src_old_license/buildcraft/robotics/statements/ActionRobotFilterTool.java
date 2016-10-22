@@ -18,8 +18,8 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionRobotFilterTool extends BCStatement implements IActionInternal {
 
@@ -30,7 +30,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.robot.filter_tool");
+        return StringUtilBC.localize("gate.action.robot.filter_tool");
     }
 
     // @Override

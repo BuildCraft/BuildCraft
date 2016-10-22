@@ -17,7 +17,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
 
@@ -49,7 +50,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
     @Override
     public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
+        return String.format(StringUtilBC.localize("gate.trigger.fluidlevel.below"), (int) (type.level * 100));
     }
 
     @Override

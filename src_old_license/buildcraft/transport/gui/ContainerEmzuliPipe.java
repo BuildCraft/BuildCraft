@@ -26,8 +26,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.RevolvingList;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class ContainerEmzuliPipe extends BuildCraftContainer {
@@ -112,9 +112,9 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
                 toolTip.clear();
                 EnumColor color = colors.getCurrent();
                 if (color != null) {
-                    toolTip.add(new ToolTipLine(String.format(BCStringUtils.localize("gui.pipes.emzuli.paint"), color.getLocalizedName())));
+                    toolTip.add(new ToolTipLine(String.format(StringUtilBC.localize("gui.pipes.emzuli.paint"), color.getLocalizedName())));
                 } else {
-                    toolTip.add(new ToolTipLine(BCStringUtils.localize("gui.pipes.emzuli.nopaint")));
+                    toolTip.add(new ToolTipLine(StringUtilBC.localize("gui.pipes.emzuli.nopaint")));
                 }
             }
         };

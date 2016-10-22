@@ -11,9 +11,9 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.mj.IMjConnector;
 
-import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.lib.engine.EngineConnector;
 import buildcraft.lib.engine.TileEngineBase_BC8;
+import buildcraft.lib.misc.data.AverageInt;
 
 public class TileEngineRedstone_BC8 extends TileEngineBase_BC8 {
     // TODO: Fix these numbers as they are probably completely wrong

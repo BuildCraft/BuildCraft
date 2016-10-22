@@ -5,8 +5,9 @@
 package buildcraft.robotics.statements;
 
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.StatementParameterItemStackExact;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionStationRequestItems extends ActionStationInputItems {
 
@@ -17,7 +18,7 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.station.request_items");
+        return StringUtilBC.localize("gate.action.station.request_items");
     }
 
     @Override

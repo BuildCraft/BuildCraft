@@ -36,8 +36,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.config.OverridableConfigOption;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiFiller extends GuiAdvancedInterface {
     class FillerParameterSlot extends StatementParameterSlot {
@@ -192,10 +192,10 @@ public class GuiFiller extends GuiAdvancedInterface {
     protected void drawGuiContainerForegroundLayer(int mx, int my) {
         super.drawGuiContainerForegroundLayer(mx, my);
 
-        String title = BCStringUtils.localize("tile.fillerBlock.name");
+        String title = StringUtilBC.localize("tile.fillerBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, 142, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.filling.resources"), 8, 74, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, 142, 0x404040);
         GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
 
         drawTooltipForSlotAt(mx, my);

@@ -10,9 +10,10 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
 import buildcraft.energy.TileEngineIron;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerCoolantBelowThreshold extends BCStatement implements ITriggerExternal {
 
@@ -26,7 +27,7 @@ public class TriggerCoolantBelowThreshold extends BCStatement implements ITrigge
 
     @Override
     public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.coolantLevelBelow"), (int) (threshold * 100));
+        return String.format(StringUtilBC.localize("gate.trigger.coolantLevelBelow"), (int) (threshold * 100));
     }
 
     @Override

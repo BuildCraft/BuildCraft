@@ -21,8 +21,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 
@@ -87,7 +87,7 @@ public class FacadeItemModel extends BuildCraftBakedModel implements ISmartItemM
         }
 
         List<BakedQuad> bakedQuads = model.bake(ModelRotation.X0_Y0, DefaultVertexFormats.ITEM, singleTextureFunction(sprite)).getGeneralQuads();
-        Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.EAST);
+        Matrix4f rotation = MatrixUtil.rotateTowardsFace(EnumFacing.EAST);
 
         Matrix4f translateToItem = new Matrix4f();
         translateToItem.setIdentity();

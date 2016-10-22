@@ -11,7 +11,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
@@ -26,7 +27,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.machine." + (active ? "scheduled" : "done"));
+        return StringUtilBC.localize("gate.trigger.machine." + (active ? "scheduled" : "done"));
     }
 
     @Override

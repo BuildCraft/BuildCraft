@@ -11,7 +11,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
@@ -26,7 +27,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.redstone.signal");
+        return StringUtilBC.localize("gate.action.redstone.signal");
     }
 
     @Override

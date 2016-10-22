@@ -46,6 +46,9 @@ public class BCTransportPipes {
     public static PipeDefinition clayItem;
     public static PipeDefinition clayFluid;
 
+    public static PipeDefinition voidItem;
+    public static PipeDefinition voidFluid;
+
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
 
@@ -90,6 +93,10 @@ public class BCTransportPipes {
         builder.logic(PipeBehaviourClay::new, PipeBehaviourClay::new);
         clayItem = builder.idTex("clay_item").flowItem().define();
         clayFluid = builder.idTex("clay_fluid").flowFluid().define();
+
+        builder.logic(PipeBehaviourVoid::new, PipeBehaviourVoid::new);
+        voidItem = builder.idTex("void_item").flowItem().define();
+        voidFluid = builder.idTex("void_fluid").flowFluid().define();
     }
 
     private static class DefinitionBuilder {

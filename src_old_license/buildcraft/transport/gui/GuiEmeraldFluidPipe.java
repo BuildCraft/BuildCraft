@@ -11,7 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 
 public class GuiEmeraldFluidPipe extends GuiBuildCraft {
@@ -32,7 +32,7 @@ public class GuiEmeraldFluidPipe extends GuiBuildCraft {
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String string = filterInventory.getDisplayName().getFormattedText();
         fontRendererObj.drawString(string, getCenteredOffset(string), 6, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 97, 0x404040);
     }
 
     @Override

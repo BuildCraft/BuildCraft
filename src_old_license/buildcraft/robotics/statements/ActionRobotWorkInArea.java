@@ -12,8 +12,9 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionRobotWorkInArea extends BCStatement implements IActionInternal {
 
@@ -50,7 +51,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize(areaType.getUnlocalizedName());
+        return StringUtilBC.localize(areaType.getUnlocalizedName());
     }
 
     public static IZone getArea(StatementSlot slot) {

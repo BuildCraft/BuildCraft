@@ -12,7 +12,8 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class PatternParameterXZDir implements IStatementParameter {
     private static final String[] names = { "west", "east", "north", "south" };
@@ -59,7 +60,7 @@ public class PatternParameterXZDir implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("direction." + names[direction & 3]);
+        return StringUtilBC.localize("direction." + names[direction & 3]);
     }
 
     @Override

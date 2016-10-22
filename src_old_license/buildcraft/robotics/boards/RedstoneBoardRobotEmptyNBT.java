@@ -9,7 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.robotics.EntityRobot;
 
 public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
@@ -42,7 +43,7 @@ public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public String getDisplayName() {
-        return BCStringUtils.localize("buildcraft.boardRobotClean");
+        return StringUtilBC.localize("buildcraft.boardRobotClean");
     }
 
 }

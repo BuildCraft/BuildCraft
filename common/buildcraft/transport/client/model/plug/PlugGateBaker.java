@@ -10,8 +10,9 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.utils.MatrixUtils;
+
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 
@@ -28,7 +29,7 @@ public enum PlugGateBaker implements IPluggableModelBaker<KeyPlugGate> {
     public List<BakedQuad> bake(KeyPlugGate key) {
         if (!cached.containsKey(key)) {
             List<BakedQuad> list = new ArrayList<>();
-            Matrix4f transform = MatrixUtils.rotateTowardsFace(key.side);
+            Matrix4f transform = MatrixUtil.rotateTowardsFace(key.side);
             MutableQuad[] quads = BCTransportModels.getGateQuads(key.variant);
             for (MutableQuad q : quads) {
                 MutableQuad c = new MutableQuad(q);

@@ -42,7 +42,6 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemMarkerConnector;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.lib.BCLibProxy;
@@ -52,6 +51,7 @@ import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
 import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public enum RenderTickListener {
@@ -70,7 +70,7 @@ public enum RenderTickListener {
         };
 
         for (EnumFacing face : EnumFacing.values()) {
-            Matrix4f matrix = MatrixUtils.rotateTowardsFace(EnumFacing.UP, face);
+            Matrix4f matrix = MatrixUtil.rotateTowardsFace(EnumFacing.UP, face);
             Vec3d[][] arr = new Vec3d[5][2];
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 2; j++) {

@@ -13,8 +13,9 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class StatementParamGateSideOnly implements IStatementParameter {
 
@@ -60,7 +61,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return isOn ? BCStringUtils.localize("gate.parameter.redstone.gateSideOnly") : "";
+        return isOn ? StringUtilBC.localize("gate.parameter.redstone.gateSideOnly") : "";
     }
 
     @Override

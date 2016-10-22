@@ -23,6 +23,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.utils.TransportUtils;
 
 public class TravelingItem {
@@ -244,7 +245,7 @@ public class TravelingItem {
         if (otherItem.isCorrupted()) {
             return false;
         }
-        return StackHelper.canStacksMerge(itemStack, otherItem.itemStack);
+        return StackUtil.canMerge(itemStack, otherItem.itemStack);
     }
 
     public boolean tryMergeInto(TravelingItem otherItem) {

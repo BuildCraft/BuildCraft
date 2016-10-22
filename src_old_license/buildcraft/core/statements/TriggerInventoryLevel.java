@@ -18,7 +18,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
 
@@ -55,7 +55,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
     @Override
     public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
+        return String.format(StringUtilBC.localize("gate.trigger.inventorylevel.below"), (int) (type.level * 100));
     }
 
     @Override

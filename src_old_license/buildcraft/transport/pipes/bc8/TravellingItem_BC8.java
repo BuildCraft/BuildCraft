@@ -23,6 +23,7 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8.Enter;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8.PropertyQuery;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.PipeTransportItems;
 
 public class TravellingItem_BC8 implements IPipeListener {
@@ -73,7 +74,7 @@ public class TravellingItem_BC8 implements IPipeListener {
     public boolean canBeGroupedWith(IPipeContentsItem other) {
         if (item.getDirection() != other.getDirection()) return false;
         if (item.getJourneyPart() != other.getJourneyPart()) return false;
-        if (!StackHelper.canStacksMerge(item.cloneItemStack(), other.cloneItemStack())) return false;
+        if (!StackUtil.canMerge(item.cloneItemStack(), other.cloneItemStack())) return false;
 
         Set<IPipeProperty<?>> thisProperties = item.getProperties().getPropertySet();
         Set<IPipeProperty<?>> otherProperties = other.getProperties().getPropertySet();

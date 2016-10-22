@@ -12,7 +12,8 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class PatternParameterYDir implements IStatementParameter {
     private static TextureAtlasSprite spriteUp, spriteDown;
@@ -47,7 +48,7 @@ public class PatternParameterYDir implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("direction." + (up ? "up" : "down"));
+        return StringUtilBC.localize("direction." + (up ? "up" : "down"));
     }
 
     @Override

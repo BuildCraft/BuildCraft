@@ -6,6 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -14,8 +15,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.BCMessageHandler;
+
 import buildcraft.lib.BCLibProxy;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.misc.data.DelayedList;
 
 import io.netty.buffer.ByteBuf;
@@ -129,6 +131,16 @@ public class MessageUtil {
             arr[i] = readNullableBlockPos(buffer, existsArray[i]);
         }
         return arr;
+    }
+
+    public static void writeVec3d(PacketBuffer buffer, Vec3d vec) {
+        buffer.writeDouble(vec.xCoord);
+        buffer.writeDouble(vec.yCoord);
+        buffer.writeDouble(vec.zCoord);
+    }
+
+    public static Vec3d readVec3d(PacketBuffer buffer) {
+        return new Vec3d(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
     }
 
     public static void sendReturnMessage(MessageContext context, IMessage reply) {

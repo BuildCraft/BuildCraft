@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.PipeEvent;
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventPriority;

@@ -29,9 +29,10 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.robotics.zone.ZonePlan;
 
@@ -78,7 +79,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int z = cpt.getInteger("z");
                     EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
-                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+                    strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
                 }
                 break;
             }
@@ -91,7 +92,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                     int yLength = cpt.getInteger("yMax") - y + 1;
                     int zLength = cpt.getInteger("zMax") - z + 1;
 
-                    strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+                    strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
                 }
                 break;
             }
@@ -107,7 +108,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
                         int y = first.getY();
                         int z = first.getZ();
 
-                        strings.add(BCStringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
+                        strings.add(StringUtilBC.localize("{" + x + ", " + y + ", " + z + "} + " + (pathNBT.tagCount() - 1) + " elements"));
                     }
                 }
                 break;
@@ -117,7 +118,7 @@ public class ItemMapLocation extends ItemBC_Neptune implements IMapLocation {
             }
         }
         if (type != MapLocationType.CLEAN) {
-            strings.add(BCStringUtils.localize("buildcraft.item.nonclean.usage"));
+            strings.add(StringUtilBC.localize("buildcraft.item.nonclean.usage"));
         }
     }
 

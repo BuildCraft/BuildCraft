@@ -11,8 +11,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
@@ -28,9 +28,9 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = BCStringUtils.localize("tile.autoWorkbenchBlock.name");
+        String title = StringUtilBC.localize("tile.autoWorkbenchBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
     }
 
     @Override

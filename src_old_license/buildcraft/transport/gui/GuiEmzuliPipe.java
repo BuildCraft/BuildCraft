@@ -9,7 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class GuiEmzuliPipe extends GuiBuildCraft {
@@ -30,8 +30,8 @@ public class GuiEmzuliPipe extends GuiBuildCraft {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = BCStringUtils.localize("gui.pipes.emzuli.title");
+        String title = StringUtilBC.localize("gui.pipes.emzuli.title");
         fontRendererObj.drawString(title, (xSize - fontRendererObj.getStringWidth(title)) / 2, 6, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 93, 0x404040);
     }
 }

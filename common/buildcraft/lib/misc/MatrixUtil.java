@@ -1,4 +1,4 @@
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 
-public class MatrixUtils {
+public class MatrixUtil {
     /** Rotation map for gates */
     private static final Map<EnumFacing, Matrix4f> rotationMap;
 

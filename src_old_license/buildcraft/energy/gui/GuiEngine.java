@@ -14,9 +14,9 @@ import buildcraft.core.client.CoreIconProvider;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.Ledger;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.misc.StringUtilBC;
 
 public abstract class GuiEngine extends GuiBC8<ContainerEngine> {
 
@@ -50,12 +50,12 @@ public abstract class GuiEngine extends GuiBC8<ContainerEngine> {
                 return;
             }
 
-            fontRendererObj.drawStringWithShadow(BCStringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-            fontRendererObj.drawStringWithShadow(BCStringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
+            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.energy"), x + 22, y + 8, headerColour);
+            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
             fontRendererObj.drawString(String.format("%d RF/t", engine.currentOutput), x + 22, y + 32, textColour);
-            fontRendererObj.drawStringWithShadow(BCStringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
             fontRendererObj.drawString(String.format("%d RF", engine.getEnergyStored()), x + 22, y + 56, textColour);
-            fontRendererObj.drawStringWithShadow(BCStringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
+            fontRendererObj.drawStringWithShadow(StringUtilBC.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
             fontRendererObj.drawString(String.format("%.2f \u00B0C", engine.getCurrentHeatValue()), x + 22, y + 80, textColour);
 
         }

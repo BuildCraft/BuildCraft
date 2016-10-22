@@ -18,8 +18,9 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.data.AverageInt;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
     public int clientRequiredEnergy = 0;
@@ -169,7 +170,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
             if (inside == null || inside.stackSize <= 0) {
                 inv.setInventorySlotContents(slot, remaining);
                 return;
-            } else if (StackHelper.canStacksMerge(inside, remaining)) {
+            } else if (StackUtil.canMerge(inside, remaining)) {
                 remaining.stackSize -= StackHelper.mergeStacks(remaining, inside, true);
             }
         }

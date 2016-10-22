@@ -14,6 +14,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
 
+import buildcraft.lib.misc.StackUtil;
+
 public class TransactorSimple extends Transactor {
     protected IInventory inventory;
     protected EnumFacing orientation;
@@ -56,7 +58,7 @@ public class TransactorSimple extends Transactor {
 
         for (IInvSlot slot : slots) {
             ItemStack stackInSlot = slot.getStackInSlot();
-            if (stackInSlot == null || StackHelper.canStacksMerge(stackInSlot, stack)) {
+            if (stackInSlot == null || StackUtil.canMerge(stackInSlot, stack)) {
                 int used = addToSlot(slot, stack, realInjected, doAdd);
                 if (used > 0) {
                     realInjected += used;
@@ -90,7 +92,7 @@ public class TransactorSimple extends Transactor {
             return wanted;
         }
 
-        if (!StackHelper.canStacksMerge(stack, stackInSlot)) {
+        if (!StackUtil.canMerge(stack, stackInSlot)) {
             return 0;
         }
 

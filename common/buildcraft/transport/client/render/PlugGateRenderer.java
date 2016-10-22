@@ -9,8 +9,8 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.plug.PluggableGate;
 
@@ -27,7 +27,7 @@ public class PlugGateRenderer implements IPluggableDynamicRenderer {
         int index = side.ordinal() + (isOn ? 6 : 0);
         if (cache[index] == null) {
             MutableQuad[] quads = BCTransportModels.getGateDynQuads(isOn);
-            Matrix4f transform = MatrixUtils.rotateTowardsFace(side);
+            Matrix4f transform = MatrixUtil.rotateTowardsFace(side);
             for (MutableQuad q : quads) {
                 q.transform(transform);
                 if (q.isShade()) {

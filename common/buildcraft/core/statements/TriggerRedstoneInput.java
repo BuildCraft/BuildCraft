@@ -9,7 +9,8 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
 
@@ -23,7 +24,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
+        return StringUtilBC.localize("gate.trigger.redstone.input." + (active ? "active" : "inactive"));
     }
 
     @Override

@@ -18,7 +18,6 @@ import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.gui.widgets.ScrollbarElement;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
@@ -29,6 +28,7 @@ import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.RemoteLibraryDatabase;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
@@ -65,7 +65,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
     public void initGui() {
         super.initGui();
 
-        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, BCStringUtils.localize("gui.del"));
+        deleteButton = new GuiButton(2, guiLeft + 174, guiTop + 109, 25, 20, StringUtilBC.localize("gui.del"));
         buttonList.add(deleteButton);
 
         guiElements.add(scrollbar);
@@ -75,7 +75,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
     @Override
     protected void drawForegroundLayer() {
-        String title = BCStringUtils.localize("tile.libraryBlock.name");
+        String title = StringUtilBC.localize("tile.libraryBlock.name");
         int x = guiLeft;
         int y = guiTop;
         fontRendererObj.drawString(title, x + getCenteredOffset(title), y + 6, 0x404040);

@@ -24,8 +24,8 @@ import net.minecraftforge.client.model.IModel;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.PipeIconProvider;
 
@@ -63,7 +63,7 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
 
     public List<BakedQuad> bake(EnumWorldBlockLayer layer, EnumFacing face, boolean hollow, IBlockState state, VertexFormat format) {
         List<BakedQuad> quads = Lists.newArrayList();
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        Matrix4f matrix = MatrixUtil.rotateTowardsFace(face);
 
         if (layer == EnumWorldBlockLayer.TRANSLUCENT) {
             if (!state.getBlock().canRenderInLayer(EnumWorldBlockLayer.TRANSLUCENT)) {

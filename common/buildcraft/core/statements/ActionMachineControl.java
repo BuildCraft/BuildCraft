@@ -14,7 +14,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionMachineControl extends BCStatement implements IActionExternal {
     public final Mode mode;
@@ -27,7 +28,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ROOT));
+        return StringUtilBC.localize("gate.action.machine." + mode.name().toLowerCase(Locale.ROOT));
     }
 
     @Override

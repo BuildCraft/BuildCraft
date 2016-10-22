@@ -19,7 +19,8 @@ public class TravellingItem {
     long tickStarted, tickFinished;
     EnumFacing from, to;
     /** A list of the next faces to try if the current "to" differs from "from" and "to" failed to insert. */
-    List<EnumFacing> toTryOrder;
+    List<EnumFacing> toTryOrder = null;
+    List<EnumFacing> tried = null;
 
     /** Used to save where this item should go next. Only the client uses this field. */
     Motion motion;

@@ -5,34 +5,18 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.items.IList;
+
+import buildcraft.lib.misc.StackUtil;
 
 public class StackHelper {
 
     protected StackHelper() {}
 
     /* STACK MERGING */
-
-    /** Checks if two ItemStacks are identical enough to be merged
-     *
-     * @param stack1 - The first stack
-     * @param stack2 - The second stack
-     * @return true if stacks can be merged, false otherwise */
-    public static boolean canStacksMerge(ItemStack stack1, ItemStack stack2) {
-        if (stack1 == null || stack2 == null) {
-            return false;
-        }
-        if (!stack1.isItemEqual(stack2)) {
-            return false;
-        }
-        if (!ItemStack.areItemStackTagsEqual(stack1, stack2)) {
-            return false;
-        }
-        return true;
-
-    }
 
     public static boolean canStacksOrListsMerge(ItemStack stack1, ItemStack stack2) {
         if (stack1 == null || stack2 == null) {
@@ -64,7 +48,7 @@ public class StackHelper {
      * @param doMerge - To actually do the merge
      * @return The number of items that was successfully merged. */
     public static int mergeStacks(ItemStack mergeSource, ItemStack mergeTarget, boolean doMerge) {
-        if (!canStacksMerge(mergeSource, mergeTarget)) {
+        if (!StackUtil.canMerge(mergeSource, mergeTarget)) {
             return 0;
         }
         int mergeCount = Math.min(mergeTarget.getMaxStackSize() - mergeTarget.stackSize, mergeSource.stackSize);
@@ -94,8 +78,7 @@ public class StackHelper {
             if (idBase.length > 0) {
                 for (int id : idBase) {
                     for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                        if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison
-                                .getItemDamage() == itemstack.getItemDamage())) {
+                        if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
                             return true;
                         }
                     }
@@ -110,8 +93,7 @@ public class StackHelper {
         if (oreIDs.length > 0) {
             for (int id : oreIDs) {
                 for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                    if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison
-                            .getItemDamage() == itemstack.getItemDamage())) {
+                    if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
                         return true;
                     }
                 }

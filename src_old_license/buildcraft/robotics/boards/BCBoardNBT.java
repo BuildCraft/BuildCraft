@@ -13,7 +13,8 @@ import net.minecraft.util.text.TextFormatting;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class BCBoardNBT extends RedstoneBoardRobotNBT {
     public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<>();
@@ -46,8 +47,8 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean advanced) {
-        list.add(TextFormatting.BOLD + BCStringUtils.localize("buildcraft.boardRobot" + upperName));
-        list.add(BCStringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
+        list.add(TextFormatting.BOLD + StringUtilBC.localize("buildcraft.boardRobot" + upperName));
+        list.add(StringUtilBC.localize("buildcraft.boardRobot" + upperName + ".desc"));
     }
 
     @Override
@@ -72,6 +73,6 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
     @Override
     public String getDisplayName() {
-        return BCStringUtils.localize("buildcraft.boardRobot" + upperName);
+        return StringUtilBC.localize("buildcraft.boardRobot" + upperName);
     }
 }

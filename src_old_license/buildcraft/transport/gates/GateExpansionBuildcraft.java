@@ -25,8 +25,8 @@ import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.StringUtilBC;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
@@ -52,7 +52,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
     @Override
     public String getDisplayName() {
-        return BCStringUtils.localize("gate.expansion." + tag);
+        return StringUtilBC.localize("gate.expansion." + tag);
     }
 
     @Override

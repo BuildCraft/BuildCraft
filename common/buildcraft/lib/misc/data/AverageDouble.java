@@ -2,12 +2,13 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc.data;
 
 import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AverageDouble implements INBTSerializable<NBTTagCompound> {

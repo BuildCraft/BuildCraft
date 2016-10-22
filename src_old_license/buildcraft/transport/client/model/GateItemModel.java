@@ -19,8 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.client.model.BakedModelHolder;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.client.model.key.KeyPlugGate;
@@ -52,7 +52,7 @@ public class GateItemModel extends BakedModelHolder implements ISmartItemModel {
         if (!map.containsKey(key)) {
             List<BakedQuad> quads = Lists.newArrayList();
             List<MutableQuad> mutableQuads = GatePluggableModel.INSTANCE.renderGate(key, DefaultVertexFormats.ITEM);
-            Matrix4f rotation = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH);
+            Matrix4f rotation = MatrixUtil.rotateTowardsFace(EnumFacing.SOUTH);
 
             Matrix4f matScale = new Matrix4f();
             matScale.setIdentity();

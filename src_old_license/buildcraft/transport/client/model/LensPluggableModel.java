@@ -25,8 +25,8 @@ import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
 import buildcraft.core.lib.client.sprite.SubSprite;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.LensPluggable;
 
@@ -123,7 +123,7 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
 
         List<BakedQuad> quads = Lists.newArrayList();
         List<BakedQuad> bakedQuads = renderLens(model, sprite, format);
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        Matrix4f matrix = MatrixUtil.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             MutableQuad mutable = MutableQuad.create(quad);
             mutable.transform(matrix);
@@ -145,7 +145,7 @@ public final class LensPluggableModel extends BakedModelHolder implements IPlugg
 
         List<BakedQuad> quads = Lists.newArrayList();
         List<BakedQuad> bakedQuads = renderLens(modelTranslucent(), sprite, format);
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        Matrix4f matrix = MatrixUtil.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             MutableQuad mutable = MutableQuad.create(quad);
             mutable.setTint(shade);

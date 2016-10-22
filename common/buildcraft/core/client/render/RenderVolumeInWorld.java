@@ -37,14 +37,20 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
         for (VolumeBox box : VolumeMarkerCache.SERVER_INSTANCE.boxes) {
-            if (box == VolumeMarkerCache.SERVER_INSTANCE.currentlyEditing) {
-                renderEditingBox(player, partialTicks, vb);
-            } else {
+            if (box != VolumeMarkerCache.SERVER_INSTANCE.currentlyEditing) {
                 renderBox(box, vb);
             }
         }
 
         Tessellator.getInstance().draw();
+
+        if (VolumeMarkerCache.SERVER_INSTANCE.currentlyEditing != null) {
+            vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+
+            renderEditingBox(player, partialTicks, vb);
+
+            Tessellator.getInstance().draw();
+        }
     }
 
     private static void renderBox(VolumeBox box, VertexBuffer vb) {
@@ -53,6 +59,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         for (LaserData_BC8 data : box.box.laserData) {
             LaserRenderer_BC8.renderLaserBuffer(data, vb);
         }
+        // TODO: Render corners!
     }
 
     private static void renderEditingBox(EntityPlayer player, float partialTicks, VertexBuffer vb) {
@@ -69,6 +76,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         for (LaserData_BC8 data : mk.renderCache.laserData) {
             LaserRenderer_BC8.renderLaserBuffer(data, vb);
         }
+        // TODO: Render corners!
     }
 
     private static void makeLaserBox(Box box, LaserType type) {

@@ -15,8 +15,8 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
@@ -57,7 +57,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.pipe." + kind.name());
+        return StringUtilBC.localize("gate.trigger.pipe." + kind.name());
     }
 
     @Override

@@ -20,8 +20,8 @@ import buildcraft.api.transport.pluggable.IPluggableModelBaker;
 import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 
 import javax.vecmath.Matrix4f;
 
@@ -69,7 +69,7 @@ public class ModelPowerAdapter extends BakedModelHolder implements IPluggableMod
 
         List<BakedQuad> quads = Lists.newArrayList();
         List<BakedQuad> bakedQuads = renderAdapter(model, sprite, format);
-        Matrix4f matrix = MatrixUtils.rotateTowardsFace(face);
+        Matrix4f matrix = MatrixUtil.rotateTowardsFace(face);
         for (BakedQuad quad : bakedQuads) {
             MutableQuad mutable = MutableQuad.create(quad);
             mutable.transform(matrix);

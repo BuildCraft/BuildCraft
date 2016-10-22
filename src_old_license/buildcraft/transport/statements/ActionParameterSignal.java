@@ -22,7 +22,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.Gate;
 
 public class ActionParameterSignal implements IStatementParameter {
@@ -108,8 +109,8 @@ public class ActionParameterSignal implements IStatementParameter {
         if (colour == null) {
             return null;
         }
-        String format = BCStringUtils.localize("gate.action.pipe.wire");
-        Object[] args = { BCStringUtils.localize("color." + colour.name().toLowerCase(Locale.ENGLISH)) };
+        String format = StringUtilBC.localize("gate.action.pipe.wire");
+        Object[] args = { StringUtilBC.localize("color." + colour.name().toLowerCase(Locale.ENGLISH)) };
         return String.format(format, args);
     }
 

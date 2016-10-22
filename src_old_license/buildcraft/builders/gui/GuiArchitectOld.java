@@ -24,8 +24,8 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiArchitectOld extends GuiBuildCraft {
 
@@ -65,8 +65,8 @@ public class GuiArchitectOld extends GuiBuildCraft {
         buttonList.add(optionExcavate);
 
         optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
-        optionAllowCreative.setToolTip(new ToolTip(500, new ToolTipLine(BCStringUtils.localize("tile.architect.tooltip.allowCreative.1")),
-                new ToolTipLine(BCStringUtils.localize("tile.architect.tooltip.allowCreative.2"))));
+        optionAllowCreative.setToolTip(new ToolTip(500, new ToolTipLine(StringUtilBC.localize("tile.architect.tooltip.allowCreative.1")),
+                new ToolTipLine(StringUtilBC.localize("tile.architect.tooltip.allowCreative.2"))));
         buttonList.add(optionAllowCreative);
 
         textField = new GuiTextField(0, this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
@@ -103,27 +103,27 @@ public class GuiArchitectOld extends GuiBuildCraft {
         BlueprintReadConfiguration conf = architect.readConfiguration;
 
         if (conf.rotate) {
-            optionRotate.displayString = BCStringUtils.localize("tile.architect.rotate");
+            optionRotate.displayString = StringUtilBC.localize("tile.architect.rotate");
         } else {
-            optionRotate.displayString = BCStringUtils.localize("tile.architect.norotate");
+            optionRotate.displayString = StringUtilBC.localize("tile.architect.norotate");
         }
 
         if (conf.excavate) {
-            optionExcavate.displayString = BCStringUtils.localize("tile.architect.excavate");
+            optionExcavate.displayString = StringUtilBC.localize("tile.architect.excavate");
         } else {
-            optionExcavate.displayString = BCStringUtils.localize("tile.architect.noexcavate");
+            optionExcavate.displayString = StringUtilBC.localize("tile.architect.noexcavate");
         }
 
         if (conf.allowCreative) {
-            optionAllowCreative.displayString = BCStringUtils.localize("tile.architect.allowCreative");
+            optionAllowCreative.displayString = StringUtilBC.localize("tile.architect.allowCreative");
         } else {
-            optionAllowCreative.displayString = BCStringUtils.localize("tile.architect.noallowCreative");
+            optionAllowCreative.displayString = StringUtilBC.localize("tile.architect.noallowCreative");
         }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = BCStringUtils.localize("tile.architectBlock.name");
+        String title = StringUtilBC.localize("tile.architectBlock.name");
         fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
         /* if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) { fontRendererObj.drawString(architect.name + "|",

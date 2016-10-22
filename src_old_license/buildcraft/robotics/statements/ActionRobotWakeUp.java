@@ -7,8 +7,9 @@ package buildcraft.robotics.statements;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
@@ -19,7 +20,7 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.robot.wakeup");
+        return StringUtilBC.localize("gate.action.robot.wakeup");
     }
 
     @Override

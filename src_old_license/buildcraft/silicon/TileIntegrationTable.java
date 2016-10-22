@@ -17,9 +17,10 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
     public static final int SLOT_OUTPUT = 9;
@@ -149,7 +150,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
         if (existingOutput == null) {
             return true;
         }
-        if (StackHelper.canStacksMerge(output, existingOutput) && output.stackSize + existingOutput.stackSize <= output.getMaxStackSize()) {
+        if (StackUtil.canMerge(output, existingOutput) && output.stackSize + existingOutput.stackSize <= output.getMaxStackSize()) {
             return true;
         }
         return false;
@@ -205,7 +206,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
     @Override
     public String getInventoryName() {
-        return BCStringUtils.localize("tile.integrationTableBlock.name");
+        return StringUtilBC.localize("tile.integrationTableBlock.name");
     }
 
     @Override

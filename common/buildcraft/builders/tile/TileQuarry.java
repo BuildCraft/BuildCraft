@@ -45,11 +45,11 @@ import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.entity.EntityQuarry;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
@@ -309,7 +309,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             }
             buffer.writeBoolean(drillPos != null);
             if (drillPos != null) {
-                NetworkUtils.writeVec3d(buffer, drillPos);
+                MessageUtil.writeVec3d(buffer, drillPos);
             }
             buffer.writeBoolean(box != null);
             if (box != null) {
@@ -344,7 +344,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                 currentTask = null;
             }
             if (buffer.readBoolean()) {
-                drillPos = NetworkUtils.readVec3d(buffer);
+                drillPos = MessageUtil.readVec3d(buffer);
             } else {
                 drillPos = null;
             }

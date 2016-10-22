@@ -30,9 +30,10 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class Blueprint extends BlueprintBase {
     public LinkedList<SchematicEntity> entities = new LinkedList<>();
@@ -178,7 +179,7 @@ public class Blueprint extends BlueprintBase {
                     schematic.writeSchematicToNBT(cpt, mapping);
                     /* We don't use the index of the current for loop because we shouldn't rely on the behaviour of
                      * BlockPos.getAllInBox */
-                    nbtContents.setTag(BCStringUtils.blockPosToShortString(pos), cpt);
+                    nbtContents.setTag(StringUtilBC.blockPosToShortString(pos), cpt);
                 }
             } catch (Throwable t) {
                 CrashReport crash;
@@ -268,7 +269,7 @@ public class Blueprint extends BlueprintBase {
         if (base instanceof NBTTagCompound) {
             NBTTagCompound contents = (NBTTagCompound) base;
             for (BlockPos pos : BlockPos.getAllInBox(BlockPos.ORIGIN, size.subtract(Utils.POS_ONE))) {
-                NBTTagCompound single = contents.getCompoundTag(BCStringUtils.blockPosToShortString(pos));
+                NBTTagCompound single = contents.getCompoundTag(StringUtilBC.blockPosToShortString(pos));
                 loadSingleSchematicFromNBT(pos, single);
             }
         } else {// 1.7.10 back-compat

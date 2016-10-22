@@ -10,8 +10,9 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.RobotUtils;
 
@@ -24,7 +25,7 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.robot.in.station");
+        return StringUtilBC.localize("gate.trigger.robot.in.station");
     }
 
     @Override

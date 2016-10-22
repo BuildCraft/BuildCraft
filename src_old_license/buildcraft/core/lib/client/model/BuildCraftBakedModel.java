@@ -25,8 +25,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 
-import buildcraft.core.lib.utils.MatrixUtils;
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 
 public class BuildCraftBakedModel extends PerspAwareModelBase {
     public static final int U_MIN = 0;
@@ -69,7 +69,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         {
             Matrix4f rotationMatrix = new Matrix4f();
             rotationMatrix.setIdentity();
-            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
+            rotationMatrix = MatrixUtil.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
 
             Matrix4f result = new Matrix4f();
             result.setIdentity();
@@ -123,7 +123,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
 
             Matrix4f rotationMatrix = new Matrix4f();
             rotationMatrix.setIdentity();
-            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.NORTH);
+            rotationMatrix = MatrixUtil.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.NORTH);
 
             // Multiply by the last matrix transformation FIRST
             result.mul(trsrMatrix);
@@ -142,7 +142,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
 
             Matrix4f rotationMatrix = new Matrix4f();
             rotationMatrix.setIdentity();
-            rotationMatrix = MatrixUtils.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
+            rotationMatrix = MatrixUtil.rotateTowardsFace(EnumFacing.SOUTH, EnumFacing.EAST);
 
             Matrix4f result = new Matrix4f();
             result.setIdentity();

@@ -22,9 +22,9 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.BCStringUtils;
 import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StringUtilBC;
 
 public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
     public ItemBlueprint() {
@@ -63,23 +63,23 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             String name = NBTUtils.getItemData(stack).getString("name");
 
             if ("".equals(name)) {
-                list.add(BCStringUtils.localize("item.blueprint.unnamed"));
+                list.add(StringUtilBC.localize("item.blueprint.unnamed"));
             } else {
                 list.add(name);
             }
 
-            list.add(BCStringUtils.localize("item.blueprint.author") + " " + NBTUtils.getItemData(stack).getString("author"));
+            list.add(StringUtilBC.localize("item.blueprint.author") + " " + NBTUtils.getItemData(stack).getString("author"));
         } else {
-            list.add(BCStringUtils.localize("item.blueprint.blank"));
+            list.add(StringUtilBC.localize("item.blueprint.blank"));
         }
 
         if (NBTUtils.getItemData(stack).hasKey("permission")) {
             BuildingPermission p = BuildingPermission.values()[NBTUtils.getItemData(stack).getByte("permission")];
 
             if (p == BuildingPermission.CREATIVE_ONLY) {
-                list.add(BCStringUtils.localize("item.blueprint.creative_only"));
+                list.add(StringUtilBC.localize("item.blueprint.creative_only"));
             } else if (p == BuildingPermission.NONE) {
-                list.add(BCStringUtils.localize("item.blueprint.no_build"));
+                list.add(StringUtilBC.localize("item.blueprint.no_build"));
             }
         }
 
@@ -87,7 +87,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
             boolean isComplete = NBTUtils.getItemData(stack).getBoolean("isComplete");
 
             if (!isComplete) {
-                list.add(BCStringUtils.localize("item.blueprint.incomplete"));
+                list.add(StringUtilBC.localize("item.blueprint.incomplete"));
             }
         }
     }

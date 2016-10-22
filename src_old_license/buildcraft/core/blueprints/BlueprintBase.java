@@ -23,8 +23,8 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.Matrix4i;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.Box;
 

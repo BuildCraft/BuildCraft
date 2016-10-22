@@ -8,7 +8,8 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.items.IList;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public enum ListTooltipHandler {
     INSTANCE;
@@ -21,7 +22,7 @@ public enum ListTooltipHandler {
             ItemStack list = player.getHeldItemMainhand();
             if (list != null && list.getItem() instanceof IList) {
                 if (((IList) list.getItem()).matches(list, stack)) {
-                    event.getToolTip().add(TextFormatting.GREEN + BCStringUtils.localize("tip.list.matches"));
+                    event.getToolTip().add(TextFormatting.GREEN + StringUtilBC.localize("tip.list.matches"));
                 }
             }
         }

@@ -7,7 +7,8 @@ package buildcraft.robotics.statements;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionStationAcceptItems extends ActionStationInputItems {
 
@@ -19,7 +20,7 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.station.accept_items");
+        return StringUtilBC.localize("gate.action.station.accept_items");
     }
 
     @Override

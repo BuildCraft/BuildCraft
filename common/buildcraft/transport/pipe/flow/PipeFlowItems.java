@@ -40,6 +40,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     public static final int NET_CREATE_ITEM = 2;
 
+    // TODO: work out how to make this fire reach centre events!
     private final DelayedList<TravellingItem> items = new DelayedList<>();
 
     public PipeFlowItems(IPipe pipe) {
@@ -169,7 +170,11 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                         // Really drop it
                         dropItem(item, leftOver);
                     } else {
-                        insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder);
+                        if (item.tried == null) {
+                            item.tried = new ArrayList<>(6);
+                        }
+                        item.tried.add(to);
+                        insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder, item.tried);
                     }
                 }
 
@@ -276,7 +281,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 /* We failed and will be dropping the item right in the centre of the pipe.
                  * 
                  * No need for any other events */
-                insertItemImpl(toInsert, colour, speed, from, null);
+                insertItemImpl(toInsert, colour, speed, from, null, null);
                 return;
             }
         }
@@ -319,11 +324,11 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 item.to = findDest.generateRandomOrder();
             }
 
-            insertItemImpl(item.stack, item.colour, nSpeed, from, item.to);
+            insertItemImpl(item.stack, item.colour, nSpeed, from, item.to, null);
         }
     }
 
-    private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to) {
+    private void insertItemImpl(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from, List<EnumFacing> to, List<EnumFacing> tried) {
         TravellingItem item = new TravellingItem(stack);
 
         World world = pipe.getHolder().getPipeWorld();
@@ -336,6 +341,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (to != null && to.size() > 1) {
             item.toTryOrder = to.subList(1, to.size());
         }
+        item.tried = tried;
 
         double dist = getPipeLength(item.from) + getPipeLength(item.to);
         item.genTimings(now, dist);

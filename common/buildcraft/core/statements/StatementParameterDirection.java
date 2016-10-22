@@ -24,7 +24,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class StatementParameterDirection implements IStatementParameter {
 
@@ -128,7 +129,7 @@ public class StatementParameterDirection implements IStatementParameter {
         if (dir == null) {
             return "";
         } else {
-            return BCStringUtils.localize("direction." + dir.name().toLowerCase());
+            return StringUtilBC.localize("direction." + dir.name().toLowerCase());
         }
     }
 

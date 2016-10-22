@@ -24,10 +24,10 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 
-import buildcraft.core.lib.utils.Matrix4i;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
+import buildcraft.lib.misc.Matrix4i;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.VecUtil;
 

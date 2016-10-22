@@ -7,9 +7,10 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerLightSensor extends BCStatement implements ITriggerInternal {
     private final boolean bright;
@@ -22,7 +23,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.trigger.light." + (bright ? "bright" : "dark"));
+        return StringUtilBC.localize("gate.trigger.light." + (bright ? "bright" : "dark"));
     }
 
     @Override

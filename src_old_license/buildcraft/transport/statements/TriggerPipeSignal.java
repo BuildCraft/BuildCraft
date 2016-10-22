@@ -11,8 +11,9 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.Pipe;
 
 public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
@@ -37,7 +38,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return String.format(BCStringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), BCStringUtils.localize("color."
+        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtilBC.localize("color."
             + color.name().toLowerCase(Locale.ENGLISH)));
     }
 

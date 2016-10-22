@@ -1,12 +1,13 @@
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.data.Box;
 
 public class Matrix4i {
-    public static final Matrix4i IDENTITY = makeScale(Utils.POS_ONE);
+    public static final Matrix4i IDENTITY = makeScale(VecUtil.POS_ONE);
 
     private final int m00, m01, m02, m03;
     private final int m10, m11, m12, m13;
@@ -143,7 +144,6 @@ public class Matrix4i {
 
     @Override
     public String toString() {
-        return m00 + ", " + m01 + ", " + m02 + ", " + m03 + "\n" + m10 + ", " + m11 + ", " + m12 + ", " + m13 + "\n" + m20 + ", " + m21 + ", " + m22
-            + ", " + m23 + "\n" + m30 + ", " + m31 + ", " + m32 + ", " + m33;
+        return m00 + ", " + m01 + ", " + m02 + ", " + m03 + "\n" + m10 + ", " + m11 + ", " + m12 + ", " + m13 + "\n" + m20 + ", " + m21 + ", " + m22 + ", " + m23 + "\n" + m30 + ", " + m31 + ", " + m32 + ", " + m33;
     }
 }

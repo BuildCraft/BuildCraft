@@ -13,7 +13,8 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.core.lib.utils.BCStringUtils;
+
+import buildcraft.lib.misc.StringUtilBC;
 
 public class PatternParameterCenter implements IStatementParameter {
     private static final int[] shiftLeft = { 6, 3, 0, 7, 4, 1, 8, 5, 2 };
@@ -58,7 +59,7 @@ public class PatternParameterCenter implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("direction.center." + direction);
+        return StringUtilBC.localize("direction.center." + direction);
     }
 
     @Override

@@ -17,7 +17,7 @@ import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.PacketGuiReturn;
-import buildcraft.core.lib.utils.BCStringUtils;
+import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
 
@@ -112,10 +112,10 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
     @Override
     protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-        String title = BCStringUtils.localize("gui.pipes.emerald.title");
+        String title = StringUtilBC.localize("gui.pipes.emerald.title");
 
         fontRendererObj.drawString(title, (xSize - fontRendererObj.getStringWidth(title)) / 2, 6, 0x404040);
-        fontRendererObj.drawString(BCStringUtils.localize("gui.inventory"), 8, ySize - 93, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 93, 0x404040);
     }
 
     @Override

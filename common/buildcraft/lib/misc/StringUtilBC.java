@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import java.text.DecimalFormat;
 
@@ -13,14 +13,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.translation.I18n;
 
-public final class BCStringUtils {
+public final class StringUtilBC {
 
     public static final Splitter newLineSplitter = Splitter.on("\\n");
 
     private static final DecimalFormat displayDecimalFormat = new DecimalFormat("#####0.00");
 
     /** Deactivate constructor */
-    private BCStringUtils() {}
+    private StringUtilBC() {}
 
     public static String localize(String key) {
         return I18n.translateToLocal(key);

@@ -11,8 +11,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.utils.MatrixUtils;
+
 import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
 import buildcraft.transport.client.model.key.KeyPlugBlocker;
 
@@ -29,7 +30,7 @@ public enum PlugBakerBlocker implements IPluggableModelBaker<KeyPlugBlocker> {
             cached.clear();
             for (EnumFacing to : EnumFacing.VALUES) {
                 List<BakedQuad> list = new ArrayList<>();
-                Matrix4f transform = MatrixUtils.rotateTowardsFace(to);
+                Matrix4f transform = MatrixUtil.rotateTowardsFace(to);
                 for (MutableQuad q : quads) {
                     MutableQuad c = new MutableQuad(q);
                     c.transform(transform);

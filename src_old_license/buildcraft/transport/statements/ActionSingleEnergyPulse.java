@@ -7,8 +7,9 @@ package buildcraft.transport.statements;
 import buildcraft.api.statements.IActionInternal.IActionInternalSingle;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.lib.utils.BCStringUtils;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionSingleEnergyPulse extends BCStatement implements IActionInternalSingle {
 
@@ -19,7 +20,7 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
 
     @Override
     public String getDescription() {
-        return BCStringUtils.localize("gate.action.pulsar.single");
+        return StringUtilBC.localize("gate.action.pulsar.single");
     }
 
     @Override
