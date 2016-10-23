@@ -13,7 +13,6 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +26,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.lib.inventory.InvUtils;
+
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
@@ -74,7 +73,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
     }
-    
+
     @Override
     public void onRemove() {
         super.onRemove();
@@ -104,7 +103,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
             if (invOverflow.getStackInSlot(1) == null) {
                 ItemStack out = crafting.craft();
                 ItemStack leftOver = invResult.insertItem(0, out, false);
-                InvUtils.dropItems(getWorld(), leftOver, getPos());
+                InventoryUtil.drop(getWorld(), getPos(), leftOver);
                 progress = 0;
             }
         } else if (progress != -1) {

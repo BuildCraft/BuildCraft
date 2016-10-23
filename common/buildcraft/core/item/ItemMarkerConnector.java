@@ -20,7 +20,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.marker.volume.VolumeMarkerCache;
 import buildcraft.core.marker.volume.VolumeMarkerCache.VolumeBox;
 import buildcraft.lib.item.ItemBC_Neptune;
@@ -90,7 +89,7 @@ public class ItemMarkerConnector extends ItemBC_Neptune {
         public MarkerLineInteraction(BlockPos marker1, BlockPos marker2, Vec3d playerPos, Vec3d playerEndPos) {
             this.marker1 = marker1;
             this.marker2 = marker2;
-            Line line = new Line(new Vec3d(marker1).add(Utils.VEC_HALF), new Vec3d(marker2).add(Utils.VEC_HALF));
+            Line line = new Line(VecUtil.convertCenter(marker1), VecUtil.convertCenter(marker2));
             LineSkewResult interactionPoint = PositionUtil.findLineSkewPoint(line, playerPos, playerEndPos);
             distToPoint = interactionPoint.closestPos.distanceTo(playerPos);
             distToLine = interactionPoint.distFromLine;

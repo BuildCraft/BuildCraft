@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.PipeEventItem;
+import buildcraft.api.transport.PipeEventItem.ItemEntry;
 import buildcraft.api.transport.neptune.IFlowItems;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
@@ -34,6 +35,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
@@ -78,6 +80,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                 long now = pipe.getHolder().getPipeWorld().getTotalWorldTime();
                 item.tickStarted = now;
                 item.tickFinished = now + delay;
+                item.state = EnumTravelState.CLIENT_RUNNING;
                 items.add(delay, item);
             }
         }
@@ -137,50 +140,120 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         List<TravellingItem> toTick = items.advance();
         if (world.isRemote) {
             // Note that we still needed to advance the items even if we are the client
+            for (TravellingItem item : toTick) {
+                if (item.state == EnumTravelState.CLIENT_RUNNING) {
+                    // If we have instructions then we should act on them
+                    if (item.motion != null) {
+                        runItemInstructions(item);
+                    } else {
+                        // But if not:
+                        item.state = EnumTravelState.CLIENT_WAITING;
+                        items.add(2, item);
+                    }
+                } else if (item.state == EnumTravelState.CLIENT_WAITING) {
+                    if (item.motion != null) {
+                        runItemInstructions(item);
+                    } else {
+                        /* forget about it, if the item did anything then we will find out soon and have to spawn a new
+                         * item. */
+                    }
+                } else {
+                    // All other client possibilities forget the item
+                }
+            }
             return;
         }
 
         for (TravellingItem item : toTick) {
-            EnumFacing to = item.to;
-            if (to == null) {
-                // TODO: fire drop event
-                dropItem(item);
-            } else {
-                ConnectedType type = pipe.getConnectedType(to);
+            if (item.state == EnumTravelState.SERVER_TO_CENTER) {
+                // fire centre event and then check to see if we need to redo the destinations
+                ItemStack oldStack = item.stack;
+                PipeEventItem.ReachCenter reachCenter = new PipeEventItem.ReachCenter(pipe.getHolder(), this, oldStack.copy(), item.from, item.colour);
+                if (pipe.getHolder().fireEvent(reachCenter)) {
+                    /* If an event handled this then we *may* need to fire destination handling events */
 
-                ItemStack leftOver = item.stack;
-
-                if (type == ConnectedType.PIPE) {
-                    IPipe oPipe = pipe.getConnectedPipe(to);
-                    PipeFlow flow = oPipe.getFlow();
-
-                    // TODO: Replace with interface for inserting
-                    if (flow instanceof PipeFlowItems) {
-                        PipeFlowItems oItemFlow = (PipeFlowItems) flow;
-                        leftOver = oItemFlow.insertItem(item.stack, item.colour, item.speed, to.getOpposite());
-                    }
-                } else if (type == ConnectedType.TILE) {
-                    TileEntity tile = pipe.getConnectedTile(to);
-                    IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, to.getOpposite());
-                    leftOver = trans.insert(item.stack, false, false);
-                }
-
-                if (leftOver != null) {
-                    if (item.toTryOrder == null || item.toTryOrder.isEmpty()) {
-                        // Really drop it
-                        dropItem(item, leftOver);
+                    ItemStack newStack = reachCenter.stack;
+                    if (newStack.stackSize <= 0) {
+                        // we must have voided or used up the item
+                        continue;
+                    } else if (item.colour != reachCenter.colour || ItemStack.areItemStacksEqual(oldStack, newStack)) {
+                        // Everything is the same, just add it back into the list
+                        item.state = EnumTravelState.SERVER_TO_EXIT;
+                        items.add(item.timeToExit, item);
                     } else {
-                        if (item.tried == null) {
-                            item.tried = new ArrayList<>(6);
+                        // Someone changed the itemstack or colour, recheck the destinations
+                        PipeEventItem.SideCheck sideCheck = new PipeEventItem.SideCheck(pipe.getHolder(), this, reachCenter.colour, item.from, newStack);
+                        sideCheck.disallow(item.from);
+                        if (item.tried != null) {
+                            sideCheck.disallowAll(item.tried);
                         }
-                        item.tried.add(to);
-                        insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder, item.tried);
-                    }
-                }
+                        pipe.getHolder().fireEvent(sideCheck);
 
-                // TODO: Inform client
+                        // Don't allow splitting now - you *have* to split at the entrance
+
+                        ItemEntry entry = new ItemEntry(reachCenter.colour, newStack, item.from);
+                        PipeEventItem.FindDest findDest = new PipeEventItem.FindDest(pipe.getHolder(), this, sideCheck.getOrder(), ImmutableList.of(entry));
+                        pipe.getHolder().fireEvent(findDest);
+                        if (entry.to == null) {
+                            entry.to = findDest.generateRandomOrder();
+                        }
+
+                        for (EnumFacing face : entry.to) {
+                            // TODO: Unfinished!
+                        }
+                    }
+                } else {
+                    // No-one handled this, its very simple
+                    item.state = EnumTravelState.SERVER_TO_EXIT;
+                    items.add(item.timeToExit, item);
+                }
+            } else {
+                EnumFacing to = item.to;
+                if (to == null) {
+                    // TODO: fire drop event
+                    dropItem(item);
+                } else {
+                    ConnectedType type = pipe.getConnectedType(to);
+
+                    ItemStack leftOver = item.stack;
+
+                    if (type == ConnectedType.PIPE) {
+                        IPipe oPipe = pipe.getConnectedPipe(to);
+                        PipeFlow flow = oPipe.getFlow();
+
+                        // TODO: Replace with interface for inserting
+                        if (flow instanceof PipeFlowItems) {
+                            PipeFlowItems oItemFlow = (PipeFlowItems) flow;
+                            leftOver = oItemFlow.insertItem(item.stack, item.colour, item.speed, to.getOpposite());
+                        }
+                    } else if (type == ConnectedType.TILE) {
+                        TileEntity tile = pipe.getConnectedTile(to);
+                        IItemTransactor trans = ItemTransactorHelper.getTransactor(tile, to.getOpposite());
+                        leftOver = trans.insert(item.stack, false, false);
+                    }
+
+                    if (leftOver != null) {
+                        if (item.toTryOrder == null || item.toTryOrder.isEmpty()) {
+                            // Really drop it
+                            dropItem(item, leftOver);
+                        } else {
+                            if (item.tried == null) {
+                                item.tried = new ArrayList<>(6);
+                            }
+                            item.tried.add(to);
+                            insertItemImpl(leftOver, item.colour, item.speed, item.to, item.toTryOrder, item.tried);
+                        }
+                    }
+                    // TODO: Inform client
+                }
             }
         }
+    }
+
+    /** Called on the client to use the motion field of the item to either move it to the next pipe or move it around
+     * etc */
+    private void runItemInstructions(TravellingItem item) {
+        // TODO!
     }
 
     private void dropItem(TravellingItem item) {
@@ -323,7 +396,6 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             if (item.to == null) {
                 item.to = findDest.generateRandomOrder();
             }
-
             insertItemImpl(item.stack, item.colour, nSpeed, from, item.to, null);
         }
     }
@@ -347,7 +419,8 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         item.genTimings(now, dist);
 
         int delay = (int) (item.tickFinished - now);
-        items.add(delay, item);
+        item.state = EnumTravelState.SERVER_TO_CENTER;
+        items.add(item.timeToCenter, item);
 
         // TODO: Optimise!
         sendCustomPayload(NET_CREATE_ITEM, (buffer) -> {

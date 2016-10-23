@@ -6,9 +6,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
 
-public class PipeBehaviourQuartz extends PipeBehaviour {
+public class PipeBehaviourQuartz extends PipeBehaviourSeperate {
     private static final double SPEED_DELTA = 0.002;
     private static final double SPEED_TARGET = 0.04;
 

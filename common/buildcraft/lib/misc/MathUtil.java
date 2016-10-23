@@ -8,4 +8,8 @@ public class MathUtil {
     public static int clamp(int toClamp, int min, int max) {
         return Math.max(Math.min(toClamp, max), min);
     }
+
+    public static int clamp(double toClamp, int min, int max) {
+        return clamp((int) toClamp, min, max);
+    }
 }

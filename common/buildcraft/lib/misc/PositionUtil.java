@@ -1,5 +1,6 @@
 package buildcraft.lib.misc;
 
+import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -250,5 +251,21 @@ public class PositionUtil {
             }
         }
         return interp.build();
+    }
+
+    public static BlockPos randomBlockPos(Random rand, BlockPos size) {
+        return new BlockPos(//
+                rand.nextInt(size.getX()),//
+                rand.nextInt(size.getY()),//
+                rand.nextInt(size.getZ())//
+        );
+    }
+
+    public static BlockPos randomBlockPos(Random rand, BlockPos min, BlockPos max) {
+        return new BlockPos(//
+                min.getX() + rand.nextInt(max.getX() - min.getX()),//
+                min.getY() + rand.nextInt(max.getY() - min.getY()),//
+                min.getZ() + rand.nextInt(max.getZ() - min.getZ())//
+        );
     }
 }

@@ -89,10 +89,12 @@ public class PipeEventBus {
         }
     }
 
-    public void fireEvent(PipeEvent event) {
+    public boolean fireEvent(PipeEvent event) {
+        boolean handled = false;
         for (LocalHandler handler : currentHandlers) {
-            handler.handleEvent(event);
+            handled |= handler.handleEvent(event);
         }
+        return handled;
     }
 
     public static class Handler {
@@ -128,18 +130,20 @@ public class PipeEventBus {
             this.handle = handle;
         }
 
-        public void handleEvent(PipeEvent event) {
+        public boolean handleEvent(PipeEvent event) {
             if (!receiveCanceled && event.isCanceled()) {
-                return;
+                return false;
             }
 
             if (classHandled.isAssignableFrom(event.getClass())) {
                 try {
                     handle.invoke(event);
+                    return true;
                 } catch (Throwable e) {
                     throw new IllegalStateException(e);
                 }
             }
+            return false;
         }
 
         @Override

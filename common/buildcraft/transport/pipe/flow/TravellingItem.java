@@ -15,8 +15,12 @@ public class TravellingItem {
     public ItemStack stack;
     public EnumDyeColor colour;
 
+    EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
     double speed = 0.05;
+    /** Absolute times with when an item started to when it finishes. */
     long tickStarted, tickFinished;
+    /** Relative times until an event needs to be fired or this item needs changing. */
+    int timeToCenter, timeToExit;
     EnumFacing from, to;
     /** A list of the next faces to try if the current "to" differs from "from" and "to" failed to insert. */
     List<EnumFacing> toTryOrder = null;
@@ -28,6 +32,21 @@ public class TravellingItem {
     static class Motion {
         EnumFacing to;
         Motion nextPipe;
+    }
+
+    enum EnumTravelState {
+        SERVER_TO_CENTER,
+        SERVER_TO_EXIT,
+
+        /** Used on the client when an item is running normally, and has instructions on what it should be doing */
+        CLIENT_RUNNING,
+        /** Used on the client when an item is waiting for its next instructions. It never stays in this state for more
+         * than 2 ticks. */
+        CLIENT_WAITING,
+        /** Used on the client to determine that when this will just disappear when it reaches its next tick. */
+        CLIENT_WILL_DESTROY,
+        /** Used on the client if this item is not valid AT ALL and so will not be drawn. */
+        CLIENT_INVALID;
     }
 
     public TravellingItem(ItemStack stack) {
@@ -45,9 +64,10 @@ public class TravellingItem {
 
     public void genTimings(long now, double distance) {
         tickStarted = now;
-        double time = distance / speed;
-        time = Math.ceil(time);
-        tickFinished = now + (long) (time);
+        int time = (int) Math.ceil(distance / speed);
+        tickFinished = now + (time);
+        timeToCenter = time / 2;
+        timeToExit = time - timeToCenter;
     }
 
     public Vec3d interpolatePosition(Vec3d start, Vec3d end, long tick, float partialTicks) {
@@ -92,5 +112,9 @@ public class TravellingItem {
         }
 
         return VecUtil.scale(from, 1 - interp).add(VecUtil.scale(to, interp));
+    }
+
+    public boolean isVisible() {
+        return state != EnumTravelState.CLIENT_INVALID;
     }
 }

@@ -62,6 +62,18 @@ public class VecUtil {
         return axis == Axis.X ? from.getX() : axis == Axis.Y ? from.getY() : from.getZ();
     }
 
+    public static Vec3d convertCenter(BlockPos pos) {
+        return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+    }
+
+    public static BlockPos convertFloor(Vec3d vec) {
+        return new BlockPos(Math.floor(vec.xCoord), Math.floor(vec.yCoord), Math.floor(vec.zCoord));
+    }
+
+    public static BlockPos convertCeiling(Vec3d vec) {
+        return new BlockPos(Math.ceil(vec.xCoord), Math.ceil(vec.yCoord), Math.ceil(vec.zCoord));
+    }
+
     // Min/Max
 
     public static BlockPos min(BlockPos a, BlockPos b) {

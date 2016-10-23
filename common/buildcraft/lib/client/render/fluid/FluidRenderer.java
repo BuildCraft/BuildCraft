@@ -16,7 +16,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
-import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.VecUtil;
@@ -102,7 +101,7 @@ public class FluidRenderer {
             sideRender = DEFAULT_FACES;
         }
 
-        double height = MathUtils.clamp(amount / cap, 0, 1);
+        double height = MathUtil.clamp(amount / cap, 0, 1);
         final Vec3d realMin, realMax;
         if (fluid.getFluid().isGaseous(fluid)) {
             realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.yCoord, max.yCoord));

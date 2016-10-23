@@ -10,9 +10,11 @@ import javax.imageio.ImageIO;
 
 import net.minecraft.util.math.MathHelper;
 
-import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCDebugging;
 
 public class SimpleTextureMap {
+    private static final boolean DEBUG = BCDebugging.shouldDebugLog("lib.texturemap");
+
     private int glId;
     private List<BufferedImage> rawTextures;
     private List<SimpleTexture> uploadedTextures = new ArrayList<>();
@@ -75,7 +77,7 @@ public class SimpleTextureMap {
     }
 
     private static void output(BufferedImage bufferedImage, String string) {
-        if (BuildCraftCore.DEVELOPER_MODE) {
+        if (DEBUG) {
             File loc = new File("./bc-tex/tex-map/");
             loc = new File(loc.getAbsolutePath());
             loc.mkdirs();

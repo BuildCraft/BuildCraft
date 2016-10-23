@@ -330,8 +330,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
-    public void fireEvent(PipeEvent event) {
-        eventBus.fireEvent(event);
+    public boolean fireEvent(PipeEvent event) {
+        return eventBus.fireEvent(event);
     }
 
     // Caps

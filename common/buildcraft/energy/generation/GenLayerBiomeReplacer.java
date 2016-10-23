@@ -4,11 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.generation;
 
-import buildcraft.core.lib.utils.SimplexNoise;
+import java.util.Random;
+
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-import java.util.Random;
+import buildcraft.lib.misc.data.SimplexNoise;
 
 @SuppressWarnings("Duplicates")
 public abstract class GenLayerBiomeReplacer extends GenLayer {

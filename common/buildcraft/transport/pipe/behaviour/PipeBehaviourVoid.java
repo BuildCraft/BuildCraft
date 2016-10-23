@@ -23,7 +23,7 @@ public class PipeBehaviourVoid extends PipeBehaviour {
     }
 
     @PipeEventHandler
-    public void split(PipeEventItem.Split split) {
-        split.items.clear();
+    public void reachCentre(PipeEventItem.ReachCenter reachCenter) {
+        reachCenter.stack.stackSize = 0;
     }
 }

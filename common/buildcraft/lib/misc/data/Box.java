@@ -11,6 +11,7 @@ import java.util.Random;
 import com.google.common.base.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -22,19 +23,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
-import buildcraft.api.core.ISerializable;
 
-import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.misc.Matrix4i;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;
 
-import io.netty.buffer.ByteBuf;
-
 /** MUTABLE integer variant of AxisAlignedBB, with a few BC-specific methods */
-public class Box implements IBox, ISerializable {
+public class Box implements IBox {
     @SideOnly(Side.CLIENT)
     public LaserData_BC8[] laserData;
     @SideOnly(Side.CLIENT)
@@ -82,7 +79,7 @@ public class Box implements IBox, ISerializable {
         this.max = max;
     }
 
-    public void initialize(Box box) {
+    public void initialize(IBox box) {
         reset();
         extendToEncompassBoth(box.min(), box.max());
     }
@@ -212,8 +209,8 @@ public class Box implements IBox, ISerializable {
     }
 
     public Box extendToEncompass(Vec3d toBeContained) {
-        setMin(VecUtil.min(min, Utils.convertFloor(toBeContained)));
-        setMax(VecUtil.max(max, Utils.convertCeiling(toBeContained)));
+        setMin(VecUtil.min(min, VecUtil.convertFloor(toBeContained)));
+        setMax(VecUtil.max(max, VecUtil.convertCeiling(toBeContained)));
         return this;
     }
 
@@ -239,28 +236,25 @@ public class Box implements IBox, ISerializable {
 
     @Override
     public BlockPos getRandomBlockPos(Random rand) {
-        return min().add(Utils.randomBlockPos(rand, size().add(VecUtil.POS_ONE)));
+        return PositionUtil.randomBlockPos(rand, min, max.add(1, 1, 1));
     }
 
-    @Override
-    public void readData(ByteBuf stream) {
-        byte flags = stream.readByte();
-        boolean initialized = (flags & 1) != 0;
-        if (initialized) {
-            min = NetworkUtils.readBlockPos(stream);
-            max = NetworkUtils.readBlockPos(stream);
+    public void readData(PacketBuffer stream) {
+        if (stream.readBoolean()) {
+            min = stream.readBlockPos();
+            max = stream.readBlockPos();
         } else {
             min = null;
             max = null;
         }
     }
 
-    @Override
-    public void writeData(ByteBuf stream) {
-        stream.writeByte((isInitialized() ? 1 : 0));
-        if (isInitialized()) {
-            NetworkUtils.writeBlockPos(stream, min);
-            NetworkUtils.writeBlockPos(stream, max);
+    public void writeData(PacketBuffer stream) {
+        boolean isValid = isInitialized();
+        stream.writeBoolean(isValid);
+        if (isValid) {
+            stream.writeBlockPos(min);
+            stream.writeBlockPos(max);
         }
     }
 

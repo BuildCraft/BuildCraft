@@ -36,16 +36,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import buildcraft.api.core.IBox;
 import buildcraft.api.items.IMapLocation.MapLocationType;
 import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.core.BCCoreConfig;
 import buildcraft.core.BCCoreItems;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.LaserData;
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemMarkerConnector;
-import buildcraft.core.lib.utils.Utils;
-import buildcraft.core.render.RenderLaser;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.client.render.DetatchedRenderer;
+import buildcraft.lib.client.render.laser.LaserBoxRenderer;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserData_BC8.LaserType;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;
@@ -53,12 +51,15 @@ import buildcraft.lib.marker.MarkerCache;
 import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.lib.misc.data.Box;
 
 public enum RenderTickListener {
     INSTANCE;
 
     private static final Vec3d[][][] MAP_LOCATION_POINT = new Vec3d[6][][];
     private static final String DIFF_START, DIFF_HEADER_FORMATTING;
+
+    private static final Box lastRenderedMapLoc = new Box();
 
     static {
         double[][][] upFace = {// Comments for formatting :)
@@ -225,17 +226,30 @@ public enum RenderTickListener {
             Vec3d[][] vectors = MAP_LOCATION_POINT[face.ordinal()];
             GL11.glTranslated(box.min().getX(), box.min().getY(), box.min().getZ());
             for (Vec3d[] vec : vectors) {
-                LaserData laser = new LaserData(vec[0], vec[1]);
-                RenderLaser.doRenderLaser(world, Minecraft.getMinecraft().getTextureManager(), laser, EntityLaser.LASER_STRIPES_YELLOW);
+                LaserData_BC8 laser = new LaserData_BC8(BuildCraftLaserManager.STRIPES_WRITE, vec[0], vec[1], 1 / 16.0);
+                LaserRenderer_BC8.renderLaserGlList(laser);
             }
-        } else if (type == MapLocationType.AREA) {
-            IBox box = ItemMapLocation.getAreaBox(stack);
-            LaserData[] laserBox = Utils.createLaserDataBox(new Vec3d(box.min()), new Vec3d(box.max().add(1, 1, 1)));
 
-            for (LaserData laser : laserBox) {
-                RenderLaser.doRenderLaser(world, Minecraft.getMinecraft().getTextureManager(), laser, EntityLaser.LASER_STRIPES_YELLOW);
-            }
+        } else if (type == MapLocationType.AREA) {
+
+            IBox box = ItemMapLocation.getAreaBox(stack);
+            lastRenderedMapLoc.reset();
+            lastRenderedMapLoc.initialize(box);
+            LaserBoxRenderer.renderLaserBoxGl(lastRenderedMapLoc, BuildCraftLaserManager.STRIPES_WRITE);
+
         } else if (type == MapLocationType.PATH) {
+            List<BlockPos> path = BCCoreItems.mapLocation.getPath(stack);
+            if (path != null && path.size() > 1) {
+                BlockPos last = null;
+                for (BlockPos p : path) {
+                    if (last == null) {
+                        last = p;
+                    } else {
+
+                    }
+                }
+            }
+
             // TODO!
         } else if (type == MapLocationType.ZONE) {
             // TODO!
@@ -264,8 +278,8 @@ public enum RenderTickListener {
                     continue;
                 }
 
-                Vec3d start = new Vec3d(a).add(Utils.VEC_HALF);
-                Vec3d end = new Vec3d(b).add(Utils.VEC_HALF);
+                Vec3d start = VecUtil.convertCenter(a);
+                Vec3d end = VecUtil.convertCenter(b);
 
                 Vec3d startToEnd = end.subtract(start).normalize();
                 Vec3d endToStart = start.subtract(end).normalize();

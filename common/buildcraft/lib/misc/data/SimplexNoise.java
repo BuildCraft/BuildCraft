@@ -1,4 +1,4 @@
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc.data;
 
 /** A speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.
  *

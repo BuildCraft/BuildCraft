@@ -2,8 +2,7 @@ package buildcraft.lib.client.guide.font;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-
-import buildcraft.core.lib.client.render.RenderUtils;
+import net.minecraft.client.renderer.GlStateManager;
 
 /** Implements a font that delegates to Minecraft's own {@link FontRenderer} */
 public enum MinecraftFont implements IFontRenderer {
@@ -26,7 +25,7 @@ public enum MinecraftFont implements IFontRenderer {
     @Override
     public int drawString(String text, int x, int y, int colour) {
         int v = getFontRenderer().drawString(text, x, y, colour);
-        RenderUtils.setGLColorFromInt(-1);
+        GlStateManager.color(1f, 1f, 1f);
         return v;
     }
 }
