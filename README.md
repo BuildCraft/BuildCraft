@@ -96,6 +96,10 @@ this repository will have to be rejected.
 
 ### Depending on BuildCraft
 
+Instructions for depending on BC 7.1.x can be found [here](https://github.com/BuildCraft/BuildCraft/blob/7.1.x/README.md) (for 1.7.10).
+8.0.x hasn't been finished yet, so there are no instructions for depending on it :(
+The following instructions are for BC 7.2.x (1.8.9):
+
 Add the following to your build.gradle file:
 ```
 repositories {
