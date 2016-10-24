@@ -277,6 +277,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public PipePluggable getPluggable(EnumFacing side) {
+        if (side == null) return null;
         return pluggables.get(side).pluggable;
     }
 
@@ -296,6 +297,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
 
     @Override
     public TileEntity getNeighbouringTile(EnumFacing side) {
+        if (side == null) return null;
         return worldObj.getTileEntity(getPos().offset(side));
     }
 

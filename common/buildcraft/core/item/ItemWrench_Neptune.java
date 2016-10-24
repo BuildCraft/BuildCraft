@@ -13,10 +13,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.blocks.CustomRotationHelper;
 import buildcraft.api.tools.IToolWrench;
+
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.misc.SoundUtil;
 
@@ -33,6 +35,11 @@ public class ItemWrench_Neptune extends ItemBC_Neptune implements IToolWrench {
     @Override
     public void wrenchUsed(EntityPlayer player, EnumHand hand, ItemStack wrench, RayTraceResult rayTrace) {
         player.swingArm(hand);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        return true;
     }
 
     @Override

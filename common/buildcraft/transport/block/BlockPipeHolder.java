@@ -289,7 +289,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack held, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TilePipeHolder tile = getPipe(world, pos, true);
+        TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             return false;
         }
@@ -298,18 +298,17 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (realSide == null) {
             realSide = side;
         }
-        if (realSide == null) {
-            EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
-
-            boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part);
-            if (!result) {
-                result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part);
-            }
-            return result;
-        }
         PipePluggable existing = tile.getPluggable(realSide);
         if (existing != null) {
             return existing.onPluggableActivate(player, trace, hitX, hitY, hitZ);
+        }
+        EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
+
+        if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
+            return true;
+        }
+        if (tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
+            return true;
         }
         Item item = held == null ? null : held.getItem();
         if (item instanceof IItemPluggable) {
@@ -325,15 +324,15 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return true;
             }
         }
-        boolean result = tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
-        if (!result) {
-            result = tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, EnumPipePart.fromFacing(realSide));
-        }
-        return result;
+        return false;
     }
 
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        if (world.isRemote) {
+            return false;
+        }
+
         TilePipeHolder tile = getPipe(world, pos, false);
         if (tile == null) {
             return super.removedByPlayer(state, world, pos, player, willHarvest);

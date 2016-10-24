@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.transport.neptune.PipeAPI;
@@ -49,6 +50,8 @@ public class BCTransportPipes {
     public static PipeDefinition voidItem;
     public static PipeDefinition voidFluid;
 
+    public static PipeDefinition lapisItem;
+
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
 
@@ -97,6 +100,15 @@ public class BCTransportPipes {
         builder.logic(PipeBehaviourVoid::new, PipeBehaviourVoid::new);
         voidItem = builder.idTex("void_item").flowItem().define();
         voidFluid = builder.idTex("void_fluid").flowFluid().define();
+
+        EnumDyeColor[] colourArray = EnumDyeColor.values();
+        String[] textSuffix = new String[16];
+        for (int i = 0; i < 16; i++) {
+            textSuffix[i] = "_" + colourArray[i].getName();
+        }
+
+        builder.logic(PipeBehaviourLapis::new, PipeBehaviourLapis::new).texSuffixes(textSuffix);
+        lapisItem = builder.idTexPrefix("lapis_item").flowItem().define();
     }
 
     private static class DefinitionBuilder {

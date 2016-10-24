@@ -39,10 +39,8 @@ import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
     private static final double EXTRACT_SPEED = 0.08;
-
     public static final int NET_CREATE_ITEM = 2;
 
-    // TODO: work out how to make this fire reach centre events!
     private final DelayedList<TravellingItem> items = new DelayedList<>();
 
     public PipeFlowItems(IPipe pipe) {

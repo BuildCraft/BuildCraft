@@ -347,6 +347,7 @@ public class TagManager {
         registerTag("item.pipe.buildcrafttransport.clay_fluid").reg("pipe_clay_fluid").locale("PipeFluidsClay");
         registerTag("item.pipe.buildcrafttransport.void_item").reg("pipe_void_item").locale("PipeItemsVoid");
         registerTag("item.pipe.buildcrafttransport.void_fluid").reg("pipe_void_fluid").locale("PipeFluidsVoid");
+        registerTag("item.pipe.buildcrafttransport.lapis_item").reg("pipe_lapis_fluid").locale("PipeItemsLapis");
         endBatch(setTab("buildcraft.pipe"));
         // BC Transport Item Blocks
         registerTag("item.block.filtered_buffer").reg("filtered_buffer").locale("filteredBufferBlock").model("filtered_buffer");
