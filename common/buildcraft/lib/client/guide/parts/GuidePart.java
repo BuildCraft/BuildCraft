@@ -164,8 +164,7 @@ public abstract class GuidePart {
             }
             if (firstLine && icon != null) {
                 int iconX = linkX - 18;
-                /* Ok this is because minecraft default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT
-                 * is 9. */
+                /* Minecraft's default font size (The actual pixels) is 6, but fontRenderer.FONT_HEIGHT is 9. */
                 int iconY = linkY - 5;
                 GuiRectangle iconBox = new GuiRectangle(iconX, iconY, 16, 16);
                 wasIconHovered = iconBox.contains(gui.mouse);
@@ -178,6 +177,9 @@ public abstract class GuidePart {
                 }
             }
             current = current.nextLine(LINE_HEIGHT, height);
+            if (current.pixel + LINE_HEIGHT > height) {
+                current = current.nextLine(LINE_HEIGHT, height);
+            }
             firstLine = false;
         }
         return current;

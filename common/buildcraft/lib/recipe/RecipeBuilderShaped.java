@@ -12,12 +12,18 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.core.BCLog;
 
+import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
+
 import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {
     private final ItemStack result;
     private final List<String> shape = new ArrayList<>();
     private final TCharObjectHashMap<Object> objects = new TCharObjectHashMap<>();
+
+    public RecipeBuilderShaped() {
+        this(null);
+    }
 
     public RecipeBuilderShaped(ItemStack result) {
         this.result = result;
@@ -51,6 +57,14 @@ public class RecipeBuilderShaped {
         return this;
     }
 
+    public RecipeBuilderShaped map(char c, Object val) {
+        if (val instanceof Item || val instanceof Block || val instanceof ItemStack || val instanceof String) {
+            objects.put(c, val);
+            return this;
+        }
+        throw new IllegalArgumentException("Invalid value " + val.getClass());
+    }
+
     public Object[] createRecipeObjectArray() {
         Object[] objs = new Object[shape.size() + objects.size() * 2];
         int offset = 0;
@@ -65,7 +79,25 @@ public class RecipeBuilderShaped {
     }
 
     public ShapedOreRecipe build() {
-        return new ShapedOreRecipe(result, createRecipeObjectArray());
+        return build(result);
+    }
+
+    public ShapedOreRecipe build(ItemStack resultStack) {
+        if (resultStack == null) {
+            throw new NullPointerException("result");
+        }
+        return new ShapedOreRecipe(resultStack, createRecipeObjectArray());
+    }
+
+    public NBTAwareShapedOreRecipe buildNbtAware() {
+        return buildNbtAware(result);
+    }
+
+    public NBTAwareShapedOreRecipe buildNbtAware(ItemStack resultStack) {
+        if (resultStack == null) {
+            throw new NullPointerException("result");
+        }
+        return new NBTAwareShapedOreRecipe(resultStack, createRecipeObjectArray());
     }
 
     public ShapedOreRecipe buildRotated() {

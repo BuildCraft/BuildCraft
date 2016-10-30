@@ -38,6 +38,7 @@ public class MutableQuad {
         ITEM_BLOCK_PADDING.addElement(new VertexFormatElement(0, EnumType.INT, EnumUsage.PADDING, 1));
     }
 
+    @Deprecated
     public static MutableQuad create(BakedQuad quad, VertexFormat format) {
         int[] data = quad.getVertexData();
         int stride = data.length / 4;
@@ -58,12 +59,7 @@ public class MutableQuad {
                 int lightmap = data[stride * v + UNUSED];
                 mutableVertex.lighti(lightmap);
             } else if (format == DefaultVertexFormats.ITEM) {
-                // TODO: get the normal!
-                int normal = data[stride * v + UNUSED];
-                float nx = 0;
-                float ny = 1;
-                float nz = 0;
-                mutableVertex.normalf(nx, ny, nz);
+                mutableVertex.normali(data[stride * v + UNUSED]);
             }
         }
         return mutable;
@@ -75,6 +71,7 @@ public class MutableQuad {
      * 
      * @param quad
      * @return */
+    @Deprecated
     public static MutableQuad create(BakedQuad quad) {
         return create(quad, ITEM_BLOCK_PADDING);
     }
@@ -163,6 +160,40 @@ public class MutableQuad {
         return new BakedQuad(data, tintIndex, face, sprite, shade, DefaultVertexFormats.ITEM);
     }
 
+    public MutableQuad fromBakedBlock(BakedQuad quad) {
+        tintIndex = quad.getTintIndex();
+        face = quad.getFace();
+        sprite = quad.getSprite();
+        shade = quad.shouldApplyDiffuseLighting();
+
+        int[] data = quad.getVertexData();
+        int stride = data.length / 4;
+
+        verticies[0].fromBakedBlock(data, 0);
+        verticies[1].fromBakedBlock(data, stride);
+        verticies[2].fromBakedBlock(data, stride * 2);
+        verticies[3].fromBakedBlock(data, stride * 3);
+
+        return this;
+    }
+
+    public MutableQuad fromBakedItem(BakedQuad quad) {
+        tintIndex = quad.getTintIndex();
+        face = quad.getFace();
+        sprite = quad.getSprite();
+        shade = quad.shouldApplyDiffuseLighting();
+
+        int[] data = quad.getVertexData();
+        int stride = data.length / 4;
+
+        verticies[0].fromBakedItem(data, 0);
+        verticies[1].fromBakedItem(data, stride);
+        verticies[2].fromBakedItem(data, stride * 2);
+        verticies[3].fromBakedItem(data, stride * 3);
+
+        return this;
+    }
+
     public void render(VertexBuffer vb) {
         for (MutableVertex v : verticies) {
             v.render(vb);
@@ -171,10 +202,6 @@ public class MutableQuad {
 
     public MutableVertex getVertex(int v) {
         return verticies[v & 0b11];
-    }
-
-    public MutableVertex[] verticies() {
-        return verticies;
     }
 
     public Vector3f getCalculatedNormal() {

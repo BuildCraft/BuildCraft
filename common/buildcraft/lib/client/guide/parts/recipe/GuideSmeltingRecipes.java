@@ -9,14 +9,28 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
 import buildcraft.lib.client.guide.parts.GuideSmeltingFactory;
+import buildcraft.lib.misc.StackUtil;
 
 public enum GuideSmeltingRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
     public List<GuidePartFactory> getUsages(ItemStack stack) {
+
+        if (stack.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+            List<GuidePartFactory> list = new ArrayList<>();
+            for (Entry<ItemStack, ItemStack> recipe : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
+                if (StackUtil.doesEitherStackMatch(stack, recipe.getValue()) || StackUtil.doesEitherStackMatch(stack, recipe.getKey())) {
+                    list.add(new GuideSmeltingFactory(recipe.getKey(), recipe.getValue()));
+                }
+            }
+            return list;
+        }
+
         ItemStack result = FurnaceRecipes.instance().getSmeltingResult(stack);
 
         if (result != null) {
@@ -33,7 +47,7 @@ public enum GuideSmeltingRecipes implements IStackRecipes {
         for (Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
             ItemStack input = entry.getKey();
             ItemStack output = entry.getValue();
-            if (ItemStack.areItemsEqual(stack, output)) {
+            if (StackUtil.doesEitherStackMatch(stack, output)) {
                 list.add(new GuideSmeltingFactory(input, output));
             }
         }

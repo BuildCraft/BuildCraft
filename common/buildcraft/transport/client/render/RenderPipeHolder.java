@@ -56,7 +56,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         Pipe p = pipe.getPipe();
         if (p != null && p.flow != null) {
             if (p.flow instanceof PipeFlowItems) {
-                RendererPipeFlowItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
+                PipeFlowRendererItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
             }
         }
     }

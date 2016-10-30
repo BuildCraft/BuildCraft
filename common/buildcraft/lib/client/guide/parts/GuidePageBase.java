@@ -68,7 +68,7 @@ public abstract class GuidePageBase extends GuidePart {
         PagePosition pos = new PagePosition(0, 0);
         for (GuidePart part : iterable) {
             pos = part.renderIntoArea(x, y, width, height, pos, -1);
-            if (part.wasHovered) {
+            if (pos.page == index && part.wasHovered) {
                 return part;
             }
             if (pos.page > index) {
@@ -100,7 +100,7 @@ public abstract class GuidePageBase extends GuidePart {
             }
             // Page index
             String text = (index + 1) + " / " + numPages;
-            getFontRenderer().drawString(text, x + GuiGuide.PAGE_LEFT_TEXT.width / 2 - getFontRenderer().getStringWidth(text) / 2, y + height, 0);
+            getFontRenderer().drawString(text, x + GuiGuide.PAGE_LEFT_TEXT.width / 2 - getFontRenderer().getStringWidth(text) / 2, y + height + 6, 0);
         }
         // Odd => second page, draw forward button and second page index
         else {
@@ -116,7 +116,7 @@ public abstract class GuidePageBase extends GuidePart {
             // Page index
             if (index + 1 <= numPages) {
                 String text = (index + 1) + " / " + numPages;
-                getFontRenderer().drawString(text, x + (GuiGuide.PAGE_RIGHT_TEXT.width - getFontRenderer().getStringWidth(text)) / 2, y + height, 0);
+                getFontRenderer().drawString(text, x + (GuiGuide.PAGE_RIGHT_TEXT.width - getFontRenderer().getStringWidth(text)) / 2, y + height + 6, 0);
             }
         }
     }

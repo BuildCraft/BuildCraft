@@ -44,8 +44,8 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon PAGE_LEFT_BACK = new GuiIcon(LEFT_PAGE_BACK, 0, 0, 193, 248);
     public static final GuiIcon PAGE_RIGHT_BACK = new GuiIcon(RIGHT_PAGE_BACK, 0, 0, 193, 248);
 
-    public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(31, 22, 141, 193);
-    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(20, 22, 141, 193);
+    public static final GuiRectangle PAGE_LEFT_TEXT = new GuiRectangle(23, 25, 168, 190);
+    public static final GuiRectangle PAGE_RIGHT_TEXT = new GuiRectangle(2, 25, 168, 190);
 
     public static final GuiIcon PEN_UP = new GuiIcon(ICONS_2, 0, 0, 14, 135);
     public static final GuiIcon PEN_ANGLED = new GuiIcon(ICONS_2, 17, 0, 100, 100);
@@ -80,7 +80,6 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon BORDER_BOTTOM_RIGHT = new GuiIcon(ICONS_2, 13, 209, 13, 13);
 
     public static final GuiIcon ORDER_TYPE = new GuiIcon(ICONS_2, 14, 100, 14, 14);
-    public static final GuiIcon ORDER_STAGE = new GuiIcon(ICONS_2, 28, 100, 14, 14);
     public static final GuiIcon ORDER_MOD_TYPE = new GuiIcon(ICONS_2, 42, 100, 14, 14);
     public static final GuiIcon ORDER_MOD = new GuiIcon(ICONS_2, 56, 100, 14, 14);
 
@@ -88,7 +87,7 @@ public class GuiGuide extends GuiScreen {
     public static final GuiIcon CHAPTER_MARKER_SPACE = new GuiIcon(ICONS_2, 6, 223, 19, 16);
     public static final GuiIcon CHAPTER_MARKER_RIGHT = new GuiIcon(ICONS_2, 27, 223, 5, 16);
 
-    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_STAGE, ORDER_MOD_TYPE, ORDER_MOD };
+    public static final GuiIcon[] ORDERS = { ORDER_TYPE, ORDER_MOD_TYPE, ORDER_MOD };
 
     public static final GuiRectangle BACK_POSITION = new GuiRectangle(PAGE_LEFT.width - BACK.width / 2, PAGE_LEFT.height - BACK.height - 2, BACK.width, BACK.height);
 

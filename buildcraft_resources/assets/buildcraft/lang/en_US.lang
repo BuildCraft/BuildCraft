@@ -239,12 +239,12 @@ gate.material.iron=Iron
 gate.material.nether_brick=Nether Brick
 gate.material.gold=Gold
 
-gate.modifier.gold=Modifier: §6Gold§r
+gate.modifier.lapis=Modifier: §9Lapis§r
 gate.modifier.quartz=Modifier: §fQuartz§r
 gate.modifier.diamond=Modifier: §bDiamond§r
 gate.modifier.prismarine=Modifier: §aPrismarine§r
 
-gate.modifier.desc.gold=Adds 1 trigger parameter slot
+gate.modifier.desc.lapis=Adds 1 trigger parameter slot
 gate.modifier.desc.quartz=Adds 1 trigger and action parameter slots
 gate.modifier.desc.diamond=Adds 2 trigger and action parameter slots
 gate.modifier.desc.prismarine=Adds 3 trigger and action parameter slots
@@ -645,10 +645,13 @@ buildcraft.guide.chapter.contents=Contents
 buildcraft.guide.chapter.type.unknown=Unknown Type!
 buildcraft.guide.chapter.type.block=Blocks
 buildcraft.guide.chapter.type.item=Items
+buildcraft.guide.chapter.type.pipe=Pipes
 
 buildcraft.guide.chapter.subtype.unknown=Unknown Subtype!
 buildcraft.guide.chapter.subtype.gear=Gears
 buildcraft.guide.chapter.subtype.tool=Tools
+buildcraft.guide.chapter.subtype.pipe_item=Item Transport
+buildcraft.guide.chapter.subtype.pipe_plug=Pluggables
 
 buildcraft.guide.chapter.stage.unknown=Unknown Era!
 buildcraft.guide.chapter.stage.base=Basic Resources
@@ -662,6 +665,9 @@ buildcraft.guide.chapter.mod.buildcraft=BuildCraft
 
 buildcraft.guide.chapter.submod.unknown=Unknown SubMod!
 buildcraft.guide.chapter.submod.core=Core
+buildcraft.guide.chapter.submod.transport=Transport
+
+buildcraft.guide.chapter.title.gate_base=Gates
 
 command.buildcraft.buildcraft.op.desc=- %s : Op FakePlayer
 command.buildcraft.buildcraft.op.help=Gives OP rights to the BC FakePlayer (acts in the name of quarries, robots, etc.)

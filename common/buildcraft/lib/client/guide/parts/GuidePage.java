@@ -30,7 +30,6 @@ public class GuidePage extends GuidePageBase {
             }
         }
         return list;
-
     }
 
     @Override

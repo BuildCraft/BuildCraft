@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCBlocks;
 import buildcraft.api.BCItems;
+
 import buildcraft.core.item.ItemPaintbrush_BC8;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.registry.TagManager;

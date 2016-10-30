@@ -9,12 +9,14 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.client.guide.GuiGuide;
 
 public class GuideCraftingFactory implements GuidePartFactory {
@@ -23,10 +25,25 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
     private final ItemStack[][] input;
     private final ItemStack output;
+    private final int hash;
 
     public GuideCraftingFactory(ItemStack[][] input, ItemStack output) {
         this.input = input;
         this.output = output;
+        NBTTagCompound hashNbt = new NBTTagCompound();
+        hashNbt.setTag("output", output.serializeNBT());
+        if (input != null) {
+            for (int i = 0; i < input.length; i++) {
+                if (input[i] != null) {
+                    for (int j = 0; j < input[i].length; j++) {
+                        if (input[i][j] != null) {
+                            hashNbt.setTag("in[" + i + "," + j + "]", input[i][j].serializeNBT());
+                        }
+                    }
+                }
+            }
+        }
+        this.hash = hashNbt.hashCode();
     }
 
     static {
@@ -43,12 +60,12 @@ public class GuideCraftingFactory implements GuidePartFactory {
 
     public static GuideCraftingFactory create(ItemStack stack) {
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            if (ItemStack.areItemStacksEqual(stack, recipe.getRecipeOutput())) {
+            if (OreDictionary.itemMatches(stack, recipe.getRecipeOutput(), false)) {
                 GuideCraftingFactory val = getFactory(recipe);
                 if (val != null) {
                     return val;
                 } else {
-                    BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown class (" + recipe.getClass() + ") for " + stack.getDisplayName());
+                    BCLog.logger.warn("[lib.guide.crafting] Found a matching recipe, but of an unknown " + recipe.getClass() + " for " + stack.getDisplayName());
                 }
             }
         }
@@ -174,5 +191,33 @@ public class GuideCraftingFactory implements GuidePartFactory {
     @Override
     public GuideCrafting createNew(GuiGuide gui) {
         return new GuideCrafting(gui, input, output);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
+        GuideCraftingFactory other = (GuideCraftingFactory) obj;
+        // Shortcut out of this full itemstack comparison as its really expensive
+        if (hash != other.hash) return false;
+
+        if (input.length != other.input.length) return false;
+        for (int i = 0; i < input.length; i++) {
+            ItemStack[] compA = input[i];
+            ItemStack[] compB = other.input[i];
+            if (compA.length != compB.length) return false;
+            for (int j = 0; j < input.length; j++) {
+                if (!ItemStack.areItemStacksEqual(compA[j], compB[j])) {
+                    return false;
+                }
+            }
+        }
+        return ItemStack.areItemStacksEqual(output, other.output);
     }
 }

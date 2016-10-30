@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.client.guide.data.JsonEntry;
 import buildcraft.lib.client.guide.data.JsonTypeTags;
 import buildcraft.lib.client.guide.loader.MarkdownPageLoader;
@@ -72,5 +73,10 @@ public class PageEntry {
 
     public ItemStack getItemStack() {
         return stack == null ? null : stack.copy();
+    }
+
+    @Override
+    public String toString() {
+        return "PageEntry [title=" + title + ", page=" + page + "]";
     }
 }

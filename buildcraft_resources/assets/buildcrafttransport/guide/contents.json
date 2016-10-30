@@ -1,0 +1,71 @@
+{
+    "entry_mask": "assets/<mod><sub_mod>/guide/<lang>/<type>/<page>",
+    "default_tags": 
+    {
+        "mod": "buildcraft",
+        "sub_mod": "transport"
+    },
+    "contents": 
+    [
+        {
+            "title": "item.PipeItemsWood.name",
+            "item_stack": "(buildcrafttransport:pipe_wood_item)",
+            "page": "wood_item.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_item"
+            }
+        },
+        {
+            "title": "item.PipeItemsCobblestone.name",
+            "item_stack": "(buildcrafttransport:pipe_cobble_item)",
+            "page": "cobblestone_item.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_item"
+            }
+        },
+        {
+            "title": "item.PipeItemsIron.name",
+            "item_stack": "(buildcrafttransport:pipe_iron_item)",
+            "page": "iron_item.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_item"
+            }
+        },
+        {
+            "title": "item.PipeItemsGold.name",
+            "item_stack": "(buildcrafttransport:pipe_gold_item)",
+            "page": "gold_item.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_item"
+            }
+        },
+        {
+            "title": "item.PipePlug.name",
+            "item_stack": "(buildcrafttransport:plug_blocker)",
+            "page": "plug_blocker.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_plug"
+            }
+        },
+        {
+            "title": "buildcraft.guide.chapter.title.gate_base",
+            "item_stack": "(buildcrafttransport:plug_gate)",
+            "page": "gate_base.md",
+            "type_tags": 
+            {
+                "type": "pipe",
+                "sub_type": "pipe_plug"
+            }
+        }
+    ]
+}

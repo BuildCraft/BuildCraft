@@ -1,5 +1,7 @@
 package buildcraft.transport;
 
+import java.util.Arrays;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
@@ -51,6 +53,7 @@ public class BCTransportPipes {
     public static PipeDefinition voidFluid;
 
     public static PipeDefinition lapisItem;
+    public static PipeDefinition daizuliItem;
 
     public static void preInit() {
         DefinitionBuilder builder = new DefinitionBuilder();
@@ -102,13 +105,19 @@ public class BCTransportPipes {
         voidFluid = builder.idTex("void_fluid").flowFluid().define();
 
         EnumDyeColor[] colourArray = EnumDyeColor.values();
-        String[] textSuffix = new String[16];
+        String[] texSuffix = new String[16];
         for (int i = 0; i < 16; i++) {
-            textSuffix[i] = "_" + colourArray[i].getName();
+            texSuffix[i] = "_" + colourArray[i].getName();
         }
 
-        builder.logic(PipeBehaviourLapis::new, PipeBehaviourLapis::new).texSuffixes(textSuffix);
+        builder.logic(PipeBehaviourLapis::new, PipeBehaviourLapis::new).texSuffixes(texSuffix);
         lapisItem = builder.idTexPrefix("lapis_item").flowItem().define();
+
+        String[] texSuffixPlus = Arrays.copyOf(texSuffix, 17);
+        texSuffixPlus[16] = "_filled";
+
+        builder.logic(PipeBehaviourDaizuli::new, PipeBehaviourDaizuli::new).texSuffixes(texSuffixPlus);
+        daizuliItem = builder.idTexPrefix("daizuli_item").flowItem().define();
     }
 
     private static class DefinitionBuilder {

@@ -458,7 +458,7 @@ public class BuildCraftCore extends BuildCraftMod {
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
         ListRegistry.itemClassAsType.add(ItemFood.class);
 
-        DebuggingTools.init();
+        DebuggingTools.fmlInit();
     }
 
     @Mod.EventHandler

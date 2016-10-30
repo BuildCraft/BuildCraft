@@ -15,8 +15,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.client.guide.PageEntry;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.parts.*;
@@ -239,6 +242,8 @@ public enum MarkdownPageLoader implements IPageLoaderText {
             list.addAll(recipeParts);
         }
         List<GuidePartFactory> usageParts = RecipeLookupHelper.getAllUsages(stack);
+        // Ensure we don't have any duplicate recipes
+        usageParts.removeAll(recipeParts);
         if (usageParts.size() > 0) {
             if (recipeParts.size() != 1) {
                 list.add(GuidePartNewPage::new);
@@ -312,6 +317,10 @@ public enum MarkdownPageLoader implements IPageLoaderText {
 
         try {
             int meta = Integer.parseInt(args[2].trim());
+            if (meta == -1) {
+                // Use oredict
+                meta = OreDictionary.WILDCARD_VALUE;
+            }
             stack = new ItemStack(stack.getItem(), stack.stackSize, meta);
         } catch (NumberFormatException nfe) {
             BCLog.logger.warn("[lib.markdown] " + args[2] + " was not a valid number: " + nfe.getLocalizedMessage());

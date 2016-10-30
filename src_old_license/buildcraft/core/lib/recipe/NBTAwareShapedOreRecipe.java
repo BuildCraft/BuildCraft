@@ -5,12 +5,15 @@ import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import buildcraft.lib.misc.StackUtil;
+
 public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
 
-    public NBTAwareShapedOreRecipe(ItemStack result, Object[] recipe) {
+    public NBTAwareShapedOreRecipe(ItemStack result, Object... recipe) {
         super(result, recipe);
     }
 
@@ -37,9 +40,8 @@ public class NBTAwareShapedOreRecipe extends ShapedOreRecipe {
                     if (!OreDictionary.itemMatches(targetStack, slot, false)) {
                         return false;
                     }
-                    if (targetStack.hasTagCompound()) {
-                        if (!slot.hasTagCompound()) return false;
-                        if (!targetStack.getTagCompound().equals(slot.getTagCompound())) return false;
+                    if (!StackUtil.doesStackNbtMatch(targetStack, slot)) {
+                        return false;
                     }
                 } else if (target instanceof List) {
                     boolean matched = false;

@@ -174,9 +174,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                     if (newStack.stackSize <= 0) {
                         // we must have voided or used up the item
                         continue;
-                    } else if (item.colour != reachCenter.colour || ItemStack.areItemStacksEqual(oldStack, newStack)) {
+                    } else if (true || item.colour == reachCenter.colour && ItemStack.areItemStacksEqual(oldStack, newStack)) {
                         // Everything is the same, just add it back into the list
                         item.state = EnumTravelState.SERVER_TO_EXIT;
+                        item.colour = reachCenter.colour;
                         items.add(item.timeToExit, item);
                     } else {
                         // Someone changed the itemstack or colour, recheck the destinations

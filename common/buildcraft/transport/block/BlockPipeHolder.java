@@ -294,6 +294,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return false;
         }
         RayTraceResult trace = rayTrace(world, pos, player);
+        if (trace == null) {
+            return false;
+        }
         EnumFacing realSide = getPartSideHit(trace);
         if (realSide == null) {
             realSide = side;

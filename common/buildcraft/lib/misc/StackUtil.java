@@ -5,6 +5,9 @@ import java.util.Collection;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.oredict.OreDictionary;
 
 /** Provides various utils for interacting with {@link ItemStack}, and multiples. */
 public class StackUtil {
@@ -61,5 +64,24 @@ public class StackUtil {
             }
         }
         return true;
+    }
+
+    public static NBTTagCompound stripNonFunctionNbt(ItemStack from) {
+        NBTTagCompound nbt = NBTUtils.getItemData(from).copy();
+        if (nbt.getSize() == 0) {
+            return nbt;
+        }
+        // TODO: Remove all of the non functional stuff (name, desc, etc)
+        return nbt;
+    }
+
+    public static boolean doesStackNbtMatch(ItemStack target, ItemStack with) {
+        NBTTagCompound nbtTarget = stripNonFunctionNbt(target);
+        NBTTagCompound nbtWith = stripNonFunctionNbt(with);
+        return nbtTarget.equals(nbtWith);
+    }
+
+    public static boolean doesEitherStackMatch(ItemStack stackA, ItemStack stackB) {
+        return OreDictionary.itemMatches(stackA, stackB, false) || OreDictionary.itemMatches(stackB, stackA, false);
     }
 }

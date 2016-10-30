@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.client.guide.*;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.client.guide.node.NodePageLine;
@@ -147,6 +148,7 @@ public class GuidePageContents extends GuidePageBase {
                     gui.sortingOrderIndex = i;
                     loadMainGui();
                     gui.refreshChapters();
+                    parentNode.setFontRenderer(getFontRenderer());
                     return;
                 }
                 oY += 14;

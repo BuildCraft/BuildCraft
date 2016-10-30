@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.api.BCModules;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+
 import buildcraft.lib.block.VanillaPaintHandlers;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.bpt.vanilla.VanillaSchematics;
@@ -67,6 +68,8 @@ public class BCLib {
         VanillaRotationHandlers.fmlInit();
 
         ItemManager.fmlInit();
+
+        BCLibRecipes.fmlInit();
 
         BCLibDatabase.fmlInit();
     }

@@ -29,6 +29,10 @@ public class MutableVertex {
     }
 
     public MutableVertex(MutableVertex from) {
+        copyFrom(from);
+    }
+
+    public void copyFrom(MutableVertex from) {
         position_x = from.position_x;
         position_y = from.position_y;
         position_z = from.position_z;
@@ -75,6 +79,34 @@ public class MutableVertex {
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
         // NROMAL_3B
         data[offset + 6] = normalToPackedInt();
+    }
+
+    public void fromBakedBlock(int[] data, int offset) {
+        // POSITION_3F
+        position_x = Float.intBitsToFloat(data[offset + 0]);
+        position_y = Float.intBitsToFloat(data[offset + 1]);
+        position_z = Float.intBitsToFloat(data[offset + 2]);
+        // COLOR_4UB
+        colouri(data[offset + 3]);
+        // TEX_2F
+        tex_u = Float.intBitsToFloat(data[offset + 4]);
+        tex_v = Float.intBitsToFloat(data[offset + 5]);
+        // TEX_2S
+        lighti(data[offset + 6]);
+    }
+
+    public void fromBakedItem(int[] data, int offset) {
+        // POSITION_3F
+        position_x = Float.intBitsToFloat(data[offset + 0]);
+        position_y = Float.intBitsToFloat(data[offset + 1]);
+        position_z = Float.intBitsToFloat(data[offset + 2]);
+        // COLOR_4UB
+        colouri(data[offset + 3]);
+        // TEX_2F
+        tex_u = Float.intBitsToFloat(data[offset + 4]);
+        tex_v = Float.intBitsToFloat(data[offset + 5]);
+        // NROMAL_3B
+        normali(data[offset + 6]);
     }
 
     // Rendering
@@ -147,6 +179,13 @@ public class MutableVertex {
         normal_x = x;
         normal_y = y;
         normal_z = z;
+        return this;
+    }
+
+    public MutableVertex normali(int combined) {
+        normal_x = ((combined >> 0) & 0xFF) / 0x7f;
+        normal_y = ((combined >> 8) & 0xFF) / 0x7f;
+        normal_z = ((combined >> 16) & 0xFF) / 0x7f;
         return this;
     }
 

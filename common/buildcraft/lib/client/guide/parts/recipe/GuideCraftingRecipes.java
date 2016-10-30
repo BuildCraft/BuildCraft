@@ -15,16 +15,17 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.lib.client.guide.parts.GuideCraftingFactory;
 import buildcraft.lib.client.guide.parts.GuidePartFactory;
+import buildcraft.lib.misc.StackUtil;
 
 public enum GuideCraftingRecipes implements IStackRecipes {
     INSTANCE;
 
     @Override
-    public List<GuidePartFactory> getUsages(ItemStack stack) {
+    public List<GuidePartFactory> getUsages(ItemStack target) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
-            if (checkRecipeUses(recipe, stack)) {
+            if (checkRecipeUses(recipe, target)) {
                 GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
                     list.add(factory);
@@ -35,32 +36,32 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         return list;
     }
 
-    private static boolean checkRecipeUses(IRecipe recipe, ItemStack stack) {
+    private static boolean checkRecipeUses(IRecipe recipe, ItemStack target) {
         if (recipe instanceof ShapedRecipes) {
             ShapedRecipes shaped = (ShapedRecipes) recipe;
             for (ItemStack in : shaped.recipeItems) {
-                if (OreDictionary.itemMatches(in, stack, false)) {
+                if (StackUtil.doesEitherStackMatch(in, target)) {
                     return true;
                 }
             }
         } else if (recipe instanceof ShapelessRecipes) {
             ShapelessRecipes shapeless = (ShapelessRecipes) recipe;
             for (ItemStack in : shapeless.recipeItems) {
-                if (OreDictionary.itemMatches(in, stack, false)) {
+                if (StackUtil.doesEitherStackMatch(in, target)) {
                     return true;
                 }
             }
         } else if (recipe instanceof ShapedOreRecipe) {
             ShapedOreRecipe ore = (ShapedOreRecipe) recipe;
             for (Object in : ore.getInput()) {
-                if (matches(in, stack)) {
+                if (matches(target, in)) {
                     return true;
                 }
             }
         } else if (recipe instanceof ShapelessOreRecipe) {
             ShapelessOreRecipe ore = (ShapelessOreRecipe) recipe;
             for (Object in : ore.getInput()) {
-                if (matches(in, stack)) {
+                if (matches(target, in)) {
                     return true;
                 }
             }
@@ -68,13 +69,13 @@ public enum GuideCraftingRecipes implements IStackRecipes {
         return false;
     }
 
-    private static boolean matches(Object in, ItemStack stack) {
+    private static boolean matches(ItemStack target, Object in) {
         if (in instanceof ItemStack) {
-            return OreDictionary.itemMatches((ItemStack) in, stack, false);
+            return StackUtil.doesEitherStackMatch((ItemStack) in, target);
         } else if (in instanceof List) {
             for (Object obj : (List<?>) in) {
                 if (obj instanceof ItemStack) {
-                    if (OreDictionary.itemMatches((ItemStack) obj, stack, false)) {
+                    if (StackUtil.doesEitherStackMatch((ItemStack) obj, target)) {
                         return true;
                     }
                 }
@@ -84,12 +85,12 @@ public enum GuideCraftingRecipes implements IStackRecipes {
     }
 
     @Override
-    public List<GuidePartFactory> getRecipes(ItemStack stack) {
+    public List<GuidePartFactory> getRecipes(ItemStack target) {
         List<GuidePartFactory> list = new ArrayList<>();
 
         for (IRecipe recipe : CraftingManager.getInstance().getRecipeList()) {
             ItemStack out = recipe.getRecipeOutput();
-            if (ItemStack.areItemsEqual(stack, out) && ItemStack.areItemStackTagsEqual(stack, out)) {
+            if (OreDictionary.itemMatches(target, out, false) || OreDictionary.itemMatches(out, target, false)) {
                 GuideCraftingFactory factory = GuideCraftingFactory.getFactory(recipe);
                 if (factory != null) {
                     list.add(factory);

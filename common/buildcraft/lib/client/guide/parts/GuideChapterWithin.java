@@ -10,7 +10,7 @@ public class GuideChapterWithin extends GuideChapter {
     }
 
     public GuideChapterWithin(GuiGuide gui, String chapter) {
-        super(gui, chapter);
+        super(gui, 1, chapter);
     }
 
     @Override
