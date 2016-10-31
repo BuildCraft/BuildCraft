@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.lib.misc.ItemStackKey;
@@ -23,13 +24,6 @@ import buildcraft.lib.misc.ItemStackKey;
 public class ItemRenderUtil {
 
     private static final LoadingCache<ItemStackKey, Integer> glListCache;
-
-    static {
-        glListCache = CacheBuilder.newBuilder()//
-                .expireAfterAccess(40, TimeUnit.SECONDS)//
-                .removalListener(ItemRenderUtil::onStackRemove)//
-                .build(CacheLoader.from(ItemRenderUtil::makeItemGlList));
-    }
 
     private static final EntityItem dummyEntityItem = new EntityItem(null);
     private static final RenderEntityItem customItemRenderer = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
@@ -43,6 +37,12 @@ public class ItemRenderUtil {
             return false;
         }
     };
+    static {
+        glListCache = CacheBuilder.newBuilder()//
+                .expireAfterAccess(40, TimeUnit.SECONDS)//
+                .removalListener(ItemRenderUtil::onStackRemove)//
+                .build(CacheLoader.from(ItemRenderUtil::makeItemGlList));
+    }
 
     private static Integer makeItemGlList(ItemStackKey item) {
         int list = GLAllocation.generateDisplayLists(1);
@@ -65,7 +65,13 @@ public class ItemRenderUtil {
         GL11.glScaled(0.9, 0.9, 0.9);
 
         // This is broken - some stacks render too big but some render way too small.
-        // Also the stacks seem to be offset at a specific angle each time?
+
+        if (stack.getItem() instanceof ItemBlock) {
+            dummyEntityItem.hoverStart = 0;
+        } else {
+            // Items are rotated by 45 degrees
+            dummyEntityItem.hoverStart = (float) (45 * Math.PI / 180);
+        }
 
         dummyEntityItem.setEntityItemStack(stack);
         customItemRenderer.doRender(dummyEntityItem, x, y, z, 0, 0);
