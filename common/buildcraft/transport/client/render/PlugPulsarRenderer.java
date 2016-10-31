@@ -12,21 +12,25 @@ import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.BCTransportModels;
-import buildcraft.transport.plug.PluggableGate;
+import buildcraft.transport.plug.PluggablePulsar;
 
-public class PlugGateRenderer implements IPluggableDynamicRenderer {
+public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     private static final MutableQuad[][] cache = new MutableQuad[6 * 2][];
 
-    private final PluggableGate toRender;
+    private final PluggablePulsar toRender;
 
-    public PlugGateRenderer(PluggableGate toRender) {
+    public PlugPulsarRenderer(PluggablePulsar toRender) {
         this.toRender = toRender;
     }
 
-    private static MutableQuad[] getFromCache(EnumFacing side, boolean isOn) {
-        int index = side.ordinal() + (isOn ? 6 : 0);
+    private static MutableQuad[] getFromCache(EnumFacing side, boolean isPulsing, double stage) {
+        if (isPulsing /* TODO: Use renderStyle == FULL_ANIMATION */) {
+            // TODO: Return a different stage
+        }
+
+        int index = side.ordinal() + (isPulsing ? 6 : 0);
         if (cache[index] == null) {
-            MutableQuad[] quads = BCTransportModels.getGateDynQuads(isOn);
+            MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage);
             Matrix4f transform = MatrixUtil.rotateTowardsFace(side);
             for (MutableQuad q : quads) {
                 q.transform(transform);
@@ -47,7 +51,7 @@ public class PlugGateRenderer implements IPluggableDynamicRenderer {
     @Override
     public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.logic.isOn)) {
+        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsing, toRender.getStage(partialTicks))) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

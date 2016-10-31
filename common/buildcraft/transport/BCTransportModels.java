@@ -13,6 +13,7 @@ import buildcraft.lib.client.model.ModelHolderVariable;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeMutableBoolean;
+import buildcraft.lib.expression.node.value.NodeMutableDouble;
 import buildcraft.lib.expression.node.value.NodeMutableString;
 import buildcraft.transport.client.model.ModelBlockerItem;
 import buildcraft.transport.client.model.ModelGateItem;
@@ -20,6 +21,7 @@ import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
 import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.client.render.PlugGateRenderer;
+import buildcraft.transport.client.render.PlugPulsarRenderer;
 import buildcraft.transport.gate.GateVariant;
 
 public class BCTransportModels {
@@ -33,10 +35,16 @@ public class BCTransportModels {
     /** Used in {@link #GATE_DYNAMIC} */
     private static final NodeMutableBoolean GATE_ON;
 
+    public static final ModelHolderStatic PULSAR_STATIC;
+    private static final ModelHolderVariable PULSAR_DYNAMIC;
+    private static final NodeMutableDouble PULSAR_STAGE;
+    private static final NodeMutableBoolean PULSAR_ON;
+
     static {
         BLOCKER = getModel("plugs/blocker.json");
         POWER_ADAPTER = getModel("plugs/power_adapter.json");
         LENS = getModel("plugs/lens.json");
+        PULSAR_STATIC = getModel("plugs/pulsar_static.json");
 
         FunctionContext fnCtx = new FunctionContext();
         GATE_MATERIAL = fnCtx.getOrAddString("material");
@@ -47,6 +55,11 @@ public class BCTransportModels {
         fnCtx = new FunctionContext();
         GATE_ON = fnCtx.getOrAddBoolean("on");
         GATE_DYNAMIC = getModel("plugs/gate_dynamic.json", fnCtx);
+
+        fnCtx = new FunctionContext();
+        PULSAR_STAGE = fnCtx.getOrAddDouble("stage");
+        PULSAR_ON = fnCtx.getOrAddBoolean("on");
+        PULSAR_DYNAMIC = getModel("plugs/pulsar_dynamic.json", fnCtx);
     }
 
     private static ModelHolderStatic getModel(String loc) {
@@ -81,6 +94,7 @@ public class BCTransportModels {
         ModelGateItem.onModelBake();
 
         PlugGateRenderer.onModelBake();
+        PlugPulsarRenderer.onModelBake();
     }
 
     private static void registerModel(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, String reg, IBakedModel val) {
@@ -101,5 +115,11 @@ public class BCTransportModels {
     public static MutableQuad[] getGateDynQuads(boolean isOn) {
         GATE_ON.value = isOn;
         return GATE_DYNAMIC.getCutoutQuads();
+    }
+
+    public static MutableQuad[] getPulsarDynQuads(boolean isPulsing, double stage) {
+        PULSAR_STAGE.value = stage;
+        PULSAR_ON.value = isPulsing;
+        return PULSAR_DYNAMIC.getCutoutQuads();
     }
 }

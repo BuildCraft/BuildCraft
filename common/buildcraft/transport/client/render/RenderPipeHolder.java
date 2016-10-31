@@ -24,7 +24,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         renderWire(pipe, x, y, z, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("pluggable");
-        renderPluggables(pipe, x, y, z, vb);
+        renderPluggables(pipe, x, y, z, partialTicks, vb);
 
         Minecraft.getMinecraft().mcProfiler.endStartSection("contents");
         renderContents(pipe, x, y, z, partialTicks, vb);
@@ -38,7 +38,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         // TODO!
     }
 
-    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
+    private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable plug = pipe.getPluggable(face);
             if (plug == null) {
@@ -48,7 +48,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
             if (dynRenderer == null) {
                 continue;
             }
-            dynRenderer.render(x, y, z, vb);
+            dynRenderer.render(x, y, z, partialTicks, vb);
         }
     }
 

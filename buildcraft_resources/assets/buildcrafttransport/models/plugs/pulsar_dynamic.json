@@ -1,0 +1,38 @@
+{
+    "textures": {
+        "#pulsing_true":"buildcrafttransport:plugs/pulsar_dynamic_on",
+        "#pulsing_false":"buildcrafttransport:plugs/pulsar_dynamic_off",
+        "particle":"#pulsing_false"
+    },
+    "elements": [
+        {
+            "from": [ 0, 6, 6 ],
+            "to": [ 2, 10, 10 ],
+            "visible":"on",
+            "shade": "false",
+            "light":15,
+            "faces": {
+                "down":  { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "up":    { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "north": { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "south": { "uv": [ 4, 6, 6, 10 ], "texture": "'#pulsing_true'" },
+                "west":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_true'" },
+                "east":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_true'" }
+            }
+        },
+        {
+            "from": [ 1.8, 6, 6 ],
+            "to": [ 2, 10, 10 ],
+            "visible":"!on",
+            "shade": "true",
+            "faces": {
+                "down":  { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "up":    { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "north": { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "south": { "uv": [ 5.8, 6, 6, 10 ], "texture": "'#pulsing_false'" },
+                "west":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_false'" },
+                "east":  { "uv": [ 6, 6, 10, 10 ], "texture": "'#pulsing_false'" }
+            }
+        }
+    ]
+}

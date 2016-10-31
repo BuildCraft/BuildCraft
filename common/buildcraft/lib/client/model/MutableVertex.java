@@ -313,7 +313,12 @@ public class MutableVertex {
     public MutableVertex transform(Matrix4f matrix) {
         Point3f point = positionvf();
         matrix.transform(point);
-        return positionv(point);
+        positionv(point);
+
+        Vector3f normal = normal();
+        matrix.transform(normal);
+        normalv(normal);
+        return this;
     }
 
     public MutableVertex translatei(int x, int y, int z) {
