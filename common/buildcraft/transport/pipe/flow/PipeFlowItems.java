@@ -346,7 +346,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             // TryBounce
 
             PipeEventItem.TryBounce bounce = new PipeEventItem.TryBounce(holder, this, colour, from, toInsert);
-
+            holder.fireEvent(bounce);
             if (bounce.canBounce) {
                 order = ImmutableList.of(EnumSet.of(from));
             } else {

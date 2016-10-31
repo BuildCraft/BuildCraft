@@ -59,7 +59,7 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
 
     @Override
     public int getTextureIndex(EnumFacing face) {
-        if (face == currentDir.face) {
+        if (face != currentDir.face && face != null) {
             return 16;
         }
         return colour.getMetadata();
