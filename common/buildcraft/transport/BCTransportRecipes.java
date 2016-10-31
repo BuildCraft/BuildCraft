@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
+import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
@@ -66,13 +67,25 @@ public class BCTransportRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
+        if (BCTransportItems.plugPulsar != null) {
+            ItemStack result = new ItemStack(BCTransportItems.plugPulsar);
+            RecipeBuilderShaped builder = new RecipeBuilderShaped(result);
+            builder.add("rer");
+            builder.add("gpg");
+            builder.map('e', BCCoreBlocks.engine);
+            builder.map('p', BCTransportItems.plugBlocker);
+            builder.map('g', "gearIron");
+            builder.map('r', "dustRedstone");
+            GameRegistry.addRecipe(builder.build());
+        }
+
         if (BCTransportItems.plugGate != null) {
             // You can craft some of the basic gate types in a normal crafting table
             RecipeBuilderShaped builder = new RecipeBuilderShaped();
             builder.add(" m ");
             builder.add("mrm");
             builder.add(" b ");
-            builder.map('r', Items.REDSTONE);
+            builder.map('r', "dustRedstone");
             builder.map('b', BCTransportItems.plugBlocker);
 
             // Base craftable types

@@ -10,12 +10,12 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.lib.client.model.ModelHolderStatic;
 import buildcraft.lib.client.model.ModelHolderVariable;
+import buildcraft.lib.client.model.ModelPluggableItem;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.node.value.NodeMutableBoolean;
 import buildcraft.lib.expression.node.value.NodeMutableDouble;
 import buildcraft.lib.expression.node.value.NodeMutableString;
-import buildcraft.transport.client.model.ModelBlockerItem;
 import buildcraft.transport.client.model.ModelGateItem;
 import buildcraft.transport.client.model.ModelPipe;
 import buildcraft.transport.client.model.ModelPipeItem;
@@ -85,10 +85,12 @@ public class BCTransportModels {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
         IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
-        registerModel(modelRegistry, "buildcrafttransport:pipe_holder#normal", ModelPipe.INSTANCE);
-        registerModel(modelRegistry, "buildcrafttransport:pipe_item#inventory", ModelPipeItem.INSTANCE);
-        registerModel(modelRegistry, "buildcrafttransport:gate_item#inventory", ModelGateItem.INSTANCE);
-        registerModel(modelRegistry, "buildcrafttransport:pluggable/blocker#inventory", ModelBlockerItem.INSTANCE);
+        String start = "buildcrafttransport:";
+        registerModel(modelRegistry, start + "pipe_holder#normal", ModelPipe.INSTANCE);
+        registerModel(modelRegistry, start + "pipe_item#inventory", ModelPipeItem.INSTANCE);
+        registerModel(modelRegistry, start + "gate_item#inventory", ModelGateItem.INSTANCE);
+        registerModel(modelRegistry, start + "plug_blocker#inventory", new ModelPluggableItem(BLOCKER.getCutoutQuads()));
+        registerModel(modelRegistry, start + "plug_pulsar#inventory", new ModelPluggableItem(PULSAR_STATIC.getCutoutQuads(), getPulsarDynQuads(true, 0.5)));
 
         PlugGateBaker.onModelBake();
         ModelGateItem.onModelBake();

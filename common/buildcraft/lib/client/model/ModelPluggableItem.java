@@ -1,7 +1,8 @@
-package buildcraft.transport.client.model;
+package buildcraft.lib.client.model;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -11,27 +12,23 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.lib.client.model.ModelItemSimple;
-import buildcraft.lib.client.model.MutableQuad;
-import buildcraft.transport.BCTransportModels;
+public class ModelPluggableItem implements IBakedModel {
 
-public enum ModelBlockerItem implements IBakedModel {
-    INSTANCE;
+    private final List<BakedQuad> quads;
 
-    private static MutableQuad[] lastQuads;
-    private static List<BakedQuad> lastBaked;
+    public ModelPluggableItem(MutableQuad[]... quads) {
+        ImmutableList.Builder<BakedQuad> list = ImmutableList.builder();
+        for (MutableQuad[] qa : quads) {
+            for (MutableQuad q : qa) {
+                list.add(q.toBakedItem());
+            }
+        }
+        this.quads = list.build();
+    }
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-        MutableQuad[] from = BCTransportModels.BLOCKER.getCutoutQuads();
-        if (from != lastQuads) {
-            lastQuads = from;
-            lastBaked = new ArrayList<>(from.length);
-            for (MutableQuad q : from) {
-                lastBaked.add(q.toBakedItem());
-            }
-        }
-        return lastBaked;
+        return side == null ? quads : ImmutableList.of();
     }
 
     @Override

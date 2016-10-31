@@ -375,6 +375,7 @@ item.mapLocation.name=Map Location
 item.gateCopier.name=Gate Copier
 item.plasticSheet.name=Plastic Sheet
 item.markerConnector.name=Marker Connector
+item.pulsar.name=Pipe Pulsar
 
 item.buildcraft_pipe_wood_item.name=Wooden Transport Pipe
 item.buildcraft_pipe_cobblestone_item.name=Cobblestone Transport Pipe

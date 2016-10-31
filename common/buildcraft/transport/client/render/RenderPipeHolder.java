@@ -2,6 +2,7 @@ package buildcraft.transport.client.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.model.animation.FastTESR;
@@ -17,6 +18,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
     @Override
     public void renderTileEntityFast(TilePipeHolder pipe, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vb) {
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("pipe");
 
