@@ -18,11 +18,6 @@ public class PipeBehaviourSandstone extends PipeBehaviour {
     }
 
     @Override
-    public int getTextureIndex(EnumFacing face) {
-        return 0;
-    }
-
-    @Override
     public boolean canConnect(EnumFacing face, PipeBehaviour other) {
         return true;
     }

@@ -47,7 +47,7 @@ public class ItemRenderUtil {
     private static Integer makeItemGlList(ItemStackKey item) {
         int list = GLAllocation.generateDisplayLists(1);
         GL11.glNewList(list, GL11.GL_COMPILE);
-        renderItemImpl(0, -0.1, 0, item.baseStack);
+        renderItemImpl(0, 0, 0, item.baseStack);
         GL11.glEndList();
         return Integer.valueOf(list);
     }
@@ -61,10 +61,11 @@ public class ItemRenderUtil {
 
     private static void renderItemImpl(double x, double y, double z, ItemStack stack) {
         GL11.glPushMatrix();
-        GL11.glTranslated(0, -0.1, 0);
+        GL11.glTranslated(0, -0.2, 0);
         GL11.glScaled(0.9, 0.9, 0.9);
 
         // This is broken - some stacks render too big but some render way too small.
+        // Also not all stacks are centered :/
 
         if (stack.getItem() instanceof ItemBlock) {
             dummyEntityItem.hoverStart = 0;

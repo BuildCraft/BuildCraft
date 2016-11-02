@@ -19,11 +19,6 @@ public class PipeBehaviourQuartz extends PipeBehaviourSeperate {
         super(pipe, nbt);
     }
 
-    @Override
-    public int getTextureIndex(EnumFacing face) {
-        return 0;
-    }
-
     @PipeEventHandler
     public void modifySpeed(PipeEventItem.ModifySpeed event) {
         event.modifyTo(SPEED_TARGET, SPEED_DELTA);

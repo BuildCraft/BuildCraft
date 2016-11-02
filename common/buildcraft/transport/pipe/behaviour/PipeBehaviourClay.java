@@ -19,11 +19,6 @@ public class PipeBehaviourClay extends PipeBehaviour {
         super(pipe, nbt);
     }
 
-    @Override
-    public int getTextureIndex(EnumFacing face) {
-        return 0;
-    }
-
     @PipeEventHandler
     public void orderSides(PipeEventItem.SideCheck ordering) {
         for (EnumFacing face : EnumFacing.VALUES) {

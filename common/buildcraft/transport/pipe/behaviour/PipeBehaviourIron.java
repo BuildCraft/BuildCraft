@@ -37,7 +37,7 @@ public class PipeBehaviourIron extends PipeBehaviourDirectional {
     }
 
     @PipeEventHandler
-    public void tryBounce(PipeEventItem.TryBounce tryBounce) {
+    public static void tryBounce(PipeEventItem.TryBounce tryBounce) {
         tryBounce.canBounce = true;
     }
 }

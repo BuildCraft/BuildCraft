@@ -17,12 +17,16 @@ public class PipeEventBus {
     private final List<LocalHandler> currentHandlers = new ArrayList<>();
 
     private static List<LocalHandler> getAndBindHandlers(Object obj) {
-        Class<?> cls = obj.getClass();
+        Class<?> cls = obj instanceof Class ? (Class<?>) obj : obj.getClass();
 
         List<Handler> handlerList = getHandlers(cls);
         List<LocalHandler> list = new ArrayList<>();
         for (Handler handler : handlerList) {
-            list.add(handler.bindTo(obj));
+            LocalHandler bound = handler.bindTo(obj);
+            /* The handler will be null if a class was registered but the method was not static */
+            if (bound != null) {
+                list.add(bound);
+            }
         }
         return list;
     }
@@ -35,13 +39,10 @@ public class PipeEventBus {
                 if (annot == null) {
                     continue;
                 }
-                if (Modifier.isStatic(m.getModifiers())) {
-                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler if it is static!");
-                }
 
                 Parameter[] params = m.getParameters();
                 if (params.length != 1) {
-                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had a bad number of paramaters (" + Arrays.toString(params) + ")");
+                    throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as it had an incorrect number of paramaters (" + Arrays.toString(params) + ")");
                 }
                 Parameter p = params[0];
                 if (!PipeEvent.class.isAssignableFrom(p.getType())) {
@@ -54,7 +55,8 @@ public class PipeEventBus {
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException("Cannot annotate " + m + " with @PipeEventHandler as there was a problem with it!", e);
                 }
-                list.add(new Handler(annot.priority(), annot.receiveCancelled(), mh, p.getType()));
+                boolean isStatic = Modifier.isStatic(m.getModifiers());
+                list.add(new Handler(annot.priority(), annot.receiveCancelled(), isStatic, mh, p.getType()));
             }
 
             Class<?> superCls = cls.getSuperclass();
@@ -99,19 +101,25 @@ public class PipeEventBus {
 
     public static class Handler {
         final PipeEventPriority priority;
-        final boolean receiveCanceled;
+        final boolean receiveCanceled, isStatic;
         final MethodHandle handle;
         final Class<?> eventClassHandled;
 
-        public Handler(PipeEventPriority priority, boolean receiveCanceled, MethodHandle handle, Class<?> eventClassHandled) {
+        public Handler(PipeEventPriority priority, boolean receiveCanceled, boolean isStatic, MethodHandle handle, Class<?> eventClassHandled) {
             this.priority = priority;
             this.receiveCanceled = receiveCanceled;
+            this.isStatic = isStatic;
             this.handle = handle;
             this.eventClassHandled = eventClassHandled;
         }
 
         public LocalHandler bindTo(Object obj) {
-            return new LocalHandler(priority, receiveCanceled, obj, eventClassHandled, handle.bindTo(obj));
+            // If its not a static method then we cannot pass the class to the handler, so we won't bind it
+            if (!isStatic && obj instanceof Class<?>) {
+                return null;
+            }
+            MethodHandle bound = isStatic ? handle : handle.bindTo(obj);
+            return new LocalHandler(priority, receiveCanceled, obj, eventClassHandled, bound);
         }
     }
 

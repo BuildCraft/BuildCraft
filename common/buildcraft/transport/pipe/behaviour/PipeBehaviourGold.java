@@ -1,7 +1,6 @@
 package buildcraft.transport.pipe.behaviour;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
@@ -20,13 +19,8 @@ public class PipeBehaviourGold extends PipeBehaviour {
         super(pipe, nbt);
     }
 
-    @Override
-    public int getTextureIndex(EnumFacing face) {
-        return 0;
-    }
-
     @PipeEventHandler
-    public void modifySpeed(PipeEventItem.ModifySpeed event) {
+    public static void modifySpeed(PipeEventItem.ModifySpeed event) {
         event.modifyTo(SPEED_TARGET, SPEED_DELTA);
     }
 }
