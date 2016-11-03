@@ -6,18 +6,18 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 
-public abstract class PipeBehaviourSeperate extends PipeBehaviour {
-    public PipeBehaviourSeperate(IPipe pipe) {
+public abstract class PipeBehaviourSeparate extends PipeBehaviour {
+    public PipeBehaviourSeparate(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourSeperate(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourSeparate(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
     }
 
     @Override
     public boolean canConnect(EnumFacing face, PipeBehaviour other) {
-        if (other instanceof PipeBehaviourSeperate) {
+        if (other instanceof PipeBehaviourSeparate) {
             return other.getClass() == getClass();
         } else {
             return true;

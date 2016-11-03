@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.transport.neptune.IPipe;
 
-public class PipeBehaviourStone extends PipeBehaviourSeperate {
+public class PipeBehaviourStone extends PipeBehaviourSeparate {
     public PipeBehaviourStone(IPipe pipe) {
         super(pipe);
     }

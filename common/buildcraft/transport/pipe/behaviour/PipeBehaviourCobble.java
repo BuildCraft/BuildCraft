@@ -6,7 +6,7 @@ import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.neptune.IPipe;
 
-public class PipeBehaviourCobble extends PipeBehaviourSeperate {
+public class PipeBehaviourCobble extends PipeBehaviourSeparate {
     private static final double SPEED_DELTA = 0.03;
     private static final double SPEED_TARGET = 0.04;
 
