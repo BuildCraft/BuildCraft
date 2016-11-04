@@ -52,6 +52,9 @@ public class BCTransportPipes {
     public static PipeDefinition voidItem;
     public static PipeDefinition voidFluid;
 
+    public static PipeDefinition obsidianItem;
+    public static PipeDefinition obsidianFluid;
+
     public static PipeDefinition lapisItem;
     public static PipeDefinition daizuliItem;
 
@@ -103,6 +106,10 @@ public class BCTransportPipes {
         builder.logic(PipeBehaviourVoid::new, PipeBehaviourVoid::new);
         voidItem = builder.idTex("void_item").flowItem().define();
         voidFluid = builder.idTex("void_fluid").flowFluid().define();
+
+        builder.logic(PipeBehaviourObsidian::new, PipeBehaviourObsidian::new);
+        obsidianItem = builder.idTex("obsidian_item").flowItem().define();
+        // obsidianFluid = builder.idTex("obsidian_fluid").flowFluid().define();
 
         EnumDyeColor[] colourArray = EnumDyeColor.values();
         String[] texSuffix = new String[16];

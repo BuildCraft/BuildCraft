@@ -7,6 +7,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntitySpectralArrow;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -62,5 +65,14 @@ public class EntityUtil {
             IToolWrench wrench = (IToolWrench) stack.getItem();
             wrench.wrenchUsed(player, EnumHand.OFF_HAND, stack, null);
         }
+    }
+
+    public static ItemStack getArrowStack(EntityArrow arrow) {
+        // FIXME: Replace this with an invocation of arrow.getArrowStack
+        // (but its protected so we can't)
+        if (arrow instanceof EntitySpectralArrow) {
+            return new ItemStack(Items.SPECTRAL_ARROW);
+        }
+        return new ItemStack(Items.ARROW);
     }
 }

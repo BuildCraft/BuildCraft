@@ -87,7 +87,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
     // IFlowItems
 
     @Override
-    public int tryExtractStack(int count, EnumFacing from, IStackFilter filter) {
+    public int tryExtractItems(int count, EnumFacing from, IStackFilter filter) {
         if (from == null) {
             return 0;
         }
@@ -144,7 +144,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                     if (item.motion != null) {
                         runItemInstructions(item);
                     } else {
-                        // But if not:
+                        // if not then wait for them
                         item.state = EnumTravelState.CLIENT_WAITING;
                         items.add(2, item);
                     }
@@ -223,7 +223,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
                         // TODO: Replace with interface for inserting
                         if (flow instanceof PipeFlowItems) {
                             PipeFlowItems oItemFlow = (PipeFlowItems) flow;
-                            leftOver = oItemFlow.insertItem(item.stack, item.colour, item.speed, to.getOpposite());
+                            leftOver = oItemFlow.tryInsertItems(item.stack, item.colour, item.speed, to.getOpposite());
                         }
                     } else if (type == ConnectedType.TILE) {
                         TileEntity tile = pipe.getConnectedTile(to);
@@ -302,8 +302,8 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
      * ModifySpeed: Changes the speed of the item
      * 
      * (This text was copied from buildcraft.api.transport.PipeEventItem) */
-    public ItemStack insertItem(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from) {
-
+    @Override
+    public ItemStack tryInsertItems(ItemStack stack, EnumDyeColor colour, double speed, EnumFacing from) {
         // Try insert
 
         PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(pipe.getHolder(), this, colour, from, stack);
@@ -311,15 +311,16 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
         if (tryInsert.isCanceled() || tryInsert.accepted <= 0) {
             return stack;
         }
-        ItemStack toInsert = stack.splitStack(tryInsert.accepted);
+        ItemStack toSplit = stack.copy();
+        ItemStack toInsert = toSplit.splitStack(tryInsert.accepted);
 
         insertItemEvents(toInsert, colour, speed, from);
 
-        if (stack.stackSize == 0) {
-            stack = null;
+        if (toSplit.stackSize == 0) {
+            toSplit = null;
         }
 
-        return stack;
+        return toSplit;
     }
 
     /** Used internally to split up manual insertions from controlled extractions. */

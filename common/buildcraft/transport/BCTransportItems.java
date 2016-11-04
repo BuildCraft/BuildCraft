@@ -48,6 +48,9 @@ public class BCTransportItems {
     public static ItemPipeHolder pipeItemVoid;
     public static ItemPipeHolder pipeFluidVoid;
 
+    public static ItemPipeHolder pipeItemObsidian;
+    public static ItemPipeHolder pipeFluidObsidian;
+
     public static ItemPipeHolder pipeItemLapis;
     public static ItemPipeHolder pipeItemDaizuli;
 
@@ -66,11 +69,12 @@ public class BCTransportItems {
         pipeItemCobble = makePipeItem(BCTransportPipes.cobbleItem);
         pipeItemStone = makePipeItem(BCTransportPipes.stoneItem);
         pipeItemQuartz = makePipeItem(BCTransportPipes.quartzItem);
-        pipeItemGold = makePipeItem(BCTransportPipes.goldItem);
         pipeItemIron = makePipeItem(BCTransportPipes.ironItem);
+        pipeItemGold = makePipeItem(BCTransportPipes.goldItem);
         pipeItemClay = makePipeItem(BCTransportPipes.clayItem);
-        pipeItemVoid = makePipeItem(BCTransportPipes.voidItem);
         pipeItemSandstone = makePipeItem(BCTransportPipes.sandstoneItem);
+        pipeItemVoid = makePipeItem(BCTransportPipes.voidItem);
+        pipeItemObsidian = makePipeItem(BCTransportPipes.obsidianItem);
         pipeItemLapis = makePipeItem(BCTransportPipes.lapisItem);
         pipeItemDaizuli = makePipeItem(BCTransportPipes.daizuliItem);
 
@@ -81,8 +85,9 @@ public class BCTransportItems {
         pipeFluidGold = makePipeItem(BCTransportPipes.goldFluid);
         pipeFluidIron = makePipeItem(BCTransportPipes.ironFluid);
         pipeFluidClay = makePipeItem(BCTransportPipes.clayFluid);
-        pipeFluidVoid = makePipeItem(BCTransportPipes.voidFluid);
         pipeFluidSandstone = makePipeItem(BCTransportPipes.sandstoneFluid);
+        pipeFluidVoid = makePipeItem(BCTransportPipes.voidFluid);
+        // pipeFluidObsidian = makePipeItem(BCTransportPipes.obsidianFluid);
 
         pipePowerWood = makePipeItem(BCTransportPipes.woodPower);
         pipePowerCobble = makePipeItem(BCTransportPipes.cobblePower);
