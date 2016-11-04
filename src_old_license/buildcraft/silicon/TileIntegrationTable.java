@@ -16,7 +16,6 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.StackUtil;
@@ -119,7 +118,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements ISidedIn
 
         activeRecipeValid = clientOutputInv.getStackInSlot(0) != null;
 
-        if (!StackHelper.isEqualItem(clientOutputInv.getStackInSlot(0), oldClientOutput)) {
+        if (!StackUtil.isEqualItem(clientOutputInv.getStackInSlot(0), oldClientOutput)) {
             sendNetworkUpdate();
         }
     }

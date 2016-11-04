@@ -2,16 +2,18 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.gui.tooltips;
+package buildcraft.lib.gui.elem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.RandomAccess;
 
 import com.google.common.collect.ForwardingList;
 
-public class ToolTip extends ForwardingList<String> {
+public class ToolTip extends ForwardingList<String> implements RandomAccess {
 
+    /* If the impl list class does not implement RandomAccess then the interface MUST be removed from this class */
     private final List<String> delegate = new ArrayList<>();
     private final long delay;
     private long mouseOverStart;

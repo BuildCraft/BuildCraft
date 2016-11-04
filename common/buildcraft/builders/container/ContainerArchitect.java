@@ -1,9 +1,10 @@
 package buildcraft.builders.container;
 
 import buildcraft.builders.tile.TileArchitect_Neptune;
-import buildcraft.core.lib.gui.slots.SlotBase;
-import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotOutput;
+
 import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerArchitect extends ContainerBCTile<TileArchitect_Neptune> {

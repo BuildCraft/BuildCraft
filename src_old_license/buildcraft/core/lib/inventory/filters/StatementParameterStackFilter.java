@@ -11,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 
+import buildcraft.lib.inventory.filter.ArrayStackOrListFilter;
+
 /** Returns true if the stack matches any one one of the filter stacks. */
 public class StatementParameterStackFilter extends ArrayStackOrListFilter {
 

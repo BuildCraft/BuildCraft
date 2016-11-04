@@ -17,8 +17,9 @@ import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
-import buildcraft.core.lib.inventory.filters.AggregateFilter;
+
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.lib.inventory.filter.AggregateFilter;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;

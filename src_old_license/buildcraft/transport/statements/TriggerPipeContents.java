@@ -14,8 +14,9 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.inventory.StackHelper;
+
 import buildcraft.core.statements.BCStatement;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
@@ -79,7 +80,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
                     if (parameter != null && parameter.getItemStack() != null) {
                         hasFilter = true;
                         for (TravelingItem item : transportItems.items) {
-                            if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
+                            if (StackUtil.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
                                 return true;
                             }
                         }

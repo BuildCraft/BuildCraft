@@ -20,8 +20,8 @@ import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
+import buildcraft.lib.misc.StackUtil;
 
 public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeViewable {
     public long powerCost = 0;
@@ -210,7 +210,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 
     @Override
     public CraftingResult<T> canCraft(ItemStack expectedOutput) {
-        if (output instanceof ItemStack && StackHelper.isMatchingItem(expectedOutput, (ItemStack) output)) {
+        if (output instanceof ItemStack && StackUtil.isMatchingItem(expectedOutput, (ItemStack) output)) {
             CraftingResult<T> result = new CraftingResult<>();
 
             result.recipe = this;

@@ -22,8 +22,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
@@ -111,7 +111,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 
                         ItemStack filter = getFilters().getStackInSlot(v);
 
-                        if (StackHelper.isMatchingItemOrList(filter, event.item.getItemStack())) {
+                        if (StackUtil.isMatchingItemOrList(filter, event.item.getItemStack())) {
                             usedFilters |= 1 << v;
                             faces.clear();
                             faces.add(dir);
@@ -136,7 +136,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 
                         ItemStack filter = getFilters().getStackInSlot(v);
 
-                        if (StackHelper.isMatchingItemOrList(filter, event.item.getItemStack())) {
+                        if (StackUtil.isMatchingItemOrList(filter, event.item.getItemStack())) {
                             usedFilters ^= 1 << v;
                         }
                     }

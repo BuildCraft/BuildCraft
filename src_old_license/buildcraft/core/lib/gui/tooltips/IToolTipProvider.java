@@ -4,6 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.tooltips;
 
+import buildcraft.lib.gui.elem.ToolTip;
+
+@Deprecated
 public interface IToolTipProvider {
 
     ToolTip getToolTip();

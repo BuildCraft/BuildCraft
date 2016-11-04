@@ -2,20 +2,18 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.gui.slots;
+package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.items.IItemHandler;
+import buildcraft.api.core.IStackFilter;
 
-public class SlotOutput extends SlotBase {
-
-    public SlotOutput(IItemHandler handler, int slotIndex, int posX, int posY) {
-        super(handler, slotIndex, posX, posY);
-    }
+/** Returns true if the stack matches any one one of the filter stacks. */
+public class PassThroughStackFilter implements IStackFilter {
 
     @Override
-    public boolean isItemValid(ItemStack itemstack) {
-        return false;
+    public boolean matches(ItemStack stack) {
+        return stack != null && stack.stackSize > 0;
     }
+
 }

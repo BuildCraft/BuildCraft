@@ -8,8 +8,9 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.core.lib.inventory.StackHelper;
+
 import buildcraft.core.lib.utils.FluidUtils;
+import buildcraft.lib.misc.StackUtil;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
     @Override
@@ -18,7 +19,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
             if (FluidContainerRegistry.isContainer(stack) && FluidContainerRegistry.isContainer(target)) {
                 ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
                 ItemStack emptyContainerTarget = FluidContainerRegistry.drainFluidContainer(target);
-                if (StackHelper.isMatchingItem(emptyContainerStack, emptyContainerTarget, true, true)) {
+                if (StackUtil.isMatchingItem(emptyContainerStack, emptyContainerTarget, true, true)) {
                     return true;
                 }
             }
@@ -62,7 +63,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                 examples.add(stack);
                 examples.add(emptyContainerStack);
                 for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {
-                    if (StackHelper.isMatchingItem(data.emptyContainer, emptyContainerStack, true, true)) {
+                    if (StackUtil.isMatchingItem(data.emptyContainer, emptyContainerStack, true, true)) {
                         examples.add(data.filledContainer);
                     }
                 }

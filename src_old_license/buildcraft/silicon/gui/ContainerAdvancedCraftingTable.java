@@ -5,9 +5,9 @@
 package buildcraft.silicon.gui;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.slots.SlotPhantom;
-import buildcraft.core.lib.gui.slots.SlotUntouchable;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.gui.slot.SlotPhantom;
+import buildcraft.lib.gui.slot.SlotUntouchable;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

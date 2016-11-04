@@ -19,12 +19,12 @@ import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.lib.gui.buttons.GuiImageButton;
 import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
 import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.list.ListHandler;
+import buildcraft.lib.misc.StackUtil;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
@@ -185,7 +185,7 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             if (input != null) {
                 List<ItemStack> repetitions = new ArrayList<>();
                 for (ItemStack is : examples) {
-                    if (StackHelper.isMatchingItem(input, is, true, false)) {
+                    if (StackUtil.isMatchingItem(input, is, true, false)) {
                         repetitions.add(is);
                     }
                 }

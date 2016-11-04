@@ -9,9 +9,9 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.slots.SlotUntouchable;
-import buildcraft.core.lib.gui.slots.SlotValidated;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.gui.slot.SlotUntouchable;
+import buildcraft.lib.gui.slot.SlotValidated;
 import buildcraft.silicon.TileIntegrationTable;
 
 public class ContainerIntegrationTable extends BuildCraftContainer {

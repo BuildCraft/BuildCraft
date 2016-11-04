@@ -20,12 +20,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.Widget_Neptune;
+import buildcraft.lib.gui.elem.ToolTip;
 
 /** Provides a "view" of a given {@link Tank} for use in GUI's. The tank will be given a tooltip containing the name of
  * the fluid and the amount of fluid current in the tank. The tank can be clicked with a valid

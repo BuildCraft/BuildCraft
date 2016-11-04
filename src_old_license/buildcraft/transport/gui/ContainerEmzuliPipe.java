@@ -21,12 +21,12 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.gui.slots.SlotPhantom;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.ButtonWidget;
 import buildcraft.core.lib.network.PacketGuiReturn;
 import buildcraft.core.lib.utils.RevolvingList;
+import buildcraft.lib.gui.elem.ToolTip;
+import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 

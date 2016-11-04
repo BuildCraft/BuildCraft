@@ -2,19 +2,20 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory.filters;
+package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
-import buildcraft.core.lib.inventory.StackHelper;
 
-/** Returns true if the stack matches any one one of the filter stacks. */
-public class ArrayStackFilter implements IStackFilter {
+import buildcraft.lib.misc.StackUtil;
 
-    protected ItemStack[] stacks;
+/** Returns true if the stack matches any one one of the filter stacks. Checks the OreDictionary and wildcards. */
+public class CraftingFilter implements IStackFilter {
 
-    public ArrayStackFilter(ItemStack... stacks) {
+    private final ItemStack[] stacks;
+
+    public CraftingFilter(ItemStack... stacks) {
         this.stacks = stacks;
     }
 
@@ -24,20 +25,10 @@ public class ArrayStackFilter implements IStackFilter {
             return true;
         }
         for (ItemStack s : stacks) {
-            if (StackHelper.isMatchingItem(s, stack)) {
+            if (StackUtil.isCraftingEquivalent(s, stack, true)) {
                 return true;
             }
         }
-        return false;
-    }
-
-    public boolean matches(IStackFilter filter2) {
-        for (ItemStack s : stacks) {
-            if (filter2.matches(s)) {
-                return true;
-            }
-        }
-
         return false;
     }
 

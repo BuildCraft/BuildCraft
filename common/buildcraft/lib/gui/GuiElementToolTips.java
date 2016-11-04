@@ -3,7 +3,7 @@ package buildcraft.lib.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.GuiUtil;
 
 public class GuiElementToolTips implements IGuiElement {

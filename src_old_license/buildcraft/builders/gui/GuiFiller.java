@@ -32,11 +32,11 @@ import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
 import buildcraft.core.lib.gui.buttons.IButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.lib.config.OverridableConfigOption;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiFiller extends GuiAdvancedInterface {

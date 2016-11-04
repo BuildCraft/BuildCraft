@@ -18,7 +18,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerInventory extends BCStatement implements ITriggerExternal {
@@ -66,9 +66,9 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
                 hasSlots = true;
                 ItemStack stack = slot.getStackInSlot();
 
-                foundItems |= stack != null && (searchedStack == null || StackHelper.canStacksOrListsMerge(stack, searchedStack));
+                foundItems |= stack != null && (searchedStack == null || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack == null || (StackHelper.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
+                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
                         .getMaxStackSize())) && (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot.canPutStackInSlot(
                                 searchedStack));
                 // On the test above, we deactivate item list as inventories

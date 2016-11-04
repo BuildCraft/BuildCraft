@@ -12,7 +12,7 @@ import buildcraft.api.transport.neptune.PipeBehaviour;
 import buildcraft.api.transport.neptune.PipeFlow;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 
-import buildcraft.core.lib.inventory.filters.StackFilter;
+import buildcraft.lib.inventory.filter.StackFilter;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver {
     public PipeBehaviourWood(IPipe pipe) {
@@ -58,7 +58,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
 
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
-            ((IFlowItems) flow).tryExtractStack(1, getCurrentDir(), StackFilter.ALL);
+            ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), StackFilter.ALL);
         }
         return 0;
     }

@@ -2,8 +2,9 @@ package buildcraft.builders.container;
 
 import buildcraft.builders.block.BlockFrame;
 import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;

@@ -17,7 +17,6 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.AverageInt;
@@ -171,7 +170,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
                 inv.setInventorySlotContents(slot, remaining);
                 return;
             } else if (StackUtil.canMerge(inside, remaining)) {
-                remaining.stackSize -= StackHelper.mergeStacks(remaining, inside, true);
+                remaining.stackSize -= StackUtil.mergeStacks(remaining, inside, true);
             }
         }
 

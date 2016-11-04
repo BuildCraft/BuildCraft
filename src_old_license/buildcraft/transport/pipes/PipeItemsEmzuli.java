@@ -26,8 +26,8 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
@@ -124,7 +124,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
             ItemStack slot = handler.extractItem(i, maxItems, true);
 
             if (slot != null && slot.stackSize > 0) {
-                if (!StackHelper.isMatchingItemOrList(slot, filter)) {
+                if (!StackUtil.isMatchingItemOrList(slot, filter)) {
                     continue;
                 }
 

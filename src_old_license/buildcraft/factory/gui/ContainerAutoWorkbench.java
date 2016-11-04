@@ -12,9 +12,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.slots.SlotUntouchable;
 import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.gui.slot.SlotUntouchable;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {
 

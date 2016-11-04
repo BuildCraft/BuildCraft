@@ -2,25 +2,29 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory.filters;
+package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
 
-public class InvertedStackFilter implements IStackFilter {
+/** Returns true if the stack matches all of the stack filters. */
+public class AggregateFilter implements IStackFilter {
 
-    private final IStackFilter filter;
+    private final IStackFilter[] filters;
 
-    public InvertedStackFilter(IStackFilter filter) {
-        this.filter = filter;
+    public AggregateFilter(IStackFilter... iFilters) {
+        filters = iFilters;
     }
 
     @Override
     public boolean matches(ItemStack stack) {
-        if (stack == null) {
-            return false;
+        for (IStackFilter f : filters) {
+            if (!f.matches(stack)) {
+                return false;
+            }
         }
-        return !filter.matches(stack);
+
+        return true;
     }
 }

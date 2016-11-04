@@ -12,7 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
+import buildcraft.lib.inventory.filter.ArrayStackOrListFilter;
 import buildcraft.robotics.StackRequest;
 
 public class AIRobotDeliverRequested extends AIRobot {

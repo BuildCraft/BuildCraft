@@ -2,18 +2,19 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.gui.slots;
+package buildcraft.lib.gui.slot;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
 
 public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
-    public SlotUntouchable(IInventory contents, int id, int x, int y) {
-        super(contents, id, x, y);
+    public SlotUntouchable(IItemHandler itemHandler, int slotIndex, int posX, int posY) {
+        super(itemHandler, slotIndex, posX, posY);
     }
 
     @Override

@@ -11,7 +11,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotOutput;
+import buildcraft.lib.gui.slot.SlotOutput;
 
 public class ContainerArchitect extends BuildCraftContainer {
 

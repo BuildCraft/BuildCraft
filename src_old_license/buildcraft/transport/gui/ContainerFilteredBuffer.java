@@ -9,8 +9,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotPhantom;
-import buildcraft.core.lib.gui.slots.SlotValidated;
+import buildcraft.lib.gui.slot.SlotPhantom;
+import buildcraft.lib.gui.slot.SlotValidated;
 import buildcraft.transport.TileFilteredBuffer;
 
 public class ContainerFilteredBuffer extends BuildCraftContainer {

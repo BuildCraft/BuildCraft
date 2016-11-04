@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotValidated;
 import buildcraft.core.lib.gui.widgets.FluidTankWidget;
 import buildcraft.factory.tile.TileEnergyHeater;
+import buildcraft.lib.gui.slot.SlotValidated;
 
 public class ContainerEnergyHeater extends BuildCraftContainer {
     public final TileEnergyHeater heater;

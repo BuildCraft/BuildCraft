@@ -9,8 +9,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.tile.TileLibrary_Neptune;
-import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotOutput;
 
 public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
     protected IInventory playerInventory;

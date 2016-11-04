@@ -14,11 +14,11 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.lib.gui.slots.IPhantomSlot;
-import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.core.lib.gui.widgets.Widget;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.lib.gui.ContainerBC_Neptune;
+import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.misc.StackUtil;
 
 // TODO: Rewrite all methods from this into BCContainer_BC8

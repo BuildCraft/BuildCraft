@@ -15,8 +15,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListRegistry;
-import buildcraft.core.lib.inventory.StackHelper;
+
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StackUtil;
 
 public final class ListHandler {
     public static final int WIDTH = 9;
@@ -86,7 +87,7 @@ public final class ListHandler {
                 }
             } else {
                 for (ItemStack s : stacks) {
-                    if (s != null && StackHelper.isMatchingItem(s, target, true, precise)) {
+                    if (s != null && StackUtil.isMatchingItem(s, target, true, precise)) {
                         // If precise, re-check damage
                         if (!precise || s.getItemDamage() == target.getItemDamage()) {
                             return true;

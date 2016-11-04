@@ -48,13 +48,7 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.lib.inventory.IInventoryListener;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.network.base.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
@@ -63,6 +57,7 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.Box.Kind;
 
@@ -911,7 +906,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         for (IInvSlot slot : InventoryIterator.getIterable(this)) {
             if (slot.getStackInSlot() != null) {
                 // TODO: This should also be using the Schematic version of the function!
-                if (StackHelper.isEqualItem(requirement, slot.getStackInSlot())) {
+                if (StackUtil.isEqualItem(requirement, slot.getStackInSlot())) {
                     if (slot.getStackInSlot().stackSize >= left) {
                         return 0;
                     } else {

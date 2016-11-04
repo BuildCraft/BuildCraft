@@ -17,11 +17,11 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.StackUtil;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
     public static final int NB_ITEMS = 20;
@@ -117,7 +117,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     public boolean isItemValidForSlot(int i, ItemStack itemStack) {
         if (requests.getStackInSlot(i) == null) {
             return false;
-        } else if (!StackHelper.isMatchingItemOrList(requests.getStackInSlot(i), itemStack)) {
+        } else if (!StackUtil.isMatchingItemOrList(requests.getStackInSlot(i), itemStack)) {
             return false;
         } else {
             return inv.isItemValidForSlot(i, itemStack);
@@ -151,7 +151,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
         } else if (inv.getStackInSlot(i) == null) {
             return false;
         } else {
-            return StackHelper.isMatchingItemOrList(requests.getStackInSlot(i), inv.getStackInSlot(i)) && inv.getStackInSlot(i).stackSize >= requests
+            return StackUtil.isMatchingItemOrList(requests.getStackInSlot(i), inv.getStackInSlot(i)) && inv.getStackInSlot(i).stackSize >= requests
                     .getStackInSlot(i).stackSize;
         }
     }
@@ -175,7 +175,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
                 return request;
             }
 
-            if (!StackHelper.isMatchingItemOrList(request, existingStack)) {
+            if (!StackUtil.isMatchingItemOrList(request, existingStack)) {
                 return null;
             }
 
@@ -195,7 +195,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
         if (requests.getStackInSlot(i) == null) {
             return stack;
         } else if (existingStack == null) {
-            if (!StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
+            if (!StackUtil.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
                 return stack;
             }
 
@@ -214,9 +214,9 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
                 return stack;
             }
-        } else if (!StackHelper.isMatchingItemOrList(stack, existingStack)) {
+        } else if (!StackUtil.isMatchingItemOrList(stack, existingStack)) {
             return stack;
-        } else if (StackHelper.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
+        } else if (StackUtil.isMatchingItemOrList(stack, requests.getStackInSlot(i))) {
             int maxQty = requests.getStackInSlot(i).stackSize;
 
             if (existingStack.stackSize + stack.stackSize <= maxQty) {

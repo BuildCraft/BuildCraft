@@ -4,10 +4,10 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.transport.container;
 
-import buildcraft.core.lib.gui.slots.SlotBase;
-import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.TransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;

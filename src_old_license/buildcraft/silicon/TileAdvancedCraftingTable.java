@@ -30,18 +30,13 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.mj.ILaserTarget;
 
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.inventory.InventoryCopy;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.InventoryMapper;
-import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.inventory.filters.CraftingFilter;
+import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.inventory.filter.CraftingFilter;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory, PacketSlotChange.ITile {
@@ -296,10 +291,10 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
         if (inputStack == null) {
             return false;
-        } else if (StackHelper.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
+        } else if (StackUtil.isMatchingItem(craftingSlots.getStackInSlot(gridSlot), inputStack, true, false)) {
             return true;
         } else {
-            return StackHelper.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack);
+            return StackUtil.isCraftingEquivalent(craftingSlots.oreIDs[gridSlot], inputStack);
         }
     }
 

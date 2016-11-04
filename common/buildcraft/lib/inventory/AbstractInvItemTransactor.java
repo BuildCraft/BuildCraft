@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.inventory.IItemTransactor;
 
-import buildcraft.core.lib.inventory.filters.StackFilter;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.StackUtil;
 
 import gnu.trove.list.array.TIntArrayList;

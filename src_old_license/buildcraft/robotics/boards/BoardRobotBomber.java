@@ -17,8 +17,8 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.lib.inventory.filter.ArrayStackFilter;
 import buildcraft.robotics.ai.*;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {

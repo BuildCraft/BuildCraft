@@ -20,8 +20,9 @@ import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
-import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
+
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.lib.inventory.filter.PassThroughFluidFilter;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;

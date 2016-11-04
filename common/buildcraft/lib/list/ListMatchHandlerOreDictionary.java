@@ -10,7 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;
-import buildcraft.core.lib.inventory.StackHelper;
+
+import buildcraft.lib.misc.StackUtil;
 
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
     private static int getUppercaseCount(String s) {
@@ -30,7 +31,7 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
         if (oreIds.length == 0) {
             // No ore IDs? Time for the best effort plan of METADATA!
             if (type == Type.TYPE) {
-                return StackHelper.isMatchingItem(stack, target, false, false);
+                return StackUtil.isMatchingItem(stack, target, false, false);
             }
             return false;
         }

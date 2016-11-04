@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.builders.item.ItemBlueprint;
 import buildcraft.builders.tile.TileBuilder_Neptune;
-import buildcraft.core.lib.gui.slots.SlotBase;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
 
 public class ContainerBuilder_Neptune extends ContainerBCTile<TileBuilder_Neptune> {
     public ContainerBuilder_Neptune(EntityPlayer player, TileBuilder_Neptune tile) {

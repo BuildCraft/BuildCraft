@@ -2,11 +2,11 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory.filters;
+package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.lib.misc.StackUtil;
 
 /** Returns true if the stack matches any one one of the filter stacks. Takes into account item lists. */
 public class ArrayStackOrListFilter extends ArrayStackFilter {
@@ -22,7 +22,7 @@ public class ArrayStackOrListFilter extends ArrayStackFilter {
         }
 
         for (ItemStack s : stacks) {
-            if (StackHelper.isMatchingItemOrList(s, stack)) {
+            if (StackUtil.isMatchingItemOrList(s, stack)) {
                 return true;
             }
         }

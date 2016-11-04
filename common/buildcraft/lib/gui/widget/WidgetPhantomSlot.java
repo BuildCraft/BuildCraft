@@ -14,8 +14,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+
 import buildcraft.lib.gui.*;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.misc.GuiUtil;
 

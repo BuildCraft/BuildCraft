@@ -7,7 +7,7 @@ package buildcraft.factory.gui;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.lib.gui.slots.SlotPhantom;
+import buildcraft.lib.gui.slot.SlotPhantom;
 
 public class SlotWorkbench extends SlotPhantom {
     public SlotWorkbench(IInventory iinventory, int slotIndex, int posX, int posY) {

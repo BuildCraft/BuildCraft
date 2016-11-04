@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.elem.ToolTip;
 
 public class IndicatorWidget extends Widget {
 

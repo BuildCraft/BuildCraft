@@ -1,8 +1,8 @@
 package buildcraft.silicon.container;
 
-import buildcraft.core.lib.gui.slots.SlotBase;
-import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import net.minecraft.entity.player.EntityPlayer;
 

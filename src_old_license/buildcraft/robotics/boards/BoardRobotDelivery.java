@@ -14,7 +14,8 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.StackHelper;
+
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.robotics.StackRequest;
 import buildcraft.robotics.ai.AIRobotDeliverRequested;
 import buildcraft.robotics.ai.AIRobotDisposeItems;
@@ -51,7 +52,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
             startDelegateAI(new AIRobotGotoStationAndLoad(robot, new IStackFilter() {
                 @Override
                 public boolean matches(ItemStack stack) {
-                    return currentRequest != null && StackHelper.isMatchingItemOrList(stack, currentRequest.getStack());
+                    return currentRequest != null && StackUtil.isMatchingItemOrList(stack, currentRequest.getStack());
                 }
             }, currentRequest.getStack().stackSize));
         }

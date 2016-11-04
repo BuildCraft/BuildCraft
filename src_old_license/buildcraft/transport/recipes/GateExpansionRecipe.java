@@ -14,8 +14,9 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.inventory.StackHelper;
+
 import buildcraft.core.recipes.IntegrationRecipeBC;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.ItemGate;
 
@@ -33,11 +34,11 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 
     @Override
     public boolean isValidExpansion(ItemStack input, ItemStack expansion) {
-        if (StackHelper.isMatchingItem(EnumRedstoneChipset.RED.getStack(), expansion, true, true)) {
+        if (StackUtil.isMatchingItem(EnumRedstoneChipset.RED.getStack(), expansion, true, true)) {
             return true;
         }
         for (ItemStack s : recipes.values()) {
-            if (StackHelper.isMatchingItem(s, expansion, true, true)) {
+            if (StackUtil.isMatchingItem(s, expansion, true, true)) {
                 IGateExpansion exp = recipes.inverse().get(s);
                 if (exp != null) {
                     GateDefinition.GateMaterial material = ItemGate.getMaterial(input);
@@ -99,14 +100,14 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
         int expansionsAdded = 0;
 
         for (ItemStack chipset : expansions) {
-            if (StackHelper.isMatchingItem(EnumRedstoneChipset.RED.getStack(), chipset, true, true)) {
+            if (StackUtil.isMatchingItem(EnumRedstoneChipset.RED.getStack(), chipset, true, true)) {
                 ItemGate.setLogic(output, ItemGate.getLogic(output) == GateDefinition.GateLogic.AND ? GateDefinition.GateLogic.OR
                     : GateDefinition.GateLogic.AND);
                 expansionsAdded++;
                 continue;
             }
             for (ItemStack expansion : recipes.values()) {
-                if (StackHelper.isMatchingItem(chipset, expansion, true, true) && !ItemGate.hasGateExpansion(output, recipes.inverse().get(
+                if (StackUtil.isMatchingItem(chipset, expansion, true, true) && !ItemGate.hasGateExpansion(output, recipes.inverse().get(
                         expansion))) {
                     if (!preview) {
                         chipset.stackSize--;

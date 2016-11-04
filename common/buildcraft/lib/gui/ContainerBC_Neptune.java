@@ -21,8 +21,9 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.gui.slots.IPhantomSlot;
+
 import buildcraft.lib.BCMessageHandler;
+import buildcraft.lib.gui.slot.IPhantomSlot;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.command.IPayloadWriter;
 

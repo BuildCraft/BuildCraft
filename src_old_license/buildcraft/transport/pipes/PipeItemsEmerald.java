@@ -20,9 +20,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.pipes.events.PipeEventItem;
@@ -167,7 +167,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
                 continue;
             }
 
-            if (!StackHelper.isMatchingItemOrList(filter, stack)) {
+            if (!StackUtil.isMatchingItemOrList(filter, stack)) {
                 continue;
             }
 
@@ -190,7 +190,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
                 continue;
             }
 
-            if (StackHelper.isMatchingItemOrList(filter, stack)) {
+            if (StackUtil.isMatchingItemOrList(filter, stack)) {
                 return true;
             }
         }

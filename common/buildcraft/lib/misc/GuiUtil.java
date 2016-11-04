@@ -12,8 +12,8 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
 
-import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 
 public class GuiUtil {

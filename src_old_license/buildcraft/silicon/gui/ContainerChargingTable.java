@@ -9,7 +9,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.slots.SlotValidated;
+import buildcraft.lib.gui.slot.SlotValidated;
 import buildcraft.silicon.TileChargingTable;
 
 public class ContainerChargingTable extends BuildCraftContainer {

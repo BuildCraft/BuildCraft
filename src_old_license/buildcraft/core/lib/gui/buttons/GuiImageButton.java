@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.elem.ToolTip;
 
 @SideOnly(Side.CLIENT)
 public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger, IToolTipProvider {

@@ -17,7 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
@@ -78,7 +78,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             for (IInvSlot slot : InventoryIterator.getIterable(inventory, side.getOpposite())) {
                 if (slot.canPutStackInSlot(searchStack)) {
                     ItemStack stackInSlot = slot.getStackInSlot();
-                    if (stackInSlot == null || StackHelper.canStacksOrListsMerge(stackInSlot, searchStack)) {
+                    if (stackInSlot == null || StackUtil.canStacksOrListsMerge(stackInSlot, searchStack)) {
                         stackSpace++;
                         foundItems += stackInSlot == null ? 0 : stackInSlot.stackSize;
                     }

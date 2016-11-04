@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.StackUtil;
@@ -252,8 +251,8 @@ public class TravelingItem {
         if (!canBeGroupedWith(otherItem)) {
             return false;
         }
-        if (StackHelper.mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
-            StackHelper.mergeStacks(itemStack, otherItem.itemStack, true);
+        if (StackUtil.mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
+            StackUtil.mergeStacks(itemStack, otherItem.itemStack, true);
             itemStack.stackSize = 0;
             return true;
         }

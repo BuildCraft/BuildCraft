@@ -2,12 +2,12 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory.filters;
+package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 import buildcraft.api.core.IFluidFilter;
 
@@ -20,7 +20,7 @@ public class ArrayFluidFilter implements IFluidFilter {
         fluids = new FluidStack[stacks.length];
 
         for (int i = 0; i < stacks.length; ++i) {
-            FluidStack stack = FluidContainerRegistry.getFluidForFilledItem(stacks[i]);
+            FluidStack stack = FluidUtil.getFluidContained(stacks[i]);
             if (stack != null) {
                 fluids[i] = stack;
             }

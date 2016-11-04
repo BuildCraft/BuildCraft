@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.builders.tile.TileLibrary_Neptune;
-import buildcraft.core.lib.gui.slots.SlotBase;
+import buildcraft.lib.gui.slot.SlotBase;
 
 public class SlotBlueprintLibrary extends SlotBase {
     private TileLibrary_Neptune library;

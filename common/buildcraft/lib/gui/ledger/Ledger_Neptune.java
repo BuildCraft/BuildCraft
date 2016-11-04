@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
 import buildcraft.core.lib.client.render.RenderUtils;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteSplit;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.GuiElementDrawable;
 import buildcraft.lib.gui.elem.GuiElementText;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionCallable;
 

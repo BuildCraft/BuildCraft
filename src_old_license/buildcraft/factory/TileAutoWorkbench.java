@@ -35,7 +35,6 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
@@ -330,7 +329,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                 continue;
             }
 
-            if (bindings[i] == -1 || !StackHelper.isMatchingItem(inputInv.getStackInSlot(bindings[i]), comparedStack, true, true)) {
+            if (bindings[i] == -1 || !StackUtil.isMatchingItem(inputInv.getStackInSlot(bindings[i]), comparedStack, true, true)) {
                 boolean found = false;
                 for (int j = 0; j < 9; j++) {
                     if (j == bindings[i]) {
@@ -339,7 +338,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
                     ItemStack inputInvStack = inputInv.getStackInSlot(j);
 
-                    if (StackHelper.isMatchingItem(inputInvStack, comparedStack, true, false) && inputInvStack.stackSize > bindingCounts[j]) {
+                    if (StackUtil.isMatchingItem(inputInvStack, comparedStack, true, false) && inputInvStack.stackSize > bindingCounts[j]) {
                         found = true;
                         bindings[i] = j;
                         bindingCounts[j]++;
@@ -430,7 +429,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
         }
         for (int i = 0; i < 9; i++) {
             ItemStack inputStack = craftMatrix.getStackInSlot(i);
-            if (inputStack != null && StackHelper.isMatchingItem(inputStack, stack, true, false)) {
+            if (inputStack != null && StackUtil.isMatchingItem(inputStack, stack, true, false)) {
                 return true;
             }
         }

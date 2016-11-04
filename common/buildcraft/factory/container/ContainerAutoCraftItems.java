@@ -6,11 +6,11 @@ package buildcraft.factory.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import buildcraft.core.lib.gui.slots.SlotBase;
-import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.factory.tile.TileAutoWorkbenchItems;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
+import buildcraft.lib.gui.slot.SlotOutput;
+import buildcraft.lib.gui.slot.SlotPhantom;
 
 public class ContainerAutoCraftItems extends ContainerBCTile<TileAutoWorkbenchItems> {
     private static final int PLAYER_INV_START = 115;

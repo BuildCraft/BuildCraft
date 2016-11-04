@@ -22,7 +22,7 @@ import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEventContents_BC8.Enter;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8;
 import buildcraft.api.transport.pipe_bc8.event_bc8.IPipeEvent_BC8.PropertyQuery;
-import buildcraft.core.lib.inventory.StackHelper;
+
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.transport.PipeTransportItems;
 
@@ -96,7 +96,7 @@ public class TravellingItem_BC8 implements IPipeListener {
         ItemStack thisStack = item.cloneItemStack();
         ItemStack otherStack = other.cloneItemStack();
         // We can test directly because both of the stacks are cloned.
-        int merged = StackHelper.mergeStacks(otherStack, thisStack, true);
+        int merged = StackUtil.mergeStacks(otherStack, thisStack, true);
         if (merged == otherStack.stackSize) {
             otherStack.stackSize = 0;
             item.setStack(thisStack);

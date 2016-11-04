@@ -7,7 +7,8 @@ package buildcraft.core.lib.gui.widgets;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.elem.ToolTip;
+
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;

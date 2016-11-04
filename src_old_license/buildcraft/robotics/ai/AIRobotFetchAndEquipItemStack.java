@@ -12,7 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.inventory.filters.AggregateFilter;
+import buildcraft.lib.inventory.filter.AggregateFilter;
 import buildcraft.robotics.statements.ActionRobotFilterTool;
 
 public class AIRobotFetchAndEquipItemStack extends AIRobot {

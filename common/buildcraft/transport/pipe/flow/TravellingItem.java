@@ -99,19 +99,19 @@ public class TravellingItem {
             end = VecUtil.offset(center, to, 0.5);
         }
 
-        Vec3d from;
-        Vec3d to;
+        Vec3d vecFrom;
+        Vec3d vecTo;
         if (interp < 0.5) {
-            from = start;
-            to = center;
+            vecFrom = start;
+            vecTo = center;
             interp *= 2;
         } else {
-            from = center;
-            to = end;
+            vecFrom = center;
+            vecTo = end;
             interp = (interp - 0.5f) * 2;
         }
 
-        return VecUtil.scale(from, 1 - interp).add(VecUtil.scale(to, interp));
+        return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
     }
 
     public boolean isVisible() {

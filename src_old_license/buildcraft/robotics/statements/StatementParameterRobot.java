@@ -10,7 +10,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.inventory.StackHelper;
+
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ItemRobot;
 import buildcraft.robotics.RobotUtils;
@@ -55,7 +56,7 @@ public class StatementParameterRobot extends StatementParameterItemStack {
                 }
             } else if (robot instanceof EntityRobot) {
                 for (ItemStack target : ((EntityRobot) robot).getWearables()) {
-                    if (target != null && StackHelper.isMatchingItem(stack, target, true, true)) {
+                    if (target != null && StackUtil.isMatchingItem(stack, target, true, true)) {
                         return true;
                     }
                 }

@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.lib.gui.elem.ToolTip;
 
 import io.netty.buffer.ByteBuf;
 
