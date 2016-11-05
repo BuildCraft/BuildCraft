@@ -12,7 +12,9 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumDyeColor;
@@ -29,6 +31,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -68,12 +71,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         setLightOpacity(0);
     }
 
+    // basics
+
     @Override
     protected BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[] { PROP_TILE });
     }
-
-    // common
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
@@ -94,6 +97,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
+
+    // Collisions
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
@@ -397,6 +402,25 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             return (TilePipeHolder) tile;
         }
         return null;
+    }
+
+    // Block overrides
+
+    @Override
+    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
+        return super.addLandingEffects(state, worldObj, blockPosition, iblockstate, entity, numberOfParticles);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager) {
+        return super.addHitEffects(state, worldObj, target, manager);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
+        return super.addDestroyEffects(world, pos, manager);
     }
 
     // paint

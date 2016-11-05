@@ -1,20 +1,21 @@
 package buildcraft.builders.entity;
 
-import buildcraft.builders.tile.TileQuarry;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.VecUtil;
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.lib.misc.BoundingBoxUtil;
+import buildcraft.lib.misc.NBTUtils;
 
 public class EntityQuarry extends Entity {
     private static final DataParameter<BlockPos> TILE_POS = EntityDataManager.createKey(EntityQuarry.class, DataSerializers.BLOCK_POS);
@@ -46,11 +47,12 @@ public class EntityQuarry extends Entity {
     }
 
     public Type getType() {
-        return Type.values()[dataManager.get(TYPE)];
+        return Type.VALUES[dataManager.get(TYPE)];
     }
 
     public TileQuarry getTile() {
-        return worldObj.getTileEntity(getTilePos()) instanceof TileQuarry ? (TileQuarry) worldObj.getTileEntity(getTilePos()) : null;
+        TileEntity tile = worldObj.getTileEntity(getTilePos());
+        return tile instanceof TileQuarry ? (TileQuarry) tile : null;
     }
 
     @Override
@@ -76,14 +78,15 @@ public class EntityQuarry extends Entity {
 
     @Override
     public AxisAlignedBB getEntityBoundingBox() {
-        if(getTile() != null && getTile().min != null && getTile().max != null && getTile().drillPos != null) {
+        TileQuarry tile = getTile();
+        if(tile != null && tile.min != null && tile.max != null && tile.drillPos != null) {
             switch(getType()) {
                 case X:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(getTile().drillPos.xCoord + 0.5, getTile().min.getY() + 0.5, getTile().min.getZ() + 1), new Vec3d(getTile().drillPos.xCoord + 0.5, getTile().min.getY() + 0.5, getTile().max.getZ()), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.min.getZ() + 1), new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.max.getZ()), 4 / 16D);
                 case Y:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(getTile().drillPos.xCoord + 0.5, getTile().min.getY() + 0.5, getTile().drillPos.zCoord + 0.5), new Vec3d(getTile().drillPos.xCoord + 0.5, getTile().drillPos.yCoord + 1 + 0.5, getTile().drillPos.zCoord + 0.5), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.drillPos.xCoord + 0.5, tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), new Vec3d(tile.drillPos.xCoord + 0.5, tile.drillPos.yCoord + 1 + 0.5, tile.drillPos.zCoord + 0.5), 4 / 16D);
                 case Z:
-                    return BoundingBoxUtil.makeFrom(new Vec3d(getTile().min.getX() + 1, getTile().min.getY() + 0.5, getTile().drillPos.zCoord + 0.5), new Vec3d(getTile().max.getX(), getTile().min.getY() + 0.5, getTile().drillPos.zCoord + 0.5), 4 / 16D);
+                    return BoundingBoxUtil.makeFrom(new Vec3d(tile.min.getX() + 1, tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), new Vec3d(tile.max.getX(), tile.min.getY() + 0.5, tile.drillPos.zCoord + 0.5), 4 / 16D);
             }
         }
         return new AxisAlignedBB(0, 0, 0, 0, 0, 0);
@@ -114,6 +117,8 @@ public class EntityQuarry extends Entity {
     public enum Type {
         X,
         Y,
-        Z
+        Z;
+
+        public static final Type[] VALUES = values();
     }
 }

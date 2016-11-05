@@ -2,7 +2,10 @@ package buildcraft.lib.inventory;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
@@ -43,5 +46,19 @@ public class ItemTransactorHelper {
             return NoSpaceTransactor.INSTANCE;
         }
         return new InventoryWrapper(inventory);
+    }
+
+    @Nonnull
+    public static IItemTransactor getTransactorForEntity(Entity entity, EnumFacing face) {
+        IItemTransactor transactor = getTransactor(entity, face);
+        if (transactor != NoSpaceTransactor.INSTANCE) {
+            return transactor;
+        } else if (entity instanceof EntityItem) {
+            return new TransactorEntityItem((EntityItem) entity);
+        } else if (entity instanceof EntityArrow) {
+            return new TransactorEntityArrow((EntityArrow) entity);
+        } else {
+            return NoSpaceTransactor.INSTANCE;
+        }
     }
 }
