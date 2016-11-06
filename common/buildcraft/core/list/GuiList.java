@@ -98,9 +98,9 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
-            buttonList.add(new GuiImageButton(bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
-            buttonList.add(new GuiImageButton(bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
-            buttonList.add(new GuiImageButton(bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28));
+            buttonList.add(new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
+            buttonList.add(new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
+            buttonList.add(new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28));
         }
 
         for (GuiButton o : buttonList) {

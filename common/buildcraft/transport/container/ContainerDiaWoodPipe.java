@@ -2,25 +2,25 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport.gui;
+package buildcraft.transport.container;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.core.lib.gui.BuildCraftContainer;
+import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
-import buildcraft.transport.pipes.PipeItemsEmerald;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiaWood;
 
-public class ContainerEmeraldPipe extends BuildCraftContainer {
+public class ContainerDiaWoodPipe extends ContainerBC_Neptune {
+    private final PipeBehaviourDiaWood behaviour;
+    private final IItemHandler filterInv;
 
-    private final PipeItemsEmerald pipe;
-    private final IInventory filterInv;
-
-    public ContainerEmeraldPipe(EntityPlayer player, PipeItemsEmerald pipe) {
-        super(player, pipe.getFilters().getSizeInventory());
-        this.pipe = pipe;
-        this.filterInv = pipe.getFilters();
+    public ContainerDiaWoodPipe(EntityPlayer player, PipeBehaviourDiaWood behaviour) {
+        super(player);
+        this.behaviour = behaviour;
+        this.filterInv = behaviour.filters;
 
         for (int i = 0; i < 9; i++) {
             addSlotToContainer(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
@@ -39,6 +39,6 @@ public class ContainerEmeraldPipe extends BuildCraftContainer {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return pipe.container.isUseableByPlayer(entityplayer);
+        return true;// FIXME!
     }
 }

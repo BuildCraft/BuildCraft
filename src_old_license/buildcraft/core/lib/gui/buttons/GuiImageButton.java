@@ -6,32 +6,37 @@
 package buildcraft.core.lib.gui.buttons;
 
 import java.util.ArrayList;
-import org.lwjgl.opengl.GL11;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
+import buildcraft.lib.gui.GuiBC8;
+import buildcraft.lib.gui.ITooltipElement;
 import buildcraft.lib.gui.elem.ToolTip;
 
 @SideOnly(Side.CLIENT)
-public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger, IToolTipProvider {
+public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger, ITooltipElement {
     private final int size, u, v, baseU, baseV;
     private final ResourceLocation texture;
+    private final GuiBC8<?> gui;
 
     private ArrayList<IButtonClickEventListener> listeners = new ArrayList<>();
     private boolean active = false;
     private ToolTip toolTip;
 
-    public GuiImageButton(int id, int x, int y, int size, ResourceLocation texture, int u, int v) {
-        this(id, x, y, size, texture, 0, 0, u, v);
+    public GuiImageButton(GuiBC8<?> gui, int id, int x, int y, int size, ResourceLocation texture, int u, int v) {
+        this(gui, id, x, y, size, texture, 0, 0, u, v);
     }
 
-    public GuiImageButton(int id, int x, int y, int size, ResourceLocation texture, int baseU, int baseV, int u, int v) {
+    public GuiImageButton(GuiBC8<?> gui, int id, int x, int y, int size, ResourceLocation texture, int baseU, int baseV, int u, int v) {
         super(id, x, y, size, size, "");
+        this.gui = gui;
         this.size = size;
         this.u = u;
         this.v = v;
@@ -64,9 +69,9 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 
         minecraft.renderEngine.bindTexture(texture);
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
 
         int buttonState = getButtonState(x, y);
 
@@ -129,23 +134,15 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
         return mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + size && mouseY < yPosition + size;
     }
 
-    @Override
-    public ToolTip getToolTip() {
-        return toolTip;
-    }
-
     public GuiImageButton setToolTip(ToolTip tips) {
         this.toolTip = tips;
         return this;
     }
 
     @Override
-    public boolean isToolTipVisible() {
-        return visible;
-    }
-
-    @Override
-    public boolean isMouseOver(int mouseX, int mouseY) {
-        return isMouseOverButton(mouseX, mouseY);
+    public void addToolTips(List<ToolTip> tooltips) {
+        if (visible && isMouseOverButton(gui.mouse.getX(), gui.mouse.getY())) {
+            tooltips.add(toolTip);
+        }
     }
 }

@@ -51,6 +51,9 @@ public class BCTransportPipes {
     // public static PipeDefinition diamondFluid;
     // public static PipeDefinition diamondPower;
 
+    public static PipeDefinition diaWoodItem;
+    // public static PipeDefinition diaWoodFluid;
+
     public static PipeDefinition clayItem;
     public static PipeDefinition clayFluid;
 
@@ -115,6 +118,10 @@ public class BCTransportPipes {
         builder.builder.itemTex(7);
         diamondItem = builder.idTexPrefix("diamond_item").flowItem().define();
         builder.builder.itemTex(0);
+
+        builder.logic(PipeBehaviourDiaWood::new, PipeBehaviourDiaWood::new).texSuffixes("_clear", "_filled");
+        diaWoodItem = builder.idTexPrefix("diamond_wood_item").flowItem().define();
+        // diaWoodFluid = builder.idTexPrefix("diamond_wood_fluid").flowFluid().define();
 
         builder.logic(PipeBehaviourClay::new, PipeBehaviourClay::new);
         clayItem = builder.idTex("clay_item").flowItem().define();
