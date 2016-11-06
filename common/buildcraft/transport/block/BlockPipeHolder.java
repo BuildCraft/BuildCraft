@@ -176,6 +176,30 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return best;
     }
 
+    @Nullable
+    public static EnumWirePart rayTraceWire(BlockPos pos, Vec3d start, Vec3d end) {
+        Vec3d realStart = start.subtract(pos.getX(), pos.getY(), pos.getZ());
+        Vec3d realEnd = end.subtract(pos.getX(), pos.getY(), pos.getZ());
+        EnumWirePart best = null;
+        double dist = 1000;
+        for (EnumWirePart part : EnumWirePart.VALUES) {
+            RayTraceResult trace = part.boundingBoxPossible.calculateIntercept(realStart, realEnd);
+            if (trace != null) {
+                if (best == null) {
+                    best = part;
+                    dist = trace.hitVec.squareDistanceTo(realStart);
+                } else {
+                    double nextDist = trace.hitVec.squareDistanceTo(realStart);
+                    if (dist > nextDist) {
+                        best = part;
+                        dist = nextDist;
+                    }
+                }
+            }
+        }
+        return best;
+    }
+
     private RayTraceResult computeTrace(RayTraceResult lastBest, BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB aabb, int part) {
         RayTraceResult next = super.rayTrace(pos, start, end, aabb);
         if (next == null) {
