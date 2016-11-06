@@ -115,6 +115,13 @@ processResources
     }
 }
 
+compileJava {
+    options.compilerArgs << "-Xmaxerrs" << "2000"
+    options.compilerArgs << "-Xmaxwarns" << "2"
+    options.compilerArgs << "-Xlint:all"
+    options.compilerArgs << "-Xdiags:verbose"
+}
+
 // --------------------
 // extra jar section
 // -------------------

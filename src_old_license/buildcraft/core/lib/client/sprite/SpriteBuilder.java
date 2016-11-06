@@ -5,14 +5,15 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-
-import javax.imageio.ImageIO;
 
 public class SpriteBuilder {
     private final String name;
@@ -58,14 +59,13 @@ public class SpriteBuilder {
     }
 
     public static BufferedImage getImage(IResourceManager manager, ResourceLocation loc) {
-        try {
-            String domain = loc.getResourceDomain();
-            String path = loc.getResourcePath();
-            if (!path.startsWith("textures/")) path = "textures/" + path;
-            if (!path.endsWith(".png")) path = path + ".png";
-            ResourceLocation altered = new ResourceLocation(domain, path);
+        String domain = loc.getResourceDomain();
+        String path = loc.getResourcePath();
+        if (!path.startsWith("textures/")) path = "textures/" + path;
+        if (!path.endsWith(".png")) path = path + ".png";
+        ResourceLocation altered = new ResourceLocation(domain, path);
 
-            IResource res = manager.getResource(altered);
+        try (IResource res = manager.getResource(altered)) {
             BufferedImage image = ImageIO.read(res.getInputStream());
             return image;
         } catch (IOException e) {

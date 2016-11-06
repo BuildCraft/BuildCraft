@@ -7,8 +7,9 @@ package buildcraft.transport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
-public enum TransportGuis {
-    FILTERED_BUFFER;
+public enum BCTransportGuis {
+    FILTERED_BUFFER,
+    PIPE_DIAMOND;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCTransport.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);

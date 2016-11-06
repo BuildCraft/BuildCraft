@@ -172,20 +172,20 @@ public class StackUtil {
         return false;
     }
 
-    public static boolean isMatchingItemOrList(final ItemStack a, final ItemStack b) {
-        if (a == null || b == null) {
+    public static boolean isMatchingItemOrList(final ItemStack base, final ItemStack comparison) {
+        if (base == null || comparison == null) {
             return false;
         }
     
-        if (a.getItem() instanceof IList) {
-            IList list = (IList) a.getItem();
-            return list.matches(a, b);
-        } else if (b.getItem() instanceof IList) {
-            IList list = (IList) b.getItem();
-            return list.matches(b, a);
+        if (base.getItem() instanceof IList) {
+            IList list = (IList) base.getItem();
+            return list.matches(base, comparison);
+        } else if (comparison.getItem() instanceof IList) {
+            IList list = (IList) comparison.getItem();
+            return list.matches(comparison, base);
         }
     
-        return isMatchingItem(a, b, true, false);
+        return isMatchingItem(base, comparison, true, false);
     }
 
     /** Compares item id, damage and NBT. Accepts wildcard damage. Ignores damage entirely if the item doesn't have
@@ -199,9 +199,9 @@ public class StackUtil {
     }
 
     /** This variant also checks damage for damaged items. */
-    public static boolean isEqualItem(final ItemStack a, final ItemStack b) {
-        if (isMatchingItem(a, b, false, true)) {
-            return isWildcard(a) || isWildcard(b) || a.getItemDamage() == b.getItemDamage();
+    public static boolean isEqualItem(final ItemStack base, final ItemStack comparison) {
+        if (isMatchingItem(base, comparison, false, true)) {
+            return isWildcard(base) || isWildcard(comparison) || base.getItemDamage() == comparison.getItemDamage();
         } else {
             return false;
         }
@@ -210,28 +210,28 @@ public class StackUtil {
     /** Compares item id, and optionally damage and NBT. Accepts wildcard damage. Ignores damage entirely if the item
      * doesn't have subtypes.
      *
-     * @param a ItemStack
-     * @param b ItemStack
+     * @param base ItemStack
+     * @param comparison ItemStack
      * @param matchDamage
      * @param matchNBT
      * @return true if matches */
-    public static boolean isMatchingItem(final ItemStack a, final ItemStack b, final boolean matchDamage, final boolean matchNBT) {
-        if (a == null || b == null) {
+    public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
+        if (base == null || comparison == null) {
             return false;
         }
     
-        if (a.getItem() != b.getItem()) {
+        if (base.getItem() != comparison.getItem()) {
             return false;
         }
-        if (matchDamage && a.getHasSubtypes()) {
-            if (!isWildcard(a) && !isWildcard(b)) {
-                if (a.getItemDamage() != b.getItemDamage()) {
+        if (matchDamage && base.getHasSubtypes()) {
+            if (!isWildcard(base) && !isWildcard(comparison)) {
+                if (base.getItemDamage() != comparison.getItemDamage()) {
                     return false;
                 }
             }
         }
         if (matchNBT) {
-            if (a.getTagCompound() != null && !a.getTagCompound().equals(b.getTagCompound())) {
+            if (base.getTagCompound() != null && !base.getTagCompound().equals(comparison.getTagCompound())) {
                 return false;
             }
         }

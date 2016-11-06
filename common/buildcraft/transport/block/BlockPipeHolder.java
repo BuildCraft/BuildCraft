@@ -258,8 +258,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block) {
         TilePipeHolder pipe = getPipe(world, pos, true);
-        if (pipe != null && pipe.getPipe() != null) {
-            pipe.getPipe().markForUpdate();
+        if (pipe != null) {
+            pipe.refreshNeighbours();
+            if (pipe.getPipe() != null) {
+                pipe.getPipe().markForUpdate();
+            }
         }
     }
 

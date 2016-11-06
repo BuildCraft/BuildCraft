@@ -2,26 +2,25 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport.gui;
+package buildcraft.transport.container;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
-import buildcraft.transport.IDiamondPipe;
-import buildcraft.transport.Pipe;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
-public class ContainerDiamondPipe extends BuildCraftContainer {
+public class ContainerDiamondPipe extends ContainerBC_Neptune {
 
-    private final IDiamondPipe pipe;
-    private final IInventory filterInv;
+    private final PipeBehaviourDiamond pipe;
+    private final ItemHandlerSimple filterInv;
 
-    public ContainerDiamondPipe(EntityPlayer player, IDiamondPipe pipe) {
-        super(player, pipe.getFilters().getSizeInventory());
+    public ContainerDiamondPipe(EntityPlayer player, PipeBehaviourDiamond pipe) {
+        super(player);
         this.pipe = pipe;
-        this.filterInv = pipe.getFilters();
+        this.filterInv = pipe.filters;
 
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 9; x++) {
@@ -42,6 +41,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
-        return ((Pipe<?>) pipe).container.isUseableByPlayer(entityplayer);
+        return true;// FIXME!
     }
 }

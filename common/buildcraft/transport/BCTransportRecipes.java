@@ -59,6 +59,7 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.pipeItemSandstone, new ItemStack(Blocks.SANDSTONE, 1, OreDictionary.WILDCARD_VALUE));
         addPipeRecipe(BCTransportItems.pipeItemVoid, new ItemStack(Items.DYE, 1, EnumDyeColor.BLACK.getDyeDamage()), "dustRedstone");
         addPipeRecipe(BCTransportItems.pipeItemObsidian, Blocks.OBSIDIAN);
+        addPipeRecipe(BCTransportItems.pipeItemDiamond, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
 

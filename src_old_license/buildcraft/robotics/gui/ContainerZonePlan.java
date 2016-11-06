@@ -13,12 +13,12 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.core.lib.client.sprite.DynamicTextureBC;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.lib.gui.slot.SlotOutput;
 import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.map.MapWorld;

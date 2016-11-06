@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 
-import buildcraft.core.lib.client.sprite.DynamicTextureBC;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.robotics.TileZonePlan;
 
 public class RenderZonePlan extends TileEntitySpecialRenderer<TileZonePlan> {

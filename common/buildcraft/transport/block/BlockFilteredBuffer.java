@@ -1,7 +1,7 @@
 package buildcraft.transport.block;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.transport.TransportGuis;
+import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +26,7 @@ public class BlockFilteredBuffer extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            TransportGuis.FILTERED_BUFFER.openGUI(player, pos);
+            BCTransportGuis.FILTERED_BUFFER.openGUI(player, pos);
         }
         return true;
     }

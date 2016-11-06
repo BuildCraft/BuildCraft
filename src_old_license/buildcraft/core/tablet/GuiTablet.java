@@ -11,9 +11,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.tablet.TabletBitmap;
-import buildcraft.core.lib.client.sprite.DynamicTextureBC;
+
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletThread;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
 
 public class GuiTablet extends GuiScreen {
     private static final boolean ENABLE_HIGHLIGHT = false;

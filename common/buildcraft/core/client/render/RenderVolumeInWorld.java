@@ -28,7 +28,8 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
     INSTANCE;
 
     private static final double OFFSET_BY = 2 / 16.0;
-    private static final double RENDER_SCALE = 1 / 16.05;
+    private static final double RENDER_SCALE = 1 / 16.0;
+    private static final double RENDER_SCALE_HIGHLIGHT = 1 / 15.8;
 
     @Override
     public void render(EntityPlayer player, float partialTicks) {
@@ -54,7 +55,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
     }
 
     private static void renderBox(VolumeBox box, VertexBuffer vb) {
-        makeLaserBox(box.box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED);
+        makeLaserBox(box.box, BuildCraftLaserManager.MARKER_VOLUME_CONNECTED, RENDER_SCALE);
 
         for (LaserData_BC8 data : box.box.laserData) {
             LaserRenderer_BC8.renderLaserBuffer(data, vb);
@@ -71,7 +72,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         mk.renderCache.extendToEncompass(mk.held);
         mk.renderCache.extendToEncompass(offset);
 
-        makeLaserBox(mk.renderCache, BuildCraftLaserManager.MARKER_VOLUME_SIGNAL);
+        makeLaserBox(mk.renderCache, BuildCraftLaserManager.MARKER_VOLUME_SIGNAL, RENDER_SCALE_HIGHLIGHT);
 
         for (LaserData_BC8 data : mk.renderCache.laserData) {
             LaserRenderer_BC8.renderLaserBuffer(data, vb);
@@ -79,7 +80,7 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
         // TODO: Render corners!
     }
 
-    private static void makeLaserBox(Box box, LaserType type) {
+    private static void makeLaserBox(Box box, LaserType type, double scale) {
         BlockPos min = box.min();
         BlockPos max = box.max();
 
@@ -108,32 +109,32 @@ public enum RenderVolumeInWorld implements IDetachedRenderer {
             }
         }
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X));
-        datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[1][0][0], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][1][0], vecs[1][1][0], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][1][1], vecs[1][1][1], Axis.X, scale));
+        datas.add(makeLaser(type, vecs[0][0][1], vecs[1][0][1], Axis.X, scale));
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y));
-        datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y));
-        datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][1][0], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][1][0], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[1][0][1], vecs[1][1][1], Axis.Y, scale));
+        datas.add(makeLaser(type, vecs[0][0][1], vecs[0][1][1], Axis.Y, scale));
 
-        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z));
-        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z));
-        datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z));
-        datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z));
+        datas.add(makeLaser(type, vecs[0][0][0], vecs[0][0][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[1][0][0], vecs[1][0][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[1][1][0], vecs[1][1][1], Axis.Z, scale));
+        datas.add(makeLaser(type, vecs[0][1][0], vecs[0][1][1], Axis.Z, scale));
 
         box.laserData = datas.toArray(new LaserData_BC8[datas.size()]);
         box.lastMin = min;
         box.lastMax = max;
     }
 
-    private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis) {
+    private static LaserData_BC8 makeLaser(LaserType type, Vec3d min, Vec3d max, Axis axis, double scale) {
         EnumFacing faceForMin = VecUtil.getFacing(axis, true);
         EnumFacing faceForMax = VecUtil.getFacing(axis, false);
         Vec3d one = offset(min, faceForMin);
         Vec3d two = offset(max, faceForMax);
-        return new LaserData_BC8(type, one, two, RENDER_SCALE);
+        return new LaserData_BC8(type, one, two, scale);
     }
 
     private static Vec3d offset(Vec3d vec, EnumFacing face) {
