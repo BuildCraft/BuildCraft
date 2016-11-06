@@ -9,7 +9,7 @@ import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotPhantom;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.transport.TransportSprites;
+import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +27,7 @@ public class ContainerFilteredBuffer extends ContainerBCTile<TileFilteredBuffer>
             SlotPhantom phantom = new SlotPhantom(tile.invFilter, i, 8 + i * 18, 27) {
                 @Override
                 public TextureAtlasSprite getBackgroundSprite() {
-                    return TransportSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();
+                    return BCTransportSprites.EMPTY_FILTERED_BUFFER_SLOT.getSprite();
                 }
 
                 @Override

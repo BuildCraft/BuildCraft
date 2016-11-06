@@ -19,6 +19,8 @@ public class NodeInliningHelper {
      * @return A new node that has been inlined fully. */
     public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, Arguments args, F subNode, Function<F, T> changer, Function<F, T> inlinedChanger) {
         GenericExpressionCompiler.debugStart("Inlining " + node);
+        // Nothing we can do about these unchecked warnings without making IExpressionNode generic
+        @SuppressWarnings("unchecked")
         F subInlined = (F) subNode.inline(args);
         if (subInlined instanceof IImmutableNode) {
             T to = inlinedChanger.apply(subInlined);
@@ -36,7 +38,10 @@ public class NodeInliningHelper {
 
     public static <F extends IExpressionNode, T extends IExpressionNode> T tryInline(T node, Arguments args, F subNodeLeft, F subNodeRight, BiFunction<F, F, T> changer, BiFunction<F, F, T> inlinedChanger) {
         GenericExpressionCompiler.debugStart("Inlining " + node);
+        // Nothing we can do about these unchecked warnings without making IExpressionNode generic
+        @SuppressWarnings("unchecked")
         F leftInlined = (F) subNodeLeft.inline(args);
+        @SuppressWarnings("unchecked")
         F rightInlined = (F) subNodeRight.inline(args);
         if (leftInlined instanceof IImmutableNode && rightInlined instanceof IImmutableNode) {
             T to = inlinedChanger.apply(leftInlined, rightInlined);

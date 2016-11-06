@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import buildcraft.transport.TransportSprites;
+import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.container.ContainerFilteredBuffer;
 
 public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer> {
@@ -44,7 +44,7 @@ public class GuiFilteredBuffer extends GuiBC8<ContainerFilteredBuffer> {
                 this.itemRender.renderItemAndEffectIntoGUI(this.mc.thePlayer, stack, currentX, currentY);
             } else {
                 this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                this.drawTexturedModalRect(currentX, currentY, TransportSprites.NOTHING_FILTERED_BUFFER_SLOT.getSprite(), 16, 16);
+                this.drawTexturedModalRect(currentX, currentY, BCTransportSprites.NOTHING_FILTERED_BUFFER_SLOT.getSprite(), 16, 16);
             }
             // GL11.glColor4f(1, 1, 1, 1);
             // GL11.glDisable(GL11.GL_BLEND);

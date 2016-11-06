@@ -1,6 +1,7 @@
 package buildcraft.transport.tile;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -60,6 +61,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     private Pipe pipe;
     private boolean scheduleRenderUpdate = true;
     private final Set<PipeMessageReceiver> networkUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
+    private final Map<EnumFacing, WeakReference<TileEntity>> neighbourTiles = new EnumMap<>(EnumFacing.class);
 
     public TilePipeHolder() {
         for (EnumFacing side : EnumFacing.VALUES) {
@@ -126,16 +128,37 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         scheduleRenderUpdate();
     }
 
+    public void refreshNeighbours() {
+        for (EnumFacing face : EnumFacing.VALUES) {
+            WeakReference<TileEntity> current = neighbourTiles.get(face);
+            if (current != null) {
+                TileEntity tile = current.get();
+                if (tile == null || tile.isInvalid()) {
+                    neighbourTiles.remove(face);
+                } else {
+                    continue;
+                }
+            }
+            TileEntity tile = worldObj.getTileEntity(getPos().offset(face));
+            if (tile != null) {
+                neighbourTiles.put(face, new WeakReference<>(tile));
+            }
+        }
+    }
+
     // ITickable
 
     @Override
     public void update() {
+        // Tick objects
         if (pipe != null) {
             pipe.onTick();
         }
         for (EnumFacing face : EnumFacing.VALUES) {
             pluggables.get(face).onTick();
         }
+
+        // Send network updates
         if (networkUpdates.size() == 1) {
             PipeMessageReceiver part = networkUpdates.iterator().next();
             sendNetworkUpdate(getReceiverId(part));
@@ -158,6 +181,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             // });
         }
         networkUpdates.clear();
+
         if (scheduleRenderUpdate) {
             scheduleRenderUpdate = false;
             redrawBlock();
@@ -299,12 +323,25 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public TileEntity getNeighbouringTile(EnumFacing side) {
         if (side == null) return null;
         return worldObj.getTileEntity(getPos().offset(side));
+        // TODO: Make caching work!
+        // WeakReference<TileEntity> weakRef = neighbourTiles.get(side);
+        // if (weakRef == null) {
+        // return null;
+        // }
+        // TileEntity tile = weakRef.get();
+        // if (tile == null) {
+        // return null;
+        // } else if (tile.isInvalid()) {
+        // neighbourTiles.remove(side);
+        // return null;
+        // }
+        // return tile;
     }
 
     @Override
     public IPipe getNeighbouringPipe(EnumFacing side) {
-        // TODO: move this function to allow for compat support!
         TileEntity neighbour = getNeighbouringTile(side);
+        // TODO: move this function to allow for compat support!
         if (neighbour instanceof IPipeHolder) {
             return ((IPipeHolder) neighbour).getPipe();
         }
@@ -353,6 +390,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         return pipe == null ? null : pipe.getCapability(capability, facing);
     }
+
+    // Client side stuffs
 
     @Override
     @SideOnly(Side.CLIENT)

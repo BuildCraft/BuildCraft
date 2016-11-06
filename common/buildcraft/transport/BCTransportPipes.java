@@ -3,6 +3,7 @@ package buildcraft.transport;
 import java.util.Arrays;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.transport.neptune.PipeAPI;
@@ -45,6 +46,10 @@ public class BCTransportPipes {
     public static PipeDefinition ironItem;
     public static PipeDefinition ironFluid;
     // public static PipeDefinition ironPower;
+
+    public static PipeDefinition diamondItem;
+    // public static PipeDefinition diamondFluid;
+    // public static PipeDefinition diamondPower;
 
     public static PipeDefinition clayItem;
     public static PipeDefinition clayFluid;
@@ -98,6 +103,18 @@ public class BCTransportPipes {
         ironItem = builder.idTexPrefix("iron_item").flowItem().define();
         ironFluid = builder.idTexPrefix("iron_fluid").flowFluid().define();
         // ironPower = builder.idTexPrefix("iron_power").flowPower().define();
+
+        String[] diamondTextureSuffixes = new String[8];
+        diamondTextureSuffixes[0] = "";
+        diamondTextureSuffixes[7] = "_itemstack";
+        for (EnumFacing face : EnumFacing.VALUES) {
+            diamondTextureSuffixes[face.ordinal() + 1] = "_" + face.getName();
+        }
+
+        builder.logic(PipeBehaviourDiamondItem::new, PipeBehaviourDiamondItem::new).texSuffixes(diamondTextureSuffixes);
+        builder.builder.itemTex(7);
+        diamondItem = builder.idTexPrefix("diamond_item").flowItem().define();
+        builder.builder.itemTex(0);
 
         builder.logic(PipeBehaviourClay::new, PipeBehaviourClay::new);
         clayItem = builder.idTex("clay_item").flowItem().define();

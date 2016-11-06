@@ -12,10 +12,17 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.PipeBehaviour;
+
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.render.RenderPipeHolder;
+import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerFilteredBuffer;
+import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -28,19 +35,30 @@ public abstract class BCTransportProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-        if (ID == TransportGuis.FILTERED_BUFFER.ordinal()) {
+        if (id == BCTransportGuis.FILTERED_BUFFER.ordinal()) {
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
                 return new ContainerFilteredBuffer(player, filteredBuffer);
+            }
+        } else if (id == BCTransportGuis.PIPE_DIAMOND.ordinal()) {
+            if (tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
+                IPipe pipe = holder.getPipe();
+                if (pipe == null) return null;
+                PipeBehaviour behaviour = pipe.getBehaviour();
+                if (behaviour instanceof PipeBehaviourDiamond) {
+                    PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
+                    return new ContainerDiamondPipe(player, diaPipe);
+                }
             }
         }
         return null;
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return null;
     }
 
@@ -70,12 +88,23 @@ public abstract class BCTransportProxy implements IGuiHandler {
         }
 
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
             TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
-            if (ID == TransportGuis.FILTERED_BUFFER.ordinal()) {
+            if (id == BCTransportGuis.FILTERED_BUFFER.ordinal()) {
                 if (tile instanceof TileFilteredBuffer) {
                     TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
                     return new GuiFilteredBuffer(new ContainerFilteredBuffer(player, filteredBuffer));
+                }
+            } else if (id == BCTransportGuis.PIPE_DIAMOND.ordinal()) {
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    IPipe pipe = holder.getPipe();
+                    if (pipe == null) return null;
+                    PipeBehaviour behaviour = pipe.getBehaviour();
+                    if (behaviour instanceof PipeBehaviourDiamond) {
+                        PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
+                        return new GuiDiamondPipe(player, diaPipe);
+                    }
                 }
             }
             return null;

@@ -1,4 +1,4 @@
-package buildcraft.core.lib.client.sprite;
+package buildcraft.lib.client.sprite;
 
 import org.lwjgl.opengl.GL11;
 

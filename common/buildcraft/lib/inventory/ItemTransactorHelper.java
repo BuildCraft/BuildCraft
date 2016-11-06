@@ -17,7 +17,6 @@ import net.minecraftforge.items.IItemHandler;
 import buildcraft.api.inventory.IItemTransactor;
 
 public class ItemTransactorHelper {
-
     @Nonnull
     public static IItemTransactor getTransactor(ICapabilityProvider provider, EnumFacing face) {
         if (provider == null) {

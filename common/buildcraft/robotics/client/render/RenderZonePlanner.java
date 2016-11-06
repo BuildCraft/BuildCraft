@@ -21,8 +21,9 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.core.lib.client.sprite.DynamicTextureBC;
+
 import buildcraft.lib.client.model.MutableVertex;
+import buildcraft.lib.client.sprite.DynamicTextureBC;
 import buildcraft.lib.misc.data.WorldPos;
 import buildcraft.robotics.tile.TileZonePlanner;
 import buildcraft.robotics.zone.ZonePlannerMapChunkKey;

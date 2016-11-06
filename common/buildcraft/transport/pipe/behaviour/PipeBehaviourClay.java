@@ -23,7 +23,7 @@ public class PipeBehaviourClay extends PipeBehaviour {
     public void orderSides(PipeEventItem.SideCheck ordering) {
         for (EnumFacing face : EnumFacing.VALUES) {
             ConnectedType type = pipe.getConnectedType(face);
-            if (type == ConnectedType.PIPE) {
+            if (type == ConnectedType.TILE) {
                 /* We only really need to increase the precedence, but using a larger number (12) means that it doesn't
                  * matter what plugs are attached (say filters) and this will always prefer to go into inventories above
                  * the correct filters. (Although note that the filters still matter) */
