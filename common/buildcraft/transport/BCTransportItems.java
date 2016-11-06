@@ -1,13 +1,9 @@
 package buildcraft.transport;
 
 import buildcraft.api.transport.neptune.PipeDefinition;
-
 import buildcraft.lib.item.ItemBC_Neptune;
 import buildcraft.lib.item.ItemManager;
-import buildcraft.transport.item.ItemPipeHolder;
-import buildcraft.transport.item.ItemPluggableGate;
-import buildcraft.transport.item.ItemPluggablePulsar;
-import buildcraft.transport.item.ItemPluggableSimple;
+import buildcraft.transport.item.*;
 
 public class BCTransportItems {
     public static ItemBC_Neptune waterproof;
@@ -58,6 +54,8 @@ public class BCTransportItems {
     public static ItemPluggableGate plugGate;
     public static ItemPluggablePulsar plugPulsar;
 
+    public static ItemWire wire;
+
     public static void preInit() {
         waterproof = ItemManager.register(new ItemBC_Neptune("item.waterproof"));
 
@@ -100,6 +98,8 @@ public class BCTransportItems {
         plugBlocker = ItemManager.register(new ItemPluggableSimple("item.plug.blocker", BCTransportPlugs.blocker));
         plugGate = ItemManager.register(new ItemPluggableGate("item.plug.gate"));
         plugPulsar = ItemManager.register(new ItemPluggablePulsar("item.plug.pulsar"));
+
+        wire = ItemManager.register(new ItemWire("item.wire"));
     }
 
     public static ItemPipeHolder makePipeItem(PipeDefinition def) {
