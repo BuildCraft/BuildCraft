@@ -27,6 +27,7 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
         super(player);
         this.behaviour = behaviour;
         this.filterInv = behaviour.filters;
+        behaviour.pipe.getHolder().onPlayerOpen(player);
 
         for (int i = 0; i < 9; i++) {
             addSlotToContainer(new SlotPhantom(filterInv, i, 8 + i * 18, 18));
@@ -41,6 +42,12 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
         for (int i1 = 0; i1 < 9; i1++) {
             addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 137));
         }
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        behaviour.pipe.getHolder().onPlayerClose(player);
     }
 
     @Override

@@ -14,6 +14,7 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.api.transport.neptune.IFlowItems;
 import buildcraft.api.transport.neptune.IItemPluggable;
 import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
@@ -45,7 +46,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     public final ItemHandlerSimple filters = new ItemHandlerSimple(9, null);
     public FilterMode filterMode = FilterMode.WHITE_LIST;
-    private int currentFilter = 0;
+    public int currentFilter = 0;
 
     public PipeBehaviourWoodDiamond(IPipe pipe) {
         super(pipe);
@@ -132,6 +133,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             IStackFilter filter = getStackFilter();
             int extracted = ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), filter);
             if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
+                int lastFilter = currentFilter;
                 while (true) {
                     currentFilter++;
                     if (currentFilter >= filters.getSlots()) {
@@ -141,6 +143,9 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
                     if (filters.getStackInSlot(currentFilter) != null) {
                         break;
                     }
+                }
+                if (lastFilter != currentFilter) {
+                    pipe.getHolder().scheduleNetworkGuiUpdate(PipeMessageReceiver.BEHAVIOUR);
                 }
             }
         }

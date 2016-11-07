@@ -61,6 +61,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     private Pipe pipe;
     private boolean scheduleRenderUpdate = true;
     private final Set<PipeMessageReceiver> networkUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
+    private final Set<PipeMessageReceiver> networkGuiUpdates = EnumSet.noneOf(PipeMessageReceiver.class);
     private final Map<EnumFacing, WeakReference<TileEntity>> neighbourTiles = new EnumMap<>(EnumFacing.class);
 
     public TilePipeHolder() {
@@ -159,28 +160,25 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
 
         // Send network updates
-        if (networkUpdates.size() == 1) {
-            PipeMessageReceiver part = networkUpdates.iterator().next();
-            sendNetworkUpdate(getReceiverId(part));
-        } else if (networkUpdates.size() > 1) {
+        if (networkUpdates.size() > 0) {
+            // TODO: Multi-update messages! (multiple updates sent in a single message)
             Set<PipeMessageReceiver> parts = EnumSet.copyOf(networkUpdates);
             for (PipeMessageReceiver part : parts) {
                 sendNetworkUpdate(getReceiverId(part));
             }
-            // createAndSendMessage(NET_UPDATE_MULTI, (buffer) -> {
-            // int total = 0;
-            // for (PipeMessageReceiver part : parts) {
-            // total |= 1 << part.ordinal();
-            // }
-            // buffer.writeByte(total);
-            // for (PipeMessageReceiver part : PipeMessageReceiver.VALUES) {
-            // if (parts.contains(part)) {
-            // writePayload(getReceiverId(part), buffer, worldObj.isRemote ? Side.CLIENT : Side.SERVER);
-            // }
-            // }
-            // });
         }
+        // No need to send gui updates to specific players if we just sent off messages to all players.
+        networkGuiUpdates.removeAll(networkUpdates);
         networkUpdates.clear();
+
+        if (networkGuiUpdates.size() > 0) {
+            // TODO: Multi-update messages! (multiple updates sent in a single message)
+            Set<PipeMessageReceiver> parts = EnumSet.copyOf(networkGuiUpdates);
+            for (PipeMessageReceiver part : parts) {
+                sendNetworkGuiUpdate(getReceiverId(part));
+            }
+        }
+        networkGuiUpdates.clear();
 
         if (scheduleRenderUpdate) {
             scheduleRenderUpdate = false;
@@ -356,6 +354,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public void scheduleNetworkUpdate(PipeMessageReceiver... parts) {
         Collections.addAll(networkUpdates, parts);
+    }
+
+    @Override
+    public void scheduleNetworkGuiUpdate(PipeMessageReceiver... parts) {
+        Collections.addAll(networkGuiUpdates, parts);
     }
 
     @Override
