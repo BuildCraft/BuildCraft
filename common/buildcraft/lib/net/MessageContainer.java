@@ -26,6 +26,10 @@ public class MessageContainer implements IMessage {
     @Deprecated
     public MessageContainer() {}
 
+    public MessageContainer(ContainerBC_Neptune container, IPayloadWriter writer) {
+        this(container.windowId, writer);
+    }
+
     public MessageContainer(int windowId, IPayloadWriter writer) {
         this.windowId = windowId;
         this.payload = new PacketBuffer(Unpooled.buffer());

@@ -11,12 +11,23 @@ import java.util.RandomAccess;
 
 import com.google.common.collect.ForwardingList;
 
+import buildcraft.lib.misc.StringUtilBC;
+
 public class ToolTip extends ForwardingList<String> implements RandomAccess {
 
     /* If the impl list class does not implement RandomAccess then the interface MUST be removed from this class */
     private final List<String> delegate = new ArrayList<>();
     private final long delay;
     private long mouseOverStart;
+
+    public static ToolTip createLocalized(String... localeKeys) {
+        List<String> allLines = new ArrayList<>();
+        for (String key : localeKeys) {
+            String localized = StringUtilBC.localize(key);
+            allLines.addAll(StringUtilBC.splitIntoLines(localized));
+        }
+        return new ToolTip(allLines);
+    }
 
     public ToolTip(String... lines) {
         this.delay = 0;
@@ -26,6 +37,11 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
     public ToolTip(int delay, String... lines) {
         this.delay = delay;
         Collections.addAll(delegate, lines);
+    }
+
+    private ToolTip(List<String> lines) {
+        this.delay = 0;
+        delegate.addAll(lines);
     }
 
     @Override

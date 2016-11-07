@@ -5,6 +5,7 @@
 package buildcraft.lib.misc;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import com.google.common.base.Splitter;
 
@@ -28,6 +29,10 @@ public final class StringUtilBC {
 
     public static boolean canLocalize(String key) {
         return I18n.canTranslate(key);
+    }
+
+    public static List<String> splitIntoLines(String string) {
+        return newLineSplitter.splitToList(string.replaceAll("\\n", "\n"));
     }
 
     public static String blockPosToShortString(BlockPos pos) {

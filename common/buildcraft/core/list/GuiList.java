@@ -7,6 +7,8 @@ package buildcraft.core.list;
 import java.io.IOException;
 import java.util.*;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +29,6 @@ import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
@@ -103,15 +104,15 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
             GuiImageButton buttonPrecise = new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
             buttonList.add(buttonPrecise);
-            buttonPrecise.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.nbt")));
+            buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt"));
 
             GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
             buttonList.add(buttonType);
-            buttonType.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.metadata")));
+            buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata"));
 
             GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
             buttonList.add(buttonMaterial);
-            buttonMaterial.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.oredict")));
+            buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict"));
         }
 
         for (GuiButton o : buttonList) {
@@ -154,6 +155,16 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean hasListEquipped() {
         return container.getListItemStack() != null;
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (textField.isFocused() && keyCode != Keyboard.KEY_ESCAPE) {
+            textField.textboxKeyTyped(typedChar, keyCode);
+            container.setLabel(textField.getText());
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 
     @Override
