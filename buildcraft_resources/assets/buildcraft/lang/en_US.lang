@@ -323,6 +323,7 @@ gui.heat=Heat
 gui.assemblyRate=Energy Rate
 gui.assemblyCurrentRequired=Energy Required
 gui.clickcraft=-Click to Craft-
+gui.list.nbt=Require Exact Match
 gui.list.metadata=Accept Variations
 gui.list.oredict=Accept Equivalents
 gui.pipes.emerald.title=Filters

@@ -141,7 +141,7 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-        if (visible && isMouseOverButton(gui.mouse.getX(), gui.mouse.getY())) {
+        if (toolTip != null && visible && isMouseOverButton(gui.mouse.getX(), gui.mouse.getY())) {
             tooltips.add(toolTip);
         }
     }

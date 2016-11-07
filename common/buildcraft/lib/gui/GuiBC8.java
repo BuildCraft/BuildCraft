@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -49,6 +50,10 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
     @Override
     public void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor) {
         super.drawGradientRect(left, top, right, bottom, startColor, endColor);
+    }
+
+    public List<GuiButton> getButtonList() {
+        return buttonList;
     }
 
     // Other

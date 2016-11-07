@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.lists.ListMatchHandler;
+
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.core.lib.gui.buttons.GuiImageButton;
@@ -23,8 +24,10 @@ import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventListener {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftcore:textures/gui/list_new.png");
@@ -98,9 +101,17 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
-            buttonList.add(new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
-            buttonList.add(new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
-            buttonList.add(new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28));
+            GuiImageButton buttonPrecise = new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
+            buttonList.add(buttonPrecise);
+            buttonPrecise.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.nbt")));
+
+            GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
+            buttonList.add(buttonType);
+            buttonType.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.metadata")));
+
+            GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
+            buttonList.add(buttonMaterial);
+            buttonMaterial.setToolTip(new ToolTip(StringUtilBC.localize("gui.list.oredict")));
         }
 
         for (GuiButton o : buttonList) {
