@@ -119,7 +119,7 @@ public class BCTransportPipes {
         diamondItem = builder.idTexPrefix("diamond_item").flowItem().define();
         builder.builder.itemTex(0);
 
-        builder.logic(PipeBehaviourDiaWood::new, PipeBehaviourDiaWood::new).texSuffixes("_clear", "_filled");
+        builder.logic(PipeBehaviourWoodDiamond::new, PipeBehaviourWoodDiamond::new).texSuffixes("_clear", "_filled");
         diaWoodItem = builder.idTexPrefix("diamond_wood_item").flowItem().define();
         // diaWoodFluid = builder.idTexPrefix("diamond_wood_fluid").flowFluid().define();
 

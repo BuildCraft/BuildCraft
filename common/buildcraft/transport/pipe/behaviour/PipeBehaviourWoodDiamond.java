@@ -23,7 +23,7 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
 import buildcraft.transport.BCTransportGuis;
 
-public class PipeBehaviourDiaWood extends PipeBehaviourWood {
+public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
 
     public enum FilterMode {
         WHITE_LIST,
@@ -47,11 +47,11 @@ public class PipeBehaviourDiaWood extends PipeBehaviourWood {
     public FilterMode filterMode = FilterMode.WHITE_LIST;
     private int currentFilter = 0;
 
-    public PipeBehaviourDiaWood(IPipe pipe) {
+    public PipeBehaviourWoodDiamond(IPipe pipe) {
         super(pipe);
     }
 
-    public PipeBehaviourDiaWood(IPipe pipe, NBTTagCompound nbt) {
+    public PipeBehaviourWoodDiamond(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
         filters.deserializeNBT(nbt.getCompoundTag("filters"));
         filterMode = FilterMode.get(nbt.getByte("mode"));
@@ -123,14 +123,24 @@ public class PipeBehaviourDiaWood extends PipeBehaviourWood {
         // Also make this extract different numbers of items depending
         // on how much power was put in
 
+        if (filters.getStackInSlot(currentFilter) == null) {
+            currentFilter = 0;
+        }
+
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
             IStackFilter filter = getStackFilter();
             int extracted = ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), filter);
             if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
-                currentFilter++;
-                if (currentFilter >= filters.getSlots()) {
-                    currentFilter = 0;
+                while (true) {
+                    currentFilter++;
+                    if (currentFilter >= filters.getSlots()) {
+                        currentFilter = 0;
+                        break;
+                    }
+                    if (filters.getStackInSlot(currentFilter) != null) {
+                        break;
+                    }
                 }
             }
         }

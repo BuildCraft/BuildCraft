@@ -24,6 +24,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.command.IPayloadWriter;
 
@@ -131,7 +132,18 @@ public abstract class ContainerBC_Neptune extends Container {
         return in == null ? null : in.copy();
     }
 
-    public void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
+    public final void sendMessage(IPayloadWriter writer) {
+        MessageContainer message = new MessageContainer(windowId, writer);
+        if (player.worldObj.isRemote) {
+            BCMessageHandler.netWrapper.sendToServer(message);
+        } else {
+            BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
+        }
+    }
+
+    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {}
+
+    public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
         if (widgetId < 0 || widgetId >= widgets.size()) {
             if (DEBUG) {
                 String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;

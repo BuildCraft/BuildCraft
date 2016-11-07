@@ -43,6 +43,7 @@ public enum BCMessageHandler {
 
     public static void fmlPreInit() {
         addMessageType(MessageUpdateTile.class, MessageUpdateTile.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
+        addMessageType(MessageContainer.class, MessageContainer.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageWidget.class, MessageWidget.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageCommand.class, MessageCommand.Handler.INSTANCE, Side.CLIENT, Side.SERVER);
         addMessageType(MessageMarker.class, MessageMarker.Handler.INSTANCE, Side.CLIENT);

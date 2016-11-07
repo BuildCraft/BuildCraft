@@ -14,11 +14,11 @@ import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.transport.container.ContainerDiaWoodPipe;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDiaWood;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourDiaWood.FilterMode;
+import buildcraft.transport.container.ContainerDiamondWoodPipe;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
-public class GuiDiaWoodPipe extends GuiBC8<ContainerDiaWoodPipe> implements IButtonClickEventListener {
+public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> implements IButtonClickEventListener {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
     private static final ResourceLocation TEXTURE_BUTTON = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald_button.png");
@@ -32,10 +32,10 @@ public class GuiDiaWoodPipe extends GuiBC8<ContainerDiaWoodPipe> implements IBut
     private GuiImageButton blackListButton;
     private GuiImageButton roundRobinButton;
 
-    private PipeBehaviourDiaWood pipe;
+    private PipeBehaviourWoodDiamond pipe;
 
-    public GuiDiaWoodPipe(EntityPlayer player, PipeBehaviourDiaWood pipe) {
-        super(new ContainerDiaWoodPipe(player, pipe));
+    public GuiDiamondWoodPipe(EntityPlayer player, PipeBehaviourWoodDiamond pipe) {
+        super(new ContainerDiamondWoodPipe(player, pipe));
 
         this.pipe = pipe;
 
@@ -104,6 +104,8 @@ public class GuiDiaWoodPipe extends GuiBC8<ContainerDiaWoodPipe> implements IBut
                 newFilterMode = FilterMode.ROUND_ROBIN;
                 break;
         }
+        this.pipe.filterMode = newFilterMode;
+        container.sendNewFilterMode(newFilterMode);
     }
 
     @Override
