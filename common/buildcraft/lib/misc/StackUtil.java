@@ -88,7 +88,7 @@ public class StackUtil {
     }
 
     public static boolean canStacksOrListsMerge(ItemStack stack1, ItemStack stack2) {
-        if (stack1 == null || stack2 == null) {
+        if (isInvalid(stack1) || isInvalid(stack2)) {
             return false;
         }
 
@@ -173,7 +173,7 @@ public class StackUtil {
     }
 
     public static boolean isMatchingItemOrList(final ItemStack base, final ItemStack comparison) {
-        if (base == null || comparison == null) {
+        if (isInvalid(base) || isInvalid(comparison)) {
             return false;
         }
 
@@ -216,7 +216,7 @@ public class StackUtil {
      * @param matchNBT
      * @return true if matches */
     public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
-        if (base == null || comparison == null) {
+        if (isInvalid(base) || isInvalid(comparison)) {
             return false;
         }
 
@@ -248,7 +248,11 @@ public class StackUtil {
 
     // 1.11 Migration helpers
 
-    public static boolean isValid(ItemStack after) {
-        return after != null;
+    public static boolean isValid(ItemStack stack) {
+        return stack != null;
+    }
+
+    public static boolean isInvalid(ItemStack stack) {
+        return stack == null;
     }
 }
