@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.font.IFontRenderer;
+import buildcraft.lib.misc.StringUtilBC;
 
 public class GuidePage extends GuidePageBase {
     public final ImmutableList<GuidePart> parts;
@@ -16,7 +17,7 @@ public class GuidePage extends GuidePageBase {
     public GuidePage(GuiGuide gui, List<GuidePart> parts, String title) {
         super(gui);
         this.parts = ImmutableList.copyOf(parts);
-        this.title = title;
+        this.title = StringUtilBC.formatStringForWhite(title);
         this.chapterContents = new GuideChapterContents(gui);
     }
 

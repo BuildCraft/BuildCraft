@@ -31,7 +31,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         super(container);
         this.container = container;
         ledgersLeft = new LedgerManager_Neptune(this, rootElement.offset(0, 5), false);
-        IPositionedElement rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, () -> 5));
+        IPositionedElement rightPos = rootElement.offset(new PositionCallable(rootElement::getWidth, 5));
         ledgersRight = new LedgerManager_Neptune(this, rightPos, true);
 
         if (container instanceof ContainerBCTile<?>) {

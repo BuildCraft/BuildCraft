@@ -20,6 +20,8 @@ public class ToolTip extends ForwardingList<String> implements RandomAccess {
     private final long delay;
     private long mouseOverStart;
 
+    /** Creates a {@link ToolTip} based off of an array of localisation keys. The localised strings can use "\n" to
+     * split up into separate lines. */
     public static ToolTip createLocalized(String... localeKeys) {
         List<String> allLines = new ArrayList<>();
         for (String key : localeKeys) {

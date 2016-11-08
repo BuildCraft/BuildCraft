@@ -20,13 +20,28 @@ public enum BCModules {
     // Optional module for compatibility with other mods
     COMPAT;
 
-    private final String modid;
+    public static final BCModules[] VALUES = values();
+
+    private static final String MODID_START = "buildcraft";
+    private final String modid, part;
 
     private BCModules() {
-        this.modid = "buildcraft" + name().toLowerCase(Locale.ROOT);
+        part = name().toLowerCase(Locale.ROOT);
+        this.modid = MODID_START + part;
     }
 
     public static void fmlPreInit() {}
+
+    public static boolean isBcMod(String modid) {
+        if (!modid.startsWith(MODID_START)) return false;
+        String post = modid.substring(MODID_START.length());
+        for (BCModules module : VALUES) {
+            if (post.equals(module.part)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean isLoaded() {
         return Loader.isModLoaded(modid);

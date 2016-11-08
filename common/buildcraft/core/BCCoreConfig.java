@@ -6,9 +6,17 @@ package buildcraft.core;
 
 import java.io.File;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.BCModules;
+
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.config.FileConfigManager;
 
@@ -21,6 +29,7 @@ public class BCCoreConfig {
     public static boolean worldGenWaterSpring;
     public static boolean useLocalServerOnClient;
     public static boolean minePlayerProteted;
+    public static boolean useColouredLabels;
     public static boolean hidePower;
     public static boolean hideFluid;
     public static boolean useBucketsStatic;
@@ -33,6 +42,7 @@ public class BCCoreConfig {
     private static Property propWorldGenWaterSpring;
     private static Property propUseLocalServerOnClient;
     private static Property propMinePlayerProtected;
+    private static Property propUseColouredLabels;
     private static Property propHidePower;
     private static Property propHideFluid;
     private static Property propUseBucketsStatic;
@@ -76,6 +86,10 @@ public class BCCoreConfig {
         propMinePlayerProtected.setComment("Should BuildCraft miners be allowed to break blocks using player-specific protection?");
         none.setTo(propMinePlayerProtected);
 
+        propUseColouredLabels = config.get(display, "useColouredLabels", true);
+        propUseColouredLabels.setComment("Should colours be displayed as their own (or a similar) colour in tooltips?");
+        none.setTo(propUseColouredLabels);
+
         propHidePower = config.get(display, "hidePowerValues", false);
         propHidePower.setComment("Should all power values (MJ, MJ/t) be hidden?");
         none.setTo(propHidePower);
@@ -103,11 +117,33 @@ public class BCCoreConfig {
         none.setTo(propMarkerMaxDistance);
 
         reloadConfig(game);
+
+        MinecraftForge.EVENT_BUS.register(BCCoreConfig.class);
+    }
+
+    @SubscribeEvent
+    public static void onConfigChange(OnConfigChangedEvent cce) {
+        if (BCModules.isBcMod(cce.getModID())) {
+            EnumRestartRequirement req = EnumRestartRequirement.NONE;
+            if (Loader.instance().isInState(LoaderState.AVAILABLE)) {
+                // The loaders state will be LoaderState.SERVER_STARTED when we are in a world
+                req = EnumRestartRequirement.WORLD;
+            }
+            reloadConfig(req);
+        }
+    }
+
+    public static void postInit() {
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 
     public static void reloadConfig(EnumRestartRequirement restarted) {
         useLocalServerOnClient = propUseLocalServerOnClient.getBoolean();
         minePlayerProteted = propMinePlayerProtected.getBoolean();
+        useColouredLabels = propUseColouredLabels.getBoolean();
+        BCLibConfig.useColouredLabels = useColouredLabels;
         hidePower = propHidePower.getBoolean();
         hideFluid = propHideFluid.getBoolean();
         useBucketsStatic = propUseBucketsStatic.getBoolean();
@@ -119,6 +155,9 @@ public class BCCoreConfig {
             colourBlindMode = propColourBlindMode.getBoolean();
             worldGen = propWorldGen.getBoolean();
             worldGenWaterSpring = propWorldGenWaterSpring.getBoolean();
+        }
+        if (config.hasChanged()) {
+            config.save();
         }
     }
 }

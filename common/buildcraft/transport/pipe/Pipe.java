@@ -42,6 +42,9 @@ public final class Pipe implements IPipe, IDebuggable {
     private final EnumMap<EnumFacing, Integer> textures = new EnumMap<>(EnumFacing.class);
     private final EnumMap<EnumFacing, ConnectedType> types = new EnumMap<>(EnumFacing.class);
 
+    @SideOnly(Side.CLIENT)
+    private PipeModelKey lastModel;
+
     public Pipe(IPipeHolder holder, PipeDefinition definition) {
         this.holder = holder;
         this.definition = definition;
@@ -113,8 +116,6 @@ public final class Pipe implements IPipe, IDebuggable {
     @SideOnly(Side.CLIENT)
     public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.CLIENT) {
-            PipeModelKey before = getModel();
-
             connected.clear();
             textures.clear();
             types.clear();
@@ -136,7 +137,9 @@ public final class Pipe implements IPipe, IDebuggable {
 
             behaviour.readPayload(buffer, side, ctx);
 
-            if (!before.equals(getModel())) {
+            PipeModelKey model = getModel();
+            if (!model.equals(lastModel)) {
+                lastModel = model;
                 getHolder().scheduleRenderUpdate();
             }
         }
