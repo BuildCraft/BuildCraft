@@ -4,17 +4,20 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
+import java.io.IOException;
+
+import javax.vecmath.Point2i;
+
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.recipes.AssemblyRecipe;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.silicon.EnumAssemblyRecipeState;
 import buildcraft.silicon.container.ContainerAssemblyTable;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-
-import javax.vecmath.Point2i;
-import java.io.IOException;
 
 public class GuiAssemblyTable extends GuiBC8<ContainerAssemblyTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_table.png");

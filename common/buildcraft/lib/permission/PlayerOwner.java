@@ -25,6 +25,7 @@ import net.minecraftforge.common.UsernameCache;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.permission.IOwner;
+
 import buildcraft.lib.misc.WorkerThreadUtil;
 
 public final class PlayerOwner implements IOwner {

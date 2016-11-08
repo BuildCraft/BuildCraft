@@ -5,7 +5,6 @@ import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCLibProxy;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 

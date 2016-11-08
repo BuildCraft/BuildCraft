@@ -9,6 +9,7 @@ import net.minecraft.block.properties.IProperty;
 
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.lib.engine.BlockEngineBase_BC8;
 import buildcraft.lib.registry.TagManager;
 import buildcraft.lib.registry.TagManager.EnumTagType;

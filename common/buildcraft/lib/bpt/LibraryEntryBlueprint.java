@@ -5,6 +5,7 @@ import java.io.IOException;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.data.NBTSquishConstants;
+
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.misc.data.ZipFileHelper;
 

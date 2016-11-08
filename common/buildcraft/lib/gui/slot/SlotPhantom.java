@@ -5,7 +5,7 @@
 package buildcraft.lib.gui.slot;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+
 import net.minecraftforge.items.IItemHandler;
 
 public class SlotPhantom extends SlotBase implements IPhantomSlot {

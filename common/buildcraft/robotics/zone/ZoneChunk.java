@@ -4,15 +4,18 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.zone;
 
-import buildcraft.api.core.INetworkLoadable_BC8;
-import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
-import io.netty.buffer.ByteBuf;
+import java.util.BitSet;
+import java.util.Random;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.BitSet;
-import java.util.Random;
+import buildcraft.api.core.INetworkLoadable_BC8;
+
+import buildcraft.core.lib.utils.BitSetUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
 

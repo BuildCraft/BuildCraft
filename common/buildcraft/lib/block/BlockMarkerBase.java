@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blocks.ICustomRotationHandler;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.lib.tile.TileMarker;
 
 public abstract class BlockMarkerBase extends BlockBCTile_Neptune implements ICustomRotationHandler {

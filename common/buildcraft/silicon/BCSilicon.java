@@ -1,13 +1,14 @@
 package buildcraft.silicon;
 
-import buildcraft.core.BCCore;
-import buildcraft.lib.BCLib;
-import buildcraft.lib.registry.RegistryHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import buildcraft.core.BCCore;
+import buildcraft.lib.BCLib;
+import buildcraft.lib.registry.RegistryHelper;
 
 @Mod(modid = BCSilicon.MODID, name = "BuildCraft Silicon", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCSilicon {

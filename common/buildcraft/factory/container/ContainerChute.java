@@ -1,10 +1,10 @@
 package buildcraft.factory.container;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 import buildcraft.factory.tile.TileChute;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
-
-import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerChute extends ContainerBCTile<TileChute> {
     private static final int PLAYER_INV_START = 71;

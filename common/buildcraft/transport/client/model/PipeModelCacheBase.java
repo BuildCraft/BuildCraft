@@ -6,13 +6,11 @@ import java.util.Objects;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.neptune.PipeDefinition;
 
 import buildcraft.lib.client.model.IModelCache;
 import buildcraft.lib.client.model.ModelCache;
-import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.client.model.key.PipeModelKey;
 
 public class PipeModelCacheBase {

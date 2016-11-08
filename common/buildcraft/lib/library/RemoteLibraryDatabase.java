@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 

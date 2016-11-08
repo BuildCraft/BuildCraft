@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.registry.MigrationManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.lib.registry.TagManager;

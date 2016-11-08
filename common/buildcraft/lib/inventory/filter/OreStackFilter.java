@@ -5,6 +5,7 @@
 package buildcraft.lib.inventory.filter;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.core.IStackFilter;

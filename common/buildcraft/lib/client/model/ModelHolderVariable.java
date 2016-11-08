@@ -15,7 +15,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.lib.client.model.json.JsonQuad;
+
 import buildcraft.lib.client.model.json.JsonVariableModel;
 import buildcraft.lib.client.model.json.JsonVariableModelPart;
 import buildcraft.lib.expression.FunctionContext;

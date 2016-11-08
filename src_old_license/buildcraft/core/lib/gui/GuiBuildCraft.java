@@ -29,7 +29,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
 import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.gui.widgets.Widget;
@@ -37,6 +36,7 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.Widget_Neptune;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.misc.RenderUtil;
 
 // TODO: Rewrite all methods from this into GuiBC8
 @Deprecated
@@ -145,7 +145,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(fluid.getFluid(), FluidType.STILL);
 
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
+        RenderUtil.setGLColorFromInt(fluid.getFluid().getColor(fluid));
         int fullX = width / 16;
         int fullY = height / 16;
         int lastX = width - fullX * 16;

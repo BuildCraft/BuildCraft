@@ -1,7 +1,26 @@
 package buildcraft.silicon.tile;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableSet;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.AssemblyRecipe;
+
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.MessageUtil;
@@ -9,21 +28,6 @@ import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.silicon.EnumAssemblyRecipeState;
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;

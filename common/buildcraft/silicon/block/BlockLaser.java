@@ -1,12 +1,13 @@
 package buildcraft.silicon.block;
 
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import buildcraft.silicon.tile.TileLaser;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
+import buildcraft.silicon.tile.TileLaser;
 
 public class BlockLaser extends BlockBCTile_Neptune implements IBlockWithFacing {
     public BlockLaser(Material material, String id) {

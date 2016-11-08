@@ -18,14 +18,14 @@ import buildcraft.api.transport.neptune.PipeBehaviour;
 
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.render.RenderPipeHolder;
-import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerDiamondPipe;
+import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerFilteredBuffer;
-import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiDiamondPipe;
+import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
-import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 

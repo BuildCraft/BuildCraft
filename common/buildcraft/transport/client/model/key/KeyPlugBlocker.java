@@ -4,6 +4,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
 import buildcraft.transport.client.model.plug.PlugBakerBlocker;
 
 public final class KeyPlugBlocker extends PluggableModelKey<KeyPlugBlocker> {

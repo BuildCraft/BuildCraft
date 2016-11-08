@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
@@ -32,21 +31,6 @@ public enum RenderUtils {
             rotations.put(face, new Vec3d(90, 0, a));
             face = face.rotateY();
         }
-    }
-
-    /** Takes ARGB */
-    public static void setGLColorFromInt(int color) {
-        setGLColorFromIntPlusAlpha(0xFF_00_00_00 | color);
-    }
-
-    /** Takes ARGB */
-    public static void setGLColorFromIntPlusAlpha(int color) {
-        float alpha = (color >> 24 & 255) / 255.0F;
-        float red = (color >> 16 & 255) / 255.0F;
-        float green = (color >> 8 & 255) / 255.0F;
-        float blue = (color & 255) / 255.0F;
-
-        GlStateManager.color(red, green, blue, alpha);
     }
 
     public static void setWorldRendererRGB(VertexBuffer wr, Vec3d color) {

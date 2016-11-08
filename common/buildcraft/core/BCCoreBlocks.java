@@ -7,6 +7,7 @@ package buildcraft.core;
 import net.minecraft.block.material.Material;
 
 import buildcraft.api.enums.EnumEngineType;
+
 import buildcraft.core.block.*;
 import buildcraft.core.item.ItemBlockDecorated;
 import buildcraft.core.item.ItemBlockSpring;

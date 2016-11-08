@@ -3,7 +3,6 @@ package buildcraft.lib.misc;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.data.Box;
 
 public class Matrix4i {
@@ -69,7 +68,7 @@ public class Matrix4i {
      *         left rotation in-place to the given box around its center point. */
     public static Matrix4i makeRotLeftTranslatePositive(Box box) {
         BlockPos translation = box.min();
-        Matrix4i translateBack = makeTranslation(Utils.invert(translation));
+        Matrix4i translateBack = makeTranslation(BlockPos.ORIGIN.subtract(translation));
         Matrix4i rotY = makeRotY(270);
         Matrix4i translateForth = makeTranslation(translation.add(new Vec3i(box.size().getZ() - 1, 0, 0)));
 

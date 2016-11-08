@@ -18,6 +18,7 @@ import net.minecraft.world.IBlockAccess;
 
 import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
 public class BlockDecoration extends BlockBCBase_Neptune {

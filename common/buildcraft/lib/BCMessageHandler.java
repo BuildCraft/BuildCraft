@@ -19,14 +19,13 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCDebugging;
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.library.network.MessageLibraryDBIndex;
 import buildcraft.lib.library.network.MessageLibraryRequest;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.*;
 import buildcraft.lib.particle.MessageParticleVanilla;
-import buildcraft.robotics.zone.MessageZoneMapRequest;
-import buildcraft.robotics.zone.MessageZoneMapResponse;
 
 public enum BCMessageHandler {
     INSTANCE;

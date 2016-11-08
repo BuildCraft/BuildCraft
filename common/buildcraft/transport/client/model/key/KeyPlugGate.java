@@ -6,6 +6,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.pluggable.PluggableModelKey;
+
 import buildcraft.transport.client.model.plug.PlugGateBaker;
 import buildcraft.transport.gate.GateVariant;
 

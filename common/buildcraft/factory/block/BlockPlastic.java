@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.lib.block.BlockBCBase_Neptune;
 
 public class BlockPlastic extends BlockBCBase_Neptune {

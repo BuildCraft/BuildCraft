@@ -12,6 +12,7 @@ import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.transport.IPipeTile;
 
 import buildcraft.lib.misc.StringUtilBC;
 

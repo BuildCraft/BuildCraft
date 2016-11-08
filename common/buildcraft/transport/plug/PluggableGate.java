@@ -13,10 +13,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
-import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.command.IPayloadWriter;

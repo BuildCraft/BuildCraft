@@ -8,6 +8,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.animation.FastTESR;
 
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.core.client.BuildCraftLaserManager;
 import buildcraft.lib.client.render.laser.LaserData_BC8;
 import buildcraft.lib.client.render.laser.LaserRenderer_BC8;

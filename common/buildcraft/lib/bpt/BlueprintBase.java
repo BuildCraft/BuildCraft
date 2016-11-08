@@ -10,7 +10,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;

@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.builders.BCBuildersGuis;
 import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;

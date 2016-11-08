@@ -6,12 +6,6 @@
  */
 package buildcraft.silicon.block;
 
-import buildcraft.api.enums.EnumLaserTableType;
-import buildcraft.api.mj.ILaserTargetBlock;
-
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.silicon.BCSiliconGuis;
-import buildcraft.silicon.tile.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +18,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import buildcraft.api.enums.EnumLaserTableType;
+import buildcraft.api.mj.ILaserTargetBlock;
+
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.silicon.BCSiliconGuis;
+import buildcraft.silicon.tile.*;
 
 public class BlockLaserTable extends BlockBCTile_Neptune implements ILaserTargetBlock {
     private final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 1, 9 / 16D, 1);

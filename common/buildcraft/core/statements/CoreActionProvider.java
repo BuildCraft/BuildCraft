@@ -14,6 +14,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+
 import buildcraft.core.BCCoreStatements;
 
 public enum CoreActionProvider implements IActionProvider {

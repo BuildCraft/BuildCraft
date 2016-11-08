@@ -1,11 +1,11 @@
 package buildcraft.lib.client.guide.parts;
 
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.lib.client.guide.GuiGuide;
 import buildcraft.lib.client.guide.PageLine;
 import buildcraft.lib.client.guide.font.IFontRenderer;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.misc.RenderUtil;
 
 public abstract class GuideChapter extends GuidePart {
     public static final int[] COLOURS = { 0x9dd5c0, 0xfac174, 0x27a4dd };
@@ -36,15 +36,15 @@ public abstract class GuideChapter extends GuidePart {
         super(gui);
         ISimpleDrawable icon = (x, y) -> {
             GuiGuide.BOX_EMPTY.drawAt(x, y);
-            RenderUtils.setGLColorFromInt(getColour());
+            RenderUtil.setGLColorFromInt(getColour());
             GuiGuide.BOX_CHAPTER.drawAt(x, y);
-            RenderUtils.setGLColorFromInt(-1);
+            RenderUtil.setGLColorFromInt(-1);
         };
         ISimpleDrawable selected = (x, y) -> {
             GuiGuide.BOX_SELECTED_EMPTY.drawAt(x, y);
-            RenderUtils.setGLColorFromInt(getColour());
+            RenderUtil.setGLColorFromInt(getColour());
             GuiGuide.BOX_SELECTED_CHAPTER.drawAt(x, y);
-            RenderUtils.setGLColorFromInt(-1);
+            RenderUtil.setGLColorFromInt(-1);
         };
         this.chapter = new PageLine(icon, selected, indent, text, false);
     }
@@ -81,20 +81,20 @@ public abstract class GuideChapter extends GuidePart {
         if (lastDrawn == EnumGuiSide.LEFT) {
             float x = gui.minX - width - 4 + 11;
 
-            RenderUtils.setGLColorFromInt(colour);
+            RenderUtil.setGLColorFromInt(colour);
             GuiGuide.CHAPTER_MARKER_LEFT.drawAt(x - 5, y - 4);
             float oX = x - 5 + GuiGuide.CHAPTER_MARKER_LEFT.width;
             GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(oX, y - 4, width + 4, 16);
-            RenderUtils.setGLColorFromInt(-1);
+            RenderUtil.setGLColorFromInt(-1);
 
             font.drawString(text, (int) x, y, 0);
         } else if (lastDrawn == EnumGuiSide.RIGHT) {
             int x = gui.minX + GuiGuide.PAGE_LEFT.width + GuiGuide.PAGE_RIGHT.width - 11;
 
-            RenderUtils.setGLColorFromInt(colour);
+            RenderUtil.setGLColorFromInt(colour);
             GuiGuide.CHAPTER_MARKER_SPACE.drawScaledInside(x, y - 4, width + 4, 16);
             GuiGuide.CHAPTER_MARKER_RIGHT.drawAt(x + width + 4, y - 4);
-            RenderUtils.setGLColorFromInt(-1);
+            RenderUtil.setGLColorFromInt(-1);
 
             font.drawString(text, (int) (x + 4 + hoverWidth), y, 0);
         }

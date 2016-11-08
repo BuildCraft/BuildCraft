@@ -1,12 +1,8 @@
 package buildcraft.factory.tile;
 
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.factory.block.BlockFloodGate;
-import buildcraft.lib.fluids.Tank;
-import buildcraft.lib.fluids.TankUtils;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.tile.TileBC_Neptune;
+import java.io.IOException;
+import java.util.*;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -15,14 +11,22 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-import java.util.*;
+import buildcraft.api.tiles.IDebuggable;
+
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.fluids.TankUtils;
+import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
     public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[]{EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};

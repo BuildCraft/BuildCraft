@@ -1,9 +1,10 @@
 package buildcraft.silicon.container;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.silicon.tile.TileAssemblyTable;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerAssemblyTable extends ContainerBCTile<TileAssemblyTable> {
     private static final int PLAYER_INV_START = 123;

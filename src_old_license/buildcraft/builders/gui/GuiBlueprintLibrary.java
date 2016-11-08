@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.BCLibDatabase.EntryStatus;
@@ -28,6 +27,7 @@ import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.library.RemoteLibraryDatabase;
 import buildcraft.lib.library.network.MessageLibraryTransferEntry;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
@@ -103,7 +103,7 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
             EntryStatus status = BCLibDatabase.getStatus(header);
             GuiIcon icon = getIcon(status);
             if (icon != null) {
-                RenderUtils.setGLColorFromInt(-1);
+                RenderUtil.setGLColorFromInt(-1);
                 icon.drawAt(x + 8 + 146 + 1, yOff);
             }
 

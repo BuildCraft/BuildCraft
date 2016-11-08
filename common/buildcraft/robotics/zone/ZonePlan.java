@@ -4,20 +4,23 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.zone;
 
-import buildcraft.api.core.INetworkLoadable_BC8;
-import buildcraft.api.core.IZone;
-import io.netty.buffer.ByteBuf;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
+
 import net.minecraftforge.common.util.Constants;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import buildcraft.api.core.INetworkLoadable_BC8;
+import buildcraft.api.core.IZone;
+
+import io.netty.buffer.ByteBuf;
 
 public class ZonePlan implements IZone, INetworkLoadable_BC8<ZonePlan> {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();

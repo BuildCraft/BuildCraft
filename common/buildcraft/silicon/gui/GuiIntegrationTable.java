@@ -4,12 +4,13 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.silicon.gui;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.silicon.container.ContainerIntegrationTable;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 
 public class GuiIntegrationTable extends GuiBC8<ContainerIntegrationTable> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftsilicon:textures/gui/integration_table.png");
