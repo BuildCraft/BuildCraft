@@ -40,11 +40,6 @@ public final class StringUtilBC {
     /** Formats a string to be displayed on a white background (for example a book background), replacing any
      * close-to-white colours with darker variants. Replaces instances of {@link TextFormatting} values. */
     public static String formatStringForWhite(String string) {
-        /* FIXME: Normal usage (changing an item's text from onBlack to onWhite) has the disadvantage that colours will
-         * be changed to onBlack FIRST, and then onWhite, which means that BLACK will be changed to GRAY despite BLACK
-         * being absolutely fine on white. One possible fix could be to emit ORIGINAL_COLOUR + CHANGED_TO_COLOUR from
-         * ColourUtil.convertColourToTextFormat as a pair, and then use the ORIGINAL_COLOUR, but change CHANGED_COLOUR
-         * when calling this. */
         return formatStringImpl(string, ColourUtil.getTextFormatForWhite);
     }
 
@@ -55,6 +50,11 @@ public final class StringUtilBC {
     }
 
     private static String formatStringImpl(String string, Function<TextFormatting, TextFormatting> fn) {
+        /* FIXME: Normal usage (changing an item's text from onBlack to onWhite) has the disadvantage that colours will
+         * be changed to onBlack FIRST, and then onWhite, which means that BLACK will be changed to GRAY despite BLACK
+         * being absolutely fine on white. One possible fix could be to emit ORIGINAL_COLOUR + CHANGED_TO_COLOUR from
+         * ColourUtil.convertColourToTextFormat as a pair, and then use the ORIGINAL_COLOUR, but change CHANGED_COLOUR
+         * when calling this. */
         StringBuilder out = new StringBuilder(string.length());
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
