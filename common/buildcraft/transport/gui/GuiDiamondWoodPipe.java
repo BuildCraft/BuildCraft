@@ -8,11 +8,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.lib.gui.buttons.GuiImageButton;
-import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
-import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.button.GuiImageButton;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.button.IButtonClickEventTrigger;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
@@ -23,9 +24,9 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
     private static final ResourceLocation TEXTURE_BUTTON = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald_button.png");
-    private static final int WHITE_LIST_BUTTON_ID = 1;
-    private static final int BLACK_LIST_BUTTON_ID = 2;
-    private static final int ROUND_ROBIN_BUTTON_ID = 3;
+    private static final int WHITE_LIST_BUTTON_ID = FilterMode.WHITE_LIST.ordinal();
+    private static final int BLACK_LIST_BUTTON_ID = FilterMode.BLACK_LIST.ordinal();
+    private static final int ROUND_ROBIN_BUTTON_ID = FilterMode.ROUND_ROBIN.ordinal();
     private static final int SIZE_X = 175, SIZE_Y = 161;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_ROUND_ROBIN_INDEX = new GuiIcon(TEXTURE, 176, 0, 20, 20);
@@ -53,19 +54,21 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
         this.buttonList.clear();
 
         this.whiteListButton = new GuiImageButton(this, WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
+        this.whiteListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.whitelist"));
         this.whiteListButton.registerListener(this);
-        this.whiteListButton.setToolTip(new ToolTip(500, StringUtilBC.localize("tip.PipeItemsEmerald.whitelist")));
         this.buttonList.add(this.whiteListButton);
 
         this.blackListButton = new GuiImageButton(this, BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
+        this.blackListButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.blacklist"));
         this.blackListButton.registerListener(this);
-        this.blackListButton.setToolTip(new ToolTip(500, StringUtilBC.localize("tip.PipeItemsEmerald.blacklist")));
         this.buttonList.add(this.blackListButton);
 
         this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
+        this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
         this.roundRobinButton.registerListener(this);
-        this.roundRobinButton.setToolTip(new ToolTip(500, StringUtilBC.localize("tip.PipeItemsEmerald.roundrobin")));
         this.buttonList.add(this.roundRobinButton);
+
+        IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
 
         switch (pipe.filterMode) {
             case WHITE_LIST:
@@ -82,31 +85,7 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
 
     @Override
     public void handleButtonClick(IButtonClickEventTrigger sender, int buttonId) {
-        FilterMode newFilterMode = pipe.filterMode;
-
-        switch (buttonId) {
-            case WHITE_LIST_BUTTON_ID:
-                whiteListButton.activate();
-                blackListButton.deActivate();
-                roundRobinButton.deActivate();
-
-                newFilterMode = FilterMode.WHITE_LIST;
-                break;
-            case BLACK_LIST_BUTTON_ID:
-                whiteListButton.deActivate();
-                blackListButton.activate();
-                roundRobinButton.deActivate();
-
-                newFilterMode = FilterMode.BLACK_LIST;
-                break;
-            case ROUND_ROBIN_BUTTON_ID:
-                whiteListButton.deActivate();
-                blackListButton.deActivate();
-                roundRobinButton.activate();
-
-                newFilterMode = FilterMode.ROUND_ROBIN;
-                break;
-        }
+        FilterMode newFilterMode = FilterMode.get(buttonId);
         this.pipe.filterMode = newFilterMode;
         container.sendNewFilterMode(newFilterMode);
     }

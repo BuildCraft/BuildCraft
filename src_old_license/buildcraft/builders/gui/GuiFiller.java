@@ -28,14 +28,14 @@ import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.GuiTools;
 import buildcraft.core.lib.gui.StatementParameterSlot;
 import buildcraft.core.lib.gui.StatementSlot;
-import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
-import buildcraft.core.lib.gui.buttons.GuiBetterButton;
-import buildcraft.core.lib.gui.buttons.IButtonTextureSet;
-import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.lib.config.OverridableConfigOption;
+import buildcraft.lib.gui.button.ButtonTextureSet;
+import buildcraft.lib.gui.button.GuiBetterButton;
+import buildcraft.lib.gui.button.IButtonTextureSet;
+import buildcraft.lib.gui.button.StandardButtonTextureSets;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StringUtilBC;
 

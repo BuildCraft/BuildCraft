@@ -11,8 +11,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.gui.button.*;
 import buildcraft.lib.gui.elem.ToolTip;
 
+/**
+ * Currently unused
+ */
 @SideOnly(Side.CLIENT)
 public class GuiMultiButton extends GuiBetterButton {
 

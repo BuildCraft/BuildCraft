@@ -19,11 +19,11 @@ import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.lib.gui.GuiBuildCraft;
-import buildcraft.core.lib.gui.buttons.GuiBetterButton;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.gui.button.GuiBetterButton;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.StringUtilBC;
 

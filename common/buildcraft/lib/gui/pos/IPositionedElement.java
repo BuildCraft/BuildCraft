@@ -6,20 +6,18 @@ public interface IPositionedElement extends IGuiPosition {
     int getHeight();
 
     default boolean contains(int x, int y) {
-        if (x < getX() || x > getX()) return false;
-        if (y < getY() || y > getY()) return false;
+        if (x < getX() || x >= getX() + getWidth()) return false;
+        if (y < getY() || y >= getY() + getHeight()) return false;
         return true;
     }
 
     default boolean contains(IGuiPosition position) {
-        if (position.getX() < getX() || position.getX() > getX() + getWidth()) return false;
-        if (position.getY() < getY() || position.getY() > getY() + getHeight()) return false;
-        return true;
+        return contains(position.getX(), position.getY());
     }
 
     default boolean contains(IPositionedElement element) {
-        if (element.getX() < getX() || element.getX() + element.getWidth() > getX() + getWidth()) return false;
-        if (element.getY() < getY() || element.getY() + element.getHeight() > getY() + getHeight()) return false;
+        if (element.getX() < getX() || element.getX() + element.getWidth() >= getX() + getWidth()) return false;
+        if (element.getY() < getY() || element.getY() + element.getHeight() >= getY() + getHeight()) return false;
         return true;
     }
 
