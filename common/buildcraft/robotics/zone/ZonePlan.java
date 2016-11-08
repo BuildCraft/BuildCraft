@@ -11,24 +11,22 @@ import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.core.IZone;
 
-import io.netty.buffer.ByteBuf;
-
-public class ZonePlan implements IZone, INetworkLoadable_BC8<ZonePlan> {
+public class ZonePlan implements IZone {
     private final HashMap<ChunkPos, ZoneChunk> chunkMapping = new HashMap<>();
 
     public ZonePlan() {}
 
     public ZonePlan(ZonePlan old) {
-        for(ChunkPos chunkPos : old.chunkMapping.keySet()) {
+        for (ChunkPos chunkPos : old.chunkMapping.keySet()) {
             chunkMapping.put(chunkPos, new ZoneChunk(old.chunkMapping.get(chunkPos)));
         }
     }
@@ -166,8 +164,7 @@ public class ZonePlan implements IZone, INetworkLoadable_BC8<ZonePlan> {
         return null;
     }
 
-    @Override
-    public ZonePlan readFromByteBuf(ByteBuf buf) {
+    public ZonePlan readFromByteBuf(PacketBuffer buf) {
         chunkMapping.clear();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
@@ -179,8 +176,7 @@ public class ZonePlan implements IZone, INetworkLoadable_BC8<ZonePlan> {
         return this;
     }
 
-    @Override
-    public void writeToByteBuf(ByteBuf buf) {
+    public void writeToByteBuf(PacketBuffer buf) {
         buf.writeInt(chunkMapping.size());
         for (Map.Entry<ChunkPos, ZoneChunk> e : chunkMapping.entrySet()) {
             buf.writeInt(e.getKey().chunkXPos);

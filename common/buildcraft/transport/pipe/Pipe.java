@@ -23,7 +23,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.transport.client.model.key.PipeModelKey;
@@ -94,7 +93,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public void writePayload(PacketBuffer buffer, Side side) {
         if (side == Side.SERVER) {
-            NetworkUtils.writeEnum(buffer, colour);
+            buffer.writeByte(colour == null ? 0 : colour.getMetadata() + 1);
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (connected.contains(face) && textures.get(face) != null) {
                     buffer.writeBoolean(true);
@@ -120,7 +119,8 @@ public final class Pipe implements IPipe, IDebuggable {
             textures.clear();
             types.clear();
 
-            this.colour = NetworkUtils.readEnum(buffer, EnumDyeColor.class);
+            int nColour = buffer.readUnsignedByte();
+            colour = nColour == 0 ? null : EnumDyeColor.byMetadata(nColour - 1);
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (buffer.readBoolean()) {

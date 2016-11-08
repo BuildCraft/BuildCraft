@@ -31,7 +31,8 @@ import buildcraft.silicon.EnumAssemblyRecipeState;
 public class TileAssemblyTable extends TileLaserTableBase {
     public static final int NET_RECIPE_STATE = 10;
     public final IItemHandlerModifiable inv = addInventory("", 3 * 4, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);
-    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(AssemblyRecipe::hashCode));
+    public SortedMap<AssemblyRecipe, EnumAssemblyRecipeState> recipesStates = new TreeMap<>(Comparator.comparing(assemblyRecipe -> assemblyRecipe.output.getItem().hashCode() + (assemblyRecipe.output.getTagCompound() == null ? 0
+        : assemblyRecipe.output.getTagCompound().hashCode()) + assemblyRecipe.output.getMetadata() * assemblyRecipe.output.getMaxStackSize() + assemblyRecipe.output.stackSize));
 
     private boolean extract(ImmutableSet<ItemStack> items, boolean simulate) {
         List<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());

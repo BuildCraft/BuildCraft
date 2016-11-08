@@ -8,15 +8,10 @@ import java.util.BitSet;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import buildcraft.api.core.INetworkLoadable_BC8;
-
-import buildcraft.core.lib.utils.NetworkUtils;
-
-import io.netty.buffer.ByteBuf;
-
-public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
+public class ZoneChunk {
 
     public BitSet property;
     private boolean fullSet = false;
@@ -24,7 +19,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
     public ZoneChunk() {}
 
     public ZoneChunk(ZoneChunk old) {
-        if(old.property != null) {
+        if (old.property != null) {
             property = BitSet.valueOf(old.property.toLongArray());
         }
     }
@@ -113,23 +108,21 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         return !fullSet && property.isEmpty();
     }
 
-    @Override
-    public ZoneChunk readFromByteBuf(ByteBuf buf) {
+    public ZoneChunk readFromByteBuf(PacketBuffer buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
-            property = BitSet.valueOf(NetworkUtils.readByteArray(buf));
+            property = BitSet.valueOf(buf.readByteArray());
         }
         fullSet = (flags & 2) != 0;
 
         return this;
     }
 
-    @Override
-    public void writeToByteBuf(ByteBuf buf) {
+    public void writeToByteBuf(PacketBuffer buf) {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
         buf.writeByte(flags);
         if (property != null) {
-            NetworkUtils.writeByteArray(buf, property.toByteArray());
+            buf.writeByteArray(property.toByteArray());
         }
     }
 }
