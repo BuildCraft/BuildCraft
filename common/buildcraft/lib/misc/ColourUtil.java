@@ -101,7 +101,7 @@ public class ColourUtil {
         return StringUtilBC.localize("item.fireworksCharge." + colour.getUnlocalizedName());
     }
 
-    /** Returns a string formatted for use in a tooltip (with a black background). if
+    /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
      * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
      * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
     public static String getTextFullTooltip(EnumDyeColor colour) {
@@ -111,10 +111,6 @@ public class ColourUtil {
         } else {
             return getLocalized(colour);
         }
-    }
-
-    public static String getTextFull(EnumDyeColor colour) {
-        return convertColourToTextFormat(colour) + getLocalized(colour) + TextFormatting.RESET;
     }
 
     /** Returns a {@link TextFormatting} colour that will display correctly on a black background, so it won't use any

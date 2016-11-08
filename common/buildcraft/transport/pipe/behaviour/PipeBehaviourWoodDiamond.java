@@ -8,6 +8,7 @@ import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
@@ -19,6 +20,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
 import buildcraft.lib.inventory.filter.InvertedStackFilter;
+import buildcraft.lib.inventory.filter.StackFilter;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
@@ -44,9 +46,10 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         }
     }
 
-    public final ItemHandlerSimple filters = new ItemHandlerSimple(9, null);
+    public final ItemHandlerSimple filters = new ItemHandlerSimple(9, this::onSlotChanged);
     public FilterMode filterMode = FilterMode.WHITE_LIST;
     public int currentFilter = 0;
+    public boolean filterValid = false;
 
     public PipeBehaviourWoodDiamond(IPipe pipe) {
         super(pipe);
@@ -57,6 +60,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         filters.deserializeNBT(nbt.getCompoundTag("filters"));
         filterMode = FilterMode.get(nbt.getByte("mode"));
         currentFilter = nbt.getByte("currentFilter") % filters.getSlots();
+        filterValid = filters.extract(StackFilter.ALL, 1, 1, true) != null;
     }
 
     @Override
@@ -74,6 +78,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         if (side == Side.CLIENT) {
             filterMode = FilterMode.get(buffer.readUnsignedByte());
             currentFilter = buffer.readUnsignedByte() % filters.getSlots();
+            filterValid = buffer.readBoolean();
         }
     }
 
@@ -83,6 +88,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         if (side == Side.SERVER) {
             buffer.writeByte(filterMode.ordinal());
             buffer.writeByte(currentFilter);
+            buffer.writeBoolean(filterValid);
         }
     }
 
@@ -101,6 +107,17 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             BCTransportGuis.PIPE_DIAMOND_WOOD.openGUI(player, pipe.getHolder().getPipePos());
         }
         return true;
+    }
+
+    private void onSlotChanged(IItemHandlerModifiable itemHandler, int slot, ItemStack before, ItemStack after) {
+        if (StackUtil.isValid(after)) {
+            if (!filterValid) {
+                currentFilter = slot;
+                filterValid = true;
+            }
+        } else if (slot == currentFilter) {
+            advanceFilter();
+        }
     }
 
     private IStackFilter getStackFilter() {
@@ -125,7 +142,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
         // on how much power was put in
 
         if (filters.getStackInSlot(currentFilter) == null) {
-            currentFilter = 0;
+            advanceFilter();
         }
 
         PipeFlow flow = pipe.getFlow();
@@ -133,22 +150,30 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             IStackFilter filter = getStackFilter();
             int extracted = ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), filter);
             if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
-                int lastFilter = currentFilter;
-                while (true) {
-                    currentFilter++;
-                    if (currentFilter >= filters.getSlots()) {
-                        currentFilter = 0;
-                        break;
-                    }
-                    if (filters.getStackInSlot(currentFilter) != null) {
-                        break;
-                    }
-                }
-                if (lastFilter != currentFilter) {
-                    pipe.getHolder().scheduleNetworkGuiUpdate(PipeMessageReceiver.BEHAVIOUR);
-                }
+                advanceFilter();
             }
         }
         return 0;
+    }
+
+    private void advanceFilter() {
+        int lastFilter = currentFilter;
+        filterValid = false;
+        while (true) {
+            currentFilter++;
+            if (currentFilter >= filters.getSlots()) {
+                currentFilter = 0;
+            }
+            if (filters.getStackInSlot(currentFilter) != null) {
+                filterValid = true;
+                break;
+            }
+            if (currentFilter == lastFilter) {
+                break;
+            }
+        }
+        if (lastFilter != currentFilter) {
+            pipe.getHolder().scheduleNetworkGuiUpdate(PipeMessageReceiver.BEHAVIOUR);
+        }
     }
 }

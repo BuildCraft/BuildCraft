@@ -29,6 +29,7 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
     private static final int SIZE_X = 175, SIZE_Y = 161;
     private static final GuiIcon ICON_GUI = new GuiIcon(TEXTURE, 0, 0, SIZE_X, SIZE_Y);
     private static final GuiIcon ICON_ROUND_ROBIN_INDEX = new GuiIcon(TEXTURE, 176, 0, 20, 20);
+    private static final GuiIcon ICON_ROUND_ROBIN_NONE = new GuiIcon(TEXTURE, 176, 20, 20, 20);
 
     private GuiImageButton whiteListButton;
     private GuiImageButton blackListButton;
@@ -117,7 +118,9 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
         fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), rootElement.getX() + 8, rootElement.getY() + ySize - 93, 0x404040);
         if (pipe.filterMode == FilterMode.ROUND_ROBIN) {
             GlStateManager.color(1, 1, 1, 1);
-            ICON_ROUND_ROBIN_INDEX.drawAt(rootElement.getX() + 6 + 18 * pipe.currentFilter, rootElement.getY() + 16);
+            GuiIcon icon = pipe.filterValid ? ICON_ROUND_ROBIN_INDEX : ICON_ROUND_ROBIN_NONE;
+            int x = pipe.filterValid ? 18 * pipe.currentFilter : 0;
+            icon.drawAt(rootElement.getX() + 6 + x, rootElement.getY() + 16);
         }
     }
 

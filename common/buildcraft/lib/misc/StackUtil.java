@@ -91,7 +91,7 @@ public class StackUtil {
         if (stack1 == null || stack2 == null) {
             return false;
         }
-    
+
         if (stack1.getItem() instanceof IList) {
             IList list = (IList) stack1.getItem();
             return list.matches(stack1, stack2);
@@ -99,7 +99,7 @@ public class StackUtil {
             IList list = (IList) stack2.getItem();
             return list.matches(stack2, stack1);
         }
-    
+
         if (!stack1.isItemEqual(stack2)) {
             return false;
         }
@@ -107,7 +107,7 @@ public class StackUtil {
             return false;
         }
         return true;
-    
+
     }
 
     /** Merges mergeSource into mergeTarget
@@ -141,7 +141,7 @@ public class StackUtil {
         if (isMatchingItem(base, comparison, true, false)) {
             return true;
         }
-    
+
         if (oreDictionary) {
             int[] idBase = OreDictionary.getOreIDs(base);
             if (idBase.length > 0) {
@@ -154,7 +154,7 @@ public class StackUtil {
                 }
             }
         }
-    
+
         return false;
     }
 
@@ -168,7 +168,7 @@ public class StackUtil {
                 }
             }
         }
-    
+
         return false;
     }
 
@@ -176,7 +176,7 @@ public class StackUtil {
         if (base == null || comparison == null) {
             return false;
         }
-    
+
         if (base.getItem() instanceof IList) {
             IList list = (IList) base.getItem();
             return list.matches(base, comparison);
@@ -184,7 +184,7 @@ public class StackUtil {
             IList list = (IList) comparison.getItem();
             return list.matches(comparison, base);
         }
-    
+
         return isMatchingItem(base, comparison, true, false);
     }
 
@@ -219,7 +219,7 @@ public class StackUtil {
         if (base == null || comparison == null) {
             return false;
         }
-    
+
         if (base.getItem() != comparison.getItem()) {
             return false;
         }
@@ -244,5 +244,11 @@ public class StackUtil {
 
     public static boolean isWildcard(int damage) {
         return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
+    }
+
+    // 1.11 Migration helpers
+
+    public static boolean isValid(ItemStack after) {
+        return after != null;
     }
 }
