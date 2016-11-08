@@ -1,6 +1,13 @@
 package buildcraft.core;
 
-import buildcraft.core.statements.StatementParamGateSideOnly;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
+
+import buildcraft.api.tiles.IControllable;
+
+import buildcraft.core.statements.TriggerFluidContainer;
+import buildcraft.core.statements.TriggerInventory;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
@@ -15,6 +22,12 @@ public class BCCoreSprites {
     public static final SpriteHolder TRIGGER_REDSTONE_INACTIVE;
     public static final SpriteHolder ACTION_REDSTONE;
 
+    public static final SpriteHolder[] PARAM_REDSTONE_LEVEL;
+
+    public static final Map<IControllable.Mode, SpriteHolder> ACTION_MACHINE_CONTROL;
+    public static final Map<TriggerInventory.State, SpriteHolder> TRIGGER_INVENTORY;
+    public static final Map<TriggerFluidContainer.State, SpriteHolder> TRIGGER_FLUID;
+
     static {
         TRIGGER_TRUE = getHolder("triggers/trigger_true");
         PARAM_GATE_SIDE_ONLY = getHolder("triggers/redstone_gate_side_only");
@@ -26,15 +39,28 @@ public class BCCoreSprites {
         TRIGGER_REDSTONE_INACTIVE = getHolder("triggers/trigger_redstoneinput_inactive");
         ACTION_REDSTONE = getHolder("triggers/action_redstoneoutput");
 
-        // statement sprite setting
-        BCCoreStatements.TRIGGER_TRUE.setSpriteHolder(TRIGGER_TRUE);
-        StatementParamGateSideOnly.sprite = PARAM_GATE_SIDE_ONLY;
-        BCCoreStatements.TRIGGER_MACHINE_ACTIVE.setSpriteHolder(TRIGGER_MACHINE_ACTIVE);
-        BCCoreStatements.TRIGGER_MACHINE_INACTIVE.setSpriteHolder(TRIGGER_MACHINE_INACTIVE);
+        PARAM_REDSTONE_LEVEL = new SpriteHolder[16];
+        for (int i = 0; i < PARAM_REDSTONE_LEVEL.length; i++) {
+            PARAM_REDSTONE_LEVEL[i] = getHolder("buildcraftcore:triggers/parameter_redstone_" + i);
+        }
 
-        BCCoreStatements.TRIGGER_REDSTONE_ACTIVE.setSpriteHolder(TRIGGER_REDSTONE_ACTIVE);
-        BCCoreStatements.TRIGGER_REDSTONE_INACTIVE.setSpriteHolder(TRIGGER_REDSTONE_INACTIVE);
-        BCCoreStatements.ACTION_REDSTONE.setSpriteHolder(ACTION_REDSTONE);
+        ACTION_MACHINE_CONTROL = new EnumMap<>(IControllable.Mode.class);
+        for (IControllable.Mode mode : IControllable.Mode.VALID_VALUES) {
+            String tex = "triggers/action_machinecontrol_" + mode.name().toLowerCase(Locale.ROOT);
+            ACTION_MACHINE_CONTROL.put(mode, getHolder(tex));
+        }
+
+        TRIGGER_INVENTORY = new EnumMap<>(TriggerInventory.State.class);
+        for (TriggerInventory.State state : TriggerInventory.State.VALUES) {
+            String tex = "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT);
+            TRIGGER_INVENTORY.put(state, getHolder(tex));
+        }
+
+        TRIGGER_FLUID = new EnumMap<>(TriggerFluidContainer.State.class);
+        for (TriggerFluidContainer.State state : TriggerFluidContainer.State.VALUES) {
+            String tex = "triggers/trigger_liquidcontainer_" + state.name().toLowerCase(Locale.ROOT);
+            TRIGGER_FLUID.put(state, getHolder(tex));
+        }
     }
 
     private static SpriteHolder getHolder(String suffix) {

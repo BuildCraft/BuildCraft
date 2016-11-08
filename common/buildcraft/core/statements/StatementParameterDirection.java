@@ -27,6 +27,8 @@ import buildcraft.api.transport.IPipeTile;
 
 import buildcraft.lib.misc.StringUtilBC;
 
+/** Directions *might* be replaced with indervidual triggers and actions per direction. Not sure yet. */
+@Deprecated
 public class StatementParameterDirection implements IStatementParameter {
 
     @SideOnly(Side.CLIENT)
@@ -35,7 +37,6 @@ public class StatementParameterDirection implements IStatementParameter {
     @Nullable
     private EnumFacing direction = null;
 
-    @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap map) {
         sprites = new TextureAtlasSprite[6];
@@ -63,12 +64,12 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIcon() {
+    public TextureAtlasSprite getSprite() {
         EnumFacing dir = getDirection();
         if (dir == null) {
             return null;
         } else {
-            return sprites[dir.ordinal()];
+            return null;// sprites[dir.ordinal()];
         }
     }
 

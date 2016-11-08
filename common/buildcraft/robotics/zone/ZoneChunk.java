@@ -12,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.INetworkLoadable_BC8;
 
-import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 
 import io.netty.buffer.ByteBuf;
@@ -74,7 +73,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         nbt.setBoolean("fullSet", fullSet);
 
         if (property != null) {
-            nbt.setByteArray("bits", BitSetUtils.toByteArray(property));
+            nbt.setByteArray("bits", property.toByteArray());
         }
     }
 
@@ -82,7 +81,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         fullSet = nbt.getBoolean("fullSet");
 
         if (nbt.hasKey("bits")) {
-            property = BitSetUtils.fromByteArray(nbt.getByteArray("bits"));
+            property = BitSet.valueOf(nbt.getByteArray("bits"));
         }
     }
 
@@ -118,7 +117,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
     public ZoneChunk readFromByteBuf(ByteBuf buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
-            property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(buf));
+            property = BitSet.valueOf(NetworkUtils.readByteArray(buf));
         }
         fullSet = (flags & 2) != 0;
 
@@ -130,7 +129,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
         buf.writeByte(flags);
         if (property != null) {
-            NetworkUtils.writeByteArray(buf, BitSetUtils.toByteArray(property));
+            NetworkUtils.writeByteArray(buf, property.toByteArray());
         }
     }
 }

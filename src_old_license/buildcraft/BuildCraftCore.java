@@ -165,8 +165,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
     public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
     public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);
-    public static IStatement triggerEnergyHigh = new TriggerEnergy(true);
-    public static IStatement triggerEnergyLow = new TriggerEnergy(false);
+    public static IStatement triggerEnergyHigh = new TriggerPower(true);
+    public static IStatement triggerEnergyLow = new TriggerPower(false);
     public static ITriggerExternal triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);
     public static ITriggerExternal triggerContainsInventory = new TriggerInventory(TriggerInventory.State.Contains);
     public static ITriggerExternal triggerSpaceInventory = new TriggerInventory(TriggerInventory.State.Space);

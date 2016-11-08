@@ -6,19 +6,21 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.IInvSlot;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.api.items.IList;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 
-import buildcraft.core.ItemList;
-import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -29,15 +31,21 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
         Empty,
         Contains,
         Space,
-        Full
+        Full;
+
+        public static final State[] VALUES = values();
     }
 
     public State state;
 
     public TriggerInventory(State state) {
         super("buildcraft:inventory." + state.name().toLowerCase(Locale.ENGLISH), "buildcraft.inventory." + state.name().toLowerCase(Locale.ENGLISH));
-        setBuildCraftLocation("core", "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT));
         this.state = state;
+    }
+
+    @Override
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.TRIGGER_INVENTORY.get(state);
     }
 
     @Override
@@ -58,20 +66,22 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
             searchedStack = parameters[0].getItemStack();
         }
 
-        if (tile instanceof IInventory) {
+        IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+
+        if (handler != null) {
             boolean hasSlots = false;
             boolean foundItems = false;
             boolean foundSpace = false;
 
-            for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, side.getOpposite())) {
+            for (int i = 0; i < handler.getSlots(); i++) {
                 hasSlots = true;
-                ItemStack stack = slot.getStackInSlot();
+                ItemStack stack = handler.getStackInSlot(i);
 
+                // TODO: Replace some of this with StackUtil.isInvalid
                 foundItems |= stack != null && (searchedStack == null || StackUtil.canStacksOrListsMerge(stack, searchedStack));
 
-                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
-                        .getMaxStackSize())) && (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot.canPutStackInSlot(
-                                searchedStack));
+                foundSpace |= (stack == null || (StackUtil.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack.getMaxStackSize()))//
+                    && (searchedStack == null || searchedStack.getItem() instanceof IList || StackUtil.isInvalid(handler.insertItem(i, searchedStack, true)));
                 // On the test above, we deactivate item list as inventories
                 // typically don't check for lists possibility. This is a
                 // heuristic which is more desirable than expensive computation
@@ -96,11 +106,6 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 
         return false;
     }
-
-    // @Override
-    // public void registerIcons(TextureAtlasSpriteRegister register) {
-    // icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + state.name().toLowerCase());
-    // }
 
     @Override
     public IStatementParameter createParameter(int index) {

@@ -1,4 +1,4 @@
-package buildcraft.core.lib.recipe;
+package buildcraft.lib.recipe;
 
 import java.util.Iterator;
 import java.util.List;

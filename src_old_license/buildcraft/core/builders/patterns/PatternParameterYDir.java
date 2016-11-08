@@ -72,7 +72,7 @@ public class PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getIcon() {
+    public TextureAtlasSprite getSprite() {
         return up ? spriteUp : spriteDown;
     }
 }

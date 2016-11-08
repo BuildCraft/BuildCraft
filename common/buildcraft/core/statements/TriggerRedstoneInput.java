@@ -10,6 +10,8 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
@@ -20,6 +22,11 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
         super("buildcraft:redstone.input." + (active ? "active" : "inactive"),//
                 "buildcraft.redtone.input." + (active ? "active" : "inactive"));
         this.active = active;
+    }
+
+    @Override
+    public SpriteHolder getSpriteHolder() {
+        return active ? BCCoreSprites.TRIGGER_REDSTONE_ACTIVE : BCCoreSprites.TRIGGER_REDSTONE_INACTIVE;
     }
 
     @Override

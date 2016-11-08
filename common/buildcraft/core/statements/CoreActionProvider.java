@@ -14,6 +14,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.tiles.IControllable;
 
 import buildcraft.core.BCCoreStatements;
 
@@ -29,13 +30,12 @@ public enum CoreActionProvider implements IActionProvider {
 
     @Override
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {
-        // TODO: the controllable sprites + statements!
-        // if (tile instanceof IControllable) {
-        // for (IControllable.Mode mode : IControllable.Mode.values()) {
-        // if (mode != IControllable.Mode.Unknown && ((IControllable) tile).acceptsControlMode(mode)) {
-        // res.add(BuildCraftCore.actionControl[mode.ordinal()]);
-        // }
-        // }
-        // }
+        if (tile instanceof IControllable) {
+            for (ActionMachineControl action : BCCoreStatements.ACTION_MACHINE_CONTROL) {
+                if (((IControllable) tile).acceptsControlMode(action.mode)) {
+                    res.add(action);
+                }
+            }
+        }
     }
 }

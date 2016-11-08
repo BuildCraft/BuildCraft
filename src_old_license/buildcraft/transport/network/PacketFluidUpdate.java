@@ -46,7 +46,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
         byte[] dBytes = new byte[1];
         data.readBytes(dBytes);
-        delta = BitSetUtils.fromByteArray(dBytes);
+        delta = BitSet.valueOf(dBytes);
 
         if (delta.get(0)) {
             fluidID = data.readShort();
@@ -71,7 +71,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
     public void writeData(ByteBuf data) {
         super.writeData(data);
 
-        byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
+        byte[] dBytes = delta.toByteArray();
         data.writeBytes(dBytes);
 
         if (delta.get(0)) {

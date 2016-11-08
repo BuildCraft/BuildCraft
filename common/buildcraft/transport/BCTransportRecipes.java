@@ -10,9 +10,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
-import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;

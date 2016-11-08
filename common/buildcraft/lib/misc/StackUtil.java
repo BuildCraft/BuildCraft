@@ -247,12 +247,15 @@ public class StackUtil {
     }
 
     // 1.11 Migration helpers
+    public static final ItemStack INVALID_STACK = null;
 
     public static boolean isValid(ItemStack stack) {
-        return stack != null;
+        return !isInvalid(stack);
     }
 
+    /** Tests to see if a given stack is invalid. This ALSO tests to see if the item is null or the stacksize is less
+     * than 0. Vanilla's method also does a metadata check, but that's not used so much in the codebase. */
     public static boolean isInvalid(ItemStack stack) {
-        return stack == null;
+        return stack == INVALID_STACK || stack.getItem() == null || stack.stackSize <= 0;
     }
 }

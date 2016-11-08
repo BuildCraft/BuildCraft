@@ -16,9 +16,11 @@ import gnu.trove.list.array.TIntArrayList;
 public abstract class AbstractInvItemTransactor implements IItemTransactor {
     /** Safely copies the input item stack, returning null if the stack size is less than or equal to zero. */
     public static ItemStack asValid(ItemStack stack) {
-        if (stack == null) return null;
-        if (stack.stackSize <= 0) return null;
-        return stack;
+        if (StackUtil.isInvalid(stack)) {
+            return StackUtil.INVALID_STACK;
+        } else {
+            return stack;
+        }
     }
 
     protected abstract ItemStack insert(int slot, ItemStack stack, boolean simulate);
@@ -46,12 +48,12 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
                 emptySlots.add(slot);
             } else {
                 stack = insert(slot, stack, simulate);
-                if (stack == null) return null;
+                if (StackUtil.isInvalid(stack)) return StackUtil.INVALID_STACK;
             }
         }
         for (int slot : emptySlots.toArray()) {
             stack = insert(slot, stack, simulate);
-            if (stack == null) return null;
+            if (StackUtil.isInvalid(stack)) return StackUtil.INVALID_STACK;
         }
         return stack;
     }
@@ -66,27 +68,27 @@ public abstract class AbstractInvItemTransactor implements IItemTransactor {
             } else {
                 stack = insert(slot, stack, true);
                 insertedSlots.add(slot);
-                if (stack == null) break;
+                if (StackUtil.isInvalid(stack)) break;
             }
         }
         for (int slot : emptySlots.toArray()) {
             stack = insert(slot, stack, true);
             insertedSlots.add(slot);
-            if (stack == null) break;
+            if (StackUtil.isInvalid(stack)) break;
         }
-        if (stack != null) {
+        if (StackUtil.isValid(stack)) {
             return stack;
         }
-        if (simulate) return null;
+        if (simulate) return StackUtil.INVALID_STACK;
         for (int slot : insertedSlots.toArray()) {
             before = insert(slot, before, false);
         }
-        if (before != null) {
+        if (StackUtil.isValid(before)) {
             // We have a bad implemtation that doesn't respect simulation properly- we are in an invalid state at this
             // point with no chance of recovery
             throw new IllegalStateException("Somehow inserting a lot of items at once failed when we thought it shouldn't! (" + getClass() + ")");
         }
-        return null;
+        return StackUtil.INVALID_STACK;
     }
 
     @Override

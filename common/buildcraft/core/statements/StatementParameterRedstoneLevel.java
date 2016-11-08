@@ -7,11 +7,8 @@ package buildcraft.core.statements;
 import java.util.Objects;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,20 +18,12 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
-public class StatementParameterRedstoneLevel implements IStatementParameter {
-    private static TextureAtlasSprite[] sprites;
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.misc.StringUtilBC;
 
+public class StatementParameterRedstoneLevel implements IStatementParameter {
     public int level;
     private int minLevel, maxLevel;
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap map) {
-        sprites = new TextureAtlasSprite[16];
-        for (int i = 0; i < 16; i++) {
-            sprites[i] = map.registerSprite(new ResourceLocation("buildcraftcore:triggers/parameter_redstone_" + i));
-        }
-    }
 
     public StatementParameterRedstoneLevel() {
         this(0, 0, 15);
@@ -56,8 +45,9 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getIcon() {
-        return sprites[level & 15];
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getSprite() {
+        return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15].getSprite();
     }
 
     @Override
@@ -97,7 +87,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(level);
@@ -105,7 +95,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        return String.format(StatCollector.translateToLocal("gate.trigger.redstone.input.level"), level);
+        return String.format(StringUtilBC.localize("gate.trigger.redstone.input.level"), level);
     }
 
     @Override
