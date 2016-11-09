@@ -149,6 +149,7 @@ public class BCCoreConfig {
         useBucketsStatic = propUseBucketsStatic.getBoolean();
         useBucketsFlow = propUseBucketsFlow.getBoolean();
         itemLifespan = propItemLifespan.getInt();
+        BCLibConfig.itemLifespan = itemLifespan;
         markerMaxDistance = propMarkerMaxDistance.getInt();
 
         if (EnumRestartRequirement.GAME.hasBeenRestarted(restarted)) {

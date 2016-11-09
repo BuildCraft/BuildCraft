@@ -14,7 +14,8 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.neptune.IPipeFlowRenderer;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.render.ItemRenderUtil;
 import buildcraft.lib.client.sprite.ISprite;
@@ -33,15 +34,14 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
         Tuple3f radius = new Vector3f(0.2f, 0.2f, 0.2f);
 
         ISprite sprite = BCTransportSprites.COLOUR_ITEM_BOX;
-        float[] uvs = {//
-            (float) sprite.getInterpU(0),//
-            (float) sprite.getInterpU(1),//
-            (float) sprite.getInterpV(0),//
-            (float) sprite.getInterpV(1) //
-        };
+        UvFaceData uvs = new UvFaceData();
+        uvs.uMin = (float) sprite.getInterpU(0);
+        uvs.uMax = (float) sprite.getInterpU(1);
+        uvs.vMin = (float) sprite.getInterpV(0);
+        uvs.vMax = (float) sprite.getInterpV(1);
 
         for (EnumFacing face : EnumFacing.VALUES) {
-            MutableQuad q = BCModelHelper.createFace(face, center, radius, uvs);
+            MutableQuad q = ModelUtil.createFace(face, center, radius, uvs);
             q.setCalculatedDiffuse();
             COLOURED_QUADS[face.ordinal()] = q;
         }

@@ -20,10 +20,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.client.model.*;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.lib.client.model.IModelCache;
-import buildcraft.lib.client.model.ModelCache;
-import buildcraft.lib.client.model.ModelCacheMultipleSame;
-import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.*;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.transport.PipeRenderState;
 
@@ -175,7 +172,7 @@ public class PipeModelCacheWire {
             uvs[BuildCraftBakedModel.U_MAX] = sprite.getInterpolatedU(VecUtil.getValue(size, uFace.getAxis()) * 16);
             uvs[BuildCraftBakedModel.V_MIN] = sprite.getMinV();
             uvs[BuildCraftBakedModel.V_MAX] = sprite.getInterpolatedV(VecUtil.getValue(size, vFace.getAxis()) * 16);
-            BCModelHelper.appendQuads(quads, BCModelHelper.createFace(face, center, radiusF, uvs));
+            ModelUtil.appendQuads(quads, ModelUtil.createFace(face, center, radiusF, uvs));
         }
     }
 

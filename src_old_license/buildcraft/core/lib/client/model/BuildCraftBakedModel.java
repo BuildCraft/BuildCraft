@@ -25,6 +25,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ItemLayerModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 
@@ -179,7 +180,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
     }
 
     public static IBakedModel createModelItemLayer(final List<TextureAtlasSprite> sprites) {
-        List<BakedQuad> quads = BCModelHelper.bakeList(createQuadsItemLayer(sprites));
+        List<BakedQuad> quads = ModelUtil.bakeList(createQuadsItemLayer(sprites));
         return new BuildCraftBakedModel(ImmutableList.copyOf(quads), sprites.get(0), MutableQuad.ITEM_LMAP);
     }
 
@@ -212,7 +213,7 @@ public class BuildCraftBakedModel extends PerspAwareModelBase {
         translation.setTranslation(new Vector3f(-15 / 32f, 0, 1));
         translation.mul(itemToEdge);
 
-        List<MutableQuad> mutableQuads = BCModelHelper.toMutableQuadList(baked, false);
+        List<MutableQuad> mutableQuads = ModelUtil.toMutableQuadList(baked, false);
         for (MutableQuad mutable : mutableQuads) {
             mutable.transform(translation);
             mutable.setTint(-1);

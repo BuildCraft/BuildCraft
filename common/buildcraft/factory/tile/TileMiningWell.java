@@ -27,7 +27,7 @@ public class TileMiningWell extends TileMiner {
             return;
         }
 
-        int target = BlockUtils.computeBlockBreakPower(worldObj, currentPos);
+        long target = BlockUtils.computeBlockBreakPower(worldObj, currentPos);
         progress += battery.extractPower(0, target - progress);
 
         if (progress >= target) {
@@ -60,7 +60,7 @@ public class TileMiningWell extends TileMiner {
             }
         } else {
             if (!worldObj.isAirBlock(currentPos)) {
-                worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (progress * 9) / target);
+                worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, (int) ((progress * 9) / target));
             }
         }
     }

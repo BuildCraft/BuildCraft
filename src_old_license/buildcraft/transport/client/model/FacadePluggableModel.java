@@ -22,8 +22,9 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IModel;
 
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.client.model.BCModelHelper;
+
 import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.transport.ItemFacade;
@@ -78,7 +79,7 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
                     MutableQuad mutable = MutableQuad.create(quad);
                     mutable.transform(matrix);
                     mutable.setCalculatedDiffuse();
-                    BCModelHelper.appendBakeQuads(quads, mutable);
+                    ModelUtil.appendBakeQuads(quads, mutable);
                 }
             }
 
@@ -105,7 +106,7 @@ public final class FacadePluggableModel extends BakedModelHolder implements IPlu
                 MutableQuad mutable = MutableQuad.create(quad);
                 mutable.transform(matrix);
                 mutable.setCalculatedDiffuse();
-                BCModelHelper.appendBakeQuads(quads, mutable);
+                ModelUtil.appendBakeQuads(quads, mutable);
             }
         }
 

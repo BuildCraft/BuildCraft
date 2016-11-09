@@ -34,14 +34,13 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
+
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.BCLibConfig;
 import buildcraft.lib.misc.FakePlayerUtil;
 
 public final class BlockUtils {
-    /** Deactivate constructor */
-    private BlockUtils() {}
 
     public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
         IBlockState state = world.getBlockState(pos);
@@ -51,6 +50,7 @@ public final class BlockUtils {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
+        // FIXME: Use the player owner
         EntityPlayer fakePlayer = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
         float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, fakePlayer);
 
@@ -65,7 +65,7 @@ public final class BlockUtils {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, BlockPos owner) {
-        return breakBlock(world, pos, BuildCraftCore.itemLifespan * 20, owner);
+        return breakBlock(world, pos, BCLibConfig.itemLifespan * 20, owner);
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, int forcedLifespan, BlockPos owner) {
@@ -81,6 +81,7 @@ public final class BlockUtils {
     }
 
     public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool, BlockPos owner) {
+        // FIXME: Use the player owner
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -90,6 +91,7 @@ public final class BlockUtils {
 
         IBlockState state = world.getBlockState(pos);
 
+        // FIXME: Use the player owner
         EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
 
         if (!state.getBlock().canHarvestBlock(world, pos, player)) {
@@ -104,6 +106,7 @@ public final class BlockUtils {
     }
 
     public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, ItemStack tool) {
+        // FIXME: Use the player owner
         EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
         int i = 0;
 
@@ -120,6 +123,7 @@ public final class BlockUtils {
     }
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops, BlockPos owner) {
+        // FIXME: Use the player owner
         BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
@@ -269,7 +273,6 @@ public final class BlockUtils {
     }
 
     /** Create an explosion which only affects a single block. */
-    @SuppressWarnings("unchecked")
     public static void explodeBlock(World world, BlockPos pos) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             return;
@@ -283,7 +286,7 @@ public final class BlockUtils {
         explosion.getAffectedBlockPositions().add(pos);
         explosion.doExplosionB(true);
 
-        for (EntityPlayer player : (List<EntityPlayer>) world.playerEntities) {
+        for (EntityPlayer player : world.playerEntities) {
             if (!(player instanceof EntityPlayerMP)) {
                 continue;
             }
@@ -294,17 +297,10 @@ public final class BlockUtils {
         }
     }
 
-    @Deprecated
-    public static int computeBlockBreakEnergy(World world, BlockPos pos) {
+    public static long computeBlockBreakPower(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         float hardness = state.getBlockHardness(world, pos);
-        return (int) Math.floor(2 * BuildCraftCore.miningMultiplier * ((hardness + 1) * 2));
-    }
-
-    public static int computeBlockBreakPower(World world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
-        float hardness = state.getBlockHardness(world, pos);
-        return (int) Math.floor(BuilderAPI.BREAK_POWER * ((hardness + 1) * 2));
+        return (long) Math.floor(BuilderAPI.BREAK_POWER * ((hardness + 1) * 2));
     }
 
     /** The following functions let you avoid unnecessary chunk loads, which is nice. */

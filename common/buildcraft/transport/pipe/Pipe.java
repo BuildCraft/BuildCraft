@@ -26,7 +26,6 @@ import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.transport.client.model.key.PipeModelKey;
-import buildcraft.transport.pipes.events.PipeEvent;
 
 public final class Pipe implements IPipe, IDebuggable {
     public static final int NET_RENDER = 0;
@@ -284,9 +283,6 @@ public final class Pipe implements IPipe, IDebuggable {
     public void markForUpdate() {
         updateMarked = true;
     }
-
-    // TODO: Replace this with a proper listener system (that allows for multiple listeners as well)
-    public void onEvent(PipeEvent event) {}
 
     @SideOnly(Side.CLIENT)
     public PipeModelKey getModel() {

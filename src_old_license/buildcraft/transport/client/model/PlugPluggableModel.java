@@ -17,9 +17,10 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.client.model.BCModelHelper;
+
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 
@@ -74,7 +75,7 @@ public class PlugPluggableModel extends BakedModelHolder implements IPluggableMo
         for (BakedQuad quad : bakedQuads) {
             MutableQuad mutable = MutableQuad.create(quad);
             mutable.transform(matrix);
-            BCModelHelper.appendBakeQuads(quads, format, mutable);
+            ModelUtil.appendBakeQuads(quads, format, mutable);
         }
 
         return quads;
@@ -86,7 +87,7 @@ public class PlugPluggableModel extends BakedModelHolder implements IPluggableMo
         for (BakedQuad quad : baked.getGeneralQuads()) {
             MutableQuad mutable = MutableQuad.create(quad);
             mutable.colouri(0xFF_FF_FF_FF);
-            BCModelHelper.appendBakeQuads(quads, format, mutable);
+            ModelUtil.appendBakeQuads(quads, format, mutable);
         }
         return quads;
     }

@@ -13,4 +13,7 @@ public class BCLibConfig {
      * {@link TextFormatting} colour value.<br>
      * This changes the behaviour of {@link ColourUtil#convertColourToTextFormat(EnumDyeColor)}. */
     public static boolean useColouredLabels = true;
+
+    /** The lifespan (in seconds) that spawned items will have, when dropped by a quarry or builder (etc) */
+    public static int itemLifespan = 60;
 }

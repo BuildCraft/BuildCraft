@@ -10,8 +10,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 
 import javax.vecmath.Vector3f;
@@ -53,15 +53,15 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
         uvs[V_MAX] = sideTexture.getInterpolatedV(8);
 
         MutableQuad[] quads = {//
-            BCModelHelper.createFace(EnumFacing.EAST, eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs),//
-            BCModelHelper.createFace(EnumFacing.WEST, westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs),//
-            BCModelHelper.createFace(EnumFacing.NORTH, westNorthDown, westNorthUp__, eastNorthUp__, eastNorthDown, uvs),//
-            BCModelHelper.createFace(EnumFacing.SOUTH, eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs),//
+            ModelUtil.createFace(EnumFacing.EAST, eastNorthDown, eastNorthUp__, eastSouthUp__, eastSouthDown, uvs),//
+            ModelUtil.createFace(EnumFacing.WEST, westSouthDown, westSouthUp__, westNorthUp__, westNorthDown, uvs),//
+            ModelUtil.createFace(EnumFacing.NORTH, westNorthDown, westNorthUp__, eastNorthUp__, eastNorthDown, uvs),//
+            ModelUtil.createFace(EnumFacing.SOUTH, eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs),//
         };
         for (MutableQuad q : quads) {
             q.setCalculatedDiffuse();
         }
-        BCModelHelper.appendBakeQuads(lst, MutableQuad.ITEM_BLOCK_PADDING, quads);
+        ModelUtil.appendBakeQuads(lst, MutableQuad.ITEM_BLOCK_PADDING, quads);
 
         return new ChuteRenderModel(ImmutableList.copyOf(lst), parent);
     }

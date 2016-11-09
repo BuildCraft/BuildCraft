@@ -8,7 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
-import buildcraft.core.lib.utils.MathUtils;
+import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AverageDouble implements INBTSerializable<NBTTagCompound> {
@@ -67,8 +67,8 @@ public class AverageDouble implements INBTSerializable<NBTTagCompound> {
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        precise = MathUtils.clamp(nbt.getInteger("precise"), 1, Short.MAX_VALUE);
-        pos = MathUtils.clamp(nbt.getInteger("pos"), 0, precise);
+        precise = MathUtil.clamp(nbt.getInteger("precise"), 1, Short.MAX_VALUE);
+        pos = MathUtil.clamp(nbt.getInteger("pos"), 0, precise);
         averageRaw = nbt.getDouble("averageRaw");
         tickValue = nbt.getDouble("tickValue");
         data = NBTUtils.readDoubleArray(nbt.getTag("data"), precise);

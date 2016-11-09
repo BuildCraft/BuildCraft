@@ -23,8 +23,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.gates.GateExpansionModelKey;
 import buildcraft.api.gates.IExpansionBaker;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.client.model.BCModelHelper;
+
 import buildcraft.core.lib.client.model.BakedModelHolder;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -133,7 +134,7 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
                     MutableQuad mutable = MutableQuad.create(quad);
                     mutable.transform(translation);
                     mutable.setTint(0xFF_FF_FF);
-                    BCModelHelper.appendBakeQuads(transformedQuads, mutable);
+                    ModelUtil.appendBakeQuads(transformedQuads, mutable);
                 }
                 this.transformedQuads = ImmutableList.copyOf(transformedQuads);
             }

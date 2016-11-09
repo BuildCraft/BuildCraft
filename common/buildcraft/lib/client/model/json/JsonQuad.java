@@ -11,7 +11,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.JsonUtil;
 
@@ -31,16 +32,16 @@ public class JsonQuad {
         if (uv.length != 4) {
             throw new JsonSyntaxException("Expected exactly 4 floats, but got " + Arrays.toString(uv));
         }
-        float[] uvs = new float[4];
-        uvs[0] = uv[0];
-        uvs[1] = uv[2];
-        uvs[2] = uv[1];
-        uvs[3] = uv[3];
+        UvFaceData uvs = new UvFaceData();
+        uvs.uMin = uv[0];
+        uvs.vMin = uv[1];
+        uvs.uMax = uv[2];
+        uvs.vMax = uv[3];
         Vector3f radius = new Vector3f(to[0] - from[0], to[1] - from[1], to[2] - from[2]);
         radius.scale(0.5f);
         Vector3f center = new Vector3f(from);
         center.add(radius);
-        MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+        MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
         quad.rotateTextureUp(rotation);
         vertices[0] = new JsonVertex(quad.getVertex(0));
         vertices[1] = new JsonVertex(quad.getVertex(1));

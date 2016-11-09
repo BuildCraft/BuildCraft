@@ -28,6 +28,7 @@ import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.ParticleUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
+// FIXME: This needs reverting to (close to) earlier engine code -- this is all horrible.
 public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITickable, IDebuggable {
     /** The starting temperature of all engines */
     public static final int TEMP_START = 19;

@@ -23,10 +23,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.transport.pluggable.IPluggableModelBaker;
-import buildcraft.core.lib.client.model.BCModelHelper;
+
 import buildcraft.core.lib.client.model.BakedModelHolder;
 import buildcraft.core.lib.client.model.BuildCraftBakedModel;
 import buildcraft.core.lib.client.model.PerspAwareModelBase;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.MatrixUtil;
 import buildcraft.robotics.RobotStationPluggable.EnumRobotStationState;
@@ -128,7 +129,7 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
                 mutable.normalv(normal);
                 float diffuse = MutableQuad.diffuseLight(normal);
                 mutable.colourf(diffuse, diffuse, diffuse, 1);
-                BCModelHelper.appendBakeQuads(quads, format, mutable);
+                ModelUtil.appendBakeQuads(quads, format, mutable);
             }
 
             if (stateQuads != null) {
@@ -139,7 +140,7 @@ public class RobotStationModel extends BakedModelHolder implements IPluggableMod
                     mutable.normalv(normal);
                     float diffuse = MutableQuad.diffuseLight(normal);
                     mutable.colourf(diffuse, diffuse, diffuse, 1);
-                    BCModelHelper.appendBakeQuads(quads, format, mutable);
+                    ModelUtil.appendBakeQuads(quads, format, mutable);
                 }
             }
         }

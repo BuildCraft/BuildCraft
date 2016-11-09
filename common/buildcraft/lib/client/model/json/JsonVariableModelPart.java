@@ -17,7 +17,8 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.expression.FunctionContext;
 import buildcraft.lib.expression.GenericExpressionCompiler;
@@ -98,9 +99,9 @@ public abstract class JsonVariableModelPart {
         }
     }
 
-    private static JsonVariableQuad[] readFace(JsonObject obj, FunctionContext fnCtx) {
-        throw new AbstractMethodError("Implement this!");
-    }
+    // private static JsonVariableQuad[] readFace(JsonObject obj, FunctionContext fnCtx) {
+    // throw new AbstractMethodError("Implement this!");
+    // }
 
     public static INodeDouble[] readVariablePosition(JsonObject obj, String member, FunctionContext fnCtx) {
         String[] got = JsonUtil.getSubAsStringArray(obj, member);
@@ -186,16 +187,16 @@ public abstract class JsonVariableModelPart {
                     JsonVariableFaceUV var = entry.getValue();
                     if (var.visible.evaluate()) {
                         TextureAtlasSprite sprite = spriteLookup.apply(var.texture.evaluate());
-                        float[] uvs = new float[4];
-                        uvs[0] = (float) var.uv[0].evaluate();
-                        uvs[1] = (float) var.uv[2].evaluate();
-                        uvs[2] = (float) var.uv[1].evaluate();
-                        uvs[3] = (float) var.uv[3].evaluate();
+                        UvFaceData uvs = new UvFaceData();
+                        uvs.uMin = (float) var.uv[0].evaluate();
+                        uvs.uMax = (float) var.uv[2].evaluate();
+                        uvs.vMin = (float) var.uv[1].evaluate();
+                        uvs.vMax = (float) var.uv[3].evaluate();
                         Vector3f radius = new Vector3f(t[0] - f[0], t[1] - f[1], t[2] - f[2]);
                         radius.scale(0.5f);
                         Vector3f center = new Vector3f(f);
                         center.add(radius);
-                        MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+                        MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
                         quad.lighti(l, 0);
                         quad.texFromSprite(sprite);
                         quad.setSprite(sprite);

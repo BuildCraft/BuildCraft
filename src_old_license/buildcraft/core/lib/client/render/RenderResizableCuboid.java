@@ -33,9 +33,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 
 import buildcraft.core.lib.EntityResizableCuboid;
-import buildcraft.core.lib.client.model.BCModelHelper;
 import buildcraft.core.lib.client.model.FacingRotationHelper;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.client.model.ModelUtil;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.VecUtil;
@@ -240,7 +240,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
         Axis v = face.getAxis() == Axis.Y ? Axis.Z : Axis.Y;
         double other = face.getAxisDirection() == AxisDirection.POSITIVE ? VecUtil.getValue(size, face.getAxis()) : 0;
 
-        boolean flip = BCModelHelper.shouldInvertForRender(face);
+        boolean flip = ModelUtil.shouldInvertForRender(face);
 
         // Flip it to be negative as the light renderer doesn't handle light proeprly
         face = face.getAxisDirection() == AxisDirection.NEGATIVE ? face : face.getOpposite();
@@ -403,7 +403,7 @@ public class RenderResizableCuboid extends Render<EntityResizableCuboid> {
 
         EnumFacing opposite = face.getOpposite();
 
-        boolean flip = BCModelHelper.shouldInvertForRender(face);
+        boolean flip = ModelUtil.shouldInvertForRender(face);
 
         for (RenderInfo ri : renderInfoList) {
             ri = ri.offset(cuboid, face.getAxis());
