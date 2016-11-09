@@ -8,7 +8,6 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
-import buildcraft.silicon.BCSiliconItems;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
 import buildcraft.transport.gate.EnumGateModifier;

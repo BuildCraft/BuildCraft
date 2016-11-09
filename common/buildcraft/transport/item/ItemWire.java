@@ -16,6 +16,7 @@ import java.util.List;
 public class ItemWire extends ItemBC_Neptune {
     public ItemWire(String id) {
         super(id);
+        setHasSubtypes(true);
     }
 
     @Override

@@ -12,7 +12,7 @@ import buildcraft.api.transport.neptune.IWireManager;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
-    private final Map<EnumWirePart, EnumDyeColor> wiresByPart = new EnumMap<>(EnumWirePart.class);
+    public final Map<EnumWirePart, EnumDyeColor> wiresByPart = new EnumMap<>(EnumWirePart.class);
     private final Map<EnumDyeColor, EnumWirePart> wiresByColour = new EnumMap<>(EnumDyeColor.class);
     // TODO: Wire connections to adjacent blocks
 
@@ -27,9 +27,9 @@ public class WireManager implements IWireManager {
 
     @Override
     public boolean addWire(EnumWirePart part, EnumDyeColor colour) {
-        if (getWireByPart(part) == null && getWireByColour(colour) == null) {
+        if (getWireByPart(part) == null/* && getWireByColour(colour) == null*/) {
             wiresByPart.put(part, colour);
-            wiresByColour.put(colour, part);
+//            wiresByColour.put(colour, part);
             return true;
         } else {
             return false;

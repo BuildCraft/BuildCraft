@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import buildcraft.transport.item.ItemWire;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -121,6 +122,9 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 AxisAlignedBB bb = pluggable.getBoundingBox();
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
             }
+        }
+        for(EnumWirePart enumWirePart : tile.getWireManager().wiresByPart.keySet()) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, enumWirePart.boundingBox);
         }
     }
 
@@ -276,7 +280,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             EnumWireBetween wirePart = EnumWireBetween.VALUES[part - 1 - 6 - 6 - 8];
             aabb = wirePart.boundingBox;
         }
-        return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
+//        return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
+        return aabb == null ? null : aabb.offset(pos);
     }
 
     @Override
@@ -357,6 +362,18 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                     held.stackSize--;
                 }
                 return true;
+            }
+        }
+        if(item instanceof ItemWire) {
+            Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+            double reachDistance = 5;
+            if (player instanceof EntityPlayerMP) {
+                reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+            }
+            Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+            EnumWirePart wirePart = BlockPipeHolder.rayTraceWire(pos, start, end);
+            if(wirePart != null) {
+                tile.getWireManager().addWire(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
             }
         }
         return false;
