@@ -17,7 +17,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.IPlantable;
 
 import buildcraft.api.crops.ICropHandler;
-import buildcraft.core.lib.utils.BlockUtils;
+
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.SoundUtil;
 
 public class CropHandlerPlantable implements ICropHandler {
@@ -56,7 +57,7 @@ public class CropHandlerPlantable implements ICropHandler {
 
     @Override
     public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
-        return BlockUtils.useItemOnBlock(world, player, seed, pos, EnumFacing.UP);
+        return BlockUtil.useItemOnBlock(world, player, seed, pos, EnumFacing.UP);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class CropHandlerPlantable implements ICropHandler {
     public boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
         if (!world.isRemote) {
             IBlockState state = world.getBlockState(pos);
-            if (BlockUtils.breakBlock((WorldServer) world, pos, drops, pos)) {
+            if (BlockUtil.breakBlock((WorldServer) world, pos, drops, pos)) {
                 SoundUtil.playBlockBreak(world, pos, state);
                 return true;
             }

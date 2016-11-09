@@ -9,16 +9,19 @@ import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
@@ -29,6 +32,8 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         BELOW50(0.5F),
         BELOW75(0.75F);
 
+        public static final TriggerType[] VALUES = values();
+
         public final float level;
 
         TriggerType(float level) {
@@ -36,12 +41,16 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
         }
     }
 
-    public TriggerType type;
+    public final TriggerType type;
 
     public TriggerFluidContainerLevel(TriggerType type) {
         super("buildcraft:fluid." + type.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + type.name().toLowerCase(Locale.ROOT));
-        setBuildCraftLocation("core", "triggers/trigger_liquidcontainer_" + type.name().toLowerCase(Locale.ROOT));
         this.type = type;
+    }
+
+    @Override
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.TRIGGER_FLUID_LEVEL.get(type);
     }
 
     @Override
@@ -56,42 +65,41 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        if (tile instanceof IFluidHandler) {
-            IFluidHandler container = (IFluidHandler) tile;
+        IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+        if (handler == null) {
+            return false;
+        }
+        FluidStack searchedFluid = null;
 
-            FluidStack searchedFluid = null;
-
-            if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
-                searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameters[0].getItemStack());
-            }
-
+        if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
+            searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             if (searchedFluid != null) {
                 searchedFluid.amount = 1;
             }
-
-            FluidTankInfo[] liquids = container.getTankInfo(side);
-            if (liquids == null || liquids.length == 0) {
-                return false;
-            }
-
-            for (FluidTankInfo c : liquids) {
-                if (c == null) {
-                    continue;
-                }
-                if (c.fluid == null) {
-                    if (searchedFluid == null) {
-                        return true;
-                    }
-                    return container.fill(side, searchedFluid, false) > 0;
-                }
-
-                if (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid)) {
-                    float percentage = (float) c.fluid.amount / (float) c.capacity;
-                    return percentage < type.level;
-                }
-            }
         }
 
+        IFluidTankProperties[] liquids = handler.getTankProperties();
+        if (liquids == null || liquids.length == 0) {
+            return false;
+        }
+
+        for (IFluidTankProperties c : liquids) {
+            if (c == null) {
+                continue;
+            }
+            FluidStack fluid = c.getContents();
+            if (fluid == null) {
+                if (searchedFluid == null) {
+                    return true;
+                }
+                return handler.fill(searchedFluid, false) > 0;
+            }
+
+            if (searchedFluid == null || searchedFluid.isFluidEqual(fluid)) {
+                float percentage = fluid.amount / (float) c.getCapacity();
+                return percentage < type.level;
+            }
+        }
         return false;
     }
 

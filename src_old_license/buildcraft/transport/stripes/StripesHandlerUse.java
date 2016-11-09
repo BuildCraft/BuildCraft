@@ -13,8 +13,9 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.core.lib.utils.BlockUtils;
+
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 
 public class StripesHandlerUse implements IStripesHandler {
     public static final List<Item> items = new ArrayList<>();
@@ -33,7 +34,7 @@ public class StripesHandlerUse implements IStripesHandler {
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
         Vec3d target = Utils.convert(pos).add(Utils.convert(direction));
 
-        if (BlockUtils.useItemOnBlock(world, player, stack, Utils.convertFloor(target), direction.getOpposite())) {
+        if (BlockUtil.useItemOnBlock(world, player, stack, Utils.convertFloor(target), direction.getOpposite())) {
             if (stack.stackSize > 0) {
                 activator.sendItem(stack, direction.getOpposite());
             }

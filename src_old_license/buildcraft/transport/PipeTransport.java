@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.lib.misc.BlockUtil;
 
 public abstract class PipeTransport {
     public TileGenericPipe container;
@@ -122,7 +122,7 @@ public abstract class PipeTransport {
     }
 
     protected void destroyPipe() {
-        BlockUtils.explodeBlock(container.getWorld(), container.getPos());
+        BlockUtil.explodeBlock(container.getWorld(), container.getPos());
         container.getWorld().setBlockToAir(container.getPos());
     }
 }

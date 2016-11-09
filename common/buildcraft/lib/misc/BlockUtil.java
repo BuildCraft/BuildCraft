@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +36,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.blueprints.BuilderAPI;
 
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.BCLibConfig;
-import buildcraft.lib.misc.FakePlayerUtil;
 
-public final class BlockUtils {
+public final class BlockUtil {
 
     public static List<ItemStack> getItemStackFromBlock(WorldServer world, BlockPos pos, BlockPos owner) {
         IBlockState state = world.getBlockState(pos);
@@ -82,7 +80,7 @@ public final class BlockUtils {
 
     public static boolean harvestBlock(WorldServer world, BlockPos pos, ItemStack tool, BlockPos owner) {
         // FIXME: Use the player owner
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -92,7 +90,7 @@ public final class BlockUtils {
         IBlockState state = world.getBlockState(pos);
 
         // FIXME: Use the player owner
-        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
+        EntityPlayer player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
 
         if (!state.getBlock().canHarvestBlock(world, pos, player)) {
             return false;
@@ -107,7 +105,7 @@ public final class BlockUtils {
 
     public static EntityPlayer getFakePlayerWithTool(WorldServer world, BlockPos pos, ItemStack tool) {
         // FIXME: Use the player owner
-        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer(world, pos).get();
+        EntityPlayer player = FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, pos).get();
         int i = 0;
 
         while (player.getHeldItemMainhand() != tool && i < 9) {
@@ -124,7 +122,7 @@ public final class BlockUtils {
 
     public static boolean breakBlock(WorldServer world, BlockPos pos, List<ItemStack> drops, BlockPos owner) {
         // FIXME: Use the player owner
-        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer(world, owner).get());
+        BreakEvent breakEvent = new BreakEvent(world, pos, world.getBlockState(pos), FakePlayerUtil.INSTANCE.getBuildCraftPlayer(world, owner).get());
         MinecraftForge.EVENT_BUS.post(breakEvent);
 
         if (breakEvent.isCanceled()) {
@@ -313,7 +311,7 @@ public final class BlockUtils {
             if (pos.getY() < 0 || pos.getY() > 255) {
                 return null;
             }
-            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
+            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getTileEntity(pos, EnumCreateEntityType.CHECK) : null;
         } else {
             return world.getTileEntity(pos);
@@ -329,34 +327,16 @@ public final class BlockUtils {
             if (pos.getY() < 0 || pos.getY() >= world.getHeight()) {
                 return Blocks.AIR.getDefaultState();
             }
-            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
+            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
         } else {
             if (pos.getY() < 0 || pos.getY() > 255) {
                 return Blocks.AIR.getDefaultState();
             }
-            Chunk chunk = ThreadSafeUtils.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
+            Chunk chunk = ChunkUtil.getChunk(world, pos.getX() >> 4, pos.getZ() >> 4);
             return chunk != null ? chunk.getBlockState(pos) : Blocks.AIR.getDefaultState();
         }
     }
-
-    // Meta is hidden internally, so we shouldn't even try
-    // public static int getBlockMetadata(World world, BlockPos pos) {
-    // return getBlockMetadata(world, pos, false);
-    //
-    // }
-
-    // public static int getBlockMetadata(World world, BlockPos pos, boolean force) {
-    // if (!force) {
-    // if (y < 0 || y > 255) {
-    // return 0;
-    // }
-    // Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
-    // return chunk != null ? chunk.getBlockMetadata(x & 15, y, z & 15) : 0;
-    // } else {
-    // return world.getBlockMetadata(pos);
-    // }
-    // }
 
     public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, BlockPos pos, EnumFacing direction) {
         boolean done = stack.getItem().onItemUseFirst(stack, player, world, pos, direction, 0.5F, 0.5F, 0.5F, EnumHand.MAIN_HAND) == EnumActionResult.SUCCESS;

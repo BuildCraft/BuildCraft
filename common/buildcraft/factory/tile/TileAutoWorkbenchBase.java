@@ -27,9 +27,9 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 
-import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
+import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.ItemStackKey;
 import buildcraft.lib.misc.StackUtil;
@@ -180,7 +180,7 @@ public abstract class TileAutoWorkbenchBase extends TileBCInventory_Neptune impl
     }
 
     public void updateRecipe() {
-        this.currentRecipe = CraftingUtils.findMatchingRecipe(this.crafting, worldObj);
+        this.currentRecipe = CraftingUtil.findMatchingRecipe(this.crafting, worldObj);
     }
 
     @Override

@@ -21,10 +21,10 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.tile.TileBC_Neptune;
 
@@ -100,7 +100,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
                     IBlockState blockState = worldObj.getBlockState(currentPos);
 
                     Block block = blockState.getBlock();
-                    Fluid fluid = BlockUtils.getFluidWithFlowing(block);
+                    Fluid fluid = BlockUtil.getFluidWithFlowing(block);
 
                     boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
 

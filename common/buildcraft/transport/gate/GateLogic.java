@@ -21,7 +21,6 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.neptune.IPipeHolder;
 
 import buildcraft.lib.net.command.IPayloadWriter;
-import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
 
@@ -35,11 +34,7 @@ public class GateLogic implements IGate, IWireEmitter {
     public final IStatement[] actions;
     public final IStatementParameter[][] actionParameters;
 
-    public final ActionActiveState[] actionsState;
     public final List<StatementSlot> activeActions = new ArrayList<>();
-
-    private final long[] tickActivated;
-    private final int[] actionGroups;
 
     private final EnumSet<EnumDyeColor> wireBroadcasts;
 
@@ -54,15 +49,6 @@ public class GateLogic implements IGate, IWireEmitter {
 
         actions = new IStatement[variant.numSlots];
         actionParameters = new IStatementParameter[variant.numSlots][variant.numActionArgs];
-
-        actionsState = new ActionActiveState[variant.numSlots];
-
-        tickActivated = new long[variant.numSlots];
-        Arrays.fill(tickActivated, -1);
-        actionGroups = new int[variant.numSlots];
-        for (int i = 0; i < actionGroups.length; i++) {
-            actionGroups[i] = i;
-        }
 
         wireBroadcasts = EnumSet.noneOf(EnumDyeColor.class);
     }

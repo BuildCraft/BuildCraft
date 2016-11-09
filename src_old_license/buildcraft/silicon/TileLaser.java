@@ -26,8 +26,8 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.data.Box;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
@@ -161,7 +161,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
         List<ILaserTarget> targets = new LinkedList<>();
         for (BlockPos pos : BlockPos.getAllInBox(min, max)) {
-            if (BlockUtils.getBlockState(worldObj, pos).getBlock() instanceof ILaserTargetBlock) {
+            if (BlockUtil.getBlockState(worldObj, pos).getBlock() instanceof ILaserTargetBlock) {
                 TileEntity tile = worldObj.getTileEntity(pos);
                 if (tile instanceof ILaserTarget) {
                     ILaserTarget table = (ILaserTarget) tile;

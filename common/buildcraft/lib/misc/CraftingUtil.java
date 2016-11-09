@@ -2,35 +2,34 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.utils;
+package buildcraft.lib.misc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 
-public final class CraftingUtils {
+public final class CraftingUtil {
 
     /** Deactivate constructor */
-    private CraftingUtils() {}
+    private CraftingUtil() {}
 
     public static IRecipe findMatchingRecipe(InventoryCrafting par1InventoryCrafting, World par2World) {
         // Begin repair recipe handler
         int itemNum = 0;
-        ItemStack item1 = null;
-        ItemStack item2 = null;
+        ItemStack item1 = StackUtil.INVALID_STACK;
+        ItemStack item2 = StackUtil.INVALID_STACK;
         int slot;
 
         for (slot = 0; slot < par1InventoryCrafting.getSizeInventory(); ++slot) {
             ItemStack itemInSlot = par1InventoryCrafting.getStackInSlot(slot);
 
-            if (itemInSlot != null) {
+            if (StackUtil.isValid(itemInSlot)) {
                 if (itemNum == 0) {
                     item1 = itemInSlot;
                 }
@@ -43,13 +42,11 @@ public final class CraftingUtils {
             }
         }
 
-        if (itemNum == 2 && item1 != null && item2 != null && item1.getItem() == item2.getItem() && item1.stackSize == 1 && item2.stackSize == 1
-            && item1.getItem().isRepairable()) {
-            Item itemBase = item1.getItem();
-            int item1Durability = itemBase.getMaxDamage() - item1.getItemDamage();
-            int item2Durability = itemBase.getMaxDamage() - item2.getItemDamage();
-            int repairAmt = item1Durability + item2Durability + itemBase.getMaxDamage() * 5 / 100;
-            int newDamage = itemBase.getMaxDamage() - repairAmt;
+        if (itemNum == 2 && item1.getItem() == item2.getItem() && item1.stackSize == 1 && item2.stackSize == 1 && item1.getItem().isRepairable()) {
+            int item1Durability = item1.getMaxDamage() - item1.getItemDamage();
+            int item2Durability = item2.getMaxDamage() - item2.getItemDamage();
+            int repairAmt = item1Durability + item2Durability + item1.getMaxDamage() * 5 / 100;
+            int newDamage = item1.getMaxDamage() - repairAmt;
 
             if (newDamage < 0) {
                 newDamage = 0;

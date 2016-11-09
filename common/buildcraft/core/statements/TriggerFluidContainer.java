@@ -9,11 +9,11 @@ import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -69,53 +69,55 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
             FluidStack searchedFluid = null;
 
             if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
-                searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameters[0].getItemStack());
+                searchedFluid = FluidUtil.getFluidContained(parameters[0].getItemStack());
             }
 
             if (searchedFluid != null) {
                 searchedFluid.amount = 1;
             }
 
-            FluidTankInfo[] liquids = handler.getTankInfo(side);
+            IFluidTankProperties[] liquids = handler.getTankProperties();
             if (liquids == null || liquids.length == 0) {
                 return false;
             }
 
             switch (state) {
                 case Empty:
-                    for (FluidTankInfo c : liquids) {
-                        if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
-                            return false;
-                        }
-                    }
-                    return true;
+                    FluidStack drained = handler.drain(1, false);
+                    return drained == null || drained.amount <= 0;
                 case Contains:
-                    for (FluidTankInfo c : liquids) {
-                        if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
+                    for (IFluidTankProperties c : liquids) {
+                        if (c == null) continue;
+                        FluidStack fluid = c.getContents();
+                        if (fluid != null && fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(fluid))) {
                             return true;
                         }
                     }
                     return false;
                 case Space:
                     if (searchedFluid == null) {
-                        for (FluidTankInfo c : liquids) {
-                            if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
+                        for (IFluidTankProperties c : liquids) {
+                            if (c == null) continue;
+                            FluidStack fluid = c.getContents();
+                            if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return true;
                             }
                         }
                         return false;
                     }
-                    return handler.fill(side, searchedFluid, false) > 0;
+                    return handler.fill(searchedFluid, false) > 0;
                 case Full:
                     if (searchedFluid == null) {
-                        for (FluidTankInfo c : liquids) {
-                            if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
+                        for (IFluidTankProperties c : liquids) {
+                            if (c == null) continue;
+                            FluidStack fluid = c.getContents();
+                            if ((fluid == null || fluid.amount < c.getCapacity())) {
                                 return false;
                             }
                         }
                         return true;
                     }
-                    return handler.fill(side, searchedFluid, false) <= 0;
+                    return handler.fill(searchedFluid, false) <= 0;
             }
         }
 

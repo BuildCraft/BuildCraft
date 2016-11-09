@@ -9,7 +9,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BlockUtils;
+
+import buildcraft.lib.misc.BlockUtil;
 
 public class AIRobotPumpBlock extends AIRobot {
 
@@ -42,10 +43,10 @@ public class AIRobotPumpBlock extends AIRobot {
         if (waited < 40) {
             waited++;
         } else {
-            FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump, false);
+            FluidStack fluidStack = BlockUtil.drainBlock(robot.worldObj, blockToPump, false);
             if (fluidStack != null) {
                 if (robot.fill(null, fluidStack, true) > 0) {
-                    BlockUtils.drainBlock(robot.worldObj, blockToPump, true);
+                    BlockUtil.drainBlock(robot.worldObj, blockToPump, true);
                 }
             }
             terminate();

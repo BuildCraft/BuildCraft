@@ -21,7 +21,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockMiner;
-import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.lib.misc.BlockUtil;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
     private boolean isDigging = true;
@@ -74,7 +74,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
                 search = search.down();
             }
 
-            if (search.getY() < 1 || search.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, search)) {
+            if (search.getY() < 1 || search.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtil.canChangeBlock(world, search)) {
                 isDigging = false;
                 // Drain energy, because at 0 energy this will stop doing calculations.
                 getBattery().useEnergy(0, 10, false);

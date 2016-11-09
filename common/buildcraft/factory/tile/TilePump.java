@@ -19,9 +19,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.mj.IMjReceiver;
 
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
 
 public class TilePump extends TileMiner {
@@ -37,7 +37,7 @@ public class TilePump extends TileMiner {
     private void rebuildQueue() {
         pumpLayerQueues.clear();
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlockState(pumpPos).getBlock());
 
         if (pumpingFluid == null) {
             return;
@@ -68,7 +68,7 @@ public class TilePump extends TileMiner {
                 return;
             }
             IBlockState state = worldObj.getBlockState(pumpPos);
-            if (BlockUtils.getFluid(state.getBlock()) == pumpingFluid && canDrainBlock(state, pumpPos, pumpingFluid)) {
+            if (BlockUtil.getFluid(state.getBlock()) == pumpingFluid && canDrainBlock(state, pumpPos, pumpingFluid)) {
                 fluidsFound.add(index);
                 getLayerQueue(pumpPos.getY()).add(index);
             }
@@ -99,7 +99,7 @@ public class TilePump extends TileMiner {
     }
 
     private boolean canDrainBlock(IBlockState state, BlockPos pos, Fluid fluid) {
-        FluidStack fluidStack = BlockUtils.drainBlock(state, worldObj, pos, false);
+        FluidStack fluidStack = BlockUtil.drainBlock(state, worldObj, pos, false);
         if (fluidStack == null || fluidStack.amount <= 0) {
             return false;
         } else {
@@ -142,10 +142,10 @@ public class TilePump extends TileMiner {
         }
         int target = 1000; // TODO: add 2 zeroes
         BlockPos pumpPos = new BlockPos(pos.getX(), currentPos.getY(), pos.getZ());
-        Fluid pumpingFluid = BlockUtils.getFluidWithFlowing(worldObj.getBlockState(pumpPos).getBlock());
+        Fluid pumpingFluid = BlockUtil.getFluidWithFlowing(worldObj.getBlockState(pumpPos).getBlock());
 
         if (timeWithoutFluid >= 30) {
-            if (worldObj.isAirBlock(pumpPos.down()) || BlockUtils.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
+            if (worldObj.isAirBlock(pumpPos.down()) || BlockUtil.getFluid(worldObj.getBlockState(pumpPos.down()).getBlock()) != null) {
                 timeWithoutFluid = 0;
                 currentPos = pumpPos.down();
                 this.goToYLevel(currentPos.getY());
@@ -168,7 +168,7 @@ public class TilePump extends TileMiner {
         if (progress >= target) {
             progress = 0;
             if (!pumpLayerQueues.isEmpty()) {
-                FluidStack drain = BlockUtils.drainBlock(worldObj, currentPos, false);
+                FluidStack drain = BlockUtil.drainBlock(worldObj, currentPos, false);
                 if (drain != null && canDrainBlock(worldObj.getBlockState(currentPos), currentPos, drain.getFluid())) {
                     worldObj.setBlockToAir(currentPos);
                     tank.fill(drain, true);

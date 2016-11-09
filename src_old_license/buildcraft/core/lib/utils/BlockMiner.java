@@ -16,6 +16,7 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 
 public class BlockMiner {
     protected final World world;
@@ -72,12 +73,12 @@ public class BlockMiner {
     }
 
     public int acceptEnergy(int offeredAmount) {
-        if (BlockUtils.isUnbreakableBlock(world, pos)) {
+        if (BlockUtil.isUnbreakableBlock(world, pos)) {
             hasFailed = true;
             return 0;
         }
 
-        energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
+        energyRequired = BlockUtil.computeBlockBreakEnergy(world, pos);
 
         int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
         energyAccepted += usedAmount;
@@ -92,7 +93,7 @@ public class BlockMiner {
             MinecraftForge.EVENT_BUS.post(breakEvent);
 
             if (!breakEvent.isCanceled()) {
-                List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) world, pos, owner.getPos());
+                List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) world, pos, owner.getPos());
 
                 if (stacks != null) {
                     for (ItemStack s : stacks) {

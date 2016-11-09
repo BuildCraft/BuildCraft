@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftTransport;
@@ -42,7 +43,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
 
     @Override
     public int extractFluid(IFluidHandler fluidHandler, EnumFacing side) {
-        FluidStack targetFluidStack = FluidUtils.getFluidStackFromItemStack(filters.getStackInSlot(0));
+        FluidStack targetFluidStack = FluidUtil.getFluidContained(filters.getStackInSlot(0));
         if (targetFluidStack == null) {
             return super.extractFluid(fluidHandler, side);
         }

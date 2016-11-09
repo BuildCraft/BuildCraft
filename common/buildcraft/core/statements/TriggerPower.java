@@ -7,16 +7,21 @@ package buildcraft.core.statements;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReadable;
+import buildcraft.api.mj.MjAPI;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.IPipeTile;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
-public class TriggerPower extends BCStatement implements ITriggerInternal {
+public class TriggerPower extends BCStatement implements ITriggerInternal, ITriggerExternal {
     public static class Neighbor {
         public TileEntity tile;
         public EnumPipePart side;
@@ -31,8 +36,12 @@ public class TriggerPower extends BCStatement implements ITriggerInternal {
 
     public TriggerPower(boolean high) {
         super("buildcraft:energyStored" + (high ? "high" : "low"));
-        this.setBuildCraftLocation("core", "triggers/trigger_energy_storage_" + (high ? "high" : "low"));
         this.high = high;
+    }
+
+    @Override
+    public SpriteHolder getSpriteHolder() {
+        return high ? BCCoreSprites.TRIGGER_POWER_HIGH : BCCoreSprites.TRIGGER_POWER_LOW;
     }
 
     @Override
@@ -40,87 +49,35 @@ public class TriggerPower extends BCStatement implements ITriggerInternal {
         return StringUtilBC.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
     }
 
-    private boolean isTriggeredEnergyHandler(IEnergyConnection connection, EnumPipePart part) {
-        int energyStored, energyMaxStored;
-
-        EnumFacing side = part.face;
-
-        if (connection instanceof IEnergyHandler) {
-            energyStored = ((IEnergyHandler) connection).getEnergyStored(side);
-            energyMaxStored = ((IEnergyHandler) connection).getMaxEnergyStored(side);
-        } else {
+    private boolean isTriggeredMjConnector(IMjReadable readable) {
+        if (readable == null) {
             return false;
         }
+        long stored = readable.getStored();
+        long max = readable.getCapacity();
 
-        if (energyMaxStored > 0) {
-            float level = (float) energyStored / (float) energyMaxStored;
+        if (max > 0) {
+            double level = stored / (double) max;
             if (high) {
-                return level > 0.95F;
+                return level > 0.95;
             } else {
-                return level < 0.05F;
+                return level < 0.05;
             }
         }
         return false;
     }
 
-    protected static boolean isTriggered(Object tile, EnumPipePart side) {
-        if (tile instanceof IPipeTile) {
-            return false;
-        } else if (tile instanceof IEnergyConnection) {
-            return ((IEnergyConnection) tile).canConnectEnergy(side.opposite().face);
-        } else {
-            return false;
-        }
-    }
-
-    protected boolean isActive(Object tile, EnumPipePart side) {
-        if (isTriggered(tile, side)) {
-            return isTriggeredEnergyHandler((IEnergyConnection) tile, side.opposite());
-        }
-
-        return false;
-    }
-
-    public static boolean isTriggeringPipe(TileEntity tile) {
-        if (tile instanceof IPipeTile) {
-            IPipeTile pipeTile = (IPipeTile) tile;
-            if (pipeTile.getPipeType() == IPipeTile.PipeType.POWER && pipeTile.getPipe() instanceof IMjReadable) {
-                return true;
-            }
-        }
-        return false;
+    protected boolean isActive(ICapabilityProvider tile, EnumPipePart side) {
+        return isTriggeredMjConnector(tile.getCapability(MjAPI.CAP_READABLE, side.face));
     }
 
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
-        // Internal check
-        if (isTriggeringPipe(source.getTile())) {
-            return isActive(((IPipeTile) source.getTile()).getPipe(), EnumPipePart.CENTER);
-        }
-
-        Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
-        if (triggeringNeighbor != null) {
-            return isActive(triggeringNeighbor.tile, triggeringNeighbor.side);
-        }
-        return false;
+        return isActive(source.getTile(), EnumPipePart.CENTER);
     }
 
-    public static Neighbor getTriggeringNeighbor(TileEntity parent) {
-        if (parent instanceof IPipeTile) {
-            for (EnumPipePart side : EnumPipePart.validFaces()) {
-                TileEntity tile = ((IPipeTile) parent).getNeighborTile(side.face);
-                if (tile != null && isTriggered(tile, side)) {
-                    return new Neighbor(tile, side);
-                }
-            }
-        } else {
-            for (EnumPipePart side : EnumPipePart.validFaces()) {
-                TileEntity tile = parent.getWorld().getTileEntity(parent.getPos().offset(side.face));
-                if (tile != null && isTriggered(tile, side)) {
-                    return new Neighbor(tile, side);
-                }
-            }
-        }
-        return null;
+    @Override
+    public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
+        return isActive(target, EnumPipePart.fromFacing(side));
     }
 }

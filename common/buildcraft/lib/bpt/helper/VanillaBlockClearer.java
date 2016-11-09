@@ -8,13 +8,13 @@ import buildcraft.api.bpt.Schematic.DefaultBptActions;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
 
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.bpt.task.ICondition;
 import buildcraft.lib.bpt.task.TaskBuilder;
 import buildcraft.lib.bpt.task.TaskBuilder.Action;
 import buildcraft.lib.bpt.task.TaskBuilder.PowerFunction;
 import buildcraft.lib.bpt.task.TaskDefinition;
 import buildcraft.lib.bpt.task.TaskUsable;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.EntityUtil;
 
 /** Provides an implementation of {@link DefaultBptActions#REQUIRE_AIR} */
@@ -30,7 +30,7 @@ public enum VanillaBlockClearer implements PreBuildAction {
             return builder.getWorld().isAirBlock(pos);
         };
         TaskBuilder ifNotAir = task.subTask("ifNotAir");
-        PowerFunction reqPower = (builder, pos) -> BlockUtils.computeBlockBreakPower(builder.getWorld(), pos);
+        PowerFunction reqPower = (builder, pos) -> BlockUtil.computeBlockBreakPower(builder.getWorld(), pos);
 
         Action action = (builder, pos) -> {
             builder.getWorld().destroyBlock(pos, shouldDrop);

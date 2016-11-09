@@ -24,10 +24,10 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.misc.BlockUtil;
 
 import io.netty.buffer.ByteBuf;
 
@@ -100,7 +100,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDeb
     }
 
     private boolean placeFluid(BlockPos pos, Fluid fluid) {
-        Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
+        Block block = BlockUtil.getBlockState(worldObj, pos).getBlock();
 
         if (canPlaceFluidAt(block, pos)) {
             boolean placed;
@@ -199,8 +199,8 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDeb
                 return;
             }
 
-            Block block = BlockUtils.getBlockState(worldObj, pos).getBlock();
-            if (BlockUtils.getFluid(block) == tank.getFluidType()) {
+            Block block = BlockUtil.getBlockState(worldObj, pos).getBlock();
+            if (BlockUtil.getFluid(block) == tank.getFluidType()) {
                 fluidsFound.add(pos);
             }
             if (canPlaceFluidAt(block, pos)) {
@@ -210,7 +210,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler, IDeb
     }
 
     private boolean canPlaceFluidAt(Block block, BlockPos pos) {
-        return BuildCraftAPI.isSoftBlock(worldObj, pos) && !BlockUtils.isFullFluidBlock(worldObj, pos);
+        return BuildCraftAPI.isSoftBlock(worldObj, pos) && !BlockUtil.isFullFluidBlock(worldObj, pos);
     }
 
     public void onNeighborBlockChange(Block block) {

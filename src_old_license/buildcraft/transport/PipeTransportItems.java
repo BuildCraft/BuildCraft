@@ -30,9 +30,9 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
@@ -152,7 +152,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     @Override
     protected void destroyPipe() {
-        BlockUtils.explodeBlock(container.getWorld(), container.getPos());
+        BlockUtil.explodeBlock(container.getWorld(), container.getPos());
         container.getWorld().setBlockToAir(container.getPos());
     }
 

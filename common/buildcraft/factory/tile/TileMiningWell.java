@@ -12,22 +12,21 @@ import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.api.mj.IMjReceiver;
 
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.FakePlayerUtil;
+import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.mj.MjBatteryReciver;
 
 public class TileMiningWell extends TileMiner {
     @Override
     protected void mine() {
         IBlockState state = worldObj.getBlockState(currentPos);
-        if (BlockUtils.isUnbreakableBlock(getWorld(), currentPos) || state.getBlock() == Blocks.BEDROCK) {
+        if (BlockUtil.isUnbreakableBlock(getWorld(), currentPos) || state.getBlock() == Blocks.BEDROCK) {
             setComplete(true);
             return;
         }
 
-        long target = BlockUtils.computeBlockBreakPower(worldObj, currentPos);
+        long target = BlockUtil.computeBlockBreakPower(worldObj, currentPos);
         progress += battery.extractPower(0, target - progress);
 
         if (progress >= target) {
@@ -39,14 +38,10 @@ public class TileMiningWell extends TileMiner {
                     setComplete(true);
                     return;
                 }
-                List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, currentPos, pos);
+                List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, currentPos, pos);
                 if (stacks != null) {
                     for (ItemStack stack : stacks) {
-                        stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, pos, stack);
-                        if (stack.stackSize > 0) {
-                            stack.stackSize -= Utils.addToRandomInjectableAround(worldObj, pos, null, stack);
-                        }
-                        InvUtils.dropItemUp(getWorld(), stack, getPos());
+                        InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);
                     }
                 }
                 worldObj.sendBlockBreakProgress(currentPos.hashCode(), currentPos, -1);

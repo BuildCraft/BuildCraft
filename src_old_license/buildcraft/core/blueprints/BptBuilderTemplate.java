@@ -21,8 +21,8 @@ import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class BptBuilderTemplate extends BptBuilderBase {
@@ -151,7 +151,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
             // }
 
             if (canDestroy(builder, context, slot)) {
-                if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockBreakCanceled(world, slot.pos) || BuildCraftAPI.isSoftBlock(world,
+                if (BlockUtil.isUnbreakableBlock(world, slot.pos) || isBlockBreakCanceled(world, slot.pos) || BuildCraftAPI.isSoftBlock(world,
                         slot.pos)) {
                     iteratorClear.remove();
                     markLocationUsed(slot.pos);
@@ -186,7 +186,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
                 break;
             }
 
-            if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockPlaceCanceled(world, slot.pos, slot.schematic) || !BuildCraftAPI.isSoftBlock(
+            if (BlockUtil.isUnbreakableBlock(world, slot.pos) || isBlockPlaceCanceled(world, slot.pos, slot.schematic) || !BuildCraftAPI.isSoftBlock(
                     world, slot.pos)) {
                 iteratorBuild.remove();
                 markLocationUsed(slot.pos);

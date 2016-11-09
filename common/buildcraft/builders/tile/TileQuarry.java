@@ -42,7 +42,6 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.entity.EntityQuarry;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.AxisOrder;
@@ -52,8 +51,6 @@ import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjBatteryReciver;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
-
-import io.netty.buffer.ByteBuf;
 
 public class TileQuarry extends TileBCInventory_Neptune implements ITickable, IDebuggable {
     private final MjBattery battery;
@@ -480,7 +477,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
 
         @Override
         public long getTarget() {
-            return BlockUtils.computeBlockBreakPower(worldObj, pos);
+            return BlockUtil.computeBlockBreakPower(worldObj, pos);
         }
 
         @Override
@@ -500,7 +497,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             if (!breakEvent.isCanceled()) {
                 boolean put = TileQuarry.this.drillPos != null;
                 if (put) {
-                    List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
+                    List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, pos, TileQuarry.this.pos);
                     // noinspection Duplicates
                     if (stacks != null) {
                         for (ItemStack stack : stacks) {
