@@ -4,10 +4,11 @@
  * distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 package buildcraft.builders.gui;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.builders.container.ContainerQuarry;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
-import net.minecraft.util.ResourceLocation;
 
 public class GuiQuarry extends GuiBC8<ContainerQuarry> {
     private static final ResourceLocation TEXTURE_BASE = new ResourceLocation("buildcraftbuilders:textures/gui/quarry.png");

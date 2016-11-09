@@ -23,7 +23,8 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeDefinition;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
@@ -71,14 +72,16 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
         QUADS_COLOURED[0] = new MutableQuad[6][2];
         Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
         Tuple3f radius = new Vector3f(0.25f, 0.25f, 0.25f);
-        float[] uvs = { 4, 12, 4, 12 };
+        UvFaceData uvs = new UvFaceData();
+        uvs.uMin = uvs.vMin = 4;
+        uvs.uMax = uvs.vMax = 12;
         for (EnumFacing face : EnumFacing.VALUES) {
-            MutableQuad quad = BCModelHelper.createFace(face, center, radius, uvs);
+            MutableQuad quad = ModelUtil.createFace(face, center, radius, uvs);
             quad.setDiffuse(quad.getVertex(0).normal());
             QUADS[0][face.ordinal()][0] = quad;
             dupDarker(QUADS[0][face.ordinal()]);
 
-            MutableQuad[] colQuads = BCModelHelper.createDoubleFace(face, center, radius, uvs);
+            MutableQuad[] colQuads = ModelUtil.createDoubleFace(face, center, radius, uvs);
             for (MutableQuad q : colQuads) {
                 q.translatevd(faceOffset[face.ordinal()]);
             }
@@ -94,11 +97,11 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             { 1, 1, 2, 0 } //
         };
 
-        float[][] types = {//
-            { 4, 12, 0, 4 },//
-            { 4, 12, 12, 16 },//
-            { 0, 4, 4, 12 },//
-            { 12, 16, 4, 12 } //
+        UvFaceData[] types = {//
+            new UvFaceData(4, 12, 0, 4),//
+            new UvFaceData(4, 12, 12, 16),//
+            new UvFaceData(0, 4, 4, 12),//
+            new UvFaceData(12, 16, 4, 12) //
         };
 
         // connected
@@ -120,7 +123,7 @@ public enum PipeBaseModelGenStandard implements IPipeBaseModelGen {
             int i = 0;
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (face.getAxis() == side.getAxis()) continue;
-                MutableQuad quad = BCModelHelper.createFace(face, center, radius, types[i]);
+                MutableQuad quad = ModelUtil.createFace(face, center, radius, types[i]);
                 quad.rotateTextureUp(uvsRot[side.ordinal()][i]);
 
                 MutableQuad col = new MutableQuad(quad);

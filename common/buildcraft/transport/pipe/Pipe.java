@@ -23,11 +23,9 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
-import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.transport.client.model.key.PipeModelKey;
-import buildcraft.transport.pipes.events.PipeEvent;
 
 public final class Pipe implements IPipe, IDebuggable {
     public static final int NET_RENDER = 0;
@@ -41,6 +39,9 @@ public final class Pipe implements IPipe, IDebuggable {
     private final EnumSet<EnumFacing> connected = EnumSet.noneOf(EnumFacing.class);
     private final EnumMap<EnumFacing, Integer> textures = new EnumMap<>(EnumFacing.class);
     private final EnumMap<EnumFacing, ConnectedType> types = new EnumMap<>(EnumFacing.class);
+
+    @SideOnly(Side.CLIENT)
+    private PipeModelKey lastModel;
 
     public Pipe(IPipeHolder holder, PipeDefinition definition) {
         this.holder = holder;
@@ -91,7 +92,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     public void writePayload(PacketBuffer buffer, Side side) {
         if (side == Side.SERVER) {
-            NetworkUtils.writeEnum(buffer, colour);
+            buffer.writeByte(colour == null ? 0 : colour.getMetadata() + 1);
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (connected.contains(face) && textures.get(face) != null) {
                     buffer.writeBoolean(true);
@@ -113,13 +114,12 @@ public final class Pipe implements IPipe, IDebuggable {
     @SideOnly(Side.CLIENT)
     public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.CLIENT) {
-            PipeModelKey before = getModel();
-
             connected.clear();
             textures.clear();
             types.clear();
 
-            this.colour = NetworkUtils.readEnum(buffer, EnumDyeColor.class);
+            int nColour = buffer.readUnsignedByte();
+            colour = nColour == 0 ? null : EnumDyeColor.byMetadata(nColour - 1);
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (buffer.readBoolean()) {
@@ -136,7 +136,9 @@ public final class Pipe implements IPipe, IDebuggable {
 
             behaviour.readPayload(buffer, side, ctx);
 
-            if (!before.equals(getModel())) {
+            PipeModelKey model = getModel();
+            if (!model.equals(lastModel)) {
+                lastModel = model;
                 getHolder().scheduleRenderUpdate();
             }
         }
@@ -281,9 +283,6 @@ public final class Pipe implements IPipe, IDebuggable {
     public void markForUpdate() {
         updateMarked = true;
     }
-
-    // TODO: Replace this with a proper listener system (that allows for multiple listeners as well)
-    public void onEvent(PipeEvent event) {}
 
     @SideOnly(Side.CLIENT)
     public PipeModelKey getModel() {

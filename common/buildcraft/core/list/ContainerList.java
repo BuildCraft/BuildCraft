@@ -4,27 +4,30 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.list;
 
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.api.lists.ListMatchHandler.Type;
+
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
-import buildcraft.lib.net.MessageCommand;
-import buildcraft.lib.net.command.ICommandReceiver;
+import buildcraft.lib.net.MessageContainer;
 
-public class ContainerList extends ContainerBC_Neptune implements ICommandReceiver {
+public class ContainerList extends ContainerBC_Neptune {
     private static final int PLAYER_INV_START = 103;
+
+    private static final int NET_ID_LABEL = 0;
+    private static final int NET_ID_BUTTON = 1;
 
     public ListHandler.Line[] lines;
 
@@ -89,7 +92,8 @@ public class ContainerList extends ContainerBC_Neptune implements ICommandReceiv
         lines[lineIndex].toggleOption(button);
 
         if (player.worldObj.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(new MessageCommand(this, "switchButton", (buffer) -> {
+            BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
+                buffer.writeByte(NET_ID_BUTTON);
                 buffer.writeByte(lineIndex);
                 buffer.writeByte(button);
             }));
@@ -110,21 +114,32 @@ public class ContainerList extends ContainerBC_Neptune implements ICommandReceiv
         BCCoreItems.list.setName(getListItemStack(), text);
 
         if (player.worldObj.isRemote) {
-            BCMessageHandler.netWrapper.sendToServer(new MessageCommand(this, "setLabel", (buffer) -> {
+            BCMessageHandler.netWrapper.sendToServer(new MessageContainer(this, (buffer) -> {
+                buffer.writeByte(NET_ID_LABEL);
                 buffer.writeString(text);
             }));
         }
     }
 
     @Override
-    public MessageCommand receiveCommand(String command, Side side, PacketBuffer buffer) throws IOException {
-        if (side.isServer()) {
-            if ("setLabel".equals(command)) {
-                setLabel(buffer.readStringFromBuffer(1024));
-            } else if ("switchButton".equals(command)) {
-                switchButton(buffer.readUnsignedByte(), buffer.readUnsignedByte());
+    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {
+        if (side == Side.SERVER) {
+            int id = payload.readUnsignedByte();
+            switch (id) {
+                case NET_ID_LABEL: {
+                    setLabel(payload.readStringFromBuffer(1024));
+                    return;
+                }
+                case NET_ID_BUTTON: {
+                    int lineIndex = payload.readUnsignedByte();
+                    int button = payload.readUnsignedByte();
+                    switchButton(lineIndex, button);
+                    return;
+                }
+                default: {
+                    BCLog.logger.warn("[core.gui.list] Unknown message id " + id);
+                }
             }
         }
-        return null;
     }
 }

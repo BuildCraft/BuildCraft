@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.util.math.BlockPos;
 
 import buildcraft.api.core.IPathProvider;
+
 import buildcraft.core.marker.PathCache;
 import buildcraft.core.marker.PathConnection;
 import buildcraft.lib.tile.TileMarker;

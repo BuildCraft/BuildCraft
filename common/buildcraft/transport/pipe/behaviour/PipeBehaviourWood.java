@@ -8,9 +8,9 @@ import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.neptune.IFlowItems;
 import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 import buildcraft.api.transport.neptune.PipeBehaviour;
 import buildcraft.api.transport.neptune.PipeFlow;
-import buildcraft.api.transport.neptune.IPipe.ConnectedType;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 

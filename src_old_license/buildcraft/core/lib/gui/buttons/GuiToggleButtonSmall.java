@@ -7,6 +7,11 @@ package buildcraft.core.lib.gui.buttons;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.gui.button.StandardButtonTextureSets;
+
+/**
+ * Made useless by IButtonBehaviour
+ */
 @SideOnly(Side.CLIENT)
 public class GuiToggleButtonSmall extends GuiToggleButton {
 

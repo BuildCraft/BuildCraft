@@ -10,12 +10,11 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 
 public class BCFactoryRecipes {
     public static void init() {
-        if (Utils.isRegistered(BCFactoryBlocks.autoWorkbenchItems)) {
+        if (BCFactoryBlocks.autoWorkbenchItems != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.autoWorkbenchItems);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("gwg");
@@ -25,7 +24,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.buildRotated());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.miningWell)) {
+        if (BCFactoryBlocks.miningWell != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.miningWell);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("iri");
@@ -38,7 +37,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.tank)) {
+        if (BCFactoryBlocks.tank != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.tank);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("ggg");
@@ -48,7 +47,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.pump)) {
+        if (BCFactoryBlocks.pump != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.pump);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("iri");
@@ -62,7 +61,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.floodGate)) {
+        if (BCFactoryBlocks.floodGate != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.floodGate);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("igi");
@@ -75,7 +74,7 @@ public class BCFactoryRecipes {
             GameRegistry.addRecipe(builder.build());
         }
 
-        if (Utils.isRegistered(BCFactoryBlocks.chute)) {
+        if (BCFactoryBlocks.chute != null) {
             ItemStack out = new ItemStack(BCFactoryBlocks.chute);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
             builder.add("ici");

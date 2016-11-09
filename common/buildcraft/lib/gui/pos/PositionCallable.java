@@ -5,6 +5,14 @@ import java.util.function.IntSupplier;
 public class PositionCallable implements IGuiPosition {
     private final IntSupplier x, y;
 
+    public PositionCallable(IntSupplier x, int y) {
+        this(x, () -> y);
+    }
+
+    public PositionCallable(int x, IntSupplier y) {
+        this(() -> x, y);
+    }
+
     public PositionCallable(IntSupplier x, IntSupplier y) {
         this.x = x;
         this.y = y;

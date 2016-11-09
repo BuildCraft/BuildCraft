@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryDatabase_Neptune;
 import buildcraft.lib.misc.NBTUtils;

@@ -3,6 +3,8 @@ package buildcraft.lib.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.gui.GuiButton;
+
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.misc.GuiUtil;
 
@@ -41,6 +43,11 @@ public class GuiElementToolTips implements IGuiElement {
         }
         checkAndAddTooltip(tooltips, gui.ledgersLeft);
         checkAndAddTooltip(tooltips, gui.ledgersRight);
+        for (GuiButton button : gui.getButtonList()) {
+            if (button instanceof ITooltipElement) {
+                checkAndAddTooltip(tooltips, (ITooltipElement) button);
+            }
+        }
         GuiUtil.drawVerticallyAppending(this, tooltips, this::drawTooltip);
     }
 

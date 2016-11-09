@@ -344,12 +344,6 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
-        if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
-        }
-        if (tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
-            return true;
-        }
         Item item = held == null ? null : held.getItem();
         if (item instanceof IItemPluggable) {
             IItemPluggable itemPlug = (IItemPluggable) item;
@@ -375,6 +369,12 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             if(wirePart != null) {
                 tile.getWireManager().addWire(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
             }
+        }
+        if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
+            return true;
+        }
+        if (tile.getPipe().flow.onFlowActivate(player, trace, hitX, hitY, hitZ, part)) {
+            return true;
         }
         return false;
     }

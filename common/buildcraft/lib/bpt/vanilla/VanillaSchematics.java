@@ -10,6 +10,7 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryNBTBlock;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+
 import buildcraft.lib.bpt.helper.SchematicBlockSimpleSet;
 
 public class VanillaSchematics {

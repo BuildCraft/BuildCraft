@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.core.lib.client.render.RenderUtils;
+import buildcraft.lib.misc.RenderUtil;
 
 /** For the refinery, a kind of phantom slot for fluid. */
 public class FluidSlot extends AdvancedSlot {
@@ -25,7 +25,7 @@ public class FluidSlot extends AdvancedSlot {
     @Override
     public void drawSprite(int cornerX, int cornerY) {
         if (fluid != null) {
-            RenderUtils.setGLColorFromInt(colorRenderCache);
+            RenderUtil.setGLColorFromInt(colorRenderCache);
         }
         super.drawSprite(cornerX, cornerY);
     }

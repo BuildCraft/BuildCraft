@@ -4,10 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.generation;
 
+import java.util.Objects;
+
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
-
-import java.util.Objects;
 
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {
 

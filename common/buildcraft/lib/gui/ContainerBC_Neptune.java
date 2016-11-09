@@ -24,6 +24,7 @@ import buildcraft.api.core.BCLog;
 
 import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
+import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageWidget;
 import buildcraft.lib.net.command.IPayloadWriter;
 
@@ -92,23 +93,8 @@ public abstract class ContainerBC_Neptune extends Container {
         if (slot == null) {
             return super.slotClick(slotId, dragType, clickType, player);
         }
-        // FIXME: this is all implemented because vanilla doesn't respect IItemHandler.getStackInSlot not allowing
-        // modifications!
-        // (Container:372 increases the stack size without setting it back to the slot)
 
         ItemStack playerStack = player.inventory.getItemStack();
-        /* if (clickType == ClickType.CLONE) { if (!player.capabilities.isCreativeMode) { return null; } if (playerStack
-         * == null) { ItemStack in = safeCopy(slot.getStack()); player.inventory.setItemStack(in); return in; } } if
-         * (slot instanceof SlotBase) { SlotBase slotB = (SlotBase) slot; ItemStack slotStack = slotB.getStack(); if
-         * (clickType == ClickType.PICKUP) { if (playerStack == null) { if (slotStack == null) { return null; }
-         * slotB.putStack(null); player.inventory.setItemStack(slotStack); return slotStack; } else if (slotStack ==
-         * null) { // put down playerStack = slotB.insert(playerStack, false);
-         * player.inventory.setItemStack(playerStack); return playerStack; } else if (StackUtil.canMerge(playerStack,
-         * slotStack)) { // put down playerStack = slotB.insert(playerStack, false);
-         * player.inventory.setItemStack(playerStack); return playerStack; } else { // swap slotB.putStack(null); if
-         * (slotB.insert(playerStack, false) != null) { // if we couldn't fully put it in reset it
-         * slotB.putStack(slotStack); return playerStack; } else { player.inventory.setItemStack(slotStack); return
-         * slotStack; } } } } */
         if (slot instanceof IPhantomSlot) {
             ItemStack itemStack;
             if (playerStack != null && (slot.getStack() == null || ((IPhantomSlot) slot).canAdjust())) {
@@ -131,7 +117,18 @@ public abstract class ContainerBC_Neptune extends Container {
         return in == null ? null : in.copy();
     }
 
-    public void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
+    public final void sendMessage(IPayloadWriter writer) {
+        MessageContainer message = new MessageContainer(windowId, writer);
+        if (player.worldObj.isRemote) {
+            BCMessageHandler.netWrapper.sendToServer(message);
+        } else {
+            BCMessageHandler.netWrapper.sendTo(message, (EntityPlayerMP) player);
+        }
+    }
+
+    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {}
+
+    public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
         if (widgetId < 0 || widgetId >= widgets.size()) {
             if (DEBUG) {
                 String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;

@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.GuiIds;
+import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.gui.*;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -53,7 +54,7 @@ public class TransportGuiHandler implements IGuiHandler {
                     return new ContainerDiamondPipe(player, (IDiamondPipe) pipe.getPipe());
 
                 case GuiIds.PIPE_EMERALD_ITEM:
-                    return new ContainerEmeraldPipe(player, (PipeItemsEmerald) pipe.getPipe());
+                    return new ContainerDiamondWoodPipe(player, (PipeItemsEmerald) pipe.getPipe());
 
                 case GuiIds.PIPE_LOGEMERALD_ITEM:
                     return new ContainerEmzuliPipe(player, (PipeItemsEmzuli) pipe.getPipe());
@@ -103,7 +104,7 @@ public class TransportGuiHandler implements IGuiHandler {
                     return new GuiDiamondPipe(player, (IDiamondPipe) pipe.getPipe());
 
                 case GuiIds.PIPE_EMERALD_ITEM:
-                    return new GuiEmeraldPipe(player, (PipeItemsEmerald) pipe.getPipe());
+                    return new GuiDiamondWoodPipe(player, (PipeItemsEmerald) pipe.getPipe());
 
                 case GuiIds.PIPE_LOGEMERALD_ITEM:
                     return new GuiEmzuliPipe(player, (PipeItemsEmzuli) pipe.getPipe());

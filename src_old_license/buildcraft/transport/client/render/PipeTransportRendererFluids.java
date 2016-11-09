@@ -22,8 +22,8 @@ import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.FluidRenderer;
 import buildcraft.core.lib.client.render.FluidRenderer.FluidType;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.utils.FluidRenderData;
@@ -119,7 +119,7 @@ public class PipeTransportRendererFluids extends PipeTransportRenderer<PipeTrans
             // TextureAtlasSprite sprite = FluidRenderer.getFluidTexture(FluidRegistry.getFluid(renderData.fluidID),
             // FluidType.STILL);
 
-            RenderUtils.setGLColorFromInt(renderData.color);
+            RenderUtil.setGLColorFromInt(renderData.color);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             boolean above = renderData.amount[EnumFacing.UP.ordinal()] > 0;

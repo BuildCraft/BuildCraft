@@ -5,8 +5,8 @@ import java.util.Date;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.SessionVars;
+import buildcraft.lib.misc.RenderUtil;
 
 /** Side ledger for guis */
 public abstract class Ledger {
@@ -112,7 +112,7 @@ public abstract class Ledger {
     }
 
     protected void drawBackground(int x, int y) {
-        RenderUtils.setGLColorFromInt(overlayColor);
+        RenderUtil.setGLColorFromInt(overlayColor);
 
         this.guiBuildCraft.mc.renderEngine.bindTexture(GuiBuildCraft.LEDGER_TEXTURE);
         this.guiBuildCraft.drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);

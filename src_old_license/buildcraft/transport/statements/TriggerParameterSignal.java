@@ -42,7 +42,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIcon() {
+    public TextureAtlasSprite getSprite() {
         if (color == null) {
             return null;
         }

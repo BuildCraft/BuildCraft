@@ -21,6 +21,7 @@ import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicBlock;
 import buildcraft.api.bpt.SchematicException;
 import buildcraft.api.bpt.SchematicFactoryWorldBlock;
+
 import buildcraft.lib.bpt.builder.SchematicEntityOffset;
 import buildcraft.lib.bpt.vanilla.SchematicAir;
 import buildcraft.lib.misc.PositionUtil;

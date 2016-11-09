@@ -6,7 +6,6 @@ import java.util.List;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.lib.client.sprite.LibSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.client.sprite.SpriteSplit;
@@ -16,6 +15,7 @@ import buildcraft.lib.gui.elem.GuiElementText;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.PositionCallable;
+import buildcraft.lib.misc.RenderUtil;
 
 public abstract class Ledger_Neptune implements ITooltipElement {
     public static final SpriteHolder SPRITE_EXP_NEG = LibSprites.LEDGER_LEFT;
@@ -138,7 +138,7 @@ public abstract class Ledger_Neptune implements ITooltipElement {
             startX = x - actualWidth;
             split = SPRITE_SPLIT_NEG;
         }
-        RenderUtils.setGLColorFromIntPlusAlpha(getColour());
+        RenderUtil.setGLColorFromIntPlusAlpha(getColour());
         split.draw(startX, startY, actualWidth, actualHeight);
         GlStateManager.color(1, 1, 1, 1);
 

@@ -4,17 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.zone;
 
-import buildcraft.api.core.INetworkLoadable_BC8;
-import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.core.lib.utils.NetworkUtils;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.BitSet;
 import java.util.Random;
 
-public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
+
+public class ZoneChunk {
 
     public BitSet property;
     private boolean fullSet = false;
@@ -22,7 +19,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
     public ZoneChunk() {}
 
     public ZoneChunk(ZoneChunk old) {
-        if(old.property != null) {
+        if (old.property != null) {
             property = BitSet.valueOf(old.property.toLongArray());
         }
     }
@@ -71,7 +68,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         nbt.setBoolean("fullSet", fullSet);
 
         if (property != null) {
-            nbt.setByteArray("bits", BitSetUtils.toByteArray(property));
+            nbt.setByteArray("bits", property.toByteArray());
         }
     }
 
@@ -79,7 +76,7 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         fullSet = nbt.getBoolean("fullSet");
 
         if (nbt.hasKey("bits")) {
-            property = BitSetUtils.fromByteArray(nbt.getByteArray("bits"));
+            property = BitSet.valueOf(nbt.getByteArray("bits"));
         }
     }
 
@@ -111,23 +108,21 @@ public class ZoneChunk implements INetworkLoadable_BC8<ZoneChunk> {
         return !fullSet && property.isEmpty();
     }
 
-    @Override
-    public ZoneChunk readFromByteBuf(ByteBuf buf) {
+    public ZoneChunk readFromByteBuf(PacketBuffer buf) {
         int flags = buf.readUnsignedByte();
         if ((flags & 1) != 0) {
-            property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(buf));
+            property = BitSet.valueOf(buf.readByteArray());
         }
         fullSet = (flags & 2) != 0;
 
         return this;
     }
 
-    @Override
-    public void writeToByteBuf(ByteBuf buf) {
+    public void writeToByteBuf(PacketBuffer buf) {
         int flags = (fullSet ? 2 : 0) | (property != null ? 1 : 0);
         buf.writeByte(flags);
         if (property != null) {
-            NetworkUtils.writeByteArray(buf, BitSetUtils.toByteArray(property));
+            buf.writeByteArray(property.toByteArray());
         }
     }
 }

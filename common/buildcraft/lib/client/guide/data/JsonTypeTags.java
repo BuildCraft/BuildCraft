@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.StringUtils;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.client.guide.ETypeTag;
 import buildcraft.lib.client.guide.TypeOrder;
 

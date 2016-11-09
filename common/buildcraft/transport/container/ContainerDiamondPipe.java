@@ -14,13 +14,14 @@ import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 
 public class ContainerDiamondPipe extends ContainerBC_Neptune {
 
-    private final PipeBehaviourDiamond pipe;
+    private final PipeBehaviourDiamond behaviour;
     private final ItemHandlerSimple filterInv;
 
     public ContainerDiamondPipe(EntityPlayer player, PipeBehaviourDiamond pipe) {
         super(player);
-        this.pipe = pipe;
+        this.behaviour = pipe;
         this.filterInv = pipe.filters;
+        behaviour.pipe.getHolder().onPlayerOpen(player);
 
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 9; x++) {
@@ -37,6 +38,12 @@ public class ContainerDiamondPipe extends ContainerBC_Neptune {
         for (int i1 = 0; i1 < 9; i1++) {
             addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 198));
         }
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        behaviour.pipe.getHolder().onPlayerClose(player);
     }
 
     @Override

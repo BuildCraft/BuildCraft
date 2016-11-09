@@ -1,12 +1,14 @@
 package buildcraft.silicon;
 
-import buildcraft.api.recipes.AssemblyRecipe;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.lib.recipe.AssemblyRecipeRegistry;
-import buildcraft.silicon.item.ItemRedstoneChipset;
 import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
+import buildcraft.api.recipes.AssemblyRecipe;
+
+import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.silicon.item.ItemRedstoneChipset;
 
 public class BCSiliconRecipes {
     public static void init() {

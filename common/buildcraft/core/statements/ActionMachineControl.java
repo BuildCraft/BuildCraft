@@ -9,12 +9,17 @@ import java.util.Locale;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionMachineControl extends BCStatement implements IActionExternal {
@@ -22,7 +27,6 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 
     public ActionMachineControl(Mode mode) {
         super("buildcraft:machine." + mode.name().toLowerCase(Locale.ROOT), "buildcraft.machine." + mode.name().toLowerCase(Locale.ROOT));
-        setBuildCraftLocation("core", "triggers/action_machinecontrol_" + mode.name().toLowerCase(Locale.ROOT));
         this.mode = mode;
     }
 
@@ -36,5 +40,11 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
         if (target instanceof IControllable) {
             ((IControllable) target).setControlMode(mode);
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.ACTION_MACHINE_CONTROL.get(mode);
     }
 }

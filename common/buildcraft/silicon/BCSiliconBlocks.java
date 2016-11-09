@@ -1,6 +1,9 @@
 package buildcraft.silicon;
 
+import net.minecraft.block.material.Material;
+
 import buildcraft.api.enums.EnumLaserTableType;
+
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.tile.TileBC_Neptune;
 import buildcraft.silicon.block.BlockLaser;
@@ -11,7 +14,6 @@ import buildcraft.silicon.tile.TileChargingTable;
 import buildcraft.silicon.tile.TileIntegrationTable;
 import buildcraft.silicon.tile.TileLaser;
 import buildcraft.silicon.tile.TileProgrammingTable;
-import net.minecraft.block.material.Material;
 
 public class BCSiliconBlocks {
     public static BlockLaser laser;

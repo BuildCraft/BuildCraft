@@ -19,10 +19,13 @@ import buildcraft.api.transport.neptune.PipeBehaviour;
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.render.RenderPipeHolder;
 import buildcraft.transport.container.ContainerDiamondPipe;
+import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerFilteredBuffer;
 import buildcraft.transport.gui.GuiDiamondPipe;
+import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
+import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -51,6 +54,17 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 if (behaviour instanceof PipeBehaviourDiamond) {
                     PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
                     return new ContainerDiamondPipe(player, diaPipe);
+                }
+            }
+        } else if (id == BCTransportGuis.PIPE_DIAMOND_WOOD.ordinal()) {
+            if (tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
+                IPipe pipe = holder.getPipe();
+                if (pipe == null) return null;
+                PipeBehaviour behaviour = pipe.getBehaviour();
+                if (behaviour instanceof PipeBehaviourWoodDiamond) {
+                    PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
+                    return new ContainerDiamondWoodPipe(player, diaPipe);
                 }
             }
         }
@@ -104,6 +118,17 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     if (behaviour instanceof PipeBehaviourDiamond) {
                         PipeBehaviourDiamond diaPipe = (PipeBehaviourDiamond) behaviour;
                         return new GuiDiamondPipe(player, diaPipe);
+                    }
+                }
+            } else if (id == BCTransportGuis.PIPE_DIAMOND_WOOD.ordinal()) {
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    IPipe pipe = holder.getPipe();
+                    if (pipe == null) return null;
+                    PipeBehaviour behaviour = pipe.getBehaviour();
+                    if (behaviour instanceof PipeBehaviourWoodDiamond) {
+                        PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
+                        return new GuiDiamondWoodPipe(player, diaPipe);
                     }
                 }
             }

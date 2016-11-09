@@ -201,7 +201,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
-        nbt.setByteArray("usedLocationList", BitSetUtils.toByteArray(usedLocations));
+        nbt.setByteArray("usedLocationList", usedLocations.toByteArray());
 
         NBTTagList buildingList = new NBTTagList();
 
@@ -216,7 +216,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
     public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
         if (nbt.hasKey("usedLocationList")) {
-            usedLocations = BitSetUtils.fromByteArray(nbt.getByteArray("usedLocationList"));
+            usedLocations = BitSet.valueOf(nbt.getByteArray("usedLocationList"));
         }
 
         NBTTagList buildingList = nbt.getTagList("buildersInAction", Constants.NBT.TAG_COMPOUND);

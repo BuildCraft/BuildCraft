@@ -6,12 +6,17 @@ package buildcraft.core.statements;
 
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
@@ -71,5 +76,11 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     protected int getSignalLevel(IStatementParameter[] parameters) {
         return 15;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.ACTION_REDSTONE;
     }
 }

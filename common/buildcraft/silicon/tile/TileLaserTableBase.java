@@ -1,18 +1,21 @@
 package buildcraft.silicon.tile;
 
-import buildcraft.api.mj.ILaserTarget;
-import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.tiles.IHasWork;
-import buildcraft.lib.tile.TileBCInventory_Neptune;
+import java.io.IOException;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-import java.util.List;
+import buildcraft.api.mj.ILaserTarget;
+import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.tiles.IHasWork;
+
+import buildcraft.lib.tile.TileBCInventory_Neptune;
 
 abstract class TileLaserTableBase extends TileBCInventory_Neptune implements ILaserTarget, IHasWork, ITickable, IDebuggable {
     public long power;

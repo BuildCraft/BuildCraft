@@ -8,22 +8,21 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-public class ConfigManager implements IModGuiFactory {
-    public static Configuration config;
+import buildcraft.core.BCCoreConfig;
 
+public class ConfigManager implements IModGuiFactory {
     public static class GuiConfigManager extends GuiConfig {
         public GuiConfigManager(GuiScreen parentScreen) {
             super(parentScreen, new ArrayList<IConfigElement>(), "buildcraftcore", "config", false, false, I18n.format("config.buildcraft"));
 
-            for (String s : config.getCategoryNames()) {
+            for (String s : BCCoreConfig.config.getCategoryNames()) {
                 if (!s.contains(".")) {
-                    configElements.add(new BCConfigElement(config.getCategory(s)));
+                    configElements.add(new BCConfigElement(BCCoreConfig.config.getCategory(s)));
                 }
             }
         }
@@ -38,12 +37,8 @@ public class ConfigManager implements IModGuiFactory {
     /** Needed for forge IModGuiFactory */
     public ConfigManager() {}
 
-    public static void setConfig(Configuration c) {
-        config = c;
-    }
-
     public static ConfigCategory getCat(String name) {
-        return config.getCategory(name);
+        return BCCoreConfig.config.getCategory(name);
     }
 
     public static Property get(String iName) {
@@ -52,7 +47,7 @@ public class ConfigManager implements IModGuiFactory {
     }
 
     public static Property get(String catName, String propName) {
-        ConfigCategory c = config.getCategory(catName);
+        ConfigCategory c = BCCoreConfig.config.getCategory(catName);
         return c.get(propName);
     }
 
@@ -75,7 +70,7 @@ public class ConfigManager implements IModGuiFactory {
     }
 
     public static Property register(String catName, String propName, Object property, String comment, RestartRequirement restartRequirement) {
-        ConfigCategory c = config.getCategory(catName);
+        ConfigCategory c = BCCoreConfig.config.getCategory(catName);
         ConfigCategory parent = c;
         while (parent != null) {
             parent.setLanguageKey("config." + parent.getQualifiedName());

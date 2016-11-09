@@ -7,6 +7,7 @@ import buildcraft.api.bpt.IBuilderAccessor;
 import buildcraft.api.bpt.Schematic.DefaultBptActions;
 import buildcraft.api.bpt.Schematic.EnumPreBuildAction;
 import buildcraft.api.bpt.Schematic.PreBuildAction;
+
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.lib.bpt.task.ICondition;
 import buildcraft.lib.bpt.task.TaskBuilder;

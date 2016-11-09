@@ -1,12 +1,8 @@
 package buildcraft.builders.block;
 
-import buildcraft.api.properties.BuildCraftProperties;
-import buildcraft.api.properties.BuildCraftProperty;
-import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileQuarry;
-import buildcraft.lib.block.BlockBCTile_Neptune;
-import buildcraft.lib.block.IBlockWithFacing;
-import net.minecraft.block.Block;
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -18,11 +14,16 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
 import net.minecraftforge.items.CapabilityItemHandler;
 
-import java.util.Arrays;
-import java.util.List;
+import buildcraft.api.properties.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperty;
+
+import buildcraft.builders.BCBuildersGuis;
+import buildcraft.builders.tile.TileQuarry;
+import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.block.IBlockWithFacing;
 
 public class BlockQuarry extends BlockBCTile_Neptune implements IBlockWithFacing {
     public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;

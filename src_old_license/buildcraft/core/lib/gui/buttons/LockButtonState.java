@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.buttons;
 
+import buildcraft.lib.gui.button.ButtonTextureSet;
+import buildcraft.lib.gui.button.IButtonTextureSet;
 import buildcraft.lib.gui.elem.ToolTip;
 
 public enum LockButtonState implements IMultiButtonState {

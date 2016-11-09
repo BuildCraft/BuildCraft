@@ -1,11 +1,11 @@
 package buildcraft.builders.container;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 import buildcraft.builders.tile.TileArchitect_Neptune;
 import buildcraft.lib.gui.ContainerBCTile;
 import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotOutput;
-
-import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerArchitect extends ContainerBCTile<TileArchitect_Neptune> {
     private static final int PLAYER_INV_START_X = 88;

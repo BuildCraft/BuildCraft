@@ -14,11 +14,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.builders.BCBuildersGuis;
-import buildcraft.builders.tile.TileBuilder_Neptune;
 import buildcraft.builders.tile.TileFiller_Neptune;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 import buildcraft.lib.block.IBlockWithFacing;

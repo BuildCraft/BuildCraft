@@ -4,6 +4,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IStackFilter;
+
 import buildcraft.lib.misc.StackUtil;
 
 public final class InventoryWrapper extends AbstractInvItemTransactor {

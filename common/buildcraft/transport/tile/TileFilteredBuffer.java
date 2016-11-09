@@ -3,6 +3,7 @@ package buildcraft.transport.tile;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.EnumPipePart;
+
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;

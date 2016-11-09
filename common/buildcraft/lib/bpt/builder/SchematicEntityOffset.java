@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 import buildcraft.api.bpt.BlueprintAPI;
 import buildcraft.api.bpt.SchematicEntity;
 import buildcraft.api.bpt.SchematicException;
-import buildcraft.core.lib.utils.Utils;
+
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.VecUtil;

@@ -22,7 +22,7 @@ import buildcraft.api.mj.*;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
@@ -181,11 +181,11 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
             battery.writeToBuffer(buffer);
             buffer.writeBoolean(targetPos != null);
             if (targetPos != null) {
-                NetworkUtils.writeBlockPos(buffer, targetPos);
+                buffer.writeBlockPos(targetPos);
             }
             buffer.writeBoolean(laserPos != null);
             if (laserPos != null) {
-                NetworkUtils.writeVec3d(buffer, laserPos);
+                MessageUtil.writeVec3d(buffer, laserPos);
             }
             buffer.writeLongArray(averageValues);
         }
@@ -197,12 +197,12 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
         if (id == NET_RENDER_DATA) {
             battery.readFromBuffer(buffer);
             if (buffer.readBoolean()) {
-                targetPos = NetworkUtils.readBlockPos(buffer);
+                targetPos = buffer.readBlockPos();
             } else {
                 targetPos = null;
             }
             if (buffer.readBoolean()) {
-                laserPos = NetworkUtils.readVec3d(buffer);
+                laserPos = MessageUtil.readVec3d(buffer);
             } else {
                 laserPos = null;
             }

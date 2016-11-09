@@ -1,14 +1,16 @@
 package buildcraft.lib.misc.data;
 
-import buildcraft.api.core.IBox;
-import buildcraft.lib.misc.NBTUtils;
-import buildcraft.lib.misc.VecUtil;
+import java.util.Iterator;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.Iterator;
+import buildcraft.api.core.IBox;
+
+import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.VecUtil;
 
 public class BoxIterator implements Iterator<BlockPos> {
     private final BlockPos min, max;

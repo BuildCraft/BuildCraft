@@ -12,8 +12,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.core.BCLog;
 
-import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
-
 import gnu.trove.map.hash.TCharObjectHashMap;
 
 public class RecipeBuilderShaped {

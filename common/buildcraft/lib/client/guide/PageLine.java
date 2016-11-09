@@ -1,6 +1,7 @@
 package buildcraft.lib.client.guide;
 
 import buildcraft.lib.gui.ISimpleDrawable;
+import buildcraft.lib.misc.StringUtilBC;
 
 /** Stores information about a single line of text. This may be displayed as more than a single line though. */
 public class PageLine implements Comparable<PageLine> {
@@ -17,11 +18,11 @@ public class PageLine implements Comparable<PageLine> {
     }
 
     public PageLine(ISimpleDrawable startIcon, ISimpleDrawable startIconHovered, int indent, String text, boolean isLink) {
+        if (text == null) throw new NullPointerException("text");
         this.startIcon = startIcon;
         this.startIconHovered = startIconHovered;
         this.indent = indent;
-        this.text = text;
-        if (text == null) throw new NullPointerException("text");
+        this.text = StringUtilBC.formatStringForWhite(text);
         this.link = isLink;
     }
 

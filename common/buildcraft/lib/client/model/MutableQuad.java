@@ -38,48 +38,6 @@ public class MutableQuad {
         ITEM_BLOCK_PADDING.addElement(new VertexFormatElement(0, EnumType.INT, EnumUsage.PADDING, 1));
     }
 
-    @Deprecated
-    public static MutableQuad create(BakedQuad quad, VertexFormat format) {
-        int[] data = quad.getVertexData();
-        int stride = data.length / 4;
-        MutableQuad mutable = new MutableQuad(quad.getTintIndex(), quad.getFace());
-        mutable.sprite = quad.getSprite();
-        for (int v = 0; v < 4; v++) {
-            MutableVertex mutableVertex = mutable.getVertex(v);
-            float x = fromBits(data[stride * v + X]);
-            float y = fromBits(data[stride * v + Y]);
-            float z = fromBits(data[stride * v + Z]);
-            mutableVertex.positionf(x, y, z);
-            mutableVertex.colouri(data[stride * v + COLOUR]);
-            float texU = fromBits(data[stride * v + U]);
-            float texV = fromBits(data[stride * v + V]);
-            mutableVertex.texf(texU, texV);
-
-            if (format == DefaultVertexFormats.BLOCK) {
-                int lightmap = data[stride * v + UNUSED];
-                mutableVertex.lighti(lightmap);
-            } else if (format == DefaultVertexFormats.ITEM) {
-                mutableVertex.normali(data[stride * v + UNUSED]);
-            }
-        }
-        return mutable;
-    }
-
-    /** Creates a mutable quad as a copy of the given {@link BakedQuad}. This assumes the baked quad uses the format
-     * {@link DefaultVertexFormats#BLOCK} or {@link DefaultVertexFormats#ITEM}, but ignores the lightmap value. (This
-     * uses Mutable
-     * 
-     * @param quad
-     * @return */
-    @Deprecated
-    public static MutableQuad create(BakedQuad quad) {
-        return create(quad, ITEM_BLOCK_PADDING);
-    }
-
-    public static float fromBits(int bits) {
-        return Float.intBitsToFloat(bits);
-    }
-
     private final MutableVertex[] verticies = new MutableVertex[4];
     private int tintIndex = -1;
     private EnumFacing face = null;

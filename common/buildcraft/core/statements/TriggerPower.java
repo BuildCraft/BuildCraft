@@ -12,10 +12,11 @@ import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.transport.IPipeTile;
 
 import buildcraft.lib.misc.StringUtilBC;
 
-public class TriggerEnergy extends BCStatement implements ITriggerInternal {
+public class TriggerPower extends BCStatement implements ITriggerInternal {
     public static class Neighbor {
         public TileEntity tile;
         public EnumPipePart side;
@@ -28,7 +29,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     private final boolean high;
 
-    public TriggerEnergy(boolean high) {
+    public TriggerPower(boolean high) {
         super("buildcraft:energyStored" + (high ? "high" : "low"));
         this.setBuildCraftLocation("core", "triggers/trigger_energy_storage_" + (high ? "high" : "low"));
         this.high = high;

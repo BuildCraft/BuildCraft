@@ -3,7 +3,6 @@ package buildcraft.core.statements;
 import java.util.Objects;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -113,12 +112,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public void registerIcons(TextureMap map) {
-
-    }
-
-    @Override
-    public TextureAtlasSprite getIcon() {
+    public TextureAtlasSprite getSprite() {
         // Whats rendered is not a sprite but the actual stack itself
         return null;
     }

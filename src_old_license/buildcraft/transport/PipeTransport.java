@@ -41,8 +41,8 @@ public abstract class PipeTransport {
 
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("inputOpen") && nbt.hasKey("outputOpen")) {
-            BitSet inputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("inputOpen") });
-            BitSet outputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("outputOpen") });
+            BitSet inputBuf = BitSet.valueOf(new byte[] { nbt.getByte("inputOpen") });
+            BitSet outputBuf = BitSet.valueOf(new byte[] { nbt.getByte("outputOpen") });
 
             for (int b = 0; b < EnumFacing.VALUES.length; b++) {
                 inputsOpen[b] = inputBuf.get(b);
@@ -69,8 +69,8 @@ public abstract class PipeTransport {
             }
         }
 
-        nbt.setByte("inputOpen", BitSetUtils.toByteArray(inputBuf)[0]);
-        nbt.setByte("outputOpen", BitSetUtils.toByteArray(outputBuf)[0]);
+        nbt.setByte("inputOpen", inputBuf.toByteArray()[0]);
+        nbt.setByte("outputOpen", outputBuf.toByteArray()[0]);
     }
 
     public void updateEntity() {}

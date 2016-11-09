@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
+
 import buildcraft.core.BCCoreBlocks;
 
 public class SpringPopulate {

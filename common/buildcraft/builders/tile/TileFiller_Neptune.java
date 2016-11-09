@@ -25,6 +25,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.tiles.IDebuggable;
+
 import buildcraft.builders.bpt.TickingBlueprintBuilder;
 import buildcraft.builders.bpt.TickingBlueprintBuilder.EnumBuilderMessage;
 import buildcraft.lib.block.BlockBCBase_Neptune;
@@ -35,7 +36,6 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.tile.TileBC_Neptune;
-import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
 public class TileFiller_Neptune extends TileBC_Neptune implements ITickable, IDebuggable {

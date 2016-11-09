@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.recipes.IIntegrationRecipeProvider;
 import buildcraft.api.recipes.IIntegrationRecipeRegistry;
 import buildcraft.api.recipes.IntegrationRecipe;
+
 import buildcraft.lib.misc.StackUtil;
 
 public enum IntegrationRecipeRegistry implements IIntegrationRecipeRegistry {

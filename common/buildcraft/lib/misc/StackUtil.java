@@ -88,10 +88,10 @@ public class StackUtil {
     }
 
     public static boolean canStacksOrListsMerge(ItemStack stack1, ItemStack stack2) {
-        if (stack1 == null || stack2 == null) {
+        if (isInvalid(stack1) || isInvalid(stack2)) {
             return false;
         }
-    
+
         if (stack1.getItem() instanceof IList) {
             IList list = (IList) stack1.getItem();
             return list.matches(stack1, stack2);
@@ -99,7 +99,7 @@ public class StackUtil {
             IList list = (IList) stack2.getItem();
             return list.matches(stack2, stack1);
         }
-    
+
         if (!stack1.isItemEqual(stack2)) {
             return false;
         }
@@ -107,7 +107,7 @@ public class StackUtil {
             return false;
         }
         return true;
-    
+
     }
 
     /** Merges mergeSource into mergeTarget
@@ -141,7 +141,7 @@ public class StackUtil {
         if (isMatchingItem(base, comparison, true, false)) {
             return true;
         }
-    
+
         if (oreDictionary) {
             int[] idBase = OreDictionary.getOreIDs(base);
             if (idBase.length > 0) {
@@ -154,7 +154,7 @@ public class StackUtil {
                 }
             }
         }
-    
+
         return false;
     }
 
@@ -168,15 +168,15 @@ public class StackUtil {
                 }
             }
         }
-    
+
         return false;
     }
 
     public static boolean isMatchingItemOrList(final ItemStack base, final ItemStack comparison) {
-        if (base == null || comparison == null) {
+        if (isInvalid(base) || isInvalid(comparison)) {
             return false;
         }
-    
+
         if (base.getItem() instanceof IList) {
             IList list = (IList) base.getItem();
             return list.matches(base, comparison);
@@ -184,7 +184,7 @@ public class StackUtil {
             IList list = (IList) comparison.getItem();
             return list.matches(comparison, base);
         }
-    
+
         return isMatchingItem(base, comparison, true, false);
     }
 
@@ -216,10 +216,10 @@ public class StackUtil {
      * @param matchNBT
      * @return true if matches */
     public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison, final boolean matchDamage, final boolean matchNBT) {
-        if (base == null || comparison == null) {
+        if (isInvalid(base) || isInvalid(comparison)) {
             return false;
         }
-    
+
         if (base.getItem() != comparison.getItem()) {
             return false;
         }
@@ -244,5 +244,18 @@ public class StackUtil {
 
     public static boolean isWildcard(int damage) {
         return damage == -1 || damage == OreDictionary.WILDCARD_VALUE;
+    }
+
+    // 1.11 Migration helpers
+    public static final ItemStack INVALID_STACK = null;
+
+    public static boolean isValid(ItemStack stack) {
+        return !isInvalid(stack);
+    }
+
+    /** Tests to see if a given stack is invalid. This ALSO tests to see if the item is null or the stacksize is less
+     * than 0. Vanilla's method also does a metadata check, but that's not used so much in the codebase. */
+    public static boolean isInvalid(ItemStack stack) {
+        return stack == INVALID_STACK || stack.getItem() == null || stack.stackSize <= 0;
     }
 }

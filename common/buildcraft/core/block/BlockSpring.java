@@ -17,10 +17,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumDecoratedBlock;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
+
 import buildcraft.lib.block.BlockBCBase_Neptune;
 import buildcraft.lib.misc.data.XorShift128Random;
 

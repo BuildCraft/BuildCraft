@@ -13,8 +13,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.neptune.IPipe;
-import buildcraft.api.transport.neptune.PipeBehaviour;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
+import buildcraft.api.transport.neptune.PipeBehaviour;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtils;

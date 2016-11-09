@@ -27,9 +27,9 @@ import net.minecraft.world.World;
 import buildcraft.api.transport.neptune.IPipeItem;
 import buildcraft.api.transport.neptune.PipeDefinition;
 
-import buildcraft.core.lib.client.model.BCModelHelper;
-import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.lib.client.model.ModelItemSimple;
+import buildcraft.lib.client.model.ModelUtil;
+import buildcraft.lib.client.model.ModelUtil.UvFaceData;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportSprites;
@@ -47,11 +47,11 @@ public enum ModelPipeItem implements IBakedModel {
             QUADS_SAME = new MutableQuad[6];
             Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
             Tuple3f radius = new Vector3f(0.25f, 0.5f, 0.25f);
-            float[] uvsY = { 4, 12, 4, 12 };
-            float[] uvsXZ = { 4, 12, 0, 16 };
+            UvFaceData uvsY = new UvFaceData(4, 12, 4, 12);
+            UvFaceData uvsXZ = new UvFaceData(4, 12, 0, 16);
             for (EnumFacing face : EnumFacing.VALUES) {
-                float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
-                QUADS_SAME[face.ordinal()] = BCModelHelper.createFace(face, center, radius, uvs);
+                UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                QUADS_SAME[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
             }
         }
 
@@ -65,11 +65,11 @@ public enum ModelPipeItem implements IBakedModel {
             QUADS_COLOUR = new MutableQuad[6];
             Tuple3f center = new Point3f(0.5f, 0.5f, 0.5f);
             Tuple3f radius = new Vector3f(0.24f, 0.49f, 0.24f);
-            float[] uvsY = { 4, 12, 4, 12 };
-            float[] uvsXZ = { 4, 12, 0, 16 };
+            UvFaceData uvsY = new UvFaceData(4, 12, 4, 12);
+            UvFaceData uvsXZ = new UvFaceData(4, 12, 0, 16);
             for (EnumFacing face : EnumFacing.VALUES) {
-                float[] uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
-                QUADS_COLOUR[face.ordinal()] = BCModelHelper.createFace(face, center, radius, uvs);
+                UvFaceData uvs = face.getAxis() == Axis.Y ? uvsY : uvsXZ;
+                QUADS_COLOUR[face.ordinal()] = ModelUtil.createFace(face, center, radius, uvs);
             }
         }
     }
@@ -94,7 +94,7 @@ public enum ModelPipeItem implements IBakedModel {
 
         if (colour > 0 && colour <= 16) {
             EnumDyeColor rColour = EnumDyeColor.byMetadata(colour - 1);
-            int rgb = 0xFF_00_00_00 | ColorUtils.convertBGRAtoRGBA(ColourUtil.getLightHex(rColour));
+            int rgb = 0xFF_00_00_00 | ColourUtil.swapArgbToAbgr(ColourUtil.getLightHex(rColour));
             TextureAtlasSprite sprite = BCTransportSprites.PIPE_COLOUR.getSprite();
             addQuadsColoured(QUADS_COLOUR, quads, sprite, rgb);
         }

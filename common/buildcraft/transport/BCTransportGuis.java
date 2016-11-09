@@ -9,7 +9,8 @@ import net.minecraft.util.math.BlockPos;
 
 public enum BCTransportGuis {
     FILTERED_BUFFER,
-    PIPE_DIAMOND;
+    PIPE_DIAMOND,
+    PIPE_DIAMOND_WOOD;
 
     public void openGUI(EntityPlayer player) {
         player.openGui(BCTransport.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);

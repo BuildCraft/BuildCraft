@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
 
-import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.lib.gui.button.GuiBetterButton;
 
 public final class GuiTools {
 

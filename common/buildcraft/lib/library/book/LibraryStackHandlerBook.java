@@ -11,6 +11,7 @@ import net.minecraft.item.ItemWrittenBook;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.BCLog;
+
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.ILibraryStackHandler;
 import buildcraft.lib.library.LibraryEntry;

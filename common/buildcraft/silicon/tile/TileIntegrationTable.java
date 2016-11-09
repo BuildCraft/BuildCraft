@@ -1,23 +1,27 @@
 package buildcraft.silicon.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.recipes.IntegrationRecipe;
-import buildcraft.lib.misc.StackUtil;
-import buildcraft.lib.recipe.IntegrationRecipeRegistry;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.items.IItemHandlerModifiable;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.IItemHandlerModifiable;
+
+import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.recipes.IntegrationRecipe;
+
+import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.recipe.IntegrationRecipeRegistry;
+import buildcraft.lib.tile.item.ItemHandlerManager;
 
 public class TileIntegrationTable extends TileLaserTableBase {
     public final IItemHandlerModifiable invTarget = addInventory("target", 1, ItemHandlerManager.EnumAccess.BOTH, EnumPipePart.VALUES);

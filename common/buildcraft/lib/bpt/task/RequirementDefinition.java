@@ -2,7 +2,6 @@ package buildcraft.lib.bpt.task;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import buildcraft.lib.bpt.task.TaskBuilder.PostTask;

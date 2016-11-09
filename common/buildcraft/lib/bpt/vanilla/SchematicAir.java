@@ -5,6 +5,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.bpt.*;
+
 import buildcraft.lib.bpt.task.TaskUsable;
 
 public class SchematicAir extends SchematicBlock {

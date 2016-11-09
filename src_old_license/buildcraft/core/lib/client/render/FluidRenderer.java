@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.core.lib.EntityResizableCuboid;
+import buildcraft.lib.misc.RenderUtil;
 
 @Deprecated
 public final class FluidRenderer {
@@ -122,7 +123,7 @@ public final class FluidRenderer {
         }
 
         int color = fluidstack.getFluid().getColor(fluidstack);
-        RenderUtils.setGLColorFromInt(color);
+        RenderUtil.setGLColorFromInt(color);
     }
 
     /** Note that this does NOT implement caching. */

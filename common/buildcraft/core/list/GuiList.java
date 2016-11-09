@@ -7,6 +7,8 @@ package buildcraft.core.list;
 import java.io.IOException;
 import java.util.*;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,15 +16,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.lists.ListMatchHandler;
+
 import buildcraft.core.BCCoreItems;
 import buildcraft.core.item.ItemList_BC8;
-import buildcraft.core.lib.gui.buttons.GuiImageButton;
-import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
-import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
 import buildcraft.core.list.ContainerList.WidgetListSlot;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
+import buildcraft.lib.gui.button.GuiImageButton;
+import buildcraft.lib.gui.button.IButtonBehaviour;
+import buildcraft.lib.gui.button.IButtonClickEventListener;
+import buildcraft.lib.gui.button.IButtonClickEventTrigger;
+import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.misc.StackUtil;
 
@@ -98,9 +103,17 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
             int bOffX = this.guiLeft + 8 + ListHandler.WIDTH * 18 - BUTTON_COUNT * 11;
             int bOffY = this.guiTop + 32 + sy * 34 + 18;
 
-            buttonList.add(new GuiImageButton(bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
-            buttonList.add(new GuiImageButton(bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
-            buttonList.add(new GuiImageButton(bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28));
+            GuiImageButton buttonPrecise = new GuiImageButton(this, bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28);
+            buttonPrecise.setToolTip(ToolTip.createLocalized("gui.list.nbt")).setBehaviour(IButtonBehaviour.TOGGLE);
+            buttonList.add(buttonPrecise);
+
+            GuiImageButton buttonType = new GuiImageButton(this, bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28);
+            buttonType.setToolTip(ToolTip.createLocalized("gui.list.metadata")).setBehaviour(IButtonBehaviour.TOGGLE);
+            buttonList.add(buttonType);
+
+            GuiImageButton buttonMaterial = new GuiImageButton(this, bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28);
+            buttonMaterial.setToolTip(ToolTip.createLocalized("gui.list.oredict")).setBehaviour(IButtonBehaviour.TOGGLE);
+            buttonList.add(buttonMaterial);
         }
 
         for (GuiButton o : buttonList) {
@@ -143,6 +156,16 @@ public class GuiList extends GuiBC8<ContainerList> implements IButtonClickEventL
 
     private boolean hasListEquipped() {
         return container.getListItemStack() != null;
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (textField.isFocused() && keyCode != Keyboard.KEY_ESCAPE) {
+            textField.textboxKeyTyped(typedChar, keyCode);
+            container.setLabel(textField.getText());
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 
     @Override

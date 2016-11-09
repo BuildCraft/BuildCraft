@@ -1,12 +1,12 @@
 package buildcraft.transport;
 
+import buildcraft.api.BCItems;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.core.BCCoreBlocks;
 import buildcraft.core.BCCoreItems;
-import buildcraft.core.lib.recipe.NBTAwareShapedOreRecipe;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
+import buildcraft.lib.recipe.NBTAwareShapedOreRecipe;
 import buildcraft.lib.recipe.RecipeBuilderShaped;
 import buildcraft.transport.gate.EnumGateLogic;
 import buildcraft.transport.gate.EnumGateMaterial;
@@ -27,15 +27,22 @@ public class BCTransportRecipes {
             GameRegistry.addShapelessRecipe(new ItemStack(BCTransportItems.waterproof), new ItemStack(Items.DYE, 1, 2));
         }
 
-        if (Utils.isRegistered(BCTransportBlocks.filteredBuffer)) {
+        if (BCTransportBlocks.filteredBuffer != null) {
             ItemStack out = new ItemStack(BCTransportBlocks.filteredBuffer);
             RecipeBuilderShaped builder = new RecipeBuilderShaped(out);
-            builder.add("w w"); // TODO: diamond pipe in center of this line
+            builder.add("wdw"); // TODO: diamond pipe in center of this line
             builder.add("wcw");
             builder.add("wpw");
             builder.map('w', "plankWood");
             builder.map('p', Blocks.PISTON);
             builder.map('c', Blocks.CHEST);
+
+            if (BCItems.TRANSPORT_PIPE_DIAMOND_ITEM == null) {
+                builder.map('d', Items.DIAMOND);
+            } else {
+                builder.map('d', BCItems.TRANSPORT_PIPE_DIAMOND_ITEM);
+            }
+
             GameRegistry.addRecipe(builder.build());
         }
 

@@ -7,8 +7,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import buildcraft.lib.client.guide.font.IFontRenderer;
-import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuideChapter;
+import buildcraft.lib.client.guide.parts.GuidePart;
 import buildcraft.lib.client.guide.parts.GuideText;
 
 public class NodePageLine implements Comparable<NodePageLine> {

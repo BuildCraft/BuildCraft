@@ -12,14 +12,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
+
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
 public abstract class BCStatement implements IStatement {
 
     protected final String uniqueTag;
-
-    @SideOnly(Side.CLIENT)
-    private SpriteHolder sprite;
 
     /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardised tags if needed,
      * otherwise just pass a single string. The first passed string will be the one used when saved to disk.
@@ -64,12 +62,11 @@ public abstract class BCStatement implements IStatement {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getGuiSprite() {
-        return sprite.getSprite();
+    public final TextureAtlasSprite getGuiSprite() {
+        SpriteHolder holder = getSpriteHolder();
+        return holder == null ? null : holder.getSprite();
     }
 
     @SideOnly(Side.CLIENT)
-    public void setSpriteHolder(SpriteHolder holder) {
-        sprite = holder;
-    }
+    public abstract SpriteHolder getSpriteHolder();
 }

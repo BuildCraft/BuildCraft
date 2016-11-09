@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
+
 import buildcraft.lib.item.IItemBuildCraft;
 import buildcraft.lib.item.ItemBlockBC_Neptune;
 import buildcraft.lib.item.ItemManager;

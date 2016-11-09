@@ -36,6 +36,8 @@ public enum FontManager {
     }
 
     public void registerGuideFont(String name, InputStream stream) throws Exception {
-        registerFont(name, new GuideFont(stream));
+        // registerFont(name, new GuideFont(stream));
+        throw new AbstractMethodError("TODO: implement this!");
+
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.api.recipes.IAssemblyRecipeProvider;
 import buildcraft.api.recipes.IAssemblyRecipeRegistry;
+
 import buildcraft.lib.misc.StackUtil;
 
 public enum AssemblyRecipeRegistry implements IAssemblyRecipeRegistry {

@@ -1,11 +1,13 @@
 package buildcraft.silicon.tile;
 
-import buildcraft.api.core.EnumPipePart;
-import buildcraft.lib.tile.item.ItemHandlerManager;
-import buildcraft.lib.tile.item.ItemHandlerSimple;
+import java.util.List;
+
 import net.minecraft.util.EnumFacing;
 
-import java.util.List;
+import buildcraft.api.core.EnumPipePart;
+
+import buildcraft.lib.tile.item.ItemHandlerManager;
+import buildcraft.lib.tile.item.ItemHandlerSimple;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase {
     public final ItemHandlerSimple invBlueprint = addInventory("blueprint", 3 * 3, ItemHandlerManager.EnumAccess.NONE);

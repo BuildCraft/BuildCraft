@@ -13,9 +13,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.client.render.FluidRenderer;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileTank;
+import buildcraft.lib.misc.RenderUtil;
 
 public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
     private static final Vec3d TANK_SIZE = new Vec3d(0.74, 1, 0.74);
@@ -48,7 +48,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        RenderUtils.setGLColorFromIntPlusAlpha(color);
+        RenderUtil.setGLColorFromIntPlusAlpha(color);
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         // float scale = 0.95f;

@@ -34,7 +34,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.INetworkLoadable_BC8;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.mj.MjBattery;
 import buildcraft.api.mj.MjCapabilityHelper;
@@ -43,14 +42,9 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.builders.BCBuildersBlocks;
 import buildcraft.builders.entity.EntityQuarry;
-import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.block.BlockBCBase_Neptune;
-import buildcraft.lib.misc.BoundingBoxUtil;
-import buildcraft.lib.misc.FakePlayerUtil;
-import buildcraft.lib.misc.MessageUtil;
-import buildcraft.lib.misc.NBTUtils;
+import buildcraft.lib.misc.*;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
@@ -415,7 +409,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
     }
 
-    private abstract class Task implements INBTSerializable<NBTTagCompound>, INetworkLoadable_BC8<Task> {
+    private abstract class Task implements INBTSerializable<NBTTagCompound> {
         protected long energy = 0;
 
         public abstract long getTarget();
@@ -455,13 +449,11 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
             energy = nbt.getLong("energy");
         }
 
-        @Override
-        public void writeToByteBuf(ByteBuf buf) {
+        public void writeToByteBuf(PacketBuffer buf) {
             buf.writeLong(energy);
         }
 
-        @Override
-        public Task readFromByteBuf(ByteBuf buf) {
+        public Task readFromByteBuf(PacketBuffer buf) {
             energy = buf.readLong();
             return this;
         }
@@ -512,11 +504,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
                     // noinspection Duplicates
                     if (stacks != null) {
                         for (ItemStack stack : stacks) {
-                            stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, TileQuarry.this.pos, stack);
-                            if (stack.stackSize > 0) {
-                                stack.stackSize -= Utils.addToRandomInjectableAround(worldObj, TileQuarry.this.pos, null, stack);
-                            }
-                            InvUtils.dropItemUp(getWorld(), stack, getPos());
+                            InventoryUtil.addToBestAcceptor(getWorld(), getPos(), null, stack);
                         }
                     }
                 }
@@ -539,7 +527,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public void writeToByteBuf(ByteBuf buf) {
+        public void writeToByteBuf(PacketBuffer buf) {
             super.writeToByteBuf(buf);
             buf.writeInt(pos.getX());
             buf.writeInt(pos.getY());
@@ -547,7 +535,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public Task readFromByteBuf(ByteBuf buf) {
+        public Task readFromByteBuf(PacketBuffer buf) {
             super.readFromByteBuf(buf);
             pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
             return this;
@@ -602,7 +590,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public void writeToByteBuf(ByteBuf buf) {
+        public void writeToByteBuf(PacketBuffer buf) {
             super.writeToByteBuf(buf);
             buf.writeInt(pos.getX());
             buf.writeInt(pos.getY());
@@ -610,7 +598,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public Task readFromByteBuf(ByteBuf buf) {
+        public Task readFromByteBuf(PacketBuffer buf) {
             super.readFromByteBuf(buf);
             pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
             return this;
@@ -661,7 +649,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public void writeToByteBuf(ByteBuf buf) {
+        public void writeToByteBuf(PacketBuffer buf) {
             super.writeToByteBuf(buf);
             buf.writeDouble(from.xCoord);
             buf.writeDouble(from.yCoord);
@@ -672,7 +660,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
         }
 
         @Override
-        public Task readFromByteBuf(ByteBuf buf) {
+        public Task readFromByteBuf(PacketBuffer buf) {
             super.readFromByteBuf(buf);
             from = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
             to = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());

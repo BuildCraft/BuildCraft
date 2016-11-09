@@ -8,16 +8,22 @@ import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
 
+import buildcraft.core.BCCoreSprites;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
 public class TriggerFluidContainer extends BCStatement implements ITriggerExternal {
@@ -27,15 +33,22 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
         Empty,
         Contains,
         Space,
-        Full
+        Full;
+
+        public static final State[] VALUES = values();
     }
 
     public State state;
 
     public TriggerFluidContainer(State state) {
         super("buildcraft:fluid." + state.name().toLowerCase(Locale.ROOT), "buildcraft.fluid." + state.name().toLowerCase(Locale.ROOT));
-        setBuildCraftLocation("core", "triggers/trigger_liquidcontainer_" + state.name().toLowerCase(Locale.ROOT));
         this.state = state;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.TRIGGER_FLUID.get(state);
     }
 
     @Override
@@ -50,9 +63,9 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
     @Override
     public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
-        if (tile instanceof IFluidHandler) {
-            IFluidHandler container = (IFluidHandler) tile;
+        IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
 
+        if (handler != null) {
             FluidStack searchedFluid = null;
 
             if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
@@ -63,7 +76,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                 searchedFluid.amount = 1;
             }
 
-            FluidTankInfo[] liquids = container.getTankInfo(side);
+            FluidTankInfo[] liquids = handler.getTankInfo(side);
             if (liquids == null || liquids.length == 0) {
                 return false;
             }
@@ -92,7 +105,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                         }
                         return false;
                     }
-                    return container.fill(side, searchedFluid, false) > 0;
+                    return handler.fill(side, searchedFluid, false) > 0;
                 case Full:
                     if (searchedFluid == null) {
                         for (FluidTankInfo c : liquids) {
@@ -102,7 +115,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
                         }
                         return true;
                     }
-                    return container.fill(side, searchedFluid, false) <= 0;
+                    return handler.fill(side, searchedFluid, false) <= 0;
             }
         }
 

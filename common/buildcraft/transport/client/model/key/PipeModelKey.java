@@ -1,5 +1,8 @@
 package buildcraft.transport.client.model.key;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import net.minecraft.item.EnumDyeColor;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,6 +26,7 @@ public final class PipeModelKey {
     public final int[] sides;
     public final float[] connected;
     public final EnumDyeColor colour;
+    private final int hash;
 
     public PipeModelKey(PipeDefinition definition, int center, int[] sides, float[] connected, EnumDyeColor colour) {
         this.definition = definition;
@@ -30,5 +34,30 @@ public final class PipeModelKey {
         this.sides = sides;
         this.connected = connected;
         this.colour = colour;
+        this.hash = Arrays.hashCode(new int[] {//
+            Objects.hashCode(definition),//
+            center,//
+            Arrays.hashCode(sides),//
+            Arrays.hashCode(connected),//
+            Objects.hashCode(colour)//
+        });
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj.getClass() != getClass()) return false;
+        PipeModelKey other = (PipeModelKey) obj;
+        if (definition != other.definition) return false;
+        if (center != other.center) return false;
+        if (!Arrays.equals(sides, other.sides)) return false;
+        if (!Arrays.equals(connected, other.connected)) return false;
+        return colour == other.colour;
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
     }
 }

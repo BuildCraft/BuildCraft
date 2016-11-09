@@ -5,7 +5,6 @@ import buildcraft.lib.expression.api.ArgumentCounts;
 import buildcraft.lib.expression.api.Arguments;
 import buildcraft.lib.expression.api.IExpression.IExpressionBoolean;
 import buildcraft.lib.expression.api.IExpressionNode.INodeBoolean;
-import buildcraft.lib.expression.api.IExpressionNode.INodeString;
 
 public class ExpressionBoolean implements IExpressionBoolean {
     private final INodeBoolean node;

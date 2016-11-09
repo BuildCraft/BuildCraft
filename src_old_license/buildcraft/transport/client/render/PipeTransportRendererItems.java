@@ -16,8 +16,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.client.render.RenderResizableCuboid;
-import buildcraft.core.lib.client.render.RenderUtils;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -135,7 +135,7 @@ public class PipeTransportRendererItems extends PipeTransportRenderer<PipeTransp
             GL11.glScalef(renderScale, renderScale, renderScale);
             GL11.glTranslatef(-0.5f, -0.5f, -0.5f);
 
-            RenderUtils.setGLColorFromInt(ColorUtils.getLightHex(color));
+            RenderUtil.setGLColorFromInt(ColorUtils.getLightHex(color));
             RenderResizableCuboid.INSTANCE.renderCube(erc);
             GlStateManager.color(1, 1, 1, 1);
 

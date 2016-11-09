@@ -69,6 +69,10 @@ public class BCItems {
     public static final Item TRANSPORT_PIPE_WOOD_FLUID;
     public static final Item TRANSPORT_PIPE_WOOD_POWER;
 
+    // ... a few more needed...
+
+    public static final Item TRANSPORT_PIPE_DIAMOND_ITEM;
+
     // Set of items scanned
     private static final Set<String> SCANNED = DEBUG ? new HashSet<String>() : null;
 
@@ -125,6 +129,8 @@ public class BCItems {
         TRANSPORT_PIPE_WOOD_ITEM = getRegisteredItem(transport, "pipe_wood_item");
         TRANSPORT_PIPE_WOOD_FLUID = getRegisteredItem(transport, "pipe_wood_fluid");
         TRANSPORT_PIPE_WOOD_POWER = getRegisteredItem(transport, "pipe_wood_power");
+
+        TRANSPORT_PIPE_DIAMOND_ITEM = getRegisteredItem(transport, "pipe_diamond_item");
 
         if (DEBUG) {
             for (Item item : Item.REGISTRY) {

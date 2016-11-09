@@ -1,12 +1,17 @@
 package buildcraft.lib.misc;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
+
+import buildcraft.lib.BCLibConfig;
 
 public class ColourUtil {
+    public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
+    public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
+
     private static final String[] NAMES = { //
         "Black", "Red", "Green", "Brown",//
         "Blue", "Purple", "Cyan", "LightGray", //
@@ -26,17 +31,49 @@ public class ColourUtil {
         0x66AAFF, 0xD943C6, 0xEA7835, 0xe4e4e4 //
     };
     private static final String[] DYES = new String[16];
-    private static final TextFormatting[] FORMAT = { //
-        TextFormatting.BLACK, TextFormatting.RED, TextFormatting.DARK_GREEN, TextFormatting.GOLD,//
-        TextFormatting.BLUE, TextFormatting.DARK_PURPLE, TextFormatting.DARK_AQUA, TextFormatting.GRAY,//
-        TextFormatting.DARK_GRAY, TextFormatting.LIGHT_PURPLE, TextFormatting.GREEN, TextFormatting.YELLOW,//
-        TextFormatting.AQUA, TextFormatting.DARK_PURPLE, TextFormatting.GOLD, TextFormatting.WHITE,//
-    };
+
+    private static final TextFormatting[] FORMATTING_VALUES = TextFormatting.values();
+
+    private static final TextFormatting[] COLOUR_TO_FORMAT = new TextFormatting[16];
+    private static final TextFormatting[] REPLACE_FOR_WHITE = new TextFormatting[16];
+    private static final TextFormatting[] REPLACE_FOR_BLACK = new TextFormatting[16];
 
     static {
         for (int i = 0; i < 16; i++) {
             DYES[i] = "dye" + NAMES[i];
+            REPLACE_FOR_WHITE[i] = REPLACE_FOR_BLACK[i] = FORMATTING_VALUES[i];
         }
+
+        REPLACE_FOR_WHITE[TextFormatting.WHITE.ordinal()] = TextFormatting.GRAY;
+        REPLACE_FOR_WHITE[TextFormatting.YELLOW.ordinal()] = TextFormatting.GOLD;
+        REPLACE_FOR_WHITE[TextFormatting.AQUA.ordinal()] = TextFormatting.BLUE;
+        REPLACE_FOR_WHITE[TextFormatting.GREEN.ordinal()] = TextFormatting.DARK_GREEN;
+
+        REPLACE_FOR_BLACK[TextFormatting.BLACK.ordinal()] = TextFormatting.DARK_GRAY;
+        REPLACE_FOR_BLACK[TextFormatting.DARK_GRAY.ordinal()] = TextFormatting.GRAY;
+        REPLACE_FOR_BLACK[TextFormatting.DARK_BLUE.ordinal()] = TextFormatting.BLUE;
+        REPLACE_FOR_BLACK[TextFormatting.DARK_PURPLE.ordinal()] = TextFormatting.LIGHT_PURPLE;
+        REPLACE_FOR_BLACK[TextFormatting.DARK_RED.ordinal()] = TextFormatting.RED;
+
+        COLOUR_TO_FORMAT[EnumDyeColor.BLACK.ordinal()] = TextFormatting.BLACK;
+        COLOUR_TO_FORMAT[EnumDyeColor.GRAY.ordinal()] = TextFormatting.DARK_GRAY;
+        COLOUR_TO_FORMAT[EnumDyeColor.SILVER.ordinal()] = TextFormatting.GRAY;
+        COLOUR_TO_FORMAT[EnumDyeColor.WHITE.ordinal()] = TextFormatting.WHITE;
+
+        COLOUR_TO_FORMAT[EnumDyeColor.RED.ordinal()] = TextFormatting.DARK_RED;
+        COLOUR_TO_FORMAT[EnumDyeColor.BLUE.ordinal()] = TextFormatting.BLUE;
+        COLOUR_TO_FORMAT[EnumDyeColor.CYAN.ordinal()] = TextFormatting.DARK_AQUA;
+        COLOUR_TO_FORMAT[EnumDyeColor.LIGHT_BLUE.ordinal()] = TextFormatting.AQUA;
+
+        COLOUR_TO_FORMAT[EnumDyeColor.GREEN.ordinal()] = TextFormatting.DARK_GREEN;
+        COLOUR_TO_FORMAT[EnumDyeColor.LIME.ordinal()] = TextFormatting.GREEN;
+        COLOUR_TO_FORMAT[EnumDyeColor.BROWN.ordinal()] = TextFormatting.GOLD;
+        COLOUR_TO_FORMAT[EnumDyeColor.YELLOW.ordinal()] = TextFormatting.YELLOW;
+
+        COLOUR_TO_FORMAT[EnumDyeColor.ORANGE.ordinal()] = TextFormatting.GOLD;
+        COLOUR_TO_FORMAT[EnumDyeColor.PURPLE.ordinal()] = TextFormatting.DARK_PURPLE;
+        COLOUR_TO_FORMAT[EnumDyeColor.MAGENTA.ordinal()] = TextFormatting.LIGHT_PURPLE;
+        COLOUR_TO_FORMAT[EnumDyeColor.PINK.ordinal()] = TextFormatting.LIGHT_PURPLE;
     }
 
     public static String getDyeName(EnumDyeColor colour) {
@@ -59,25 +96,38 @@ public class ColourUtil {
         return Arrays.copyOf(NAMES, NAMES.length);
     }
 
+    /** Returns a localised name for the given colour. */
     public static String getLocalized(EnumDyeColor colour) {
-        return I18n.translateToLocal("item.fireworksCharge." + colour.getUnlocalizedName());
+        return StringUtilBC.localize("item.fireworksCharge." + colour.getUnlocalizedName());
     }
 
+    /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
+     * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
+     * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
     public static String getTextFullTooltip(EnumDyeColor colour) {
-        return getTextFormatTooltip(colour) + getLocalized(colour) + TextFormatting.RESET;
+        if (BCLibConfig.useColouredLabels) {
+            TextFormatting formatColour = convertColourToTextFormat(colour);
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + getLocalized(colour) + TextFormatting.RESET;
+        } else {
+            return getLocalized(colour);
+        }
     }
 
-    public static String getTextFull(EnumDyeColor colour) {
-        return getTextFormat(colour) + getLocalized(colour) + TextFormatting.RESET;
+    /** Returns a {@link TextFormatting} colour that will display correctly on a black background, so it won't use any
+     * of the darker colours (as they will be difficult to see). */
+    public static TextFormatting getTextFormatForBlack(TextFormatting in) {
+        return in.isColor() ? REPLACE_FOR_BLACK[in.ordinal()] : in;
     }
 
-    public static TextFormatting getTextFormatTooltip(EnumDyeColor colour) {
-        if (colour == EnumDyeColor.BLACK) colour = EnumDyeColor.GRAY;
-        return getTextFormat(colour);
+    /** Returns a {@link TextFormatting} colour that will display correctly on a white background, so it won't use any
+     * of the lighter colours (as they will be difficult to see). */
+    public static TextFormatting getTextFormatForWhite(TextFormatting in) {
+        return in.isColor() ? REPLACE_FOR_WHITE[in.ordinal()] : in;
     }
 
-    public static TextFormatting getTextFormat(EnumDyeColor colour) {
-        return FORMAT[colour.getDyeDamage()];
+    /** Converts an {@link EnumDyeColor} into an equivalent {@link TextFormatting} for display. */
+    public static TextFormatting convertColourToTextFormat(EnumDyeColor colour) {
+        return COLOUR_TO_FORMAT[colour.ordinal()];
     }
 
     public static int swapArgbToAbgr(int argb) {
