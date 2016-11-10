@@ -1,9 +1,11 @@
 package buildcraft.transport.pipe.flow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -17,9 +19,9 @@ public class TravellingItem {
 
     EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
     double speed = 0.05;
-    /** Absolute times with when an item started to when it finishes. */
+    /** Absolute times (relative to world.getTotalWorldTime()) with when an item started to when it finishes. */
     long tickStarted, tickFinished;
-    /** Relative times until an event needs to be fired or this item needs changing. */
+    /** Relative times (from tickStarted) until an event needs to be fired or this item needs changing. */
     int timeToCenter, timeToExit;
     EnumFacing from, to;
     /** A list of the next faces to try if the current "to" differs from "from" and "to" failed to insert. */
@@ -53,6 +55,84 @@ public class TravellingItem {
         this.stack = stack;
         if (stack == null || stack.getItem() == null) {
             throw new NullPointerException("stack");
+        }
+    }
+
+    // List<EnumFacing> tried = null;
+
+    public TravellingItem(NBTTagCompound nbt, long tickNow) {
+        stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+        int c = nbt.getByte("colour");
+        this.colour = c == 0 ? null : EnumDyeColor.byMetadata(c - 1);
+        this.state = nbt.getBoolean("toCenter") ? EnumTravelState.SERVER_TO_CENTER : EnumTravelState.SERVER_TO_EXIT;
+        this.speed = nbt.getDouble("speed");
+        if (speed < 0.001) {
+            // Just to make sure that we don't have an invalid speed
+            speed = 0.001;
+        }
+        tickStarted = nbt.getInteger("tickStarted") + tickNow;
+        tickFinished = nbt.getInteger("tickFinished") + tickNow;
+        timeToCenter = nbt.getInteger("timeToCenter");
+        timeToExit = nbt.getInteger("timeToExit");
+
+        int f = nbt.getInteger("from");
+        from = f == 0 ? null : EnumFacing.getFront(f - 1);
+
+        int t = nbt.getInteger("to");
+        to = t == 0 ? null : EnumFacing.getFront(t - 1);
+
+        int[] toTry = nbt.getIntArray("toTryOrder");
+        if (toTry.length > 0) {
+            toTryOrder = new ArrayList<>(toTry.length);
+            for (int i : toTry) {
+                toTryOrder.add(EnumFacing.getFront(i));
+            }
+        }
+
+        int[] triedArr = nbt.getIntArray("tried");
+        if (triedArr.length > 0) {
+            tried = new ArrayList<>(triedArr.length);
+            for (int i : toTry) {
+                tried.add(EnumFacing.getFront(i));
+            }
+        }
+    }
+
+    public NBTTagCompound writeToNbt(long tickNow) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setTag("stack", stack.serializeNBT());
+        nbt.setByte("colour", (byte) (colour == null ? 0 : colour.getMetadata()));
+        nbt.setBoolean("toCenter", state == EnumTravelState.SERVER_TO_CENTER);
+        nbt.setDouble("speed", speed);
+        nbt.setInteger("tickStarted", (int) (tickStarted - tickNow));
+        nbt.setInteger("tickFinished", (int) (tickFinished - tickNow));
+        nbt.setInteger("timeToCenter", timeToCenter);
+        nbt.setInteger("timeToExit", timeToExit);
+        nbt.setByte("from", (byte) (from == null ? 0 : from.ordinal() + 1));
+        nbt.setByte("to", (byte) (to == null ? 0 : to.ordinal() + 1));
+        if (toTryOrder != null) {
+            int[] order = new int[toTryOrder.size()];
+            for (int i = toTryOrder.size() - 1; i >= 0; i--) {
+                order[i] = toTryOrder.get(i).getIndex();
+            }
+            nbt.setIntArray("toTryOrder", order);
+        }
+        if (tried != null) {
+            int[] order = new int[tried.size()];
+            for (int i = tried.size() - 1; i >= 0; i--) {
+                order[i] = tried.get(i).getIndex();
+            }
+            nbt.setIntArray("tried", order);
+        }
+        return nbt;
+    }
+
+    public int getCurrentDelay(long tickNow) {
+        long diff = tickFinished - tickNow;
+        if (diff < 0) {
+            return 0;
+        } else {
+            return (int) diff;
         }
     }
 

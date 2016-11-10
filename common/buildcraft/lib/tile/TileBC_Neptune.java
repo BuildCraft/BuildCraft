@@ -456,6 +456,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         return nbt;
     }
 
+    @Override
+    protected void setWorldCreate(World world) {
+        // The default impl doesn't actually set the world for some reason :/
+        setWorldObj(world);
+    }
+
     // ##################
     //
     // Advanced debugging

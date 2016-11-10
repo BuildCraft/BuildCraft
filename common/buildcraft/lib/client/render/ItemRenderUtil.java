@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
@@ -86,6 +87,7 @@ public class ItemRenderUtil {
 
         RenderHelper.enableStandardItemLighting();
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.color(1, 1, 1);
 
         if (stack.hasEffect() || model.isBuiltInRenderer()) {
             renderItemImpl(x, y, z, stack);
