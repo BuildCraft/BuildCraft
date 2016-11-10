@@ -21,6 +21,7 @@ import buildcraft.builders.client.render.RenderBuilder;
 import buildcraft.builders.client.render.RenderFiller;
 import buildcraft.builders.client.render.RenderQuarry;
 import buildcraft.builders.container.ContainerArchitect;
+import buildcraft.builders.container.ContainerBlueprintLibrary;
 import buildcraft.builders.container.ContainerBuilder_Neptune;
 import buildcraft.builders.container.ContainerQuarry;
 import buildcraft.builders.entity.EntityQuarry;

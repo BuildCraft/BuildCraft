@@ -1,4 +1,4 @@
-package buildcraft.test.core.lib.utils;
+package buildcraft.test.lib.misc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

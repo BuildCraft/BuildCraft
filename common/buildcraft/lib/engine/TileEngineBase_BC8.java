@@ -1,13 +1,11 @@
 package buildcraft.lib.engine;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -23,7 +21,6 @@ import buildcraft.api.mj.IMjReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.core.lib.BlockTileCache;
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.ParticleUtil;
 import buildcraft.lib.tile.TileBC_Neptune;

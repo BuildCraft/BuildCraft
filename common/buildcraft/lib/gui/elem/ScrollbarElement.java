@@ -1,14 +1,14 @@
-package buildcraft.core.lib.gui.widgets;
+package buildcraft.lib.gui.elem;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiElementSimple;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.GuiRectangle;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.misc.MathUtil;
 
 @SideOnly(Side.CLIENT)
 public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> {
@@ -69,7 +69,7 @@ public class ScrollbarElement<G extends GuiBC8<?>> extends GuiElementSimple<G> {
     }
 
     public void setPosition(int pos) {
-        this.pos = MathUtils.clamp(pos, 0, len);
+        this.pos = MathUtil.clamp(pos, 0, len);
     }
 
     public void setLength(int len) {

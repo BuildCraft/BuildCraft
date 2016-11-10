@@ -2,7 +2,7 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders.gui;
+package buildcraft.builders.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -10,6 +10,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.tile.TileLibrary_Neptune;
 import buildcraft.lib.gui.ContainerBCTile;
+import buildcraft.lib.gui.slot.SlotBase;
 import buildcraft.lib.gui.slot.SlotOutput;
 
 public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptune> {
@@ -21,10 +22,10 @@ public class ContainerBlueprintLibrary extends ContainerBCTile<TileLibrary_Neptu
         super(player, library);
         this.playerInventory = player.inventory;
 
-        addSlotToContainer(new SlotBlueprintLibrary(library, library.inv, player, 0, 219, 57));
+        addSlotToContainer(new SlotBase(library.inv, 0, 219, 57));
         addSlotToContainer(new SlotOutput(library.inv, 1, 175, 57));
 
-        addSlotToContainer(new SlotBlueprintLibrary(library, library.inv, player, 2, 175, 79));
+        addSlotToContainer(new SlotBase(library.inv, 2, 175, 79));
         addSlotToContainer(new SlotOutput(library.inv, 3, 219, 79));
 
         // Player inventory

@@ -14,13 +14,13 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import buildcraft.builders.container.ContainerBlueprintLibrary;
 import buildcraft.builders.tile.TileLibrary_Neptune;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.gui.widgets.ScrollbarElement;
 import buildcraft.lib.BCLibDatabase;
 import buildcraft.lib.BCLibDatabase.EntryStatus;
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
+import buildcraft.lib.gui.elem.ScrollbarElement;
 import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntryHeader;
@@ -88,10 +88,6 @@ public class GuiBlueprintLibrary extends GuiBC8<ContainerBlueprintLibrary> {
 
             LibraryEntryHeader header = BCLibDatabase.allEntries.get(i);
             String name = header.name;
-
-            if (name.length() > DefaultProps.MAX_NAME_SIZE) {
-                name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
-            }
 
             int l1 = x + 8;
             int i2 = y + 22;

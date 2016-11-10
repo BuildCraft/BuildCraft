@@ -10,14 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-import buildcraft.builders.gui.ContainerArchitect;
-import buildcraft.builders.gui.ContainerBlueprintLibrary;
-import buildcraft.builders.gui.ContainerBuilder;
-import buildcraft.builders.gui.ContainerFiller;
-import buildcraft.builders.gui.GuiArchitectOld;
-import buildcraft.builders.gui.GuiBlueprintLibrary;
-import buildcraft.builders.gui.GuiBuilder_Neptune;
-import buildcraft.builders.gui.GuiFiller;
+import buildcraft.builders.container.ContainerBlueprintLibrary;
+import buildcraft.builders.gui.*;
 import buildcraft.core.GuiIds;
 
 public class BuildersGuiHandler implements IGuiHandler {
