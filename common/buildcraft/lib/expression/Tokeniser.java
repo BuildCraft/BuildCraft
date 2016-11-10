@@ -34,10 +34,10 @@ public class Tokeniser {
                 TokenResult res = token.tokenizePart(ctx);
                 if (res == ResultSpecific.IGNORE) continue;
                 if (res == ResultSpecific.INVALID) {
-                    throw new InputMismatchException("Invalid src \"" + ctx.get(10) + "\"");
+                    throw new InputMismatchException("Invalid src \"" + ctx.get(10).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultInvalid) {
-                    throw new InputMismatchException("Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace('\n', '¬') + "\"");
+                    throw new InputMismatchException("Invalid src \"" + ctx.get(((ResultInvalid) res).length).replace("\n", "\\n") + "\"");
                 }
                 if (res instanceof ResultDiscard) {
                     int discardLength = ((ResultDiscard) res).length;

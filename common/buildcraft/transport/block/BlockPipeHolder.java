@@ -333,10 +333,13 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (realSide == null) {
             realSide = side;
         }
-        PipePluggable existing = tile.getPluggable(realSide);
-        if (existing != null) {
-            return existing.onPluggableActivate(player, trace, hitX, hitY, hitZ);
+        if (trace.subHit > 6 && trace.subHit <= 12) {
+            PipePluggable existing = tile.getPluggable(realSide);
+            if (existing != null) {
+                return existing.onPluggableActivate(player, trace, hitX, hitY, hitZ);
+            }
         }
+
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
         Item item = held == null ? null : held.getItem();

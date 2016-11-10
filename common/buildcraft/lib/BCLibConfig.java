@@ -1,6 +1,8 @@
 package buildcraft.lib;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.misc.ColourUtil;
@@ -16,4 +18,30 @@ public class BCLibConfig {
 
     /** The lifespan (in seconds) that spawned items will have, when dropped by a quarry or builder (etc) */
     public static int itemLifespan = 60;
+
+    /** If true then ItemRenderUtil.renderItemStack will use the facing parameter to rotate the item */
+    public static RenderRotation rotateTravelingItems = RenderRotation.ENABLED;
+
+    public enum RenderRotation {
+        DISABLED {
+            @Override
+            public EnumFacing changeFacing(EnumFacing dir) {
+                return EnumFacing.EAST;
+            }
+        },
+        HORIZONTALS_ONLY {
+            @Override
+            public EnumFacing changeFacing(EnumFacing dir) {
+                return dir.getAxis() == Axis.Y ? EnumFacing.EAST : dir;
+            }
+        },
+        ENABLED {
+            @Override
+            public EnumFacing changeFacing(EnumFacing dir) {
+                return dir;
+            }
+        };
+
+        public abstract EnumFacing changeFacing(EnumFacing dir);
+    }
 }

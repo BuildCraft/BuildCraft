@@ -193,6 +193,19 @@ public class TravellingItem {
 
         return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
     }
+    
+    public EnumFacing getRenderDirection(long tick, float partialTicks) {
+        long diff = tickFinished - tickStarted;
+        long afterTick = tick - tickStarted;
+
+        float interp = (afterTick + partialTicks) / diff;
+        interp = Math.max(0, Math.min(1, interp));
+        if (interp < 0.5) {
+            return from.getOpposite();
+        } else {
+            return to;
+        }
+    }
 
     public boolean isVisible() {
         return state != EnumTravelState.CLIENT_INVALID;

@@ -2,6 +2,9 @@ package buildcraft.lib.client.render;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -10,17 +13,26 @@ import com.google.common.cache.RemovalNotification;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.core.EnumPipePart;
+
+import buildcraft.lib.BCLibConfig;
+import buildcraft.lib.client.model.MutableQuad;
+import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.ItemStackKey;
+import buildcraft.lib.misc.StackUtil;
 
 public class ItemRenderUtil {
 
@@ -81,25 +93,108 @@ public class ItemRenderUtil {
         GL11.glPopMatrix();
     }
 
-    public static void renderItem(double x, double y, double z, ItemStack stack) {
+    // Batch item rendering
+
+    private static boolean inBatch = false;
+
+    /** Used to render a lot of items in sequential order. Assumes that you don't change the glstate inbetween calls.
+     * You must call {@link #endItemBatch()} after your have rendered all of the items. */
+    public static void renderItemStack(double x, double y, double z, ItemStack stack, EnumFacing dir, VertexBuffer vb) {
+        if (StackUtil.isInvalid(stack)) {
+            return;
+        }
+        if (dir == null) {
+            dir = EnumFacing.EAST;
+        }
+        dir = BCLibConfig.rotateTravelingItems.changeFacing(dir);
+
         IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(stack);
         model = model.getOverrides().handleItemState(model, stack, null, null);
+        boolean requireGl = stack.hasEffect() || model.isBuiltInRenderer();
 
-        RenderHelper.enableStandardItemLighting();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.color(1, 1, 1);
+        if (vb != null && !requireGl) {
+            vb.setTranslation(x, y, z);
 
-        if (stack.hasEffect() || model.isBuiltInRenderer()) {
-            renderItemImpl(x, y, z, stack);
-        } else {
-            GL11.glPushMatrix();
-            GL11.glTranslated(x, y, z);
-            GL11.glCallList(glListCache.getUnchecked(new ItemStackKey(stack)));
-            glListCache.cleanUp();
+            // TODO: gl translation
+            float scale = 0.30f;
 
-            GL11.glPopMatrix();
+            MutableQuad q = new MutableQuad(-1, null);
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                for (BakedQuad quad : model.getQuads(null, part.face, 0)) {
+                    q.fromBakedItem(quad);
+
+                    for (int i = 0; i < 4; i++) {
+                        MutableVertex v = q.getVertex(i);
+                        Point3f pos = v.positionvf();
+                        Point3f nPos = new Point3f(pos);
+                        switch (dir) {
+                            case EAST:
+                                nPos.x = (pos.z - 0.5f) * scale;
+                                nPos.y = (pos.y - 0.5f) * scale;
+                                nPos.z = (1 - pos.x - 0.5f) * scale;
+                                break;
+                            case WEST:
+                                nPos.x = (1 - pos.z - 0.5f) * scale;
+                                nPos.y = (pos.y - 0.5f) * scale;
+                                nPos.z = (pos.x - 0.5f) * scale;
+                                break;
+                            case DOWN:
+                                nPos.x = (pos.z - 0.5f) * scale;
+                                nPos.y = (pos.x - 0.5f) * scale;
+                                nPos.z = (pos.y - 0.5f) * scale;
+                                break;
+                            case UP:
+                                nPos.x = (pos.x - 0.5f) * scale;
+                                nPos.y = (pos.z - 0.5f) * scale;
+                                nPos.z = (1 - pos.y - 0.5f) * scale;
+                                break;
+                            case NORTH:
+                                nPos.x = (1 - pos.x - 0.5f) * scale;
+                                nPos.y = (pos.y - 0.5f) * scale;
+                                nPos.z = (1 - pos.z - 0.5f) * scale;
+                                break;
+                            default:
+                            case SOUTH:
+                                nPos.x = (pos.x - 0.5f) * scale;
+                                nPos.y = (pos.y - 0.5f) * scale;
+                                nPos.z = (pos.z - 0.5f) * scale;
+                                break;
+                        }
+                        v.positionv(nPos);
+                    }
+                    if (quad.hasTintIndex()) {
+                        int colour = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, quad.getTintIndex());
+                        if (EntityRenderer.anaglyphEnable) {
+                            colour = TextureUtil.anaglyphColor(colour);
+                        }
+                        q.multColouri(colour, colour >> 8, colour >> 16, 0xFF);
+                    }
+                    q.lighti(15, 15);
+                    Vector3f normal = q.getCalculatedNormal();
+                    q.normalv(normal);
+                    if (quad.shouldApplyDiffuseLighting()) {
+                        q.setDiffuse(normal);
+                    }
+                    q.render(vb);
+                }
+            }
+
+            vb.setTranslation(0, 0, 0);
+            return;
         }
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        if (!inBatch) {
+            inBatch = true;
+            Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            // TODO: glstate changes
+        }
+        // TODO: render using opengl
+    }
+
+    public static void endItemBatch() {
+        if (inBatch) {
+            inBatch = false;
+            // TODO: revert glstate changes
+        }
     }
 }

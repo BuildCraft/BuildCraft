@@ -58,7 +58,8 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
         for (TravellingItem item : toRender) {
             Vec3d pos = item.getRenderPosition(BlockPos.ORIGIN, now, partialTicks);
 
-            ItemRenderUtil.renderItem(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord, item.stack);
+            ItemRenderUtil.renderItemStack(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord,//
+                    item.stack, item.getRenderDirection(now, partialTicks), vb);
 
             if (item.colour != null) {
                 vb.setTranslation(x + pos.xCoord, y + pos.yCoord, z + pos.zCoord);
@@ -75,5 +76,7 @@ public enum PipeFlowRendererItems implements IPipeFlowRenderer<PipeFlowItems> {
                 vb.setTranslation(0, 0, 0);
             }
         }
+
+        ItemRenderUtil.endItemBatch();
     }
 }
