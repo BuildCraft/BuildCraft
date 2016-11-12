@@ -33,6 +33,7 @@ custom
 #licnse_checker
 # Not in git because it contains names + emails.
 license_checker/agreed.txt
+license_checker/unused_code.txt
 license_checker/out/**
 
 # For some annoying reason the tests creates a log file in "/logs/latest.txt"

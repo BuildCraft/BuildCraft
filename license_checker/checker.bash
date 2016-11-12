@@ -1,6 +1,7 @@
 #!/bin/bash
 # License checker program
 # Add users to "agreed.txt" if someone has agreed to the relicense
+# Add users to "unused_code.txt" if someone hasn't agreed to the relicese (yet) but their code isn't used anymore
 # Relicensable files will be output to "out/safe/[path]"
 # Files that need people to sign will be in "out/need/[path]"
 
@@ -8,8 +9,11 @@
 
 ## CONSTANTS
 
-agreedFile="license_checker/agreed.txt"
+agreeInput="license_checker/agreed.txt"
+unusedInput="license_checker/unused_code.txt"
+
 outDir="license_checker/out"
+agreedFile="license_checker/out/merged_agreed.txt"
 tempOutDir="license_checker/out/work"
 goodOutDir="license_checker/out/safe"
 badOutDir="license_checker/out/need"
@@ -120,6 +124,9 @@ mkdir $tempOutDir
 mkdir $goodOutDir
 mkdir $badOutDir
 
+cat $agreeInput >> $agreedFile
+cat $unusedInput >> $agreedFile
+
 scanFolder "common"
 scanFolder "common_old_license"
 scanFolder "src_old_license"
@@ -130,5 +137,4 @@ testFolder "."
 eval "git log --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" > "license_checker/out/all"
 eval "grep -vf $agreedFile license_checker/out/all" > "license_checker/out/req"
 
-dispProgress "done"
-
+echo "done                                                                              "
