@@ -103,7 +103,7 @@ public abstract class BCLibProxy implements IGuiHandler {
         public void postRegisterItem(IItemBuildCraft item) {
             item.postRegisterClient();
         }
-        
+
         @Override
         public void postRegisterFluid(BCFluid fluid) {
             FluidManager.postRegisterFluid(fluid);
@@ -178,8 +178,11 @@ public abstract class BCLibProxy implements IGuiHandler {
         }
 
         @Override
-        public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-            return new GuiGuide();
+        public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+            if (id == 0) {
+                return new GuiGuide();
+            }
+            return null;
         }
 
         @Override
