@@ -73,6 +73,7 @@ sourceSets {
     main {
         java {
             srcDir "common"
+            srcDir "common_old_license"
           //  srcDir "src_old_license"
             // exclude 'some exclusion'
             // include 'some inclusion'
@@ -176,9 +177,15 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
-task apiJar(type: Jar) {
-    from sourceSets.api.output
+task apiJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = file("modules")
     classifier = 'api'
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll(["buildcraft/api/**"])
+        }
+    }
 }
 
 task libJar(type: Jar, dependsOn: reobfJar) {
@@ -283,6 +290,17 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
+task allJar(type: Jar, dependsOn:reobfJar) {
+
+    destinationDir = file("modules")
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll("**")
+        }
+    }
+}
+
 
 // add api classes to main package
 jar {
@@ -316,9 +334,9 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-    archives apiJar
 
     // Modules
+    archives apiJar
     archives libJar
     archives coreJar
     archives buildersJar
@@ -327,6 +345,7 @@ artifacts {
     archives siliconJar
     archives transportJar
     archives roboticsJar
+    archives allJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {

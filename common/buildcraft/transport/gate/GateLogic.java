@@ -28,13 +28,16 @@ public class GateLogic implements IGate, IWireEmitter {
     public final PluggableGate pluggable;
     public final GateVariant variant;
 
-    public final IStatement[] triggers;
+    public final TriggerWrapper[] triggers;
     public final IStatementParameter[][] triggerParameters;
 
-    public final IStatement[] actions;
+    public final ActionWrapper[] actions;
     public final IStatementParameter[][] actionParameters;
 
     public final List<StatementSlot> activeActions = new ArrayList<>();
+
+    /** Used to determine if gate logic should go across several trigger/action pairs. */
+    public final boolean[] connections;
 
     private final EnumSet<EnumDyeColor> wireBroadcasts;
 
@@ -44,11 +47,13 @@ public class GateLogic implements IGate, IWireEmitter {
     public GateLogic(PluggableGate pluggable, GateVariant variant) {
         this.pluggable = pluggable;
         this.variant = variant;
-        triggers = new IStatement[variant.numSlots];
+        triggers = new TriggerWrapper[variant.numSlots];
         triggerParameters = new IStatementParameter[variant.numSlots][variant.numTriggerArgs];
 
-        actions = new IStatement[variant.numSlots];
+        actions = new ActionWrapper[variant.numSlots];
         actionParameters = new IStatementParameter[variant.numSlots][variant.numActionArgs];
+
+        connections = new boolean[variant.numSlots - 1];
 
         wireBroadcasts = EnumSet.noneOf(EnumDyeColor.class);
     }
@@ -94,6 +99,11 @@ public class GateLogic implements IGate, IWireEmitter {
     @Override
     public TileEntity getTile() {
         return pluggable.holder.getPipeTile();
+    }
+
+    @Override
+    public TileEntity getNeighbourTile(EnumFacing side) {
+        return getPipeHolder().getNeighbouringTile(side);
     }
 
     @Override
@@ -182,7 +192,51 @@ public class GateLogic implements IGate, IWireEmitter {
 
     // Internal Logic
 
-    public void onTick() {
+    /** @return True if the gate GUI should be split into 2 separate columns. Needed on the server for the values of
+     *         {@link #connections} */
+    public boolean isSplitInTwo() {
+        return variant.numSlots > 4;
+    }
 
+    public void resolveActions() {
+        int groupCount = 0;
+        int groupActive = 0;
+
+        activeActions.clear();
+
+        for (int i = 0; i < triggers.length; i++) {
+            TriggerWrapper trigger = triggers[i];
+            groupCount++;
+            if (trigger != null) {
+                if (trigger.isTriggerActive(this, triggerParameters[i])) {
+                    groupActive++;
+                }
+            }
+            if (connections.length == i || !connections[i]) {
+                boolean allActionsActive = variant.logic == EnumGateLogic.AND ? groupActive == groupCount : groupActive > 0;
+                for (int j = i - groupCount; j <= i; j++) {
+                    ActionWrapper action = actions[j];
+                    if (action != null) {
+                        if (allActionsActive) {
+                            StatementSlot slot = new StatementSlot();
+                            slot.statement = action.delegate;
+                            slot.parameters = actionParameters[j];
+                            slot.part = action.sourcePart;
+                            activeActions.add(slot);
+                            action.actionActivate(this, actionParameters[j]);
+                        } else {
+                            action.actionDeactivated(this, actionParameters[j]);
+                        }
+                    }
+                }
+                groupActive = 0;
+                groupCount = 0;
+            }
+        }
+    }
+
+    public void onTick() {
+        // TEMP -- this is waaay to often, but is just for testing purposes.
+        resolveActions();
     }
 }

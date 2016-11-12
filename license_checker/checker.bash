@@ -16,6 +16,13 @@ badOutDir="license_checker/out/need"
 
 ## FUNCTIONS
 
+dispProgress() {
+    sp1="            "
+    sp2=$sp1$sp1$sp1
+    sp3=$sp2$sp2$sp2
+    printf "> $1$sp3\r"
+}
+
 testFile() {
     # arg 1 is the file
 
@@ -26,6 +33,7 @@ testFile() {
     # uniq                                  // Remove all but 1 of the duplicates
     local fld=$(dirname $1)
     local fle=$(basename $1)
+    dispProgress "$1"
     ( cd $fld && eval "git log --follow --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" ) > "$tempOutDir/$1.all"
     eval "grep -vf $agreedFile $tempOutDir/$1.all" > "$tempOutDir/$1.req"
     if [ -s "$tempOutDir/$1.req" ]; then
@@ -72,7 +80,6 @@ scanFiles() {
     do
         local f1=$file
         if [ -d $file ]; then
-            echo $file
             mkdir "$tempOutDir/$file"
             mkdir "$goodOutDir/$file"
             mkdir "$badOutDir/$file"
@@ -114,6 +121,7 @@ mkdir $goodOutDir
 mkdir $badOutDir
 
 scanFolder "common"
+scanFolder "common_old_license"
 scanFolder "src_old_license"
 scanFolder "BuildCraft-Localization"
 scanFolder "buildcraft_resources"
@@ -121,4 +129,6 @@ testFolder "."
 
 eval "git log --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" > "license_checker/out/all"
 eval "grep -vf $agreedFile license_checker/out/all" > "license_checker/out/req"
+
+dispProgress "done"
 
