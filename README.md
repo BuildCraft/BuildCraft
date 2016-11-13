@@ -41,17 +41,17 @@ PR implementing new features or changing large portions of code are helpful. But
 * Render issue (Quarry causes flickering) - Try without OptiFine first! This is a known issue with some versions of OptiFine.
 
 ### Compiling and packaging Buildcraft
-1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
+1. Ensure that `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)), `Git` (found [here](http://git-scm.com/)) are installed correctly on your system.
  * Optional: Install `Gradle` (found [here](http://www.gradle.org/downloads))
 1. Create a base directory for the build
-1. Clone the Buildcraft repository into 'baseDir/BuildCraft/' recursivly
+1. Clone the Buildcraft repository into 'baseDir/BuildCraft/'
+1. Clone (and update) the submodules into 'baseDir/BuildCraft with 'git submodule init' and 'git submodule update'
 1. Navigate to basedir/BuildCraft in a shell and run one of two commands:
  * `gradlew setupCIWorkspace build` to just build a current jar (this may take a while).
  * `gradlew setupDecompWorkspace` to setup a complete developement enviroment.
  * With `Gradle` installed: use `gradle` instead of `gradlew`
  * On Windows: use `gradlew.bat` instead of `gradlew`
-1. The compiled and obfuscated jar will be in 'baseDir/BuildCraft/build/libs'
-2. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/modules'
+1. The compiles and obfuscated module jars will be in 'baseDir/BuildCraft/modules'
 
 Your directory structure should look like this before running gradle:
 ***
