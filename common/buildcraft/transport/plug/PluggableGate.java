@@ -2,12 +2,15 @@ package buildcraft.transport.plug;
 
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,6 +23,7 @@ import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 import buildcraft.transport.client.render.PlugGateRenderer;
@@ -129,6 +133,18 @@ public class PluggableGate extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public IPluggableDynamicRenderer getDynamicRenderer() {
         return new PlugGateRenderer(this);
+    }
+
+    @Override
+    public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
+        if (!player.worldObj.isRemote) {
+            BlockPos pos = holder.getPipePos();
+            int x = pos.getX();
+            int y = pos.getY() << 3 | side.ordinal();
+            int z = pos.getZ();
+            BCTransportGuis.GATE.openGui(player, x, y, z);
+        }
+        return true;
     }
 
     // Gate methods
