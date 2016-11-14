@@ -1,3 +1,17 @@
+Breaking Changes:
+
+* Transport:
+  * Gates now 
+
+Additions:
+
+* 
+
 Improvements:
 
-* You can now clone items from phantom slots if you are in creative mode
+* General:
+  * You can now clone items from phantom slots if you are in creative mode
+* Transport:
+  * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
+  
+  

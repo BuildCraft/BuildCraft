@@ -3,6 +3,7 @@ package buildcraft.transport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -15,17 +16,21 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.PipeBehaviour;
+import buildcraft.api.transport.neptune.PipePluggable;
 
 import buildcraft.transport.client.model.GateMeshDefinition;
 import buildcraft.transport.client.render.RenderPipeHolder;
 import buildcraft.transport.container.ContainerDiamondPipe;
 import buildcraft.transport.container.ContainerDiamondWoodPipe;
 import buildcraft.transport.container.ContainerFilteredBuffer;
+import buildcraft.transport.container.ContainerGate;
 import buildcraft.transport.gui.GuiDiamondPipe;
 import buildcraft.transport.gui.GuiDiamondWoodPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
+import buildcraft.transport.gui.GuiGate;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
+import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.tile.TileFilteredBuffer;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -65,6 +70,17 @@ public abstract class BCTransportProxy implements IGuiHandler {
                 if (behaviour instanceof PipeBehaviourWoodDiamond) {
                     PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
                     return new ContainerDiamondWoodPipe(player, diaPipe);
+                }
+            }
+        } else if (id == BCTransportGuis.GATE.ordinal()) {
+            int ry = y >> 3;
+            EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
+            tile = world.getTileEntity(new BlockPos(x, ry, z));
+            if (tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
+                PipePluggable plug = holder.getPluggable(gateSide);
+                if (plug instanceof PluggableGate) {
+                    return new ContainerGate(player, ((PluggableGate) plug).logic);
                 }
             }
         }
@@ -129,6 +145,17 @@ public abstract class BCTransportProxy implements IGuiHandler {
                     if (behaviour instanceof PipeBehaviourWoodDiamond) {
                         PipeBehaviourWoodDiamond diaPipe = (PipeBehaviourWoodDiamond) behaviour;
                         return new GuiDiamondWoodPipe(player, diaPipe);
+                    }
+                }
+            } else if (id == BCTransportGuis.GATE.ordinal()) {
+                int ry = y >> 3;
+                EnumFacing gateSide = EnumFacing.getFront(y & 0x7);
+                tile = world.getTileEntity(new BlockPos(x, ry, z));
+                if (tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    PipePluggable plug = holder.getPluggable(gateSide);
+                    if (plug instanceof PluggableGate) {
+                        return new GuiGate(new ContainerGate(player, ((PluggableGate) plug).logic));
                     }
                 }
             }

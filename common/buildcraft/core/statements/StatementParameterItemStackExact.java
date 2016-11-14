@@ -112,7 +112,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         // Whats rendered is not a sprite but the actual stack itself
         return null;
     }

@@ -64,4 +64,7 @@ public abstract class StatementWrapper implements IStatement {
     public TileEntity getNeighbourTile(IStatementContainer source) {
         return source.getNeighbourTile(sourcePart.face);
     }
+
+    @Override
+    public abstract StatementWrapper[] getPossible();
 }

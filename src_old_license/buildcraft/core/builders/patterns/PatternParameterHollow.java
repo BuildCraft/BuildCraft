@@ -43,7 +43,7 @@ public class PatternParameterHollow implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         return filled ? iconFilled : iconHollow;
     }
 

@@ -43,7 +43,7 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         PipeWire colour = getColor();
         if (colour == null) {
             return null;

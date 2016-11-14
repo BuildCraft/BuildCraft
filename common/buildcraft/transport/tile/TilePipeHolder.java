@@ -367,6 +367,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
+    public void sendGuiMessage(PipeMessageReceiver to, IWriter writer) {
+        createAndSendGuiMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+    }
+
+    @Override
     public WireManager getWireManager() {
         return wireManager;
     }

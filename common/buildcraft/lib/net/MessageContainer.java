@@ -52,8 +52,9 @@ public class MessageContainer implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(windowId);
-        buf.writeShort(payload.readableBytes());
-        buf.writeBytes(payload);
+        int length = payload.readableBytes();
+        buf.writeShort(length);
+        buf.writeBytes(payload, 0, length);
     }
 
     public enum Handler implements IMessageHandler<MessageContainer, IMessage> {

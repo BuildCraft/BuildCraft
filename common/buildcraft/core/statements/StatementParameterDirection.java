@@ -64,7 +64,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         EnumFacing dir = getDirection();
         if (dir == null) {
             return null;

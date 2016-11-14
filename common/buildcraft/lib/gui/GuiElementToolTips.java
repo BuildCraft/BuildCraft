@@ -38,6 +38,9 @@ public class GuiElementToolTips implements IGuiElement {
     @Override
     public void drawForeground(float partialTicks) {
         List<ToolTip> tooltips = new ArrayList<>();
+        if (gui instanceof ITooltipElement) {
+            checkAndAddTooltip(tooltips, (ITooltipElement) gui);
+        }
         for (IGuiElement elem : gui.guiElements) {
             checkAndAddTooltip(tooltips, elem);
         }

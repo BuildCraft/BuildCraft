@@ -343,7 +343,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         EnumPipePart part = trace.subHit == 0 ? EnumPipePart.CENTER : EnumPipePart.fromFacing(realSide);
 
         Item item = held == null ? null : held.getItem();
-        if (item instanceof IItemPluggable) {
+        PipePluggable existing = tile.getPluggable(realSide);
+        if (item instanceof IItemPluggable && existing == null) {
             IItemPluggable itemPlug = (IItemPluggable) item;
             PipePluggable plug = itemPlug.onPlace(held, tile, realSide);
             if (plug == null) {

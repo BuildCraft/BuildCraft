@@ -1,5 +1,6 @@
 package buildcraft.transport.plug;
 
+import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -93,9 +95,25 @@ public class PluggableGate extends PipePluggable {
     public void sendMessage(int id, IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendMessage(to, (buffer) -> {
+            buffer.writeByte(1);
             buffer.writeByte(id);
             writer.write(buffer);
         });
+    }
+
+    public void sendGuiMessage(int id, IPayloadWriter writer) {
+        PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
+        holder.sendGuiMessage(to, (buffer) -> {
+            buffer.writeByte(1);
+            buffer.writeByte(id);
+            writer.write(buffer);
+        });
+    }
+
+    @Override
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        int id = buffer.readUnsignedByte();
+        logic.readPayload(id, buffer, side, ctx);
     }
 
     // PipePluggable

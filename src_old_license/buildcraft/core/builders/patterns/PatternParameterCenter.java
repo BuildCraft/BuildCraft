@@ -48,7 +48,7 @@ public class PatternParameterCenter implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         return sprites[direction % 9];
     }
 

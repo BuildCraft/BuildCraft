@@ -86,17 +86,19 @@ public class MessageUtil {
 
     public static boolean[] readBooleanArray(PacketBuffer buf, int length) {
         boolean[] total = new boolean[length];
-        int bytes = MathHelper.ceiling_double_int(length / 8.0);
+        readBooleanArray(buf, total);
+        return total;
+    }
+
+    public static void readBooleanArray(PacketBuffer buf, boolean[] into) {
+        int bytes = MathHelper.ceiling_double_int(into.length / 8.0);
         for (int b = 0; b < bytes; b++) {
             short packed = buf.readUnsignedByte();
-            for (int i = 0; i < 8 && i + b * 8 < total.length; i++) {
+            for (int i = 0; i < 8 && i + b * 8 < into.length; i++) {
                 int mask = 1 << i;
-                if ((packed & mask) == mask) {
-                    total[i + b * 8] = true;
-                }
+                into[i + b * 8] = (packed & mask) == mask;
             }
         }
-        return total;
     }
 
     public static void writeNullableBlockPos(PacketBuffer buffer, BlockPos pos) {
@@ -188,6 +190,7 @@ public class MessageUtil {
             } else {
                 BCLog.logger.warn(ex);
             }
+            buf.clear();
         }
     }
 }

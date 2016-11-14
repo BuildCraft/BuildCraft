@@ -49,7 +49,7 @@ public class BCCoreSprites {
 
         PARAM_REDSTONE_LEVEL = new SpriteHolder[16];
         for (int i = 0; i < PARAM_REDSTONE_LEVEL.length; i++) {
-            PARAM_REDSTONE_LEVEL[i] = getHolder("buildcraftcore:triggers/parameter_redstone_" + i);
+            PARAM_REDSTONE_LEVEL[i] = getHolder("triggers/parameter_redstone_" + i);
         }
 
         ACTION_MACHINE_CONTROL = new EnumMap<>(IControllable.Mode.class);

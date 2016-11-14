@@ -46,7 +46,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         return BCCoreSprites.PARAM_REDSTONE_LEVEL[level & 15].getSprite();
     }
 

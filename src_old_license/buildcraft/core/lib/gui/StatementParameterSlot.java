@@ -52,7 +52,7 @@ public abstract class StatementParameterSlot extends AdvancedSlot {
         IStatementParameter parameter = getParameter();
 
         if (parameter != null) {
-            return parameter.getSprite();
+            return parameter.getGuiSprite();
         } else {
             return null;
         }

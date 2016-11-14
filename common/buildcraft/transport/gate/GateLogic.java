@@ -14,17 +14,21 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.neptune.IPipeHolder;
 
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
 
 public class GateLogic implements IGate, IWireEmitter {
+    public static final int NET_ID_RESOLVE = 3;
+
     public final PluggableGate pluggable;
     public final GateVariant variant;
 
@@ -38,6 +42,8 @@ public class GateLogic implements IGate, IWireEmitter {
 
     /** Used to determine if gate logic should go across several trigger/action pairs. */
     public final boolean[] connections;
+
+    public final boolean[] triggerOn, actionOn;
 
     private final EnumSet<EnumDyeColor> wireBroadcasts;
 
@@ -54,6 +60,8 @@ public class GateLogic implements IGate, IWireEmitter {
         actionParameters = new IStatementParameter[variant.numSlots][variant.numActionArgs];
 
         connections = new boolean[variant.numSlots - 1];
+        triggerOn = new boolean[variant.numSlots];
+        actionOn = new boolean[variant.numSlots];
 
         wireBroadcasts = EnumSet.noneOf(EnumDyeColor.class);
     }
@@ -74,10 +82,23 @@ public class GateLogic implements IGate, IWireEmitter {
 
     public GateLogic(PluggableGate pluggable, PacketBuffer buffer) {
         this(pluggable, new GateVariant(buffer));
+
+        MessageUtil.readBooleanArray(buffer, triggerOn);
+        MessageUtil.readBooleanArray(buffer, actionOn);
+        MessageUtil.readBooleanArray(buffer, connections);
+        boolean on = false;
+        for (boolean b : actionOn) {
+            on |= b;
+        }
+        isOn = on;
     }
 
     public void writeCreationToBuf(PacketBuffer buffer) {
         variant.writeToBuffer(buffer);
+
+        MessageUtil.writeBooleanArray(buffer, triggerOn);
+        MessageUtil.writeBooleanArray(buffer, actionOn);
+        MessageUtil.writeBooleanArray(buffer, connections);
     }
 
     /** Helper method to send a custom payload to the other side via the pluggable. */
@@ -86,7 +107,30 @@ public class GateLogic implements IGate, IWireEmitter {
     }
 
     public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) {
+        if (side == Side.CLIENT) {
+            if (id == NET_ID_RESOLVE) {
+                MessageUtil.readBooleanArray(buffer, triggerOn);
+                MessageUtil.readBooleanArray(buffer, actionOn);
+                MessageUtil.readBooleanArray(buffer, connections);
+                boolean on = false;
+                for (boolean b : actionOn) {
+                    on |= b;
+                }
+                isOn = on;
+            } else {
+                BCLog.logger.warn("Unknown ID " + id);
+            }
+        } else {
+            BCLog.logger.warn("Unknown side + ID" + id);
+        }
+    }
 
+    public void sendResolveData() {
+        pluggable.sendMessage(NET_ID_RESOLVE, (buffer) -> {
+            MessageUtil.writeBooleanArray(buffer, triggerOn);
+            MessageUtil.writeBooleanArray(buffer, actionOn);
+            MessageUtil.writeBooleanArray(buffer, connections);
+        });
     }
 
     // IGate
@@ -202,30 +246,39 @@ public class GateLogic implements IGate, IWireEmitter {
         int groupCount = 0;
         int groupActive = 0;
 
+        boolean[] prevTriggers = Arrays.copyOf(triggerOn, triggerOn.length);
+        boolean[] prevActions = Arrays.copyOf(actionOn, actionOn.length);
+
+        Arrays.fill(triggerOn, false);
+        Arrays.fill(actionOn, false);
+
         activeActions.clear();
 
-        for (int i = 0; i < triggers.length; i++) {
-            TriggerWrapper trigger = triggers[i];
+        for (int triggerIndex = 0; triggerIndex < triggers.length; triggerIndex++) {
+            TriggerWrapper trigger = triggers[triggerIndex];
             groupCount++;
             if (trigger != null) {
-                if (trigger.isTriggerActive(this, triggerParameters[i])) {
+                if (trigger.isTriggerActive(this, triggerParameters[triggerIndex])) {
                     groupActive++;
+                    triggerOn[triggerIndex] = true;
                 }
             }
-            if (connections.length == i || !connections[i]) {
+            if (connections.length == triggerIndex || !connections[triggerIndex]) {
                 boolean allActionsActive = variant.logic == EnumGateLogic.AND ? groupActive == groupCount : groupActive > 0;
-                for (int j = i - groupCount; j <= i; j++) {
-                    ActionWrapper action = actions[j];
+                for (int i = groupCount - 1; i >= 0; i--) {
+                    int actionIndex = triggerIndex - i;
+                    ActionWrapper action = actions[actionIndex];
                     if (action != null) {
                         if (allActionsActive) {
                             StatementSlot slot = new StatementSlot();
                             slot.statement = action.delegate;
-                            slot.parameters = actionParameters[j];
+                            slot.parameters = actionParameters[actionIndex];
                             slot.part = action.sourcePart;
                             activeActions.add(slot);
-                            action.actionActivate(this, actionParameters[j]);
+                            action.actionActivate(this, actionParameters[actionIndex]);
+                            actionOn[actionIndex] = true;
                         } else {
-                            action.actionDeactivated(this, actionParameters[j]);
+                            action.actionDeactivated(this, actionParameters[actionIndex]);
                         }
                     }
                 }
@@ -233,9 +286,16 @@ public class GateLogic implements IGate, IWireEmitter {
                 groupCount = 0;
             }
         }
+
+        if (!Arrays.equals(prevTriggers, triggerOn) || !Arrays.equals(prevActions, actionOn)) {
+            sendResolveData();
+        }
     }
 
     public void onTick() {
+        if (getPipeHolder().getPipeWorld().isRemote) {
+            return;
+        }
         // TEMP -- this is waaay to often, but is just for testing purposes.
         resolveActions();
     }

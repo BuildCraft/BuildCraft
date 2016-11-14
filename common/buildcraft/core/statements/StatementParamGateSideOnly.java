@@ -32,7 +32,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         if (!isOn) {
             return null;
         } else {

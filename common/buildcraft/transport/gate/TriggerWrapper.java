@@ -16,6 +16,38 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
         super(delegate, sourcePart);
     }
 
+    public static TriggerWrapper wrap(IStatement statement, EnumFacing side) {
+        if (statement == null) {
+            return null;
+        } else if (statement instanceof TriggerWrapper) {
+            return (TriggerWrapper) statement;
+        } else if (statement instanceof ITriggerInternal) {
+            return new TriggerWrapperInternal((ITriggerInternal) statement);
+        } else if (statement instanceof ITriggerInternalSided) {
+            if (side == null) {
+                throw new NullPointerException("side");
+            }
+            return new TriggerWrapperInternalSided((ITriggerInternalSided) statement, side);
+        } else if (statement instanceof ITriggerExternal) {
+            if (side == null) {
+                throw new NullPointerException("side");
+            }
+            return new TriggerWrapperExternal((ITriggerExternal) statement, side);
+        } else {
+            throw new IllegalArgumentException("Unknwon class or interface " + statement.getClass());
+        }
+    }
+
+    @Override
+    public TriggerWrapper[] getPossible() {
+        IStatement[] possible = delegate.getPossible();
+        TriggerWrapper[] real = new TriggerWrapper[possible.length];
+        for (int i = 0; i < possible.length; i++) {
+            real[i] = wrap(possible[i], sourcePart.face);
+        }
+        return real;
+    }
+
     public static class TriggerWrapperInternal extends TriggerWrapper {
         public final ITriggerInternal trigger;
 
