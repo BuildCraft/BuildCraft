@@ -251,6 +251,8 @@ gate.modifier.desc.prismarine=Adds 3 trigger and action parameter slots
 
 gate.modifier.divisor=§cBut halves the number of action and trigger slots!§r
 
+gate.side=§7on the %s§7 side
+
 gate.name=%s %s Gate
 gate.name.basic=Basic Gate
 

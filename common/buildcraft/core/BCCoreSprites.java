@@ -9,6 +9,7 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.core.statements.TriggerFluidContainer;
 import buildcraft.core.statements.TriggerFluidContainerLevel;
 import buildcraft.core.statements.TriggerInventory;
+import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 
@@ -30,6 +31,7 @@ public class BCCoreSprites {
 
     public static final Map<IControllable.Mode, SpriteHolder> ACTION_MACHINE_CONTROL;
     public static final Map<TriggerInventory.State, SpriteHolder> TRIGGER_INVENTORY;
+    public static final Map<TriggerInventoryLevel.TriggerType, SpriteHolder> TRIGGER_INVENTORY_LEVEL;
     public static final Map<TriggerFluidContainer.State, SpriteHolder> TRIGGER_FLUID;
     public static final Map<TriggerFluidContainerLevel.TriggerType, SpriteHolder> TRIGGER_FLUID_LEVEL;
 
@@ -62,6 +64,12 @@ public class BCCoreSprites {
         for (TriggerInventory.State state : TriggerInventory.State.VALUES) {
             String tex = "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT);
             TRIGGER_INVENTORY.put(state, getHolder(tex));
+        }
+        
+        TRIGGER_INVENTORY_LEVEL = new EnumMap<>(TriggerInventoryLevel.TriggerType.class);
+        for (TriggerInventoryLevel.TriggerType state : TriggerInventoryLevel.TriggerType.VALUES) {
+            String tex = "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT);
+            TRIGGER_INVENTORY_LEVEL.put(state, getHolder(tex));
         }
 
         TRIGGER_FLUID = new EnumMap<>(TriggerFluidContainer.State.class);

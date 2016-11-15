@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -31,20 +32,22 @@ public enum CoreTriggerProvider implements ITriggerProvider {
             res.add(BCCoreStatements.TRIGGER_REDSTONE_INACTIVE);
         }
 
-        // if (TriggerEnergy.isTriggeringPipe(container.getTile()) ||
-        // TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
-        // res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
-        // res.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
-        // }
+        if (TriggerPower.isTriggeringTile(container.getTile())) {
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+        }
     }
 
     @Override
-    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, EnumFacing side) {
-
-    }
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, EnumFacing side) {}
 
     @Override
     public void addExternalTriggers(Collection<ITriggerExternal> res, EnumFacing side, TileEntity tile) {
+
+        if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+        }
 
         boolean blockInventoryTriggers = false;
         boolean blockFluidHandlerTriggers = false;
@@ -57,29 +60,30 @@ public enum CoreTriggerProvider implements ITriggerProvider {
         if (!blockInventoryTriggers) {
             IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             if (itemHandler != null) {
-                // res.add(BuildCraftCore.triggerEmptyInventory);
-                // res.add(BuildCraftCore.triggerContainsInventory);
-                // res.add(BuildCraftCore.triggerSpaceInventory);
-                // res.add(BuildCraftCore.triggerFullInventory);
-                // res.add(BuildCraftCore.triggerInventoryBelow25);
-                // res.add(BuildCraftCore.triggerInventoryBelow50);
-                // res.add(BuildCraftCore.triggerInventoryBelow75);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_CONTAINS);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_FULL);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_25);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_50);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_75);
             }
         }
 
         if (!blockFluidHandlerTriggers) {
             IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             if (fluidHandler != null) {
-                // FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(side.getOpposite());
-                // if (tanks != null && tanks.length > 0) {
-                // res.add(BuildCraftCore.triggerEmptyFluid);
-                // res.add(BuildCraftCore.triggerContainsFluid);
-                // res.add(BuildCraftCore.triggerSpaceFluid);
-                // res.add(BuildCraftCore.triggerFullFluid);
-                // res.add(BuildCraftCore.triggerFluidContainerBelow25);
-                // res.add(BuildCraftCore.triggerFluidContainerBelow50);
-                // res.add(BuildCraftCore.triggerFluidContainerBelow75);
-                // }
+
+                IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
+                if (liquids != null && liquids.length > 0) {
+                    res.add(BCCoreStatements.TRIGGER_FLUID_EMPTY);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_SPACE);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_CONTAINS);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_FULL);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_25);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_50);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_75);
+                }
             }
         }
 

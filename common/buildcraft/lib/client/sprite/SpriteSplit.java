@@ -37,7 +37,7 @@ public class SpriteSplit {
         vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         vb.setTranslation(x, y, 0);
 
-        double sm = scale / 1;
+        double sm = scale;
         double[] xa = { 0, xMin * sm, width + (xMax - 1) * sm, width };
         double[] ya = { 0, yMin * sm, height + (yMax - 1) * sm, height };
 

@@ -76,4 +76,29 @@ public interface IPositionedElement extends IGuiPosition {
             }
         };
     }
+
+    default IPositionedElement resize(int newWidth, int newHeight) {
+        IPositionedElement containing = this;
+        return new IPositionedElement() {
+            @Override
+            public int getX() {
+                return containing.getX();
+            }
+
+            @Override
+            public int getY() {
+                return containing.getY();
+            }
+
+            @Override
+            public int getWidth() {
+                return newWidth;
+            }
+
+            @Override
+            public int getHeight() {
+                return newHeight;
+            }
+        };
+    }
 }

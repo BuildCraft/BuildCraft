@@ -11,12 +11,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.*;
+
+import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -27,6 +31,9 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
         BELOW25(0.25F),
         BELOW50(0.5F),
         BELOW75(0.75F);
+
+        public static final TriggerType[] VALUES = values();
+
         public final float level;
 
         TriggerType(float level) {
@@ -37,9 +44,9 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     public TriggerType type;
 
     public TriggerInventoryLevel(TriggerType type) {
-        super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT), "buildcraft.inventorylevel." + type.name().toLowerCase(
-                Locale.ROOT), "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT));
-        setBuildCraftLocation("core", "triggers/trigger_inventory_" + type.name().toLowerCase(Locale.ROOT));
+        super("buildcraft:inventorylevel." + type.name().toLowerCase(Locale.ROOT),//
+                "buildcraft.inventorylevel." + type.name().toLowerCase(Locale.ROOT), //
+                "buildcraft.filteredBuffer." + type.name().toLowerCase(Locale.ROOT));
         this.type = type;
     }
 
@@ -51,6 +58,12 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     @Override
     public int minParameters() {
         return 1;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public SpriteHolder getSpriteHolder() {
+        return BCCoreSprites.TRIGGER_INVENTORY_LEVEL.get(type);
     }
 
     @Override
@@ -86,8 +99,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
             }
 
             if (stackSpace > 0) {
-                float percentage = foundItems / ((float) stackSpace * (float) Math.min(searchStack.getMaxStackSize(), inventory
-                        .getInventoryStackLimit()));
+                float percentage = foundItems / ((float) stackSpace * (float) Math.min(searchStack.getMaxStackSize(), inventory.getInventoryStackLimit()));
                 return percentage < type.level;
             }
 
@@ -99,5 +111,10 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     @Override
     public IStatementParameter createParameter(int index) {
         return new StatementParameterItemStack();
+    }
+
+    @Override
+    public IStatement[] getPossible() {
+        return BCCoreStatements.TRIGGER_INVENTORY_ALL;
     }
 }

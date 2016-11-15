@@ -8,7 +8,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 
-public abstract class StatementWrapper implements IStatement {
+public abstract class StatementWrapper implements IStatement, Comparable<StatementWrapper> {
     public final IStatement delegate;
 
     /** Used to determine the background colour of triggers and actions. */
@@ -67,4 +67,12 @@ public abstract class StatementWrapper implements IStatement {
 
     @Override
     public abstract StatementWrapper[] getPossible();
+
+    @Override
+    public int compareTo(StatementWrapper o) {
+        if (sourcePart != o.sourcePart) {
+            return Integer.compare(o.sourcePart.getIndex(), sourcePart.getIndex());
+        }
+        return getUniqueTag().compareTo(o.getUniqueTag());
+    }
 }

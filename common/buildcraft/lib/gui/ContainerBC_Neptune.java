@@ -126,7 +126,7 @@ public abstract class ContainerBC_Neptune extends Container {
         }
     }
 
-    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {}
+    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) throws IOException {}
 
     public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
         if (widgetId < 0 || widgetId >= widgets.size()) {

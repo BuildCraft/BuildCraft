@@ -1,9 +1,6 @@
 package buildcraft.transport.gate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,17 +13,22 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.statements.*;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.transport.neptune.IPipeHolder;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.transport.gate.ActionWrapper.ActionWrapperExternal;
+import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternal;
+import buildcraft.transport.gate.ActionWrapper.ActionWrapperInternalSided;
+import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperExternal;
+import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternal;
+import buildcraft.transport.gate.TriggerWrapper.TriggerWrapperInternalSided;
 import buildcraft.transport.plug.PluggableGate;
 import buildcraft.transport.wire.IWireEmitter;
 
-public class GateLogic implements IGate, IWireEmitter {
+public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContainer {
     public static final int NET_ID_RESOLVE = 3;
 
     public final PluggableGate pluggable;
@@ -180,13 +182,23 @@ public class GateLogic implements IGate, IWireEmitter {
         return Arrays.asList(actionParameters[slot]);
     }
 
+    @Override
+    public int getRedstoneInput(EnumFacing side) {
+        return pluggable.holder.getRedstoneInput(side);
+    }
+
+    @Override
+    public boolean setRedstoneOutput(EnumFacing side, int value) {
+        return pluggable.holder.setRedstoneOutput(side, value);
+    }
+
     // Gate helpers
 
-    public void setTrigger(int index, IStatement trigger) {
+    public void setTrigger(int index, TriggerWrapper trigger) {
         setStatementInternal(index, triggers, triggerParameters, trigger);
     }
 
-    public IStatement getTrigger(int index) {
+    public StatementWrapper getTrigger(int index) {
         return triggers[index];
     }
 
@@ -198,8 +210,8 @@ public class GateLogic implements IGate, IWireEmitter {
         return triggerParameters[index][pIndex];
     }
 
-    public void setAction(int index, IStatement trigger) {
-        setStatementInternal(index, actions, actionParameters, trigger);
+    public void setAction(int index, ActionWrapper action) {
+        setStatementInternal(index, actions, actionParameters, action);
     }
 
     public void setActionParam(int index, int pIndex, IStatementParameter param) {
@@ -207,7 +219,7 @@ public class GateLogic implements IGate, IWireEmitter {
     }
 
     /** Sets up the given trigger or action statements to the given ones. */
-    private static void setStatementInternal(int index, IStatement[] array, IStatementParameter[][] paramters, IStatement statement) {
+    private static void setStatementInternal(int index, StatementWrapper[] array, IStatementParameter[][] paramters, StatementWrapper statement) {
         array[index] = statement;
         if (statement == null) {
             Arrays.fill(paramters[index], null);
@@ -268,6 +280,7 @@ public class GateLogic implements IGate, IWireEmitter {
                 for (int i = groupCount - 1; i >= 0; i--) {
                     int actionIndex = triggerIndex - i;
                     ActionWrapper action = actions[actionIndex];
+                    actionOn[actionIndex] = allActionsActive;
                     if (action != null) {
                         if (allActionsActive) {
                             StatementSlot slot = new StatementSlot();
@@ -276,7 +289,6 @@ public class GateLogic implements IGate, IWireEmitter {
                             slot.part = action.sourcePart;
                             activeActions.add(slot);
                             action.actionActivate(this, actionParameters[actionIndex]);
-                            actionOn[actionIndex] = true;
                         } else {
                             action.actionDeactivated(this, actionParameters[actionIndex]);
                         }
@@ -298,5 +310,63 @@ public class GateLogic implements IGate, IWireEmitter {
         }
         // TEMP -- this is waaay to often, but is just for testing purposes.
         resolveActions();
+    }
+
+    public SortedSet<TriggerWrapper> getAllValidTriggers() {
+        SortedSet<TriggerWrapper> set = new TreeSet<>();
+        for (ITriggerInternal trigger : StatementManager.getInternalTriggers(this)) {
+            if (isValidTrigger(trigger)) {
+                set.add(new TriggerWrapperInternal(trigger));
+            }
+        }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            for (ITriggerInternalSided trigger : StatementManager.getInternalSidedTriggers(this, face)) {
+                if (isValidTrigger(trigger)) {
+                    set.add(new TriggerWrapperInternalSided(trigger, face));
+                }
+            }
+            TileEntity neighbour = getNeighbourTile(face);
+            if (neighbour != null) {
+                for (ITriggerExternal trigger : StatementManager.getExternalTriggers(face, neighbour)) {
+                    if (isValidTrigger(trigger)) {
+                        set.add(new TriggerWrapperExternal(trigger, face));
+                    }
+                }
+            }
+        }
+        return set;
+    }
+
+    public SortedSet<ActionWrapper> getAllValidActions() {
+        SortedSet<ActionWrapper> set = new TreeSet<>();
+        for (IActionInternal trigger : StatementManager.getInternalActions(this)) {
+            if (isValidAction(trigger)) {
+                set.add(new ActionWrapperInternal(trigger));
+            }
+        }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            for (IActionInternalSided trigger : StatementManager.getInternalSidedActions(this, face)) {
+                if (isValidAction(trigger)) {
+                    set.add(new ActionWrapperInternalSided(trigger, face));
+                }
+            }
+            TileEntity neighbour = getNeighbourTile(face);
+            if (neighbour != null) {
+                for (IActionExternal trigger : StatementManager.getExternalActions(face, neighbour)) {
+                    if (isValidAction(trigger)) {
+                        set.add(new ActionWrapperExternal(trigger, face));
+                    }
+                }
+            }
+        }
+        return set;
+    }
+
+    public boolean isValidTrigger(IStatement statement) {
+        return statement != null && statement.minParameters() <= variant.numTriggerArgs;
+    }
+
+    public boolean isValidAction(IStatement statement) {
+        return statement != null && statement.minParameters() <= variant.numActionArgs;
     }
 }

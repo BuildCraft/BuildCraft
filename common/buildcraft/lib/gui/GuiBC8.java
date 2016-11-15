@@ -78,6 +78,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        RenderHelper.disableStandardItemLighting();
         this.lastPartialTicks = partialTicks;
         mouse.setMousePosition(mouseX, mouseY);
 

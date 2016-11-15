@@ -29,6 +29,10 @@ public final class StringUtilBC {
         return I18n.translateToLocal(key);
     }
 
+    public static String localize(String key, Object... args) {
+        return String.format(localize(key), args);
+    }
+
     public static boolean canLocalize(String key) {
         return I18n.canTranslate(key);
     }

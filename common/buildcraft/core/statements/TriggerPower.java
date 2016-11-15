@@ -12,12 +12,10 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.mj.IMjReadable;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.*;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -49,7 +47,7 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
         return StringUtilBC.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
     }
 
-    private boolean isTriggeredMjConnector(IMjReadable readable) {
+    public boolean isTriggeredMjConnector(IMjReadable readable) {
         if (readable == null) {
             return false;
         }
@@ -67,6 +65,14 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
         return false;
     }
 
+    public static boolean isTriggeringTile(TileEntity tile) {
+        return isTriggeringTile(tile, null);
+    }
+
+    public static boolean isTriggeringTile(TileEntity tile, EnumFacing face) {
+        return tile.getCapability(MjAPI.CAP_READABLE, face) != null;
+    }
+
     protected boolean isActive(ICapabilityProvider tile, EnumPipePart side) {
         return isTriggeredMjConnector(tile.getCapability(MjAPI.CAP_READABLE, side.face));
     }
@@ -78,6 +84,11 @@ public class TriggerPower extends BCStatement implements ITriggerInternal, ITrig
 
     @Override
     public boolean isTriggerActive(TileEntity target, EnumFacing side, IStatementContainer source, IStatementParameter[] parameters) {
-        return isActive(target, EnumPipePart.fromFacing(side));
+        return isActive(target, EnumPipePart.fromFacing(side.getOpposite()));
+    }
+
+    @Override
+    public IStatement[] getPossible() {
+        return BCCoreStatements.TRIGGER_POWER;
     }
 }

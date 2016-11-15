@@ -28,7 +28,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
                 throw new NullPointerException("side");
             }
             return new ActionWrapperInternalSided((IActionInternalSided) statement, side);
-        } else if (statement instanceof ITriggerExternal) {
+        } else if (statement instanceof IActionExternal) {
             if (side == null) {
                 throw new NullPointerException("side");
             }

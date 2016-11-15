@@ -15,12 +15,10 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.*;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -106,5 +104,10 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
     @Override
     public IStatementParameter createParameter(int index) {
         return new StatementParameterItemStack();
+    }
+
+    @Override
+    public IStatement[] getPossible() {
+        return BCCoreStatements.TRIGGER_FLUID_ALL;
     }
 }

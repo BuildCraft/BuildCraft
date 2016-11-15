@@ -3,30 +3,22 @@ package buildcraft.transport.gui;
 import java.io.IOException;
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.EnumPipePart;
-import buildcraft.api.statements.IStatementParameter;
 
-import buildcraft.core.BCCoreStatements;
-import buildcraft.lib.gui.GuiBC8;
-import buildcraft.lib.gui.GuiIcon;
-import buildcraft.lib.gui.GuiRectangle;
-import buildcraft.lib.gui.ITooltipElement;
+import buildcraft.lib.client.sprite.RawSprite;
+import buildcraft.lib.client.sprite.SpriteSplit;
+import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
-import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.IPositionedElement;
-import buildcraft.lib.misc.SpriteUtil;
-import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.misc.ColourUtil;
+import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.container.ContainerGate;
-import buildcraft.transport.gate.GateLogic;
-import buildcraft.transport.gate.GateVariant;
-import buildcraft.transport.gate.StatementWrapper;
-import buildcraft.transport.gate.TriggerWrapper;
+import buildcraft.transport.gate.*;
 
 public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
@@ -62,9 +54,18 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     public static final GuiIcon SLOT_3_PARAM = new GuiIcon(TEXTURE_GATE, 176, 72, 18 * 4, 18);
     public static final GuiIcon[] SLOT = { SLOT_0_PARAM, SLOT_1_PARAM, SLOT_2_PARAM, SLOT_3_PARAM };
 
+    public static final RawSprite ICON_SELECT_HOVER = new RawSprite(TEXTURE_GATE, 212, 0, 16, 16, 256);
+    public static final SpriteSplit SELECTION_HOVER = new SpriteSplit(ICON_SELECT_HOVER, 3, 3, 13, 13, 16);
+
     public static final GuiIcon SLOT_COLOUR = new GuiIcon(TEXTURE_GATE, 176, 72, 18, 18);
 
+    public ElementStatement<?> currentHover = null;
+
     private final IPositionedElement[] positionSlotPair, positionConnect;
+
+    public boolean isDraggingBig;
+    public TriggerWrapper draggingTrigger;
+    public ActionWrapper draggingAction;
 
     public GuiGate(ContainerGate container) {
         super(container);
@@ -88,18 +89,40 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
             boolean otherColumn = split && i >= container.slotHeight;
             int x = otherColumn ? columnStartSecond : columnStartFirst;
             int y = (otherColumn ? i - container.slotHeight : i) * 18 + 16;
-            positionSlotPair[i] = new GuiRectangle(x, y, columWidth, 18);
+            positionSlotPair[i] = new GuiRectangle(x, y, columWidth, 18).offset(rootElement);
 
             boolean nextOtherColum = split && i + 1 >= container.slotHeight;
             if (otherColumn == nextOtherColum && i < numSlots - 1) {
-                positionConnect[i] = new GuiRectangle(x + triggerWidth, y + 9, 18, 18);
+                positionConnect[i] = new GuiRectangle(x + triggerWidth, y + 9, 18, 18).offset(rootElement);
             }
         }
 
+        // Ask the server for all the valid statements
+        MessageUtil.doDelayed(() -> container.sendMessage((buffer) -> {
+            buffer.writeByte(ContainerGate.ID_VALID_STATEMENTS);
+        }));
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        GateVariant variant = container.gate.variant;
+        int numSlots = variant.numSlots;
+
         for (int i = 0; i < numSlots; i++) {
-            positionSlotPair[i] = positionSlotPair[i].offset(rootElement);
-            if (positionConnect[i] != null) {
-                positionConnect[i] = positionConnect[i].offset(rootElement);
+            IPositionedElement actionPos = positionSlotPair[i].offset(18 * (2 + variant.numTriggerArgs), 0);
+            ElementTrigger trigger = new ElementTrigger(this, positionSlotPair[i].resize(18, 18), container.pairs[i].trigger);
+            ElementAction action = new ElementAction(this, actionPos.resize(18, 18), container.pairs[i].action);
+            guiElements.add(trigger);
+            guiElements.add(action);
+            for (int p = 0; p < variant.numTriggerArgs; p++) {
+                IPositionedElement pos = positionSlotPair[i].offset(18 * (p + 1), 0).resize(18, 18);
+                guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].triggerParams[p], p, trigger));
+            }
+            for (int p = 0; p < variant.numActionArgs; p++) {
+                IPositionedElement pos = actionPos.offset(18 * (p + 1), 0).resize(18, 18);
+                guiElements.add(new ElementStatementParam(this, pos, container.pairs[i].actionParams[p], p, action));
             }
         }
     }
@@ -118,15 +141,10 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
         GateLogic gate = container.gate;
         int triggerArgs = gate.variant.numTriggerArgs;
-        int actionArgs = gate.variant.numActionArgs;
 
         for (int i = 0; i < positionSlotPair.length; i++) {
             int xOff = 18 * (triggerArgs + 1);
             IPositionedElement elemSlots = positionSlotPair[i];
-            IPositionedElement elemActionSlots = elemSlots.offset(xOff + 18, 0);
-
-            SLOT[triggerArgs].drawAt(elemSlots);
-            SLOT[actionArgs].drawAt(elemActionSlots);
 
             IPositionedElement offsetConnect = elemSlots.offset(xOff, 0);
 
@@ -161,90 +179,79 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                     icon.drawAt(elemConnect.offset(0, 9));
                 }
             }
-            drawStatementSlots(gate.triggers[i], gate.triggerParameters[i], elemSlots);
-            drawStatementSlots(gate.actions[i], gate.actionParameters[i], elemActionSlots);
         }
-    }
-
-    private void drawStatementSlots(StatementWrapper statement, IStatementParameter[] params, IPositionedElement offset) {
-        int allowedParams = 0;
-        if (statement != null) {
-            allowedParams = statement.maxParameters();
-
-            EnumPipePart part = statement.sourcePart;
-            int yOffset = (part.getIndex() + 1) % 7;
-            SLOT_COLOUR.offset(0, yOffset * 18).drawAt(offset);
-
-            TextureAtlasSprite sprite = statement.getGuiSprite();
-            if (sprite != null) {
-                SpriteUtil.bindBlockTextureMap();
-                drawTexturedModalRect(offset.getX() + 1, offset.getY() + 1, sprite, 16, 16);
-            }
-        }
-        for (int p = 0; p < params.length; p++) {
-            IGuiPosition pos = offset.offset(18 * (p + 1), 0);
-            if (p >= allowedParams) {
-                ICON_SLOT_BLOCKED.drawAt(pos);
-            } else {
-                IStatementParameter param = params[p];
-                if (param == null) {
-                    ICON_SLOT_NOT_SET.drawAt(pos);
-                } else {
-                    int x = pos.getX();
-                    int y = pos.getY();
-
-                    TextureAtlasSprite sprite = param.getGuiSprite();
-                    if (sprite != null) {
-                        SpriteUtil.bindBlockTextureMap();
-                        drawTexturedModalRect(x + 1, y + 1, sprite, 16, 16);
-                    }
-
-                    ItemStack stack = param.getItemStack();
-                    if (StackUtil.isValid(stack)) {
-                        this.drawItemStackAt(stack, x + 1, y + 1);
-                    }
-
-                    if (sprite == null && StackUtil.isInvalid(stack)) {
-                        ICON_SLOT_NOT_SET.drawAt(pos);
-                    }
-                }
-            }
-        }
+        iteratePossible((wrapper, pos) -> {
+            ElementStatement.draw(this, wrapper, pos);
+        });
     }
 
     @Override
     protected void drawForegroundLayer() {
-        fontRendererObj.drawString(StringUtilBC.localize(this.container.gate.variant.getVariantName()), 8, 10, 0x404040);
-        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), 8, ySize - 97, 0x404040);
-    }
+        int x = rootElement.getX();
+        int y = rootElement.getY();
+        String localizedName = container.gate.variant.getLocalizedName();
+        int cX = x + (GUI_WIDTH - fontRendererObj.getStringWidth(localizedName)) / 2;
+        fontRendererObj.drawString(localizedName, cX, y + 5, 0x404040);
+        fontRendererObj.drawString(StringUtilBC.localize("gui.inventory"), x + 8, y + ySize - 97, 0x404040);
+        GlStateManager.color(1, 1, 1);
 
-    // Tooltips
+        if (currentHover != null) {
+            drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
+        }
+
+        if (isDraggingBig) {
+            StatementWrapper wrapper = draggingTrigger == null ? draggingAction : draggingTrigger;
+            ElementStatement.draw(this, wrapper, mouse.offset(-9, -9));
+        }
+    }
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
-
-        // Test for triggers, actions or params
-
-        for (int i = 0; i < positionSlotPair.length; i++) {
-            IPositionedElement pos = positionSlotPair[i];
-            if (pos.contains(mouse)) {
-                GuiRectangle rect = new GuiRectangle(pos.getX() + 1, pos.getY() + 1, 16, 16);
-                if (rect.contains(mouse)) {
-                    TriggerWrapper trigger = container.gate.triggers[i];
-                    if (trigger != null) {
-                        tooltips.add(new ToolTip(trigger.getDescription()));
-                    }
-                    return;
+        iteratePossible((wrapper, pos) -> {
+            if (pos.contains(mouse) && wrapper != null) {
+                String[] arr = { wrapper.getDescription() };
+                EnumFacing face = wrapper.sourcePart.face;
+                if (face != null) {
+                    String translated = ColourUtil.getTextFullTooltip(face);
+                    translated = StringUtilBC.localize("gate.side", translated);
+                    arr = new String[] { arr[0], translated };
                 }
-                int params = container.gate.triggerParameters[i].length;
-                for (int p = 0; p < params; p++) {
-                    IStatementParameter param = container.gate.triggerParameters[i][p];
-                    if (param != null && rect.offset(18 * (p + 1), 0).contains(mouse)) {
-                        tooltips.add(new ToolTip(param.getDescription()));
-                        return;
-                    }
-                }
+                tooltips.add(new ToolTip(arr));
             }
+        });
+    }
+
+    private interface OnStatement {
+        void iterate(StatementWrapper wrapper, IPositionedElement pos);
+    }
+
+    private void iteratePossible(OnStatement onStatemenet) {
+        int tx = 0;
+        int ty = 0;
+        EnumPipePart last = null;
+        onStatemenet.iterate(null, rootElement.offset(-18, 8).resize(18, 18));
+        for (TriggerWrapper wrapper : container.possibleTriggers) {
+            tx++;
+            if (tx > 5 || (last != null && last != wrapper.sourcePart)) {
+                tx = 0;
+                ty++;
+            }
+            onStatemenet.iterate(wrapper, rootElement.offset(18 * (-1 - tx), ty * 18 + 8).resize(18, 18));
+            last = wrapper.sourcePart;
+        }
+
+        tx = 0;
+        ty = 0;
+        last = null;
+        onStatemenet.iterate(null, rootElement.offset(GUI_WIDTH, 8).resize(18, 18));
+        for (ActionWrapper wrapper : container.possibleActions) {
+            tx++;
+            if (tx > 5 || (last != null && last != wrapper.sourcePart)) {
+                tx = 0;
+                ty++;
+            }
+            onStatemenet.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty + 8).resize(18, 18));
+            last = wrapper.sourcePart;
         }
     }
 
@@ -259,26 +266,47 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
             IPositionedElement pos = positionConnect[i];
             if (pos != null && pos.contains(mouse)) {
                 container.setConnected(i, !container.gate.connections[i]);
+                return;
             }
         }
 
-        // Test for changing statements from the small popup
-
-        for (int i = 0; i < positionSlotPair.length; i++) {
-            IPositionedElement pos = positionSlotPair[i];
+        // Test for dragging statements from the side contexts
+        iteratePossible((wrapper, pos) -> {
             if (pos.contains(mouse)) {
-                container.gate.triggers[i] = new TriggerWrapper.TriggerWrapperExternal(BCCoreStatements.TRIGGER_MACHINE_ACTIVE, EnumFacing.DOWN);
+                isDraggingBig = true;
+                if (wrapper instanceof TriggerWrapper) {
+                    draggingTrigger = (TriggerWrapper) wrapper;
+                } else if (wrapper instanceof ActionWrapper) {
+                    draggingAction = (ActionWrapper) wrapper;
+                }
             }
-        }
-
-        // Test for dragging statements from the big contexts
+        });
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        // Test for changing statements from the small popup
+        // Test for dragging statements from the side contexts
 
-        // Test for dragging statements from the big contexts
+        if (isDraggingBig) {
+
+            // Is our location valid?
+            for (IGuiElement elem : guiElements) {
+                if (elem instanceof ElementStatement<?>) {
+                    ElementStatement<?> element = (ElementStatement<?>) elem;
+                    if (element.contains(mouse)) {
+                        if (element instanceof ElementTrigger && draggingAction == null) {
+                            ((ElementTrigger) element).reference.set(draggingTrigger);
+                        } else if (element instanceof ElementAction && draggingTrigger == null) {
+                            ((ElementAction) element).reference.set(draggingAction);
+                        }
+                        break;
+                    }
+                }
+            }
+            isDraggingBig = false;
+            draggingTrigger = null;
+            draggingAction = null;
+        }
     }
 }

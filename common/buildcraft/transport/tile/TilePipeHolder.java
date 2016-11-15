@@ -381,6 +381,16 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         return eventBus.fireEvent(event);
     }
 
+    @Override
+    public int getRedstoneInput(EnumFacing side) {
+        return 0;// TODO!
+    }
+
+    @Override
+    public boolean setRedstoneOutput(EnumFacing side, int value) {
+        return false;// TODO!
+    }
+
     // Caps
 
     @Override

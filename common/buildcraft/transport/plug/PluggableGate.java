@@ -95,6 +95,8 @@ public class PluggableGate extends PipePluggable {
     public void sendMessage(int id, IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendMessage(to, (buffer) -> {
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
             buffer.writeByte(1);
             buffer.writeByte(id);
             writer.write(buffer);
@@ -104,6 +106,8 @@ public class PluggableGate extends PipePluggable {
     public void sendGuiMessage(int id, IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendGuiMessage(to, (buffer) -> {
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
             buffer.writeByte(1);
             buffer.writeByte(id);
             writer.write(buffer);
