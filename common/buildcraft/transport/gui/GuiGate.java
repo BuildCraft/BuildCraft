@@ -250,7 +250,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                 tx = 0;
                 ty++;
             }
-            onStatemenet.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty + 8).resize(18, 18));
+            onStatemenet.iterate(wrapper, rootElement.offset(GUI_WIDTH + 18 * tx, ty * 18 + 8).resize(18, 18));
             last = wrapper.sourcePart;
         }
     }

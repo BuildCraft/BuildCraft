@@ -2,11 +2,17 @@
  * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory;
+package buildcraft.lib.inventory;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.util.EnumFacing;
+
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.core.IInvSlot;
 
@@ -14,6 +20,21 @@ public final class InventoryIterator {
 
     /** Deactivate constructor */
     private InventoryIterator() {}
+
+    public static Iterable<IInvSlot> getIterable(ICapabilityProvider provider) {
+        return getIterable(provider, null);
+    }
+
+    public static Iterable<IInvSlot> getIterable(ICapabilityProvider provider, EnumFacing side) {
+        IItemHandler itemHandler = provider.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        if (itemHandler != null) {
+            return new InventoryIteratorHandler(itemHandler);
+        } else if (provider instanceof IInventory) {
+            return getIterable((IInventory) provider, side);
+        } else {
+            return ImmutableList.of();
+        }
+    }
 
     public static Iterable<IInvSlot> getIterable(IInventory inv) {
         return getIterable(inv, null);

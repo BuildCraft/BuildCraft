@@ -33,10 +33,10 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.gui.ContainerDummy;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.StackUtil;
 

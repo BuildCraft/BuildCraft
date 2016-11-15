@@ -1,22 +1,23 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
- * <p/>
- * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
- * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.core.lib.inventory;
+package buildcraft.lib.inventory;
 
 import java.util.Iterator;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.IInvSlot;
 
-class InventoryIteratorSimple implements Iterable<IInvSlot> {
+import buildcraft.lib.misc.StackUtil;
 
-    private final IInventory inv;
+// Ok, this class is HORRID. IInvSlot needs to be redone to be based off of IItemHandler rather than IInventory
+class InventoryIteratorHandler implements Iterable<IInvSlot> {
 
-    InventoryIteratorSimple(IInventory inv) {
-        this.inv = InvUtils.getInventory(inv);
+    private final IItemHandler inv;
+
+    InventoryIteratorHandler(IItemHandler inv) {
+        this.inv = inv;
     }
 
     @Override
@@ -26,7 +27,7 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 
             @Override
             public boolean hasNext() {
-                return slot < inv.getSizeInventory();
+                return slot < inv.getSlots();
             }
 
             @Override
@@ -56,27 +57,31 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 
         @Override
         public void setStackInSlot(ItemStack stack) {
-            inv.setInventorySlotContents(slot, stack);
+            if (inv instanceof IItemHandlerModifiable) {
+                ((IItemHandlerModifiable) inv).setStackInSlot(slot, stack);
+            } else {
+                throw new IllegalStateException("Invalid IItemHandler class " + inv.getClass());
+            }
         }
 
         @Override
         public boolean canPutStackInSlot(ItemStack stack) {
-            return inv.isItemValidForSlot(slot, stack);
+            return StackUtil.isInvalid(inv.insertItem(slot, stack, true));
         }
 
         @Override
         public boolean canTakeStackFromSlot(ItemStack stack) {
-            return true;
+            return StackUtil.isValid(inv.extractItem(slot, 1, true));
         }
 
         @Override
         public boolean isItemValidForSlot(ItemStack stack) {
-            return inv.isItemValidForSlot(slot, stack);
+            return StackUtil.isInvalid(inv.insertItem(slot, stack, true));
         }
 
         @Override
         public ItemStack decreaseStackInSlot(int amount) {
-            return inv.decrStackSize(slot, amount);
+            return inv.extractItem(slot, amount, false);
         }
 
         @Override

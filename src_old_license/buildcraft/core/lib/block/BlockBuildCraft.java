@@ -25,8 +25,8 @@ import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.data.XorShift128Random;
 
 /**

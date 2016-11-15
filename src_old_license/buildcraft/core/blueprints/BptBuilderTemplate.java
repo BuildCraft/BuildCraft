@@ -20,8 +20,8 @@ import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 

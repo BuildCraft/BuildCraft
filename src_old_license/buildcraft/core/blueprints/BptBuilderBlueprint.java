@@ -46,8 +46,8 @@ import buildcraft.core.builders.BuildingSlotEntity;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryCopy;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 

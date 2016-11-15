@@ -34,6 +34,7 @@ import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.inventory.filter.CraftingFilter;
 import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.StackUtil;

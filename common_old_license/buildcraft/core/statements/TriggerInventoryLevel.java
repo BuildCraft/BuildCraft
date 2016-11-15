@@ -19,8 +19,8 @@ import buildcraft.api.statements.*;
 
 import buildcraft.core.BCCoreSprites;
 import buildcraft.core.BCCoreStatements;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 

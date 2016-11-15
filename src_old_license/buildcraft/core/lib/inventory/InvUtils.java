@@ -28,6 +28,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
 
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.BlockUtil;
 
 public final class InvUtils {
