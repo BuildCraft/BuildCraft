@@ -5,11 +5,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.items.IList;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.*;
 
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.robotics.EntityRobot;
@@ -19,7 +15,7 @@ import buildcraft.robotics.RobotUtils;
 public class StatementParameterRobot extends StatementParameterItemStack {
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         if (stack == null && (this.stack == null || this.stack.getItem() instanceof ItemRobot)) {
             RedstoneBoardRobotNBT nextBoard = RobotUtils.getNextBoard(this.stack, mouse.getButton() > 0);
             if (nextBoard != null) {
@@ -30,6 +26,7 @@ public class StatementParameterRobot extends StatementParameterItemStack {
         } else {
             super.onClick(source, stmt, stack, mouse);
         }
+        return true;
     }
 
     @Override

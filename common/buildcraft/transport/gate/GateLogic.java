@@ -214,8 +214,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         setStatementInternal(index, actions, actionParameters, action);
     }
 
+    public StatementWrapper getAction(int index) {
+        return actions[index];
+    }
+
+
     public void setActionParam(int index, int pIndex, IStatementParameter param) {
         actionParameters[index][pIndex] = param;
+    }
+
+    public IStatementParameter getActionParam(int index, int pIndex) {
+        return actionParameters[index][pIndex];
     }
 
     /** Sets up the given trigger or action statements to the given ones. */

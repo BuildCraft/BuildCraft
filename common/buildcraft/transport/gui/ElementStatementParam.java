@@ -1,9 +1,12 @@
 package buildcraft.transport.gui;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 
+import buildcraft.lib.gui.pos.IGuiPosition;
 import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.IReference;
@@ -33,5 +36,40 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
                 gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
             }
         }
+    }
+
+    @Override
+    public void draw(IStatementParameter val, IGuiPosition element) {
+        if (val == null) {
+            GuiGate.ICON_SLOT_BLOCKED.drawAt(element);
+        } else {
+            GuiGate.SLOT_COLOUR.drawAt(element);
+            super.draw(val, element);
+            ItemStack stack = val.getItemStack();
+            if (StackUtil.isValid(stack)) {
+                gui.drawItemStackAt(stack, getX() + 1, getY() + 1);
+            }
+        }
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        if (contains(gui.mouse)) {
+            IStatementParameter value = reference.get();
+            if (value == null) return;
+            if (value.onClick(gui.container.gate, parent.reference.get(), gui.mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(button, GuiScreen.isShiftKeyDown()))) {
+                // update the server with the click
+                reference.set(value);
+                return;
+            }
+            displayPossible();
+        }
+    }
+
+    @Override
+    protected IStatementParameter[] getPossible() {
+        IStatementParameter value = reference.get();
+        if (value == null) return null;
+        return value.getPossible();
     }
 }

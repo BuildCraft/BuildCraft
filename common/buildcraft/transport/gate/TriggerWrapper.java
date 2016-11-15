@@ -21,7 +21,7 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
             return null;
         } else if (statement instanceof TriggerWrapper) {
             return (TriggerWrapper) statement;
-        } else if (statement instanceof ITriggerInternal) {
+        } else if (statement instanceof ITriggerInternal && side == null) {
             return new TriggerWrapperInternal((ITriggerInternal) statement);
         } else if (statement instanceof ITriggerInternalSided) {
             if (side == null) {
@@ -87,6 +87,9 @@ public abstract class TriggerWrapper extends StatementWrapper implements ITrigge
         @Override
         public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
             TileEntity tile = getNeighbourTile(source);
+            if (tile == null) {
+                return false;
+            }
             if (tile instanceof ITriggerExternalOverride) {
                 ITriggerExternalOverride override = (ITriggerExternalOverride) tile;
                 ITriggerExternalOverride.Result result = override.override(sourcePart.face, source, trigger, parameters);

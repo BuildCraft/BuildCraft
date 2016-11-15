@@ -258,6 +258,7 @@ gate.name.basic=Basic Gate
 
 gate.parameter.redstone.gateSideOnly=Gate Side Only
 
+gate.trigger.true=Always On
 gate.trigger.engine.blue=Engine Blue
 gate.trigger.engine.green=Engine Green
 gate.trigger.engine.yellow=Engine Yellow

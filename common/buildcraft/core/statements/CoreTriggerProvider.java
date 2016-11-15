@@ -34,7 +34,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
 
         if (TriggerPower.isTriggeringTile(container.getTile())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
-            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_LOW);
         }
     }
 
@@ -46,7 +46,7 @@ public enum CoreTriggerProvider implements ITriggerProvider {
 
         if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
             res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
-            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_LOW);
         }
 
         boolean blockInventoryTriggers = false;

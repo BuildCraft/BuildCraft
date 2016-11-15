@@ -65,7 +65,7 @@ public class BCCoreSprites {
             String tex = "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT);
             TRIGGER_INVENTORY.put(state, getHolder(tex));
         }
-        
+
         TRIGGER_INVENTORY_LEVEL = new EnumMap<>(TriggerInventoryLevel.TriggerType.class);
         for (TriggerInventoryLevel.TriggerType state : TriggerInventoryLevel.TriggerType.VALUES) {
             String tex = "triggers/trigger_inventory_" + state.name().toLowerCase(Locale.ROOT);

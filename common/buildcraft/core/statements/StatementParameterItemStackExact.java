@@ -20,7 +20,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         if (stack != null) {
             if (areItemsEqual(this.stack, stack)) {
                 if (mouse.getButton() == 0) {
@@ -52,6 +52,7 @@ public class StatementParameterItemStackExact implements IStatementParameter {
                 }
             }
         }
+        return true;
     }
 
     @Override
@@ -114,6 +115,11 @@ public class StatementParameterItemStackExact implements IStatementParameter {
     @Override
     public TextureAtlasSprite getGuiSprite() {
         // Whats rendered is not a sprite but the actual stack itself
+        return null;
+    }
+
+    @Override
+    public IStatementParameter[] getPossible() {
         return null;
     }
 }

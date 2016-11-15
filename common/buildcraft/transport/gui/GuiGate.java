@@ -48,18 +48,12 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
     public static final GuiIcon CONNECT_VERT_OFF = new GuiIcon(TEXTURE_GATE, 176, 54, 18, 18);
     public static final GuiIcon CONNECT_VERT_ON = CONNECT_VERT_OFF.offset(18, 0);
 
-    public static final GuiIcon SLOT_0_PARAM = new GuiIcon(TEXTURE_GATE, 176, 72, 18 * 1, 18);
-    public static final GuiIcon SLOT_1_PARAM = new GuiIcon(TEXTURE_GATE, 176, 72, 18 * 2, 18);
-    public static final GuiIcon SLOT_2_PARAM = new GuiIcon(TEXTURE_GATE, 176, 72, 18 * 3, 18);
-    public static final GuiIcon SLOT_3_PARAM = new GuiIcon(TEXTURE_GATE, 176, 72, 18 * 4, 18);
-    public static final GuiIcon[] SLOT = { SLOT_0_PARAM, SLOT_1_PARAM, SLOT_2_PARAM, SLOT_3_PARAM };
-
     public static final RawSprite ICON_SELECT_HOVER = new RawSprite(TEXTURE_GATE, 212, 0, 16, 16, 256);
     public static final SpriteSplit SELECTION_HOVER = new SpriteSplit(ICON_SELECT_HOVER, 3, 3, 13, 13, 16);
 
     public static final GuiIcon SLOT_COLOUR = new GuiIcon(TEXTURE_GATE, 176, 72, 18, 18);
 
-    public ElementStatement<?> currentHover = null;
+    public ElementGuiSlot<?> currentHover = null;
 
     private final IPositionedElement[] positionSlotPair, positionConnect;
 
@@ -98,9 +92,10 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         }
 
         // Ask the server for all the valid statements
-        MessageUtil.doDelayed(() -> container.sendMessage((buffer) -> {
-            buffer.writeByte(ContainerGate.ID_VALID_STATEMENTS);
-        }));
+        MessageUtil.doDelayed(() -> {
+            container.sendMessage((buffer) -> buffer.writeByte(ContainerGate.ID_VALID_STATEMENTS));
+            container.sendMessage((buffer) -> buffer.writeByte(ContainerGate.ID_CURRENT_SET));
+        });
     }
 
     @Override
@@ -182,6 +177,9 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         }
         iteratePossible((wrapper, pos) -> {
             ElementStatement.draw(this, wrapper, pos);
+            if (currentHover != null) {
+                drawGradientRect(pos.getX(), pos.getY(), pos.getX() + 18, pos.getY() + 18, 0x55_00_00_00, 0x55_00_00_00);
+            }
         });
     }
 
@@ -197,6 +195,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
         if (currentHover != null) {
             drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
+
         }
 
         if (isDraggingBig) {
@@ -207,6 +206,10 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
     @Override
     public void addToolTips(List<ToolTip> tooltips) {
+        if (currentHover != null) {
+            return;
+        }
+
         iteratePossible((wrapper, pos) -> {
             if (pos.contains(mouse) && wrapper != null) {
                 String[] arr = { wrapper.getDescription() };
@@ -289,7 +292,6 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         // Test for dragging statements from the side contexts
 
         if (isDraggingBig) {
-
             // Is our location valid?
             for (IGuiElement elem : guiElements) {
                 if (elem instanceof ElementStatement<?>) {

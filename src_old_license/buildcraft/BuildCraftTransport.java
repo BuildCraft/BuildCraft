@@ -150,7 +150,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static ITriggerInternal[] triggerRedstoneFader = new ITriggerInternal[3];
     public static IActionInternal actionRedstoneFader;
     public static IActionInternal[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
-    public static IActionInternal actionEnergyPulser = new ActionEnergyPulsar();
+    public static IActionInternal actionEnergyPulser = new ActionPowerPulsar();
     public static IActionInternal actionSingleEnergyPulse = new ActionSingleEnergyPulse();
     public static IActionInternal[] actionPipeColor = new IActionInternal[16];
     public static IActionInternal[] actionPipeDirection = new IActionInternal[16];

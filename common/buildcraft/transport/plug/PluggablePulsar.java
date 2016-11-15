@@ -38,6 +38,8 @@ public class PluggablePulsar extends PipePluggable {
     /** Increments from 0 to 20 to decide when it should pulse some power into the pipe behaviour */
     private int pulseStage = 0;
 
+    private long lastActionChange = 0;
+
     static {
         double ll = 2 / 16.0;
         double lu = 4 / 16.0;
@@ -159,7 +161,7 @@ public class PluggablePulsar extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public double getStage(float partialTicks) {
         if (isPulsing) {
-            return 0.5;//TODO
+            return 0.5;// TODO
         } else {
             return 0;
         }
@@ -176,5 +178,14 @@ public class PluggablePulsar extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public IPluggableDynamicRenderer getDynamicRenderer() {
         return new PlugPulsarRenderer(this);
+    }
+
+    public void setPulsing(boolean on) {
+        long now = holder.getPipeWorld().getTotalWorldTime();
+        if (lastActionChange + 5 < now) {
+            lastActionChange = now;
+            isPulsing = on;
+            scheduleNetworkUpdate();
+        }
     }
 }

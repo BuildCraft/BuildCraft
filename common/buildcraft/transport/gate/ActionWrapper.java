@@ -21,7 +21,7 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
             return null;
         } else if (statement instanceof ActionWrapper) {
             return (ActionWrapper) statement;
-        } else if (statement instanceof IActionInternal) {
+        } else if (statement instanceof IActionInternal && side == null) {
             return new ActionWrapperInternal((IActionInternal) statement);
         } else if (statement instanceof IActionInternalSided) {
             if (side == null) {
@@ -108,6 +108,9 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
                 }
             }
             TileEntity neighbourTile = getNeighbourTile(source);
+            if (neighbourTile == null) {
+                return;
+            }
             action.actionActivate(neighbourTile, sourcePart.face, source, parameters);
             if (neighbourTile instanceof IActionReceptor) {
                 IActionReceptor receptor = (IActionReceptor) neighbourTile;

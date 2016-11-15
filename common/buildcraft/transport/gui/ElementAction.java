@@ -1,5 +1,8 @@
 package buildcraft.transport.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.misc.data.IReference;
 import buildcraft.transport.gate.ActionWrapper;
@@ -15,9 +18,15 @@ public class ElementAction extends ElementStatement<ActionWrapper> {
         ActionWrapper value = reference.get();
         if (value == null) return null;
         ActionWrapper[] possible = value.getPossible();
-        ActionWrapper[] realPossible = new ActionWrapper[possible.length + 1];
-        System.arraycopy(possible, 0, realPossible, 1, possible.length);
-        realPossible[0] = null;
-        return realPossible;
+        if (possible == null) return null;
+
+        List<ActionWrapper> list = new ArrayList<>();
+        list.add(null);
+        for (ActionWrapper poss : possible) {
+            if (gui.container.possibleActions.contains(poss)) {
+                list.add(poss);
+            }
+        }
+        return list.toArray(new ActionWrapper[list.size()]);
     }
 }

@@ -51,18 +51,19 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        if (mouse.getButton() == 0) {
-            level = (level + 1) & 15;
-            while (level < minLevel || level > maxLevel) {
-                level = (level + 1) & 15;
-            }
-        } else {
-            level = (level - 1) & 15;
-            while (level < minLevel || level > maxLevel) {
-                level = (level - 1) & 15;
-            }
-        }
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+//        if (mouse.getButton() == 0) {
+//            level = (level + 1) & 15;
+//            while (level < minLevel || level > maxLevel) {
+//                level = (level + 1) & 15;
+//            }
+//        } else {
+//            level = (level - 1) & 15;
+//            while (level < minLevel || level > maxLevel) {
+//                level = (level - 1) & 15;
+//            }
+//        }
+        return true;
     }
 
     @Override
@@ -106,5 +107,19 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         return this;
+    }
+    
+    @Override
+    public IStatementParameter[] getPossible() {
+        IStatementParameter[] possible = new IStatementParameter[maxLevel - minLevel];
+        for (int i = 0; i < maxLevel - minLevel; i++) {
+            int l = minLevel + i;
+            if (level == l) {
+                possible[i] = this;
+            } else {
+                possible[i] = new StatementParameterRedstoneLevel(l, minLevel, maxLevel);
+            }
+        }
+        return possible;
     }
 }
