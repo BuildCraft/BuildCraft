@@ -12,6 +12,7 @@ import buildcraft.api.core.IStackFilter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
+
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.Transactor;
@@ -51,6 +52,42 @@ public class AIRobotLoad extends AIRobot {
         }
     }
 
+    /** Similar method to {@link #load(EntityRobotBase, DockingStation, IStackFilter, int, boolean)} but returns the
+     * itemstack rather than loading it onto the robot.
+     * 
+     * Only loads a single stack at once. */
+    public static ItemStack takeSingle(DockingStation station, IStackFilter filter, boolean doTake) {
+        if (station == null) {
+            return null;
+        }
+
+        IInventory tileInventory = station.getItemInput();
+        if (tileInventory == null) {
+            return null;
+        }
+
+        for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, station.getItemInputSide().face)) {
+            ItemStack stack = slot.getStackInSlot();
+
+            if (stack == null//
+                || !slot.canTakeStackFromSlot(stack)//
+                || !filter.matches(stack)//
+                || !ActionStationProvideItems.canExtractItem(station, stack)//
+                || !ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
+                continue;
+            }
+
+            if (doTake) {
+                stack = slot.decreaseStackInSlot(1);
+            } else {
+                stack = stack.copy();
+                stack = stack.splitStack(1);
+            }
+            return stack;
+        }
+        return null;
+    }
+
     public static boolean load(EntityRobotBase robot, DockingStation station, IStackFilter filter, int quantity, boolean doLoad) {
         if (station == null) {
             return false;
@@ -66,8 +103,11 @@ public class AIRobotLoad extends AIRobot {
         for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, station.getItemInputSide().face)) {
             ItemStack stack = slot.getStackInSlot();
 
-            if (stack == null || !slot.canTakeStackFromSlot(stack) || !filter.matches(stack) || !ActionStationProvideItems.canExtractItem(station,
-                    stack) || !ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
+            if (stack == null//
+                || !slot.canTakeStackFromSlot(stack)//
+                || !filter.matches(stack)//
+                || !ActionStationProvideItems.canExtractItem(station, stack)//
+                || !ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
                 continue;
             }
 
