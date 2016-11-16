@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.*;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -34,19 +36,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -76,7 +75,8 @@ import buildcraft.api.robots.IRobotOverlayItem;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.core.ItemWrench;
+import buildcraft.api.robots.*;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -286,7 +286,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public String getName() {
+        if (this.hasCustomName()) {
+            return this.getCustomNameTag();
+        } else {
         return StatCollector.translateToLocal("item.robot.name");
+    }
     }
 
     @Override
@@ -408,9 +412,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @SideOnly(Side.CLIENT)
     private void spawnEnergyFX() {
-        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDirection.xCoord * 0.25, posY
-            + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05, steamDirection.yCoord * 0.05,
-                steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDirection.xCoord * 0.25, posY + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05,
+                steamDirection.yCoord * 0.05, steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
     }
 
     @Override
@@ -710,15 +713,15 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         updateClientSlot(var1);
     }
 
-    @Override
-    public IChatComponent getDisplayName() {
-        return null;
-    }
+    // @Override
+    // public IChatComponent getDisplayName() {
+    // return null;
+    // }
 
-    @Override
-    public boolean hasCustomName() {
-        return false;
-    }
+    // @Override
+    // public boolean hasCustomName() {
+    // return false;
+    // }
 
     @Override
     public int getInventoryStackLimit() {
@@ -751,8 +754,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public boolean isItemValidForSlot(int var1, ItemStack var2) {
-        return inv[var1] == null || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1]
-                .getItem().getItemStackLimit(inv[var1]));
+        return inv[var1] == null || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
     }
 
     @Override
@@ -1011,8 +1013,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
         BlockPos entPos = Utils.convertFloor(Utils.getVec(par1Entity));
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, entPos).get(),
-                par1Entity))) {
+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, entPos).get(), par1Entity))) {
             return;
         }
         if (par1Entity.canAttackWithItem()) {
@@ -1055,8 +1056,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                         this.setLastAttacker(par1Entity);
 
                         if (knockback > 0) {
-                            par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F),
-                                    0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F));
+                            par1Entity.addVelocity(-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F, 0.1D, MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * knockback * 0.5F);
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
                             this.setSprinting(false);
@@ -1186,7 +1186,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             return false;
         }
 
-        if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+        if (player.isSneaking() && stack.getItem() instanceof IToolWrench) {
             RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
             MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
             if (robotDismantleEvent.isCanceled()) {
@@ -1196,7 +1196,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             onRobotHit(false);
 
             if (worldObj.isRemote) {
-                ((ItemWrench) stack.getItem()).wrenchUsed(player, this);
+                ((IToolWrench) stack.getItem()).wrenchUsed(player, this);
             }
             return true;
         } else if (wearables.size() < MAX_WEARABLES && stack.getItem().isValidArmor(stack, 0, this)) {
@@ -1207,8 +1207,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 player.swingItem();
             }
             return true;
-        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem())
-                .isValidRobotOverlay(stack)) {
+        } else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
             if (!worldObj.isRemote) {
                 wearables.add(stack.splitStack(1));
                 syncWearablesToClient();
@@ -1357,8 +1356,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     /** Tries to receive items in parameters, return items that are left after the operation. */
     @Override
     public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
-        if (currentDockingStation != null && currentDockingStation.index().subtract(tile.getPos()).distanceSq(BlockPos.ORIGIN) == 1
-            && mainAI != null) {
+        if (currentDockingStation != null && currentDockingStation.index().subtract(tile.getPos()).distanceSq(BlockPos.ORIGIN) == 1 && mainAI != null) {
 
             return mainAI.getActiveAI().receiveItem(stack);
         } else {
@@ -1453,7 +1451,20 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
-        left.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
+        left.add("Robot:");
+        if (board != null) {
+            if (board.getNBTHandler() != null) {
+                left.add("  " + board.getNBTHandler().getID());
+            } else {
+                left.add("  " + board.getClass());
+            }
+        } else {
+            left.add("  Unknown type");
+        }
+        if (getBattery() != null) {
+            left.add("  Battery " + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF");
+        }
+
         left.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
         left.add("AI tree:");
         AIRobot aiRobot = mainAI;

@@ -9,7 +9,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 public class SchematicLever extends SchematicBlock {
     @Override
     public void rotateLeft(IBuilderContext context) {
-        BlockLever.EnumOrientation orientation = (EnumOrientation) state.getValue(BlockLever.FACING);
+        BlockLever.EnumOrientation orientation = state.getValue(BlockLever.FACING);
         BlockLever.EnumOrientation newOrientation = null;
         switch (orientation) {
             case DOWN_X: {

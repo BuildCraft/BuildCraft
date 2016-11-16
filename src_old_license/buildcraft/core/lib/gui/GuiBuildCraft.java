@@ -299,7 +299,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
     public Slot getSlotAtPosition(int x, int y) {
         for (int slotIndex = 0; slotIndex < this.inventorySlots.inventorySlots.size(); ++slotIndex) {
-            Slot slot = (Slot) this.inventorySlots.inventorySlots.get(slotIndex);
+            Slot slot = this.inventorySlots.inventorySlots.get(slotIndex);
             if (isMouseOverSlot(slot, x, y)) {
                 return slot;
             }

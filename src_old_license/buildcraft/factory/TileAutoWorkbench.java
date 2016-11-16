@@ -75,6 +75,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                 }
             }
         });
+        resultInv.addInvListener((slot, before, after) -> {
+            if (craftMatrix.isJammed) {
+                scheduledCacheRebuild = true;
+            }
+        });
     }
 
     @Override

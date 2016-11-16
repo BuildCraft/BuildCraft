@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -358,7 +359,6 @@ public class BuildCraftCore extends BuildCraftMod {
         MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
         MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
-        OreDictionary.registerOre("chestWood", Blocks.chest);
         OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
     }
 
@@ -456,6 +456,7 @@ public class BuildCraftCore extends BuildCraftMod {
         ListRegistry.registerHandler(new ListMatchHandlerFluid());
         ListRegistry.registerHandler(new ListMatchHandlerTools());
         ListRegistry.registerHandler(new ListMatchHandlerArmor());
+//        ListRegistry.registerHandler(new ListMatchHandler());
         ListRegistry.itemClassAsType.add(ItemFood.class);
 
         DebuggingTools.fmlInit();
@@ -700,7 +701,10 @@ public class BuildCraftCore extends BuildCraftMod {
                 ((IDebuggable) tile).getDebugInfo(event.left, event.right, object.sideHit);
             }
         } else if (type == MovingObjectType.ENTITY) {
-
+            Entity ent = object.entityHit;
+            if (ent instanceof IDebuggable) {
+                ((IDebuggable) ent).getDebugInfo(event.left, event.right, object.sideHit);
+            }
         }
     }
 
