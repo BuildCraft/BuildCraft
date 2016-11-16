@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
@@ -72,11 +73,101 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
 
     public GateLogic(PluggableGate pluggable, NBTTagCompound nbt) {
         this(pluggable, new GateVariant(nbt.getCompoundTag("variant")));
+
+        short c = nbt.getShort("connections");
+        for (int i = 0; i < connections.length; i++) {
+            connections[i] = ((c >>> i) & 1) == 1;
+        }
+
+        for (int i = 0; i < triggers.length; i++) {
+            String tag = nbt.getString("trigger[" + i + "]");
+            EnumPipePart part = EnumPipePart.fromMeta(nbt.getByte("trigger[" + i + "].side"));
+            TriggerWrapper wrapper = TriggerWrapper.wrap(StatementManager.statements.get(tag), part.face);
+            triggers[i] = wrapper;
+
+            if (wrapper != null) {
+                for (int j = 0; j < triggerParameters[i].length; j++) {
+                    NBTTagCompound cpt = nbt.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
+                    if (cpt.hasNoTags()) continue;
+                    tag = cpt.getString("kind");
+                    IStatementParameter param = StatementManager.createParameter(tag);
+                    if (param != null) {
+                        param.readFromNBT(cpt);
+                        triggerParameters[i][j] = param;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < actions.length; i++) {
+            String tag = nbt.getString("action[" + i + "]");
+            EnumPipePart part = EnumPipePart.fromMeta(nbt.getByte("action[" + i + "].side"));
+            ActionWrapper wrapper = ActionWrapper.wrap(StatementManager.statements.get(tag), part.face);
+            actions[i] = wrapper;
+
+            if (wrapper != null) {
+                for (int j = 0; j < actionParameters[i].length; j++) {
+                    NBTTagCompound cpt = nbt.getCompoundTag("actionParameters[" + i + "][" + j + "]");
+                    if (cpt.hasNoTags()) continue;
+                    tag = cpt.getString("kind");
+                    IStatementParameter param = StatementManager.createParameter(tag);
+                    if (param != null) {
+                        param.readFromNBT(cpt);
+                        actionParameters[i][j] = param;
+                    }
+                }
+            }
+        }
     }
 
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("variant", variant.writeToNbt());
+
+        short c = 0;
+        for (int i = 0; i < connections.length; i++) {
+            if (connections[i]) {
+                c |= 1 << i;
+            }
+        }
+        nbt.setShort("connections", c);
+
+        for (int i = 0; i < triggers.length; i++) {
+            TriggerWrapper trigger = triggers[i];
+            if (trigger != null) {
+                nbt.setString("trigger[" + i + "]", trigger.getUniqueTag());
+                nbt.setByte("trigger[" + i + "].side", (byte) trigger.sourcePart.getIndex());
+
+                for (int j = 0; j < triggerParameters[i].length; j++) {
+                    IStatementParameter param = triggerParameters[i][j];
+                    if (param != null) {
+                        NBTTagCompound cpt = new NBTTagCompound();
+                        cpt.setString("kind", param.getUniqueTag());
+                        param.writeToNBT(cpt);
+                        nbt.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < actions.length; i++) {
+            ActionWrapper action = actions[i];
+            if (action != null) {
+                nbt.setString("action[" + i + "]", action.getUniqueTag());
+                nbt.setByte("action[" + i + "].side", (byte) action.sourcePart.getIndex());
+            }
+
+            for (int j = 0; j < actionParameters[i].length; j++) {
+                IStatementParameter param = actionParameters[i][j];
+                if (param != null) {
+                    NBTTagCompound cpt = new NBTTagCompound();
+                    cpt.setString("kind", param.getUniqueTag());
+                    param.writeToNBT(cpt);
+                    nbt.setTag("actionParameters[" + i + "][" + j + "]", cpt);
+                }
+            }
+        }
+
         return nbt;
     }
 
@@ -217,7 +308,6 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     public StatementWrapper getAction(int index) {
         return actions[index];
     }
-
 
     public void setActionParam(int index, int pIndex, IStatementParameter param) {
         actionParameters[index][pIndex] = param;

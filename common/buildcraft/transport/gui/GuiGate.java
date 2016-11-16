@@ -57,7 +57,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
     private final IPositionedElement[] positionSlotPair, positionConnect;
 
-    public boolean isDraggingBig;
+    public boolean isDraggingStatement;
     public TriggerWrapper draggingTrigger;
     public ActionWrapper draggingAction;
 
@@ -195,10 +195,9 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
 
         if (currentHover != null) {
             drawGradientRect(rootElement.getX(), rootElement.getY(), rootElement.getX() + GUI_WIDTH, rootElement.getY() + ySize, 0x55_00_00_00, 0x55_00_00_00);
-
         }
 
-        if (isDraggingBig) {
+        if (isDraggingStatement) {
             StatementWrapper wrapper = draggingTrigger == null ? draggingAction : draggingTrigger;
             ElementStatement.draw(this, wrapper, mouse.offset(-9, -9));
         }
@@ -276,7 +275,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         // Test for dragging statements from the side contexts
         iteratePossible((wrapper, pos) -> {
             if (pos.contains(mouse)) {
-                isDraggingBig = true;
+                isDraggingStatement = true;
                 if (wrapper instanceof TriggerWrapper) {
                     draggingTrigger = (TriggerWrapper) wrapper;
                 } else if (wrapper instanceof ActionWrapper) {
@@ -291,7 +290,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
         super.mouseReleased(mouseX, mouseY, state);
         // Test for dragging statements from the side contexts
 
-        if (isDraggingBig) {
+        if (isDraggingStatement) {
             // Is our location valid?
             for (IGuiElement elem : guiElements) {
                 if (elem instanceof ElementStatement<?>) {
@@ -306,7 +305,7 @@ public class GuiGate extends GuiBC8<ContainerGate> implements ITooltipElement {
                     }
                 }
             }
-            isDraggingBig = false;
+            isDraggingStatement = false;
             draggingTrigger = null;
             draggingAction = null;
         }

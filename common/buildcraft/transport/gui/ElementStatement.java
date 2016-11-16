@@ -12,7 +12,9 @@ import buildcraft.lib.gui.pos.IPositionedElement;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.data.IReference;
+import buildcraft.transport.gate.ActionWrapper;
 import buildcraft.transport.gate.StatementWrapper;
+import buildcraft.transport.gate.TriggerWrapper;
 
 public abstract class ElementStatement<T extends StatementWrapper> extends ElementGuiSlot<T> {
 
@@ -26,6 +28,27 @@ public abstract class ElementStatement<T extends StatementWrapper> extends Eleme
             return false;
         } else {
             return param < statement.maxParameters();
+        }
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        if (button == 1 && contains(gui.mouse)) {// right click
+            if (!gui.isDraggingStatement) {
+                T value = reference.get();
+                if (value != null) {
+                    // Copy trigger/action on right click
+                    if (value instanceof TriggerWrapper) {
+                        gui.draggingTrigger = (TriggerWrapper) value;
+                        gui.isDraggingStatement = true;
+                    } else if (value instanceof ActionWrapper) {
+                        gui.draggingAction = (ActionWrapper) value;
+                        gui.isDraggingStatement = true;
+                    }
+                }
+            }
+        } else {
+            super.onMouseClicked(button);
         }
     }
 

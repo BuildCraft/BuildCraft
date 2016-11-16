@@ -74,6 +74,9 @@ public class BCCoreStatements {
         TRIGGER_FLUID_ALL = new BCStatement[7];
         System.arraycopy(TRIGGER_FLUID, 0, TRIGGER_FLUID_ALL, 0, 4);
         System.arraycopy(TRIGGER_FLUID_LEVEL, 0, TRIGGER_FLUID_ALL, 4, 3);
+
+        StatementManager.registerParameterClass(StatementParamGateSideOnly.class);
+        StatementManager.registerParameterClass(StatementParameterRedstoneLevel.class);
     }
 
     public static void preInit() {

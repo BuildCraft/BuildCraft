@@ -32,7 +32,7 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.pulsar.constant");
+        return StringUtilBC.localize("gate.action.pulsar." + (on ? "on" : "off"));
     }
 
     @Override
