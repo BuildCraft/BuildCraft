@@ -41,6 +41,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.*;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.engines.BlockEngineBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
@@ -95,8 +96,8 @@ public final class Utils {
             return false;
         }
         Block block = Block.getBlockFromItem(stack.getItem());
-        if (block instanceof BlockEngine) {
-            return isRegistered(block) && ((BlockEngine) block).hasEngine(stack.getMetadata());
+	    if (block instanceof BlockEngineBase) {
+	        return isRegistered(block) && ((BlockEngineBase) block).hasEngine(stack.getMetadata());
         }
         return isRegistered(stack.getItem());
     }

@@ -65,6 +65,7 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
         }
     }
 
+	@Override
     public boolean hasEngine(int meta) {
         return engineTiles[meta] != null;
     }
