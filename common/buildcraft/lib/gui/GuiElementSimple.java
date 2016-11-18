@@ -1,35 +1,38 @@
 package buildcraft.lib.gui;
 
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.gui.pos.IPositionedElement;
 
 public class GuiElementSimple<G extends GuiBC8<?>> implements IGuiElement {
     public final G gui;
-    private final IGuiPosition parent;
-    private final GuiRectangle rectangle;
+    private final IPositionedElement element;
 
     public GuiElementSimple(G gui, IGuiPosition parent, GuiRectangle rectangle) {
+        this(gui, rectangle.offset(parent));
+    }
+
+    public GuiElementSimple(G gui, IPositionedElement element) {
         this.gui = gui;
-        this.parent = parent;
-        this.rectangle = rectangle;
+        this.element = element;
     }
 
     @Override
     public int getX() {
-        return (parent == null ? 0 : parent.getX()) + rectangle.x;
+        return element.getX();
     }
 
     @Override
     public int getY() {
-        return (parent == null ? 0 : parent.getY()) + rectangle.y;
+        return element.getY();
     }
 
     @Override
     public int getWidth() {
-        return rectangle.width;
+        return element.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return rectangle.height;
+        return element.getHeight();
     }
 }

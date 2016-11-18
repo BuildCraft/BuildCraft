@@ -12,7 +12,8 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.core.lib.inventory.InventoryIterator;
+
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.inventory.filter.ArrayStackOrListFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptItems;

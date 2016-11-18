@@ -210,4 +210,9 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     public abstract String getUnlocalizedName(int metadata);
 
     public abstract TileEntity createTileEntity(World world, int metadata);
+
+	/**
+	 * Checks to see if this block has an engine tile for the given metadata.
+	 */
+	public abstract boolean hasEngine(int meta);
 }

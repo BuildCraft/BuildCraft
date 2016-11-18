@@ -22,8 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class BakedModelHolder extends BuildCraftBakedModel {
 
-    public BakedModelHolder(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format,
-            ImmutableMap<TransformType, TRSRTransformation> transforms) {
+    public BakedModelHolder(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format, ImmutableMap<TransformType, TRSRTransformation> transforms) {
         super(quads, particle, format, transforms);
     }
 

@@ -1,14 +1,19 @@
 package buildcraft.transport.plug;
 
+import java.io.IOException;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,6 +25,7 @@ import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
 import buildcraft.lib.net.command.IPayloadWriter;
+import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugGate;
 import buildcraft.transport.client.render.PlugGateRenderer;
@@ -89,9 +95,29 @@ public class PluggableGate extends PipePluggable {
     public void sendMessage(int id, IPayloadWriter writer) {
         PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
         holder.sendMessage(to, (buffer) -> {
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
+            buffer.writeByte(1);
             buffer.writeByte(id);
             writer.write(buffer);
         });
+    }
+
+    public void sendGuiMessage(int id, IPayloadWriter writer) {
+        PipeMessageReceiver to = PipeMessageReceiver.PLUGGABLES[side.ordinal()];
+        holder.sendGuiMessage(to, (buffer) -> {
+            /* The pluggable holder receives this message and requires the ID '1' (UPDATE) to forward the message onto
+             * ourselves */
+            buffer.writeByte(1);
+            buffer.writeByte(id);
+            writer.write(buffer);
+        });
+    }
+
+    @Override
+    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+        int id = buffer.readUnsignedByte();
+        logic.readPayload(id, buffer, side, ctx);
     }
 
     // PipePluggable
@@ -129,6 +155,18 @@ public class PluggableGate extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public IPluggableDynamicRenderer getDynamicRenderer() {
         return new PlugGateRenderer(this);
+    }
+
+    @Override
+    public boolean onPluggableActivate(EntityPlayer player, RayTraceResult trace, float hitX, float hitY, float hitZ) {
+        if (!player.worldObj.isRemote) {
+            BlockPos pos = holder.getPipePos();
+            int x = pos.getX();
+            int y = pos.getY() << 3 | side.ordinal();
+            int z = pos.getZ();
+            BCTransportGuis.GATE.openGui(player, x, y, z);
+        }
+        return true;
     }
 
     // Gate methods

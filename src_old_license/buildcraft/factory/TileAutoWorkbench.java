@@ -33,11 +33,11 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.gui.ContainerDummy;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
-import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.inventory.InventoryIterator;
+import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.StackUtil;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver, IDebuggable {
@@ -73,6 +73,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                 if (craftMatrix.isJammed) {
                     scheduledCacheRebuild = true;
                 }
+            }
+        });
+        resultInv.addInvListener((slot, before, after) -> {
+            if (craftMatrix.isJammed) {
+                scheduledCacheRebuild = true;
             }
         });
     }
@@ -137,7 +142,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
                 }
             }
 
-            return CraftingUtils.findMatchingRecipe(craftMatrix, worldObj);
+            return CraftingUtil.findMatchingRecipe(craftMatrix, worldObj);
         }
 
         public void rebuildCache() {

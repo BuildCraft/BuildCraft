@@ -256,7 +256,20 @@ public class MutableVertex {
                 (int) (colour_r * r),//
                 (int) (colour_g * g),//
                 (int) (colour_b * b),//
-                (int) (colour_a * a)//
+                (int) (colour_a * a) //
+        );
+    }
+
+    public MutableVertex multColouri(int rgba) {
+        return multColouri(rgba, rgba >> 8, rgba >> 16, rgba >>> 24);
+    }
+
+    public MutableVertex multColouri(int r, int g, int b, int a) {
+        return multColourd(//
+                (r & 255) / 255f,//
+                (g & 255) / 255f,//
+                (b & 255) / 255f,//
+                (a & 255) / 255f //
         );
     }
 

@@ -55,15 +55,7 @@ public class ItemPluggableGate extends ItemBC_Neptune implements IItemPluggable 
 
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
-        GateVariant variant = getVariant(stack);
-        if (variant.material == EnumGateMaterial.CLAY_BRICK) {
-            return I18n.translateToLocal("gate.name.basic");
-        } else {
-            String gateName = I18n.translateToLocal("gate.name");
-            String materialName = I18n.translateToLocal("gate.material." + variant.material.tag);
-            Object logicName = I18n.translateToLocal("gate.logic." + variant.logic.tag);
-            return String.format(gateName, materialName, logicName);
-        }
+        return getVariant(stack).getLocalizedName();
     }
 
     @Override

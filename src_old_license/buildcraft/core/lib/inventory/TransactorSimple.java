@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
 
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.StackUtil;
 
 public class TransactorSimple extends Transactor {

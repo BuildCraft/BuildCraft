@@ -13,12 +13,14 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,6 +36,7 @@ import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
+import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
 import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
@@ -49,13 +52,31 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
 
     public PipeFlowItems(IPipe pipe, NBTTagCompound nbt) {
         super(pipe, nbt);
-        // TODO!
+        NBTTagList list = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
+        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        for (int i = 0; i < list.tagCount(); i++) {
+            TravellingItem item = new TravellingItem(list.getCompoundTagAt(i), tickNow);
+            if (StackUtil.isValid(item.stack)) {
+                items.add(item.getCurrentDelay(tickNow), item);
+            }
+        }
     }
 
     @Override
     public NBTTagCompound writeToNbt() {
-        // TODO!
-        return super.writeToNbt();
+        NBTTagCompound nbt = super.writeToNbt();
+        List<List<TravellingItem>> allItems = items.getAllElements();
+        NBTTagList list = new NBTTagList();
+
+        long tickNow = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+        for (List<TravellingItem> l : allItems) {
+            for (TravellingItem item : l) {
+                list.appendTag(item.writeToNbt(tickNow));
+            }
+        }
+
+        nbt.setTag("items", list);
+        return nbt;
     }
 
     // Network

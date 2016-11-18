@@ -104,7 +104,7 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
             }
         }
         if (!player.worldObj.isRemote) {
-            BCTransportGuis.PIPE_DIAMOND_WOOD.openGUI(player, pipe.getHolder().getPipePos());
+            BCTransportGuis.PIPE_DIAMOND_WOOD.openGui(player, pipe.getHolder().getPipePos());
         }
         return true;
     }

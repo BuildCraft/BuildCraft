@@ -1,3 +1,19 @@
+Breaking Changes:
+
+* Transport:
+  * Actions and triggers on gates are based upon the side that they act on, rather than being generic and deciding which tile to use by themselves.
+  * Gate expansions have been moved to seperate pluggables.
+
+Additions:
+
+* 
+
 Improvements:
 
-* You can now clone items from phantom slots if you are in creative mode
+* General:
+  * You can now clone items from phantom slots if you are in creative mode
+* Transport:
+  * The wooden-diamond pipe (formally known as the emerald pipe) shows the current index of what is being extracted, when in round-robin mode.
+  * Gates:
+    * Added a small selection area for changing between different triggers, actions and paramaters. Complex params still require the existing mechanism (for example with itemstack params)
+    * Dragging a trigger or action with the secondary mouse button will copy that statement, and can be placed in a simalir way to dragging from the side selections.

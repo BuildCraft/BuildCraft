@@ -170,7 +170,9 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     // Item caps
     protected void onSlotChange(IItemHandlerModifiable handler, int slot, ItemStack before, ItemStack after) {
-        markDirty();
+        if (worldObj.isBlockLoaded(getPos())) {
+            markDirty();
+        }
     }
 
     // ##################
@@ -302,7 +304,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public final NBTTagCompound getUpdateTag() {
+    public NBTTagCompound getUpdateTag() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(NET_RENDER_DATA);
         writePayload(NET_RENDER_DATA, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
@@ -315,7 +317,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public final void handleUpdateTag(NBTTagCompound tag) {
+    public void handleUpdateTag(NBTTagCompound tag) {
         super.readFromNBT(tag);
         byte[] bytes = tag.getByteArray("d");
         ByteBuf buf = Unpooled.copiedBuffer(bytes);
@@ -454,6 +456,12 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
         }
 
         return nbt;
+    }
+
+    @Override
+    protected void setWorldCreate(World world) {
+        // The default impl doesn't actually set the world for some reason :/
+        setWorldObj(world);
     }
 
     // ##################

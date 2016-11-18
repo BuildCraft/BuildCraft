@@ -4,8 +4,8 @@ import net.minecraft.network.PacketBuffer;
 
 import io.netty.buffer.ByteBuf;
 
-final class PrintingByteBuf extends PacketBuffer {
-    PrintingByteBuf(ByteBuf wrapped) {
+public final class PrintingByteBuf extends PacketBuffer {
+    public PrintingByteBuf(ByteBuf wrapped) {
         super(wrapped);
     }
 

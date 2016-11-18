@@ -11,27 +11,27 @@ import buildcraft.lib.item.ItemManager;
 import buildcraft.lib.registry.CreativeTabManager;
 
 public class BCCoreItems {
-    public static ItemBC_Neptune diamondShard;
+    public static ItemWrench_Neptune wrench;
     public static ItemBC_Neptune gearWood;
     public static ItemBC_Neptune gearStone;
     public static ItemBC_Neptune gearIron;
     public static ItemBC_Neptune gearGold;
     public static ItemBC_Neptune gearDiamond;
+    public static ItemBC_Neptune diamondShard;
     public static ItemPaintbrush_BC8 paintbrush;
-    public static ItemWrench_Neptune wrench;
     public static ItemList_BC8 list;
     public static ItemMapLocation mapLocation;
     public static ItemMarkerConnector markerConnector;
 
     public static void preInit() {
-        diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
+        wrench = ItemManager.register(new ItemWrench_Neptune("item.wrench"));
         gearWood = ItemManager.register(new ItemBC_Neptune("item.gear.wood"));
         gearStone = ItemManager.register(new ItemBC_Neptune("item.gear.stone"));
         gearIron = ItemManager.register(new ItemBC_Neptune("item.gear.iron"));
         gearGold = ItemManager.register(new ItemBC_Neptune("item.gear.gold"));
         gearDiamond = ItemManager.register(new ItemBC_Neptune("item.gear.diamond"));
+        diamondShard = ItemManager.register(new ItemBC_Neptune("item.diamond.shard"));
         paintbrush = ItemManager.register(new ItemPaintbrush_BC8("item.paintbrush"));
-        wrench = ItemManager.register(new ItemWrench_Neptune("item.wrench"));
         list = ItemManager.register(new ItemList_BC8("item.list"));
         mapLocation = ItemManager.register(new ItemMapLocation("item.map_location"));
         markerConnector = ItemManager.register(new ItemMarkerConnector("item.marker_connector"));

@@ -73,6 +73,7 @@ sourceSets {
     main {
         java {
             srcDir "common"
+            srcDir "common_old_license"
           //  srcDir "src_old_license"
             // exclude 'some exclusion'
             // include 'some inclusion'
@@ -176,20 +177,37 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
 }
 
-task apiJar(type: Jar) {
-    from sourceSets.api.output
+task apiJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = file("modules")
     classifier = 'api'
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll(["buildcraft/api/**"])
+        }
+    }
 }
 
-task coreJar(type: Jar, dependsOn: reobfJar) {
-
+task libJar(type: Jar, dependsOn: reobfJar) {
     destinationDir = file("modules")
-    classifier = 'core'
+    classifier = 'lib'
 
     doFirst {
         from(createMCModInfo(0, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraft/**", "assets/buildcraftcore/**", "buildcraft/BuildCraftCore**", "buildcraft/BuildCraftMod**", "buildcraft/core/**", "buildcraft/api/**", "cofh/**", "changelog/**", "LICENSE**", "versions.txt"])
+            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "buildcraft/lib/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
+        }
+    }
+}
+
+task coreJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = file("modules")
+    classifier = 'core'
+
+    doFirst {
+        from(createMCModInfo(1, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraft/**", "assets/buildcraftlib/**", "assets/buildcraftcore/**", "buildcraft/lib/**", "buildcraft/core/**", "buildcraft/api/**", "changelog/**", "LICENSE**", "versions.txt"])
         }
     }
 }
@@ -200,9 +218,9 @@ task buildersJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'builders'
 
     doFirst {
-        from(createMCModInfo(1, name).parentFile)
+        from(createMCModInfo(2, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "buildcraft/BuildCraftBuilders**", "LICENSE"])
+            includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "LICENSE"])
         }
     }
 }
@@ -213,9 +231,9 @@ task energyJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'energy'
 
     doFirst {
-        from(createMCModInfo(2, name).parentFile)
+        from(createMCModInfo(3, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "buildcraft/BuildCraftEnergy**", "LICENSE"])
+            includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "LICENSE"])
         }
     }
 }
@@ -226,9 +244,9 @@ task factoryJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'factory'
 
     doFirst {
-        from(createMCModInfo(3, name).parentFile)
+        from(createMCModInfo(4, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "buildcraft/BuildCraftFactory**", "LICENSE"])
+            includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "LICENSE"])
         }
     }
 }
@@ -239,9 +257,9 @@ task siliconJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'silicon'
 
     doFirst {
-        from(createMCModInfo(4, name).parentFile)
+        from(createMCModInfo(5, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "buildcraft/BuildCraftSilicon**", "LICENSE"])
+            includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "LICENSE"])
         }
     }
 }
@@ -252,9 +270,9 @@ task transportJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'transport'
 
     doFirst {
-        from(createMCModInfo(5, name).parentFile)
+        from(createMCModInfo(6, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "buildcraft/BuildCraftTransport**", "LICENSE"])
+            includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "LICENSE"])
         }
     }
 }
@@ -265,9 +283,20 @@ task roboticsJar(type: Jar, dependsOn: reobfJar) {
     classifier = 'robotics'
 
     doFirst {
-        from(createMCModInfo(6, name).parentFile)
+        from(createMCModInfo(7, name).parentFile)
         from(project.ext.jarFile) {
-            includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "buildcraft/BuildCraftRobotics**", "LICENSE"])
+            includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "LICENSE"])
+        }
+    }
+}
+
+task allJar(type: Jar, dependsOn:reobfJar) {
+
+    destinationDir = file("modules")
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll("**")
         }
     }
 }
@@ -305,9 +334,10 @@ clean{
 artifacts {
     // the default jar is already here by default
     archives sourceJar
-    archives apiJar
 
     // Modules
+    archives apiJar
+    archives libJar
     archives coreJar
     archives buildersJar
     archives energyJar
@@ -315,6 +345,7 @@ artifacts {
     archives siliconJar
     archives transportJar
     archives roboticsJar
+    archives allJar
 }
 
 def sftp(String subPath, Closure antFileset = {}) {

@@ -18,8 +18,9 @@ import net.minecraftforge.event.ForgeEventFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BlockUtils;
+
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotBreak extends AIRobot {
@@ -90,7 +91,7 @@ public class AIRobotBreak extends AIRobot {
                 }
             }
 
-            if (continueBreaking && BlockUtils.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem(), robot.getPosition())) {
+            if (continueBreaking && BlockUtil.harvestBlock((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem(), robot.getPosition())) {
                 robot.worldObj.playAuxSFXAtEntity(null, 2001, blockToBreak, Block.getStateId(state));
 
                 if (robot.getHeldItem() != null) {
@@ -136,7 +137,7 @@ public class AIRobotBreak extends AIRobot {
             }
         }
 
-        f = ForgeEventFactory.getBreakSpeed(BlockUtils.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()), state,
+        f = ForgeEventFactory.getBreakSpeed(BlockUtil.getFakePlayerWithTool((WorldServer) robot.worldObj, blockToBreak, robot.getHeldItem()), state,
                 f, blockToBreak);
         return f < 0 ? 0 : f;
     }

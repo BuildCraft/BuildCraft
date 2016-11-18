@@ -52,6 +52,7 @@ import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.AxisOrder;
@@ -396,7 +397,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                         IBlockState state = worldObj.getBlockState(pos);
                         Block block = state.getBlock();
 
-                        if (!BlockUtils.canChangeBlock(state, worldObj, pos)) {
+                        if (!BlockUtil.canChangeBlock(state, worldObj, pos)) {
                             blockedColumns[searchX][searchZ] = true;
                         } else if (!BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock)) {
                             visitList.add(new int[] { bx, by, bz });
@@ -501,7 +502,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private boolean isQuarriableBlock(BlockPos pos) {
         IBlockState state = worldObj.getBlockState(pos);
         Block block = state.getBlock();
-        return BlockUtils.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
+        return BlockUtil.canChangeBlock(state, worldObj, pos) && !BuildCraftAPI.isSoftBlock(worldObj, pos) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
     }
 
     @Override

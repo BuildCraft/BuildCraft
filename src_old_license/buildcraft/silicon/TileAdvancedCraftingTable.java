@@ -32,10 +32,11 @@ import buildcraft.api.mj.ILaserTarget;
 
 import buildcraft.core.lib.inventory.*;
 import buildcraft.core.lib.network.PacketSlotChange;
-import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.inventory.filter.CraftingFilter;
+import buildcraft.lib.misc.CraftingUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -385,7 +386,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
         internalInventoryCrafting.recipeUpdate(true);
 
         if (this.currentRecipe == null || !this.currentRecipe.matches(internalInventoryCrafting, worldObj)) {
-            currentRecipe = CraftingUtils.findMatchingRecipe(internalInventoryCrafting, worldObj);
+            currentRecipe = CraftingUtil.findMatchingRecipe(internalInventoryCrafting, worldObj);
         }
 
         internalInventoryCrafting.recipeUpdate(false);

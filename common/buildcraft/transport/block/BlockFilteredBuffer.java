@@ -27,7 +27,7 @@ public class BlockFilteredBuffer extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
-            BCTransportGuis.FILTERED_BUFFER.openGUI(player, pos);
+            BCTransportGuis.FILTERED_BUFFER.openGui(player, pos);
         }
         return true;
     }

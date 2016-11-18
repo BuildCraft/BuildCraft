@@ -46,9 +46,9 @@ import buildcraft.core.builders.BuildingSlotEntity;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.inventory.InventoryCopy;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.inventory.InventoryIterator;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
@@ -378,7 +378,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                     continue;
                 }
 
-                if (BlockUtils.isUnbreakableBlock(world, slot.pos)) {
+                if (BlockUtil.isUnbreakableBlock(world, slot.pos)) {
                     // if the block can't be broken, just forget this iterator
                     iterator.remove();
                     markLocationUsed(slot.pos);

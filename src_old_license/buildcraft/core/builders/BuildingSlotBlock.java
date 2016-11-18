@@ -31,7 +31,7 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.IndexRequirementMap;
-import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
@@ -70,7 +70,7 @@ public class BuildingSlotBlock extends BuildingSlot {
             if (!getSchematic().isAlreadyBuilt(context, pos)) {
                 context.world().sendBlockBreakProgress(pos.hashCode(), pos, -1);
                 if (BuildCraftBuilders.dropBrokenBlocks) {
-                    BlockUtils.breakBlock((WorldServer) context.world(), pos, pos);
+                    BlockUtil.breakBlock((WorldServer) context.world(), pos, pos);
                     return false;
                 } else {
                     context.world().setBlockToAir(pos);

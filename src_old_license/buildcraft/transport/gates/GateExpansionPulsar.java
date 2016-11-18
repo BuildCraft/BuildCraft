@@ -16,7 +16,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
-import buildcraft.transport.statements.ActionEnergyPulsar;
+import buildcraft.transport.statements.ActionPowerPulsar;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
 public final class GateExpansionPulsar extends GateExpansionBuildcraft implements IGateExpansion {
@@ -60,7 +60,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 
         @Override
         public boolean resolveAction(IStatement action, int count) {
-            if (action instanceof ActionEnergyPulsar) {
+            if (action instanceof ActionPowerPulsar) {
                 enablePulse(count);
                 return true;
             } else if (action instanceof ActionSingleEnergyPulse) {

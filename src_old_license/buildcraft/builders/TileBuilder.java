@@ -56,6 +56,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankManager;
+import buildcraft.lib.inventory.InventoryIterator;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.Box;

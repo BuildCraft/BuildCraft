@@ -27,7 +27,9 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IStackFilter;
-import buildcraft.core.lib.utils.BlockUtils;
+
+import buildcraft.lib.inventory.InventoryIterator;
+import buildcraft.lib.misc.BlockUtil;
 
 public final class InvUtils {
     private static final boolean DISABLE_INVENTORY_WRAPPERS = false;
@@ -253,7 +255,7 @@ public final class InvUtils {
      * @return Modified inventory if double chest, unmodified otherwise. */
     public static IInventory getInventory(IInventory inv) {
         if (inv instanceof TileEntityChest) {
-            TileEntityChest adjacent = BlockUtils.getOtherDoubleChest((TileEntityChest) inv);
+            TileEntityChest adjacent = BlockUtil.getOtherDoubleChest((TileEntityChest) inv);
             if (adjacent != null) {
                 return new InventoryLargeChest("", (TileEntityChest) inv, adjacent);
             }

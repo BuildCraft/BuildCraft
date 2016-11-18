@@ -17,8 +17,8 @@ import net.minecraft.world.WorldServer;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockMarker;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 
 public class BlockConstructionMarker extends BlockMarker {
     public BlockConstructionMarker() {}
@@ -38,7 +38,7 @@ public class BlockConstructionMarker extends BlockMarker {
     private boolean dropMarkerIfPresent(World world, BlockPos pos, boolean onBreak) {
         TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
         if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
-            BlockUtils.dropItem((WorldServer) world, pos, 6000, marker.itemBlueprint);
+            BlockUtil.dropItem((WorldServer) world, pos, 6000, marker.itemBlueprint);
             marker.itemBlueprint = null;
             if (!onBreak) {
                 marker.bluePrintBuilder = null;

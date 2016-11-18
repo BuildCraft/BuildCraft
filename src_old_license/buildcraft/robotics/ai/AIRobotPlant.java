@@ -8,9 +8,10 @@ import net.minecraft.world.WorldServer;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BlockUtils;
+
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotPlant extends AIRobot {
@@ -46,7 +47,7 @@ public class AIRobotPlant extends AIRobot {
                 setSuccess(false);
             }
             if (robot.getHeldItem().stackSize > 0) {
-                BlockUtils.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, robot.getHeldItem());
+                BlockUtil.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, robot.getHeldItem());
             }
             robot.setItemInUse(null);
             terminate();

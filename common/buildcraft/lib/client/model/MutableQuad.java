@@ -255,6 +255,8 @@ public class MutableQuad {
 
     public MutableQuad multColourd(double by) {for (MutableVertex v : verticies) v.multColourd(by); return this;}
     public MutableQuad multColourd(double r, double g, double b, double a) {for (MutableVertex v : verticies) v.multColourd(r, g, b, a); return this;}
+    public MutableQuad multColouri(int rgba) {for (MutableVertex v : verticies) v.multColouri(rgba); return this;}
+    public MutableQuad multColouri(int r, int g, int b, int a) {for (MutableVertex v : verticies) v.multColouri(r, g, b, a); return this;}
 
     public MutableQuad texFromSprite(TextureAtlasSprite s) {for (MutableVertex v : verticies) v.texFromSprite(s); return this;}
 

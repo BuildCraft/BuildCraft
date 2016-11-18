@@ -6,7 +6,7 @@
     },
     "elements": [
         {
-            "from": [ 0, 6, 6 ],
+            "from": [ "2 - stage * 2", 6, 6 ],
             "to": [ 2, 10, 10 ],
             "visible":"on",
             "shade": "false",

@@ -31,8 +31,7 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
              * doesn't exist. Just print out a warning to make sure they know that this is why. Print out a full stack
              * trace because this really shouldn't happen, and it makes it much more obvious in the logfile where the
              * error message is. */
-            throw new IllegalStateException("For some reason, the block model for the chute block was missing!"
-                + "\nThis is not meant to happen, you have a bad JAR file!");
+            throw new IllegalStateException("For some reason, the block model for the chute block was missing!" + "\nThis is not meant to happen, you have a bad JAR file!");
         }
         List<BakedQuad> lst = Lists.newArrayList(parent.getGeneralQuads());
 

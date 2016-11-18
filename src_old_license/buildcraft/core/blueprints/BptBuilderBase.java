@@ -34,6 +34,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.builders.*;
 import buildcraft.core.lib.utils.*;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.AxisOrder;
 import buildcraft.lib.misc.data.Box;
@@ -177,7 +178,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     private int getBlockBreakEnergy(BuildingSlotBlock slot) {
-        return BlockUtils.computeBlockBreakEnergy(context.world(), slot.pos);
+        return BlockUtil.computeBlockBreakEnergy(context.world(), slot.pos);
     }
 
     protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {

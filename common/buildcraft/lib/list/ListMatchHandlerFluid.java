@@ -7,10 +7,10 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 
 import buildcraft.api.lists.ListMatchHandler;
 
-import buildcraft.core.lib.utils.FluidUtils;
 import buildcraft.lib.misc.StackUtil;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
@@ -25,8 +25,8 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
                 }
             }
         } else if (type == Type.MATERIAL) {
-            FluidStack fStack = FluidUtils.getFluidStackFromItemStack(stack);
-            FluidStack fTarget = FluidUtils.getFluidStackFromItemStack(target);
+            FluidStack fStack = FluidUtil.getFluidContained(stack);
+            FluidStack fTarget = FluidUtil.getFluidContained(target);
             if (fStack != null && fTarget != null) {
                 return fStack.isFluidEqual(fTarget);
             }
@@ -39,7 +39,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
         if (type == Type.TYPE) {
             return FluidContainerRegistry.isContainer(stack);
         } else if (type == Type.MATERIAL) {
-            return FluidUtils.getFluidStackFromItemStack(stack) != null;
+            return FluidUtil.getFluidContained(stack) != null;
         }
         return false;
     }
@@ -47,7 +47,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
     @Override
     public List<ItemStack> getClientExamples(Type type, ItemStack stack) {
         if (type == Type.MATERIAL) {
-            FluidStack fStack = FluidUtils.getFluidStackFromItemStack(stack);
+            FluidStack fStack = FluidUtil.getFluidContained(stack);
             if (fStack != null) {
                 List<ItemStack> examples = new ArrayList<>();
                 for (FluidContainerRegistry.FluidContainerData data : FluidContainerRegistry.getRegisteredFluidContainerData()) {

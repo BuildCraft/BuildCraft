@@ -9,7 +9,8 @@ import net.minecraft.entity.item.EntityItem;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.InventoryIterator;
+
+import buildcraft.lib.inventory.InventoryIterator;
 
 public class AIRobotDisposeItems extends AIRobot {
 

@@ -12,6 +12,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 
+import buildcraft.core.BCCoreSprites;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -26,23 +27,28 @@ public class StatementParamGateSideOnly implements IStatementParameter {
 
     }
 
+    StatementParamGateSideOnly(boolean def) {
+        isOn = def;
+    }
+
     @Override
     public ItemStack getItemStack() {
         return null;
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
-        if (!isOn) {
-            return null;
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getGuiSprite() {
+        if (isOn) {
+            return BCCoreSprites.PARAM_GATE_SIDE_ONLY.getSprite();
         } else {
-            return sprite.getSprite();
+            return null;
         }
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        isOn = !isOn;
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return false;
     }
 
     @Override
@@ -70,5 +76,13 @@ public class StatementParamGateSideOnly implements IStatementParameter {
     @Override
     public IStatementParameter rotateLeft() {
         return this;
+    }
+
+    @Override
+    public IStatementParameter[] getPossible() {
+        IStatementParameter[] possible = new IStatementParameter[2];
+        possible[0] = isOn ? this : new StatementParamGateSideOnly(true);
+        possible[1] = !isOn ? this : new StatementParamGateSideOnly(false);
+        return possible;
     }
 }

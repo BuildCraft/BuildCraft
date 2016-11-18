@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
 
 import buildcraft.lib.BCLibConfig;
@@ -37,6 +38,7 @@ public class ColourUtil {
     private static final TextFormatting[] COLOUR_TO_FORMAT = new TextFormatting[16];
     private static final TextFormatting[] REPLACE_FOR_WHITE = new TextFormatting[16];
     private static final TextFormatting[] REPLACE_FOR_BLACK = new TextFormatting[16];
+    private static final TextFormatting[] FACE_TO_FORMAT = new TextFormatting[6];
 
     static {
         for (int i = 0; i < 16; i++) {
@@ -74,6 +76,13 @@ public class ColourUtil {
         COLOUR_TO_FORMAT[EnumDyeColor.PURPLE.ordinal()] = TextFormatting.DARK_PURPLE;
         COLOUR_TO_FORMAT[EnumDyeColor.MAGENTA.ordinal()] = TextFormatting.LIGHT_PURPLE;
         COLOUR_TO_FORMAT[EnumDyeColor.PINK.ordinal()] = TextFormatting.LIGHT_PURPLE;
+
+        FACE_TO_FORMAT[EnumFacing.UP.ordinal()] = TextFormatting.WHITE;
+        FACE_TO_FORMAT[EnumFacing.DOWN.ordinal()] = TextFormatting.BLACK;
+        FACE_TO_FORMAT[EnumFacing.NORTH.ordinal()] = TextFormatting.RED;
+        FACE_TO_FORMAT[EnumFacing.SOUTH.ordinal()] = TextFormatting.BLUE;
+        FACE_TO_FORMAT[EnumFacing.EAST.ordinal()] = TextFormatting.YELLOW;
+        FACE_TO_FORMAT[EnumFacing.WEST.ordinal()] = TextFormatting.GREEN;
     }
 
     public static String getDyeName(EnumDyeColor colour) {
@@ -101,6 +110,11 @@ public class ColourUtil {
         return StringUtilBC.localize("item.fireworksCharge." + colour.getUnlocalizedName());
     }
 
+    /** Returns a localised name for the given face. */
+    public static String getLocalized(EnumFacing face) {
+        return StringUtilBC.localize("direction." + face.getName());
+    }
+
     /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
      * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
      * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
@@ -110,6 +124,18 @@ public class ColourUtil {
             return formatColour.toString() + getTextFormatForBlack(formatColour) + getLocalized(colour) + TextFormatting.RESET;
         } else {
             return getLocalized(colour);
+        }
+    }
+
+    /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
+     * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
+     * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
+    public static String getTextFullTooltip(EnumFacing face) {
+        if (BCLibConfig.useColouredLabels) {
+            TextFormatting formatColour = convertFaceToTextFormat(face);
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + getLocalized(face) + TextFormatting.RESET;
+        } else {
+            return getLocalized(face);
         }
     }
 
@@ -128,6 +154,11 @@ public class ColourUtil {
     /** Converts an {@link EnumDyeColor} into an equivalent {@link TextFormatting} for display. */
     public static TextFormatting convertColourToTextFormat(EnumDyeColor colour) {
         return COLOUR_TO_FORMAT[colour.ordinal()];
+    }
+
+    /** Converts an {@link EnumFacing} into an equivalent {@link TextFormatting} for display. */
+    public static TextFormatting convertFaceToTextFormat(EnumFacing face) {
+        return FACE_TO_FORMAT[face.ordinal()];
     }
 
     public static int swapArgbToAbgr(int argb) {

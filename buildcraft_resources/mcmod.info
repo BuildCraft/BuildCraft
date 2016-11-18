@@ -1,22 +1,5 @@
 [
 {
-  "modid": "buildcraftcore",
-  "name": "BuildCraft",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",
-  "credits": "Created by SpaceToad",
-  "logoFile": "assets/buildcraft/logo.png",
-  "url": "http://www.mod-buildcraft.com/",
-  "updateUrl": "",
-  "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent":"",
-  "screenshots": [],
-  "dependencies": [
-     "mod_MinecraftForge"
-  ]
-},
-{
   "modid": "buildcraftlib",
   "name": "BuildCraft Lib",
   "version": "${version}",
@@ -28,6 +11,23 @@
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
   "parent":"buildcraftcore",
+  "screenshots": [],
+  "dependencies": [
+     "mod_MinecraftForge"
+  ]
+},
+{
+  "modid": "buildcraftcore",
+  "name": "BuildCraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",
+  "credits": "Created by SpaceToad",
+  "logoFile": "assets/buildcraft/logo.png",
+  "url": "http://www.mod-buildcraft.com/",
+  "updateUrl": "",
+  "authorList": [ "SpaceToad", "BuildCraft Team" ],
+  "parent":"",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"

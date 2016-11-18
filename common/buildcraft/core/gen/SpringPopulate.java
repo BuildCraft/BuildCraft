@@ -76,7 +76,7 @@ public class SpringPopulate {
 
             world.setBlockState(new BlockPos(posX, y, posZ), springState);
 
-            for (int j = y + 2; j < world.getActualHeight(); j++) {
+            for (int j = y + 2; j < world.getHeight(); j++) {
                 if (world.isAirBlock(new BlockPos(posX, j, posZ))) {
                     break;
                 } else {

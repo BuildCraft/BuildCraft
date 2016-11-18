@@ -49,7 +49,7 @@ public class PatternParameterXZDir implements IStatementParameter {
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         return sprites[direction & 3];
     }
 

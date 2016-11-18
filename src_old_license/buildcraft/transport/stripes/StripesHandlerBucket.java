@@ -15,7 +15,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.core.lib.utils.BlockUtils;
+
+import buildcraft.lib.misc.BlockUtil;
 
 public class StripesHandlerBucket implements IStripesHandler {
     private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
@@ -61,11 +62,11 @@ public class StripesHandlerBucket implements IStripesHandler {
         }
 
         IBlockState targetBlock = world.getBlockState(pos);
-        FluidStack fluidStack = BlockUtils.drainBlock(targetBlock, world, pos, true);
+        FluidStack fluidStack = BlockUtil.drainBlock(targetBlock, world, pos, true);
 
         if (fluidStack == null) {
             targetBlock = world.getBlockState(pos.down());
-            fluidStack = BlockUtils.drainBlock(targetBlock, world, pos.down(), true);
+            fluidStack = BlockUtil.drainBlock(targetBlock, world, pos.down(), true);
         }
 
         ItemStack filledBucket = getFilledBucket(fluidStack, targetBlock.getBlock());

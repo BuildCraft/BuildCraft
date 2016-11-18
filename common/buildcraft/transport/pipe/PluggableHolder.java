@@ -119,6 +119,8 @@ public final class PluggableHolder {
             pluggable.readPayload(buffer, netSide, ctx);
         } else if (id == ID_CREATE_PLUG) {
             readCreateInternal(buffer);
+        } else {
+            BCLog.logger.warn("[PluggableHolder] Unknown ID " + id);
         }
     }
 

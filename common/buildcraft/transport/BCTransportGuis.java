@@ -10,13 +10,18 @@ import net.minecraft.util.math.BlockPos;
 public enum BCTransportGuis {
     FILTERED_BUFFER,
     PIPE_DIAMOND,
-    PIPE_DIAMOND_WOOD;
+    PIPE_DIAMOND_WOOD,
+    GATE;
 
-    public void openGUI(EntityPlayer player) {
-        player.openGui(BCTransport.INSTANCE, ordinal(), player.getEntityWorld(), 0, 0, 0);
+    public void openGui(EntityPlayer player) {
+        openGui(player, 0, -1, 0);
     }
 
-    public void openGUI(EntityPlayer player, BlockPos pos) {
-        player.openGui(BCTransport.INSTANCE, ordinal(), player.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
+    public void openGui(EntityPlayer player, BlockPos pos) {
+        openGui(player, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public void openGui(EntityPlayer player, int x, int y, int z) {
+        player.openGui(BCTransport.INSTANCE, ordinal(), player.getEntityWorld(), x, y, z);
     }
 }

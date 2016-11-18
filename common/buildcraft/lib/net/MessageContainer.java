@@ -1,5 +1,7 @@
 package buildcraft.lib.net;
 
+import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 
@@ -52,8 +54,9 @@ public class MessageContainer implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(windowId);
-        buf.writeShort(payload.readableBytes());
-        buf.writeBytes(payload);
+        int length = payload.readableBytes();
+        buf.writeShort(length);
+        buf.writeBytes(payload, 0, length);
     }
 
     public enum Handler implements IMessageHandler<MessageContainer, IMessage> {
@@ -61,14 +64,18 @@ public class MessageContainer implements IMessage {
 
         @Override
         public IMessage onMessage(MessageContainer message, MessageContext ctx) {
-            int windowId = message.windowId;
-            EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
-            if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
-                ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
-                container.handleMessage(ctx, message.payload, ctx.side);
-                MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, getClass().getSimpleName());
+            try {
+                int windowId = message.windowId;
+                EntityPlayer player = BCLibProxy.getProxy().getPlayerForContext(ctx);
+                if (player != null && player.openContainer instanceof ContainerBC_Neptune && player.openContainer.windowId == windowId) {
+                    ContainerBC_Neptune container = (ContainerBC_Neptune) player.openContainer;
+                    container.handleMessage(ctx, message.payload, ctx.side);
+                    MessageUtil.ensureEmpty(message.payload, ctx.side == Side.CLIENT, getClass().getSimpleName());
+                }
+                return null;
+            } catch (IOException e) {
+                throw new Error(e);
             }
-            return null;
         }
     }
 }

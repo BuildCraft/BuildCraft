@@ -364,6 +364,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     }
 
     @Override
+    public void sendGuiMessage(PipeMessageReceiver to, IWriter writer) {
+        createAndSendGuiMessage(getReceiverId(to), (buffer) -> writer.write(buffer));
+    }
+
+    @Override
     public WireManager getWireManager() {
         return wireManager;
     }
@@ -371,6 +376,16 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     @Override
     public boolean fireEvent(PipeEvent event) {
         return eventBus.fireEvent(event);
+    }
+
+    @Override
+    public int getRedstoneInput(EnumFacing side) {
+        return 0;// TODO!
+    }
+
+    @Override
+    public boolean setRedstoneOutput(EnumFacing side, int value) {
+        return false;// TODO!
     }
 
     // Caps

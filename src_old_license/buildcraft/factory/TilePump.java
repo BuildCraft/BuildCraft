@@ -28,10 +28,10 @@ import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.lib.fluids.SingleUseTank;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.misc.data.Box;
 
@@ -107,13 +107,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
         BlockPos index = getNextIndexToPump(false);
 
-        FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index, false) : null;
+        FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index, false) : null;
         if (fluidToPump != null) {
             if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
                 if (getBattery().useEnergy(100, 100, false) > 0) {
                     if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
                         index = getNextIndexToPump(true);
-                        BlockUtils.drainBlock(worldObj, index, true);
+                        BlockUtil.drainBlock(worldObj, index, true);
                     }
 
                     tank.fill(fluidToPump, true);
@@ -153,7 +153,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isBlocked(BlockPos pos) {
-        Material mat = BlockUtils.getBlockState(worldObj, pos).getMaterial();
+        Material mat = BlockUtil.getBlockState(worldObj, pos).getMaterial();
         return mat.blocksMovement();
     }
 
@@ -245,7 +245,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         int y = aimY;
         int z = pos.getZ();
         BlockPos pos = new BlockPos(x, y, z);
-        Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlockState(worldObj, pos).getBlock());
+        Fluid pumpingFluid = BlockUtil.getFluid(BlockUtil.getBlockState(worldObj, pos).getBlock());
 
         if (pumpingFluid == null) {
             return;
@@ -290,9 +290,9 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
                 return;
             }
 
-            IBlockState state = BlockUtils.getBlockState(worldObj, pos);
+            IBlockState state = BlockUtil.getBlockState(worldObj, pos);
 
-            if (BlockUtils.getFluid(state.getBlock()) == pumpingFluid) {
+            if (BlockUtil.getFluid(state.getBlock()) == pumpingFluid) {
                 fluidsFound.add(index);
             }
 
@@ -304,7 +304,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isPumpableFluid(BlockPos pos) {
-        Fluid fluid = BlockUtils.getFluid(BlockUtils.getBlockState(worldObj, pos).getBlock());
+        Fluid fluid = BlockUtil.getFluid(BlockUtil.getBlockState(worldObj, pos).getBlock());
 
         if (fluid == null) {
             return false;
@@ -320,7 +320,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
             return false;
         }
 
-        FluidStack fluidStack = BlockUtils.drainBlock(state, worldObj, pos, false);
+        FluidStack fluidStack = BlockUtil.drainBlock(state, worldObj, pos, false);
 
         if (fluidStack == null || fluidStack.amount <= 0) {
             return false;

@@ -11,7 +11,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.core.lib.gui.widgets.ScrollbarElement;
+import buildcraft.lib.gui.elem.ScrollbarElement;
 
 public class ContainerBuilder extends BuildCraftContainer {
     IInventory playerInventory;

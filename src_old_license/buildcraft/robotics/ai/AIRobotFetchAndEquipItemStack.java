@@ -14,6 +14,7 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.lib.inventory.filter.AggregateFilter;
 import buildcraft.robotics.statements.ActionRobotFilterTool;
+import buildcraft.robotics.statements.ActionStationProvideItems;
 
 public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
@@ -75,15 +76,11 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
             return false;
         }
 
-        ITransactor trans = Transactor.getTransactorFor(tileInventory, robot.getDockingStation().getItemInputSide().face);
-
-        ItemStack itemFound = trans.remove(filter, true);
-
-        if (itemFound != null) {
-            robot.setItemInUse(itemFound);
+		ItemStack possible = AIRobotLoad.takeSingle(robot.getDockingStation(), filter, true);
+		if (possible == null) {
+		    return false;
+		}
+		robot.setItemInUse(possible);
             return true;
         }
-
-        return false;
-    }
 }

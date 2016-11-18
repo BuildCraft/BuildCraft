@@ -46,6 +46,7 @@ public class BCTransport {
         BCTransportPipes.preInit();
         BCTransportPlugs.preInit();
         BCTransportItems.preInit();
+        BCTransportStatements.preInit();
 
         CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);
         CreativeTabManager.setItem("buildcraft.gate", BCTransportItems.plugGate);

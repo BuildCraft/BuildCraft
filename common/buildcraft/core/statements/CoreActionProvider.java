@@ -9,10 +9,7 @@ import java.util.Collection;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionProvider;
-import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
 
@@ -27,6 +24,9 @@ public enum CoreActionProvider implements IActionProvider {
             res.add(BCCoreStatements.ACTION_REDSTONE);
         }
     }
+
+    @Override
+    public void addInternalSidedActions(Collection<IActionInternalSided> actions, IStatementContainer container, EnumFacing side) { }
 
     @Override
     public void addExternalActions(Collection<IActionExternal> res, EnumFacing side, TileEntity tile) {

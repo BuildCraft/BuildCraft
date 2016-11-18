@@ -62,7 +62,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
         return guiElements.stream().filter(elem -> elem.contains(x, y));
     }
 
-    protected void drawItemStackAt(ItemStack stack, int x, int y) {
+    public void drawItemStackAt(ItemStack stack, int x, int y) {
         RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(mc.thePlayer, stack, x, y);
         itemRender.renderItemOverlayIntoGUI(mc.fontRendererObj, stack, x, y, null);
@@ -78,6 +78,7 @@ public abstract class GuiBC8<C extends ContainerBC_Neptune> extends GuiContainer
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        RenderHelper.disableStandardItemLighting();
         this.lastPartialTicks = partialTicks;
         mouse.setMousePosition(mouseX, mouseY);
 

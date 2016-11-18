@@ -14,12 +14,10 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import buildcraft.api.items.IList;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.*;
 
 import buildcraft.core.BCCoreSprites;
+import buildcraft.core.BCCoreStatements;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.StringUtilBC;
@@ -110,5 +108,10 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
     @Override
     public IStatementParameter createParameter(int index) {
         return new StatementParameterItemStack();
+    }
+
+    @Override
+    public IStatement[] getPossible() {
+        return BCCoreStatements.TRIGGER_INVENTORY_ALL;
     }
 }

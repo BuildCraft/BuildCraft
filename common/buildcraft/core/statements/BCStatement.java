@@ -56,6 +56,11 @@ public abstract class BCStatement implements IStatement {
     }
 
     @Override
+    public IStatement[] getPossible() {
+        return new IStatement[] { this };
+    }
+
+    @Override
     public IStatementParameter createParameter(int index) {
         return null;
     }

@@ -12,8 +12,9 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BlockUtils;
+
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotHarvest extends AIRobot {
@@ -51,7 +52,7 @@ public class AIRobotHarvest extends AIRobot {
                 return;
             }
             for (ItemStack stack : drops) {
-                BlockUtils.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
+                BlockUtil.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
             }
         }
     }

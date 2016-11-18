@@ -25,16 +25,14 @@ public class GuiIcon implements ISimpleDrawable {
     }
 
     public GuiIcon(ResourceLocation texture, int u, int v, int width, int height) {
-        this(new RawSprite(texture, u, v, u + width, v + height, 256), 256);
+        this(new RawSprite(texture, u, v, width, height, 256), 256);
     }
 
     public GuiIcon offset(int u, int v) {
         RawSprite raw = (RawSprite) sprite;
         float uMin = raw.uMin + u / (float) textureSize;
         float vMin = raw.vMin + v / (float) textureSize;
-        float uMax = raw.uMax + u / (float) textureSize;
-        float vMax = raw.vMax + v / (float) textureSize;
-        return new GuiIcon(new RawSprite(raw.location, uMin, vMin, uMax, vMax), textureSize);
+        return new GuiIcon(new RawSprite(raw.location, uMin, vMin, raw.width, raw.height), textureSize);
     }
 
     public DynamicTexture createDynamicTexure(int scale) {

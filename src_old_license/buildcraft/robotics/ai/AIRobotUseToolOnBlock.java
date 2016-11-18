@@ -13,9 +13,10 @@ import net.minecraft.world.WorldServer;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.utils.BlockUtils;
+
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.NBTUtils;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
@@ -47,7 +48,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
             ItemStack stack = robot.getHeldItem();
 
             EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, robot.getPosition()).get();
-            if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock, EnumFacing.UP)) {
+            if (BlockUtil.useItemOnBlock(robot.worldObj, player, stack, useToBlock, EnumFacing.UP)) {
                 if (robot.getHeldItem().isItemStackDamageable()) {
                     robot.getHeldItem().damageItem(1, robot);
 
@@ -60,7 +61,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
             } else {
                 setSuccess(false);
                 if (!robot.getHeldItem().isItemStackDamageable()) {
-                    BlockUtils.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
+                    BlockUtil.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
                     robot.setItemInUse(null);
                 }
             }

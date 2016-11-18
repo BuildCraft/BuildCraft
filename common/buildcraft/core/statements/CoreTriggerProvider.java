@@ -9,10 +9,13 @@ import java.util.Collection;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.ITriggerProvider;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+
+import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
 
@@ -29,56 +32,60 @@ public enum CoreTriggerProvider implements ITriggerProvider {
             res.add(BCCoreStatements.TRIGGER_REDSTONE_INACTIVE);
         }
 
-        // if (TriggerEnergy.isTriggeringPipe(container.getTile()) ||
-        // TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
-        // res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
-        // res.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
-        // }
+        if (TriggerPower.isTriggeringTile(container.getTile())) {
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_LOW);
+        }
     }
+
+    @Override
+    public void addInternalSidedTriggers(Collection<ITriggerInternalSided> res, IStatementContainer container, EnumFacing side) {}
 
     @Override
     public void addExternalTriggers(Collection<ITriggerExternal> res, EnumFacing side, TileEntity tile) {
 
-//        boolean blockInventoryTriggers = false;
-//        boolean blockFluidHandlerTriggers = false;
-//
-//        if (tile instanceof IBlockDefaultTriggers) {
-//            blockInventoryTriggers = ((IBlockDefaultTriggers) tile).blockInventoryTriggers(side);
-//            blockFluidHandlerTriggers = ((IBlockDefaultTriggers) tile).blockFluidHandlerTriggers(side);
-//        }
-//
-//        if (!blockInventoryTriggers && tile instanceof IInventory) {
-//            boolean isSided = tile instanceof ISidedInventory;
-//            boolean addTriggers = false;
-//
-//            if (isSided) {
-//                int[] accessibleSlots = ((ISidedInventory) tile).getSlotsForFace(side.getOpposite());
-//                addTriggers = accessibleSlots != null && accessibleSlots.length > 0;
-//            }
-//
-//            if (addTriggers || (!isSided && ((IInventory) tile).getSizeInventory() > 0)) {
-//                res.add(BuildCraftCore.triggerEmptyInventory);
-//                res.add(BuildCraftCore.triggerContainsInventory);
-//                res.add(BuildCraftCore.triggerSpaceInventory);
-//                res.add(BuildCraftCore.triggerFullInventory);
-//                res.add(BuildCraftCore.triggerInventoryBelow25);
-//                res.add(BuildCraftCore.triggerInventoryBelow50);
-//                res.add(BuildCraftCore.triggerInventoryBelow75);
-//            }
-//        }
-//
-//        if (!blockFluidHandlerTriggers && tile instanceof IFluidHandler) {
-//            FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(side.getOpposite());
-//            if (tanks != null && tanks.length > 0) {
-//                res.add(BuildCraftCore.triggerEmptyFluid);
-//                res.add(BuildCraftCore.triggerContainsFluid);
-//                res.add(BuildCraftCore.triggerSpaceFluid);
-//                res.add(BuildCraftCore.triggerFullFluid);
-//                res.add(BuildCraftCore.triggerFluidContainerBelow25);
-//                res.add(BuildCraftCore.triggerFluidContainerBelow50);
-//                res.add(BuildCraftCore.triggerFluidContainerBelow75);
-//            }
-//        }
+        if (TriggerPower.isTriggeringTile(tile, side.getOpposite())) {
+            res.add(BCCoreStatements.TRIGGER_POWER_HIGH);
+            res.add(BCCoreStatements.TRIGGER_POWER_LOW);
+        }
+
+        boolean blockInventoryTriggers = false;
+        boolean blockFluidHandlerTriggers = false;
+
+        if (tile instanceof IBlockDefaultTriggers) {
+            blockInventoryTriggers = ((IBlockDefaultTriggers) tile).blockInventoryTriggers(side);
+            blockFluidHandlerTriggers = ((IBlockDefaultTriggers) tile).blockFluidHandlerTriggers(side);
+        }
+
+        if (!blockInventoryTriggers) {
+            IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
+            if (itemHandler != null) {
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_EMPTY);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_SPACE);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_CONTAINS);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_FULL);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_25);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_50);
+                res.add(BCCoreStatements.TRIGGER_INVENTORY_BELOW_75);
+            }
+        }
+
+        if (!blockFluidHandlerTriggers) {
+            IFluidHandler fluidHandler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+            if (fluidHandler != null) {
+
+                IFluidTankProperties[] liquids = fluidHandler.getTankProperties();
+                if (liquids != null && liquids.length > 0) {
+                    res.add(BCCoreStatements.TRIGGER_FLUID_EMPTY);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_SPACE);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_CONTAINS);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_FULL);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_25);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_50);
+                    res.add(BCCoreStatements.TRIGGER_FLUID_BELOW_75);
+                }
+            }
+        }
 
         if (tile instanceof IHasWork) {
             res.add(BCCoreStatements.TRIGGER_MACHINE_ACTIVE);

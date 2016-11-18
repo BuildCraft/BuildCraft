@@ -1,6 +1,7 @@
 #!/bin/bash
 # License checker program
 # Add users to "agreed.txt" if someone has agreed to the relicense
+# Add users to "unused_code.txt" if someone hasn't agreed to the relicese (yet) but their code isn't used anymore
 # Relicensable files will be output to "out/safe/[path]"
 # Files that need people to sign will be in "out/need/[path]"
 
@@ -8,13 +9,23 @@
 
 ## CONSTANTS
 
-agreedFile="license_checker/agreed.txt"
+agreeInput="license_checker/agreed.txt"
+unusedInput="license_checker/unused_code.txt"
+
 outDir="license_checker/out"
+agreedFile="license_checker/out/merged_agreed.txt"
 tempOutDir="license_checker/out/work"
 goodOutDir="license_checker/out/safe"
 badOutDir="license_checker/out/need"
 
 ## FUNCTIONS
+
+dispProgress() {
+    sp1="            "
+    sp2=$sp1$sp1$sp1
+    sp3=$sp2$sp2$sp2
+    printf "> $1$sp3\r"
+}
 
 testFile() {
     # arg 1 is the file
@@ -26,6 +37,7 @@ testFile() {
     # uniq                                  // Remove all but 1 of the duplicates
     local fld=$(dirname $1)
     local fle=$(basename $1)
+    dispProgress "$1"
     ( cd $fld && eval "git log --follow --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" ) > "$tempOutDir/$1.all"
     eval "grep -vf $agreedFile $tempOutDir/$1.all" > "$tempOutDir/$1.req"
     if [ -s "$tempOutDir/$1.req" ]; then
@@ -72,7 +84,6 @@ scanFiles() {
     do
         local f1=$file
         if [ -d $file ]; then
-            echo $file
             mkdir "$tempOutDir/$file"
             mkdir "$goodOutDir/$file"
             mkdir "$badOutDir/$file"
@@ -113,7 +124,11 @@ mkdir $tempOutDir
 mkdir $goodOutDir
 mkdir $badOutDir
 
+cat $agreeInput >> $agreedFile
+cat $unusedInput >> $agreedFile
+
 scanFolder "common"
+scanFolder "common_old_license"
 scanFolder "src_old_license"
 scanFolder "BuildCraft-Localization"
 scanFolder "buildcraft_resources"
@@ -122,3 +137,4 @@ testFolder "."
 eval "git log --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" > "license_checker/out/all"
 eval "grep -vf $agreedFile license_checker/out/all" > "license_checker/out/req"
 
+echo "done                                                                              "

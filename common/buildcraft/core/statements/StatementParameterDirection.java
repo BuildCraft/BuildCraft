@@ -19,11 +19,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.transport.IPipeTile;
 
 import buildcraft.lib.misc.StringUtilBC;
 
@@ -52,6 +52,10 @@ public class StatementParameterDirection implements IStatementParameter {
 
     }
 
+    public StatementParameterDirection(EnumFacing face) {
+        this.direction = face;
+    }
+
     @Nullable
     public EnumFacing getDirection() {
         return direction;
@@ -64,7 +68,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSprite() {
+    public TextureAtlasSprite getGuiSprite() {
         EnumFacing dir = getDirection();
         if (dir == null) {
             return null;
@@ -74,24 +78,8 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        EnumFacing direction = getDirection();
-        if (source.getTile() instanceof IPipeTile) {
-            for (int i = 0; i < 6; i++) {
-                int ord;
-                if (direction == null) {
-                    ord = 0;
-                } else {
-                    ord = direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1);
-                }
-                direction = EnumFacing.VALUES[ord % 6];
-                if (((IPipeTile) source.getTile()).isPipeConnected(getDirection())) {
-                    return;
-                }
-            }
-            direction = null;
-        }
-        this.direction = direction;
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return false;
     }
 
     @Override
@@ -147,5 +135,18 @@ public class StatementParameterDirection implements IStatementParameter {
             d.direction = dir.rotateY();
         }
         return d;
+    }
+
+    @Override
+    public IStatementParameter[] getPossible() {
+        IStatementParameter[] possible = new IStatementParameter[7];
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            if (part.face == direction) {
+                possible[part.getIndex()] = this;
+            } else {
+                possible[part.getIndex()] = new StatementParameterDirection(part.face);
+            }
+        }
+        return possible;
     }
 }
