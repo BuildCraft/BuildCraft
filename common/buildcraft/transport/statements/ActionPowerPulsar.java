@@ -7,10 +7,7 @@ package buildcraft.transport.statements;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.statements.IActionInternalSided;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.*;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.PipePluggable;
 
@@ -21,18 +18,18 @@ import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
 
-public class ActionPowerPulsar extends BCStatement implements IActionInternalSided {
+public class ActionPowerPulsar extends BCStatement implements IActionInternalSided, IActionSingle {
 
-    public final boolean on;
+    public final boolean constant;
 
-    public ActionPowerPulsar(boolean on) {
-        super("buildcraft:pulsar." + (on ? "on" : "off"), "buildcraft:pulsar.constant", "buildcraft.pulser.constant");
-        this.on = on;
+    public ActionPowerPulsar(boolean constant) {
+        super("buildcraft:pulsar." + (constant ? "constant" : "single"), "buildcraft.pulser.constant" + (constant ? "constant" : "single"));
+        this.constant = constant;
     }
 
     @Override
     public String getDescription() {
-        return StringUtilBC.localize("gate.action.pulsar." + (on ? "on" : "off"));
+        return StringUtilBC.localize(constant ? "gate.action.pulsar.constant" : "gate.action.pulsar.single");
     }
 
     @Override
@@ -43,17 +40,23 @@ public class ActionPowerPulsar extends BCStatement implements IActionInternalSid
             PipePluggable plug = pipe.getPluggable(side);
             if (plug instanceof PluggablePulsar) {
                 PluggablePulsar pulsar = (PluggablePulsar) plug;
-                boolean before = pulsar.isPulsing;
-                if (before != on) {
-                    pulsar.setPulsing(on);
+                if (constant) {
+                    pulsar.enablePulsar();
+                } else {
+                    pulsar.addSinglePulse();
                 }
             }
         }
     }
 
     @Override
+    public boolean singleActionTick() {
+        return !constant;
+    }
+
+    @Override
     public SpriteHolder getSpriteHolder() {
-        return on ? BCTransportSprites.ACTION_PULSAR_ON : BCTransportSprites.ACTION_PULSAR_OFF;
+        return constant ? BCTransportSprites.ACTION_PULSAR_CONSTANT : BCTransportSprites.ACTION_PULSAR_SINGLE;
     }
 
     @Override

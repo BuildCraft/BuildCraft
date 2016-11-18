@@ -28,9 +28,8 @@ public enum TransportActionProvider implements IActionProvider {
             IPipeHolder holder = gate.getPipeHolder();
             PipePluggable plug = holder.getPluggable(side);
             if (plug instanceof PluggablePulsar) {
-                actions.add(BCTransportStatements.ACTION_PULSAR_OFF);
-                actions.add(BCTransportStatements.ACTION_PULSAR_ON);
-                // actions.add(BCTransportStatements.ACTION_PULSAR_SINGLE);
+                actions.add(BCTransportStatements.ACTION_PULSAR_CONSTANT);
+                actions.add(BCTransportStatements.ACTION_PULSAR_SINGLE);
             }
         }
     }

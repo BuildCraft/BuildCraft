@@ -127,9 +127,6 @@ public class BCTransportRecipes {
             builder.map('m', BCCoreItems.diamondShard);
             makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.DIAMOND);
 
-            builder.map('m', Items.PRISMARINE_SHARD);
-            makeGateRecipe(builder, EnumGateMaterial.IRON, EnumGateModifier.PRISMARINE);
-
             // And Gate <-> Or Gate (shapeless)
             for (EnumGateMaterial material : EnumGateMaterial.VALUES) {
                 if (material == EnumGateMaterial.CLAY_BRICK) {

@@ -6,8 +6,7 @@ public enum EnumGateModifier {
     NO_MODIFIER(0, 0, 1),
     LAPIS(1, 0, 1),
     QUARTZ(1, 1, 2),
-    DIAMOND(2, 2, 2),
-    PRISMARINE(3, 3, 2);
+    DIAMOND(3, 3, 2);
 
     public static final EnumGateModifier[] VALUES = values();
 

@@ -9,17 +9,15 @@ import buildcraft.transport.statements.TransportTriggerProvider;
 
 public class BCTransportStatements {
 
-    public static final ActionPowerPulsar ACTION_PULSAR_ON;
-    public static final ActionPowerPulsar ACTION_PULSAR_OFF;
-    // public static final ActionPowerPulsarSingle ACTION_PULSAR_SINGLE;
+    public static final ActionPowerPulsar ACTION_PULSAR_CONSTANT;
+    public static final ActionPowerPulsar ACTION_PULSAR_SINGLE;
 
     public static final IStatement[] ACTION_PULSAR;
 
     static {
-        ACTION_PULSAR_ON = new ActionPowerPulsar(true);
-        ACTION_PULSAR_OFF = new ActionPowerPulsar(false);
-        // ACTION_PULSAR_SINGLE = new ActionPowerPulsarSingle();
-        ACTION_PULSAR = new IStatement[] { ACTION_PULSAR_ON, ACTION_PULSAR_OFF /* , ACTION_PULSAR_SINGLE */ };
+        ACTION_PULSAR_CONSTANT = new ActionPowerPulsar(true);
+        ACTION_PULSAR_SINGLE = new ActionPowerPulsar(false);
+        ACTION_PULSAR = new IStatement[] { ACTION_PULSAR_CONSTANT, ACTION_PULSAR_SINGLE };
     }
 
     public static void preInit() {

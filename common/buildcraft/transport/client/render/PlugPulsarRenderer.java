@@ -29,6 +29,9 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
         }
 
         int index = side.ordinal() + (isPulsing ? 6 : 0);
+        if (isPulsing) {
+            cache[index] = null;
+        }
         if (cache[index] == null) {
             MutableQuad[] quads = BCTransportModels.getPulsarDynQuads(isPulsing, stage);
             Matrix4f transform = MatrixUtil.rotateTowardsFace(side);
@@ -38,6 +41,9 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
                     q.setCalculatedDiffuse();
                     q.setShade(false);
                 }
+            }
+            if (isPulsing) {
+                return quads;
             }
             cache[index] = quads;
         }
@@ -51,7 +57,7 @@ public class PlugPulsarRenderer implements IPluggableDynamicRenderer {
     @Override
     public void render(double x, double y, double z, float partialTicks, VertexBuffer vb) {
         vb.setTranslation(x, y, z);
-        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsing, toRender.getStage(partialTicks))) {
+        for (MutableQuad q : getFromCache(toRender.side, toRender.isPulsing(), toRender.getStage(partialTicks))) {
             q.render(vb);
         }
         vb.setTranslation(0, 0, 0);

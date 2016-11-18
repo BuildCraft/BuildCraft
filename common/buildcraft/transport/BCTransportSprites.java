@@ -16,8 +16,7 @@ public class BCTransportSprites {
     public static final SpriteHolder NOTHING_FILTERED_BUFFER_SLOT;
     public static final SpriteHolder PIPE_COLOUR, COLOUR_ITEM_BOX;
 
-    public static final SpriteHolder ACTION_PULSAR_ON;
-    public static final SpriteHolder ACTION_PULSAR_OFF;
+    public static final SpriteHolder ACTION_PULSAR_CONSTANT;
     public static final SpriteHolder ACTION_PULSAR_SINGLE;
 
     static {
@@ -26,8 +25,7 @@ public class BCTransportSprites {
         PIPE_COLOUR = getHolder("pipes/overlay_stained");
         COLOUR_ITEM_BOX = getHolder("pipes/colour_item_box");
 
-        ACTION_PULSAR_ON = getHolder("triggers/action_pulsar_on");
-        ACTION_PULSAR_OFF = getHolder("triggers/action_pulsar_off");
+        ACTION_PULSAR_CONSTANT = getHolder("triggers/action_pulsar_on");
         ACTION_PULSAR_SINGLE = getHolder("triggers/action_pulsar_single");
     }
 
