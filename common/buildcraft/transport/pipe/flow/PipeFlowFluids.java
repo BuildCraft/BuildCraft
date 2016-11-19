@@ -4,14 +4,21 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.transport.neptune.IFlowFluid;
 import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeFlow;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid {
+
+    private final int fluidPerTick = PipeAPI.getFluidPerTick(pipe.getDefinition());
+
+    private FluidStack currentFluid;
+
     public PipeFlowFluids(IPipe pipe) {
         super(pipe);
     }

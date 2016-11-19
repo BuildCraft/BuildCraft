@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fluids.Fluid;
@@ -101,7 +102,7 @@ public class FluidRenderer {
             sideRender = DEFAULT_FACES;
         }
 
-        double height = MathUtil.clamp(amount / cap, 0, 1);
+        double height = MathHelper.clamp_double(amount / cap, 0, 1);
         final Vec3d realMin, realMax;
         if (fluid.getFluid().isGaseous(fluid)) {
             realMin = VecUtil.replaceValue(min, Axis.Y, MathUtil.interp(1 - height, min.yCoord, max.yCoord));
