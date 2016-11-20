@@ -6,11 +6,8 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.mj.IMjConnector;
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
-import buildcraft.api.transport.neptune.PipeBehaviour;
-import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.filter.StackFilter;
 
@@ -59,6 +56,8 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
         PipeFlow flow = pipe.getFlow();
         if (flow instanceof IFlowItems) {
             ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), StackFilter.ALL);
+        } else if (flow instanceof IFlowFluid) {
+            ((IFlowFluid) flow).tryExtractFluid(250, getCurrentDir(), null);
         }
         return 0;
     }

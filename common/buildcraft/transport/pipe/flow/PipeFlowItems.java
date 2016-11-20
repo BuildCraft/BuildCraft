@@ -352,6 +352,10 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             return stack;
         }
 
+        if (speed < 0.01) {
+            speed = 0.01;
+        }
+
         // Try insert
 
         PipeEventItem.TryInsert tryInsert = new PipeEventItem.TryInsert(pipe.getHolder(), this, colour, from, stack);

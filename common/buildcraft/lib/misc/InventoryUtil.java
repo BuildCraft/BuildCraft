@@ -91,7 +91,7 @@ public class InventoryUtil {
             TileEntity tile = world.getTileEntity(pos.offset(face));
             IInjectable injectable = ItemInjectableHelper.getIjectable(tile, face.getOpposite());
             if (injectable != null) {
-                stack = injectable.injectItem(stack, true, face.getOpposite(), null);
+                stack = injectable.injectItem(stack, true, face.getOpposite(), null, 0);
                 if (StackUtil.isInvalid(stack)) {
                     return StackUtil.INVALID_STACK;
                 }
