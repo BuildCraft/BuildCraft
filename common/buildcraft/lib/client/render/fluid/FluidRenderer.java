@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.misc.MathUtil;
+import buildcraft.lib.misc.RenderUtil;
 import buildcraft.lib.misc.VecUtil;
 
 /** Can render 3D fluid cuboid's, up to 1x1x1 in size. Note that they *must* be contained within the 1x1x1 block space -
@@ -128,7 +129,7 @@ public class FluidRenderer {
         final double yb = realMax.yCoord;
         final double zb = realMax.zCoord;
 
-        vertex.colouri(fluid.getFluid().getColor(fluid));
+        vertex.colouri(RenderUtil.swapARGBforABGR(fluid.getFluid().getColor(fluid)));
 
         texmap = TexMap.XZ;
         // TODO: Enable/disable inversion for the correct faces
