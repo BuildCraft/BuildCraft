@@ -16,11 +16,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluids.SingleUseTank;
@@ -107,7 +108,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             // noinspection unchecked
-            return (T) new IFluidHandler() {
+            return (T) new IFluidHandlerAdv() {
                 @Override
                 public IFluidTankProperties[] getTankProperties() {
                     return tank.getTankProperties();
@@ -185,6 +186,20 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
                     FluidStack result = null;
                     for (Tank tank : getTanks()) {
                         FluidStack drained = tank.drain(maxDrain, doDrain);
+                        if (result == null) {
+                            result = drained;
+                        } else if (drained != null) {
+                            result.amount += drained.amount;
+                        }
+                    }
+                    return result;
+                }
+
+                @Override
+                public FluidStack drain(IFluidFilter filter, int maxDrain, boolean doDrain) {
+                    FluidStack result = null;
+                    for (Tank tank : getTanks()) {
+                        FluidStack drained = tank.drain(filter, maxDrain, doDrain);
                         if (result == null) {
                             result = drained;
                         } else if (drained != null) {

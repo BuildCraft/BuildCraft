@@ -29,16 +29,14 @@ import buildcraft.api.inventory.IItemTransactor;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.PipeEventItem.ItemEntry;
-import buildcraft.api.transport.neptune.IFlowItems;
-import buildcraft.api.transport.neptune.IPipe;
+import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipe.ConnectedType;
-import buildcraft.api.transport.neptune.IPipeHolder;
-import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.inventory.ItemTransactorHelper;
 import buildcraft.lib.inventory.NoSpaceTransactor;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.misc.data.DelayedList;
+import buildcraft.transport.client.render.PipeFlowRendererItems;
 import buildcraft.transport.pipe.flow.TravellingItem.EnumTravelState;
 
 public class PipeFlowItems extends PipeFlow implements IFlowItems {
@@ -508,7 +506,7 @@ public class PipeFlowItems extends PipeFlow implements IFlowItems {
             return 0.25;
         }
     }
-
+    
     @SideOnly(Side.CLIENT)
     public List<TravellingItem> getAllItemsForRender() {
         List<TravellingItem> all = new ArrayList<>();

@@ -4,23 +4,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.RayTraceResult;
 
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.core.IStackFilter;
+import buildcraft.api.transport.neptune.IFlowFluid;
 import buildcraft.api.transport.neptune.IFlowItems;
 import buildcraft.api.transport.neptune.IItemPluggable;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
-import buildcraft.api.transport.neptune.PipeFlow;
 
-import buildcraft.lib.inventory.filter.DelegatingItemHandlerFilter;
-import buildcraft.lib.inventory.filter.InvertedStackFilter;
-import buildcraft.lib.inventory.filter.StackFilter;
+import buildcraft.lib.inventory.filter.*;
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.StackUtil;
 import buildcraft.lib.tile.item.ItemHandlerSimple;
@@ -136,24 +137,45 @@ public class PipeBehaviourWoodDiamond extends PipeBehaviourWood {
     }
 
     @Override
-    public long receivePower(long microJoules, boolean simulate) {
-        // TODO: Make this require more or less than 1 Mj Per item
-        // Also make this extract different numbers of items depending
-        // on how much power was put in
+    protected int extractItems(IFlowItems flow, EnumFacing dir, int count) {
+        if (filters.getStackInSlot(currentFilter) == null) {
+            advanceFilter();
+        }
+        int extracted = flow.tryExtractItems(1, getCurrentDir(), getStackFilter());
+        if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
+            advanceFilter();
+        }
+        return extracted;
+    }
 
+    @Override
+    protected FluidStack extractFluid(IFlowFluid flow, EnumFacing dir, int millibuckets) {
         if (filters.getStackInSlot(currentFilter) == null) {
             advanceFilter();
         }
 
-        PipeFlow flow = pipe.getFlow();
-        if (flow instanceof IFlowItems) {
-            IStackFilter filter = getStackFilter();
-            int extracted = ((IFlowItems) flow).tryExtractItems(1, getCurrentDir(), filter);
-            if (extracted > 0 & filterMode == FilterMode.ROUND_ROBIN) {
-                advanceFilter();
-            }
+        switch (filterMode) {
+            default:
+            case WHITE_LIST:
+                // Firstly try the advanced version - if that fails we will need to try the basic version
+                FluidStack extracted = flow.tryExtractFluidAdv(millibuckets, dir, new ArrayFluidFilter(filters.stacks));
+
+                if (extracted == null || extracted.amount <= 0) {
+                    for (ItemStack stack : filters.stacks) {
+                        extracted = flow.tryExtractFluid(millibuckets, dir, FluidUtil.getFluidContained(stack));
+                        if (extracted != null && extracted.amount > 0) {
+                            return extracted;
+                        }
+                    }
+                }
+                return null;
+            case BLACK_LIST:
+                // We cannot fallback to the basic version - only use the advanced version
+                return flow.tryExtractFluidAdv(millibuckets, dir, new InvertedFluidFilter(new ArrayFluidFilter(filters.stacks)));
+            case ROUND_ROBIN:
+                // We can't do this -- amounts might differ and its just ugly
+                return null;
         }
-        return 0;
     }
 
     private void advanceFilter() {

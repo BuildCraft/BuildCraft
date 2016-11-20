@@ -24,7 +24,7 @@ public class ItemHandlerSimple extends AbstractInvItemTransactor implements IIte
     private final StackChangeCallback callback;
 
     // Actual item stacks used
-    private final ItemStack[] stacks;
+    public final ItemStack[] stacks;
 
     // Transactor speedup (small)
     private int firstUsed = Integer.MAX_VALUE;

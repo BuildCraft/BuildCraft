@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.transport.neptune.IFlowItems;
+
 import buildcraft.lib.gui.GuiBC8;
 import buildcraft.lib.gui.GuiIcon;
 import buildcraft.lib.gui.button.GuiImageButton;
@@ -63,12 +65,16 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
         this.blackListButton.registerListener(this);
         this.buttonList.add(this.blackListButton);
 
-        this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
-        this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
-        this.roundRobinButton.registerListener(this);
-        this.buttonList.add(this.roundRobinButton);
-
-        IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
+        if (pipe.pipe.getFlow() instanceof IFlowItems) {
+            // Don't show round robin for the fluid pipe - its not yet implemented
+            this.roundRobinButton = new GuiImageButton(this, ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
+            this.roundRobinButton.setToolTip(ToolTip.createLocalized("tip.PipeItemsEmerald.roundrobin"));
+            this.roundRobinButton.registerListener(this);
+            this.buttonList.add(this.roundRobinButton);
+            IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton, roundRobinButton);
+        } else {
+            IButtonBehaviour.createAndSetRadioButtons(whiteListButton, blackListButton);
+        }
 
         switch (pipe.filterMode) {
             case WHITE_LIST:
@@ -78,7 +84,9 @@ public class GuiDiamondWoodPipe extends GuiBC8<ContainerDiamondWoodPipe> impleme
                 this.blackListButton.activate();
                 break;
             case ROUND_ROBIN:
-                this.roundRobinButton.activate();
+                if (roundRobinButton != null) {
+                    this.roundRobinButton.activate();
+                }
                 break;
         }
     }
