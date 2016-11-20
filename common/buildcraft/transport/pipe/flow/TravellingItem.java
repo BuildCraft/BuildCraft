@@ -17,6 +17,7 @@ public class TravellingItem {
     public ItemStack stack;
     public EnumDyeColor colour;
 
+    int id = 0;
     EnumTravelState state = EnumTravelState.SERVER_TO_CENTER;
     double speed = 0.05;
     /** Absolute times (relative to world.getTotalWorldTime()) with when an item started to when it finishes. */
@@ -193,7 +194,7 @@ public class TravellingItem {
 
         return VecUtil.scale(vecFrom, 1 - interp).add(VecUtil.scale(vecTo, interp));
     }
-    
+
     public EnumFacing getRenderDirection(long tick, float partialTicks) {
         long diff = tickFinished - tickStarted;
         long afterTick = tick - tickStarted;

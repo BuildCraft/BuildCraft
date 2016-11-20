@@ -1,10 +1,7 @@
 {
     "textures": {
-        "#gate_false_":"buildcrafttransport:gates/gate_off",
-        "#gate_true_":"buildcrafttransport:gates/gate_on",
-
-        "#gate_true":"minecraft:blocks/redstone_block",
-        "#gate_false":"minecraft:blocks/redstone_block",
+        "#gate_false":"buildcrafttransport:gates/gate_off",
+        "#gate_true":"buildcrafttransport:gates/gate_on",
 
         "particle":"#gate_off"
     },

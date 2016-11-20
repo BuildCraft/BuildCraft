@@ -18,13 +18,18 @@ tempOutDir="license_checker/out/work"
 goodOutDir="license_checker/out/safe"
 badOutDir="license_checker/out/need"
 
+## variables
+
+fileCount=0
+scannedFiles=0
+
 ## FUNCTIONS
 
 dispProgress() {
     sp1="            "
     sp2=$sp1$sp1$sp1
     sp3=$sp2$sp2$sp2
-    printf "> $1$sp3\r"
+    printf "   $scannedFiles / $fileCount > $1$sp3\r"
 }
 
 testFile() {
@@ -38,6 +43,7 @@ testFile() {
     local fld=$(dirname $1)
     local fle=$(basename $1)
     dispProgress "$1"
+    ((scannedFiles = scannedFiles + 1))
     ( cd $fld && eval "git log --follow --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" ) > "$tempOutDir/$1.all"
     eval "grep -vf $agreedFile $tempOutDir/$1.all" > "$tempOutDir/$1.req"
     if [ -s "$tempOutDir/$1.req" ]; then
@@ -107,6 +113,18 @@ scanFolder() {
     testFolder $f1
 }
 
+countFolder() {
+    local f1=$1
+    for file in $1/*
+    do
+        if [ -d $file ]; then
+            countFolder $file
+        else
+            ((fileCount = fileCount + 1))
+        fi
+    done
+}
+
 ## MAIN
 
 # Because all of our paths start with ".." we need to remove that.
@@ -127,11 +145,23 @@ mkdir $badOutDir
 cat $agreeInput >> $agreedFile
 cat $unusedInput >> $agreedFile
 
-scanFolder "common"
-scanFolder "common_old_license"
-scanFolder "src_old_license"
-scanFolder "BuildCraft-Localization"
-scanFolder "buildcraft_resources"
+declare -a folders=("common" "common_old_license" "src_old_license" "BuildCraft-Localization" "buildcraft_resources")
+
+for i in "${folders[@]}"
+do
+    countFolder "$i"
+done
+
+for i in "${folders[@]}"
+do
+    scanFolder "$i"
+done
+
+#scanFolder "common"
+#scanFolder "common_old_license"
+#scanFolder "src_old_license"
+#scanFolder "BuildCraft-Localization"
+#scanFolder "buildcraft_resources"
 testFolder "."
 
 eval "git log --pretty=format:\"%an <%ae>\" -- $fle | sort | uniq" > "license_checker/out/all"
