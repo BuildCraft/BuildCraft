@@ -419,7 +419,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pipe.getDebugInfo(left, right, side);
         }
         left.add("Wires:");
-        wireManager.wiresByPart.forEach((enumWirePart, enumDyeColor) -> left.add(" - " + enumWirePart + " = " + enumDyeColor));
+        wireManager.wires.forEach((enumWirePart, enumDyeColor) -> left.add(" - " + enumWirePart + " = " + enumDyeColor));
     }
 
     @Override

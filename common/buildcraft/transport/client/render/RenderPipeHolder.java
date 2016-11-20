@@ -20,7 +20,6 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
@@ -87,7 +86,7 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
             GlStateManager.enableTexture2D();
             GlStateManager.resetColor();
         };
-        pipe.getWireManager().wiresByPart.forEach((enumWirePart, enumDyeColor) -> {
+        pipe.getWireManager().wires.forEach((enumWirePart, enumDyeColor) -> {
             renderAABB.accept(enumWirePart.boundingBox, enumDyeColor.getMapColor());
         });
     }

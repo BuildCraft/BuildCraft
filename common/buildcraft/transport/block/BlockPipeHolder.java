@@ -123,7 +123,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
             }
         }
-        for(EnumWirePart enumWirePart : tile.getWireManager().wiresByPart.keySet()) {
+        for(EnumWirePart enumWirePart : tile.getWireManager().wires.keySet()) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, enumWirePart.boundingBox);
         }
     }
@@ -170,7 +170,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         }
         WireManager wires = tile.getWireManager();
         for (EnumWirePart part : EnumWirePart.VALUES) {
-            if (wires.getWireByPart(part) != null) {
+            if (wires.getColorOfWire(part) != null) {
                 best = computeTrace(best, pos, start, end, part.boundingBox, part.ordinal() + 13);
             }
         }
