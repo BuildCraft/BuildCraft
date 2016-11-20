@@ -105,25 +105,15 @@ public class ColourUtil {
         return Arrays.copyOf(NAMES, NAMES.length);
     }
 
-    /** Returns a localised name for the given colour. */
-    public static String getLocalized(EnumDyeColor colour) {
-        return StringUtilBC.localize("item.fireworksCharge." + colour.getUnlocalizedName());
-    }
-
-    /** Returns a localised name for the given face. */
-    public static String getLocalized(EnumFacing face) {
-        return StringUtilBC.localize("direction." + face.getName());
-    }
-
     /** Returns a string formatted for use in a tooltip (or anything else with a black background). If
      * {@link BCLibConfig#useColouredLabels} is true then this will make prefix the string with an appropriate
      * {@link TextFormatting} colour, and postfix with {@link TextFormatting#RESET} */
     public static String getTextFullTooltip(EnumDyeColor colour) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertColourToTextFormat(colour);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + getLocalized(colour) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + StringUtilBC.getLocalized(colour) + TextFormatting.RESET;
         } else {
-            return getLocalized(colour);
+            return StringUtilBC.getLocalized(colour);
         }
     }
 
@@ -133,9 +123,9 @@ public class ColourUtil {
     public static String getTextFullTooltip(EnumFacing face) {
         if (BCLibConfig.useColouredLabels) {
             TextFormatting formatColour = convertFaceToTextFormat(face);
-            return formatColour.toString() + getTextFormatForBlack(formatColour) + getLocalized(face) + TextFormatting.RESET;
+            return formatColour.toString() + getTextFormatForBlack(formatColour) + StringUtilBC.getLocalized(face) + TextFormatting.RESET;
         } else {
-            return getLocalized(face);
+            return StringUtilBC.getLocalized(face);
         }
     }
 

@@ -133,7 +133,7 @@ public class PipeBehaviourObsidian extends PipeBehaviour implements IMjRedstoneR
         if (flowItem != null) {
             ItemStack potential = transactor.extract(StackFilter.ALL, 1, 1, true);
             if (potential != null) {
-                ItemStack leftOver = flowItem.tryInsertItems(potential, null, INSERT_SPEED, faceFrom);
+                ItemStack leftOver = flowItem.injectItem(potential, true, faceFrom, null, INSERT_SPEED);
                 if (leftOver == null) {
                     transactor.extract(StackFilter.ALL, 1, 1, false);
                     battery.extractPower(MjAPI.MJ);
