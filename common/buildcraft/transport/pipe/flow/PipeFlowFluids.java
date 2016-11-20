@@ -28,6 +28,8 @@ import buildcraft.lib.misc.StringUtilBC;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
+    private static final int DIRECTION_COOLDOWN = 30;
+
     private final FluidTransferInfo fluidTransferInfo = PipeAPI.getFluidTransferInfo(pipe.getDefinition());
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
@@ -135,6 +137,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         int timeSlot = (int) (world.getTotalWorldTime() % currentDelay);
 
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+
+        }
+
         // Fluid movement is split into 3 parts :
         // - move from pipe (to other tiles)
         // - move from center (to sides)
@@ -160,10 +166,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         /** If 0 then fluids can move from this in either direction.
          * 
-         * If less than 0 then fluids can only move INTO this section from OTHER TILES
+         * If less than 0 then fluids can only move into this section from other tiles, and outputs to other sections.
          * 
-         * If greater than 0 then fluids can only move INTO this section from ANOTHER SECTION. Not used for the centre
-         * section */
+         * If greater than 0 then fluids can only move out of this section into other tiles. */
         int ticksInDirection = 0;
 
         /** @return The maximum amount of fluid that can be inserted into this pipe on this tick. */
@@ -218,11 +223,24 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         void setTime(short current) {
             currentTime = current;
         }
+
+        Dir getCurrentDirection() {
+            return ticksInDirection == 0 ? Dir.NONE : ticksInDirection < 0 ? Dir.IN : Dir.OUT;
+        }
     }
 
+    /** Enum used for the current direction that a fluid is flowing. */
     enum Dir {
         IN,
         NONE,
-        OUT
+        OUT;
+
+        public boolean canInput() {
+            return this != OUT;
+        }
+
+        public boolean canOutput() {
+            return this != IN;
+        }
     }
 }
