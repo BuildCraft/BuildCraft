@@ -1,22 +1,5 @@
 package buildcraft.transport.plug;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.mj.IMjRedstoneReceiver;
 import buildcraft.api.mj.MjAPI;
 import buildcraft.api.transport.neptune.IPipeHolder;
@@ -24,10 +7,24 @@ import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
-
 import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.client.model.key.KeyPlugPulsar;
 import buildcraft.transport.client.render.PlugPulsarRenderer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
 
 public class PluggablePulsar extends PipePluggable {
 
@@ -183,7 +180,17 @@ public class PluggablePulsar extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public double getStage(float partialTicks) {
         if (isPulsing()) {
-            return MathHelper.sin((float) ((pulseStage + partialTicks) / 20.0 * Math.PI));
+            double v = (pulseStage + partialTicks) / 20.0;
+            Function<Double, Double> easing = x -> x < 0.5 ?
+                    4 * x * x * x :
+                    1 - (2 - 2 * x) * (2 - 2 * x) * (2 - 2 * x) * (2 - 2 * x) / 2;
+            if(v < 0.5) {
+                v = easing.apply(v * 2);
+            } else {
+                v = 1 - easing.apply(v * 2 - 1);
+            }
+            v += 0.001;
+            return v;
         } else {
             return 0;
         }
