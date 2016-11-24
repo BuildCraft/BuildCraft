@@ -24,12 +24,11 @@ import buildcraft.api.core.IFluidFilter;
 import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
 
-import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
-    public Tank tank = new SingleUseTank("tank", 16000, this);
+    public Tank tank = new Tank("tank", 16000, this);
 
     // ITickable
 

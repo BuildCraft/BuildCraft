@@ -213,10 +213,6 @@ public class FluidRenderer {
          * 
          * (Uses {@link #ux} and {@link #vy} to determine how they are mapped). */
         private void apply(double x, double y, double z) {
-            // TODO: this doesn't work when the coord is exactly 1!
-            x = (x % 1 + 1) % 1;
-            y = (y % 1 + 1) % 1;
-            z = (z % 1 + 1) % 1;
             double realu = ux ? x : z;
             double realv = vy ? y : z;
             if (invertU) {

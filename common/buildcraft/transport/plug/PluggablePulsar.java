@@ -10,7 +10,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -183,7 +182,7 @@ public class PluggablePulsar extends PipePluggable {
     @SideOnly(Side.CLIENT)
     public double getStage(float partialTicks) {
         if (isPulsing()) {
-            return MathHelper.sin((float) ((pulseStage + partialTicks) / 20.0 * Math.PI));
+            return (pulseStage + partialTicks) / 20 % 1;
         } else {
             return 0;
         }

@@ -35,6 +35,9 @@ configFile.withReader {
 if (System.getenv("BUILD_NUMBER") != null) {
     config.mod_version += "-${System.getenv("BUILD_NUMBER")}"
 }
+if (System.getenv("BUILD_VARIANT") != null) {
+    config.mod_version += "-${System.getenv("BUILD_VARIANT")}"
+}
 
 version = config.mod_version
 group= "com.mod-buildcraft"

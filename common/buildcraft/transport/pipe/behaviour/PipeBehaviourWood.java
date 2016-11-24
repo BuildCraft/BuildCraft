@@ -22,7 +22,7 @@ import buildcraft.transport.BCTransportConfig;
 
 public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRedstoneReceiver {
 
-    private final MjBattery mjBattery = new MjBattery(10 * MjAPI.MJ);
+    private final MjBattery mjBattery = new MjBattery(2 * MjAPI.MJ);
 
     public PipeBehaviourWood(IPipe pipe) {
         super(pipe);
@@ -74,6 +74,7 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
                     int extracted = extractItems(flow, getCurrentDir(), maxItems);
                     if (extracted > 0) {
                         mjBattery.extractPower(extracted * BCTransportConfig.mjPerItem);
+                        return;
                     }
                 }
             } else if (pipe.getFlow() instanceof IFlowFluid) {
@@ -83,9 +84,11 @@ public class PipeBehaviourWood extends PipeBehaviourDirectional implements IMjRe
                     FluidStack extracted = extractFluid(flow, getCurrentDir(), maxMillibuckets);
                     if (extracted != null && extracted.amount > 0) {
                         mjBattery.extractPower(extracted.amount * BCTransportConfig.mjPerMillibucket);
+                        return;
                     }
                 }
             }
+            mjBattery.extractPower(0, 5 * MjAPI.MJ / 100);
         }
     }
 

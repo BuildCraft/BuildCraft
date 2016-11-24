@@ -3,6 +3,7 @@ package buildcraft.transport.pipe.flow;
 import java.util.*;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextFormatting;
@@ -32,7 +33,7 @@ import buildcraft.lib.misc.StringUtilBC;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
-    private static final int DIRECTION_COOLDOWN = 30;
+    private static final int DIRECTION_COOLDOWN = 60;
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
 
@@ -40,7 +41,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
      * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
-    private final int capacity = fluidTransferInfo.transferPerTick * (40);// TEMP!
+    public final int capacity = fluidTransferInfo.transferPerTick * (40);// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
@@ -58,6 +59,49 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             sections.put(part, new Section(part));
         }
+        if (nbt.hasKey("fluid")) {
+            setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fluid")));
+        } else {
+            setFluid(null);
+        }
+
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            int direction = part.getIndex();
+            if (nbt.hasKey("tank[" + direction + "]")) {
+                NBTTagCompound compound = nbt.getCompoundTag("tank[" + direction + "]");
+                if (compound.hasKey("FluidType")) {
+                    FluidStack stack = FluidStack.loadFluidStackFromNBT(compound);
+                    if (currentFluid == null) {
+                        setFluid(stack);
+                    }
+                    if (stack.isFluidEqual(currentFluid)) {
+                        sections.get(part).readFromNbt(compound);
+                    }
+                } else {
+                    sections.get(part).readFromNbt(compound);
+                }
+            }
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
+
+        if (currentFluid != null) {
+            NBTTagCompound fluidTag = new NBTTagCompound();
+            currentFluid.writeToNBT(fluidTag);
+            nbt.setTag("fluid", fluidTag);
+
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                int direction = part.getIndex();
+                NBTTagCompound subTag = new NBTTagCompound();
+                sections.get(part).writeToNbt(subTag);
+                nbt.setTag("tank[" + direction + "]", subTag);
+            }
+        }
+
+        return nbt;
     }
 
     @Override
@@ -227,8 +271,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @SideOnly(Side.CLIENT)
-    public int[] getAmountsForRender() {
-        int[] arr = new int[7];
+    public double[] getAmountsForRender(float partialTicks) {
+        double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             arr[part.getIndex()] = sections.get(part).amount;
         }
@@ -256,6 +300,13 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     public void onTick() {
         World world = pipe.getHolder().getPipeWorld();
         if (world.isRemote) {
+
+            if (currentFluid != null) {
+                for (EnumPipePart part : EnumPipePart.VALUES) {
+                    sections.get(part).tickClient();
+                }
+            }
+
             return;
         }
 
@@ -316,13 +367,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
                 if (fluidToPush.amount > 0) {
                     int filled = cap.fill(fluidToPush, true);
-                    if (filled <= 0) {
-                        // section.ticksInDirection = COOLDOWN_OUTPUT;
-                    } else {
-                        int reallyActuallyDrained = section.drainInternal(filled, true);
-                        if (filled != reallyActuallyDrained) {
-                            BCLog.logger.info("[moveFromPipe] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
-                        }
+                    if (filled > 0) {
+                        section.drainInternal(filled, true);
                         section.ticksInDirection = COOLDOWN_OUTPUT;
                     }
                 }
@@ -371,11 +417,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 amountToPush = center.drainInternal(amountToPush, false);
                 if (amountToPush > 0) {
                     int filled = section.fill(amountToPush, true);
-                    int reallyActuallyDrained = center.drainInternal(filled, true);
-                    if (filled != reallyActuallyDrained) {
-                        BCLog.logger.info("[moveFromCenter] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
+                    if (filled > 0) {
+                        center.drainInternal(filled, true);
+                        section.ticksInDirection = COOLDOWN_OUTPUT;
                     }
-                    section.ticksInDirection = COOLDOWN_OUTPUT;
                     // FIXME: This is the animated flow variable
                     // flow[direction.ordinal()] = 1;
                 }
@@ -414,9 +459,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 int amountToPush = section.drainInternal(amountToDrain, false);
                 if (amountToPush > 0) {
                     int filled = center.fill(amountToPush, true);
-                    int reallyActuallyDrained = section.drainInternal(filled, true);
-                    if (filled != reallyActuallyDrained) {
-                        BCLog.logger.info("[moveToCenter] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
+                    section.drainInternal(filled, true);
+                    if (filled > 0) {
+                        section.ticksInDirection = COOLDOWN_INPUT;
                     }
                     // FIXME: This is the animated flow variable
                     // flow[dir.ordinal()] = -1;
@@ -429,9 +474,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     class Section implements IFluidHandler {
         final EnumPipePart part;
 
-        /**
-         * 
-         */
         int amount;
 
         /**
@@ -451,8 +493,35 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
          * If greater than 0 then fluids can only move out of this section into other tiles. */
         int ticksInDirection = 0;
 
-        public Section(EnumPipePart part) {
+        // Client side fields
+
+        /** Used to interpolate between {@link #clientAmountThis} and {@link #clientAmountLast} for rendering. */
+        double clientAmountThis, clientAmountLast;
+
+        /** Holds the amount of fluid was last sent to us from the sever */
+        int target;
+
+        /** The world-times of when the last message was received. */
+        long targetTime = -1;
+
+        Section(EnumPipePart part) {
             this.part = part;
+        }
+
+        void writeToNbt(NBTTagCompound nbt) {
+            nbt.setShort("capacity", (short) amount);
+
+            for (int i = 0; i < incoming.length; ++i) {
+                nbt.setShort("in[" + i + "]", (short) incoming[i]);
+            }
+        }
+
+        void readFromNbt(NBTTagCompound nbt) {
+            this.amount = nbt.getShort("capacity");
+
+            for (int i = 0; i < incoming.length; ++i) {
+                incoming[i] = nbt.getShort("in[" + i + "]");
+            }
         }
 
         /** @return The maximum amount of fluid that can be inserted into this pipe on this tick. */
@@ -512,6 +581,29 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return dir;
         }
 
+        void writeClientMessage(PacketBuffer buffer) {
+            buffer.writeShort(amount);
+        }
+
+        void handleClientMessage(PacketBuffer buffer) {
+            targetTime = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+            target = buffer.readShort();
+        }
+
+        /** @return True if this still contains fluid, false if not. */
+        boolean tickClient() {
+            clientAmountLast = clientAmountThis;
+
+            if (target != clientAmountThis) {
+                double diff = target - clientAmountThis;
+                diff = Math.min(diff, fluidTransferInfo.transferPerTick);
+                // TODO: alternate interpolation?
+                clientAmountThis += diff;
+            }
+
+            return clientAmountThis > 0 | clientAmountLast > 0;
+        }
+
         // IFluidHandler
 
         @Override
@@ -542,9 +634,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     if (currentFluid == null) {
                         setFluid(resource);
                     }
+                }
+                int filled = fill(resource.amount, doFill);
+                if (filled > 0 && doFill) {
                     ticksInDirection = COOLDOWN_INPUT;
                 }
-                return fill(resource.amount, doFill);
+                return filled;
             }
             return 0;
         }

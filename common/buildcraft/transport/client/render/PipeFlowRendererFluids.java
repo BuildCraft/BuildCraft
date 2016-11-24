@@ -28,9 +28,9 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
         for (EnumFacing face : EnumFacing.VALUES) {
             Vec3d faceVec = new Vec3d(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
-            Vec3d center = new Vec3d(0.5, 0.5, 0.5).add(VecUtil.scale(faceVec, 0.375));
+            Vec3d center = new Vec3d(0.5, 0.5, 0.5).add(VecUtil.scale(faceVec, 0.37));
             Vec3d radius = new Vec3d(0.24, 0.24, 0.24);
-            radius = VecUtil.replaceValue(radius, face.getAxis(), 0.125);
+            radius = VecUtil.replaceValue(radius, face.getAxis(), 0.13);
 
             MIN_FULL[face.ordinal()] = center.subtract(radius);
             MAX_FULL[face.ordinal()] = center.add(radius);
@@ -44,7 +44,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             return;
         }
 
-        int[] amounts = flow.getAmountsForRender();
+        double[] amounts = flow.getAmountsForRender(partialTicks);
 
         VertexBuffer fluidBuffer = vb;
         // fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -53,24 +53,24 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         for (EnumFacing face : EnumFacing.VALUES) {
             boolean[] sides = new boolean[6];
             Arrays.fill(sides, true);
-//            sides[face.ordinal()] = false;
-//            sides[face.getOpposite().ordinal()] = false;
+            // sides[face.ordinal()] = false;
+            // sides[face.getOpposite().ordinal()] = false;
             Vec3d min = MIN_FULL[face.ordinal()];
             Vec3d max = MAX_FULL[face.ordinal()];
 
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()], 1000, min, max, fluidBuffer, sides);
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()], flow.capacity, min, max, fluidBuffer, sides);
         }
 
         boolean[] sides = new boolean[6];
         Arrays.fill(sides, true);
-//        for (EnumFacing face : EnumFacing.VALUES) {
-//            sides[face.ordinal()] = !flow.pipe.isConnected(face);
-//        }
-        int amount = amounts[EnumPipePart.CENTER.getIndex()];
+        // for (EnumFacing face : EnumFacing.VALUES) {
+        // sides[face.ordinal()] = !flow.pipe.isConnected(face);
+        // }
+        double amount = amounts[EnumPipePart.CENTER.getIndex()];
         Vec3d min = new Vec3d(0.26, 0.26, 0.26);
         Vec3d max = new Vec3d(0.74, 0.74, 0.74);
 
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount, 1000, min, max, fluidBuffer, sides);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount, flow.capacity, min, max, fluidBuffer, sides);
 
         // gl state setup
         // RenderHelper.disableStandardItemLighting();
@@ -81,5 +81,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         // Tessellator.getInstance().draw();
 
         // RenderHelper.enableStandardItemLighting();
+
+        fluidBuffer.setTranslation(0, 0, 0);
     }
 }
