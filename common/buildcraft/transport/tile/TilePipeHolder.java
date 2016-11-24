@@ -314,8 +314,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         PipePluggable old = holder.pluggable;
         holder.pluggable = with;
 
-        eventBus.registerHandler(with);
         eventBus.unregisterHandler(old);
+        eventBus.registerHandler(with);
 
         pipe.markForUpdate();
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);

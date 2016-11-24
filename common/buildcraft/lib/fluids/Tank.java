@@ -28,6 +28,9 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
+
 import buildcraft.lib.gui.elem.ToolTip;
 
 import io.netty.buffer.ByteBuf;
@@ -35,7 +38,7 @@ import io.netty.buffer.ByteBuf;
 /** Provides a useful implementation of a fluid tank that can save + load, and has a few helper funtions.
  * 
  * Can optionally specify a filter to only allow a limited types of fluids in the tank. */
-public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> {
+public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
     public int colorRenderCache = 0xFFFFFF;
 
     protected final ToolTip toolTip = new ToolTip() {
@@ -150,6 +153,17 @@ public class Tank extends FluidTank implements INBTSerializable<NBTTagCompound> 
     public int fill(FluidStack resource, boolean doFill) {
         if (filter.test(resource)) return super.fill(resource, doFill);
         return 0;
+    }
+
+    @Override
+    public FluidStack drain(IFluidFilter drainFilter, int maxDrain, boolean doDrain) {
+        if (drainFilter == null) {
+            return null;
+        }
+        if (drainFilter.matches(getFluid())) {
+            return drain(maxDrain, doDrain);
+        }
+        return null;
     }
 
     @Override

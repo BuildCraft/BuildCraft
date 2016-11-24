@@ -11,6 +11,7 @@ import buildcraft.api.transport.neptune.PipeFlowType;
 
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
 import buildcraft.transport.pipe.PipeRegistry;
@@ -42,11 +43,15 @@ public class BCTransport {
         CreativeTabManager.createTab("buildcraft.pipe");
         CreativeTabManager.createTab("buildcraft.gate");
 
+        BCTransportConfig.preInit();
         BCTransportBlocks.preInit();
         BCTransportPipes.preInit();
         BCTransportPlugs.preInit();
         BCTransportItems.preInit();
         BCTransportStatements.preInit();
+
+        // Reload after all of the pipe defs have been created.
+        BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);
 
         CreativeTabManager.setItem("buildcraft.pipe", BCTransportItems.pipeItemGold);
         CreativeTabManager.setItem("buildcraft.gate", BCTransportItems.plugGate);

@@ -15,7 +15,9 @@ import net.minecraftforge.client.model.animation.FastTESR;
 import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
 import buildcraft.api.transport.neptune.PipePluggable;
 
+import buildcraft.lib.BCLibProxy;
 import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
 import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.tile.TilePipeHolder;
 
@@ -109,6 +111,15 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
         if (p != null && p.flow != null) {
             if (p.flow instanceof PipeFlowItems) {
                 PipeFlowRendererItems.INSTANCE.render((PipeFlowItems) p.flow, x, y, z, partialTicks, vb);
+            } else if (p.flow instanceof PipeFlowFluids) {
+
+                TilePipeHolder pipe2 = BCLibProxy.getProxy().getServerTile(pipe);
+
+                if (pipe2.getPipe() != null && pipe2.getPipe().flow instanceof PipeFlowFluids) {
+                    p = pipe2.getPipe();
+                }
+
+                PipeFlowRendererFluids.INSTANCE.render((PipeFlowFluids) p.flow, x, y, z, partialTicks, vb);
             }
         }
     }

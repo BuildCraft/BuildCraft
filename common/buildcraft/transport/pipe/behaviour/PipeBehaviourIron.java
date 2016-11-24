@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.PipeEventFluid;
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
 import buildcraft.api.transport.neptune.IPipe;
@@ -37,7 +38,17 @@ public class PipeBehaviourIron extends PipeBehaviourDirectional {
     }
 
     @PipeEventHandler
+    public void fluidSideCheck(PipeEventFluid.SideCheck sideCheck) {
+        if (currentDir == EnumPipePart.CENTER) {
+            sideCheck.disallowAll();
+        } else {
+            sideCheck.disallowAllExcept(currentDir.face);
+        }
+    }
+
+    @PipeEventHandler
     public static void tryBounce(PipeEventItem.TryBounce tryBounce) {
         tryBounce.canBounce = true;
     }
+
 }

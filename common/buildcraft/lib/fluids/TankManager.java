@@ -17,17 +17,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import buildcraft.api.core.IFluidFilter;
+import buildcraft.api.core.IFluidHandlerAdv;
 
 import io.netty.buffer.ByteBuf;
 
 /** Provides a simple way to save+load and send+receive data for any number of tanks. This also attempts to fill all of
  * the tanks one by one via the {@link #fill(EnumFacing, FluidStack, boolean)} and
  * {@link #drain(EnumFacing, FluidStack, boolean)} methods. */
-public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, INBTSerializable<NBTTagCompound> {
+public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandlerAdv, INBTSerializable<NBTTagCompound> {
 
     private List<T> tanks = new ArrayList<>();
 
@@ -73,6 +75,23 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain) {
         for (Tank tank : tanks) {
+            FluidStack drained = tank.drain(maxDrain, doDrain);
+            if (drained != null && drained.amount > 0) {
+                return drained;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public FluidStack drain(IFluidFilter filter, int maxDrain, boolean doDrain) {
+        if (filter == null) {
+            return null;
+        }
+        for (Tank tank : tanks) {
+            if (!filter.matches(tank.getFluid())) {
+                continue;
+            }
             FluidStack drained = tank.drain(maxDrain, doDrain);
             if (drained != null && drained.amount > 0) {
                 return drained;
