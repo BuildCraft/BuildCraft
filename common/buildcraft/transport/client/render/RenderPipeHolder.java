@@ -86,9 +86,8 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
             GlStateManager.enableTexture2D();
             GlStateManager.resetColor();
         };
-        pipe.getWireManager().wires.forEach((enumWirePart, enumDyeColor) -> {
-            renderAABB.accept(enumWirePart.boundingBox, enumDyeColor.getMapColor());
-        });
+        pipe.getWireManager().parts.forEach((part, color) -> renderAABB.accept(part.boundingBox, color.getMapColor()));
+        pipe.getWireManager().betweens.forEach((between, color) -> renderAABB.accept(between.boundingBox, color.getMapColor()));
     }
 
     private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {

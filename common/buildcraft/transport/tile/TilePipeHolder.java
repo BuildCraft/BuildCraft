@@ -41,6 +41,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public static final int NET_UPDATE_PLUG_SOUTH = getReceiverId(PipeMessageReceiver.PLUGGABLE_SOUTH);
     public static final int NET_UPDATE_PLUG_WEST = getReceiverId(PipeMessageReceiver.PLUGGABLE_WEST);
     public static final int NET_UPDATE_PLUG_EAST = getReceiverId(PipeMessageReceiver.PLUGGABLE_EAST);
+    public static final int NET_UPDATE_WIRES = getReceiverId(PipeMessageReceiver.WIRES);
 
     public static final int[] NET_UPDATE_PLUGS = {//
         NET_UPDATE_PLUG_DOWN, NET_UPDATE_PLUG_UP,//
@@ -85,6 +86,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         if (!plugs.hasNoTags()) {
             nbt.setTag("plugs", plugs);
         }
+        nbt.setTag("wireManager", wireManager.writeToNbt());
         return nbt;
     }
 
@@ -105,6 +107,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         for (EnumFacing face : EnumFacing.VALUES) {
             pluggables.get(face).readFromNbt(plugs.getCompoundTag(face.getName()));
         }
+        wireManager.readFromNbt(nbt.getCompoundTag("wireManager"));
     }
 
     // Misc
@@ -181,6 +184,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             scheduleRenderUpdate = false;
             redrawBlock();
         }
+
+        wireManager.update();
     }
 
     // Network
@@ -199,6 +204,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 for (EnumFacing face : EnumFacing.VALUES) {
                     pluggables.get(face).writeCreationPayload(buffer);
                 }
+                wireManager.writePayload(buffer, side);
             } else if (id == NET_UPDATE_PIPE_BEHAVIOUR) {
                 if (pipe == null) {
                     buffer.writeBoolean(false);
@@ -219,6 +225,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             else if (id == NET_UPDATE_PLUG_SOUTH) pluggables.get(EnumFacing.SOUTH).writePayload(buffer, side);
             else if (id == NET_UPDATE_PLUG_WEST) pluggables.get(EnumFacing.WEST).writePayload(buffer, side);
             else if (id == NET_UPDATE_PLUG_EAST) pluggables.get(EnumFacing.EAST).writePayload(buffer, side);
+            else if (id == NET_UPDATE_WIRES) wireManager.writePayload(buffer, side);
         }
     }
 
@@ -239,6 +246,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
                 for (EnumFacing face : EnumFacing.VALUES) {
                     pluggables.get(face).readCreationPayload(buffer);
                 }
+                wireManager.readPayload(buffer, side, ctx);
             } else if (id == NET_UPDATE_MULTI) {
                 int total = buffer.readUnsignedByte();
                 for (PipeMessageReceiver type : PipeMessageReceiver.VALUES) {
@@ -269,6 +277,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             else if (id == NET_UPDATE_PLUG_SOUTH) pluggables.get(EnumFacing.SOUTH).readPayload(buffer, side, ctx);
             else if (id == NET_UPDATE_PLUG_WEST) pluggables.get(EnumFacing.WEST).readPayload(buffer, side, ctx);
             else if (id == NET_UPDATE_PLUG_EAST) pluggables.get(EnumFacing.EAST).readPayload(buffer, side, ctx);
+            else if (id == NET_UPDATE_WIRES) wireManager.readPayload(buffer, side, ctx);
         }
     }
 
@@ -418,8 +427,8 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             left.add("Pipe:");
             pipe.getDebugInfo(left, right, side);
         }
-        left.add("Wires:");
-        wireManager.wires.forEach((enumWirePart, enumDyeColor) -> left.add(" - " + enumWirePart + " = " + enumDyeColor));
+        left.add("Parts:");
+        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color));
     }
 
     @Override

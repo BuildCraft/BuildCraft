@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import buildcraft.transport.BCTransport;
+import buildcraft.transport.BCTransportItems;
 import buildcraft.transport.item.ItemWire;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -123,8 +125,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 addCollisionBoxToList(pos, entityBox, collidingBoxes, bb);
             }
         }
-        for(EnumWirePart enumWirePart : tile.getWireManager().wires.keySet()) {
-            addCollisionBoxToList(pos, entityBox, collidingBoxes, enumWirePart.boundingBox);
+        for(EnumWirePart part : tile.getWireManager().parts.keySet()) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, part.boundingBox);
+        }
+        for(EnumWireBetween between : tile.getWireManager().betweens.keySet()) {
+            addCollisionBoxToList(pos, entityBox, collidingBoxes, between.boundingBox);
         }
     }
 
@@ -165,18 +170,15 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             PipePluggable pluggable = tile.getPluggable(face);
             if (pluggable != null) {
                 AxisAlignedBB bb = pluggable.getBoundingBox();
-                best = computeTrace(best, pos, start, end, bb, face.ordinal() + 7);
+                best = computeTrace(best, pos, start, end, bb, face.ordinal() + 1 + 6);
             }
         }
-        WireManager wires = tile.getWireManager();
-        for (EnumWirePart part : EnumWirePart.VALUES) {
-            if (wires.getColorOfWire(part) != null) {
-                best = computeTrace(best, pos, start, end, part.boundingBox, part.ordinal() + 13);
-            }
+        for (EnumWirePart part : tile.getWireManager().parts.keySet()) {
+            best = computeTrace(best, pos, start, end, part.boundingBox, part.ordinal() + 1 + 6 + 6);
         }
-        // for (EnumWireBetween wire : EnumWireBetween.VALUES) {
-        // best = computeTrace(best, pos, start, end, wire.boundingBox, wire.ordinal() + 21);
-        // }
+        for (EnumWireBetween between : tile.getWireManager().betweens.keySet()) {
+            best = computeTrace(best, pos, start, end, between.boundingBox, between.ordinal() + 1 + 6 + 6 + 8);
+        }
         return best;
     }
 
@@ -277,8 +279,8 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             EnumWirePart wirePart = EnumWirePart.VALUES[part - 1 - 6 - 6];
             aabb = wirePart.boundingBox;
         } else if (part < 1 + 6 + 6 + 6 + 8 + 36) {
-            EnumWireBetween wirePart = EnumWireBetween.VALUES[part - 1 - 6 - 6 - 8];
-            aabb = wirePart.boundingBox;
+            EnumWireBetween wireBetween = EnumWireBetween.VALUES[part - 1 - 6 - 6 - 8];
+            aabb = wireBetween.boundingBox;
         }
 //        return aabb == null ? null : aabb.expandXyz(1 / 32.0).offset(pos);
         return aabb == null ? null : aabb.offset(pos);
@@ -371,7 +373,11 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
             EnumWirePart wirePart = BlockPipeHolder.rayTraceWire(pos, start, end);
             if(wirePart != null) {
-                tile.getWireManager().addWire(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                tile.getWireManager().addPart(wirePart, EnumDyeColor.byMetadata(held.getMetadata()));
+                tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
+                if (!player.capabilities.isCreativeMode) {
+                    held.stackSize--;
+                }
             }
         }
         if (tile.getPipe().behaviour.onPipeActivate(player, trace, hitX, hitY, hitZ, part)) {
@@ -397,16 +403,39 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         List<ItemStack> toDrop = new ArrayList<>();
         RayTraceResult trace = rayTrace(world, pos, player);
         EnumFacing side = null;
+        EnumWirePart part = null;
+        EnumWireBetween between = null;
 
         if (trace != null && trace.subHit > 6) {
             side = getPartSideHit(trace);
+            part = getWirePartHit(trace);
+            between = getWireBetweenHit(trace);
         }
 
         if (side != null) {
             removePluggable(side, tile, toDrop);
-            if (!world.isRemote && !player.capabilities.isCreativeMode) {
+            if (!player.capabilities.isCreativeMode) {
                 InventoryUtil.dropAll(world, pos, toDrop);
             }
+            return false;
+        } else if (part != null) {
+            toDrop.add(new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata()));
+            tile.wireManager.removePart(part);
+            if (!player.capabilities.isCreativeMode) {
+                InventoryUtil.dropAll(world, pos, toDrop);
+            }
+            tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
+            return false;
+        } else if (between != null) {
+            toDrop.add(new ItemStack(BCTransportItems.wire, 2, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata()));
+            tile.wireManager.removePart(between.parts[0]);
+            if(between.to == null) {
+                tile.wireManager.removePart(between.parts[1]);
+            }
+            if (!player.capabilities.isCreativeMode) {
+                InventoryUtil.dropAll(world, pos, toDrop);
+            }
+            tile.scheduleNetworkUpdate(IPipeHolder.PipeMessageReceiver.WIRES);
             return false;
         } else {
             for (EnumFacing face : EnumFacing.VALUES) {
@@ -414,7 +443,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             }
             tile.getPipe().onRemove(toDrop);
         }
-        if (!world.isRemote && !player.capabilities.isCreativeMode) {
+        if (!player.capabilities.isCreativeMode) {
             InventoryUtil.dropAll(world, pos, toDrop);
         }
         return super.removedByPlayer(state, world, pos, player, willHarvest);
