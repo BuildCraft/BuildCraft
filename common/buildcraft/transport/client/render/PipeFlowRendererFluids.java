@@ -74,7 +74,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             Vec3d min = center.subtract(radius);
             Vec3d max = center.add(radius);
 
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()] / flow.capacity, 1, min, max, vb, sides);
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()] / flow.capacity, 1, min, max, fluidBuffer, sides);
         }
         double amount = amounts[EnumPipePart.CENTER.getIndex()];
 
@@ -85,7 +85,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         if (horizontal | !vertical) {
             Vec3d min = new Vec3d(0.26, 0.26, 0.26);
             Vec3d max = new Vec3d(0.74, 0.74, 0.74);
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount / flow.capacity, 1, min, max, vb, sides);
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount / flow.capacity, 1, min, max, fluidBuffer, sides);
         }
 
         if (vertical) {
