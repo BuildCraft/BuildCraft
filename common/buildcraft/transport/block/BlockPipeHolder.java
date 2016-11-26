@@ -44,7 +44,9 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.neptune.*;
 
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.misc.BoundingBoxUtil;
 import buildcraft.lib.misc.InventoryUtil;
+import buildcraft.lib.misc.VecUtil;
 import buildcraft.lib.prop.UnlistedNonNullProperty;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.tile.TilePipeHolder;
@@ -110,8 +112,18 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (pipe != null) {
             addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_CENTER);
             for (EnumFacing face : EnumFacing.VALUES) {
-                if (pipe.isConnected(face)) {
-                    addCollisionBoxToList(pos, entityBox, collidingBoxes, BOX_FACES[face.ordinal()]);
+                float conSize = pipe.getConnectedDist(face);
+                if (conSize > 0) {
+                    AxisAlignedBB aabb = BOX_FACES[face.ordinal()];
+                    if (conSize != 0.25f) {
+                        Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
+                        Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
+                        radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
+                        Vec3d min = center.subtract(radius);
+                        Vec3d max = center.add(radius);
+                        aabb = BoundingBoxUtil.makeFrom(min, max);
+                    }
+                    addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb);
                 }
             }
         }
@@ -152,8 +164,18 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         if (pipe != null) {
             best = computeTrace(best, pos, start, end, BOX_CENTER, 0);
             for (EnumFacing face : EnumFacing.VALUES) {
-                if (pipe.isConnected(face)) {
-                    best = computeTrace(best, pos, start, end, BOX_FACES[face.ordinal()], face.ordinal() + 1);
+                float conSize = pipe.getConnectedDist(face);
+                if (conSize > 0) {
+                    AxisAlignedBB aabb = BOX_FACES[face.ordinal()];
+                    if (conSize != 0.25f) {
+                        Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
+                        Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
+                        radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
+                        Vec3d min = center.subtract(radius);
+                        Vec3d max = center.add(radius);
+                        aabb = BoundingBoxUtil.makeFrom(min, max);
+                    }
+                    best = computeTrace(best, pos, start, end, aabb, face.ordinal() + 1);
                 }
             }
         }
@@ -263,6 +285,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
             aabb = BOX_CENTER;
         } else if (part < 1 + 6) {
             aabb = BOX_FACES[part - 1];
+            Pipe pipe = tile.getPipe();
+            if (pipe != null) {
+                EnumFacing face = EnumFacing.VALUES[part - 1];
+                float conSize = pipe.getConnectedDist(face);
+                if (conSize > 0 && conSize != 0.25f) {
+                    Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + (conSize / 2));
+                    Vec3d radius = new Vec3d(0.25, 0.25, 0.25);
+                    radius = VecUtil.replaceValue(radius, face.getAxis(), conSize / 2);
+                    Vec3d min = center.subtract(radius);
+                    Vec3d max = center.add(radius);
+                    aabb = BoundingBoxUtil.makeFrom(min, max);
+                }
+            }
         } else if (part < 1 + 6 + 6) {
             EnumFacing side = EnumFacing.VALUES[part - 1 - 6];
             PipePluggable pluggable = tile.getPluggable(side);

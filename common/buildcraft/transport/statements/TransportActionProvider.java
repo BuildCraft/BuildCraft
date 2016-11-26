@@ -7,6 +7,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
+import buildcraft.api.transport.PipeEventStatement;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.api.transport.neptune.PipePluggable;
 
@@ -18,7 +19,11 @@ public enum TransportActionProvider implements IActionProvider {
 
     @Override
     public void addInternalActions(Collection<IActionInternal> actions, IStatementContainer container) {
-
+        if (container instanceof IGate) {
+            IGate gate = (IGate) container;
+            IPipeHolder holder = gate.getPipeHolder();
+            holder.fireEvent(new PipeEventStatement.AddActionInternal(holder, actions));
+        }
     }
 
     @Override
@@ -26,6 +31,7 @@ public enum TransportActionProvider implements IActionProvider {
         if (container instanceof IGate) {
             IGate gate = (IGate) container;
             IPipeHolder holder = gate.getPipeHolder();
+            holder.fireEvent(new PipeEventStatement.AddActionInternalSided(holder, actions, side));
             PipePluggable plug = holder.getPluggable(side);
             if (plug instanceof PluggablePulsar) {
                 actions.add(BCTransportStatements.ACTION_PULSAR_CONSTANT);

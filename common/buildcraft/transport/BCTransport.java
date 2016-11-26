@@ -1,11 +1,16 @@
 package buildcraft.transport;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
+
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeFlowType;
 
@@ -49,6 +54,11 @@ public class BCTransport {
         BCTransportPlugs.preInit();
         BCTransportItems.preInit();
         BCTransportStatements.preInit();
+
+        ICustomPipeConnection smallerBlockConnection = (world, pos, face, state) -> face == EnumFacing.UP ? 0 : 2 / 16f;
+        PipeConnectionAPI.registerConnection(Blocks.CHEST, smallerBlockConnection);
+        PipeConnectionAPI.registerConnection(Blocks.TRAPPED_CHEST, smallerBlockConnection);
+        PipeConnectionAPI.registerConnection(Blocks.HOPPER, smallerBlockConnection);
 
         // Reload after all of the pipe defs have been created.
         BCTransportConfig.reloadConfig(EnumRestartRequirement.GAME);

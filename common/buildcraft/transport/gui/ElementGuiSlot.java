@@ -70,9 +70,10 @@ public abstract class ElementGuiSlot<T extends IGuiSlot> extends GuiElementSimpl
     @Override
     public void drawForeground(float partialTicks) {
         if (possible != null) {
+            int sub = 18 * (possible.length > 8 ? 2 : 1);
             int add = 18 * (possible.length > 8 ? 3 : 1);
-            int x = getX() - add - 4;
-            int y = getY() - add - 4;
+            int x = getX() - sub - 4;
+            int y = getY() - sub - 4;
             int size = 8 + add + 18 * 2;
             GuiGate.SELECTION_HOVER.draw(x, y, size, size);
             for (int i = 0; i < possible.length; i++) {

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -26,6 +25,7 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -175,7 +175,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (id == NET_RENDER_DATA) {
             battery.writeToBuffer(buffer);
@@ -192,7 +192,7 @@ public class TileLaser extends TileBC_Neptune implements ITickable, IDebuggable 
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (id == NET_RENDER_DATA) {
             battery.readFromBuffer(buffer);

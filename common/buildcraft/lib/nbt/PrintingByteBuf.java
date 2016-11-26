@@ -25,6 +25,14 @@ public final class PrintingByteBuf extends PacketBuffer {
     }
 
     @Override
+    public ByteBuf writeBytes(byte[] src, int srcIndex, int length) {
+        for (int i = 0; i < length; i++) {
+            writeByte(src[i + srcIndex]);
+        }
+        return this;
+    }
+
+    @Override
     public ByteBuf writeBytes(ByteBuf src) {
         return writeBytes(src, src.readableBytes());
     }
@@ -33,6 +41,14 @@ public final class PrintingByteBuf extends PacketBuffer {
     public ByteBuf writeBytes(ByteBuf src, int length) {
         for (int i = 0; i < length; i++) {
             writeByte(src.readByte());
+        }
+        return this;
+    }
+
+    @Override
+    public ByteBuf writeBytes(ByteBuf src, int srcIndex, int length) {
+        for (int i = 0; i < length; i++) {
+            writeByte(src.getByte(i + srcIndex));
         }
         return this;
     }

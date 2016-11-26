@@ -17,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -50,6 +49,7 @@ import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PermissionUtil.PermissionBlock;
 import buildcraft.lib.net.MessageUpdateTile;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.lib.permission.PlayerOwner;
@@ -307,7 +307,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     public NBTTagCompound getUpdateTag() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeShort(NET_RENDER_DATA);
-        writePayload(NET_RENDER_DATA, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
+        writePayload(NET_RENDER_DATA, new PacketBufferBC(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER);
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
 
@@ -324,7 +324,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
         try {
             int id = buf.readUnsignedShort();
-            readPayload(id, new PacketBuffer(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER, null);
+            readPayload(id, new PacketBufferBC(buf), worldObj.isRemote ? Side.CLIENT : Side.SERVER, null);
             // Make sure that we actually read the entire message rather than just discarding it
             MessageUtil.ensureEmpty(buf, worldObj.isRemote, getClass().getSimpleName());
         } catch (IOException e) {
@@ -348,7 +348,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     }
 
     @Override
-    public final IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
+    public final IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         int id = buffer.readUnsignedShort();
         readPayload(id, buffer, ctx.side, ctx);
 
@@ -367,7 +367,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
     //
     // ######################
 
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         // write render data with gui data
         if (id == NET_GUI_DATA) {
 
@@ -393,7 +393,7 @@ public abstract class TileBC_Neptune extends TileEntity implements IPayloadRecei
 
     /** @param ctx The context. Will be null if this is a generic update payload
      * @throws IOException if something went wrong */
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         // read render data with gui data
         if (id == NET_GUI_DATA) {
             readPayload(NET_RENDER_DATA, buffer, side, ctx);

@@ -67,6 +67,7 @@ import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.network.PacketPipeSyncRequest;
+import buildcraft.transport.pipe.DefaultPipeConnection;
 import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;

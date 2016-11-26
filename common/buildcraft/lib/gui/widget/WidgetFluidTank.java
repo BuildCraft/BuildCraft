@@ -3,8 +3,6 @@ package buildcraft.lib.gui.widget;
 import java.io.IOException;
 import java.util.List;
 
-import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -14,6 +12,7 @@ import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.gui.*;
 import buildcraft.lib.gui.elem.ToolTip;
 import buildcraft.lib.gui.pos.IGuiPosition;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     private static final byte NET_CLICK = 0;
@@ -26,7 +25,7 @@ public class WidgetFluidTank extends Widget_Neptune<ContainerBC_Neptune> {
     }
 
     @Override
-    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         byte id = buffer.readByte();
         if (id == NET_CLICK) {
             // TODO: Item interaction

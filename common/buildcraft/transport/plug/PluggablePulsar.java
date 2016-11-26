@@ -74,7 +74,7 @@ public class PluggablePulsar extends PipePluggable {
     public NBTTagCompound writeToNbt() {
         NBTTagCompound nbt = super.writeToNbt();
         nbt.setBoolean("isPulsing", isPulsing);
-        nbt.setInteger("gateEnabledTicks", (byte) gateEnabledTicks);
+        nbt.setInteger("gateEnabledTicks", gateEnabledTicks);
         nbt.setInteger("gateSinglePulses", gateSinglePulses);
         return nbt;
     }

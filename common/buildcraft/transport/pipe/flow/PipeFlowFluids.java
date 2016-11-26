@@ -476,9 +476,6 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
         int amount;
 
-        /**
-         * 
-         */
         int currentTime;
 
         /** Map of [time] -> [amount inserted].

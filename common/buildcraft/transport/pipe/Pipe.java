@@ -2,17 +2,16 @@ package buildcraft.transport.pipe;
 
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -20,11 +19,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.ICustomPipeConnection;
+import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.neptune.*;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.misc.NBTUtils;
 import buildcraft.lib.misc.data.LoadingException;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.client.model.key.PipeModelKey;
 
 public final class Pipe implements IPipe, IDebuggable {
@@ -36,7 +38,7 @@ public final class Pipe implements IPipe, IDebuggable {
     public final PipeFlow flow;
     private EnumDyeColor colour = null;
     private boolean updateMarked = true;
-    private final EnumSet<EnumFacing> connected = EnumSet.noneOf(EnumFacing.class);
+    private final EnumMap<EnumFacing, Float> connected = new EnumMap<>(EnumFacing.class);
     private final EnumMap<EnumFacing, Integer> textures = new EnumMap<>(EnumFacing.class);
     private final EnumMap<EnumFacing, ConnectedType> types = new EnumMap<>(EnumFacing.class);
 
@@ -71,7 +73,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     // network
 
-    public Pipe(IPipeHolder holder, PacketBuffer buffer, MessageContext ctx) throws IOException {
+    public Pipe(IPipeHolder holder, PacketBufferBC buffer, MessageContext ctx) throws IOException {
         this.holder = holder;
         try {
             this.definition = PipeRegistry.INSTANCE.loadDefinition(buffer.readStringFromBuffer(256));
@@ -84,18 +86,20 @@ public final class Pipe implements IPipe, IDebuggable {
         this.flow.readPayload(PipeFlow.NET_ID_FULL_STATE, buffer, Side.CLIENT);
     }
 
-    public void writeCreationPayload(PacketBuffer buffer) {
+    public void writeCreationPayload(PacketBufferBC buffer) {
         buffer.writeString(definition.identifier.toString());
         writePayload(buffer, Side.SERVER);
         flow.writePayload(PipeFlow.NET_ID_FULL_STATE, buffer, Side.SERVER);
     }
 
-    public void writePayload(PacketBuffer buffer, Side side) {
+    public void writePayload(PacketBufferBC buffer, Side side) {
         if (side == Side.SERVER) {
             buffer.writeByte(colour == null ? 0 : colour.getMetadata() + 1);
             for (EnumFacing face : EnumFacing.VALUES) {
-                if (connected.contains(face) && textures.get(face) != null) {
+                Float con = connected.get(face);
+                if (con != null && textures.get(face) != null) {
                     buffer.writeBoolean(true);
+                    buffer.writeFloat(con.floatValue());
 
                     Integer tex = textures.get(face);
                     buffer.writeByte(tex.intValue());
@@ -106,13 +110,12 @@ public final class Pipe implements IPipe, IDebuggable {
                     buffer.writeBoolean(false);
                 }
             }
-
             behaviour.writePayload(buffer, side);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public void readPayload(PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         if (side == Side.CLIENT) {
             connected.clear();
             textures.clear();
@@ -123,10 +126,11 @@ public final class Pipe implements IPipe, IDebuggable {
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (buffer.readBoolean()) {
+                    float dist = buffer.readFloat();
                     int tex = buffer.readUnsignedByte();
                     int type = buffer.readUnsignedByte();
 
-                    connected.add(face);
+                    connected.put(face, dist);
                     textures.put(face, Integer.valueOf(tex));
                     if (type != 0) {
                         types.put(face, type == 1 ? ConnectedType.TILE : ConnectedType.PIPE);
@@ -197,10 +201,10 @@ public final class Pipe implements IPipe, IDebuggable {
     public void onTick() {
         behaviour.onTick();
         flow.onTick();
-        if (updateMarked) {
+        if (updateMarked && !holder.getPipeWorld().isRemote) {
             updateMarked = false;
 
-            Set<EnumFacing> old = EnumSet.copyOf(connected);
+            EnumMap<EnumFacing, Float> old = connected.clone();
 
             connected.clear();
             types.clear();
@@ -223,24 +227,32 @@ public final class Pipe implements IPipe, IDebuggable {
                         continue;
                     }
                     if (canPipesConnect(facing, this, oPipe)) {
-                        connected.add(facing);
+                        connected.put(facing, 0.25f);
                         types.put(facing, ConnectedType.PIPE);
                     }
                 } else if (oTile != null) {
-                    // TODO: custom pipe connections! (custom tiles basically)
+                    BlockPos nPos = holder.getPipePos().offset(facing);
+                    IBlockState neighbour = holder.getPipeWorld().getBlockState(nPos);
+
+                    ICustomPipeConnection cust = PipeConnectionAPI.getCustomConnection(neighbour.getBlock());
+                    if (cust == null) {
+                        cust = DefaultPipeConnection.INSTANCE;
+                    }
+                    float ext = 0.25f + cust.getExtension(holder.getPipeWorld(), nPos, facing.getOpposite(), neighbour);
+
                     if (behaviour.canConnect(facing, oTile) & flow.canConnect(facing, oTile)) {
-                        connected.add(facing);
+                        connected.put(facing, ext);
                         types.put(facing, ConnectedType.TILE);
                     }
                 }
-                if (connected.contains(facing)) {
+                if (connected.containsKey(facing)) {
                     textures.put(facing, behaviour.getTextureIndex(facing));
                 }
             }
             if (!old.equals(connected)) {
                 for (EnumFacing face : EnumFacing.VALUES) {
-                    boolean o = old.contains(face);
-                    boolean n = connected.contains(face);
+                    boolean o = old.containsKey(face);
+                    boolean n = connected.containsKey(face);
                     if (o != n) {
                         IPipe oPipe = getHolder().getNeighbouringPipe(face);
                         if (oPipe != null) {
@@ -291,14 +303,14 @@ public final class Pipe implements IPipe, IDebuggable {
         for (EnumFacing face : EnumFacing.VALUES) {
             int i = face.ordinal();
             sides[i] = behaviour.getTextureIndex(face);
-            mc[i] = connected.contains(face) ? 0.25f : 0;
+            mc[i] = getConnectedDist(face);
         }
         return new PipeModelKey(definition, behaviour.getTextureIndex(null), sides, mc, colour);
     }
 
     @Override
     public TileEntity getConnectedTile(EnumFacing side) {
-        if (connected.contains(side)) {
+        if (connected.containsKey(side)) {
             TileEntity offset = getHolder().getNeighbouringTile(side);
             if (offset == null && !getHolder().getPipeWorld().isRemote) {
                 markForUpdate();
@@ -311,7 +323,7 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public IPipe getConnectedPipe(EnumFacing side) {
-        if (connected.contains(side)) {
+        if (connected.containsKey(side)) {
             IPipe offset = getHolder().getNeighbouringPipe(side);
             if (offset == null && !getHolder().getPipeWorld().isRemote) {
                 markForUpdate();
@@ -329,7 +341,12 @@ public final class Pipe implements IPipe, IDebuggable {
 
     @Override
     public boolean isConnected(EnumFacing side) {
-        return connected.contains(side);
+        return connected.containsKey(side);
+    }
+
+    public float getConnectedDist(EnumFacing face) {
+        Float custom = connected.get(face);
+        return custom == null ? 0 : custom.floatValue();
     }
 
     @Override

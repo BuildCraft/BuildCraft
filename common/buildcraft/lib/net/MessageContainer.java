@@ -3,7 +3,6 @@ package buildcraft.lib.net;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -22,7 +21,7 @@ import io.netty.buffer.Unpooled;
 public class MessageContainer implements IMessage {
 
     private int windowId;
-    private PacketBuffer payload;
+    private PacketBufferBC payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
     @Deprecated
@@ -34,7 +33,7 @@ public class MessageContainer implements IMessage {
 
     public MessageContainer(int windowId, IPayloadWriter writer) {
         this.windowId = windowId;
-        this.payload = new PacketBuffer(Unpooled.buffer());
+        this.payload = new PacketBufferBC(Unpooled.buffer());
         writer.write(payload);
     }
 
@@ -48,7 +47,7 @@ public class MessageContainer implements IMessage {
         windowId = buf.readInt();
         int payloadSize = buf.readUnsignedShort();
         ByteBuf read = buf.readBytes(payloadSize);
-        payload = new PacketBuffer(read);
+        payload = new PacketBufferBC(read);
     }
 
     @Override

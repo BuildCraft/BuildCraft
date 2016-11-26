@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -20,6 +19,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.recipes.IntegrationRecipe;
 
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.IntegrationRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 
@@ -31,8 +31,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     private boolean extract(ItemStack item, ImmutableList<ItemStack> items, boolean simulate) {
         ItemStack targetStack = invTarget.getStackInSlot(0);
-        if(targetStack != null && StackUtil.canMerge(targetStack, item) && item.stackSize <= targetStack.stackSize) {
-            if(!simulate) {
+        if (targetStack != null && StackUtil.canMerge(targetStack, item) && item.stackSize <= targetStack.stackSize) {
+            if (!simulate) {
                 targetStack.stackSize -= item.stackSize;
                 invTarget.setStackInSlot(0, targetStack);
             }
@@ -40,30 +40,30 @@ public class TileIntegrationTable extends TileLaserTableBase {
             return false;
         }
         List<ItemStack> itemsNeeded = items.stream().map(ItemStack::copy).collect(Collectors.toList());
-        for(int i = 0; i < invToIntegrate.getSlots(); i++) {
+        for (int i = 0; i < invToIntegrate.getSlots(); i++) {
             ItemStack stack = invToIntegrate.getStackInSlot(i);
             boolean found = false;
-            for(Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext(); ) {
+            for (Iterator<ItemStack> iterator = itemsNeeded.iterator(); iterator.hasNext();) {
                 ItemStack itemStack = iterator.next();
-                if(StackUtil.canMerge(stack, itemStack) && stack != null) {
+                if (StackUtil.canMerge(stack, itemStack) && stack != null) {
                     found = true;
                     int spend = Math.min(itemStack.stackSize, stack.stackSize);
                     itemStack.stackSize -= spend;
-                    if(!simulate) {
+                    if (!simulate) {
                         stack.stackSize -= spend;
                     }
-                    if(itemStack.stackSize <= 0) {
+                    if (itemStack.stackSize <= 0) {
                         iterator.remove();
                     }
-                    if(!simulate) {
-                        if(stack.stackSize <= 0) {
+                    if (!simulate) {
+                        if (stack.stackSize <= 0) {
                             stack = null;
                         }
                         invToIntegrate.setStackInSlot(i, stack);
                     }
                 }
             }
-            if(!found && stack != null) {
+            if (!found && stack != null) {
                 return false;
             }
         }
@@ -80,13 +80,13 @@ public class TileIntegrationTable extends TileLaserTableBase {
     }
 
     private void updateRecipe() {
-        if(canUseRecipe(recipe)) {
+        if (canUseRecipe(recipe)) {
             return;
         }
 
         recipe = null;
-        for(IntegrationRecipe possible : IntegrationRecipeRegistry.INSTANCE.getAllRecipes()) {
-            if(canUseRecipe(possible)) {
+        for (IntegrationRecipe possible : IntegrationRecipeRegistry.INSTANCE.getAllRecipes()) {
+            if (canUseRecipe(possible)) {
                 recipe = possible;
                 return;
             }
@@ -101,16 +101,16 @@ public class TileIntegrationTable extends TileLaserTableBase {
     public void update() {
         super.update();
 
-        if(worldObj.isRemote) {
+        if (worldObj.isRemote) {
             return;
         }
 
         updateRecipe();
 
-        if(power >= getTarget() && getTarget() != 0) {
+        if (power >= getTarget() && getTarget() != 0) {
             extract(recipe.target, recipe.toIntegrate, false);
             ItemStack result = invResult.getStackInSlot(0);
-            if(result != null) {
+            if (result != null) {
                 result = result.copy();
                 result.stackSize += recipe.output.stackSize;
             } else {
@@ -126,7 +126,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        if(recipe != null) {
+        if (recipe != null) {
             nbt.setTag("recipe", recipe.writeToNBT());
         }
         return nbt;
@@ -135,7 +135,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        if(nbt.hasKey("recipe")) {
+        if (nbt.hasKey("recipe")) {
             recipe = new IntegrationRecipe(nbt.getCompoundTag("recipe"));
         } else {
             recipe = null;
@@ -143,23 +143,23 @@ public class TileIntegrationTable extends TileLaserTableBase {
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
 
-        if(id == NET_GUI_DATA) {
+        if (id == NET_GUI_DATA) {
             buffer.writeBoolean(recipe != null);
-            if(recipe != null) {
+            if (recipe != null) {
                 recipe.writeToBuffer(buffer);
             }
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
-        if(id == NET_GUI_DATA) {
-            if(buffer.readBoolean()) {
+        if (id == NET_GUI_DATA) {
+            if (buffer.readBoolean()) {
                 recipe = new IntegrationRecipe(buffer);
             } else {
                 recipe = null;

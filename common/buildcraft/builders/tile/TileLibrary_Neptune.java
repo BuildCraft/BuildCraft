@@ -9,7 +9,6 @@ import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -23,6 +22,7 @@ import buildcraft.lib.library.ILibraryEntryData;
 import buildcraft.lib.library.LibraryEntry;
 import buildcraft.lib.library.LibraryEntryHeader;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager.EnumAccess;
 
@@ -88,7 +88,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
 
         if (id == NET_GUI_DATA || id == NET_SELECTED) {
@@ -102,7 +102,7 @@ public class TileLibrary_Neptune extends TileBCInventory_Neptune implements ITic
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA || id == NET_SELECTED) {

@@ -16,6 +16,7 @@ import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.transport.PipeEventActionActivate;
 import buildcraft.api.transport.neptune.IPipeHolder;
 
 import buildcraft.lib.misc.MessageUtil;
@@ -47,6 +48,8 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
     public final boolean[] connections;
 
     public final boolean[] triggerOn, actionOn;
+
+    public int redstoneOutput, redstoneOutputSide;
 
     private final EnumSet<EnumDyeColor> wireBroadcasts;
 
@@ -388,6 +391,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                             slot.part = action.sourcePart;
                             activeActions.add(slot);
                             action.actionActivate(this, actionParameters[actionIndex]);
+                            getPipeHolder().fireEvent(new PipeEventActionActivate(getPipeHolder(), action.getDelegate(), actionParameters[actionIndex], action.sourcePart));
                         } else {
                             action.actionDeactivated(this, actionParameters[actionIndex]);
                         }

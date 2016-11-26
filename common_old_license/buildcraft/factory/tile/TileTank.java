@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -25,6 +24,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.fluids.Tank;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
@@ -71,7 +71,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER && id == NET_RENDER_DATA) {
             tank.writeToBuffer(buffer);
@@ -79,7 +79,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable {
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT && id == NET_RENDER_DATA) {
             tank.readFromBuffer(buffer);

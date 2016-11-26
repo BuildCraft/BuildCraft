@@ -2,7 +2,17 @@ package buildcraft.transport.client.render;
 
 import java.util.Arrays;
 
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -14,6 +24,7 @@ import buildcraft.api.transport.neptune.IPipeFlowRenderer;
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
 import buildcraft.lib.misc.VecUtil;
+import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.flow.PipeFlowFluids;
 
 public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> {
@@ -44,44 +55,64 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             return;
         }
 
+        boolean[] sides = new boolean[6];
+        Arrays.fill(sides, true);
+
         double[] amounts = flow.getAmountsForRender(partialTicks);
 
-        VertexBuffer fluidBuffer = vb;
-        // fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        VertexBuffer fluidBuffer = Tessellator.getInstance().getBuffer();
+        fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         fluidBuffer.setTranslation(x, y, z);
 
         for (EnumFacing face : EnumFacing.VALUES) {
-            boolean[] sides = new boolean[6];
-            Arrays.fill(sides, true);
-            // sides[face.ordinal()] = false;
-            // sides[face.getOpposite().ordinal()] = false;
-            Vec3d min = MIN_FULL[face.ordinal()];
-            Vec3d max = MAX_FULL[face.ordinal()];
+            double size = ((Pipe) flow.pipe).getConnectedDist(face);
 
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()], flow.capacity, min, max, fluidBuffer, sides);
+            Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + size / 2);
+            Vec3d radius = new Vec3d(0.24, 0.24, 0.24);
+            radius = VecUtil.replaceValue(radius, face.getAxis(), size / 2);
+
+            Vec3d min = center.subtract(radius);
+            Vec3d max = center.add(radius);
+
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()] / flow.capacity, 1, min, max, vb, sides);
+        }
+        double amount = amounts[EnumPipePart.CENTER.getIndex()];
+
+        boolean horizontal = true;
+        boolean vertical = false;
+        double horizPos = 0.25;
+
+        if (horizontal | !vertical) {
+            Vec3d min = new Vec3d(0.26, 0.26, 0.26);
+            Vec3d max = new Vec3d(0.74, 0.74, 0.74);
+            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount / flow.capacity, 1, min, max, vb, sides);
         }
 
-        boolean[] sides = new boolean[6];
-        Arrays.fill(sides, true);
-        // for (EnumFacing face : EnumFacing.VALUES) {
-        // sides[face.ordinal()] = !flow.pipe.isConnected(face);
-        // }
-        double amount = amounts[EnumPipePart.CENTER.getIndex()];
-        Vec3d min = new Vec3d(0.26, 0.26, 0.26);
-        Vec3d max = new Vec3d(0.74, 0.74, 0.74);
-
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount, flow.capacity, min, max, fluidBuffer, sides);
+        if (vertical) {
+            if (horizPos <= 0.25) {
+                // draw the bottom face
+            }
+        }
 
         // gl state setup
-        // RenderHelper.disableStandardItemLighting();
-        // Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        // GlStateManager.enableBlend();
-        // GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-
-        // Tessellator.getInstance().draw();
-
-        // RenderHelper.enableStandardItemLighting();
+        RenderHelper.disableStandardItemLighting();
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableCull();
 
         fluidBuffer.setTranslation(0, 0, 0);
+        Tessellator.getInstance().draw();
+
+        RenderHelper.enableStandardItemLighting();
+
+    }
+
+    private static void drawFluidCenter(FluidStack fluid, double percentage, boolean horizontal, boolean above, VertexBuffer vb) {
+        boolean[] sides = new boolean[6];
+        Arrays.fill(sides, true);
+        Vec3d min = new Vec3d(0.26, 0.26, 0.26);
+        Vec3d max = new Vec3d(0.74, 0.74, 0.74);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, fluid, percentage, 1, min, max, vb, sides);
     }
 }

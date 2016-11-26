@@ -2,13 +2,12 @@ package buildcraft.lib.gui;
 
 import java.io.IOException;
 
-import net.minecraft.network.PacketBuffer;
-
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.command.IPayloadReceiver;
 import buildcraft.lib.net.command.IPayloadWriter;
 
@@ -30,17 +29,17 @@ public abstract class Widget_Neptune<C extends ContainerBC_Neptune> implements I
         container.sendWidgetData(this, writer);
     }
 
-    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataServer(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @SideOnly(Side.CLIENT)
-    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBuffer buffer) throws IOException {
+    public IMessage handleWidgetDataClient(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         return null;
     }
 
     @Override
-    public IMessage receivePayload(MessageContext ctx, PacketBuffer buffer) throws IOException {
+    public IMessage receivePayload(MessageContext ctx, PacketBufferBC buffer) throws IOException {
         if (ctx.side == Side.CLIENT) {
             return handleWidgetDataClient(ctx, buffer);
         } else {
