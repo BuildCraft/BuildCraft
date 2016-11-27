@@ -1,7 +1,8 @@
 package buildcraft.lib.client.render.fluid;
 
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -28,8 +29,9 @@ import buildcraft.lib.misc.VecUtil;
  * Not thread safe -- this uses static variables so you should only call this from the main client thread. */
 // TODO: thread safety (per thread context?)
 public class FluidRenderer {
-    private static final Map<Fluid, TextureAtlasSprite> fluidSprites = new ConcurrentHashMap<>();
-    private static final MutableVertex vertex = new MutableVertex();
+
+    private static final EnumMap<FluidSpriteType, Map<Fluid, TextureAtlasSprite>> fluidSprites = new EnumMap<>(FluidSpriteType.class);
+    public static final MutableVertex vertex = new MutableVertex();
     private static final boolean[] DEFAULT_FACES = { true, true, true, true, true, true };
 
     // Cached fields that prevent lots of arguments on most methods
@@ -41,13 +43,22 @@ public class FluidRenderer {
     static {
         // TODO: allow the caller to change the light level
         vertex.lighti(0xF, 0xF);
+        for (FluidSpriteType type : FluidSpriteType.values()) {
+            fluidSprites.put(type, new HashMap<>());
+        }
     }
 
     public static void onTextureStitchPre(TextureMap map) {
-        fluidSprites.clear();
+        for (FluidSpriteType type : FluidSpriteType.values()) {
+            fluidSprites.get(type).clear();
+        }
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            fluidSprites.put(fluid, map.registerSprite(fluid.getStill()));
-            // TODO: both other types (FLOWING and FROZEN)
+            TextureAtlasSprite stillSprite = map.registerSprite(fluid.getStill());
+            fluidSprites.get(FluidSpriteType.STILL).put(fluid, stillSprite);
+            fluidSprites.get(FluidSpriteType.FLOWING).put(fluid, map.registerSprite(fluid.getFlowing()));
+            SpriteFluidFrozen sproteFrozen = new SpriteFluidFrozen(stillSprite);
+            map.setTextureEntry(sproteFrozen);
+            fluidSprites.get(FluidSpriteType.FROZEN).put(fluid, sproteFrozen);
         }
     }
 
@@ -115,8 +126,10 @@ public class FluidRenderer {
 
         vb = vbIn;
 
-        // TODO: use type to determine the sprite
-        sprite = fluidSprites.get(fluid.getFluid());
+        if (type == null) {
+            type = FluidSpriteType.STILL;
+        }
+        sprite = fluidSprites.get(type).get(fluid.getFluid());
         if (sprite == null) {
             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
         }

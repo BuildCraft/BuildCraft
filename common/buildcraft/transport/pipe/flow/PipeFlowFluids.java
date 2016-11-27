@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -30,12 +31,16 @@ import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
 import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.VecUtil;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
     private static final int DIRECTION_COOLDOWN = 60;
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
+
+    /** The number of pixels the fluid moves by per millisecond */
+    public static final double FLOW_MULTIPLIER = 0.016;
 
     private final FluidTransferInfo fluidTransferInfo = PipeAPI.getFluidTransferInfo(pipe.getDefinition());
 
@@ -274,7 +279,20 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     public double[] getAmountsForRender(float partialTicks) {
         double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
-            arr[part.getIndex()] = sections.get(part).amount;
+            Section s = sections.get(part);
+            arr[part.getIndex()] = s.clientAmountLast + partialTicks * (s.clientAmountLast - s.clientAmountThis);
+        }
+        return arr;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public Vec3d[] getOffsetsForRender(float partialTicks) {
+        Vec3d[] arr = new Vec3d[7];
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            Section s = sections.get(part);
+            if (s.offsetLast != null & s.offsetThis != null) {
+                arr[part.getIndex()] = s.offsetLast.add(s.offsetLast.subtract(s.offsetThis).scale(partialTicks));
+            }
         }
         return arr;
     }
@@ -299,15 +317,15 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     @Override
     public void onTick() {
         World world = pipe.getHolder().getPipeWorld();
-        if (world.isRemote) {
-
+        if (world.isRemote | true) {
             if (currentFluid != null) {
                 for (EnumPipePart part : EnumPipePart.VALUES) {
                     sections.get(part).tickClient();
                 }
             }
-
-            return;
+            if (world.isRemote) {
+                return;
+            }
         }
 
         if (currentFluid == null) {
@@ -501,6 +519,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         /** The world-times of when the last message was received. */
         long targetTime = -1;
 
+        Vec3d offsetLast, offsetThis;
+
         Section(EnumPipePart part) {
             this.part = part;
         }
@@ -591,11 +611,53 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         boolean tickClient() {
             clientAmountLast = clientAmountThis;
 
+            target = amount; // temp until networking is added
+
             if (target != clientAmountThis) {
                 double diff = target - clientAmountThis;
                 diff = Math.min(diff, fluidTransferInfo.transferPerTick);
-                // TODO: alternate interpolation?
                 clientAmountThis += diff;
+            }
+
+            if (offsetThis == null) {
+                offsetThis = Vec3d.ZERO;
+            }
+            offsetLast = offsetThis;
+
+            if (part.face == null) {
+                Vec3d dir = Vec3d.ZERO;
+                for (EnumPipePart p : EnumPipePart.FACES) {
+                    Section s = sections.get(p);
+                    if (s.amount > 0) {
+                        double mult = Math.signum(s.ticksInDirection);
+                        dir = VecUtil.offset(dir, p.face, -FLOW_MULTIPLIER * mult / 2);
+                    }
+                }
+                offsetThis = offsetThis.add(dir);
+            } else {
+                double mult = Math.signum(ticksInDirection);
+                offsetThis = VecUtil.offset(offsetLast, part.face, -FLOW_MULTIPLIER * (mult));
+            }
+
+            if (offsetThis.xCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(-1, 0, 0);
+            } else if (offsetThis.xCoord <= -0.5) {
+                offsetThis = offsetThis.addVector(1, 0, 0);
+                offsetLast = offsetLast.addVector(1, 0, 0);
+            }
+            if (offsetThis.yCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(0, -1, 0);
+                offsetLast = offsetLast.addVector(0, -1, 0);
+            } else if (offsetThis.yCoord <= -1) {
+                offsetThis = offsetThis.addVector(0, 1, 0);
+                offsetLast = offsetLast.addVector(0, -1, 0);
+            }
+            if (offsetThis.zCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(0, 0, -1);
+                offsetLast = offsetLast.addVector(0, 0, -1);
+            } else if (offsetThis.zCoord <= -0.5) {
+                offsetThis = offsetThis.addVector(0, 0, 1);
+                offsetLast = offsetLast.addVector(0, 0, 1);
             }
 
             return clientAmountThis > 0 | clientAmountLast > 0;

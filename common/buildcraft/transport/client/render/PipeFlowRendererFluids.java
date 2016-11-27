@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.EnumPipePart;
 import buildcraft.api.transport.neptune.IPipeFlowRenderer;
+import buildcraft.api.transport.neptune.IPipeHolder;
 
 import buildcraft.lib.client.render.fluid.FluidRenderer;
 import buildcraft.lib.client.render.fluid.FluidSpriteType;
@@ -59,6 +60,13 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         Arrays.fill(sides, true);
 
         double[] amounts = flow.getAmountsForRender(partialTicks);
+        Vec3d[] offsets = flow.getOffsetsForRender(partialTicks);
+
+        int blocklight = forRender.getFluid().getLuminosity(forRender);
+        IPipeHolder holder = flow.pipe.getHolder();
+        int combinedLight = holder.getPipeWorld().getCombinedLight(holder.getPipePos(), blocklight);
+
+        FluidRenderer.vertex.lighti(combinedLight);
 
         VertexBuffer fluidBuffer = Tessellator.getInstance().getBuffer();
         fluidBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -67,14 +75,19 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         for (EnumFacing face : EnumFacing.VALUES) {
             double size = ((Pipe) flow.pipe).getConnectedDist(face);
 
-            Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.25 + size / 2);
+            Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.245 + size / 2);
             Vec3d radius = new Vec3d(0.24, 0.24, 0.24);
-            radius = VecUtil.replaceValue(radius, face.getAxis(), size / 2);
+            radius = VecUtil.replaceValue(radius, face.getAxis(), 0.005 + size / 2);
+
+            Vec3d offset = offsets[face.getIndex()];
+            if (offset == null) offset = Vec3d.ZERO;
+            center = center.add(offset);
+            fluidBuffer.setTranslation(x - offset.xCoord, y - offset.yCoord, z - offset.zCoord);
 
             Vec3d min = center.subtract(radius);
             Vec3d max = center.add(radius);
 
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amounts[face.getIndex()] / flow.capacity, 1, min, max, fluidBuffer, sides);
+            FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, amounts[face.getIndex()], flow.capacity, min, max, fluidBuffer, sides);
         }
         double amount = amounts[EnumPipePart.CENTER.getIndex()];
 
@@ -85,7 +98,14 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         if (horizontal | !vertical) {
             Vec3d min = new Vec3d(0.26, 0.26, 0.26);
             Vec3d max = new Vec3d(0.74, 0.74, 0.74);
-            FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, amount / flow.capacity, 1, min, max, fluidBuffer, sides);
+
+            Vec3d offset = offsets[EnumPipePart.CENTER.getIndex()];
+            if (offset == null) offset = Vec3d.ZERO;
+            min = min.add(offset);
+            max = max.add(offset);
+            fluidBuffer.setTranslation(x - offset.xCoord, y - offset.yCoord, z - offset.zCoord);
+
+            FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, amount, flow.capacity, min, max, fluidBuffer, sides);
         }
 
         if (vertical) {
@@ -105,6 +125,8 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         Tessellator.getInstance().draw();
 
         RenderHelper.enableStandardItemLighting();
+
+        FluidRenderer.vertex.lighti(0xF, 0xF);
 
     }
 
