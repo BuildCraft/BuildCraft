@@ -147,6 +147,12 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        wireManager.parts.keySet().forEach(wireManager::removePart);
+    }
+
     // ITickable
 
     @Override
@@ -429,6 +435,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         left.add("Parts:");
         wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color));
+        left.add("All wire systems in world count = " + wireManager.getWireSystems().wireSystems.size());
     }
 
     @Override

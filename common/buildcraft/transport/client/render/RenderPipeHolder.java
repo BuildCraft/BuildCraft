@@ -1,25 +1,24 @@
 package buildcraft.transport.client.render;
 
-import net.minecraft.block.material.MapColor;
+import buildcraft.api.transport.neptune.EnumWirePart;
+import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
+import buildcraft.api.transport.neptune.PipePluggable;
+import buildcraft.lib.BCLibProxy;
+import buildcraft.transport.pipe.Pipe;
+import buildcraft.transport.pipe.flow.PipeFlowFluids;
+import buildcraft.transport.pipe.flow.PipeFlowItems;
+import buildcraft.transport.tile.TilePipeHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
-
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.model.animation.FastTESR;
-
-import buildcraft.api.transport.neptune.IPluggableDynamicRenderer;
-import buildcraft.api.transport.neptune.PipePluggable;
-
-import buildcraft.lib.BCLibProxy;
-import buildcraft.transport.pipe.Pipe;
-import buildcraft.transport.pipe.flow.PipeFlowFluids;
-import buildcraft.transport.pipe.flow.PipeFlowItems;
-import buildcraft.transport.tile.TilePipeHolder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.BiConsumer;
 
@@ -48,48 +47,54 @@ public class RenderPipeHolder extends FastTESR<TilePipeHolder> {
 
     @SuppressWarnings("PointlessBitwiseExpression")
     private static void renderWire(TilePipeHolder pipe, double x, double y, double z, VertexBuffer vb) {
-        BiConsumer<AxisAlignedBB, MapColor> renderAABB = (AABB, mapColor) -> {
+        BiConsumer<Pair<AxisAlignedBB, EnumWirePart>, EnumDyeColor> renderAABB = (wireInfo, color) -> {
             GlStateManager.disableTexture2D();
             Tessellator tessellator = Tessellator.getInstance();
             VertexBuffer vertexbuffer = tessellator.getBuffer();
-            int colorValue = mapColor.colorValue;
-            float r = ((colorValue >> 16) & 0xFF) / 255.0F;
-            float g = ((colorValue >> 8) & 0xFF) / 255.0F;
-            float b = ((colorValue >> 0) & 0xFF) / 255.0F;
+            int colorValue = color.getMapColor().colorValue;
+            float modifier = 1;
+            EnumWirePart part = wireInfo.getRight();
+            if(part != null) {
+                modifier = pipe.getWireManager().isPowered(part) ? 1 : 0.5F;
+            }
+            float r = ((colorValue >> 16) & 0xFF) / 255.0F * modifier;
+            float g = ((colorValue >> 8) & 0xFF) / 255.0F * modifier;
+            float b = ((colorValue >> 0) & 0xFF) / 255.0F * modifier;
             GlStateManager.color(r, g, b);
             vertexbuffer.setTranslation(x, y, z);
             vertexbuffer.begin(7, DefaultVertexFormats.POSITION_NORMAL);
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.maxY, AABB.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.minX, AABB.minY, AABB.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.maxY, AABB.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
-            vertexbuffer.pos(AABB.maxX, AABB.minY, AABB.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
+            AxisAlignedBB aabb = wireInfo.getLeft();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(0.0F, 0.0F, -1.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(0.0F, 0.0F, 1.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(0.0F, -1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(0.0F, -1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(0.0F, 1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(0.0F, 1.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.maxY, aabb.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.minX, aabb.minY, aabb.minZ).normal(-1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ).normal(1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
+            vertexbuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ).normal(1.0F, 0.0F, 0.0F).endVertex();
             tessellator.draw();
             vertexbuffer.setTranslation(0.0D, 0.0D, 0.0D);
             GlStateManager.enableTexture2D();
             GlStateManager.resetColor();
         };
-        pipe.getWireManager().parts.forEach((part, color) -> renderAABB.accept(part.boundingBox, color.getMapColor()));
-        pipe.getWireManager().betweens.forEach((between, color) -> renderAABB.accept(between.boundingBox, color.getMapColor()));
+        pipe.getWireManager().parts.forEach((part, color) -> renderAABB.accept(Pair.of(part.boundingBox, part), color));
+        pipe.getWireManager().betweens.forEach((between, color) -> renderAABB.accept(Pair.of(between.boundingBox, between.parts[0]), color));
     }
 
     private static void renderPluggables(TilePipeHolder pipe, double x, double y, double z, float partialTicks, VertexBuffer vb) {

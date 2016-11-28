@@ -238,7 +238,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
     public static EnumWirePart getWirePartHit(RayTraceResult trace) {
         if (trace.subHit <= 6 + 6) {
             return null;
-        } else if (trace.subHit <= 6 + 6 + 16) {
+        } else if (trace.subHit <= 6 + 6 + 8) {
             return EnumWirePart.VALUES[trace.subHit - 1 - 6 - 6];
         } else {
             return null;

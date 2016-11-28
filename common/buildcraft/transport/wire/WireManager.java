@@ -27,6 +27,10 @@ public class WireManager implements IWireManager {
         this.holder = holder;
     }
 
+    public WorldSavedDataWireSystems getWireSystems() {
+        return WorldSavedDataWireSystems.get(holder.getPipeWorld());
+    }
+
     @Override
     public IPipeHolder getHolder() {
         return holder;
@@ -36,6 +40,7 @@ public class WireManager implements IWireManager {
     public boolean addPart(EnumWirePart part, EnumDyeColor colour) {
         if(getColorOfPart(part) == null) {
             parts.put(part, colour);
+            getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
             return true;
         } else {
             return false;
@@ -49,6 +54,7 @@ public class WireManager implements IWireManager {
             return null;
         } else {
             parts.remove(part);
+            getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
             return color;
         }
     }
@@ -81,8 +87,14 @@ public class WireManager implements IWireManager {
         return parts.get(part);
     }
 
-    public void onBlockRemoved() {
-        World world = getHolder().getPipeWorld();
+    public boolean isPowered(EnumWirePart part) {
+        return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
+                .stream()
+                .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce((a, b) -> a || b).orElse(false);
+    }
+
+    public boolean isAnyPowered(EnumDyeColor color) {
+        return parts.values().stream().filter(partColor -> partColor == color).anyMatch(this::isAnyPowered);
     }
 
     public NBTTagCompound writeToNbt() {
