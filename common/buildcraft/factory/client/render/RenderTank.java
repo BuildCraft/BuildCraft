@@ -65,8 +65,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         FluidRenderer.vertex.lighti(combinedLight);
 
-        // TODO: use a DeltaInt for the fluid amount
-        FluidRenderer.renderFluid(FluidSpriteType.STILL, te.tank, min, max, vb, sideRender);
+        FluidRenderer.renderFluid(FluidSpriteType.STILL, forRender, te.getFluidAmountForRender(partialTicks), te.tank.getCapacity(), min, max, vb, sideRender);
 
         // buffer finish
         vb.setTranslation(0, 0, 0);

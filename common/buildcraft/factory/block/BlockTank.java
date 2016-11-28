@@ -30,6 +30,7 @@ import buildcraft.api.transport.ICustomPipeConnection;
 
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;
+import buildcraft.lib.tile.TileBC_Neptune;
 
 public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
     private static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
@@ -93,6 +94,7 @@ public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnect
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
         if (FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
+            tile.sendNetworkUpdate(TileBC_Neptune.NET_RENDER_DATA);
             player.inventoryContainer.detectAndSendChanges();
             return true;
         }
