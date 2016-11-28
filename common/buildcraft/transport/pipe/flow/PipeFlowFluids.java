@@ -169,9 +169,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             filter.amount = millibuckets;
             toAdd = fluidHandler.drain(filter, true);
         }
-        if (toAdd == null) {
+        if (toAdd == null || toAdd.amount <= 0) {
             return null;
         }
+        millibuckets = toAdd.amount;
         if (currentFluid == null) {
             setFluid(toAdd);
         }
@@ -211,9 +212,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return null;
         }
         FluidStack toAdd = handlerAdv.drain(filter, millibuckets, true);
-        if (toAdd == null) {
+        if (toAdd == null || toAdd.amount <= 0) {
             return null;
         }
+        millibuckets = toAdd.amount;
         if (currentFluid == null) {
             setFluid(toAdd);
         }
