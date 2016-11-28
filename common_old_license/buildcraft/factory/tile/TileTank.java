@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -25,6 +27,7 @@ import buildcraft.api.core.IFluidHandlerAdv;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IDebuggable;
 
+import buildcraft.core.BCCoreConfig;
 import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.misc.MathUtil;
 import buildcraft.lib.net.PacketBufferBC;
@@ -37,7 +40,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
 
     private int lastSentAmount = -1;
     private boolean lastSentFluid = false;
-    private final SafeTimeTracker tracker = new SafeTimeTracker(4, 4);
+    private final SafeTimeTracker tracker = new SafeTimeTracker(BCCoreConfig.networkUpdateRate, 4);
 
     // client side
 
@@ -54,7 +57,7 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             if (amount != target) {
                 int delta = target - amount;
                 long msgDelta = lastMessage - lastMessageMinus1;
-                msgDelta = MathUtil.clamp((int) msgDelta, 1, 100);
+                msgDelta = MathUtil.clamp((int) msgDelta, 1, 60);
                 if (Math.abs(delta) < msgDelta) {
                     amount += delta;
                 } else {
@@ -62,15 +65,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
                 }
             }
             return;
-        }
-
-        TileEntity tileDown = worldObj.getTileEntity(pos.down());
-        if (tileDown != null && tileDown instanceof TileTank) {
-            TileTank tile = (TileTank) tileDown;
-            int used = tile.tank.fill(tank.getFluid(), true);
-            if (used > 0) {
-                tank.drain(used, true);
-            }
         }
 
         if (lastSentFluid != (tank.getFluid() != null)) {
@@ -83,6 +77,31 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
             if (tracker.markTimeIfDelay(worldObj)) {
                 lastSentAmount = tank.getFluidAmount();
                 sendNetworkUpdate(NET_FLUID_DELTA);
+            }
+        }
+    }
+
+    @Override
+    public void onPlacedBy(EntityLivingBase placer, ItemStack stack) {
+        super.onPlacedBy(placer, stack);
+        if (!placer.worldObj.isRemote) {
+            BlockPos p = pos.up();
+            TileTank moveTo = this;
+            while (true) {
+                TileEntity tileUp = worldObj.getTileEntity(p);
+                if (tileUp instanceof TileTank) {
+                    TileTank tankUp = (TileTank) tileUp;
+
+                    int used = moveTo.tank.fill(tankUp.tank.getFluid(), true);
+                    if (used > 0) {
+                        tankUp.drain(used, true);
+                    }
+
+                    moveTo = tankUp;
+                    p = p.up();
+                } else {
+                    break;
+                }
             }
         }
     }
@@ -186,7 +205,6 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
     private List<Tank> getTanks() {
         List<Tank> tanks = new ArrayList<>();
         BlockPos currentPos = pos;
-        // Find the bottom tank
         while (true) {
             Tank tankUp = getTank(currentPos);
             if (tankUp != null) {
@@ -242,10 +260,11 @@ public class TileTank extends TileBC_Neptune implements ITickable, IDebuggable, 
         }
         int filled = 0;
         List<Tank> tanks = getTanks();
-        Tank bottom = tanks.get(0);
-        FluidStack current = bottom.getFluid();
-        if (current != null && !current.isFluidEqual(resource)) {
-            return 0;
+        for (Tank t : tanks) {
+            FluidStack current = t.getFluid();
+            if (current != null && !current.isFluidEqual(resource)) {
+                return 0;
+            }
         }
         for (Tank t : tanks) {
             int tankFilled = t.fill(resource, doFill);
