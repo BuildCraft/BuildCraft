@@ -18,6 +18,7 @@ import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.transport.PipeEventActionActivate;
 import buildcraft.api.transport.neptune.IPipeHolder;
+import buildcraft.api.transport.neptune.IWireManager;
 
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.net.command.IPayloadWriter;
@@ -344,6 +345,7 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         return wireBroadcasts.contains(colour);
     }
 
+    @Override
     public void emitWire(EnumDyeColor colour) {
         wireBroadcasts.add(colour);
     }
@@ -367,6 +369,9 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
         Arrays.fill(actionOn, false);
 
         activeActions.clear();
+
+        EnumSet<EnumDyeColor> previousBroadcasts = EnumSet.copyOf(wireBroadcasts);
+        wireBroadcasts.clear();
 
         for (int triggerIndex = 0; triggerIndex < triggers.length; triggerIndex++) {
             TriggerWrapper trigger = triggers[triggerIndex];
@@ -400,6 +405,17 @@ public class GateLogic implements IGate, IWireEmitter, IRedstoneStatementContain
                 groupActive = 0;
                 groupCount = 0;
             }
+        }
+
+        if (!previousBroadcasts.equals(wireBroadcasts)) {
+            IWireManager wires = getPipeHolder().getWireManager();
+            EnumSet<EnumDyeColor> turnedOff = EnumSet.copyOf(previousBroadcasts);
+            turnedOff.removeAll(wireBroadcasts);
+            // FIXME: add call to "wires.stopEmittingColour(turnedOff)"
+
+            EnumSet<EnumDyeColor> turnedOn = EnumSet.copyOf(wireBroadcasts);
+            turnedOn.removeAll(previousBroadcasts);
+            // FIXME: add call to "wires.emittingColour(turnedOff)"
         }
 
         if (!Arrays.equals(prevTriggers, triggerOn) || !Arrays.equals(prevActions, actionOn)) {

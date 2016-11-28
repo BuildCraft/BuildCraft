@@ -39,6 +39,7 @@ public class FluidRenderer {
     private static TextureAtlasSprite sprite;
     private static TexMap texmap;
     private static boolean invertU, invertV;
+    private static double xTexDiff, yTexDiff, zTexDiff;
 
     static {
         // TODO: allow the caller to change the light level
@@ -142,6 +143,34 @@ public class FluidRenderer {
         final double yb = realMax.yCoord;
         final double zb = realMax.zCoord;
 
+        if (type == FluidSpriteType.FROZEN) {
+            if (min.xCoord > 1) {
+                xTexDiff = Math.floor(min.xCoord);
+            } else if (min.xCoord < 0) {
+                xTexDiff = Math.floor(min.xCoord);
+            } else {
+                xTexDiff = 0;
+            }
+            if (min.yCoord > 1) {
+                yTexDiff = Math.floor(min.yCoord);
+            } else if (min.yCoord < 0) {
+                yTexDiff = Math.floor(min.yCoord);
+            } else {
+                yTexDiff = 0;
+            }
+            if (min.zCoord > 1) {
+                zTexDiff = Math.floor(min.zCoord);
+            } else if (min.zCoord < 0) {
+                zTexDiff = Math.floor(min.zCoord);
+            } else {
+                zTexDiff = 0;
+            }
+        } else {
+            xTexDiff = 0;
+            yTexDiff = 0;
+            zTexDiff = 0;
+        }
+
         vertex.colouri(RenderUtil.swapARGBforABGR(fluid.getFluid().getColor(fluid)));
 
         texmap = TexMap.XZ;
@@ -200,7 +229,7 @@ public class FluidRenderer {
     /** Helper function to add a vertex. */
     private static void vertex(double x, double y, double z) {
         vertex.positiond(x, y, z);
-        texmap.apply(x, y, z);
+        texmap.apply(x - xTexDiff, y - yTexDiff, z - zTexDiff);
         vertex.render(vb);
     }
 

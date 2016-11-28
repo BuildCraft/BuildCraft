@@ -15,6 +15,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.lib.misc.ColourUtil;
 import buildcraft.transport.BCTransportStatements;
 import buildcraft.transport.plug.PluggablePulsar;
+import buildcraft.transport.wire.IWireEmitter;
 
 public enum TransportActionProvider implements IActionProvider {
     INSTANCE;
@@ -26,9 +27,11 @@ public enum TransportActionProvider implements IActionProvider {
             IPipeHolder holder = gate.getPipeHolder();
             holder.fireEvent(new PipeEventStatement.AddActionInternal(holder, actions));
 
-            for (EnumDyeColor colour : ColourUtil.COLOURS) {
-                if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
-                    actions.add(BCTransportStatements.ACTION_PIPE_SIGNAL[colour.ordinal()]);
+            if (container instanceof IWireEmitter) {
+                for (EnumDyeColor colour : ColourUtil.COLOURS) {
+                    if (TriggerPipeSignal.doesGateHaveColour(gate, colour)) {
+                        actions.add(BCTransportStatements.ACTION_PIPE_SIGNAL[colour.ordinal()]);
+                    }
                 }
             }
         }

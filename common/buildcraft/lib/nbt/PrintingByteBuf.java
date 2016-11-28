@@ -76,27 +76,29 @@ public final class PrintingByteBuf extends PacketBuffer {
 
     @Override
     public ByteBuf writeFloat(float val) {
-        System.out.print(padLength(8, val));
+        System.out.print(padLength(8, Float.floatToRawIntBits(val)));
         super.writeFloat(val);
         return this;
     }
 
     @Override
     public ByteBuf writeDouble(double val) {
-        System.out.print(padLength(16, val));
+        System.out.print(padLength(16, Double.doubleToRawLongBits(val)));
         super.writeDouble(val);
         return this;
     }
 
-    private static String padLength(int length, long val) {
+    private static char[] padLength(int length, long val) {
         String s = Long.toHexString(val);
-        while (s.length() < length) {
-            s = "0" + s;
+        char[] chars = new char[length + 1];
+        chars[0] = ' ';
+        int diff = length - s.length();
+        for (int i = 0; i < diff; i++) {
+            chars[i + 1] = '0';
         }
-        return " " + s;
-    }
-
-    private static String padLength(int length, double val) {
-        return padLength(length, length == 8 ? Float.floatToRawIntBits((float) val) : Double.doubleToRawLongBits(val));
+        for (int i = 0; i < s.length(); i++) {
+            chars[i + diff + 1] = s.charAt(i);
+        }
+        return chars;
     }
 }
