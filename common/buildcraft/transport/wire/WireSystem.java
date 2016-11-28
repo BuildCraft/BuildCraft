@@ -3,71 +3,63 @@ package buildcraft.transport.wire;
 import buildcraft.api.transport.neptune.EnumWirePart;
 import buildcraft.api.transport.neptune.IPipeHolder;
 import buildcraft.transport.plug.PluggableGate;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WireSystem {
     public final List<Element> elements = new ArrayList<>();
+    public EnumDyeColor color = null;
 
     public boolean hasElement(Element element) {
         return elements.contains(element);
     }
 
-    public WireSystem build(WorldSavedDataWireSystems wireSystems, Element element) {
-        if(elements.contains(element)) {
-            return this;
-        }
+    public static List<Element> getConnectedElementsOfElement(World world, Element element) {
         if(element.type == Element.Type.WIRE_PART) {
-            wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this).forEach(wireSystems::removeWireSystem);
-            if(wireSystems.world.getTileEntity(element.blockPos) instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) wireSystems.world.getTileEntity(element.blockPos);
-                //noinspection ConstantConditions
-                if(holder.getWireManager().getColorOfPart(element.wirePart) != null) {
-                    elements.add(element);
-                }
-            }
-            for(EnumWirePart part : EnumWirePart.VALUES) {
-                EnumFacing.Axis axis = null;
-                if(element.wirePart != part) {
-                    //noinspection ConstantConditions
-                    if(element.wirePart.y == part.y && element.wirePart.z == part.z) {
-                        axis = EnumFacing.Axis.X;
-                    } else if(element.wirePart.z == part.z && element.wirePart.x == part.x) {
-                        axis = EnumFacing.Axis.Y;
-                    } else if(element.wirePart.x == part.x && element.wirePart.y == part.y) {
-                        axis = EnumFacing.Axis.Z;
+            TileEntity tile = world.getTileEntity(element.blockPos);
+            if(tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
+                assert element.wirePart != null;
+                return element.wirePart.getAllPossibleConnections().stream().map(sidePosPart -> {
+                    if(sidePosPart.getLeft() == null || holder.getPipe().isConnected(sidePosPart.getLeft())) {
+                        return new Element(element.blockPos.add(sidePosPart.getMiddle()), sidePosPart.getRight());
                     }
-                }
-                if(axis != null) {
-                    if(wireSystems.world.getTileEntity(element.blockPos) instanceof IPipeHolder) {
-                        IPipeHolder holder = (IPipeHolder) wireSystems.world.getTileEntity(element.blockPos);
-                        //noinspection ConstantConditions
-                        if(holder.getWireManager().getColorOfPart(element.wirePart) != null && holder.getWireManager().getColorOfPart(element.wirePart) == holder.getWireManager().getColorOfPart(part)) {
-                            build(wireSystems, new Element(element.blockPos, part));
+                    return null;
+                }).filter(Objects::nonNull).collect(Collectors.toList());
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    public WireSystem build(WorldSavedDataWireSystems wireSystems, Element element) {
+        if(!elements.contains(element)) {
+            TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
+            if(tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
+                if(element.type == Element.Type.WIRE_PART) {
+                    wireSystems.getWireSystemsWithElement(element).stream().filter(wireSystem -> wireSystem != this).forEach(wireSystems::removeWireSystem);
+                    EnumDyeColor colorOfPart = holder.getWireManager().getColorOfPart(element.wirePart);
+                    if(color == null) {
+                        if(colorOfPart != null) {
+                            color = colorOfPart;
                         }
                     }
-                    BlockPos otherPos = element.blockPos.offset(EnumFacing.getFacingFromAxis(element.wirePart.getDirection(axis), axis));
-                    if(wireSystems.world.getTileEntity(otherPos) instanceof IPipeHolder) {
-                        IPipeHolder holder = (IPipeHolder) wireSystems.world.getTileEntity(otherPos);
-                        //noinspection ConstantConditions
-                        if(holder.getWireManager().getColorOfPart(element.wirePart) != null && holder.getWireManager().getColorOfPart(element.wirePart) == holder.getWireManager().getColorOfPart(part)) {
-                            build(wireSystems, new Element(otherPos, part));
-                        }
+                    if(color != null && colorOfPart == color) {
+                        elements.add(element);
+                        getConnectedElementsOfElement(wireSystems.world, element).forEach(localElement -> build(wireSystems, localElement));
                     }
-                }
-            }
-            Arrays.stream(EnumFacing.values()).forEach(side -> build(wireSystems, new Element(element.blockPos, side)));
-        } else if(element.type == Element.Type.EMITTER_SIDE) {
-            if(wireSystems.world.getTileEntity(element.blockPos) instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) wireSystems.world.getTileEntity(element.blockPos);
-                //noinspection ConstantConditions
-                if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
-                    elements.add(new Element(element.blockPos, element.emitterSide));
+                    Arrays.stream(EnumFacing.values()).forEach(side -> build(wireSystems, new Element(element.blockPos, side)));
+                } else if(element.type == Element.Type.EMITTER_SIDE) {
+                    if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
+                        elements.add(new Element(element.blockPos, element.emitterSide));
+                    }
                 }
             }
         }
@@ -80,16 +72,12 @@ public class WireSystem {
 
     public boolean update(WorldSavedDataWireSystems wireSystems) {
         return elements.stream().filter(element -> element.type == Element.Type.EMITTER_SIDE).map(element -> {
-            if(wireSystems.world.getTileEntity(element.blockPos) instanceof IPipeHolder) {
-                IPipeHolder holder = (IPipeHolder) wireSystems.world.getTileEntity(element.blockPos);
-                //noinspection ConstantConditions
+            TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
+            if(tile instanceof IPipeHolder) {
+                IPipeHolder holder = (IPipeHolder) tile;
                 if(holder.getPluggable(element.emitterSide) instanceof PluggableGate) {
                     PluggableGate gate = (PluggableGate) holder.getPluggable(element.emitterSide);
-                    return gate.logic.isEmitting(holder.getWireManager().getColorOfPart(
-                            elements.stream()
-                                    .filter(localElement -> localElement.type == Element.Type.WIRE_PART && localElement.blockPos.equals(element.blockPos))
-                                    .findAny().orElse(null).wirePart)
-                    );
+                    return gate.logic.isEmitting(color);
                 }
             }
             return false;

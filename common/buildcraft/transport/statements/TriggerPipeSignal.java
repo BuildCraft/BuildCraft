@@ -38,7 +38,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     public static boolean doesGateHaveColour(IGate gate, EnumDyeColor c) {
         // FIXME: replace with a check to wires.hasWire(colour)!
-        return c.ordinal() % 3 == 1;
+        return gate.getPipeHolder().getWireManager().hasPartOfColor(c);
     }
 
     @Override

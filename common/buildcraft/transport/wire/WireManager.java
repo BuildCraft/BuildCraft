@@ -54,7 +54,9 @@ public class WireManager implements IWireManager {
             return null;
         } else {
             parts.remove(part);
-            getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+            WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
+            WireSystem.getConnectedElementsOfElement(holder.getPipeWorld(), element).forEach(getWireSystems()::buildAndAddWireSystem);
+            getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
             return color;
         }
     }
@@ -65,7 +67,8 @@ public class WireManager implements IWireManager {
             for(EnumWireBetween between : EnumWireBetween.VALUES) {
                 EnumWirePart[] betweenParts = between.parts;
                 if(between.to == null) {
-                    if((betweenParts[0] == part && getColorOfPart(betweenParts[1]) == color) || (betweenParts[1] == part && getColorOfPart(betweenParts[0]) == color)) {
+                    if((betweenParts[0] == part && getColorOfPart(betweenParts[1]) == color) ||
+                            (betweenParts[1] == part && getColorOfPart(betweenParts[0]) == color)) {
                         betweens.put(between, color);
                     }
                 } else if(holder.getPipe().isConnected(between.to)) {
@@ -85,6 +88,11 @@ public class WireManager implements IWireManager {
     @Override
     public EnumDyeColor getColorOfPart(EnumWirePart part) {
         return parts.get(part);
+    }
+
+    @Override
+    public boolean hasPartOfColor(EnumDyeColor color) {
+        return parts.values().contains(color);
     }
 
     public boolean isPowered(EnumWirePart part) {

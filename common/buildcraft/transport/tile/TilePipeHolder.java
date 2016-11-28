@@ -10,6 +10,7 @@ import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
 import buildcraft.transport.wire.WireManager;
+import buildcraft.transport.wire.WireSystem;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
     public static final int NET_UPDATE_MULTI = 10;
@@ -324,6 +326,9 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         eventBus.registerHandler(with);
 
         pipe.markForUpdate();
+        Arrays.stream(EnumWirePart.values())
+                .flatMap(part -> WireSystem.getConnectedElementsOfElement(worldObj, new WireSystem.Element(pos, part)).stream())
+                .forEach(wireManager.getWireSystems()::buildAndAddWireSystem);
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
         return old;
