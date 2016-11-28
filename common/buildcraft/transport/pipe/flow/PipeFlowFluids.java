@@ -280,7 +280,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
-            arr[part.getIndex()] = s.clientAmountLast + partialTicks * (s.clientAmountLast - s.clientAmountThis);
+            arr[part.getIndex()] = s.clientAmountLast * partialTicks + s.clientAmountThis * (1 - partialTicks);
         }
         return arr;
     }
@@ -291,7 +291,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
             if (s.offsetLast != null & s.offsetThis != null) {
-                arr[part.getIndex()] = s.offsetLast.add(s.offsetLast.subtract(s.offsetThis).scale(partialTicks));
+                arr[part.getIndex()] = s.offsetLast.scale(partialTicks).add(s.offsetThis.scale(1 - partialTicks));
             }
         }
         return arr;
@@ -316,19 +316,14 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public void onTick() {
-        World world = pipe.getHolder().getPipeWorld();
-        if (world.isRemote | true) {
-            if (currentFluid != null) {
-                for (EnumPipePart part : EnumPipePart.VALUES) {
-                    sections.get(part).tickClient();
-                }
-            }
-            if (world.isRemote) {
-                return;
-            }
-        }
-
         if (currentFluid == null) {
+            return;
+        }
+        World world = pipe.getHolder().getPipeWorld();
+        if (world.isRemote) {
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                sections.get(part).tickClient();
+            }
             return;
         }
 
@@ -375,19 +370,24 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.FACES) {
             Section section = sections.get(part);
             if (section.getCurrentDirection().canOutput()) {
-                TileEntity target = pipe.getConnectedTile(part.face);
-                if (target == null) continue;
-                EnumFacing opposite = part.face.getOpposite();
-                IFluidHandler cap = target.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
-                if (cap == null) continue;
+                PipeEventFluid.SideCheck sideCheck = new PipeEventFluid.SideCheck(pipe.getHolder(), this, currentFluid);
+                sideCheck.disallowAllExcept(part.face);
+                pipe.getHolder().fireEvent(sideCheck);
+                if (sideCheck.getOrder().size() == 1) {
+                    TileEntity target = pipe.getConnectedTile(part.face);
+                    if (target == null) continue;
+                    EnumFacing opposite = part.face.getOpposite();
+                    IFluidHandler cap = target.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
+                    if (cap == null) continue;
 
-                FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
+                    FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
 
-                if (fluidToPush.amount > 0) {
-                    int filled = cap.fill(fluidToPush, true);
-                    if (filled > 0) {
-                        section.drainInternal(filled, true);
-                        section.ticksInDirection = COOLDOWN_OUTPUT;
+                    if (fluidToPush.amount > 0) {
+                        int filled = cap.fill(fluidToPush, true);
+                        if (filled > 0) {
+                            section.drainInternal(filled, true);
+                            section.ticksInDirection = COOLDOWN_OUTPUT;
+                        }
                     }
                 }
             }
@@ -641,6 +641,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
             if (offsetThis.xCoord >= 0.5) {
                 offsetThis = offsetThis.addVector(-1, 0, 0);
+                offsetLast = offsetLast.addVector(-1, 0, 0);
             } else if (offsetThis.xCoord <= -0.5) {
                 offsetThis = offsetThis.addVector(1, 0, 0);
                 offsetLast = offsetLast.addVector(1, 0, 0);

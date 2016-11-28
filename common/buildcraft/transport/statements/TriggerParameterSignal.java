@@ -29,7 +29,7 @@ public class TriggerParameterSignal implements IStatementParameter {
     private static TextureAtlasSprite[] icons;
 
     public boolean active = false;
-    public PipeWire color = null;
+    public PipeWire colour = null;
 
     public TriggerParameterSignal() {
 
@@ -43,11 +43,11 @@ public class TriggerParameterSignal implements IStatementParameter {
     @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getGuiSprite() {
-        if (color == null) {
+        if (colour == null) {
             return null;
         }
 
-        return icons[color.ordinal() + (active ? 4 : 0)];
+        return icons[colour.ordinal() + (active ? 4 : 0)];
     }
 
     @Override
@@ -58,31 +58,31 @@ public class TriggerParameterSignal implements IStatementParameter {
         }
 
         if (mouse.getButton() == 0) {
-            if (color == null) {
+            if (colour == null) {
                 active = true;
-                color = PipeWire.RED;
+                colour = PipeWire.RED;
             } else if (active) {
                 active = false;
-            } else if (color == PipeWire.values()[maxColor - 1]) {
-                color = null;
+            } else if (colour == PipeWire.values()[maxColor - 1]) {
+                colour = null;
             } else {
                 do {
-                    color = PipeWire.values()[(color.ordinal() + 1) & 3];
-                } while (color.ordinal() >= maxColor);
+                    colour = PipeWire.values()[(colour.ordinal() + 1) & 3];
+                } while (colour.ordinal() >= maxColor);
                 active = true;
             }
         } else {
-            if (color == null) {
+            if (colour == null) {
                 active = false;
-                color = PipeWire.values()[maxColor - 1];
+                colour = PipeWire.values()[maxColor - 1];
             } else if (!active) {
                 active = true;
-            } else if (color == PipeWire.RED) {
-                color = null;
+            } else if (colour == PipeWire.RED) {
+                colour = null;
             } else {
                 do {
-                    color = PipeWire.values()[(color.ordinal() - 1) & 3];
-                } while (color.ordinal() >= maxColor);
+                    colour = PipeWire.values()[(colour.ordinal() - 1) & 3];
+                } while (colour.ordinal() >= maxColor);
                 active = false;
             }
         }
@@ -92,8 +92,8 @@ public class TriggerParameterSignal implements IStatementParameter {
     public void writeToNBT(NBTTagCompound nbt) {
         nbt.setBoolean("active", active);
 
-        if (color != null) {
-            nbt.setByte("color", (byte) color.ordinal());
+        if (colour != null) {
+            nbt.setByte("color", (byte) colour.ordinal());
         }
 
     }
@@ -103,17 +103,17 @@ public class TriggerParameterSignal implements IStatementParameter {
         active = nbt.getBoolean("active");
 
         if (nbt.hasKey("color")) {
-            color = PipeWire.values()[nbt.getByte("color")];
+            colour = PipeWire.values()[nbt.getByte("color")];
         }
     }
 
     @Override
     public String getDescription() {
-        if (color == null) {
+        if (colour == null) {
             return null;
         }
         return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtilBC.localize("color."
-            + color.name().toLowerCase(Locale.ENGLISH)));
+            + colour.name().toLowerCase(Locale.ENGLISH)));
     }
 
     @Override

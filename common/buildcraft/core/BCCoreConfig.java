@@ -36,6 +36,7 @@ public class BCCoreConfig {
     public static boolean useBucketsFlow;
     public static int itemLifespan;
     public static int markerMaxDistance;
+    public static int networkUpdateRate = 10;
 
     private static Property propColourBlindMode;
     private static Property propWorldGen;
@@ -49,6 +50,7 @@ public class BCCoreConfig {
     private static Property propUseBucketsFlow;
     private static Property propItemLifespan;
     private static Property propMarkerMaxDistance;
+    private static Property propNetworkUpdateRate;
 
     public static void preInit(File cfgFolder) {
         config = new Configuration(new File(cfgFolder, "main.cfg"));
@@ -115,6 +117,11 @@ public class BCCoreConfig {
         propMarkerMaxDistance.setMinValue(16).setMaxValue(256);
         propMarkerMaxDistance.setComment("How far, in minecraft blocks, should markers (volume and path) reach?");
         none.setTo(propMarkerMaxDistance);
+
+        propNetworkUpdateRate = config.get(general, "updateFactor", networkUpdateRate);
+        propNetworkUpdateRate.setMinValue(1).setMaxValue(100);
+        propNetworkUpdateRate.setComment("How often, in ticks, should network update packets be sent? Increasing this might help network performance.");
+        none.setTo(propNetworkUpdateRate);
 
         reloadConfig(game);
 

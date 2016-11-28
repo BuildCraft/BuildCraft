@@ -1,5 +1,8 @@
 package buildcraft.transport;
 
+import java.util.EnumMap;
+import java.util.Locale;
+
 import net.minecraft.item.EnumDyeColor;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -23,6 +26,9 @@ public class BCTransportSprites {
     public static final SpriteHolder ACTION_PULSAR_SINGLE;
     public static final SpriteHolder[] ACTION_PIPE_COLOUR;
 
+    private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_ON;
+    private static final EnumMap<EnumDyeColor, SpriteHolder> PIPE_SIGNAL_OFF;
+
     static {
         EMPTY_FILTERED_BUFFER_SLOT = getHolder("gui/empty_filtered_buffer_slot");
         NOTHING_FILTERED_BUFFER_SLOT = getHolder("gui/nothing_filtered_buffer_slot");
@@ -34,6 +40,15 @@ public class BCTransportSprites {
         ACTION_PIPE_COLOUR = new SpriteHolder[ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_COLOUR[colour.ordinal()] = getHolder("core", "items/paintbrush/" + colour.getName());
+        }
+
+        PIPE_SIGNAL_OFF = new EnumMap<>(EnumDyeColor.class);
+        PIPE_SIGNAL_ON = new EnumMap<>(EnumDyeColor.class);
+
+        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            String pre = "triggers/trigger_pipesignal_" + colour.getName().toLowerCase(Locale.ROOT) + "_";
+            PIPE_SIGNAL_OFF.put(colour, getHolder(pre + "inactive"));
+            PIPE_SIGNAL_ON.put(colour, getHolder(pre + "active"));
         }
     }
 
@@ -58,5 +73,9 @@ public class BCTransportSprites {
     public static void onModelBake(ModelBakeEvent event) {
         PipeModelCacheAll.clearModels();
         PipeFlowRendererItems.onModelBake();
+    }
+
+    public static SpriteHolder getPipeSignal(boolean active, EnumDyeColor colour) {
+        return (active ? PIPE_SIGNAL_ON : PIPE_SIGNAL_OFF).get(colour);
     }
 }

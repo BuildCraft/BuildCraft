@@ -12,7 +12,7 @@ public enum TransportTriggerProvider implements ITriggerProvider {
 
     @Override
     public void addInternalTriggers(Collection<ITriggerInternal> triggers, IStatementContainer container) {
-
+        
     }
 
     @Override
