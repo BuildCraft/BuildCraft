@@ -56,12 +56,13 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
         fluidBuffer.setTranslation(x, y, z);
 
         boolean horizontal = false;
-        boolean vertical = flow.pipe.isConnected(EnumFacing.UP) && amounts[EnumPipePart.UP.getIndex()] > 0;
+        boolean vertical = flow.pipe.isConnected(EnumFacing.UP);
 
         for (EnumFacing face : EnumFacing.VALUES) {
             double size = ((Pipe) flow.pipe).getConnectedDist(face);
+            double amount = amounts[face.getIndex()];
             if (face.getAxis() != Axis.Y) {
-                horizontal |= flow.pipe.isConnected(face);
+                horizontal |= flow.pipe.isConnected(face) && amount > 0;
             }
 
             Vec3d center = VecUtil.offset(new Vec3d(0.5, 0.5, 0.5), face, 0.245 + size / 2);
@@ -69,7 +70,8 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             radius = VecUtil.replaceValue(radius, face.getAxis(), 0.005 + size / 2);
 
             if (face.getAxis() == Axis.Y) {
-                double perc = amounts[face.getIndex()] / flow.capacity;
+                double perc = amount / flow.capacity;
+                perc = Math.sqrt(perc);
                 radius = new Vec3d(perc * 0.24, radius.yCoord, perc * 0.24);
             }
 
@@ -84,7 +86,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
             if (face.getAxis() == Axis.Y) {
                 FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, 1, 1, min, max, fluidBuffer, sides);
             } else {
-                FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, amounts[face.getIndex()], flow.capacity, min, max, fluidBuffer, sides);
+                FluidRenderer.renderFluid(FluidSpriteType.FROZEN, forRender, amount, flow.capacity, min, max, fluidBuffer, sides);
             }
         }
 
@@ -109,6 +111,7 @@ public enum PipeFlowRendererFluids implements IPipeFlowRenderer<PipeFlowFluids> 
 
         if (vertical && horizPos < 0.74) {
             double perc = amount / flow.capacity;
+            perc = Math.sqrt(perc);
             double minXZ = 0.5 - 0.24 * perc;
             double maxXZ = 0.5 + 0.24 * perc;
 
