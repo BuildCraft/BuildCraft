@@ -54,20 +54,25 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
         if (src.getFrameCount() > 0) {
             int widthOld = src.getIconWidth();
             int heightOld = src.getIconHeight();
-            width = widthOld * 4;
-            height = heightOld * 4;
+            width = widthOld * 2;
+            height = heightOld * 2;
 
             int[][] srcData = src.getFrameTextureData(0);
+
+            data = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+            for (int m = 0; m < data.length; m++) {
+                data[m] = new int[width * height / (m + 1) / (m + 1)];
+            }
             int[] relData = srcData[0];
-
-            data = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][width * height];
-            Arrays.fill(data[0], 0xFF_AA_00_FF);
-
-            for (int x = 0; x < width; x++) {
-                int fx = ((x + widthOld / 4) % widthOld) * heightOld;
-                for (int y = 0; y < height; y++) {
-                    int fy = (y + heightOld / 4) % heightOld;
-                    data[0][x * height + y] = relData[fx + fy];
+            if (relData.length < (width * height / 4)) {
+                Arrays.fill(data[0], 0xFF_FF_FF_00);
+            } else {
+                for (int x = 0; x < width; x++) {
+                    int fx = (x % widthOld) * heightOld;
+                    for (int y = 0; y < height; y++) {
+                        int fy = y % heightOld;
+                        data[0][x * height + y] = relData[fx + fy];
+                    }
                 }
             }
         } else {
@@ -90,11 +95,11 @@ public class SpriteFluidFrozen extends TextureAtlasSprite {
 
     @Override
     public float getInterpolatedU(double u) {
-        return super.getInterpolatedU(u / 4 + 8);
+        return super.getInterpolatedU(u / 2 + 4);
     }
 
     @Override
     public float getInterpolatedV(double v) {
-        return super.getInterpolatedV(v / 4 + 8);
+        return super.getInterpolatedV(v / 2 + 4);
     }
 }

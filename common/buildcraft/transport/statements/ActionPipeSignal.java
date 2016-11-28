@@ -8,7 +8,6 @@ import java.util.Locale;
 
 import net.minecraft.item.EnumDyeColor;
 
-import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -19,6 +18,7 @@ import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.wire.IWireEmitter;
 
 public class ActionPipeSignal extends BCStatement implements IActionInternal {
 
@@ -48,18 +48,18 @@ public class ActionPipeSignal extends BCStatement implements IActionInternal {
 
     @Override
     public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
-        IGate gate = (IGate) container;
-
-        // FIXME: replace these calls with the correct ones in IGate or IWireManager!
-        // gate.broadcastSignal(colour);
+        if (!(container instanceof IWireEmitter)) {
+            return;
+        }
+        IWireEmitter emitter = (IWireEmitter) container;
+        emitter.emitWire(colour);
 
         for (IStatementParameter param : parameters) {
             if (param != null && param instanceof ActionParameterSignal) {
                 ActionParameterSignal signal = (ActionParameterSignal) param;
 
                 if (signal.getColor() != null) {
-                    // FIXME: replace these calls with the correct ones in IGate or IWireManager!
-                    // gate.broadcastSignal(signal.getColor());
+                    emitter.emitWire(signal.getColor());
                 }
             }
         }

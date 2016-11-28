@@ -282,7 +282,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
-            arr[part.getIndex()] = s.clientAmountLast * partialTicks + s.clientAmountThis * (1 - partialTicks);
+            arr[part.getIndex()] = s.clientAmountLast * (1 - partialTicks) + s.clientAmountThis * partialTicks;
         }
         return arr;
     }
@@ -293,7 +293,7 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             Section s = sections.get(part);
             if (s.offsetLast != null & s.offsetThis != null) {
-                arr[part.getIndex()] = s.offsetLast.scale(partialTicks).add(s.offsetThis.scale(1 - partialTicks));
+                arr[part.getIndex()] = s.offsetLast.scale(1 - partialTicks).add(s.offsetThis.scale(partialTicks));
             }
         }
         return arr;
