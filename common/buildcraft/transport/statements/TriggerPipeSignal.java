@@ -13,11 +13,11 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.neptune.IWireManager;
 
 import buildcraft.core.statements.BCStatement;
 import buildcraft.lib.client.sprite.SpriteHolderRegistry.SpriteHolder;
+import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.StringUtilBC;
 import buildcraft.transport.BCTransportSprites;
 import buildcraft.transport.BCTransportStatements;
@@ -35,16 +35,9 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         this.colour = colour;
     }
 
-    @Deprecated
-    public TriggerPipeSignal(boolean active, PipeWire color) {
-        super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"), //
-                "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ROOT) + (active ? ".active" : ".inactive"));
-
-        // setBuildCraftLocation("transport", "triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" +
-        // (active ? "active" : "inactive"));
-
-        this.active = active;
-        this.colour = null;
+    public static boolean doesGateHaveColour(IGate gate, EnumDyeColor c) {
+        // FIXME: replace with a check to wires.hasWire(colour)!
+        return c.ordinal() % 3 == 1;
     }
 
     @Override
@@ -54,7 +47,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtilBC.getLocalized(colour));
+        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
     }
 
     @Override
@@ -67,6 +60,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         IWireManager wires = gate.getPipeHolder().getWireManager();
 
         if (active) {
+            // FIXME: replace these calls with the correct ones in IWireManager!
             // if (!wireManager.isWireOn(colour)) {
             // return false;
             // }
@@ -77,8 +71,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         for (IStatementParameter param : parameters) {
             if (param != null && param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
-
                 if (signal.colour != null) {
+                    // FIXME: replace these calls with the correct ones in IWireManager!
                     // if (!wireManager.isWireOn(signal.colour)) {
                     // return false;
                     // }

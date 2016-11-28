@@ -4,86 +4,69 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.transport.PipeWire;
 
+import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.transport.Gate;
+import buildcraft.transport.BCTransportSprites;
 
 public class ActionParameterSignal implements IStatementParameter {
-    @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite[] icons;
-
     @Nullable
-    private PipeWire color = null;
+    private EnumDyeColor colour = null;
 
-    public ActionParameterSignal() {
+    public ActionParameterSignal() {}
 
+    public ActionParameterSignal(EnumDyeColor colour) {
+        this.colour = colour;
     }
 
     @Nullable
-    public PipeWire getColor() {
-        return color;
+    public EnumDyeColor getColor() {
+        return colour;
     }
 
     @Override
     public TextureAtlasSprite getGuiSprite() {
-        PipeWire colour = getColor();
-        if (colour == null) {
+        EnumDyeColor c = colour;
+        if (c == null) {
             return null;
         } else {
-            return icons[colour.ordinal()];
+            return BCTransportSprites.getPipeSignal(true, c).getSprite();
         }
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        int maxColor = 4;
-        if (source instanceof Gate) {
-            maxColor = ((Gate) source).material.maxWireColor;
-        }
-        PipeWire colour = getColor();
-
-        if (colour == null) {
-            colour = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
-        } else if (colour == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
-            colour = null;
-        } else {
-            do {
-                colour = PipeWire.values()[(mouse.getButton() == 0 ? colour.ordinal() + 1 : colour.ordinal() - 1) & 3];
-            } while (colour.ordinal() >= maxColor);
-        }
-        this.color = colour;
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return false;
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt) {
-        PipeWire colour = getColor();
-        if (colour != null) {
-            nbt.setByte("color", (byte) colour.ordinal());
+        EnumDyeColor c = colour;
+        if (c != null) {
+            nbt.setByte("color", (byte) c.ordinal());
         }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("color")) {
-            this.color = PipeWire.values()[nbt.getByte("color")];
+            this.colour = EnumDyeColor.byMetadata(nbt.getByte("color"));
         }
     }
 
@@ -105,27 +88,18 @@ public class ActionParameterSignal implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        PipeWire colour = getColor();
-        if (colour == null) {
+        EnumDyeColor c = colour;
+        if (c == null) {
             return null;
         }
         String format = StringUtilBC.localize("gate.action.pipe.wire");
-        Object[] args = { StringUtilBC.localize("color." + colour.name().toLowerCase(Locale.ENGLISH)) };
+        Object[] args = { ColourUtil.getTextFullTooltip(c) };
         return String.format(format, args);
     }
 
     @Override
     public String getUniqueTag() {
         return "buildcraft:pipeWireAction";
-    }
-
-    @Override
-    public void registerIcons(TextureMap map) {
-        icons = new TextureAtlasSprite[4];
-        icons[0] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_red_active"));
-        icons[1] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_blue_active"));
-        icons[2] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_green_active"));
-        icons[3] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_yellow_active"));
     }
 
     @Override
@@ -136,5 +110,21 @@ public class ActionParameterSignal implements IStatementParameter {
     @Override
     public ItemStack getItemStack() {
         return null;
+    }
+
+    @Override
+    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
+        if (!(source instanceof IGate)) {
+            return null;
+        }
+        IGate gate = (IGate) source;
+        List<IStatementParameter> poss = new ArrayList<>(1 + ColourUtil.COLOURS.length);
+        poss.add(new ActionParameterSignal());
+        for (EnumDyeColor c : ColourUtil.COLOURS) {
+            if (TriggerPipeSignal.doesGateHaveColour(gate, c)) {
+                poss.add(new ActionParameterSignal(c));
+            }
+        }
+        return poss.toArray(new IStatementParameter[poss.size()]);
     }
 }

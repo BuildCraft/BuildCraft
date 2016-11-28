@@ -79,7 +79,7 @@ public class StatementParamGateSideOnly implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible() {
+    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
         IStatementParameter[] possible = new IStatementParameter[2];
         possible[0] = isOn ? this : new StatementParamGateSideOnly(true);
         possible[1] = !isOn ? this : new StatementParamGateSideOnly(false);

@@ -4,35 +4,37 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.transport.PipeWire;
 
+import buildcraft.lib.misc.ColourUtil;
 import buildcraft.lib.misc.StringUtilBC;
-import buildcraft.transport.Gate;
+import buildcraft.transport.BCTransportSprites;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
-    @SideOnly(Side.CLIENT)
-    private static TextureAtlasSprite[] icons;
-
     public boolean active = false;
-    public PipeWire colour = null;
+    public EnumDyeColor colour = null;
 
-    public TriggerParameterSignal() {
+    public TriggerParameterSignal() {}
 
+    public TriggerParameterSignal(boolean active, EnumDyeColor colour) {
+        this.active = active;
+        this.colour = colour;
     }
 
     @Override
@@ -46,46 +48,12 @@ public class TriggerParameterSignal implements IStatementParameter {
         if (colour == null) {
             return null;
         }
-
-        return icons[colour.ordinal() + (active ? 4 : 0)];
+        return BCTransportSprites.getPipeSignal(active, colour).getSprite();
     }
 
     @Override
-    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-        int maxColor = 4;
-        if (source instanceof Gate) {
-            maxColor = ((Gate) source).material.maxWireColor;
-        }
-
-        if (mouse.getButton() == 0) {
-            if (colour == null) {
-                active = true;
-                colour = PipeWire.RED;
-            } else if (active) {
-                active = false;
-            } else if (colour == PipeWire.values()[maxColor - 1]) {
-                colour = null;
-            } else {
-                do {
-                    colour = PipeWire.values()[(colour.ordinal() + 1) & 3];
-                } while (colour.ordinal() >= maxColor);
-                active = true;
-            }
-        } else {
-            if (colour == null) {
-                active = false;
-                colour = PipeWire.values()[maxColor - 1];
-            } else if (!active) {
-                active = true;
-            } else if (colour == PipeWire.RED) {
-                colour = null;
-            } else {
-                do {
-                    colour = PipeWire.values()[(colour.ordinal() - 1) & 3];
-                } while (colour.ordinal() >= maxColor);
-                active = false;
-            }
-        }
+    public boolean onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        return false;
     }
 
     @Override
@@ -103,7 +71,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         active = nbt.getBoolean("active");
 
         if (nbt.hasKey("color")) {
-            colour = PipeWire.values()[nbt.getByte("color")];
+            colour = EnumDyeColor.byMetadata(nbt.getByte("color"));
         }
     }
 
@@ -112,8 +80,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         if (colour == null) {
             return null;
         }
-        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtilBC.localize("color."
-            + colour.name().toLowerCase(Locale.ENGLISH)));
+        return String.format(StringUtilBC.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), ColourUtil.getTextFullTooltip(colour));
     }
 
     @Override
@@ -122,21 +89,24 @@ public class TriggerParameterSignal implements IStatementParameter {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap map) {
-        icons = new TextureAtlasSprite[8];
-        icons[0] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_red_inactive"));
-        icons[1] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_blue_inactive"));
-        icons[2] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_green_inactive"));
-        icons[3] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_yellow_inactive"));
-        icons[4] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_red_active"));
-        icons[5] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_blue_active"));
-        icons[6] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_green_active"));
-        icons[7] = map.registerSprite(new ResourceLocation("buildcrafttransport", "triggers/trigger_pipesignal_yellow_active"));
+    public IStatementParameter rotateLeft() {
+        return this;
     }
 
     @Override
-    public IStatementParameter rotateLeft() {
-        return this;
+    public TriggerParameterSignal[] getPossible(IStatementContainer source, IStatement stmt) {
+        if (!(source instanceof IGate)) {
+            return null;
+        }
+        IGate gate = (IGate) source;
+        List<TriggerParameterSignal> poss = new ArrayList<>(ColourUtil.COLOURS.length * 2 + 1);
+        poss.add(new TriggerParameterSignal());
+        for (EnumDyeColor c : ColourUtil.COLOURS) {
+            if (TriggerPipeSignal.doesGateHaveColour(gate, c)) {
+                poss.add(new TriggerParameterSignal(true, c));
+                poss.add(new TriggerParameterSignal(false, c));
+            }
+        }
+        return poss.toArray(new TriggerParameterSignal[poss.size()]);
     }
 }

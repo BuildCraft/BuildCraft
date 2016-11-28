@@ -14,7 +14,7 @@ public class BCTransportStatements {
     public static final ActionPowerPulsar ACTION_PULSAR_SINGLE;
 
     public static final TriggerPipeSignal[] TRIGGER_PIPE_SIGNAL;
-    public static final ActionSignalOutput[] ACTION_SIGNAL_OUTPUT;
+    public static final ActionPipeSignal[] ACTION_PIPE_SIGNAL;
     public static final ActionPipeColor[] ACTION_PIPE_COLOUR;
 
     public static final IStatement[] ACTION_PULSAR;
@@ -30,10 +30,18 @@ public class BCTransportStatements {
             TRIGGER_PIPE_SIGNAL[colour.ordinal() * 2 + 1] = new TriggerPipeSignal(false, colour);
         }
 
+        ACTION_PIPE_SIGNAL = new ActionPipeSignal[ColourUtil.COLOURS.length];
+        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            ACTION_PIPE_SIGNAL[colour.ordinal()] = new ActionPipeSignal(colour);
+        }
+
         ACTION_PIPE_COLOUR = new ActionPipeColor[ColourUtil.COLOURS.length];
         for (EnumDyeColor colour : ColourUtil.COLOURS) {
             ACTION_PIPE_COLOUR[colour.ordinal()] = new ActionPipeColor(colour);
         }
+
+        StatementManager.registerParameterClass(TriggerParameterSignal.class);
+        StatementManager.registerParameterClass(ActionParameterSignal.class);
     }
 
     public static void preInit() {
