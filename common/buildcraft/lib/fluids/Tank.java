@@ -227,6 +227,6 @@ public class Tank extends FluidTank implements IFluidHandlerAdv, INBTSerializabl
     }
 
     public String getDebugString() {
-        return getFluidAmount() + " / " + capacity + " MB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
+        return getFluidAmount() + " / " + capacity + " mB of " + (getFluid() != null ? getFluid().getFluid().getName() : "n/a");
     }
 }

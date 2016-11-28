@@ -172,14 +172,16 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         if (toAdd == null || toAdd.amount <= 0) {
             return null;
         }
-        millibuckets = toAdd.amount;
+        int extracted = toAdd.amount;
         if (currentFluid == null) {
             setFluid(toAdd);
         }
-        int reallyFilled = section.fill(millibuckets, true);
+        int reallyFilled = section.fill(extracted, true);
         section.ticksInDirection = COOLDOWN_INPUT;
-        if (reallyFilled != millibuckets) {
-            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != wanted " + millibuckets);
+        if (reallyFilled != extracted) {
+            BCLog.logger.warn("[tryExtractFluid] Filled " + reallyFilled + " != extracted " + extracted //
+                + " (maxExtract = " + millibuckets + ")" //
+                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
@@ -222,7 +224,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         int reallyFilled = section.fill(millibuckets, true);
         section.ticksInDirection = COOLDOWN_INPUT;
         if (reallyFilled != millibuckets) {
-            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != wanted " + millibuckets);
+            BCLog.logger.warn("[tryExtractFluidAdv] Filled " + reallyFilled + " != extracted " + millibuckets //
+                + " (handler = " + fluidHandler.getClass() + ") @" + pipe.getHolder().getPipePos());
         }
         return toAdd;
     }
