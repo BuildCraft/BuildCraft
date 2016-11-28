@@ -1,12 +1,17 @@
 package buildcraft.transport;
 
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.transport.ICustomPipeConnection;
@@ -70,6 +75,20 @@ public class BCTransport {
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, BCTransportProxy.getProxy());
 
         BCTransportProxy.getProxy().fmlPreInit();
+
+        MinecraftForge.EVENT_BUS.register(new Object() {
+            @SubscribeEvent
+            public void onWorldTick(TickEvent.WorldTickEvent event) {
+                WorldSavedDataWireSystems.get(event.world).updateAllWireSystems();
+            }
+
+            @SubscribeEvent
+            public void onClientTick(TickEvent.ClientTickEvent event) {
+                if(Minecraft.getMinecraft().theWorld != null) {
+                    WorldSavedDataWireSystems.get(Minecraft.getMinecraft().theWorld).updateAllWireSystems(); // TODO: remove this
+                }
+            }
+        });
     }
 
     @Mod.EventHandler

@@ -90,7 +90,7 @@ public class WireManager implements IWireManager {
     public boolean isPowered(EnumWirePart part) {
         return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
                 .stream()
-                .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce((a, b) -> a || b).orElse(false);
+                .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce(Boolean::logicalOr).orElse(false);
     }
 
     public boolean isAnyPowered(EnumDyeColor color) {

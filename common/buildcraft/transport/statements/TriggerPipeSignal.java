@@ -6,6 +6,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import buildcraft.transport.wire.WireManager;
 import net.minecraft.item.EnumDyeColor;
 
 import buildcraft.api.gates.IGate;
@@ -57,7 +58,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         }
 
         IGate gate = (IGate) container;
-        IWireManager wires = gate.getPipeHolder().getWireManager();
+        WireManager wires = (WireManager) gate.getPipeHolder().getWireManager(); // TODO: use IWireManager
 
         if (active) {
             // FIXME: replace these calls with the correct ones in IWireManager!
@@ -66,12 +67,14 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
             // }
             // } else if (wireManager.isWireOn(colour)) {
             // return false;
+            return wires.isAnyPowered(colour);
         }
 
         for (IStatementParameter param : parameters) {
             if (param != null && param instanceof TriggerParameterSignal) {
                 TriggerParameterSignal signal = (TriggerParameterSignal) param;
                 if (signal.colour != null) {
+                    return wires.isAnyPowered(colour);
                     // FIXME: replace these calls with the correct ones in IWireManager!
                     // if (!wireManager.isWireOn(signal.colour)) {
                     // return false;

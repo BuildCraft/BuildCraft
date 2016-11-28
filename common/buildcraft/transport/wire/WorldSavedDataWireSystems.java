@@ -39,7 +39,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
     }
 
     public void updateWireSystem(WireSystem wireSystem) {
-        wireSystems.put(wireSystem, false);
+        wireSystems.put(wireSystem, wireSystem.update(this));
     }
 
     public void updateAllWireSystems() {

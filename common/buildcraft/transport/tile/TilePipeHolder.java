@@ -434,7 +434,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             pipe.getDebugInfo(left, right, side);
         }
         left.add("Parts:");
-        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color));
+        wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager.isPowered(part)));
         left.add("All wire systems in world count = " + wireManager.getWireSystems().wireSystems.size());
     }
 
