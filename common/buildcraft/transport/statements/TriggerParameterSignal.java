@@ -61,7 +61,7 @@ public class TriggerParameterSignal implements IStatementParameter {
         nbt.setBoolean("active", active);
 
         if (colour != null) {
-            nbt.setByte("color", (byte) colour.ordinal());
+            nbt.setByte("color", (byte) colour.getMetadata());
         }
 
     }

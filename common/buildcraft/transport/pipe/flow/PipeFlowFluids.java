@@ -320,10 +320,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return;
         }
         World world = pipe.getHolder().getPipeWorld();
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            sections.get(part).tickClient();
+        }
         if (world.isRemote) {
-            for (EnumPipePart part : EnumPipePart.VALUES) {
-                sections.get(part).tickClient();
-            }
             return;
         }
 

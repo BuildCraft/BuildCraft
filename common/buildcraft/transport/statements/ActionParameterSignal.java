@@ -59,7 +59,7 @@ public class ActionParameterSignal implements IStatementParameter {
     public void writeToNBT(NBTTagCompound nbt) {
         EnumDyeColor c = colour;
         if (c != null) {
-            nbt.setByte("color", (byte) c.ordinal());
+            nbt.setByte("color", (byte) c.getMetadata());
         }
     }
 
