@@ -49,6 +49,7 @@ import buildcraft.lib.misc.data.Box;
 import buildcraft.lib.misc.data.BoxIterator;
 import buildcraft.lib.misc.data.EnumAxisOrder;
 import buildcraft.lib.mj.MjBatteryReciver;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBCInventory_Neptune;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 
@@ -282,7 +283,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (id == NET_RENDER_DATA) {
             buffer.writeBoolean(min != null);
@@ -310,7 +311,7 @@ public class TileQuarry extends TileBCInventory_Neptune implements ITickable, ID
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (id == NET_RENDER_DATA) {
             if (buffer.readBoolean()) {

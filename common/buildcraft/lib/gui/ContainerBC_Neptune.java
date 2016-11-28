@@ -14,7 +14,6 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,6 +25,7 @@ import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.gui.slot.IPhantomSlot;
 import buildcraft.lib.net.MessageContainer;
 import buildcraft.lib.net.MessageWidget;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.command.IPayloadWriter;
 
 public abstract class ContainerBC_Neptune extends Container {
@@ -126,9 +126,9 @@ public abstract class ContainerBC_Neptune extends Container {
         }
     }
 
-    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) throws IOException {}
+    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) throws IOException {}
 
-    public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBuffer payload, Side side) {
+    public final void handleWidgetMessage(MessageContext ctx, int widgetId, PacketBufferBC payload, Side side) {
         if (widgetId < 0 || widgetId >= widgets.size()) {
             if (DEBUG) {
                 String string = "Received unknown or invalid widget ID " + widgetId + " on side " + side;

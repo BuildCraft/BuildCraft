@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -23,6 +22,7 @@ import buildcraft.api.tiles.IDebuggable;
 
 import buildcraft.lib.block.VanillaRotationHandlers;
 import buildcraft.lib.misc.ParticleUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 // FIXME: This needs reverting to (close to) earlier engine code -- this is all horrible.
@@ -46,7 +46,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
 
     private EnumFacing currentDirection = EnumFacing.UP;
     // Keep a buffer of what tiles are infront of us.
-//    protected final BlockTileCache[] infrontBuffer = new BlockTileCache[Math.abs(getMaxEngineCarryDist()) + 1];
+    // protected final BlockTileCache[] infrontBuffer = new BlockTileCache[Math.abs(getMaxEngineCarryDist()) + 1];
     // refreshed from above, but is guaranteed to be non-null and contain non-null.
     protected TileEngineBase_BC8[] enginesInFront = new TileEngineBase_BC8[0];
     protected IMjReceiver receiverBuffer = null;
@@ -130,29 +130,29 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
             // Except that this is really cheap to do, and we don't want to try
             // and inject power to a non-existent tile
             int num = 0;
-//            TileEngineBase_BC8[] engines = new TileEngineBase_BC8[infrontBuffer.length];
-//            for (BlockTileCache cache : infrontBuffer) {
-//                if (cache == null) break;
-//                // if the cache is not loaded then don't even bother checking.
-//                if (!cache.exists()) break;
-//                TileEntity tile = cache.getTile();
-//                if (tile instanceof TileEngineBase_BC8) {
-//                    TileEngineBase_BC8 forwardEngine = (TileEngineBase_BC8) tile;
-//                    // No corners
-//                    if (forwardEngine.getCurrentDirection() != currentDirection) break;
-//                    // Just make sure we can carry over- we don't want to carry power over a redstone engine.
-//                    if (canCarryOver(forwardEngine) && forwardEngine.canCarryOver(this)) {
-//                        engines[num++] = forwardEngine;
-//                    } else break;
-//                } else if (tile != null) {
-//                    IMjReceiver c = tile.getCapability(MjAPI.CAP_RECEIVER, currentDirection.getOpposite());
-//                    if (c != null && c.canConnect(conductor) && conductor.canConnect(c)) {
-//                        receiverBuffer = c;
-//                    }
-//                    break;
-//                }
-//            }
-//            enginesInFront = Arrays.copyOf(engines, num);
+            // TileEngineBase_BC8[] engines = new TileEngineBase_BC8[infrontBuffer.length];
+            // for (BlockTileCache cache : infrontBuffer) {
+            // if (cache == null) break;
+            // // if the cache is not loaded then don't even bother checking.
+            // if (!cache.exists()) break;
+            // TileEntity tile = cache.getTile();
+            // if (tile instanceof TileEngineBase_BC8) {
+            // TileEngineBase_BC8 forwardEngine = (TileEngineBase_BC8) tile;
+            // // No corners
+            // if (forwardEngine.getCurrentDirection() != currentDirection) break;
+            // // Just make sure we can carry over- we don't want to carry power over a redstone engine.
+            // if (canCarryOver(forwardEngine) && forwardEngine.canCarryOver(this)) {
+            // engines[num++] = forwardEngine;
+            // } else break;
+            // } else if (tile != null) {
+            // IMjReceiver c = tile.getCapability(MjAPI.CAP_RECEIVER, currentDirection.getOpposite());
+            // if (c != null && c.canConnect(conductor) && conductor.canConnect(c)) {
+            // receiverBuffer = c;
+            // }
+            // break;
+            // }
+            // }
+            // enginesInFront = Arrays.copyOf(engines, num);
 
             // Move onto the next stage of our pulse.
             pulseStage += 1 / (double) getPulseFrequency();
@@ -178,9 +178,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     private void makeTileCacheIfNeeded() {
-//        if (cannotUpdate() || infrontBuffer[0] != null) {
-//            return;
-//        }
+        // if (cannotUpdate() || infrontBuffer[0] != null) {
+        // return;
+        // }
         makeTileCache();
     }
 
@@ -188,9 +188,9 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
         if (cannotUpdate()) {
             return;
         }
-//        for (int i = 0; i < infrontBuffer.length; i++) {
-//            infrontBuffer[i] = new BlockTileCache(getWorld(), getPos().offset(currentDirection, i + 1), false);
-//        }
+        // for (int i = 0; i < infrontBuffer.length; i++) {
+        // infrontBuffer[i] = new BlockTileCache(getWorld(), getPos().offset(currentDirection, i + 1), false);
+        // }
     }
 
     protected void sendPower(long power) {
@@ -280,7 +280,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -290,7 +290,7 @@ public abstract class TileEngineBase_BC8 extends TileBC_Neptune implements ITick
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {

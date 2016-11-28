@@ -6,7 +6,6 @@ package buildcraft.transport.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -16,6 +15,7 @@ import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.slot.SlotPhantom;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond;
 import buildcraft.transport.pipe.behaviour.PipeBehaviourWoodDiamond.FilterMode;
 
@@ -62,7 +62,7 @@ public class ContainerDiamondWoodPipe extends ContainerBC_Neptune {
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {
+    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) {
         if (side == Side.SERVER) {
             FilterMode mode = FilterMode.get(payload.readUnsignedByte());
             behaviour.filterMode = mode;

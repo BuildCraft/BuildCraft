@@ -5,7 +5,6 @@ import java.util.*;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -23,6 +22,7 @@ import buildcraft.lib.fluids.SingleUseTank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.mj.MjRedstoneBatteryReceiver;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class TilePump extends TileMiner {
     private SingleUseTank tank = new SingleUseTank("tank", 160000, this); // TODO: remove 1 zero
@@ -207,7 +207,7 @@ public class TilePump extends TileMiner {
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -219,7 +219,7 @@ public class TilePump extends TileMiner {
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {

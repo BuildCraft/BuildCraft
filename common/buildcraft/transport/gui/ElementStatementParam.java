@@ -70,6 +70,6 @@ public class ElementStatementParam extends ElementGuiSlot<IStatementParameter> {
     protected IStatementParameter[] getPossible() {
         IStatementParameter value = reference.get();
         if (value == null) return null;
-        return value.getPossible();
+        return value.getPossible(gui.container.gate, parent.reference.get());
     }
 }

@@ -1,8 +1,8 @@
 package buildcraft.lib.net.command;
 
-import net.minecraft.network.PacketBuffer;
+import buildcraft.lib.net.PacketBufferBC;
 
 @FunctionalInterface
 public interface IPayloadWriter {
-    void write(PacketBuffer buffer);
+    void write(PacketBufferBC buffer);
 }

@@ -1,7 +1,6 @@
 package buildcraft.lib.net;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,7 +17,7 @@ import io.netty.buffer.Unpooled;
 public class MessageWidget implements IMessage {
 
     private int windowId, widgetId;
-    private PacketBuffer payload;
+    private PacketBufferBC payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
     @Deprecated
@@ -27,7 +26,7 @@ public class MessageWidget implements IMessage {
     public MessageWidget(int windowId, int widgetId, IPayloadWriter writer) {
         this.windowId = windowId;
         this.widgetId = widgetId;
-        this.payload = new PacketBuffer(Unpooled.buffer());
+        this.payload = new PacketBufferBC(Unpooled.buffer());
         writer.write(payload);
     }
 
@@ -43,7 +42,7 @@ public class MessageWidget implements IMessage {
         widgetId = buf.readInt();
         int payloadSize = buf.readUnsignedShort();
         ByteBuf read = buf.readBytes(payloadSize);
-        payload = new PacketBuffer(read);
+        payload = new PacketBufferBC(read);
     }
 
     @Override

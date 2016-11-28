@@ -12,8 +12,12 @@ public abstract class ActionWrapper extends StatementWrapper implements IActionI
 
     protected boolean isActive = false;
 
-    public ActionWrapper(IStatement delegate, EnumPipePart sourcePart) {
+    public ActionWrapper(IAction delegate, EnumPipePart sourcePart) {
         super(delegate, sourcePart);
+    }
+
+    public IAction getDelegate() {
+        return (IAction) delegate;
     }
 
     public static ActionWrapper wrap(IStatement statement, EnumFacing side) {

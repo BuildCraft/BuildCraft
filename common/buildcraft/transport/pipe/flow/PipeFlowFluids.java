@@ -3,8 +3,10 @@ package buildcraft.transport.pipe.flow;
 import java.util.*;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -29,18 +31,22 @@ import buildcraft.api.transport.neptune.PipeAPI.FluidTransferInfo;
 import buildcraft.api.transport.neptune.PipeFlow;
 
 import buildcraft.lib.misc.StringUtilBC;
+import buildcraft.lib.misc.VecUtil;
 
 public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable {
 
-    private static final int DIRECTION_COOLDOWN = 30;
+    private static final int DIRECTION_COOLDOWN = 60;
     private static final int COOLDOWN_INPUT = -DIRECTION_COOLDOWN;
     private static final int COOLDOWN_OUTPUT = DIRECTION_COOLDOWN;
+
+    /** The number of pixels the fluid moves by per millisecond */
+    public static final double FLOW_MULTIPLIER = 0.016;
 
     private final FluidTransferInfo fluidTransferInfo = PipeAPI.getFluidTransferInfo(pipe.getDefinition());
 
     /* Default to an additional second of fluid inserting and removal. This means that (for a normal pipe like cobble)
      * it will be 20 * (10 + 12) = 20 * 22 = 440 - oh that's not good is it */
-    private final int capacity = fluidTransferInfo.transferPerTick * (40);// TEMP!
+    public final int capacity = fluidTransferInfo.transferPerTick * (40);// TEMP!
 
     private final Map<EnumPipePart, Section> sections = new EnumMap<>(EnumPipePart.class);
     private FluidStack currentFluid;
@@ -58,6 +64,49 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.VALUES) {
             sections.put(part, new Section(part));
         }
+        if (nbt.hasKey("fluid")) {
+            setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("fluid")));
+        } else {
+            setFluid(null);
+        }
+
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            int direction = part.getIndex();
+            if (nbt.hasKey("tank[" + direction + "]")) {
+                NBTTagCompound compound = nbt.getCompoundTag("tank[" + direction + "]");
+                if (compound.hasKey("FluidType")) {
+                    FluidStack stack = FluidStack.loadFluidStackFromNBT(compound);
+                    if (currentFluid == null) {
+                        setFluid(stack);
+                    }
+                    if (stack.isFluidEqual(currentFluid)) {
+                        sections.get(part).readFromNbt(compound);
+                    }
+                } else {
+                    sections.get(part).readFromNbt(compound);
+                }
+            }
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNbt() {
+        NBTTagCompound nbt = super.writeToNbt();
+
+        if (currentFluid != null) {
+            NBTTagCompound fluidTag = new NBTTagCompound();
+            currentFluid.writeToNBT(fluidTag);
+            nbt.setTag("fluid", fluidTag);
+
+            for (EnumPipePart part : EnumPipePart.VALUES) {
+                int direction = part.getIndex();
+                NBTTagCompound subTag = new NBTTagCompound();
+                sections.get(part).writeToNbt(subTag);
+                nbt.setTag("tank[" + direction + "]", subTag);
+            }
+        }
+
+        return nbt;
     }
 
     @Override
@@ -227,10 +276,23 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     }
 
     @SideOnly(Side.CLIENT)
-    public int[] getAmountsForRender() {
-        int[] arr = new int[7];
+    public double[] getAmountsForRender(float partialTicks) {
+        double[] arr = new double[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
-            arr[part.getIndex()] = sections.get(part).amount;
+            Section s = sections.get(part);
+            arr[part.getIndex()] = s.clientAmountLast * partialTicks + s.clientAmountThis * (1 - partialTicks);
+        }
+        return arr;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public Vec3d[] getOffsetsForRender(float partialTicks) {
+        Vec3d[] arr = new Vec3d[7];
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            Section s = sections.get(part);
+            if (s.offsetLast != null & s.offsetThis != null) {
+                arr[part.getIndex()] = s.offsetLast.scale(partialTicks).add(s.offsetThis.scale(1 - partialTicks));
+            }
         }
         return arr;
     }
@@ -254,12 +316,14 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
 
     @Override
     public void onTick() {
-        World world = pipe.getHolder().getPipeWorld();
-        if (world.isRemote) {
+        if (currentFluid == null) {
             return;
         }
-
-        if (currentFluid == null) {
+        World world = pipe.getHolder().getPipeWorld();
+        for (EnumPipePart part : EnumPipePart.VALUES) {
+            sections.get(part).tickClient();
+        }
+        if (world.isRemote) {
             return;
         }
 
@@ -306,24 +370,24 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
         for (EnumPipePart part : EnumPipePart.FACES) {
             Section section = sections.get(part);
             if (section.getCurrentDirection().canOutput()) {
-                TileEntity target = pipe.getConnectedTile(part.face);
-                if (target == null) continue;
-                EnumFacing opposite = part.face.getOpposite();
-                IFluidHandler cap = target.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
-                if (cap == null) continue;
+                PipeEventFluid.SideCheck sideCheck = new PipeEventFluid.SideCheck(pipe.getHolder(), this, currentFluid);
+                sideCheck.disallowAllExcept(part.face);
+                pipe.getHolder().fireEvent(sideCheck);
+                if (sideCheck.getOrder().size() == 1) {
+                    TileEntity target = pipe.getConnectedTile(part.face);
+                    if (target == null) continue;
+                    EnumFacing opposite = part.face.getOpposite();
+                    IFluidHandler cap = target.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
+                    if (cap == null) continue;
 
-                FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
+                    FluidStack fluidToPush = new FluidStack(currentFluid, section.drainInternal(fluidTransferInfo.transferPerTick, false));
 
-                if (fluidToPush.amount > 0) {
-                    int filled = cap.fill(fluidToPush, true);
-                    if (filled <= 0) {
-                        // section.ticksInDirection = COOLDOWN_OUTPUT;
-                    } else {
-                        int reallyActuallyDrained = section.drainInternal(filled, true);
-                        if (filled != reallyActuallyDrained) {
-                            BCLog.logger.info("[moveFromPipe] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
+                    if (fluidToPush.amount > 0) {
+                        int filled = cap.fill(fluidToPush, true);
+                        if (filled > 0) {
+                            section.drainInternal(filled, true);
+                            section.ticksInDirection = COOLDOWN_OUTPUT;
                         }
-                        section.ticksInDirection = COOLDOWN_OUTPUT;
                     }
                 }
             }
@@ -371,11 +435,10 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 amountToPush = center.drainInternal(amountToPush, false);
                 if (amountToPush > 0) {
                     int filled = section.fill(amountToPush, true);
-                    int reallyActuallyDrained = center.drainInternal(filled, true);
-                    if (filled != reallyActuallyDrained) {
-                        BCLog.logger.info("[moveFromCenter] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
+                    if (filled > 0) {
+                        center.drainInternal(filled, true);
+                        section.ticksInDirection = COOLDOWN_OUTPUT;
                     }
-                    section.ticksInDirection = COOLDOWN_OUTPUT;
                     // FIXME: This is the animated flow variable
                     // flow[direction.ordinal()] = 1;
                 }
@@ -414,9 +477,9 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                 int amountToPush = section.drainInternal(amountToDrain, false);
                 if (amountToPush > 0) {
                     int filled = center.fill(amountToPush, true);
-                    int reallyActuallyDrained = section.drainInternal(filled, true);
-                    if (filled != reallyActuallyDrained) {
-                        BCLog.logger.info("[moveToCenter] Filled " + filled + " but drained " + reallyActuallyDrained + " instead!");
+                    section.drainInternal(filled, true);
+                    if (filled > 0) {
+                        section.ticksInDirection = COOLDOWN_INPUT;
                     }
                     // FIXME: This is the animated flow variable
                     // flow[dir.ordinal()] = -1;
@@ -429,14 +492,8 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
     class Section implements IFluidHandler {
         final EnumPipePart part;
 
-        /**
-         * 
-         */
         int amount;
 
-        /**
-         * 
-         */
         int currentTime;
 
         /** Map of [time] -> [amount inserted].
@@ -451,8 +508,37 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
          * If greater than 0 then fluids can only move out of this section into other tiles. */
         int ticksInDirection = 0;
 
-        public Section(EnumPipePart part) {
+        // Client side fields
+
+        /** Used to interpolate between {@link #clientAmountThis} and {@link #clientAmountLast} for rendering. */
+        double clientAmountThis, clientAmountLast;
+
+        /** Holds the amount of fluid was last sent to us from the sever */
+        int target;
+
+        /** The world-times of when the last message was received. */
+        long targetTime = -1;
+
+        Vec3d offsetLast, offsetThis;
+
+        Section(EnumPipePart part) {
             this.part = part;
+        }
+
+        void writeToNbt(NBTTagCompound nbt) {
+            nbt.setShort("capacity", (short) amount);
+
+            for (int i = 0; i < incoming.length; ++i) {
+                nbt.setShort("in[" + i + "]", (short) incoming[i]);
+            }
+        }
+
+        void readFromNbt(NBTTagCompound nbt) {
+            this.amount = nbt.getShort("capacity");
+
+            for (int i = 0; i < incoming.length; ++i) {
+                incoming[i] = nbt.getShort("in[" + i + "]");
+            }
         }
 
         /** @return The maximum amount of fluid that can be inserted into this pipe on this tick. */
@@ -512,6 +598,72 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
             return dir;
         }
 
+        void writeClientMessage(PacketBuffer buffer) {
+            buffer.writeShort(amount);
+        }
+
+        void handleClientMessage(PacketBuffer buffer) {
+            targetTime = pipe.getHolder().getPipeWorld().getTotalWorldTime();
+            target = buffer.readShort();
+        }
+
+        /** @return True if this still contains fluid, false if not. */
+        boolean tickClient() {
+            clientAmountLast = clientAmountThis;
+
+            target = amount; // temp until networking is added
+
+            if (target != clientAmountThis) {
+                double diff = target - clientAmountThis;
+                diff = Math.min(diff, fluidTransferInfo.transferPerTick);
+                clientAmountThis += diff;
+            }
+
+            if (offsetThis == null) {
+                offsetThis = Vec3d.ZERO;
+            }
+            offsetLast = offsetThis;
+
+            if (part.face == null) {
+                Vec3d dir = Vec3d.ZERO;
+                for (EnumPipePart p : EnumPipePart.FACES) {
+                    Section s = sections.get(p);
+                    if (s.amount > 0) {
+                        double mult = Math.signum(s.ticksInDirection);
+                        dir = VecUtil.offset(dir, p.face, -FLOW_MULTIPLIER * mult / 2);
+                    }
+                }
+                offsetThis = offsetThis.add(dir);
+            } else {
+                double mult = Math.signum(ticksInDirection);
+                offsetThis = VecUtil.offset(offsetLast, part.face, -FLOW_MULTIPLIER * (mult));
+            }
+
+            if (offsetThis.xCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(-1, 0, 0);
+                offsetLast = offsetLast.addVector(-1, 0, 0);
+            } else if (offsetThis.xCoord <= -0.5) {
+                offsetThis = offsetThis.addVector(1, 0, 0);
+                offsetLast = offsetLast.addVector(1, 0, 0);
+            }
+            if (offsetThis.yCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(0, -1, 0);
+                offsetLast = offsetLast.addVector(0, -1, 0);
+            } else if (offsetThis.yCoord <= -1) {
+                offsetThis = offsetThis.addVector(0, 1, 0);
+                offsetLast = offsetLast.addVector(0, -1, 0);
+            }
+            if (offsetThis.zCoord >= 0.5) {
+                offsetThis = offsetThis.addVector(0, 0, -1);
+                offsetLast = offsetLast.addVector(0, 0, -1);
+            } else if (offsetThis.zCoord <= -0.5) {
+                offsetThis = offsetThis.addVector(0, 0, 1);
+                offsetLast = offsetLast.addVector(0, 0, 1);
+            }
+
+            return clientAmountThis > 0 | clientAmountLast > 0;
+        }
+
         // IFluidHandler
 
         @Override
@@ -542,9 +694,12 @@ public class PipeFlowFluids extends PipeFlow implements IFlowFluid, IDebuggable 
                     if (currentFluid == null) {
                         setFluid(resource);
                     }
+                }
+                int filled = fill(resource.amount, doFill);
+                if (filled > 0 && doFill) {
                     ticksInDirection = COOLDOWN_INPUT;
                 }
-                return fill(resource.amount, doFill);
+                return filled;
             }
             return 0;
         }

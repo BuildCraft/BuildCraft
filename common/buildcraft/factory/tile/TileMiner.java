@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +26,7 @@ import buildcraft.lib.delta.DeltaInt;
 import buildcraft.lib.delta.DeltaManager.EnumNetworkVisibility;
 import buildcraft.lib.migrate.BCVersion;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHasWork, IControllable, IDebuggable {
@@ -156,7 +156,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     // Networking
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -170,7 +170,7 @@ public abstract class TileMiner extends TileBC_Neptune implements ITickable, IHa
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_RENDER_DATA) {

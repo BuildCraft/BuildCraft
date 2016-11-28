@@ -34,6 +34,10 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
     @Override
     public void renderTileEntityAt(TileTank te, double x, double y, double z, float partialTicks, int destroyStage) {
+        FluidStack forRender = te.tank.getFluid();
+        if (forRender == null) {
+            return;
+        }
         Minecraft.getMinecraft().mcProfiler.startSection("bc");
         Minecraft.getMinecraft().mcProfiler.startSection("tank");
 
@@ -45,7 +49,7 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         // buffer setup
         VertexBuffer vb = Tessellator.getInstance().getBuffer();
-        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         vb.setTranslation(x, y, z);
 
         boolean[] sideRender = { true, true, true, true, true, true };
@@ -56,6 +60,10 @@ public class RenderTank extends TileEntitySpecialRenderer<TileTank> {
 
         Vec3d min = connectedDown ? MIN_CONNECTED : MIN;
         Vec3d max = connectedUp ? MAX_CONNECTED : MAX;
+        int blocklight = forRender.getFluid().getLuminosity(forRender);
+        int combinedLight = te.getWorld().getCombinedLight(te.getPos(), blocklight);
+
+        FluidRenderer.vertex.lighti(combinedLight);
 
         // TODO: use a DeltaInt for the fluid amount
         FluidRenderer.renderFluid(FluidSpriteType.STILL, te.tank, min, max, vb, sideRender);

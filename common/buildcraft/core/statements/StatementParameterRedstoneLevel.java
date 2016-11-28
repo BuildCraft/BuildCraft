@@ -110,7 +110,7 @@ public class StatementParameterRedstoneLevel implements IStatementParameter {
     }
     
     @Override
-    public IStatementParameter[] getPossible() {
+    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
         IStatementParameter[] possible = new IStatementParameter[maxLevel - minLevel];
         for (int i = 0; i < maxLevel - minLevel; i++) {
             int l = minLevel + i;

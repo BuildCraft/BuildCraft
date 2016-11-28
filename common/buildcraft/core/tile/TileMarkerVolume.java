@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +28,7 @@ import buildcraft.lib.marker.MarkerSubCache;
 import buildcraft.lib.misc.PermissionUtil;
 import buildcraft.lib.misc.PositionUtil;
 import buildcraft.lib.misc.data.Box;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileMarker;
 
 public class TileMarkerVolume extends TileMarker<VolumeConnection> implements ITileAreaProvider {
@@ -81,7 +81,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
         if (side == Side.SERVER) {
             if (id == NET_RENDER_DATA) {
@@ -91,7 +91,7 @@ public class TileMarkerVolume extends TileMarker<VolumeConnection> implements IT
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
         if (side == Side.CLIENT) {
             if (id == NET_SIGNALS_ON) {

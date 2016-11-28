@@ -22,7 +22,7 @@ import io.netty.buffer.Unpooled;
 
 public class MessageUpdateTile implements IMessage {
     private BlockPos pos;
-    private PacketBuffer payload;
+    private PacketBufferBC payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
     @Deprecated
@@ -30,7 +30,7 @@ public class MessageUpdateTile implements IMessage {
 
     public MessageUpdateTile(BlockPos pos, IPayloadWriter writer) {
         this.pos = pos;
-        payload = new PacketBuffer(Unpooled.buffer());
+        payload = new PacketBufferBC(Unpooled.buffer());
         writer.write(payload);
     }
 
@@ -39,7 +39,7 @@ public class MessageUpdateTile implements IMessage {
         PacketBuffer buffer = new PacketBuffer(buf);
         this.pos = buffer.readBlockPos();
         int size = buffer.readUnsignedShort();
-        payload = new PacketBuffer(buffer.readBytes(size));
+        payload = new PacketBufferBC(buffer.readBytes(size));
     }
 
     @Override

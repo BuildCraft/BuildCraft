@@ -32,7 +32,7 @@ public class MessageCommand implements IMessage {
     private ICommandTarget target;
     private String name;
     private final IPayloadWriter writer;
-    private PacketBuffer payload;
+    private PacketBufferBC payload;
 
     /** Used by forge to construct this upon receive. Do not use! */
     @Deprecated
@@ -83,12 +83,12 @@ public class MessageCommand implements IMessage {
         }
         int payloadSize = buffer.readUnsignedShort();
         ByteBuf read = buffer.readBytes(payloadSize);
-        payload = new PacketBuffer(read);
+        payload = new PacketBufferBC(read);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        payload = new PacketBuffer(Unpooled.buffer());
+        payload = new PacketBufferBC(Unpooled.buffer());
         target.writePositionData(payload);
         writer.write(payload);
 

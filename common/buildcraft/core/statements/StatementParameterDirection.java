@@ -138,7 +138,7 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public IStatementParameter[] getPossible() {
+    public IStatementParameter[] getPossible(IStatementContainer source, IStatement stmt) {
         IStatementParameter[] possible = new IStatementParameter[7];
         for (EnumPipePart part : EnumPipePart.VALUES) {
             if (part.face == direction) {

@@ -24,6 +24,7 @@ import buildcraft.api.transport.neptune.PipePluggable;
 import buildcraft.api.transport.neptune.PluggableDefinition;
 import buildcraft.api.transport.pluggable.PluggableModelKey;
 
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.net.command.IPayloadWriter;
 import buildcraft.transport.BCTransportGuis;
 import buildcraft.transport.BCTransportItems;
@@ -99,7 +100,7 @@ public class PluggableGate extends PipePluggable {
              * ourselves */
             buffer.writeByte(1);
             buffer.writeByte(id);
-            writer.write(buffer);
+            writer.write(PacketBufferBC.asPacketBufferBc(buffer));
         });
     }
 
@@ -110,7 +111,7 @@ public class PluggableGate extends PipePluggable {
              * ourselves */
             buffer.writeByte(1);
             buffer.writeByte(id);
-            writer.write(buffer);
+            writer.write(PacketBufferBC.asPacketBufferBc(buffer));
         });
     }
 

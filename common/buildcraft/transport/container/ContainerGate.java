@@ -22,6 +22,7 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.misc.data.ForwardingReference;
 import buildcraft.lib.misc.data.IReference;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.transport.gate.*;
 
 public class ContainerGate extends ContainerBC_Neptune {
@@ -81,7 +82,7 @@ public class ContainerGate extends ContainerBC_Neptune {
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBuffer buffer, Side side) throws IOException {
+    public void handleMessage(MessageContext ctx, PacketBufferBC buffer, Side side) throws IOException {
         int id = buffer.readUnsignedByte();
         if (side == Side.SERVER) {
             if (id == ID_CONNECTION) {

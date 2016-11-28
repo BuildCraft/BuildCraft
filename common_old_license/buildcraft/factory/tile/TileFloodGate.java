@@ -7,7 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -26,11 +25,12 @@ import buildcraft.lib.fluids.Tank;
 import buildcraft.lib.fluids.TankUtils;
 import buildcraft.lib.misc.BlockUtil;
 import buildcraft.lib.misc.MessageUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
 
 public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebuggable {
-    public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[]{EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
-    public static final int[] REBUILD_DELAYS = new int[]{128, 256, 512, 1024, 2048, 4096, 8192, 16384};
+    public static final EnumFacing[] SIDE_INDEXES = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST };
+    public static final int[] REBUILD_DELAYS = new int[] { 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
     public static final int NET_FLOOD_GATE = 10;
 
     private boolean[] sidesBlocked = new boolean[5];
@@ -58,7 +58,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     private Deque<BlockPos> getLayerQueue(int layer) {
         Deque<BlockPos> pumpQueue = layerQueues.get(layer);
 
-        if(pumpQueue == null) {
+        if (pumpQueue == null) {
             pumpQueue = new LinkedList<>();
             layerQueues.put(layer, pumpQueue);
         }
@@ -74,26 +74,26 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
         tryAddToQueue(pos, visitedBlocks, blocksFound);
 
-        while(!blocksFound.isEmpty()) {
+        while (!blocksFound.isEmpty()) {
             Deque<BlockPos> blocksToExpand = blocksFound;
             blocksFound = new LinkedList<>();
 
-            for(BlockPos index : blocksToExpand) {
+            for (BlockPos index : blocksToExpand) {
                 tryAddToQueue(index, visitedBlocks, blocksFound);
             }
         }
     }
 
     private void tryAddToQueue(BlockPos blockPos, Set<BlockPos> visitedBlocks, Deque<BlockPos> blocksFound) {
-        for(EnumFacing side : EnumFacing.VALUES) {
-            if(side != EnumFacing.UP && !isSideBlocked(side)) {
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (side != EnumFacing.UP && !isSideBlocked(side)) {
                 BlockPos currentPos = blockPos.offset(side);
 
-                if(currentPos.getY() < 0 || currentPos.getY() > 255) {
+                if (currentPos.getY() < 0 || currentPos.getY() > 255) {
                     return;
                 }
-                if(visitedBlocks.add(currentPos)) {
-                    if((currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) * (currentPos.getZ() - pos.getZ()) > 64 * 64) {
+                if (visitedBlocks.add(currentPos)) {
+                    if ((currentPos.getX() - pos.getX()) * (currentPos.getX() - pos.getX()) + (currentPos.getZ() - pos.getZ()) * (currentPos.getZ() - pos.getZ()) > 64 * 64) {
                         return;
                     }
 
@@ -104,9 +104,9 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
                     boolean isCurrentFluid = this.tank.getFluidType() != null && this.tank.getFluidType() == fluid;
 
-                    if(worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
+                    if (worldObj.isAirBlock(currentPos) || block instanceof BlockFloodGate || isCurrentFluid) {
                         blocksFound.add(currentPos);
-                        if(worldObj.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
+                        if (worldObj.isAirBlock(currentPos) || (isCurrentFluid && blockState.getValue(BlockLiquid.LEVEL) != 0)) {
                             getLayerQueue(currentPos.getY()).addLast(currentPos);
                         }
                     }
@@ -116,14 +116,14 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     }
 
     private BlockPos getNext() {
-        if(layerQueues.isEmpty()) {
+        if (layerQueues.isEmpty()) {
             return null;
         }
 
         Deque<BlockPos> bottomLayer = layerQueues.firstEntry().getValue();
 
-        if(bottomLayer != null) {
-            if(bottomLayer.isEmpty()) {
+        if (bottomLayer != null) {
+            if (bottomLayer.isEmpty()) {
                 bottomLayer = layerQueues.pollFirstEntry().getValue();
             }
             return bottomLayer.pollFirst();
@@ -136,19 +136,18 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
     public void update() {
-        if(worldObj.isRemote) {
+        if (worldObj.isRemote) {
             return;
         }
 
         TankUtils.pullFluidAround(worldObj, pos);
 
-
         tick++;
-        if(tick % 16 == 0) {
+        if (tick % 16 == 0) {
             FluidStack fluid = tank.drain(1000, false);
-            if(fluid != null && fluid.amount == 1000) {
+            if (fluid != null && fluid.amount == 1000) {
                 BlockPos current = getNext();
-                if(current != null) {
+                if (current != null) {
                     worldObj.setBlockState(current, fluid.getFluid().getBlock().getDefaultState());
                     tank.drain(1000, true);
                     delayIndex = 0;
@@ -156,7 +155,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
             }
         }
 
-        if(tick % getCurrentDelay() == 0) {
+        if (tick % getCurrentDelay() == 0) {
             delayIndex = Math.min(delayIndex + 1, REBUILD_DELAYS.length - 1);
             rebuildQueue();
         }
@@ -171,7 +170,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
         left.add("");
         left.add("fluid = " + tank.getDebugString());
         String[] sides = new String[5];
-        for(int i = 0; i < sidesBlocked.length; i++) {
+        for (int i = 0; i < sidesBlocked.length; i++) {
             sides[i] = SIDE_INDEXES[i].toString().toLowerCase() + "(" + sidesBlocked[i] + ")";
         }
         left.add("sides = " + String.join(" ", (CharSequence[]) sides));
@@ -184,7 +183,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         tank.readFromNBT(nbt);
-        for(int i = 0; i < sidesBlocked.length; i++) {
+        for (int i = 0; i < sidesBlocked.length; i++) {
             nbt.setBoolean("sides_blocked_" + i, sidesBlocked[i]);
         }
     }
@@ -193,7 +192,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
         tank.writeToNBT(nbt);
-        for(int i = 0; i < sidesBlocked.length; i++) {
+        for (int i = 0; i < sidesBlocked.length; i++) {
             sidesBlocked[i] = nbt.getBoolean("sides_blocked_" + i);
         }
         return nbt;
@@ -202,18 +201,18 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
     // Netwokring
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
-        if(side == Side.SERVER && id == NET_FLOOD_GATE) {
+        if (side == Side.SERVER && id == NET_FLOOD_GATE) {
             tank.writeToBuffer(buffer);
             MessageUtil.writeBooleanArray(buffer, sidesBlocked);
         }
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
-        if(side == Side.CLIENT && id == NET_FLOOD_GATE) {
+        if (side == Side.CLIENT && id == NET_FLOOD_GATE) {
             tank.readFromBuffer(buffer);
             sidesBlocked = MessageUtil.readBooleanArray(buffer, sidesBlocked.length);
         }
@@ -223,7 +222,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -231,7 +230,7 @@ public class TileFloodGate extends TileBC_Neptune implements ITickable, IDebugga
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return (T) tank;
         }
         return super.getCapability(capability, facing);

@@ -149,7 +149,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static ITriggerInternal[] triggerTimer = new ITriggerInternal[TriggerClockTimer.Time.VALUES.length];
     public static ITriggerInternal[] triggerRedstoneFader = new ITriggerInternal[3];
     public static IActionInternal actionRedstoneFader;
-    public static IActionInternal[] actionPipeWire = new ActionSignalOutput[PipeWire.values().length];
+    public static IActionInternal[] actionPipeWire = new ActionPipeSignal[PipeWire.values().length];
     public static IActionInternal actionEnergyPulser = new ActionPowerPulsar();
     public static IActionInternal actionSingleEnergyPulse = new ActionSingleEnergyPulse();
     public static IActionInternal[] actionPipeColor = new IActionInternal[16];
@@ -327,7 +327,7 @@ public class BuildCraftTransport extends BuildCraftMod {
             for (PipeWire wire : PipeWire.values()) {
                 triggerPipeWireActive[wire.ordinal()] = new TriggerPipeSignal(true, wire);
                 triggerPipeWireInactive[wire.ordinal()] = new TriggerPipeSignal(false, wire);
-                actionPipeWire[wire.ordinal()] = new ActionSignalOutput(wire);
+                actionPipeWire[wire.ordinal()] = new ActionPipeSignal(wire);
             }
 
             for (Time time : TriggerClockTimer.Time.VALUES) {

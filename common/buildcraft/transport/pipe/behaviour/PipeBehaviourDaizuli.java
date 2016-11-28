@@ -1,5 +1,7 @@
 package buildcraft.transport.pipe.behaviour;
 
+import java.util.Collections;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,13 +13,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.EnumPipePart;
+import buildcraft.api.transport.PipeEventActionActivate;
 import buildcraft.api.transport.PipeEventHandler;
 import buildcraft.api.transport.PipeEventItem;
+import buildcraft.api.transport.PipeEventStatement;
 import buildcraft.api.transport.neptune.IPipe;
 import buildcraft.api.transport.neptune.IPipeHolder.PipeMessageReceiver;
 
 import buildcraft.lib.misc.EntityUtil;
 import buildcraft.lib.misc.NBTUtils;
+import buildcraft.transport.BCTransportStatements;
+import buildcraft.transport.statements.ActionPipeColor;
 
 public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
     private EnumDyeColor colour = EnumDyeColor.WHITE;
@@ -96,6 +102,22 @@ public class PipeBehaviourDaizuli extends PipeBehaviourDirectional {
             sideCheck.disallowAllExcept(currentDir.face);
         } else {
             sideCheck.disallow(currentDir.face);
+        }
+    }
+
+    @PipeEventHandler
+    public void addActions(PipeEventStatement.AddActionInternal event) {
+        Collections.addAll(event.actions, BCTransportStatements.ACTION_PIPE_COLOUR);
+    }
+
+    @PipeEventHandler
+    public void onActionActivated(PipeEventActionActivate event) {
+        if (event.action instanceof ActionPipeColor) {
+            ActionPipeColor action = ((ActionPipeColor) event.action);
+            if (this.colour != action.color) {
+                this.colour = action.color;
+                pipe.getHolder().scheduleNetworkUpdate(PipeMessageReceiver.BEHAVIOUR);
+            }
         }
     }
 }

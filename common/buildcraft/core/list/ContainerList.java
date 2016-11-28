@@ -6,7 +6,6 @@ package buildcraft.core.list;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,6 +21,7 @@ import buildcraft.lib.gui.ContainerBC_Neptune;
 import buildcraft.lib.gui.widget.WidgetPhantomSlot;
 import buildcraft.lib.list.ListHandler;
 import buildcraft.lib.net.MessageContainer;
+import buildcraft.lib.net.PacketBufferBC;
 
 public class ContainerList extends ContainerBC_Neptune {
     private static final int PLAYER_INV_START = 103;
@@ -122,7 +122,7 @@ public class ContainerList extends ContainerBC_Neptune {
     }
 
     @Override
-    public void handleMessage(MessageContext ctx, PacketBuffer payload, Side side) {
+    public void handleMessage(MessageContext ctx, PacketBufferBC payload, Side side) {
         if (side == Side.SERVER) {
             int id = payload.readUnsignedByte();
             switch (id) {

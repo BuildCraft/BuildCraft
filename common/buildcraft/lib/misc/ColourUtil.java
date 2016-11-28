@@ -13,6 +13,8 @@ public class ColourUtil {
     public static final Function<TextFormatting, TextFormatting> getTextFormatForBlack = ColourUtil::getTextFormatForBlack;
     public static final Function<TextFormatting, TextFormatting> getTextFormatForWhite = ColourUtil::getTextFormatForWhite;
 
+    public static final EnumDyeColor[] COLOURS = EnumDyeColor.values();
+
     private static final String[] NAMES = { //
         "Black", "Red", "Green", "Brown",//
         "Blue", "Purple", "Cyan", "LightGray", //

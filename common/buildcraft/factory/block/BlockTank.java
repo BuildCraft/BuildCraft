@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,11 +26,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.api.transport.ICustomPipeConnection;
 
 import buildcraft.factory.tile.TileTank;
 import buildcraft.lib.block.BlockBCTile_Neptune;
 
-public class BlockTank extends BlockBCTile_Neptune {
+public class BlockTank extends BlockBCTile_Neptune implements ICustomPipeConnection {
     private static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     private static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(2.0 / 16.0, 0.0 / 16.0, 2.0 / 16.0, 14.0 / 16.0, 16.0 / 16.0, 14.0 / 16.0);
 
@@ -47,7 +49,6 @@ public class BlockTank extends BlockBCTile_Neptune {
         super.addProperties(properties);
         properties.add(JOINED_BELOW);
     }
-
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -73,7 +74,7 @@ public class BlockTank extends BlockBCTile_Neptune {
     @SideOnly(Side.CLIENT)
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        if(side.getAxis() == EnumFacing.Axis.Y) {
+        if (side.getAxis() == EnumFacing.Axis.Y) {
             return !(world.getBlockState(pos.offset(side)).getBlock() instanceof BlockTank);
         } else {
             return super.shouldSideBeRendered(blockState, world, pos, side);
@@ -88,13 +89,18 @@ public class BlockTank extends BlockBCTile_Neptune {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileTank tile = (TileTank) world.getTileEntity(pos);
-        if(heldItem == null || tile == null) {
+        if (heldItem == null || tile == null) {
             return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
         }
-        if( FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
+        if (FluidUtil.interactWithFluidHandler(heldItem, tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null), player)) {
             player.inventoryContainer.detectAndSendChanges();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public float getExtension(World world, BlockPos pos, EnumFacing face, IBlockState state) {
+        return face.getAxis() == Axis.Y ? 0 : 2 / 16f;
     }
 }

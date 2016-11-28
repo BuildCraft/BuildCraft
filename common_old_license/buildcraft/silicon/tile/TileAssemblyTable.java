@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.common.util.Constants;
@@ -24,6 +23,7 @@ import buildcraft.api.recipes.AssemblyRecipe;
 import buildcraft.lib.misc.InventoryUtil;
 import buildcraft.lib.misc.MessageUtil;
 import buildcraft.lib.misc.StackUtil;
+import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.recipe.AssemblyRecipeRegistry;
 import buildcraft.lib.tile.item.ItemHandlerManager;
 import buildcraft.silicon.EnumAssemblyRecipeState;
@@ -200,7 +200,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     @Override
-    public void writePayload(int id, PacketBuffer buffer, Side side) {
+    public void writePayload(int id, PacketBufferBC buffer, Side side) {
         super.writePayload(id, buffer, side);
 
         if (id == NET_GUI_DATA) {
@@ -213,7 +213,7 @@ public class TileAssemblyTable extends TileLaserTableBase {
     }
 
     @Override
-    public void readPayload(int id, PacketBuffer buffer, Side side, MessageContext ctx) throws IOException {
+    public void readPayload(int id, PacketBufferBC buffer, Side side, MessageContext ctx) throws IOException {
         super.readPayload(id, buffer, side, ctx);
 
         if (id == NET_GUI_DATA) {

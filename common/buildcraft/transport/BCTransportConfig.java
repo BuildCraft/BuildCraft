@@ -18,10 +18,10 @@ import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.misc.MathUtil;
 
 public class BCTransportConfig {
-    private static final long MJ_REQ_MILLIBUCKET_MIN = 1_000;
+    private static final long MJ_REQ_MILLIBUCKET_MIN = 100;
     private static final long MJ_REQ_ITEM_MIN = 50_000;
 
-    public static long mjPerMillibucket = MjAPI.MJ / 50;
+    public static long mjPerMillibucket = 1_000;
     public static long mjPerItem = MjAPI.MJ;
     public static int baseFlowRate = 10;
 
@@ -32,8 +32,13 @@ public class BCTransportConfig {
     public static void preInit() {
         Configuration config = BCCoreConfig.config;
         propMjPerMillibucket = config.get("general", "pipes.mjPerMillibucket", (int) mjPerMillibucket).setMinValue((int) MJ_REQ_MILLIBUCKET_MIN);
+        EnumRestartRequirement.WORLD.setTo(propMjPerMillibucket);
+
         propMjPerItem = config.get("general", "pipes.mjPerItem", (int) mjPerItem).setMinValue((int) MJ_REQ_ITEM_MIN);
+        EnumRestartRequirement.WORLD.setTo(propMjPerItem);
+
         propBaseFlowRate = config.get("general", "pipes.baseFluidRate", baseFlowRate).setMinValue(1).setMaxValue(40);
+        EnumRestartRequirement.WORLD.setTo(propBaseFlowRate);
 
         MinecraftForge.EVENT_BUS.register(BCTransportConfig.class);
     }
