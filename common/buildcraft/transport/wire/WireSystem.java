@@ -31,25 +31,28 @@ public class WireSystem {
         return elements.contains(element);
     }
 
+    public static List<Element> getConnectedElementsOfElement(IPipeHolder holder, Element element) {
+        assert element.wirePart != null;
+        return element.wirePart.getAllPossibleConnections().stream().map(sidePosPart -> {
+            if(sidePosPart.getLeft() == null || holder.getPipe().isConnected(sidePosPart.getLeft())) {
+                return new Element(element.blockPos.add(sidePosPart.getMiddle()), sidePosPart.getRight());
+            }
+            return null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
     public static List<Element> getConnectedElementsOfElement(World world, Element element) {
         if(element.type == Element.Type.WIRE_PART) {
             TileEntity tile = world.getTileEntity(element.blockPos);
             if(tile instanceof IPipeHolder) {
                 IPipeHolder holder = (IPipeHolder) tile;
-                assert element.wirePart != null;
-                return element.wirePart.getAllPossibleConnections().stream().map(sidePosPart -> {
-                    if(sidePosPart.getLeft() == null || holder.getPipe().isConnected(sidePosPart.getLeft())) {
-                        return new Element(element.blockPos.add(sidePosPart.getMiddle()), sidePosPart.getRight());
-                    }
-                    return null;
-                }).filter(Objects::nonNull).collect(Collectors.toList());
+                return getConnectedElementsOfElement(holder, element);
             }
         }
         return Collections.emptyList();
     }
 
     public WireSystem build(WorldSavedDataWireSystems wireSystems, Element element) {
-        System.out.println(element);
         if(!elements.contains(element)) {
             TileEntity tile = wireSystems.world.getTileEntity(element.blockPos);
             if(tile instanceof IPipeHolder) {

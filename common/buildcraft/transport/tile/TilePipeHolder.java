@@ -6,6 +6,7 @@ import buildcraft.api.transport.neptune.*;
 import buildcraft.lib.misc.data.LoadingException;
 import buildcraft.lib.net.PacketBufferBC;
 import buildcraft.lib.tile.TileBC_Neptune;
+import buildcraft.transport.block.BlockPipeHolder;
 import buildcraft.transport.pipe.Pipe;
 import buildcraft.transport.pipe.PipeEventBus;
 import buildcraft.transport.pipe.PluggableHolder;
@@ -29,7 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITickable, IDebuggable {
     public static final int NET_UPDATE_MULTI = 10;
@@ -153,6 +153,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
     public void invalidate() {
         super.invalidate();
         wireManager.parts.keySet().forEach(wireManager::removePart);
+        pluggables.keySet().forEach(side -> BlockPipeHolder.removePluggable(side, this, new ArrayList<>()));
     }
 
     // ITickable
@@ -193,7 +194,10 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
             redrawBlock();
         }
 
-        wireManager.update();
+        if(!wireManager.inited) {
+            wireManager.updateBetweens(false);
+            wireManager.inited = true;
+        }
     }
 
     // Network

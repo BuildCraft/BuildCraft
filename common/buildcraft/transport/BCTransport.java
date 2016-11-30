@@ -31,8 +31,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.util.Arrays;
-
 @Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCTransport {
     public static final String MODID = "buildcrafttransport";
@@ -82,9 +80,7 @@ public class BCTransport {
             @SubscribeEvent
             public void onWorldTick(TickEvent.WorldTickEvent event) {
                 if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
-//                    Arrays.stream(event.world.getMinecraftServer().worldServers)
-//                            .forEach(worldServer -> WorldSavedDataWireSystems.get(worldServer).updateAllWireSystemsAndSendThemToPlayers());
-                    WorldSavedDataWireSystems.get(event.world).updateAllWireSystemsAndSendThemToPlayers();
+                    WorldSavedDataWireSystems.get(event.world).tick();
                 }
             }
 

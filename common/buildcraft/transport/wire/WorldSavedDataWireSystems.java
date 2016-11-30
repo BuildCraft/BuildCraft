@@ -49,7 +49,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         structureChanged = true;
     }
 
-    public void updateAllWireSystemsAndSendThemToPlayers() {
+    public void tick() {
         wireSystems.keySet().stream()
                 .filter(wireSystem -> {
                     boolean newPowered = wireSystem.update(this);

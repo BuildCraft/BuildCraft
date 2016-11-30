@@ -7,21 +7,21 @@ import buildcraft.api.transport.neptune.IWireManager;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
     public final Map<EnumWirePart, EnumDyeColor> parts = new EnumMap<>(EnumWirePart.class);
     public final Set<EnumWirePart> poweredClient = EnumSet.noneOf(EnumWirePart.class);
     public final Map<EnumWireBetween, EnumDyeColor> betweens = new EnumMap<>(EnumWireBetween.class);
+    public boolean inited = false;
     // TODO: Wire connections to adjacent blocks
 
     public WireManager(IPipeHolder holder) {
@@ -44,6 +44,7 @@ public class WireManager implements IWireManager {
             if(!holder.getPipeWorld().isRemote) {
                 getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
             }
+            updateBetweens(false);
             return true;
         } else {
             return false;
@@ -59,14 +60,16 @@ public class WireManager implements IWireManager {
             parts.remove(part);
             if(!holder.getPipeWorld().isRemote) {
                 WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
-                WireSystem.getConnectedElementsOfElement(holder.getPipeWorld(), element).forEach(getWireSystems()::buildAndAddWireSystem);
+                WireSystem.getConnectedElementsOfElement(holder, element).forEach(getWireSystems()::buildAndAddWireSystem);
                 getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
             }
+            updateBetweens(false);
             return color;
         }
     }
 
-    public void update() {
+    @Override
+    public void updateBetweens(boolean recursive) {
         betweens.clear();
         parts.forEach((part, color) -> {
             for(EnumWireBetween between : EnumWireBetween.VALUES) {
@@ -88,6 +91,16 @@ public class WireManager implements IWireManager {
                 }
             }
         });
+
+        if(!recursive) {
+            for(EnumFacing side : EnumFacing.values()) {
+                TileEntity tile = holder.getPipeWorld().getTileEntity(holder.getPipePos().offset(side));
+                if(tile instanceof IPipeHolder) {
+                    IPipeHolder holder = (IPipeHolder) tile;
+                    holder.getWireManager().updateBetweens(true);
+                }
+            }
+        }
     }
 
     @Override
@@ -155,6 +168,7 @@ public class WireManager implements IWireManager {
             for(int i = 0; i < count; i++) {
                 parts.put(EnumWirePart.VALUES[buffer.readInt()], EnumDyeColor.byMetadata(buffer.readInt()));
             }
+            updateBetweens(false);
         }
     }
 }

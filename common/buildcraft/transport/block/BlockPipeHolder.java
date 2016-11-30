@@ -356,7 +356,19 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
                 return plug.getPickStack();
             }
         } else {
-            // TODO: wire handling
+            EnumWirePart part = null;
+            EnumWireBetween between = null;
+
+            if (target.subHit > 6) {
+                part = getWirePartHit(target);
+                between = getWireBetweenHit(target);
+            }
+
+            if(part != null) {
+                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(part).getMetadata());
+            } else if(between != null) {
+                return new ItemStack(BCTransportItems.wire, 1, tile.wireManager.getColorOfPart(between.parts[0]).getMetadata());
+            }
         }
         return null;
     }
@@ -484,7 +496,7 @@ public class BlockPipeHolder extends BlockBCTile_Neptune implements ICustomPaint
         return super.removedByPlayer(state, world, pos, player, willHarvest);
     }
 
-    private static void removePluggable(EnumFacing side, TilePipeHolder tile, List<ItemStack> toDrop) {
+    public static void removePluggable(EnumFacing side, TilePipeHolder tile, List<ItemStack> toDrop) {
         PipePluggable removed = tile.replacePluggable(side, null);
         if (removed != null) {
             removed.onRemove(toDrop);
