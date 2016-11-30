@@ -144,7 +144,7 @@ public class BCTransportRecipes {
                 }
             }
             for(EnumDyeColor color : EnumDyeColor.values()) {
-                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())), new ItemStack(BCTransportItems.wire, 1, color.getMetadata())));
+                AssemblyRecipeRegistry.INSTANCE.addRecipe(new AssemblyRecipe(10000000000L, ImmutableSet.of(new ItemStack(Items.REDSTONE), new ItemStack(Items.DYE, 1, color.getMetadata())), new ItemStack(BCTransportItems.wire, 8, color.getMetadata())));
             }
         }
     }
