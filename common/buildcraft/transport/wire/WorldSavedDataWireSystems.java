@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
-    public static final String DATA_NAME = "BC_WireSystems";
+    public static final String DATA_NAME = "buildcraft_wire_systems";
     public World world;
     public final Map<WireSystem, Boolean> wireSystems = new HashMap<>();
     public boolean structureChanged = true;
@@ -74,10 +74,12 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
                 BCMessageHandler.netWrapper.sendTo(new MessageElementsPowered(elementsPowered), player);
             }
         });
+        if(structureChanged || !changedSystems.isEmpty()) {
+            markDirty();
+        }
         structureChanged = false;
         changedSystems.clear();
         changedPlayers.clear();
-        markDirty();
     }
 
     @Override
