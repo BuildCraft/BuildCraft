@@ -326,9 +326,11 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         eventBus.registerHandler(with);
 
         pipe.markForUpdate();
-        Arrays.stream(EnumWirePart.values())
-                .flatMap(part -> WireSystem.getConnectedElementsOfElement(worldObj, new WireSystem.Element(pos, part)).stream())
-                .forEach(wireManager.getWireSystems()::buildAndAddWireSystem);
+        if(!worldObj.isRemote) {
+            Arrays.stream(EnumWirePart.values())
+                    .flatMap(part -> WireSystem.getConnectedElementsOfElement(worldObj, new WireSystem.Element(pos, part)).stream())
+                    .forEach(wireManager.getWireSystems()::buildAndAddWireSystem);
+        }
         scheduleNetworkUpdate(PipeMessageReceiver.PLUGGABLES[side.getIndex()]);
         scheduleRenderUpdate();
         return old;
@@ -440,7 +442,7 @@ public class TilePipeHolder extends TileBC_Neptune implements IPipeHolder, ITick
         }
         left.add("Parts:");
         wireManager.parts.forEach((part, color) -> left.add(" - " + part + " = " + color + " = " + wireManager.isPowered(part)));
-        left.add("All wire systems in world count = " + wireManager.getWireSystems().wireSystems.size());
+        left.add("All wire systems in world count = " + (worldObj.isRemote ? 0 : wireManager.getWireSystems().wireSystems.size()));
     }
 
     @Override

@@ -58,7 +58,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         }
 
         IGate gate = (IGate) container;
-        WireManager wires = (WireManager) gate.getPipeHolder().getWireManager(); // TODO: use IWireManager
+        IWireManager wires = gate.getPipeHolder().getWireManager();
 
         if (active) {
             // FIXME: replace these calls with the correct ones in IWireManager!

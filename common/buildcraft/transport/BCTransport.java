@@ -1,26 +1,12 @@
 package buildcraft.transport;
 
-import buildcraft.transport.wire.WorldSavedDataWireSystems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import buildcraft.api.transport.ICustomPipeConnection;
 import buildcraft.api.transport.PipeConnectionAPI;
 import buildcraft.api.transport.neptune.PipeAPI;
 import buildcraft.api.transport.neptune.PipeFlowType;
-
 import buildcraft.core.BCCore;
 import buildcraft.lib.BCLib;
+import buildcraft.lib.BCMessageHandler;
 import buildcraft.lib.config.EnumRestartRequirement;
 import buildcraft.lib.registry.CreativeTabManager;
 import buildcraft.lib.registry.RegistryHelper;
@@ -30,6 +16,22 @@ import buildcraft.transport.pipe.flow.PipeFlowItems;
 import buildcraft.transport.pipe.flow.PipeFlowPower;
 import buildcraft.transport.pipe.flow.PipeFlowStructure;
 import buildcraft.transport.plug.PluggableRegistry;
+import buildcraft.transport.wire.MessageElementsPowered;
+import buildcraft.transport.wire.WorldSavedDataWireSystems;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.Arrays;
 
 @Mod(modid = BCTransport.MODID, name = "BuildCraft Transport", dependencies = "required-after:buildcraftcore", version = BCLib.VERSION)
 public class BCTransport {
@@ -79,16 +81,24 @@ public class BCTransport {
         MinecraftForge.EVENT_BUS.register(new Object() {
             @SubscribeEvent
             public void onWorldTick(TickEvent.WorldTickEvent event) {
-                WorldSavedDataWireSystems.get(event.world).updateAllWireSystems();
+                if(!event.world.isRemote && event.world.getMinecraftServer() != null) {
+//                    Arrays.stream(event.world.getMinecraftServer().worldServers)
+//                            .forEach(worldServer -> WorldSavedDataWireSystems.get(worldServer).updateAllWireSystemsAndSendThemToPlayers());
+                    WorldSavedDataWireSystems.get(event.world).updateAllWireSystemsAndSendThemToPlayers();
+                }
             }
 
             @SubscribeEvent
-            public void onClientTick(TickEvent.ClientTickEvent event) {
-                if(Minecraft.getMinecraft().theWorld != null) {
-                    WorldSavedDataWireSystems.get(Minecraft.getMinecraft().theWorld).updateAllWireSystems(); // TODO: remove this
-                }
+            public void onChunkWatch(ChunkWatchEvent.Watch event) {
+                WorldSavedDataWireSystems.get(event.getPlayer().worldObj).changedPlayers.add(event.getPlayer());
             }
+
         });
+        BCMessageHandler.addMessageType(MessageElementsPowered.class, MessageElementsPowered.Handler.INSTANCE, Side.CLIENT);
+    }
+
+    @SubscribeEvent
+    public void onChunkWatch(ChunkWatchEvent.Watch event) {
     }
 
     @Mod.EventHandler

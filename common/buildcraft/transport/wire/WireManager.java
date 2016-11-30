@@ -7,19 +7,20 @@ import buildcraft.api.transport.neptune.IWireManager;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 public class WireManager implements IWireManager {
     private final IPipeHolder holder;
     public final Map<EnumWirePart, EnumDyeColor> parts = new EnumMap<>(EnumWirePart.class);
+    public final Set<EnumWirePart> poweredClient = EnumSet.noneOf(EnumWirePart.class);
     public final Map<EnumWireBetween, EnumDyeColor> betweens = new EnumMap<>(EnumWireBetween.class);
     // TODO: Wire connections to adjacent blocks
 
@@ -40,7 +41,9 @@ public class WireManager implements IWireManager {
     public boolean addPart(EnumWirePart part, EnumDyeColor colour) {
         if(getColorOfPart(part) == null) {
             parts.put(part, colour);
-            getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+            if(!holder.getPipeWorld().isRemote) {
+                getWireSystems().buildAndAddWireSystem(new WireSystem.Element(holder.getPipePos(), part));
+            }
             return true;
         } else {
             return false;
@@ -54,9 +57,11 @@ public class WireManager implements IWireManager {
             return null;
         } else {
             parts.remove(part);
-            WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
-            WireSystem.getConnectedElementsOfElement(holder.getPipeWorld(), element).forEach(getWireSystems()::buildAndAddWireSystem);
-            getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
+            if(!holder.getPipeWorld().isRemote) {
+                WireSystem.Element element = new WireSystem.Element(holder.getPipePos(), part);
+                WireSystem.getConnectedElementsOfElement(holder.getPipeWorld(), element).forEach(getWireSystems()::buildAndAddWireSystem);
+                getWireSystems().getWireSystemsWithElement(element).forEach(getWireSystems()::removeWireSystem);
+            }
             return color;
         }
     }
@@ -95,14 +100,20 @@ public class WireManager implements IWireManager {
         return parts.values().contains(color);
     }
 
+    @Override
     public boolean isPowered(EnumWirePart part) {
-        return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
-                .stream()
-                .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce(Boolean::logicalOr).orElse(false);
+        if(holder.getPipeWorld().isRemote) {
+            return poweredClient.contains(part);
+        } else {
+            return getWireSystems().getWireSystemsWithElement(new WireSystem.Element(holder.getPipePos(), part))
+                    .stream()
+                    .map(wireSystem -> getWireSystems().wireSystems.get(wireSystem)).reduce(Boolean::logicalOr).orElse(false);
+        }
     }
 
+    @Override
     public boolean isAnyPowered(EnumDyeColor color) {
-        return parts.values().stream().filter(partColor -> partColor == color).anyMatch(this::isAnyPowered);
+        return parts.entrySet().stream().filter(partColor -> partColor.getValue() == color).anyMatch(partColor -> isPowered(partColor.getKey()));
     }
 
     public NBTTagCompound writeToNbt() {
