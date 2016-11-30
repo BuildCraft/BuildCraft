@@ -20,15 +20,18 @@ import java.util.stream.Collectors;
 
 public class WorldSavedDataWireSystems extends WorldSavedData {
     public static final String DATA_NAME = "BC_WireSystems";
-    public final World world;
+    public World world;
     public final Map<WireSystem, Boolean> wireSystems = new HashMap<>();
     public boolean structureChanged = true;
     public final List<WireSystem> changedSystems = new ArrayList<>();
     public final List<EntityPlayerMP> changedPlayers = new ArrayList<>();
 
-    public WorldSavedDataWireSystems(World world) {
+    public WorldSavedDataWireSystems() {
         super(DATA_NAME);
-        this.world = world;
+    }
+
+    public WorldSavedDataWireSystems(String name) {
+        super(name);
     }
 
     public List<WireSystem> getWireSystemsWithElement(WireSystem.Element element) {
@@ -74,6 +77,7 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         structureChanged = false;
         changedSystems.clear();
         changedPlayers.clear();
+        markDirty();
     }
 
     @Override
@@ -106,9 +110,10 @@ public class WorldSavedDataWireSystems extends WorldSavedData {
         MapStorage storage = world.getPerWorldStorage();
         WorldSavedDataWireSystems instance = (WorldSavedDataWireSystems) storage.getOrLoadData(WorldSavedDataWireSystems.class, DATA_NAME);
         if(instance == null) {
-            instance = new WorldSavedDataWireSystems(world);
+            instance = new WorldSavedDataWireSystems();
             storage.setData(DATA_NAME, instance);
         }
+        instance.world = world;
         return instance;
     }
 }
