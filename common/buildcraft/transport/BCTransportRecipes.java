@@ -3,10 +3,12 @@ package buildcraft.transport;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.api.BCItems;
 
@@ -68,6 +70,24 @@ public class BCTransportRecipes {
         addPipeRecipe(BCTransportItems.pipeItemDiamond, Items.DIAMOND);
         addPipeRecipe(BCTransportItems.pipeItemLapis, Blocks.LAPIS_BLOCK);
         addPipeRecipe(BCTransportItems.pipeItemDaizuli, Blocks.LAPIS_BLOCK, Items.DIAMOND);
+        addPipeRecipe(BCTransportItems.pipeItemDiaWood, "plankWood", Items.DIAMOND);
+
+        Item waterproof = BCTransportItems.waterproof;
+        if (waterproof == null) {
+            waterproof = Items.SLIME_BALL;
+        }
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemWood, BCTransportItems.pipeFluidWood, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemCobble, BCTransportItems.pipeFluidCobble, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemStone, BCTransportItems.pipeFluidStone, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemQuartz, BCTransportItems.pipeFluidQuartz, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemIron, BCTransportItems.pipeFluidIron, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemGold, BCTransportItems.pipeFluidGold, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemClay, BCTransportItems.pipeFluidClay, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemSandstone, BCTransportItems.pipeFluidSandstone, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemVoid, BCTransportItems.pipeFluidVoid, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemObsidian, BCTransportItems.pipeFluidObsidian, waterproof);
+        // addPipeUpgradeRecipe(BCTransportItems.pipeItemDiamond, BCTransportItems.pipeFluidDiamond, waterproof);
+        addPipeUpgradeRecipe(BCTransportItems.pipeItemDiaWood, BCTransportItems.pipeFluidDiaWood, waterproof);
 
         if (BCTransportItems.plugBlocker != null) {
             ItemStack result = new ItemStack(BCTransportItems.plugBlocker, 4);
@@ -160,6 +180,8 @@ public class BCTransportRecipes {
         if (pipe == null) {
             return;
         }
+
+        // TODO: Use RecipePipeColour instead!
         RecipeBuilderShaped pipeBuilderSingle = new RecipeBuilderShaped();
         pipeBuilderSingle.add("lgr");
 
@@ -171,6 +193,27 @@ public class BCTransportRecipes {
         for (EnumDyeColor colour : EnumDyeColor.values()) {
             pipeBuilderSingle.map('g', "blockGlass" + ColourUtil.getName(colour));
             GameRegistry.addRecipe(pipeBuilderSingle.build(new ItemStack(pipe, 8, colour.getMetadata() + 1)));
+        }
+    }
+
+    private static void addPipeUpgradeRecipe(ItemPipeHolder from, ItemPipeHolder to, Object additional) {
+        if (from == null || to == null) {
+            return;
+        }
+        if (additional == null) {
+            throw new NullPointerException("additional");
+        }
+        
+        // TODO: Use RecipePipeColour instead!
+
+        GameRegistry.addShapelessRecipe(new ItemStack(from), new ItemStack(to));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(to), new ItemStack(from), additional));
+
+        for (EnumDyeColor colour : ColourUtil.COLOURS) {
+            ItemStack f = new ItemStack(from, 1, colour.getMetadata() + 1);
+            ItemStack t = new ItemStack(to, 1, colour.getMetadata() + 1);
+            GameRegistry.addShapelessRecipe(f, t);
+            GameRegistry.addRecipe(new ShapelessOreRecipe(t, f, additional));
         }
     }
 }
