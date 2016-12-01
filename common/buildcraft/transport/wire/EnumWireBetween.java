@@ -90,13 +90,13 @@ public enum EnumWireBetween {
         this.to = to;
         this.xy = xy;
         this.yz = yz;
-        int start = to.getAxisDirection() == AxisDirection.POSITIVE ? 12 : 0;
+        int start = to.getAxisDirection() == AxisDirection.POSITIVE ? 13 : 0;
         int x1 = mainAxis == Axis.X ? start : (xy ? 12 : 3);
         int y1 = mainAxis == Axis.Y ? start : ((mainAxis == Axis.X ? xy : yz) ? 12 : 3);
         int z1 = mainAxis == Axis.Z ? start : (yz ? 12 : 3);
-        int x2 = x1 + (mainAxis == Axis.X ? 4 : 1);
-        int y2 = y1 + (mainAxis == Axis.Y ? 4 : 1);
-        int z2 = z1 + (mainAxis == Axis.Z ? 4 : 1);
+        int x2 = x1 + (mainAxis == Axis.X ? 3 : 1);
+        int y2 = y1 + (mainAxis == Axis.Y ? 3 : 1);
+        int z2 = z1 + (mainAxis == Axis.Z ? 3 : 1);
         boundingBox = new AxisAlignedBB(x1 / 16.0, y1 / 16.0, z1 / 16.0, x2 / 16.0, y2 / 16.0, z2 / 16.0);
         parts = getParts();
     }
